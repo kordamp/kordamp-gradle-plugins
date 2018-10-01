@@ -22,6 +22,7 @@ import org.gradle.api.Project
 
 /**
  * @author Andres Almiray
+ * @since 0.1.0
  */
 @CompileStatic
 class ProjectConfigurationExtension {

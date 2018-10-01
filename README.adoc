@@ -1,7 +1,7 @@
 = jdeps-gradle-plugin
 :linkattrs:
-:project-name: jdeps-gradle-plugin
-:plugin-version: 0.4.1
+:project-name: kordamp-gradle-plugins
+:plugin-version: 0.1.0-SNAPSHOT
 
 image:http://img.shields.io/travis/aalmiray/{project-name}/master.svg["Build Status", link="https://travis-ci.org/aalmiray/{project-name}"]
 image:http://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2", link="http://www.apache.org/licenses/LICENSE-2.0.txt"]
@@ -10,7 +10,7 @@ image:https://img.shields.io/badge/donations-Patreon-orange.svg[link="https://ww
 
 ---
 
-Runs the `jdeps` command on the project's output and all of its dependencies.
+A set of opinionated Gradle plugins that provide common behavior observed in Maven, and more!
 
 == Usage
 
@@ -23,7 +23,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:{project-name}:{plugin-version}'
+        classpath 'org.kordamp.gradle:{plugin-id}:{plugin-version}'
     }
 }
 apply plugin: 'org.kordamp.jdeps'
@@ -34,41 +34,101 @@ Option #2
 [subs="attributes"]
 ----
 plugins {
-    id 'org.kordamp.jdeps' version '{plugin-version}'
+    id '{plugin-id}' version '{plugin-version}'
 }
 ----
 
-This will add a `jdeps` task to your build, which will analyze the `main` sourceSets and all dependencies found in the
-`runtime` configuration.
+Where `{plugin-id}` stands for any of the ids described in the following section
 
-== Configuration
-=== Plugin configuration
+== Plugins
 
-The following properties can be specified in the `jdeps` task configuration
+=== Base
 
+id: `org.kordamp.gradle.base`
+
+Responsibilities:
+
+ * Creates an extension named `projectConfiguration` that serves as the central point of configuration for all
+other plugins. This extension has the following properties
+
+[header, cols="4*"]
 |===
-| Name           | Type         | Default Value
-| verbose        | boolean      | false
-| summary        | boolean      | false
-| profile        | boolean      | false
-| recursive      | boolean      | false
-| jdkinternals   | boolean      | true
-| failOnError    | boolean      | true
-| consoleOutput  | boolean      | true
-| reportsDir     | File         | "${buildDir}/reports/jdeps"
-| configurations | List<String> | ['runtime']
-| sourceSets     | List<String> | ['main']
+| Name    | Type    | Default Value | Description
+| sources | boolean | true          | Generates `sourceJar` is active
+| apidocs | boolean | true          | Generates `javadoc`and `javadocJar` if active
+| minpom  | boolean | true          | Generates `minPom` if active
+| release | boolean | false         | Customizes Jar manifest and metainf if active
 |===
 
-If `failOnError` is set to true the build will result in failure if `jdeps` reports any problems.
+=== BuildInfo
 
-You may configure multiple sourceSets and configurations, which will be evaluated in a single report. The following snippet
-shows how this plugin can be configured to run `jdeps` on production and test sources
+id: `org.kordamp.gradle.build-info`
 
-[source]
-----
-jdeps {
-    sourceSets = ['main', 'test']
-    configurations = ['testRuntime']
-}
-----
+Responsibilities:
+
+ * Defines a set of build related properties and attaches them to the `rootProject`. These properties are
+
+[header, cols="3*"]
+|===
+| Name             | Type             | Description
+| buildTimeAndDate | `java.util.Date` | A `java.util.Date` instance representing the current time
+| buildDate        | String           | The value of `buildTimeAndDate` formatted with "yyyy-MM-dd"
+| buildtime        | String           | The value of `buildTimeAndDate` formatted with "HH:mm:ss.SSSZ"
+| buildBy          | String           | The value of the `user.name` System property
+| buildRevision    | String           | The value of the latest commit hash
+| buildJdk         | String           | Concatenation of the following System properties [`java.version`, `java.vendor`, `java.vm.version]
+| buildCreatedBy   | String           | The Gradle version used in the build
+|===
+
+NOTE: This plugin implicitly applies `net.nemerosa:versioning` to obtain SCM information.
+
+=== SourceJar
+
+id: `org.kordamp.gradle.source-jar`
+
+Responsibilities:
+
+ * Creates a `Jar` task that packages sources per `SourceSet`.
+ * Configures a `MavenPublication` that matches the sourceSet's name.
+ * Attaches the source JAR artifact to the custom `MavenPublication`.
+ * Creates a composite `allSourceJars` tasks that triggers every other `sourceJar` in the current project.
+
+=== Apidocs
+
+id: `org.kordamp.gradle.apidoc`
+
+Responsibilities:
+
+ * Creates a `Javadoc` task per `SourceSet`.
+ * Creates a `Jar` task that packages javadoc per `SourceSet`.
+ * Configures a `MavenPublication` that matches the sourceSet's name.
+ * Attaches the javadoc JAR artifact to the custom `MavenPublication`.
+ * Creates a composite `allJavadocJars` tasks that triggers every other `javadocJar` in the current project.
+
+=== MinPom
+
+id: `org.kordamp.gradle.minpom`
+
+Responsibilities:
+
+ * Creates a minimum `pom.xml` file per `SourceSet`.
+ * Creates a minimum `pom.properties` file per `SourceSet`.
+
+=== Jar
+
+id: `org.kordamp.gradle.jar`
+
+Responsibilities:
+
+ * Creates a `Jar` task per `SourceSet`.
+ * If the `release` property is enabled, configures manifest entries provided by `BuildInfo`.
+ * If the `release` property is enabled, adds the output of the matching `minpom` task to `metaInf`.
+
+=== Project
+
+id: `org.kordamp.gradle.project`
+
+Responsibilities:
+
+ * Applies all previous projects
+

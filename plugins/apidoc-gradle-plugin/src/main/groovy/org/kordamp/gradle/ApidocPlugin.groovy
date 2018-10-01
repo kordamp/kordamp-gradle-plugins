@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -34,6 +35,7 @@ import org.gradle.api.tasks.javadoc.Javadoc
  * Applies the {@code maven-publish} plugin if it has not been applied before.
  *
  * @author Andres Almiray
+ * @since 0.1.0
  */
 class ApidocPlugin implements Plugin<Project> {
     static final String VISITED = ApidocPlugin.class.name.replace('.', '_') + '_VISITED'
@@ -76,15 +78,36 @@ class ApidocPlugin implements Plugin<Project> {
             if (!extension.apidocs) {
                 return
             }
+            List<Task> javadocTasks = []
+            List<Task> javadocJarTasks = []
 
             prj.plugins.withType(JavaBasePlugin) {
+
                 prj.sourceSets.each { SourceSet ss ->
                     // skip generating a javadoc task for SourceSets that may contain tests
                     if (!ss.name.toLowerCase().contains('test')) {
                         Task javadoc = createJavadocTaskIfNeeded(prj, ss)
+                        javadocTasks << javadoc
                         Task javadocJar = createJavadocJarTask(prj, ss, javadoc)
+                        javadocJarTasks << javadocJar
                         updatePublications(prj, ss, javadocJar)
                     }
+                }
+            }
+
+            if (javadocTasks) {
+                project.tasks.create('allJavadocs', DefaultTask) {
+                    dependsOn javadocTasks
+                    group 'Documentation'
+                    description "Triggers all javadoc tasks for project ${project.name}"
+                }
+            }
+
+            if (javadocJarTasks) {
+                project.tasks.create('allJavadocJars', DefaultTask) {
+                    dependsOn javadocJarTasks
+                    group 'Documentation'
+                    description "Triggers all javadocJar tasks for project ${project.name}"
                 }
             }
 
@@ -137,7 +160,7 @@ class ApidocPlugin implements Plugin<Project> {
 
             javadocJarTask = project.tasks.create(taskName, Jar) {
                 dependsOn javadoc
-                group 'Build'
+                group 'Documentation'
                 description "An archive of the API docs [sourceSet ${sourceSet.name}]"
                 baseName = archiveBaseName
                 classifier 'javadoc'

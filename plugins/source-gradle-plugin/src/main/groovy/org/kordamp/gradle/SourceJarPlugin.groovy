@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -32,6 +33,7 @@ import org.gradle.api.tasks.bundling.Jar
  * Applies the {@code maven-publish} plugin if it has not been applied before.
  *
  * @author Andres Almiray
+ * @since 0.1.0
  */
 class SourceJarPlugin implements Plugin<Project> {
     static final String VISITED = SourceJarPlugin.class.name.replace('.', '_') + '_VISITED'
@@ -76,13 +78,24 @@ class SourceJarPlugin implements Plugin<Project> {
                 return
             }
 
+            List<Task> sourceJarTasks = []
+
             prj.plugins.withType(JavaBasePlugin) {
                 prj.sourceSets.each { SourceSet ss ->
                     // skip generating a source task for SourceSets that may contain tests
                     if (!ss.name.toLowerCase().contains('test')) {
                         Task sourceJar = createSourceJarTask(prj, ss)
+                        sourceJarTasks << sourceJar
                         updatePublications(prj, ss, sourceJar)
                     }
+                }
+            }
+
+            if (sourceJarTasks) {
+                project.tasks.create('allSourceJars', DefaultTask) {
+                    dependsOn sourceJarTasks
+                    group 'Build'
+                    description "Triggers all sourceJar tasks for project ${project.name}"
                 }
             }
         }

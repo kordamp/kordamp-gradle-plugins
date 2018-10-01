@@ -37,6 +37,7 @@ import java.text.SimpleDateFormat
  *     <li>buildCreatedBy: the Gradle version used in the build.</li>
  * </ul>
  * @author Andres Almiray
+ * @since 0.1.0
  */
 class BuildInfoPlugin implements Plugin<Project> {
     Project project

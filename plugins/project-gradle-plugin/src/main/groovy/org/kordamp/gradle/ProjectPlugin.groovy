@@ -21,7 +21,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 /**
+ * Aggregator for all Kordamp plugins.
+ *
  * @author Andres Almiray
+ * @since 0.1.0
  */
 class ProjectPlugin implements Plugin<Project> {
     Project project

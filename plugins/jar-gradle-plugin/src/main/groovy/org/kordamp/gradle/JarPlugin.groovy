@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -25,8 +26,11 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Jar
 
 /**
+ * Creates a {@code Jar} task per {@code SourceSet}.
+ * Configures Manifest and MetaInf entries if the {@code projectConfiguration.release} is enabled.
  *
  * @author Andres Almiray
+ * @since 0.1.0
  */
 class JarPlugin implements Plugin<Project> {
     static final String VISITED = JarPlugin.class.name.replace('.', '_') + '_VISITED'
@@ -61,13 +65,23 @@ class JarPlugin implements Plugin<Project> {
         BuildInfoPlugin.applyIfMissing(project)
         MinPomPlugin.applyIfMissing(project)
 
+        List<Task> jarTasks = []
+
         project.afterEvaluate { Project prj ->
             prj.plugins.withType(JavaBasePlugin) {
                 prj.sourceSets.each { SourceSet ss ->
                     // skip generating/updating a jar task for SourceSets that may contain tests
                     if (!ss.name.toLowerCase().contains('test')) {
-                        createJarTaskIfNeeded(prj, ss)
+                        jarTasks << createJarTaskIfNeeded(prj, ss)
                     }
+                }
+            }
+
+            if (jarTasks) {
+                project.tasks.create('allJars', DefaultTask) {
+                    dependsOn jarTasks
+                    group 'Build'
+                    description "Triggers all jar tasks for project ${project.name}"
                 }
             }
         }

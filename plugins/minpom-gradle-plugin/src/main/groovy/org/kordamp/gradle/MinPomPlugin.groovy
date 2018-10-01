@@ -29,6 +29,7 @@ import org.gradle.api.tasks.SourceSet
  * These files should be packaged under {@code /META-INF/maven}.
 
  * @author Andres Almiray
+ * @since 0.1.0
  */
 class MinPomPlugin implements Plugin<Project> {
     static final String VISITED = MinPomPlugin.class.name.replace('.', '_') + '_VISITED'
@@ -73,12 +74,22 @@ class MinPomPlugin implements Plugin<Project> {
                 return
             }
 
+            List<Task> minPomTasks = []
+
             prj.plugins.withType(JavaBasePlugin) {
                 prj.sourceSets.each { SourceSet ss ->
                     // skip generating a task for SourceSets that may contain tests
                     if (!ss.name.toLowerCase().contains('test')) {
-                        createMinPomTask(prj, ss)
+                        minPomTasks << createMinPomTask(prj, ss)
                     }
+                }
+            }
+
+            if (minPomTasks) {
+                project.tasks.create('allMinPoms', DefaultTask) {
+                    dependsOn minPomTasks
+                    group 'Build'
+                    description "Triggers all minPom tasks for project ${project.name}"
                 }
             }
         }
