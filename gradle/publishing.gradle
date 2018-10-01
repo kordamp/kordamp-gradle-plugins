@@ -1,0 +1,124 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import java.text.SimpleDateFormat
+
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.gradle.plugin-publish'
+
+jar {
+    manifest {
+        attributes(
+            'Created-By': buildCreatedBy,
+            'Built-By': buildBy,
+            'Build-Jdk': buildJdk,
+            'Build-Date': buildDate,
+            'Build-Time': buildTime,
+            'Build-Revision': buildRevision,
+            'Specification-Title': project.name,
+            'Specification-Version': project.version,
+            'Specification-Vendor': project.name
+        )
+    }
+
+    metaInf {
+        from file('.')
+        include 'LICENSE'
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+                name = project.name
+                description = project.project_description
+                url = project.project_website
+                inceptionYear = '2018'
+                licenses {
+                    license {
+                        name = 'The Apache Software License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution = 'repo'
+                    }
+                }
+                scm {
+                    url = project.project_vcs
+                }
+                developers {
+                    [
+                        aalmiray: 'Andres Almiray',
+                    ].each { devId, devName ->
+                        developer {
+                            id = devId
+                            name = devName
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    user = bintrayUsername
+    key = bintrayKey
+    publications = ['mavenJava']
+    dryRun = bintrayDryRun.toBoolean()
+    pkg {
+        userOrg = bintrayOrg
+        repo = bintrayRepo
+        name = project.name
+        desc = project.project_description
+        licenses = ['Apache-2.0']
+        labels = ['gradle', 'plugin']
+        websiteUrl = project.project_website
+        issueTrackerUrl = project.project_issues
+        vcsUrl = project.project_vcs
+        publicDownloadNumbers = true
+        githubRepo = 'aalmiray/kordamp-gradle-plugins'
+        version {
+            attributes = ['gradle-plugin': "${project.pluginId}:${project.group}:${project.name}"]
+        }
+    }
+}
+
+pluginBundle {
+    website = project.project_website
+    vcsUrl = project.project_vcs
+    description = project.project_description
+    tags = ['gradle', 'plugin']
+
+    plugins {
+        "${project.pluginShortName}Plugin" {
+            id = project.pluginId
+            displayName = project.displayName
+        }
+    }
+
+    mavenCoordinates {
+        groupId = project.group
+        artifactId = project.name
+        version = project.version
+    }
+}

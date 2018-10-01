@@ -1,0 +1,74 @@
+= jdeps-gradle-plugin
+:linkattrs:
+:project-name: jdeps-gradle-plugin
+:plugin-version: 0.4.1
+
+image:http://img.shields.io/travis/aalmiray/{project-name}/master.svg["Build Status", link="https://travis-ci.org/aalmiray/{project-name}"]
+image:http://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2", link="http://www.apache.org/licenses/LICENSE-2.0.txt"]
+image:https://api.bintray.com/packages/aalmiray/kordamp/{project-name}/images/download.svg[link="https://bintray.com/aalmiray/kordamp/{project-name}/_latestVersion"]
+image:https://img.shields.io/badge/donations-Patreon-orange.svg[link="https://www.patreon.com/user?u=6609318"]
+
+---
+
+Runs the `jdeps` command on the project's output and all of its dependencies.
+
+== Usage
+
+Option #1
+[source,groovy]
+[subs="attributes"]
+----
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.kordamp.gradle:{project-name}:{plugin-version}'
+    }
+}
+apply plugin: 'org.kordamp.jdeps'
+----
+
+Option #2
+[source,groovy]
+[subs="attributes"]
+----
+plugins {
+    id 'org.kordamp.jdeps' version '{plugin-version}'
+}
+----
+
+This will add a `jdeps` task to your build, which will analyze the `main` sourceSets and all dependencies found in the
+`runtime` configuration.
+
+== Configuration
+=== Plugin configuration
+
+The following properties can be specified in the `jdeps` task configuration
+
+|===
+| Name           | Type         | Default Value
+| verbose        | boolean      | false
+| summary        | boolean      | false
+| profile        | boolean      | false
+| recursive      | boolean      | false
+| jdkinternals   | boolean      | true
+| failOnError    | boolean      | true
+| consoleOutput  | boolean      | true
+| reportsDir     | File         | "${buildDir}/reports/jdeps"
+| configurations | List<String> | ['runtime']
+| sourceSets     | List<String> | ['main']
+|===
+
+If `failOnError` is set to true the build will result in failure if `jdeps` reports any problems.
+
+You may configure multiple sourceSets and configurations, which will be evaluated in a single report. The following snippet
+shows how this plugin can be configured to run `jdeps` on production and test sources
+
+[source]
+----
+jdeps {
+    sourceSets = ['main', 'test']
+    configurations = ['testRuntime']
+}
+----
