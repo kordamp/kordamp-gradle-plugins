@@ -1,4 +1,4 @@
-= jdeps-gradle-plugin
+= kordamp-gradle-plugins
 :linkattrs:
 :project-name: kordamp-gradle-plugins
 :plugin-version: 0.1.0
