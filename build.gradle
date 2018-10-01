@@ -112,7 +112,7 @@ subprojects {
 
     gradlePlugin {
         plugins {
-            "${project.name.replaceAll('-','_')}Plugin" {
+            "${project.pluginShortName}Plugin" {
                 id = project.pluginId
                 implementationClass = project.pluginImplementationClass
             }
