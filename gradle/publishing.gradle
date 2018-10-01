@@ -88,7 +88,7 @@ bintray {
     pkg {
         userOrg = bintrayOrg
         repo = bintrayRepo
-        name = project.name
+        name = project.rootProject.name
         desc = project.project_description
         licenses = ['Apache-2.0']
         labels = ['project', 'configuration']
