@@ -91,7 +91,7 @@ bintray {
         name = project.name
         desc = project.project_description
         licenses = ['Apache-2.0']
-        labels = ['gradle', 'plugin']
+        labels = ['project', 'configuration']
         websiteUrl = project.project_website
         issueTrackerUrl = project.project_issues
         vcsUrl = project.project_vcs
@@ -107,7 +107,7 @@ pluginBundle {
     website = project.project_website
     vcsUrl = project.project_vcs
     description = project.project_description
-    tags = ['gradle', 'plugin']
+    tags = ['project', 'configuration']
 
     plugins {
         "${project.pluginShortName}Plugin" {
