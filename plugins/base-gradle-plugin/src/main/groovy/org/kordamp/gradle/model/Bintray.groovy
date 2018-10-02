@@ -22,6 +22,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.util.ConfigureUtil
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -40,6 +41,10 @@ class Bintray {
 
     void credentials(Action<? super Credentials> action) {
         action.execute(credentials)
+    }
+
+    void credentials(@DelegatesTo(Credentials) Closure action) {
+        ConfigureUtil.configure(action, credentials)
     }
 
     void copyInto(Bintray copy) {

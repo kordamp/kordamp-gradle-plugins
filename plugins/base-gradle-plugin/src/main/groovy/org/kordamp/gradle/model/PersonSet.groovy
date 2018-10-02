@@ -21,6 +21,7 @@ import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.gradle.api.Action
+import org.gradle.util.ConfigureUtil
 
 /**
  * @author Andres Almiray
@@ -35,6 +36,12 @@ class PersonSet {
     void person(Action<? super Person> action) {
         Person person = new Person()
         action.execute(person)
+        people << person
+    }
+
+    void person(@DelegatesTo(Person) Closure action) {
+        Person person = new Person()
+        ConfigureUtil.configure(action, person)
         people << person
     }
 

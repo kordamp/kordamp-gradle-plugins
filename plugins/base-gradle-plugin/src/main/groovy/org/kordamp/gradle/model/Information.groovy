@@ -23,6 +23,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.util.ConfigureUtil
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -100,10 +101,10 @@ class Information {
     List<String> validate() {
         List<String> errors = []
 
-        if(isBlank(description)) {
+        if (isBlank(description)) {
             errors << "[${project.name}] Project description is blank".toString()
         }
-        if(isBlank(vendor)) {
+        if (isBlank(vendor)) {
             errors << "[${project.name}] Project vendor is blank".toString()
         }
         //errors.addAll(licenses.validate(project))
@@ -143,6 +144,38 @@ class Information {
 
     void implementation(Action<? super SpecOrImpl> action) {
         action.execute(impl)
+    }
+
+    void licenses(@DelegatesTo(LicenseSet) Closure action) {
+        ConfigureUtil.configure(action, licenses)
+    }
+
+    void people(@DelegatesTo(PersonSet) Closure action) {
+        ConfigureUtil.configure(action, people)
+    }
+
+    void organization(@DelegatesTo(Organization) Closure action) {
+        ConfigureUtil.configure(action, organization)
+    }
+
+    void bintray(@DelegatesTo(Bintray) Closure action) {
+        ConfigureUtil.configure(action, bintray)
+    }
+
+    void links(@DelegatesTo(Links) Closure action) {
+        ConfigureUtil.configure(action, links)
+    }
+
+    void credentials(@DelegatesTo(CredentialsSet) Closure action) {
+        ConfigureUtil.configure(action, credentials)
+    }
+
+    void specification(@DelegatesTo(SpecOrImpl) Closure action) {
+        ConfigureUtil.configure(action, spec)
+    }
+
+    void implementation(@DelegatesTo(SpecOrImpl) Closure action) {
+        ConfigureUtil.configure(action, impl)
     }
 
     String getName() {

@@ -21,6 +21,7 @@ import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.gradle.api.Action
+import org.gradle.util.ConfigureUtil
 
 /**
  * @author Andres Almiray
@@ -38,6 +39,14 @@ class CredentialsSet {
 
     void sonatype(Action<? super Credentials> action) {
         action.execute(credentials.computeIfAbsent('sonatype', { k -> new Credentials() }))
+    }
+
+    void github(@DelegatesTo(Credentials) Closure action) {
+        ConfigureUtil.configure(action, credentials.computeIfAbsent('github', { k -> new Credentials() }))
+    }
+
+    void sonatype(@DelegatesTo(Credentials) Closure action) {
+        ConfigureUtil.configure(action, credentials.computeIfAbsent('sonatype', { k -> new Credentials() }))
     }
 
     Credentials getGithub() {

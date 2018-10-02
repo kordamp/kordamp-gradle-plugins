@@ -22,6 +22,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.util.ConfigureUtil
 
 /**
  * @author Andres Almiray
@@ -36,6 +37,12 @@ class LicenseSet {
     void license(Action<? super License> action) {
         License license = new License()
         action.execute(license)
+        licenses << license
+    }
+
+    void license(@DelegatesTo(License) Closure action) {
+        License license = new License()
+        ConfigureUtil.configure(action, license)
         licenses << license
     }
 
