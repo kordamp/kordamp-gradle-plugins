@@ -60,4 +60,12 @@ class PersonSet {
         people.clear()
         people.addAll(a.values())
     }
+
+    void forEach(Closure action) {
+        people.each(action)
+    }
+
+    boolean isEmpty() {
+        people.isEmpty()
+    }
 }

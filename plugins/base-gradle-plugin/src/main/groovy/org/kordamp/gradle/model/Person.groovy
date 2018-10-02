@@ -42,7 +42,7 @@ class Person {
         copy.name = name
         copy.email = email
         copy.url = url
-        copy.organization = organization.copyOf()
+        copy.organization = organization?.copyOf()
         copy.roles.addAll(roles)
         copy
     }
@@ -54,7 +54,7 @@ class Person {
         copy.email = email ?: other?.email
         copy.url = url ?: other?.url
         copy.roles.addAll((roles + other?.roles).unique())
-        copy.organization.merge(organization, other.organization)
+        copy.organization?.merge(organization, other?.organization)
         copy
     }
 }

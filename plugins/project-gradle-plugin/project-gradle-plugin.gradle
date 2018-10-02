@@ -23,4 +23,5 @@ dependencies {
     compile project(':source-gradle-plugin')
     compile project(':apidoc-gradle-plugin')
     compile project(':minpom-gradle-plugin')
+    compile project(':publishing-gradle-plugin')
 }

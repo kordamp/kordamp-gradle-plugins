@@ -21,6 +21,8 @@ import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 
+import static org.kordamp.gradle.StringUtils.isBlank
+
 /**
  * @author Andres Almiray
  * @since 0.2.0
@@ -46,5 +48,9 @@ class Organization {
     void merge(Organization o1, Organization o2) {
         name = o1?.name ?: o2?.name
         url = o1?.url ?: o2?.url
+    }
+
+    boolean isEmpty() {
+        isBlank(name) && isBlank(url)
     }
 }

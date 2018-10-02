@@ -61,7 +61,7 @@ class BasePlugin implements Plugin<Project> {
                 ProjectConfigurationExtension rootExtension = project.rootProject.extensions.findByType(ProjectConfigurationExtension)
                 if (rootExtension) {
                     Information merged = extension.information.merge(rootExtension.information)
-                    errors = merged.validate(project)
+                    errors = merged.validate()
                     project.ext.mergedInformation = merged
                 }
             }

@@ -56,6 +56,12 @@ class ApidocPlugin implements Plugin<Project> {
         }
     }
 
+    static void applyIfMissing(Project project) {
+        if (!project.plugins.findPlugin(ApidocPlugin)) {
+            project.plugins.apply(ApidocPlugin)
+        }
+    }
+
     private void createJavadocJarTaskIfCompatible(Project project) {
         String visitedPropertyName = VISITED + '_' + project.name
         if (project.findProperty(visitedPropertyName)) {
@@ -118,7 +124,7 @@ class ApidocPlugin implements Plugin<Project> {
     }
 
     private Task createJavadocTaskIfNeeded(Project project, SourceSet sourceSet) {
-        String taskName = sourceSet.name == 'main' ? 'javadoc' : sourceSet.name + 'Javadoc'
+        String taskName = resolveJavadocTaskName(sourceSet)
 
         Task javadocTask = project.tasks.findByName(taskName)
 
@@ -148,8 +154,12 @@ class ApidocPlugin implements Plugin<Project> {
         javadocTask
     }
 
+    static String resolveJavadocTaskName(SourceSet sourceSet) {
+        return sourceSet.name == 'main' ? 'javadoc' : sourceSet.name + 'Javadoc'
+    }
+
     private Task createJavadocJarTask(Project project, SourceSet sourceSet, Task javadoc) {
-        String taskName = sourceSet.name == 'main' ? 'javadocJar' : sourceSet.name + 'JavadocJar'
+        String taskName = resolveJavadocJarTaskName(sourceSet)
 
         Task javadocJarTask = project.tasks.findByName(taskName)
 
@@ -167,6 +177,10 @@ class ApidocPlugin implements Plugin<Project> {
         }
 
         javadocJarTask
+    }
+
+    static String resolveJavadocJarTaskName(SourceSet sourceSet) {
+        return sourceSet.name == 'main' ? 'javadocJar' : sourceSet.name + 'JavadocJar'
     }
 
     private void updatePublications(Project project, SourceSet sourceSet, Task javadocJar) {

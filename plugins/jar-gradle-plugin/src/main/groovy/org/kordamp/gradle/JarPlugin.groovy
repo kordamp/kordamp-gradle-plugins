@@ -22,8 +22,11 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Jar
+import org.kordamp.gradle.model.Information
 
 import static org.kordamp.gradle.BasePlugin.isRootProject
 
@@ -52,6 +55,12 @@ class JarPlugin implements Plugin<Project> {
         }
     }
 
+    static void applyIfMissing(Project project) {
+        if (!project.plugins.findPlugin(JarPlugin)) {
+            project.plugins.apply(JarPlugin)
+        }
+    }
+
     private void createJarTaskIfCompatible(Project project) {
         String visitedPropertyName = VISITED + '_' + project.name
         if (project.findProperty(visitedPropertyName)) {
@@ -63,6 +72,12 @@ class JarPlugin implements Plugin<Project> {
         BuildInfoPlugin.applyIfMissing(project)
         MinPomPlugin.applyIfMissing(project)
 
+        project.plugins.withType(JavaBasePlugin) {
+            if (!project.plugins.findPlugin(MavenPublishPlugin)) {
+                project.plugins.apply(MavenPublishPlugin)
+            }
+        }
+
         List<Task> jarTasks = []
 
         project.afterEvaluate { Project prj ->
@@ -70,7 +85,9 @@ class JarPlugin implements Plugin<Project> {
                 prj.sourceSets.each { SourceSet ss ->
                     // skip generating/updating a jar task for SourceSets that may contain tests
                     if (!ss.name.toLowerCase().contains('test')) {
-                        jarTasks << createJarTaskIfNeeded(prj, ss)
+                        Task jar = createJarTaskIfNeeded(prj, ss)
+                        jarTasks << jar
+                        updatePublications(prj, ss, jar)
                     }
                 }
             }
@@ -86,12 +103,12 @@ class JarPlugin implements Plugin<Project> {
     }
 
     private Task createJarTaskIfNeeded(Project project, SourceSet sourceSet) {
-        String taskName = sourceSet.name == 'main' ? 'jar' : sourceSet.name + 'Jar'
+        String taskName = resolveJarTaskName(sourceSet)
 
         Task jarTask = project.tasks.findByName(taskName)
 
         if (!jarTask) {
-            String archiveBaseName = sourceSet.name == 'main' ? project.name : project.name + '-' + sourceSet.name
+            String archiveBaseName = resolveArchiveBaseName(project, sourceSet)
 
             jarTask = project.tasks.create(taskName, Jar) {
                 dependsOn sourceSet.output
@@ -105,6 +122,8 @@ class JarPlugin implements Plugin<Project> {
 
         ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
         if (extension.minpom && extension.release) {
+            Information information = project.ext.mergedInformation
+
             jarTask.configure {
                 dependsOn MinPomPlugin.resolveMinPomTaskName(sourceSet)
                 manifest {
@@ -115,9 +134,12 @@ class JarPlugin implements Plugin<Project> {
                         'Build-Date': project.rootProject.buildDate,
                         'Build-Time': project.rootProject.buildTime,
                         'Build-Revision': project.rootProject.buildRevision,
-                        'Specification-Title': project.name,
-                        'Specification-Version': project.version,
-                        'Specification-Vendor': project.name
+                        'Specification-Title': information.specification.title,
+                        'Specification-Version': information.specification.version,
+                        'Specification-Vendor': information.specification.vendor,
+                        'Implementation-Title': information.implementation.title,
+                        'Implementation-Version': information.implementation.version,
+                        'Implementation-Vendor': information.implementation.vendor
                     )
                 }
 
@@ -133,5 +155,28 @@ class JarPlugin implements Plugin<Project> {
         }
 
         jarTask
+    }
+
+    static String resolveArchiveBaseName(Project project, SourceSet sourceSet) {
+        return sourceSet.name == 'main' ? project.name : project.name + '-' + sourceSet.name
+    }
+
+    private void updatePublications(Project project, SourceSet sourceSet, Task jar) {
+        project.publishing {
+            publications {
+                "${sourceSet.name}"(MavenPublication) {
+                    from project.components.java
+                    // artifact jar
+                }
+            }
+        }
+
+        project.artifacts {
+            jar
+        }
+    }
+
+    static String resolveJarTaskName(SourceSet sourceSet) {
+        return sourceSet.name == 'main' ? 'jar' : sourceSet.name + 'Jar'
     }
 }

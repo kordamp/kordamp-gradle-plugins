@@ -62,6 +62,10 @@ class LicenseSet {
         licenses.addAll(a.values())
     }
 
+    void forEach(Closure action) {
+        licenses.each(action)
+    }
+
     List<String> validate(Project project) {
         List<String> errors = []
 

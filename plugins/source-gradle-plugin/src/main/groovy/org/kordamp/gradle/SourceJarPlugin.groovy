@@ -55,6 +55,12 @@ class SourceJarPlugin implements Plugin<Project> {
         }
     }
 
+    static void applyIfMissing(Project project) {
+        if (!project.plugins.findPlugin(SourceJarPlugin)) {
+            project.plugins.apply(SourceJarPlugin)
+        }
+    }
+
     private void createSourceJarTaskIfCompatible(Project project) {
         String visitedPropertyName = VISITED + '_' + project.name
         if (project.findProperty(visitedPropertyName)) {
@@ -100,7 +106,7 @@ class SourceJarPlugin implements Plugin<Project> {
     }
 
     private Task createSourceJarTask(Project project, SourceSet sourceSet) {
-        String taskName = sourceSet.name == 'main' ? 'sourceJar' : sourceSet.name + 'SourceJar'
+        String taskName = resolveSourceJarTaskName(sourceSet)
 
         Task sourceJarTask = project.tasks.findByName(taskName)
 
@@ -119,6 +125,10 @@ class SourceJarPlugin implements Plugin<Project> {
         }
 
         sourceJarTask
+    }
+
+    static String resolveSourceJarTaskName(SourceSet sourceSet) {
+        return sourceSet.name == 'main' ? 'sourceJar' : sourceSet.name + 'SourceJar'
     }
 
     private void updatePublications(Project project, SourceSet sourceSet, Task sourceJar) {

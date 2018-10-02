@@ -15,29 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle
 
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-
-/**
- * Aggregator for all Kordamp plugins.
- *
- * @author Andres Almiray
- * @since 0.1.0
- */
-class ProjectPlugin implements Plugin<Project> {
-    Project project
-
-    void apply(Project project) {
-        this.project = project
-
-        BasePlugin.applyIfMissing(project)
-        BuildInfoPlugin.applyIfMissing(project)
-        SourceJarPlugin.applyIfMissing(project)
-        ApidocPlugin.applyIfMissing(project)
-        MinPomPlugin.applyIfMissing(project)
-        JarPlugin.applyIfMissing(project)
-        PublishingPlugin.applyIfMissing(project)
-    }
+dependencies {
+    compile project(':base-gradle-plugin')
+    compile project(':buildinfo-gradle-plugin')
+    compile project(':jar-gradle-plugin')
+    compile project(':source-gradle-plugin')
+    compile project(':apidoc-gradle-plugin')
 }
