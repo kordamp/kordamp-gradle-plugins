@@ -29,7 +29,7 @@ import static org.kordamp.gradle.BasePlugin.isRootProject
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.2.0
  */
 class PublishingPlugin implements Plugin<Project> {
     static final String VISITED = PublishingPlugin.class.name.replace('.', '_') + '_VISITED'

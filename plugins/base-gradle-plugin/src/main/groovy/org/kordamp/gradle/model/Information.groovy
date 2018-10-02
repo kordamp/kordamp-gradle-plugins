@@ -48,7 +48,7 @@ class Information {
     final Organization organization = new Organization()
     final Links links = new Links()
     final CredentialsSet credentials = new CredentialsSet()
-    final Bintray bintray = new Bintray()
+    final Bintray bintray
 
     final SpecOrImpl specification = new SpecOrImpl()
     final SpecOrImpl implementation = new SpecOrImpl()
@@ -58,6 +58,7 @@ class Information {
 
     Information(Project project) {
         this.project = project
+        this.bintray = new Bintray(project)
     }
 
     Information copyOf() {

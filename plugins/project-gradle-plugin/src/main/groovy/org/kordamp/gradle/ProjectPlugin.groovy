@@ -38,6 +38,7 @@ class ProjectPlugin implements Plugin<Project> {
         ApidocPlugin.applyIfMissing(project)
         MinPomPlugin.applyIfMissing(project)
         JarPlugin.applyIfMissing(project)
-        PublishingPlugin.applyIfMissing(project)
+        BintrayPlugin.applyIfMissing(project)
+        BintrayPlugin.applyIfMissing(project)
     }
 }

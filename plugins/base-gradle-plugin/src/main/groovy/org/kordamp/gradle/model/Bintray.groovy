@@ -36,8 +36,19 @@ import static org.kordamp.gradle.StringUtils.isBlank
 class Bintray {
     String repo
     String userOrg
+    String name
     String githubRepo
     final Credentials credentials = new Credentials()
+
+    private Project project
+
+    Bintray(Project project) {
+        this.project = project
+    }
+
+    String getName() {
+        name ?: project.name
+    }
 
     void credentials(Action<? super Credentials> action) {
         action.execute(credentials)
