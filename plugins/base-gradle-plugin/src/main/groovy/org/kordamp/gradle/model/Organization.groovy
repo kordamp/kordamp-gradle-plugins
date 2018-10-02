@@ -15,28 +15,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle
+package org.kordamp.gradle.model
 
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import groovy.transform.Canonical
+import groovy.transform.CompileStatic
+import groovy.transform.ToString
 
 /**
- * Aggregator for all Kordamp plugins.
- *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.2.0
  */
-class ProjectPlugin implements Plugin<Project> {
-    Project project
+@CompileStatic
+@Canonical
+@ToString(includeNames = true)
+class Organization {
+    String name
+    String url
 
-    void apply(Project project) {
-        this.project = project
+    Organization copyOf() {
+        Organization copy = new Organization()
+        copyInto(copy)
+        copy
+    }
 
-        project.plugins.apply(BasePlugin)
-        project.plugins.apply(BuildInfoPlugin)
-        project.plugins.apply(SourceJarPlugin)
-        project.plugins.apply(ApidocPlugin)
-        project.plugins.apply(MinPomPlugin)
-        project.plugins.apply(JarPlugin)
+    void copyInto(Organization copy) {
+        copy.name = name
+        copy.url = url
+    }
+
+    void merge(Organization o1, Organization o2) {
+        name = o1?.name ?: o2?.name
+        url = o1?.url ?: o2?.url
     }
 }

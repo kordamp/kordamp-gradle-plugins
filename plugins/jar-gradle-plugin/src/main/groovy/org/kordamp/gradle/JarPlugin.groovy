@@ -25,6 +25,8 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Jar
 
+import static org.kordamp.gradle.BasePlugin.isRootProject
+
 /**
  * Creates a {@code Jar} task per {@code SourceSet}.
  * Configures Manifest and MetaInf entries if the {@code projectConfiguration.release} is enabled.
@@ -48,10 +50,6 @@ class JarPlugin implements Plugin<Project> {
         } else {
             createJarTaskIfCompatible(project)
         }
-    }
-
-    static boolean isRootProject(Project project) {
-        project == project.rootProject
     }
 
     private void createJarTaskIfCompatible(Project project) {

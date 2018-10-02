@@ -27,6 +27,8 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Jar
 
+import static org.kordamp.gradle.BasePlugin.isRootProject
+
 /**
  * Configures a {@code sourceJar} for each {@code SourceSet}.
  * <strong>NOTE:</strong> any sources with the word "test" will be skipped.
@@ -51,10 +53,6 @@ class SourceJarPlugin implements Plugin<Project> {
         } else {
             createSourceJarTaskIfCompatible(project)
         }
-    }
-
-    static boolean isRootProject(Project project) {
-        project == project.rootProject
     }
 
     private void createSourceJarTaskIfCompatible(Project project) {

@@ -15,28 +15,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle
+package org.kordamp.gradle.model
 
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import groovy.transform.Canonical
+import groovy.transform.CompileStatic
+import groovy.transform.ToString
 
 /**
- * Aggregator for all Kordamp plugins.
- *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.2.0
  */
-class ProjectPlugin implements Plugin<Project> {
-    Project project
+@CompileStatic
+@Canonical
+@ToString(includeNames = true)
+class SpecOrImpl {
+    String title
+    String version
+    String vendor
 
-    void apply(Project project) {
-        this.project = project
+    SpecOrImpl copyOf() {
+        SpecOrImpl copy = new SpecOrImpl()
+        copy.title = title
+        copy.version = version
+        copy.vendor = vendor
+        copy
+    }
 
-        project.plugins.apply(BasePlugin)
-        project.plugins.apply(BuildInfoPlugin)
-        project.plugins.apply(SourceJarPlugin)
-        project.plugins.apply(ApidocPlugin)
-        project.plugins.apply(MinPomPlugin)
-        project.plugins.apply(JarPlugin)
+    SpecOrImpl merge(SpecOrImpl other) {
+        SpecOrImpl copy = new SpecOrImpl()
+        copy.title = title ?: other.title
+        copy.version = version ?: other.version
+        copy.vendor = vendor ?: other.vendor
+        copy
     }
 }

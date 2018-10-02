@@ -24,6 +24,8 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.SourceSet
 
+import static org.kordamp.gradle.BasePlugin.isRootProject
+
 /**
  * Calculates {@code pom.xml} and {@code pom.properties} for each {@code SourceSet}.
  * These files should be packaged under {@code /META-INF/maven}.
@@ -47,10 +49,6 @@ class MinPomPlugin implements Plugin<Project> {
         } else {
             createMinPomTaskIdCompatible(project)
         }
-    }
-
-    static boolean isRootProject(Project project) {
-        project == project.rootProject
     }
 
     static void applyIfMissing(Project project) {

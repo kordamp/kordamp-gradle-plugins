@@ -18,7 +18,9 @@
 package org.kordamp.gradle
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.kordamp.gradle.model.Information
 
 /**
  * @author Andres Almiray
@@ -46,7 +48,13 @@ class ProjectConfigurationExtension {
      */
     boolean release = false
 
-    ProjectConfigurationExtension(Project project) {
+    final Information information
 
+    ProjectConfigurationExtension(Project project) {
+        information = new Information(project)
+    }
+
+    void information(Action<? super Information> action) {
+        action.execute(information)
     }
 }

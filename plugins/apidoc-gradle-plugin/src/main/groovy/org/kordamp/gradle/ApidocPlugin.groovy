@@ -29,6 +29,8 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
 
+import static org.kordamp.gradle.BasePlugin.isRootProject
+
 /**
  * Configures a {@code javadocJar} for each {@code SourceSet}.
  * <strong>NOTE:</strong> any sources with the word "test" will be skipped.
@@ -52,10 +54,6 @@ class ApidocPlugin implements Plugin<Project> {
         } else {
             createJavadocJarTaskIfCompatible(project)
         }
-    }
-
-    static boolean isRootProject(Project project) {
-        project == project.rootProject
     }
 
     private void createJavadocJarTaskIfCompatible(Project project) {

@@ -17,8 +17,10 @@
  */
 package org.kordamp.gradle
 
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.kordamp.gradle.model.Information
 
 /**
  *
@@ -26,6 +28,8 @@ import org.gradle.api.Project
  * @since 0.1.0
  */
 class BasePlugin implements Plugin<Project> {
+    static final String VISITED = BasePlugin.class.name.replace('.', '_') + '_VISITED'
+
     Project project
 
     void apply(Project project) {
@@ -38,11 +42,42 @@ class BasePlugin implements Plugin<Project> {
         if (!project.extensions.findByType(ProjectConfigurationExtension)) {
             project.extensions.create('projectConfiguration', ProjectConfigurationExtension, project)
         }
+
+        project.afterEvaluate {
+            String visitedPropertyName = VISITED + '_' + project.name
+            if (project.findProperty(visitedPropertyName)) {
+                return
+            }
+            project.ext[visitedPropertyName] = true
+
+            ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
+            extension.information.normalize()
+
+            List<String> errors = []
+            if (isRootProject(project)) {
+                errors = extension.information.validate()
+            } else {
+                ProjectConfigurationExtension rootExtension = project.rootProject.extensions.findByType(ProjectConfigurationExtension)
+                if (rootExtension) {
+                    Information merged = extension.information.merge(rootExtension.information)
+                    errors = merged.validate(project)
+                }
+            }
+
+            if (errors) {
+                errors.each { project.logger.error(it) }
+                throw new GradleException("Project ${project.name} has not been properly configured")
+            }
+        }
     }
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(BasePlugin)) {
             project.plugins.apply(BasePlugin)
         }
+    }
+
+    static boolean isRootProject(Project project) {
+        project == project.rootProject
     }
 }
