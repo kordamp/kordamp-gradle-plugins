@@ -1,7 +1,7 @@
 = kordamp-gradle-plugins
 :linkattrs:
 :project-name: kordamp-gradle-plugins
-:plugin-version: 0.1.0
+:plugin-version: 0.2.0
 
 image:http://img.shields.io/travis/aalmiray/{project-name}/master.svg["Build Status", link="https://travis-ci.org/aalmiray/{project-name}"]
 image:http://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2", link="http://www.apache.org/licenses/LICENSE-2.0.txt"]
@@ -54,7 +54,7 @@ other plugins. This extension has the following properties
 [header, cols="5*"]
 |===
 | Name    | Type        | Default Value | Description
-| sources | boolean     | true          | Generates `sourceJar` is active
+| sources | boolean     | true          | Generates `sourceJar` if active
 | apidocs | boolean     | true          | Generates `javadoc`and `javadocJar` if active
 | minpom  | boolean     | true          | Generates `minPom` if active
 | release | boolean     | false         | Customizes Jar manifest and metainf if active
