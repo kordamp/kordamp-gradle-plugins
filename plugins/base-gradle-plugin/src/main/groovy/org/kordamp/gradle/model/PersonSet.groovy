@@ -51,7 +51,7 @@ class PersonSet {
 
     void merge(PersonSet o1, PersonSet o2) {
         Map<String, Person> a = o1.people.collectEntries { [(it.name): it] }
-        Map<String, Person> b = o1.people.collectEntries { [(it.name): it] }
+        Map<String, Person> b = o2.people.collectEntries { [(it.name): it] }
 
         a.each { k, person ->
             person.merge(b.remove(k))
