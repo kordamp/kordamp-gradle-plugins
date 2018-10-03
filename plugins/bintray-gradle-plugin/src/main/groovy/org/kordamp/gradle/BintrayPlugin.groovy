@@ -96,7 +96,7 @@ class BintrayPlugin implements Plugin<Project> {
                 userOrg = info.bintray.userOrg
                 name = info.bintray.name
                 desc = info.description
-                licenses = info.licenses.listAllShortNames()
+                licenses = info.licenses.resolveBintrayLicenseIds()
                 labels = info.tags
                 websiteUrl = info.links.website
                 issueTrackerUrl = info.links.issueTracker

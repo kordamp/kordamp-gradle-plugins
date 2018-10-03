@@ -68,10 +68,10 @@ class LicenseSet {
     }
 
     @CompileDynamic
-    List<String> listAllShortNames() {
-        List<String> shortNames = licenses.collect { it.id?.shortName() ?: '' }.unique()
-        shortNames.remove('')
-        shortNames
+    List<String> resolveBintrayLicenseIds() {
+        List<String> ids = licenses.collect { it.id?.bintray() ?: '' }.unique()
+        ids.remove('')
+        ids
     }
 
     List<String> validate(Project project) {

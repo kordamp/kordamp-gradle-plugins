@@ -107,7 +107,7 @@ class LicensePlugin implements Plugin<Project> {
                 projectName   = info.name
                 copyrightYear = year
                 author        = authors.join(', ')
-                license       = lic.id?.shortName()
+                license       = lic.id?.spdx()
             }
             licenseExtension.exclude '**/*.png'
             licenseExtension.exclude 'META-INF/services/*'

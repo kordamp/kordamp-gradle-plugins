@@ -431,7 +431,7 @@ The following variables become available to the license header template
 | projectName  | config.info.name
 | copyrightYear| config.info.inceptionYear [hyphenated with the current year if inceptionYear is earlier]
 | author       | Name or Id of all people with role `author` or the first `Person` found in config.info.people
-| license      | The shortName of the primary license
+| license      | The SPDX id of the primary license
 |===
 
 NOTE: This plugin implicitly applies `com.github.hierynomus.license` to all projects.
