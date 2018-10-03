@@ -33,12 +33,13 @@ class ProjectPlugin implements Plugin<Project> {
         this.project = project
 
         BasePlugin.applyIfMissing(project)
+        JacocoPlugin.applyIfMissing(project)
         BuildInfoPlugin.applyIfMissing(project)
         SourceJarPlugin.applyIfMissing(project)
         ApidocPlugin.applyIfMissing(project)
         MinPomPlugin.applyIfMissing(project)
         JarPlugin.applyIfMissing(project)
-        BintrayPlugin.applyIfMissing(project)
+        PublishingPlugin.applyIfMissing(project)
         BintrayPlugin.applyIfMissing(project)
     }
 }

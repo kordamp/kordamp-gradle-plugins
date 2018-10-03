@@ -49,6 +49,7 @@ class Information {
     final Links links = new Links()
     final CredentialsSet credentials = new CredentialsSet()
     final Bintray bintray
+    final Jacoco jacoco
 
     final SpecOrImpl specification = new SpecOrImpl()
     final SpecOrImpl implementation = new SpecOrImpl()
@@ -59,6 +60,7 @@ class Information {
     Information(Project project) {
         this.project = project
         this.bintray = new Bintray(project)
+        this.jacoco = new Jacoco(project)
     }
 
     Information copyOf() {
@@ -76,6 +78,7 @@ class Information {
         links.copyInto(copy.links)
         credentials.copyInto(copy.credentials)
         bintray.copyInto(copy.bintray)
+        jacoco.copyInto(copy.jacoco)
 
         copy.normalize()
     }
@@ -95,6 +98,7 @@ class Information {
         copy.links.merge(links, other.links)
         copy.credentials.merge(credentials, other.credentials)
         copy.bintray.merge(bintray, other.bintray)
+        copy.jacoco.merge(jacoco, other.jacoco)
 
         copy.normalize()
     }
@@ -131,6 +135,10 @@ class Information {
         action.execute(bintray)
     }
 
+    void jacoco(Action<? super Jacoco> action) {
+        action.execute(jacoco)
+    }
+
     void links(Action<? super Links> action) {
         action.execute(links)
     }
@@ -161,6 +169,10 @@ class Information {
 
     void bintray(@DelegatesTo(Bintray) Closure action) {
         ConfigureUtil.configure(action, bintray)
+    }
+
+    void jacoco(@DelegatesTo(Jacoco) Closure action) {
+        ConfigureUtil.configure(action, jacoco)
     }
 
     void links(@DelegatesTo(Links) Closure action) {

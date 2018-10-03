@@ -26,6 +26,24 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class StringUtils {
     /**
+     * Capitalizes a String (makes the first char uppercase) taking care
+     * of blank strings and single character strings.
+     *
+     * @param str The String to be capitalized
+     *
+     * @return Capitalized version of the target string if it is not blank
+     */
+    static String capitalize(String str) {
+        if (isBlank(str)) {
+            return str;
+        }
+        if (str.length() == 1) {
+            return str.toUpperCase();
+        }
+        return str.substring(0, 1).toUpperCase(Locale.ENGLISH) + str.substring(1);
+    }
+
+    /**
      * <p>Determines whether a given string is <code>null</code>, empty,
      * or only contains whitespace. If it contains anything other than
      * whitespace then the string is not considered to be blank and the

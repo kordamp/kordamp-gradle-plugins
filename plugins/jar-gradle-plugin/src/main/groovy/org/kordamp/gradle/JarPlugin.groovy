@@ -122,7 +122,7 @@ class JarPlugin implements Plugin<Project> {
 
         ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
         if (extension.minpom && extension.release) {
-            Information information = project.ext.mergedInformation
+            Information info = project.ext.mergedInfo
 
             jarTask.configure {
                 dependsOn MinPomPlugin.resolveMinPomTaskName(sourceSet)
@@ -134,12 +134,12 @@ class JarPlugin implements Plugin<Project> {
                         'Build-Date': project.rootProject.buildDate,
                         'Build-Time': project.rootProject.buildTime,
                         'Build-Revision': project.rootProject.buildRevision,
-                        'Specification-Title': information.specification.title,
-                        'Specification-Version': information.specification.version,
-                        'Specification-Vendor': information.specification.vendor,
-                        'Implementation-Title': information.implementation.title,
-                        'Implementation-Version': information.implementation.version,
-                        'Implementation-Vendor': information.implementation.vendor
+                        'Specification-Title': info.specification.title,
+                        'Specification-Version': info.specification.version,
+                        'Specification-Vendor': info.specification.vendor,
+                        'Implementation-Title': info.implementation.title,
+                        'Implementation-Version': info.implementation.version,
+                        'Implementation-Vendor': info.implementation.vendor
                     )
                 }
 

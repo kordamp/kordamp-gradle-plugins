@@ -1,0 +1,163 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.kordamp.gradle
+
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.tasks.testing.Test
+import org.gradle.testing.jacoco.tasks.JacocoMerge
+import org.gradle.testing.jacoco.tasks.JacocoReport
+import org.kordamp.gradle.model.Information
+
+import static org.kordamp.gradle.BasePlugin.isRootProject
+
+/**
+ *
+ * @author Andres Almiray
+ * @since 0.2.0
+ */
+class JacocoPlugin implements Plugin<Project> {
+    static final String VISITED = JacocoPlugin.class.name.replace('.', '_') + '_VISITED'
+
+    Project project
+
+    void apply(Project project) {
+        this.project = project
+
+        if (isRootProject(project)) {
+            applyJacocoIfCompatible(project)
+            project.childProjects.values().each { prj ->
+                applyJacocoIfCompatible(prj)
+            }
+        } else {
+            applyJacocoIfCompatible(project)
+        }
+    }
+
+    static void applyIfMissing(Project project) {
+        if (!project.plugins.findPlugin(JacocoPlugin)) {
+            project.plugins.apply(JacocoPlugin)
+        }
+    }
+
+    private void applyJacocoIfCompatible(Project project) {
+        String visitedPropertyName = VISITED + '_' + project.name
+        if (project.findProperty(visitedPropertyName)) {
+            return
+        }
+        project.ext[visitedPropertyName] = true
+
+        BasePlugin.applyIfMissing(project)
+        project.plugins.apply(org.gradle.testing.jacoco.plugins.JacocoPlugin)
+
+        project.afterEvaluate { Project prj ->
+            Information info = project.rootProject.ext.mergedInfo
+
+            prj.plugins.withType(JavaBasePlugin) {
+                prj.tasks.withType(Test) { Test testTask ->
+                    Task reportTask = configureJacocoReportTask(project, testTask)
+                    if (reportTask.enabled) {
+                        info.jacoco.testTasks() << testTask
+                        info.jacoco.reportTasks() << reportTask
+                        info.jacoco.projects() << prj
+                    }
+                }
+            }
+
+            if (isRootProject(project) && !project.childProjects.isEmpty()) {
+                project.evaluationDependsOnChildren()
+                applyJacocoMerge(project)
+            }
+        }
+    }
+
+    static String resolveJacocoReportTaskName(String name) {
+        return 'jacoco' + StringUtils.capitalize(name) + 'Report'
+    }
+
+    private Task configureJacocoReportTask(Project project, Test testTask) {
+        Information info = project.ext.mergedInfo
+
+        String taskName = resolveJacocoReportTaskName(testTask.name)
+
+        Task jacocoReportTask = project.tasks.findByName(taskName)
+
+        if (!jacocoReportTask) {
+            jacocoReportTask = project.tasks.create(taskName, JacocoReport) {
+                dependsOn testTask
+                group 'Verification'
+                description "Generates code coverage report for the ${testTask.name} task."
+
+                jacocoClasspath = project.configurations.jacocoAnt
+
+                additionalSourceDirs = project.files(project.sourceSets.main.allSource.srcDirs)
+                sourceDirectories = project.files(project.sourceSets.main.allSource.srcDirs)
+                classDirectories = project.files(project.sourceSets.main.output.classesDirs*.path)
+                executionData testTask
+
+                reports {
+                    html.destination = project.file("${project.buildDir}/reports/jacoco/${testTask.name}/html")
+                    xml.destination = project.file("${project.buildDir}/reports/jacoco/${testTask.name}/jacocoTestReport.xml")
+                }
+            }
+        }
+
+        jacocoReportTask.with {
+            enabled = !info.jacoco.skip
+            reports {
+                xml.enabled = true
+                csv.enabled = false
+                html.enabled = true
+            }
+        }
+
+        jacocoReportTask
+    }
+
+    private void applyJacocoMerge(Project project) {
+        Information info = project.ext.mergedInfo
+
+        Task jacocoRootMerge = project.tasks.create('jacocoRootMerge', JacocoMerge) {
+            group = 'Reporting'
+            description = 'Aggregate Jacoco coverage reports.'
+            dependsOn info.jacoco.testTasks() + info.jacoco.reportTasks()
+            executionData info.jacoco.reportTasks().executionData.files.flatten()
+            destinationFile info.jacoco.mergeExecFile
+        }
+
+        project.tasks.create('jacocoRootReport', JacocoReport) {
+            dependsOn jacocoRootMerge
+            group = 'Reporting'
+            description = 'Generate aggregate Jacoco coverage report.'
+
+            additionalSourceDirs = project.files(info.jacoco.projects().sourceSets.main.allSource.srcDirs)
+            sourceDirectories = project.files(info.jacoco.projects().sourceSets.main.allSource.srcDirs)
+            classDirectories = project.files(info.jacoco.projects().sourceSets.main.output)
+            executionData project.files(jacocoRootMerge.destinationFile)
+
+            reports {
+                html.enabled = true
+                xml.enabled = true
+                html.destination = info.jacoco.mergeReportHtmlFile
+                xml.destination = info.jacoco.mergeReportXmlFile
+            }
+        }
+    }
+}

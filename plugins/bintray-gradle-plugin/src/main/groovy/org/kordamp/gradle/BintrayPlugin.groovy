@@ -85,32 +85,32 @@ class BintrayPlugin implements Plugin<Project> {
     }
 
     private void updatePublications(Project project, SourceSet sourceSet) {
-        Information information = project.ext.mergedInformation
+        Information info = project.ext.mergedInfo
 
         project.bintray {
-            user = information.bintray.credentials.username
-            key = information.bintray.credentials.password
+            user = info.bintray.credentials.username
+            key = info.bintray.credentials.password
             publications = [sourceSet.name]
             pkg {
-                repo = information.bintray.repo
-                userOrg = information.bintray.userOrg
-                name = information.bintray.name
-                desc = information.description
+                repo = info.bintray.repo
+                userOrg = info.bintray.userOrg
+                name = info.bintray.name
+                desc = info.description
                 licenses = ['Apache-2.0'] // TODO fixme
-                labels = information.tags
-                websiteUrl = information.links.website
-                issueTrackerUrl = information.links.issueTracker
-                vcsUrl = information.links.scm
+                labels = info.tags
+                websiteUrl = info.links.website
+                issueTrackerUrl = info.links.issueTracker
+                vcsUrl = info.links.scm
                 publicDownloadNumbers = true
-                githubRepo = information.bintray.githubRepo
+                githubRepo = info.bintray.githubRepo
                 version {
                     name = project.version
-                    vcsTag = "${information.bintray.name}-${project.version}"
-                    if (information.credentials.sonatype)
+                    vcsTag = "${info.bintray.name}-${project.version}"
+                    if (info.credentials.sonatype)
                         mavenCentralSync {
                             sync = true
-                            user = information.credentials.sonatype.username
-                            password = information.credentials.sonatype.password
+                            user = info.credentials.sonatype.username
+                            password = info.credentials.sonatype.password
                         }
                 }
             }

@@ -48,13 +48,13 @@ class ProjectConfigurationExtension {
      */
     boolean release = false
 
-    final Information information
+    final Information info
 
     ProjectConfigurationExtension(Project project) {
-        information = new Information(project)
+        info = new Information(project)
     }
 
-    void information(Action<? super Information> action) {
-        action.execute(information)
+    void info(Action<? super Information> action) {
+        action.execute(info)
     }
 }

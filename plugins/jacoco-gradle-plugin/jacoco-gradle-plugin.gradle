@@ -18,12 +18,4 @@
 
 dependencies {
     compile project(':base-gradle-plugin')
-    compile project(':jacoco-gradle-plugin')
-    compile project(':buildinfo-gradle-plugin')
-    compile project(':jar-gradle-plugin')
-    compile project(':source-gradle-plugin')
-    compile project(':apidoc-gradle-plugin')
-    compile project(':minpom-gradle-plugin')
-    compile project(':publishing-gradle-plugin')
-    compile project(':bintray-gradle-plugin')
 }

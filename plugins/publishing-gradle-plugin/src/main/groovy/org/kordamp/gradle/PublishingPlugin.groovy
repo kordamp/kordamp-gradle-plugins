@@ -87,7 +87,7 @@ class PublishingPlugin implements Plugin<Project> {
     }
 
     private void updatePublications(Project project, SourceSet sourceSet) {
-        Information information = project.ext.mergedInformation
+        Information info = project.ext.mergedInfo
 
         project.publishing {
             publications {
@@ -97,12 +97,12 @@ class PublishingPlugin implements Plugin<Project> {
                     version project.version
 
                     pom {
-                        name = information.name
-                        description = information.description
-                        url = information.links.website
-                        inceptionYear = information.inceptionYear
+                        name = info.name
+                        description = info.description
+                        url = info.links.website
+                        inceptionYear = info.inceptionYear
                         licenses {
-                            information.licenses.forEach { lic ->
+                            info.licenses.forEach { lic ->
                                 license {
                                     name = lic.name
                                     if (lic.url) url = lic.url
@@ -111,14 +111,14 @@ class PublishingPlugin implements Plugin<Project> {
                                 }
                             }
                         }
-                        if (!information.organization.isEmpty()) {
+                        if (!info.organization.isEmpty()) {
                             organization {
-                                name = information.organization.name
-                                url = information.organization.url
+                                name = info.organization.name
+                                url = info.organization.url
                             }
                         }
                         developers {
-                            information.people.forEach { person ->
+                            info.people.forEach { person ->
                                 if('developer' in person.roles*.toLowerCase()) {
                                     developer {
                                         if (person.id) id = person.id
@@ -133,7 +133,7 @@ class PublishingPlugin implements Plugin<Project> {
                             }
                         }
                         contributors {
-                            information.people.forEach { person ->
+                            info.people.forEach { person ->
                                 if('contributor' in person.roles*.toLowerCase()) {
                                     contributor {
                                         if (person.name) name = person.name
