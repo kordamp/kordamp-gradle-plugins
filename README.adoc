@@ -236,14 +236,17 @@ This block maps to the `<licenses>` block in POM. At least one nested `license` 
 .License
 [header, cols="5*"]
 |===
-| Name         | Type   | Required | Default Value | Description
-| name         | String | yes      |               | Maps to the `<name>` block
-| url          | String | no       |               | Maps to the `<url>` block
-| distribution | String | no       | 'repo'        | Maps to the `<distribution>` block
-| comments     | String | no       |               | Maps to the `<comments>` block
+| Name         | Type      | Required | Default Value | Description
+| id           | LicenseId | no*      |               |
+| name         | String    | yes      |               | Maps to the `<name>` block
+| url          | String    | no       |               | Maps to the `<url>` block
+| distribution | String    | no       | 'repo'        | Maps to the `<distribution>` block
+| comments     | String    | no       |               | Maps to the `<comments>` block
 |===
 
 This entry maps to a `<license>` block nested inside `<licenses>` in POM.
+
+Prefer setting a value for the `id` property if using the `org.kordamp.gradle.bintray` plugin.
 
 .Bintray
 [header, cols="5*"]

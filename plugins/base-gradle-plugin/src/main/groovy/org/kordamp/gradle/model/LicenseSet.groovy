@@ -18,6 +18,7 @@
 package org.kordamp.gradle.model
 
 import groovy.transform.Canonical
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.gradle.api.Action
@@ -64,6 +65,13 @@ class LicenseSet {
 
     void forEach(Closure action) {
         licenses.each(action)
+    }
+
+    @CompileDynamic
+    List<String> listAllShortNames() {
+        List<String> shortNames = licenses.collect { it.id?.shortName() ?: '' }.unique()
+        shortNames.remove('')
+        shortNames
     }
 
     List<String> validate(Project project) {

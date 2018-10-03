@@ -29,6 +29,7 @@ import groovy.transform.ToString
 @Canonical
 @ToString(includeNames = true)
 class License {
+    LicenseId id
     String name
     String url
     String distribution = 'repo'
@@ -36,6 +37,7 @@ class License {
 
     License copyOf() {
         License copy = new License()
+        copy.id = id
         copy.name = name
         copy.url = url
         copy.distribution = distribution
@@ -44,6 +46,7 @@ class License {
     }
 
     void merge(License other) {
+        id = id ?: other.id
         name = name ?: other?.name
         url = url ?: other?.url
         distribution = distribution ?: other?.distribution
