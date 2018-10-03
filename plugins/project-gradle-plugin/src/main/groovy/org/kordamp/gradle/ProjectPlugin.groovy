@@ -17,8 +17,11 @@
  */
 package org.kordamp.gradle
 
+import com.github.benmanes.gradle.versions.VersionsPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+
+import static org.kordamp.gradle.BasePlugin.isRootProject
 
 /**
  * Aggregator for all Kordamp plugins.
@@ -41,5 +44,12 @@ class ProjectPlugin implements Plugin<Project> {
         JarPlugin.applyIfMissing(project)
         PublishingPlugin.applyIfMissing(project)
         BintrayPlugin.applyIfMissing(project)
+
+        project.plugins.apply(VersionsPlugin)
+        if (isRootProject(project)) {
+            project.childProjects.values().each { prj ->
+                prj.plugins.apply(VersionsPlugin)
+            }
+        }
     }
 }

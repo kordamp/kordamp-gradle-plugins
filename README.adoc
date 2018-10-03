@@ -415,3 +415,4 @@ Responsibilities:
 
  * Applies all previous projects except `IntegrationTest`, `FunctionalTest`.
 
+This plugin implicitly applies `com.github.ben-manes.versions` to al projects.

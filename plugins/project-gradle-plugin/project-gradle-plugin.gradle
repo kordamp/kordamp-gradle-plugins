@@ -17,6 +17,7 @@
  */
 
 dependencies {
+    compile 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
     compile project(':base-gradle-plugin')
     compile project(':jacoco-gradle-plugin')
     compile project(':buildinfo-gradle-plugin')
