@@ -77,11 +77,15 @@ class FunctionalTestPlugin implements Plugin<Project> {
 
     private void createSourceSetsIfNeeded(Project project) {
         if (!project.sourceSets.findByName('functionalTest')) {
+            if (project.plugins.findPlugin('groovy')) {
+                project.file('src/functional-test/groovy').mkdirs()
+            }
+            project.file('src/functional-test/java').mkdirs()
+            project.file('src/functional-test/resources').mkdirs()
+
             project.sourceSets {
                 functionalTest {
-                    if (project.file('src/functional-test/java').exists()) {
-                        java.srcDirs project.file('src/functional-test/java')
-                    }
+                    java.srcDirs project.file('src/functional-test/java')
                     if (project.file('src/functional-test/groovy').exists()) {
                         groovy.srcDirs project.file('src/functional-test/groovy')
                     }

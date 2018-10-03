@@ -77,11 +77,15 @@ class IntegrationTestPlugin implements Plugin<Project> {
 
     private void createSourceSetsIfNeeded(Project project) {
         if (!project.sourceSets.findByName('integrationTest')) {
+            if (project.plugins.findPlugin('groovy')) {
+                project.file('src/integration-test/groovy').mkdirs()
+            }
+            project.file('src/integration-test/java').mkdirs()
+            project.file('src/integration-test/resources').mkdirs()
+
             project.sourceSets {
                 integrationTest {
-                    if (project.file('src/integration-test/java').exists()) {
-                        java.srcDirs project.file('src/integration-test/java')
-                    }
+                    java.srcDirs project.file('src/integration-test/java')
                     if (project.file('src/integration-test/groovy').exists()) {
                         groovy.srcDirs project.file('src/integration-test/groovy')
                     }
