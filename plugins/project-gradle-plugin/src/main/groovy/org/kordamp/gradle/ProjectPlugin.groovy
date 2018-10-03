@@ -35,22 +35,27 @@ class ProjectPlugin implements Plugin<Project> {
     void apply(Project project) {
         this.project = project
 
+        if (isRootProject(project)) {
+            applyPlugins(project)
+            project.childProjects.values().each { prj ->
+                applyPlugins(prj)
+            }
+        } else {
+            applyPlugins(project)
+        }
+    }
+
+    static void applyPlugins(Project project) {
         BasePlugin.applyIfMissing(project)
         JacocoPlugin.applyIfMissing(project)
         LicensePlugin.applyIfMissing(project)
         BuildInfoPlugin.applyIfMissing(project)
-        LicensePlugin.applyIfMissing(project)
+        SourceJarPlugin.applyIfMissing(project)
         ApidocPlugin.applyIfMissing(project)
         MinPomPlugin.applyIfMissing(project)
         JarPlugin.applyIfMissing(project)
         PublishingPlugin.applyIfMissing(project)
         BintrayPlugin.applyIfMissing(project)
-
         project.plugins.apply(VersionsPlugin)
-        if (isRootProject(project)) {
-            project.childProjects.values().each { prj ->
-                prj.plugins.apply(VersionsPlugin)
-            }
-        }
     }
 }
