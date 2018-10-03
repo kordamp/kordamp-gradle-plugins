@@ -37,8 +37,9 @@ class ProjectPlugin implements Plugin<Project> {
 
         BasePlugin.applyIfMissing(project)
         JacocoPlugin.applyIfMissing(project)
+        LicensePlugin.applyIfMissing(project)
         BuildInfoPlugin.applyIfMissing(project)
-        SourceJarPlugin.applyIfMissing(project)
+        LicensePlugin.applyIfMissing(project)
         ApidocPlugin.applyIfMissing(project)
         MinPomPlugin.applyIfMissing(project)
         JarPlugin.applyIfMissing(project)

@@ -112,7 +112,7 @@ class Information {
         if (isBlank(vendor)) {
             errors << "[${project.name}] Project vendor is blank".toString()
         }
-        //errors.addAll(licenses.validate(project))
+        errors.addAll(licenses.validate(project))
         errors.addAll(links.validate(project))
         errors.addAll(bintray.validate(project))
 

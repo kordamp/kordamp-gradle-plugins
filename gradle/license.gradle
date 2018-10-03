@@ -27,5 +27,4 @@ license {
         groovy = 'SLASHSTAR_STYLE'
     }
     ext.year = copyrightYear
-    exclude '**/*.properties'
 }

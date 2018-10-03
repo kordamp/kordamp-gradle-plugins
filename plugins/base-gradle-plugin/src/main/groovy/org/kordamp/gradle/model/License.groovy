@@ -34,6 +34,7 @@ class License {
     String url
     String distribution = 'repo'
     String comments
+    boolean primary
 
     License copyOf() {
         License copy = new License()
@@ -42,6 +43,7 @@ class License {
         copy.url = url
         copy.distribution = distribution
         copy.comments = comments
+        copy.primary
         copy
     }
 
@@ -51,5 +53,6 @@ class License {
         url = url ?: other?.url
         distribution = distribution ?: other?.distribution
         comments = comments ?: other?.comments
+        primary = primary ?: other?. primary
     }
 }
