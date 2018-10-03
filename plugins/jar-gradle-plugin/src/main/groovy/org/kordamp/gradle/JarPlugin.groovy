@@ -32,7 +32,7 @@ import static org.kordamp.gradle.BasePlugin.isRootProject
 
 /**
  * Creates a {@code Jar} task per {@code SourceSet}.
- * Configures Manifest and MetaInf entries if the {@code projectConfiguration.release} is enabled.
+ * Configures Manifest and MetaInf entries if the {@code config.release} is enabled.
  *
  * @author Andres Almiray
  * @since 0.1.0

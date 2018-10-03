@@ -111,6 +111,11 @@ class PublishingPlugin implements Plugin<Project> {
                                 }
                             }
                         }
+                        if(info.links.scm) {
+                            scm {
+                                url = info.links.scm
+                            }
+                        }
                         if (!info.organization.isEmpty()) {
                             organization {
                                 name = info.organization.name

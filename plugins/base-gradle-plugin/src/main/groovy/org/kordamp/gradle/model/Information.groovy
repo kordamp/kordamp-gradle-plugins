@@ -195,6 +195,10 @@ class Information {
         name ?: project.name
     }
 
+    String getVendor() {
+        vendor ?: organization?.name
+    }
+
     String getInceptionYear() {
         if (!inceptionYear) {
             Date now = new Date()
@@ -208,11 +212,11 @@ class Information {
     Information normalize() {
         specification.title = spec.title ?: project.name
         specification.version = spec.version ?: project.version
-        specification.vendor = spec.vendor ?: vendor
+        specification.vendor = spec.vendor ?: getVendor()
 
         implementation.title = impl.title ?: project.name
         implementation.version = impl.version ?: project.version
-        implementation.vendor = impl.vendor ?: vendor
+        implementation.vendor = impl.vendor ?: getVendor()
 
         this
     }

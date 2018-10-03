@@ -40,7 +40,7 @@ class BasePlugin implements Plugin<Project> {
         }
 
         if (!project.extensions.findByType(ProjectConfigurationExtension)) {
-            project.extensions.create('projectConfiguration', ProjectConfigurationExtension, project)
+            project.extensions.create('config', ProjectConfigurationExtension, project)
         }
 
         project.afterEvaluate {

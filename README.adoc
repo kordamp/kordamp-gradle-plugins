@@ -48,17 +48,237 @@ id: `org.kordamp.gradle.base`
 
 Responsibilities:
 
- * Creates an extension named `projectConfiguration` that serves as the central point of configuration for all
+ * Creates an extension named `config` that serves as the central point of configuration for all
 other plugins. This extension has the following properties
 
-[header, cols="4*"]
+[header, cols="5*"]
 |===
-| Name    | Type    | Default Value | Description
-| sources | boolean | true          | Generates `sourceJar` is active
-| apidocs | boolean | true          | Generates `javadoc`and `javadocJar` if active
-| minpom  | boolean | true          | Generates `minPom` if active
-| release | boolean | false         | Customizes Jar manifest and metainf if active
+| Name    | Type        | Default Value | Description
+| sources | boolean     | true          | Generates `sourceJar` is active
+| apidocs | boolean     | true          | Generates `javadoc`and `javadocJar` if active
+| minpom  | boolean     | true          | Generates `minPom` if active
+| release | boolean     | false         | Customizes Jar manifest and metainf if active
+| info    | Information |               | The entry point for the project's info DSL
 |===
+
+==== DSL
+
+The DSL defines the following elements
+
+[source,groovy]
+----
+info {
+    name
+    description
+    inceptionYear
+    vendor
+    tags
+
+    links {
+        website
+        issueTracker
+        scm
+    }
+
+    organization {
+        name
+        url
+    }
+
+    specification {
+        title
+        version
+        vendor
+    }
+
+    implementation {
+        title
+        version
+        vendor
+    }
+
+    jacoco {
+        skip
+        mergeExecFile
+        mergeReportHtmlFile
+        mergeReportXmlFile
+    }
+
+    credentials {
+        github {
+            username
+            password
+        }
+        sonatype {
+            username
+            password
+        }
+    }
+
+    licenses {
+        license {
+            name
+            url
+            distribution
+            comments
+        }
+    }
+
+    bintray {
+        credentials {
+            username
+            password
+        }
+        name
+        repo
+        userOrg
+        githubRepo
+    }
+
+    people {
+        person {
+            id
+            name
+            email
+            url
+            roles
+            organization {
+                name
+                url
+            }
+        }
+    }
+----
+
+.General Properties
+[header, cols="5*"]
+|===
+| Name          | Type         | Required | Default Value | Description
+| name          | String       | no       | project.name  | Mapped to the `<name>` block in POM
+| description   | String       | yes      |               | Mapped to the `<description>` block in POM
+| inceptionYear | String       | no       | current year  | Mapped to the `<inceptionYear>` block in POM
+| vendor        | String       | no*      |               |
+| tags          | List<String> | no       |               |
+|===
+
+The value for `vendor` may be ommitted if a value for `organization.name` is given.
+
+.Links
+[header, cols="5*"]
+|===
+| Name         | Type   | Required | Default Value | Description
+| website      | String | yes      | empty         | Mapped to the `<url>` block in POM.
+                                                      Mapped to `bintray.pkg.websiteUrl`
+| issueTracker | String | no*      | empty         | Mapped to `bintray.pkg.issueTracker`
+| scm          | String | no*      | empty         | Mapped to the `<scm>` block in POM.
+                                                     Mapped to `bintray.pkg.websiteUrl`
+|===
+
+Values for `issueTracker` and `scm` should be defined if the `org.kordamp.gradle.bintray` plugin is used.
+
+.Organization
+[header, cols="5*"]
+|===
+| Name | Type   | Required | Default Value | Description
+| name | String | no       |               | The name of the organization
+| url  | String | no       |               | The URL of the organization (website perhaps).
+|===
+
+This block is optional.
+
+.Specification
+[header, cols="5*"]
+|===
+| Name    | Type   | Required | Default Value   | Description
+| title   | String | no       | project.name    | Mapped to `Specification-Title` manifest entry
+| version | String | no       | project.version | Mapped to `Specification-Version` manifest entry
+| vendor  | String | no       | info.vendor     | Mapped to `Specification-Vendor` manifest entry
+|===
+
+.Implementation
+[header, cols="5*"]
+|===
+| Name    | Type   | Required | Default Value   | Description
+| title   | String | no       | project.name    | Mapped to `Implementation-Title` manifest entry
+| version | String | no       | project.version | Mapped to `Implementation-Version` manifest entry
+| vendor  | String | no       | info.vendor     | Mapped to `Implementation-Vendor` manifest entry
+|===
+
+This block is optional.
+
+.Jacoco
+[header, cols="5*"]
+|===
+| Name                | Type    | Required | Default Value                                                | Description
+| skip                | boolean | no       | false                                                        | Disables tasks of type `JacocoReport`.
+| mergeExecFile       | File    | no       | ${project.buildDir}/jacoco/root.exec                         | Location for the root merge execution data file
+| mergeReportHtmlFile | File    | no       | ${project.buildDir}/reports/jacoco/root/html                 | Location for root HTML reports
+| mergeReportXmlFile  | File    | no       | ${project.buildDir}/reports/jacoco/root/jacocoTestReport.xml | Location for the root XML report
+|===
+
+This block is optional.
+
+.Credentials
+[header, cols="5*"]
+|===
+| Name     | Type        | Required | Default Value   | Description
+| github   | Credentials | no*      |                 | Username/Password for connecting to GitHub
+| sonatype | Credentials | no*      |                 | Username/Password for connecting to Maven Central
+|===
+
+The `sonatype` entry may be used by the `org.kordamp.gradle.bintray` plugin to configure auto-sync with Maven Central when
+pushing a publication.
+This block is optional.
+
+.Licenses
+This block maps to the `<licenses>` block in POM. At least one nested `license` block must be defined.
+
+.License
+[header, cols="5*"]
+|===
+| Name         | Type   | Required | Default Value | Description
+| name         | String | yes      |               | Maps to the `<name>` block
+| url          | String | no       |               | Maps to the `<url>` block
+| distribution | String | no       | 'repo'        | Maps to the `<distribution>` block
+| comments     | String | no       |               | Maps to the `<comments>` block
+|===
+
+This entry maps to a `<license>` block nested inside `<licenses>` in POM.
+
+.Bintray
+[header, cols="5*"]
+|===
+| Name         | Type        | Required | Default Value | Description
+| credentials  | Credentials | yes      |               | Values map to `bintray.user` and `bintray.key`
+| repo         | String      | yes      |               | Mapped to `bintray.pkg.repo`
+| userOrg      | String      | yes      |               | Mapped to `bintray.pkg.userOrg`
+| name         | String      | no       | project.name  | Mapped to `bintray.pkg.name`
+| githubRepo   | String      | yes      |               | Mapped to `bintray.pkg.githubRepo`
+|===
+
+The value of `info.tags` is mapped to `bintray.pkg.labels`.
+
+Values for `info.links` are mapped to their matching entries in `bintray.pkg`. 
+
+.People
+This block defines data associated with a particular person.
+
+This block is optional.
+
+.Person
+[header, cols="5*"]
+|===
+| Name         | Type         | Required | Default Value | Description
+| id           | String       | no*      |               | Mapped to the `<id>` block in POM
+| name         | String       | no*      |               | Mapped to the `<name>` block in POM
+| email        | String       | no       |               | Mapped to the `<email>` block in POM
+| url          | String       | no       |               | Mapped to the `<url>` block in POM
+| organization | Organization | no       |               | Mapped to the `<organizationName>` and `<organizationUrl>` blocks in POM
+| roles        | List<String> | no       |               | Mapped to the `<roles>` block in POM
+|===
+
+At least `id` or `name` must be defined. If a `developer` role exists then the person instance is mapped to a `<developer>`
+block in the POM. If a `contributor` role exists then the person instance is maped to a `<contributor>` block in the POM.
 
 === BuildInfo
 
@@ -126,11 +346,69 @@ Responsibilities:
  * If the `release` property is enabled, configures manifest entries provided by `BuildInfo`.
  * If the `release` property is enabled, adds the output of the matching `minpom` task to `metaInf`.
 
+=== Jacoco
+
+id: `org.kordamp.gradle.jacoco`
+
+Responsibilities:
+
+ * Creates a `JacocoReport` task per each task of type `Test`.
+ * Creates a `JacocoMerge` task on the `rootProject` with name `jacocoRootMerge` that aggregates all execution data.
+ * Creates a `JacocoReport`task on the `rootProject` with name `jacocoRootReport` that aggregates all reports.
+ * Settings can be specified using `config.info.jacoco`. See DSL for more options.
+
+=== Publishing
+
+id: `org.kordamp.gradle.publishing`
+
+Responsibilities:
+
+ * Configures a `MavenPublication` per `SourceSet`.
+ * Configures POM entries based on data available from `config.info`. See DSL for more options.
+
+=== Bintray
+
+id: `org.kordamp.gradle.bintray`
+
+Responsibilities:
+
+ * Configures a Bintray publication per `SourceSet`.
+ * Configuration values based on data available from `config.info.bintray. See DSL for more options.
+ * Automatic synchronization with Maven Central if `config.credentials.sonatype` is provided.
+
+NOTE: This plugin implicitly applies `com.jfrog.bintray` to obtain SCM information.
+
+=== IntegrationTest
+
+id: `org.kordmap.gradle.integration-test`
+
+Responsibilities:
+
+ * Create two additional configurations: `integrationTestCompile` and `integrationTestRuntime`. These configurations
+   extend from `testCompile` and `testRuntime` respectively.
+ * Create a `SourceSet` named `integrationTest`.
+ * Create a `Test` task named `integrationTest`.
+ * Create a `TestReport` task named `integrationTestReport`. This task is added as a dependency to `check`.
+
+=== FunctionalTest
+
+id: `org.kordmap.gradle.functional-test`
+
+Responsibilities:
+
+ * Create two additional configurations: `functionalTestCompile` and `functionalTestRuntime`. These configurations
+   extend from `compile` and `runtime` respectively.
+ * Create a `SourceSet` named `functionalTest`.
+ * Create a `Test` task named `functionalTest`.
+ * Create a `TestReport` task named `functionalTestReport`. This task is added as a dependency to `check`.
+
+NOTE: You must add testing dependencies to `functionalTestCompile` as this configuration is independent from `testCompile`.
+
 === Project
 
 id: `org.kordamp.gradle.project`
 
 Responsibilities:
 
- * Applies all previous projects
+ * Applies all previous projects except `IntegrationTest`, `FunctionalTest`.
 
