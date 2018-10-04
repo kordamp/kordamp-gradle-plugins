@@ -16,8 +16,6 @@
  * limitations under the License.
  */
 
-import java.text.SimpleDateFormat
-
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.gradle.plugin-publish'

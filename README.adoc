@@ -339,6 +339,8 @@ Responsibilities:
  * Configures a `MavenPublication` that matches the sourceSet's name.
  * Attaches the javadoc JAR artifact to the custom `MavenPublication`.
  * Creates a composite `allJavadocJars` tasks that triggers every other `javadocJar` in the current project.
+ * Creates a `aggregateJavadocs` task that collects Javadoc from all projects.
+ * Creates a `aggregateJavadocsJar` task that packages the collected Javadoc from all projects.
 
 TODO: Support `groovyDoc` and other JVM language specific doc tasks (Scala, Kotlin, etc).
 

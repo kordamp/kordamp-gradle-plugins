@@ -122,6 +122,11 @@ class ApidocPlugin implements Plugin<Project> {
                     options.addStringOption('Xdoclint:none', '-quiet')
                 }
             }
+
+            if (isRootProject(project) && !project.childProjects.isEmpty()) {
+                project.evaluationDependsOnChildren()
+                createAggregateJavadocsTask(project)
+            }
         }
     }
 
@@ -196,6 +201,38 @@ class ApidocPlugin implements Plugin<Project> {
 
         project.artifacts {
             javadocJar
+        }
+    }
+
+    private void createAggregateJavadocsTask(Project project) {
+        List<Javadoc> javadocTasks = []
+
+        project.tasks.withType(Javadoc) { Javadoc javadoc -> if (javadoc.name != 'aggregateJavadocs') javadocTasks << javadoc }
+
+        project.childProjects.values().each { Project prj ->
+            prj.tasks.withType(Javadoc) { Javadoc javadoc -> javadocTasks << javadoc }
+        }
+
+        javadocTasks = javadocTasks.unique()
+
+        if (javadocTasks) {
+            Task aggregateJavadocs = project.tasks.create('aggregateJavadocs', Javadoc) {
+                description = 'Aggregates API docs for all projects.'
+                group = 'Documentation'
+                dependsOn javadocTasks
+
+                source javadocTasks.source
+                destinationDir project.file("${project.buildDir}/docs/javadoc")
+                classpath = project.files(javadocTasks.classpath)
+            }
+
+            project.tasks.create('aggregateJavadocsJar', Jar) {
+                dependsOn aggregateJavadocs
+                group 'Documentation'
+                description "An archive of the aggregate API docs"
+                classifier 'javadoc'
+                from aggregateJavadocs.destinationDir
+            }
         }
     }
 }
