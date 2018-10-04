@@ -98,7 +98,7 @@ class BintrayPlugin implements Plugin<Project> {
                 desc = info.description
                 licenses = info.licenses.resolveBintrayLicenseIds()
                 labels = info.tags
-                websiteUrl = info.links.website
+                websiteUrl = info.url
                 issueTrackerUrl = info.links.issueTracker
                 vcsUrl = info.links.scm
                 publicDownloadNumbers = true

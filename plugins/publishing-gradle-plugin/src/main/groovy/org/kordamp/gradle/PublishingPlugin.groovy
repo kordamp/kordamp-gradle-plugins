@@ -99,7 +99,7 @@ class PublishingPlugin implements Plugin<Project> {
                     pom {
                         name = info.name
                         description = info.description
-                        url = info.links.website
+                        url = info.url
                         inceptionYear = info.inceptionYear
                         licenses {
                             info.licenses.forEach { lic ->

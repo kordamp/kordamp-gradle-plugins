@@ -199,6 +199,10 @@ class Information {
         vendor ?: organization?.name
     }
 
+    String getUrl() {
+        links.website ?: organization.url
+    }
+
     String getInceptionYear() {
         if (!inceptionYear) {
             Date now = new Date()
