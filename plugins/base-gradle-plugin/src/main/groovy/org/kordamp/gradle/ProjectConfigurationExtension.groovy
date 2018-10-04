@@ -50,11 +50,68 @@ class ProjectConfigurationExtension {
 
     final Information info
 
+    private boolean sourcesSet
+    private boolean apidocsSet
+    private boolean minpomSet
+    private boolean releaseSet
+
     ProjectConfigurationExtension(Project project) {
         info = new Information(project)
     }
 
     void info(Action<? super Information> action) {
         action.execute(info)
+    }
+
+    void setSources(boolean sources) {
+        this.sources = sources
+        this.sourcesSet = true
+    }
+
+    void setApidocs(boolean apidocs) {
+        this.apidocs = apidocs
+        this.apidocsSet = true
+    }
+
+    void setMinpom(boolean minpom) {
+        this.minpom = minpom
+        this.minpomSet = true
+    }
+
+    void setRelease(boolean release) {
+        this.release = release
+        this.releaseSet = true
+    }
+
+    boolean isSourcesSet() {
+        return sourcesSet
+    }
+
+    boolean isApidocsSet() {
+        return apidocsSet
+    }
+
+    boolean isMinpomSet() {
+        return minpomSet
+    }
+
+    boolean isReleaseSet() {
+        return releaseSet
+    }
+
+    static boolean sources(ProjectConfigurationExtension child, ProjectConfigurationExtension parent) {
+        child.sourcesSet ? child.sources : parent.sources
+    }
+
+    static boolean apidocs(ProjectConfigurationExtension child, ProjectConfigurationExtension parent) {
+        child.apidocsSet ? child.apidocs : parent.apidocs
+    }
+
+    static boolean minpom(ProjectConfigurationExtension child, ProjectConfigurationExtension parent) {
+        child.minpomSet ? child.minpom : parent.minpom
+    }
+
+    static boolean release(ProjectConfigurationExtension child, ProjectConfigurationExtension parent) {
+        child.releaseSet ? child.release : parent.release
     }
 }

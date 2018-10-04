@@ -78,15 +78,17 @@ class ApidocPlugin implements Plugin<Project> {
         }
 
         project.afterEvaluate { Project prj ->
-            ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
-            if (!extension.apidocs) {
+            ProjectConfigurationExtension extension = prj.extensions.findByType(ProjectConfigurationExtension)
+            ProjectConfigurationExtension rootExtension = prj.rootProject.extensions.findByType(ProjectConfigurationExtension)
+
+            if (!ProjectConfigurationExtension.apidocs(extension, rootExtension)) {
                 return
             }
+
             List<Task> javadocTasks = []
             List<Task> javadocJarTasks = []
 
             prj.plugins.withType(JavaBasePlugin) {
-
                 prj.sourceSets.each { SourceSet ss ->
                     // skip generating a javadoc task for SourceSets that may contain tests
                     if (!ss.name.toLowerCase().contains('test')) {
