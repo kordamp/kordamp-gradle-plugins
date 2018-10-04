@@ -86,19 +86,21 @@ info {
     }
 
     specification {
+        enabled
         title
         version
         vendor
     }
 
     implementation {
+        enabled
         title
         version
         vendor
     }
 
     jacoco {
-        skip
+        enabled
         mergeExecFile
         mergeReportHtmlFile
         mergeReportXmlFile
@@ -127,6 +129,7 @@ info {
     }
 
     bintray {
+        enabled
         credentials {
             username
             password
@@ -191,19 +194,21 @@ This block is optional.
 .Specification
 [header, cols="5*"]
 |===
-| Name    | Type   | Required | Default Value   | Description
-| title   | String | no       | project.name    | Mapped to `Specification-Title` manifest entry
-| version | String | no       | project.version | Mapped to `Specification-Version` manifest entry
-| vendor  | String | no       | info.vendor     | Mapped to `Specification-Vendor` manifest entry
+| Name    | Type    | Required | Default Value   | Description
+| enabled | boolean | no       | true            | JAR manifest entries will be updated if  `true`
+| title   | String  | no       | project.name    | Mapped to `Specification-Title` manifest entry
+| version | String  | no       | project.version | Mapped to `Specification-Version` manifest entry
+| vendor  | String  | no       | info.vendor     | Mapped to `Specification-Vendor` manifest entry
 |===
 
 .Implementation
 [header, cols="5*"]
 |===
-| Name    | Type   | Required | Default Value   | Description
-| title   | String | no       | project.name    | Mapped to `Implementation-Title` manifest entry
-| version | String | no       | project.version | Mapped to `Implementation-Version` manifest entry
-| vendor  | String | no       | info.vendor     | Mapped to `Implementation-Vendor` manifest entry
+| Name    | Type    | Required | Default Value   | Description
+| enabled | boolean | no       | true            | JAR manifest entries will be updated if  `true`
+| title   | String  | no       | project.name    | Mapped to `Implementation-Title` manifest entry
+| version | String  | no       | project.version | Mapped to `Implementation-Version` manifest entry
+| vendor  | String  | no       | info.vendor     | Mapped to `Implementation-Vendor` manifest entry
 |===
 
 This block is optional.
@@ -212,7 +217,7 @@ This block is optional.
 [header, cols="5*"]
 |===
 | Name                | Type    | Required | Default Value                                                | Description
-| skip                | boolean | no       | false                                                        | Disables tasks of type `JacocoReport`.
+| enabled             | boolean | no       | true                                                         | Disables jacoco tasks if  `false`
 | mergeExecFile       | File    | no       | ${project.buildDir}/jacoco/root.exec                         | Location for the root merge execution data file
 | mergeReportHtmlFile | File    | no       | ${project.buildDir}/reports/jacoco/root/html                 | Location for root HTML reports
 | mergeReportXmlFile  | File    | no       | ${project.buildDir}/reports/jacoco/root/jacocoTestReport.xml | Location for the root XML report
@@ -258,6 +263,7 @@ be treated as the primary license.
 [header, cols="5*"]
 |===
 | Name         | Type        | Required | Default Value | Description
+| enabled      | boolean     | no       | true          | Disables bintray publications if `false`
 | credentials  | Credentials | yes      |               | Values map to `bintray.user` and `bintray.key`
 | repo         | String      | yes      |               | Mapped to `bintray.pkg.repo`
 | userOrg      | String      | yes      |               | Mapped to `bintray.pkg.userOrg`

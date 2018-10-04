@@ -120,33 +120,51 @@ class JarPlugin implements Plugin<Project> {
             }
         }
 
-        ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
-        if (extension.minpom && extension.release) {
-            Information info = project.ext.mergedInfo
+        jarTask.configure {
+            metaInf {
+                from(project.rootProject.file('.')) {
+                    include 'LICENSE*'
+                }
+            }
+        }
 
+        ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
+        ProjectConfigurationExtension rootExtension = project.rootProject.extensions.findByType(ProjectConfigurationExtension)
+        Information info = project.ext.mergedInfo
+
+        if (ProjectConfigurationExtension.release(extension, rootExtension)) {
             jarTask.configure {
-                dependsOn MinPomPlugin.resolveMinPomTaskName(sourceSet)
-                manifest {
-                    attributes(
-                        'Created-By': project.rootProject.buildCreatedBy,
-                        'Built-By': project.rootProject.buildBy,
-                        'Build-Jdk': project.rootProject.buildJdk,
-                        'Build-Date': project.rootProject.buildDate,
-                        'Build-Time': project.rootProject.buildTime,
-                        'Build-Revision': project.rootProject.buildRevision,
-                        'Specification-Title': info.specification.title,
-                        'Specification-Version': info.specification.version,
-                        'Specification-Vendor': info.specification.vendor,
-                        'Implementation-Title': info.implementation.title,
-                        'Implementation-Version': info.implementation.version,
-                        'Implementation-Vendor': info.implementation.vendor
-                    )
+                Map<String, String> attributesMap = [
+                    'Created-By'    : project.rootProject.buildCreatedBy,
+                    'Built-By'      : project.rootProject.buildBy,
+                    'Build-Jdk'     : project.rootProject.buildJdk,
+                    'Build-Date'    : project.rootProject.buildDate,
+                    'Build-Time'    : project.rootProject.buildTime,
+                    'Build-Revision': project.rootProject.buildRevision
+                ]
+
+                if (info.specification.enabled) {
+                    attributesMap.'Specification-Title' = info.specification.title
+                    attributesMap.'Specification-Version' = info.specification.version
+                    if (info.specification.vendor) attributesMap.'Specification-Vendor' = info.specification.vendor
                 }
 
+                if (info.implementation.enabled) {
+                    attributesMap.'Implementation-Title' = info.implementation.title
+                    attributesMap.'Implementation-Version' = info.implementation.version
+                    if (info.implementation.vendor) attributesMap.'Implementation-Vendor' = info.implementation.vendor
+                }
+
+                manifest {
+                    attributes(attributesMap)
+                }
+            }
+        }
+
+        if (ProjectConfigurationExtension.minpom(extension, rootExtension)) {
+            jarTask.configure {
+                dependsOn MinPomPlugin.resolveMinPomTaskName(sourceSet)
                 metaInf {
-                    from(project.rootProject.file('.')) {
-                        include 'LICENSE*'
-                    }
                     from(MinPomPlugin.resolveMinPomDestinationDir(project, sourceSet)) {
                         into "maven/${project.group}/${project.name}"
                     }

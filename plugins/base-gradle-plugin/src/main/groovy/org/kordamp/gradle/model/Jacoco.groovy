@@ -33,7 +33,7 @@ import org.gradle.api.Task
 @EqualsAndHashCode(excludes = ['projects'])
 @ToString(includeNames = true, excludes = ['projects'])
 class Jacoco {
-    boolean skip = false
+    boolean enabled = true
     File mergeExecFile
     File mergeReportHtmlFile
     File mergeReportXmlFile
@@ -42,6 +42,8 @@ class Jacoco {
     private final List<Task> testTasks = []
     private final List<Task> reportTasks = []
 
+    private boolean enabledSet
+
     Jacoco(Project project) {
         File destinationDir = project.file("${project.buildDir}/reports/jacoco/root")
         mergeExecFile = project.file("${project.buildDir}/jacoco/root.exec")
@@ -49,15 +51,25 @@ class Jacoco {
         mergeReportXmlFile = project.file("${destinationDir}/jacocoTestReport.xml")
     }
 
+    void setEnabled(boolean enabled) {
+        this.enabled = enabled
+        this.enabledSet = true
+    }
+
+    boolean isEnabledSet() {
+        this.enabledSet
+    }
+
     void copyInto(Jacoco copy) {
-        copy.skip = skip
+        copy.@enabled = enabled
+        copy.@enabledSet = enabledSet
         copy.mergeExecFile = mergeExecFile
         copy.mergeReportHtmlFile = mergeReportHtmlFile
         copy.mergeReportXmlFile = mergeReportXmlFile
     }
 
     void merge(Jacoco o1, Jacoco o2) {
-        skip = o1?.skip ?: o2?.skip
+        setEnabled(o1?.enabledSet ? o1.enabled : o2?.enabled)
         mergeExecFile = o1?.mergeExecFile ?: o2?.mergeExecFile
         mergeReportHtmlFile = o1?.mergeReportHtmlFile ?: o2?.mergeReportHtmlFile
         mergeReportXmlFile = o1?.mergeReportXmlFile ?: o2?.mergeReportXmlFile

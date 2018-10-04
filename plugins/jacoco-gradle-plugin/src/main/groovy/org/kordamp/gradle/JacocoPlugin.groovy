@@ -119,8 +119,8 @@ class JacocoPlugin implements Plugin<Project> {
             }
         }
 
-        jacocoReportTask.with {
-            enabled = !info.jacoco.skip
+        jacocoReportTask.configure {
+            enabled = info.jacoco.enabled
             reports {
                 xml.enabled = true
                 csv.enabled = false
@@ -135,6 +135,7 @@ class JacocoPlugin implements Plugin<Project> {
         Information info = project.ext.mergedInfo
 
         Task jacocoRootMerge = project.tasks.create('jacocoRootMerge', JacocoMerge) {
+            enabled = info.jacoco.enabled
             group = 'Reporting'
             description = 'Aggregate Jacoco coverage reports.'
             dependsOn info.jacoco.testTasks() + info.jacoco.reportTasks()
@@ -144,6 +145,7 @@ class JacocoPlugin implements Plugin<Project> {
 
         project.tasks.create('jacocoRootReport', JacocoReport) {
             dependsOn jacocoRootMerge
+            enabled = info.jacoco.enabled
             group = 'Reporting'
             description = 'Generate aggregate Jacoco coverage report.'
 

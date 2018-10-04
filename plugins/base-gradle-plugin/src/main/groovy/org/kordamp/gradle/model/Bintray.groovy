@@ -39,8 +39,10 @@ class Bintray {
     String name
     String githubRepo
     final Credentials credentials = new Credentials()
+    boolean enabled = true
 
     private Project project
+    private boolean enabledSet
 
     Bintray(Project project) {
         this.project = project
@@ -48,6 +50,15 @@ class Bintray {
 
     String getName() {
         name ?: project.name
+    }
+
+    void setEnabled(boolean enabled) {
+        this.enabled = enabled
+        this.enabledSet = true
+    }
+
+    boolean isEnabledSet() {
+        this.enabledSet
     }
 
     void credentials(Action<? super Credentials> action) {
@@ -59,6 +70,8 @@ class Bintray {
     }
 
     void copyInto(Bintray copy) {
+        copy.@enabled = enabled
+        copy.@enabledSet = enabledSet
         copy.repo = repo
         copy.userOrg = userOrg
         copy.githubRepo = githubRepo
@@ -66,6 +79,7 @@ class Bintray {
     }
 
     void merge(Bintray o1, Bintray o2) {
+        setEnabled(o1?.enabledSet ? o1.enabled : o2?.enabled)
         repo = o1?.repo ?: o2?.repo
         userOrg = o1?.userOrg ?: o2?.userOrg
         githubRepo = o1?.githubRepo ?: o2?.githubRepo

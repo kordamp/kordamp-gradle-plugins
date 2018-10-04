@@ -29,12 +29,26 @@ import groovy.transform.ToString
 @Canonical
 @ToString(includeNames = true)
 class SpecOrImpl {
+    boolean enabled = true
     String title
     String version
     String vendor
 
+    private boolean enabledSet
+
+    void setEnabled(boolean enabled) {
+        this.enabled = enabled
+        this.enabledSet = true
+    }
+
+    boolean isEnabledSet() {
+        this.enabledSet
+    }
+
     SpecOrImpl copyOf() {
         SpecOrImpl copy = new SpecOrImpl()
+        copy.@enabled = enabled
+        copy.@enabledSet = enabledSet
         copy.title = title
         copy.version = version
         copy.vendor = vendor
@@ -43,6 +57,7 @@ class SpecOrImpl {
 
     SpecOrImpl merge(SpecOrImpl other) {
         SpecOrImpl copy = new SpecOrImpl()
+        copy.setEnabled(enabledSet ? enabled : other.enabled)
         copy.title = title ?: other.title
         copy.version = version ?: other.version
         copy.vendor = vendor ?: other.vendor
