@@ -38,7 +38,9 @@ import static org.kordamp.gradle.BasePlugin.isRootProject
  * @since 0.1.0
  */
 class SourceJarPlugin implements Plugin<Project> {
-    static final String VISITED = SourceJarPlugin.class.name.replace('.', '_') + '_VISITED'
+    static final String ALL_SOURCE_JARS_TASK_NAME = 'allSourceJars'
+
+    private static final String VISITED = SourceJarPlugin.class.name.replace('.', '_') + '_VISITED'
 
     Project project
 
@@ -98,9 +100,9 @@ class SourceJarPlugin implements Plugin<Project> {
             }
 
             if (sourceJarTasks) {
-                project.tasks.create('allSourceJars', DefaultTask) {
+                project.tasks.create(ALL_SOURCE_JARS_TASK_NAME, DefaultTask) {
                     dependsOn sourceJarTasks
-                    group 'Build'
+                    group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
                     description "Triggers all sourceJar tasks for project ${project.name}"
                 }
             }
@@ -118,7 +120,7 @@ class SourceJarPlugin implements Plugin<Project> {
 
             sourceJarTask = project.tasks.create(taskName, Jar) {
                 dependsOn project.tasks.getByName(classesTaskName)
-                group 'Build'
+                group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
                 description "An archive of the source code [sourceSet ${sourceSet.name}]"
                 baseName = archiveBaseName
                 classifier 'sources'

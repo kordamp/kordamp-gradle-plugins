@@ -30,7 +30,7 @@ import static org.kordamp.gradle.BasePlugin.isRootProject
  * @since 0.2.0
  */
 class BintrayPlugin implements Plugin<Project> {
-    static final String VISITED = BintrayPlugin.class.name.replace('.', '_') + '_VISITED'
+    private static final String VISITED = BintrayPlugin.class.name.replace('.', '_') + '_VISITED'
 
     Project project
 

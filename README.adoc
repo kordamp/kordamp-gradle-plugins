@@ -444,6 +444,19 @@ The following variables become available to the license header template
 
 NOTE: This plugin implicitly applies `com.github.hierynomus.license` to all projects.
 
+=== Guide
+
+id: `org.kordamp.gradle.guide`
+
+Responsibilities:
+
+ * Applies and configures the `asciidoctor` plugin.
+ * Creates a task named `guide` that assembles the documentation based on the output from `asciidoctor` and `aggregateJavadocs`tasks.
+ * Creates a task named `guideZip` that packages the guide's contents.
+ * Creates a task named `initGuide` that initializes the director/file structure.
+
+NOTE: This plugin implicitly applies the `org.asciidoctor.convert` plugin.
+
 === Project
 
 id: `org.kordamp.gradle.project`

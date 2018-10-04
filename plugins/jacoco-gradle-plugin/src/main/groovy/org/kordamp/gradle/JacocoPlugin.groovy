@@ -34,7 +34,7 @@ import static org.kordamp.gradle.BasePlugin.isRootProject
  * @since 0.2.0
  */
 class JacocoPlugin implements Plugin<Project> {
-    static final String VISITED = JacocoPlugin.class.name.replace('.', '_') + '_VISITED'
+    private static final String VISITED = JacocoPlugin.class.name.replace('.', '_') + '_VISITED'
 
     Project project
 

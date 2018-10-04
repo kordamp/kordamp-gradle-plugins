@@ -22,7 +22,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.kordamp.gradle.model.Information
 import org.kordamp.gradle.model.License
-import org.kordamp.gradle.model.Person
 
 import static org.kordamp.gradle.BasePlugin.isRootProject
 
@@ -31,7 +30,7 @@ import static org.kordamp.gradle.BasePlugin.isRootProject
  * @since 0.2.0
  */
 class LicensePlugin implements Plugin<Project> {
-    static final String VISITED = LicensePlugin.class.name.replace('.', '_') + '_VISITED'
+    private static final String VISITED = LicensePlugin.class.name.replace('.', '_') + '_VISITED'
 
     Project project
 
@@ -77,18 +76,6 @@ class LicensePlugin implements Plugin<Project> {
                 year += '-' + currentYear
             }
 
-            List<String> authors = []
-            info.people.forEach { Person person ->
-                if ('author' in person.roles*.toLowerCase()) {
-                    String author = person.name ?: person.id
-                    if (author) authors << author
-                }
-            }
-            if (!authors && !info.people.isEmpty()) {
-                Person person = info.people.people[0]
-                authors << person.name ?: person.id
-            }
-
             License lic = info.licenses.licenses[0]
             if (info.licenses.licenses.size() > 1) {
                 lic = info.licenses.licenses.find { it.primary } ?: info.licenses.licenses[0]
@@ -106,7 +93,7 @@ class LicensePlugin implements Plugin<Project> {
             licenseExtension.ext {
                 projectName   = info.name
                 copyrightYear = year
-                author        = authors.join(', ')
+                author        = info.resolveAuthors().join(', ')
                 license       = lic.id?.spdx()
             }
             licenseExtension.exclude '**/*.png'

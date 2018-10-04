@@ -38,7 +38,9 @@ import static org.kordamp.gradle.BasePlugin.isRootProject
  * @since 0.1.0
  */
 class JarPlugin implements Plugin<Project> {
-    static final String VISITED = JarPlugin.class.name.replace('.', '_') + '_VISITED'
+    static final String ALL_JARS_TASK_NAME = 'allJars'
+
+    private static final String VISITED = JarPlugin.class.name.replace('.', '_') + '_VISITED'
 
     Project project
 
@@ -93,9 +95,9 @@ class JarPlugin implements Plugin<Project> {
             }
 
             if (jarTasks) {
-                project.tasks.create('allJars', DefaultTask) {
+                project.tasks.create(ALL_JARS_TASK_NAME, DefaultTask) {
                     dependsOn jarTasks
-                    group 'Build'
+                    group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
                     description "Triggers all jar tasks for project ${project.name}"
                 }
             }
@@ -112,7 +114,7 @@ class JarPlugin implements Plugin<Project> {
 
             jarTask = project.tasks.create(taskName, Jar) {
                 dependsOn sourceSet.output
-                group 'Build'
+                group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
                 description "Assembles a jar archive [sourceSet ${sourceSet.name}]"
                 baseName = archiveBaseName
                 from sourceSet.output

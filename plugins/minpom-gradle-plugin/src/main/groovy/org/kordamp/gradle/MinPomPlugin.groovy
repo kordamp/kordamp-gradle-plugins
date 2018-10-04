@@ -34,7 +34,7 @@ import static org.kordamp.gradle.BasePlugin.isRootProject
  * @since 0.1.0
  */
 class MinPomPlugin implements Plugin<Project> {
-    static final String VISITED = MinPomPlugin.class.name.replace('.', '_') + '_VISITED'
+    private static final String VISITED = MinPomPlugin.class.name.replace('.', '_') + '_VISITED'
 
     Project project
 
@@ -88,7 +88,7 @@ class MinPomPlugin implements Plugin<Project> {
             if (minPomTasks) {
                 project.tasks.create('allMinPoms', DefaultTask) {
                     dependsOn minPomTasks
-                    group 'Build'
+                    group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
                     description "Triggers all minPom tasks for project ${project.name}"
                 }
             }
@@ -109,7 +109,7 @@ class MinPomPlugin implements Plugin<Project> {
 
             minPomTask = project.tasks.create(taskName, DefaultTask) {
                 dependsOn project.tasks.getByName(classesTaskName)
-                group 'Build'
+                group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
                 description "Generates a minimum POM file [sourceSet ${sourceSet.name}]"
                 outputs.dir(minPomDestinationDir)
                 inputs.property('projectName', project.name)

@@ -40,7 +40,13 @@ import static org.kordamp.gradle.BasePlugin.isRootProject
  * @since 0.1.0
  */
 class ApidocPlugin implements Plugin<Project> {
-    static final String VISITED = ApidocPlugin.class.name.replace('.', '_') + '_VISITED'
+    static final String ALL_JAVADOCS_TASK_NAME = 'allJavadocs'
+    static final String ALL_JAVADOC_JARS_TASK_NAME = 'allJavadocJars'
+    static final String AGGREGATE_JAVADOCS_TASK_NAME = 'aggregateJavadocs'
+    static final String AGGREGATE_JAVADOCS_JAR_TASK_NAME = 'aggregateJavadocsJar'
+
+    private static final String VISITED = ApidocPlugin.class.name.replace('.', '_') + '_VISITED'
+
     Project project
 
     void apply(Project project) {
@@ -77,6 +83,11 @@ class ApidocPlugin implements Plugin<Project> {
             }
         }
 
+        List<Task> aggregateTasks = []
+        if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            aggregateTasks = createAggregateJavadocsTask(project)
+        }
+
         project.afterEvaluate { Project prj ->
             ProjectConfigurationExtension extension = prj.extensions.findByType(ProjectConfigurationExtension)
             ProjectConfigurationExtension rootExtension = prj.rootProject.extensions.findByType(ProjectConfigurationExtension)
@@ -102,17 +113,17 @@ class ApidocPlugin implements Plugin<Project> {
             }
 
             if (javadocTasks) {
-                project.tasks.create('allJavadocs', DefaultTask) {
+                project.tasks.create(ALL_JAVADOCS_TASK_NAME, DefaultTask) {
                     dependsOn javadocTasks
-                    group 'Documentation'
+                    group JavaBasePlugin.DOCUMENTATION_GROUP
                     description "Triggers all javadoc tasks for project ${project.name}"
                 }
             }
 
             if (javadocJarTasks) {
-                project.tasks.create('allJavadocJars', DefaultTask) {
+                project.tasks.create(ALL_JAVADOC_JARS_TASK_NAME, DefaultTask) {
                     dependsOn javadocJarTasks
-                    group 'Documentation'
+                    group JavaBasePlugin.DOCUMENTATION_GROUP
                     description "Triggers all javadocJar tasks for project ${project.name}"
                 }
             }
@@ -125,7 +136,29 @@ class ApidocPlugin implements Plugin<Project> {
 
             if (isRootProject(project) && !project.childProjects.isEmpty()) {
                 project.evaluationDependsOnChildren()
-                createAggregateJavadocsTask(project)
+
+                List<Javadoc> javadocs = []
+
+                project.tasks.withType(Javadoc) { Javadoc javadoc -> if (javadoc.name != AGGREGATE_JAVADOCS_TASK_NAME) javadocs << javadoc }
+
+                project.childProjects.values().each { Project p ->
+                    p.tasks.withType(Javadoc) { Javadoc javadoc -> javadocs << javadoc }
+                }
+
+                javadocs = javadocs.unique()
+
+                if(javadocs) {
+                    aggregateTasks[0].configure {
+                        enabled true
+                        dependsOn javadocs
+                        source javadocs.source
+                        classpath = project.files(javadocs.classpath)
+                    }
+                    aggregateTasks[1].configure {
+                        enabled true
+                        from aggregateTasks[0].destinationDir
+                    }
+                }
             }
         }
     }
@@ -140,7 +173,7 @@ class ApidocPlugin implements Plugin<Project> {
 
             javadocTask = project.tasks.create(taskName, Javadoc) {
                 dependsOn project.tasks.getByName(classesTaskName)
-                group 'Documentation'
+                group JavaBasePlugin.DOCUMENTATION_GROUP
                 description "Generates Javadoc API documentation [sourceSet ${sourceSet.name}]"
                 source sourceSet.allSource
                 destinationDir project.file("${project.buildDir}/docs/${sourceSet.name}/javadoc")
@@ -175,7 +208,7 @@ class ApidocPlugin implements Plugin<Project> {
 
             javadocJarTask = project.tasks.create(taskName, Jar) {
                 dependsOn javadoc
-                group 'Documentation'
+                group JavaBasePlugin.DOCUMENTATION_GROUP
                 description "An archive of the API docs [sourceSet ${sourceSet.name}]"
                 baseName = archiveBaseName
                 classifier 'javadoc'
@@ -204,35 +237,22 @@ class ApidocPlugin implements Plugin<Project> {
         }
     }
 
-    private void createAggregateJavadocsTask(Project project) {
-        List<Javadoc> javadocTasks = []
-
-        project.tasks.withType(Javadoc) { Javadoc javadoc -> if (javadoc.name != 'aggregateJavadocs') javadocTasks << javadoc }
-
-        project.childProjects.values().each { Project prj ->
-            prj.tasks.withType(Javadoc) { Javadoc javadoc -> javadocTasks << javadoc }
+    private List<Task> createAggregateJavadocsTask(Project project) {
+        Task aggregateJavadocs = project.tasks.create(AGGREGATE_JAVADOCS_TASK_NAME, Javadoc) {
+            enabled false
+            group JavaBasePlugin.DOCUMENTATION_GROUP
+            description 'Aggregates API docs for all projects.'
+            destinationDir project.file("${project.buildDir}/docs/javadoc")
         }
 
-        javadocTasks = javadocTasks.unique()
-
-        if (javadocTasks) {
-            Task aggregateJavadocs = project.tasks.create('aggregateJavadocs', Javadoc) {
-                description = 'Aggregates API docs for all projects.'
-                group = 'Documentation'
-                dependsOn javadocTasks
-
-                source javadocTasks.source
-                destinationDir project.file("${project.buildDir}/docs/javadoc")
-                classpath = project.files(javadocTasks.classpath)
-            }
-
-            project.tasks.create('aggregateJavadocsJar', Jar) {
-                dependsOn aggregateJavadocs
-                group 'Documentation'
-                description "An archive of the aggregate API docs"
-                classifier 'javadoc'
-                from aggregateJavadocs.destinationDir
-            }
+        Task aggregateJavadocsJar = project.tasks.create(AGGREGATE_JAVADOCS_JAR_TASK_NAME, Jar) {
+            enabled false
+            dependsOn aggregateJavadocs
+            group JavaBasePlugin.DOCUMENTATION_GROUP
+            description "An archive of the aggregate API docs"
+            classifier 'javadoc'
         }
+
+        [aggregateJavadocs, aggregateJavadocsJar]
     }
 }

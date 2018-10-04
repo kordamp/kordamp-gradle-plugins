@@ -28,7 +28,7 @@ import org.kordamp.gradle.model.Information
  * @since 0.1.0
  */
 class BasePlugin implements Plugin<Project> {
-    static final String VISITED = BasePlugin.class.name.replace('.', '_') + '_VISITED'
+    private static final String VISITED = BasePlugin.class.name.replace('.', '_') + '_VISITED'
 
     Project project
 

@@ -224,4 +224,22 @@ class Information {
 
         this
     }
+
+    List<String> resolveAuthors() {
+        List<String> authors = []
+
+        people.forEach { Person person ->
+            if ('author' in person.roles*.toLowerCase()) {
+                String author = person.name ?: person.id
+                if (author) authors << author
+            }
+        }
+
+        if (!authors && !people.isEmpty()) {
+            Person person = people.people[0]
+            authors << person.name ?: person.id
+        }
+
+        authors
+    }
 }

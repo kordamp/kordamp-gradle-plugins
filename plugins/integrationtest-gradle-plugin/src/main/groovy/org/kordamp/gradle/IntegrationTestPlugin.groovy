@@ -30,7 +30,7 @@ import org.gradle.api.tasks.testing.TestReport
  * @since 0.2.0
  */
 class IntegrationTestPlugin implements Plugin<Project> {
-    static final String VISITED = IntegrationTestPlugin.class.name.replace('.', '_') + '_VISITED'
+    private static final String VISITED = IntegrationTestPlugin.class.name.replace('.', '_') + '_VISITED'
     Project project
 
     void apply(Project project) {
