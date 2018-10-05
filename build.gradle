@@ -67,6 +67,10 @@ subprojects {
 
     dependencies {
         compile gradleApi()
+
+        testCompile("org.spockframework:spock-core:$spockVersion") {
+            exclude group: 'org.codehaus.groovy'
+        }
     }
 
     compileGroovy {

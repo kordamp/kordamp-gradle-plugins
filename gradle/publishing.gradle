@@ -28,10 +28,7 @@ jar {
             'Build-Jdk': buildJdk,
             'Build-Date': buildDate,
             'Build-Time': buildTime,
-            'Build-Revision': buildRevision,
-            'Specification-Title': project.name,
-            'Specification-Version': project.version,
-            'Specification-Vendor': project.name
+            'Build-Revision': buildRevision
         )
     }
 
