@@ -108,4 +108,10 @@ class Groovydoc {
     Map<String, Jar> groovydocJarTasks() {
         groovydocJarTasks
     }
+
+    void applyTo(org.gradle.api.tasks.javadoc.Groovydoc groovydoc) {
+        groovydoc.getIncludes().addAll(includes)
+        groovydoc.getExcludes().addAll(excludes)
+        options.applyTo(groovydoc)
+    }
 }

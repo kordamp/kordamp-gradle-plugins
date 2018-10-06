@@ -54,12 +54,18 @@ other plugins. This extension has the following properties
 
 [header, cols="5*"]
 |===
-| Name    | Type        | Default Value | Description
-| sources | boolean     | true          | Generates `sourceJar` if active
-| apidocs | boolean     | true          | Generates `javadoc`and `javadocJar` if active
-| minpom  | boolean     | true          | Generates `minPom` if active
-| release | boolean     | false         | Customizes Jar manifest and metainf if active
-| info    | Information |               | The entry point for the project's info DSL
+| Name       | Type        | Default Value | Description
+| release    | boolean     | false         | Customizes Jar manifest and metainf if active
+| info       | Information |               | The entry point for the project's info DSL
+| apidoc     | Apidoc      |               | Configures the `org.kordamp.gradle.apidocs` plugin
+| bintray    | Bintray     |               | Configures the `org.kordamp.gradle.bintray` plugin
+| groovydoc  | Groovydoc   |               | Configures the `org.kordamp.gradle.groovydoc` plugin
+| jacoco     | Jacoco      |               | Configures the `org.kordamp.gradle.jacoco` plugin
+| javadoc    | Javadoc     |               | Configures the `org.kordamp.gradle.javadoc` plugin
+| license    | License     |               | Configures the `org.kordamp.gradle.license` plugin
+| minpom     | Minpom      |               | Configures the `org.kordamp.gradle.minpom` plugin
+| publishing | Publishing  |               | Configures the `org.kordamp.gradle.publishing` plugin
+| source     | Source      |               | Configures the `org.kordamp.gradle.source-jar` plugin
 |===
 
 ==== DSL
@@ -100,13 +106,6 @@ info {
         vendor
     }
 
-    jacoco {
-        enabled
-        mergeExecFile
-        mergeReportHtmlFile
-        mergeReportXmlFile
-    }
-
     credentials {
         github {
             username
@@ -116,29 +115,6 @@ info {
             username
             password
         }
-    }
-
-    licenses {
-        license {
-            id
-            primary
-            name
-            url
-            distribution
-            comments
-        }
-    }
-
-    bintray {
-        enabled
-        credentials {
-            username
-            password
-        }
-        name
-        repo
-        userOrg
-        githubRepo
     }
 
     people {
@@ -154,6 +130,82 @@ info {
             }
         }
     }
+}
+
+apidoc {
+    enabled
+}
+
+bintray {
+    enabled
+    credentials {
+        username
+        password
+    }
+    name
+    repo
+    userOrg
+    githubRepo
+}
+
+groovydoc {
+    enabled
+    includes
+    excludes
+    options {
+        windowTitle
+        docTitle
+        header
+        footer
+        overviewText
+        links
+        noTimestamp
+        noVersionStamp
+        includePrivate
+        use
+    }
+}
+
+jacoco {
+    enabled
+    mergeExecFile
+    mergeReportHtmlFile
+    mergeReportXmlFile
+}
+
+javadoc {
+    enabled
+    includes
+    excludes
+    title
+    options { ... }
+}
+
+license {
+    enabled
+    licenses {
+        license {
+            id
+            primary
+            name
+            url
+            distribution
+            comments
+        }
+    }
+}
+
+minpom {
+    enabled
+}
+
+publishing {
+    enabled
+}
+
+source {
+    enabled
+}
 ----
 
 .General Properties
@@ -167,7 +219,7 @@ info {
 | tags          | List<String> | no       |               |
 |===
 
-The value for `vendor` may be ommitted if a value for `organization.name` is given.
+The value for `vendor` may be omitted if a value for `organization.name` is given.
 
 .Links
 [header, cols="5*"]
@@ -196,7 +248,7 @@ This block is optional.
 [header, cols="5*"]
 |===
 | Name    | Type    | Required | Default Value   | Description
-| enabled | boolean | no       | true            | JAR manifest entries will be updated if  `true`
+| enabled | boolean | no       | true            | JAR manifest entries will be updated if `true`
 | title   | String  | no       | project.name    | Mapped to `Specification-Title` manifest entry
 | version | String  | no       | project.version | Mapped to `Specification-Version` manifest entry
 | vendor  | String  | no       | info.vendor     | Mapped to `Specification-Vendor` manifest entry
@@ -206,22 +258,10 @@ This block is optional.
 [header, cols="5*"]
 |===
 | Name    | Type    | Required | Default Value   | Description
-| enabled | boolean | no       | true            | JAR manifest entries will be updated if  `true`
+| enabled | boolean | no       | true            | JAR manifest entries will be updated if `true`
 | title   | String  | no       | project.name    | Mapped to `Implementation-Title` manifest entry
 | version | String  | no       | project.version | Mapped to `Implementation-Version` manifest entry
 | vendor  | String  | no       | info.vendor     | Mapped to `Implementation-Vendor` manifest entry
-|===
-
-This block is optional.
-
-.Jacoco
-[header, cols="5*"]
-|===
-| Name                | Type    | Required | Default Value                                                | Description
-| enabled             | boolean | no       | true                                                         | Disables jacoco tasks if  `false`
-| mergeExecFile       | File    | no       | ${project.buildDir}/jacoco/root.exec                         | Location for the root merge execution data file
-| mergeReportHtmlFile | File    | no       | ${project.buildDir}/reports/jacoco/root/html                 | Location for root HTML reports
-| mergeReportXmlFile  | File    | no       | ${project.buildDir}/reports/jacoco/root/jacocoTestReport.xml | Location for the root XML report
 |===
 
 This block is optional.
@@ -237,44 +277,6 @@ This block is optional.
 The `sonatype` entry may be used by the `org.kordamp.gradle.bintray` plugin to configure auto-sync with Maven Central when
 pushing a publication.
 This block is optional.
-
-.Licenses
-This block maps to the `<licenses>` block in POM. At least one nested `license` block must be defined.
-
-.License
-[header, cols="5*"]
-|===
-| Name         | Type      | Required | Default Value | Description
-| id           | LicenseId | no*      |               |
-| primary      | boolean   | no*      | false         | Identifies this as the main license if there are more than one
-| name         | String    | yes      |               | Maps to the `<name>` block
-| url          | String    | no       |               | Maps to the `<url>` block
-| distribution | String    | no       | 'repo'        | Maps to the `<distribution>` block
-| comments     | String    | no       |               | Maps to the `<comments>` block
-|===
-
-This entry maps to a `<license>` block nested inside `<licenses>` in POM.
-
-Prefer setting a value for the `id` property if using the `org.kordamp.gradle.bintray` and/or `org.kordamp.gradle.license`
-plugins. Only a single license entry must have `primary = true`. If no license has this setting then the first one in the
-list will be treated as the primary license. If more than one license has this setting the the first one of that set will
-be treated as the primary license.
-
-.Bintray
-[header, cols="5*"]
-|===
-| Name         | Type        | Required | Default Value | Description
-| enabled      | boolean     | no       | true          | Disables bintray publications if `false`
-| credentials  | Credentials | yes      |               | Values map to `bintray.user` and `bintray.key`
-| repo         | String      | yes      |               | Mapped to `bintray.pkg.repo`
-| userOrg      | String      | yes      |               | Mapped to `bintray.pkg.userOrg`
-| name         | String      | no       | project.name  | Mapped to `bintray.pkg.name`
-| githubRepo   | String      | yes      |               | Mapped to `bintray.pkg.githubRepo`
-|===
-
-The value of `info.tags` is mapped to `bintray.pkg.labels`.
-
-Values for `info.links` are mapped to their matching entries in `bintray.pkg`. 
 
 .People
 This block defines data associated with a particular person.
@@ -296,13 +298,141 @@ This block is optional.
 At least `id` or `name` must be defined. If a `developer` role exists then the person instance is mapped to a `<developer>`
 block in the POM. If a `contributor` role exists then the person instance is maped to a `<contributor>` block in the POM.
 
+.Apidoc
+
+[header, cols="5*"]
+|===
+| Name                | Type    | Required | Default Value | Description
+| enabled             | boolean | no       | true          | Disables `org.kordamp.gradle.apidoc` plugin if `false`
+|===
+
+This block is optional.
+
+.Bintray
+[header, cols="5*"]
+|===
+| Name         | Type        | Required | Default Value | Description
+| enabled      | boolean     | no       | true          | Disables `org.kordamp.gradle.bintray` plugin if `false`
+| credentials  | Credentials | yes      |               | Values map to `bintray.user` and `bintray.key`
+| repo         | String      | yes      |               | Mapped to `bintray.pkg.repo`
+| userOrg      | String      | yes      |               | Mapped to `bintray.pkg.userOrg`
+| name         | String      | no       | project.name  | Mapped to `bintray.pkg.name`
+| githubRepo   | String      | yes      |               | Mapped to `bintray.pkg.githubRepo`
+|===
+
+The value of `info.tags` is mapped to `bintray.pkg.labels`.
+
+Values for `info.links` are mapped to their matching entries in `bintray.pkg`.
+
+.Groovydoc
+[header, cols="5*"]
+|===
+| Name                   | Type         | Required | Default Value                        | Description
+| enabled                | boolean      | no       | true                                 | Disables `org.kordamp.gradle.groovydoc` plugin if `false`
+| includes               | Set<String>  | no       | []                                   |
+| excludes               | Set<String>  | no       | []                                   |
+| options.windowTitle    | String       | no       | "${project.name} ${project.version}" |
+| options.docTitle       | String       | no       | "${project.name} ${project.version}" |
+| options.header         | String       | no       | "${project.name} ${project.version}" |
+| options.footer         | String       | no       |                                      |
+| options.overviewText   | TextResource | no       |                                      |
+| options.links          | Set<Link>    | no       | []                                   |
+| options.noTimestamp    | boolean      | no       |                                      |
+| options.noVersionStamp | boolean      | no       |                                      |
+| options.includePrivate | boolean      | no       | true                                 |
+| options.use            | boolean      | no       | true                                 |
+|===
+
+This block is optional.
+
+.Jacoco
+[header, cols="5*"]
+|===
+| Name                | Type    | Required | Default Value                                                | Description
+| enabled             | boolean | no       | true                                                         | Disables `org.kordamp.gradle.jacoco` plugin if `false`
+| mergeExecFile       | File    | no       | ${project.buildDir}/jacoco/root.exec                         | Location for the root merge execution data file
+| mergeReportHtmlFile | File    | no       | ${project.buildDir}/reports/jacoco/root/html                 | Location for root HTML reports
+| mergeReportXmlFile  | File    | no       | ${project.buildDir}/reports/jacoco/root/jacocoTestReport.xml | Location for the root XML report
+|===
+
+This block is optional.
+
+.Javadoc
+[header, cols="5*"]
+|===
+| Name     | Type                  | Required | Default Value | Description
+| enabled  | boolean               | no       | true          | Disables `org.kordamp.gradle.javaydoc` plugin if `false`
+| includes | Set<String>           | no       | []            |
+| excludes | Set<String>           | no       | []            |
+| title    | String                | no       |               |
+| options  | MinimalJavadocOptions | no       |               | Supports all options from `org.gradle.external.javadoc.StandardJavadocDocletOptions`.
+|===
+
+This block is optional.
+
+.License
+[header, cols="5*"]
+|===
+| Name     | Type    | Required | Default Value | Description
+| enabled  | boolean | no       | true          | Disables `org.kordamp.gradle.javadoc` plugin if `false`
+|===
+
+.License.licenses
+This block maps to the `<licenses>` block in POM. At least one nested `license` block must be defined.
+
+.License.licenses.license
+[header, cols="5*"]
+|===
+| Name         | Type      | Required | Default Value | Description
+| id           | LicenseId | no*      |               |
+| primary      | boolean   | no*      | false         | Identifies this as the main license if there are more than one
+| name         | String    | yes      |               | Maps to the `<name>` block
+| url          | String    | no       |               | Maps to the `<url>` block
+| distribution | String    | no       | 'repo'        | Maps to the `<distribution>` block
+| comments     | String    | no       |               | Maps to the `<comments>` block
+|===
+
+This entry maps to a `<license>` block nested inside `<licenses>` in POM.
+
+Prefer setting a value for the `id` property if using the `org.kordamp.gradle.bintray` and/or `org.kordamp.gradle.license`
+plugins. Only a single license entry must have `primary = true`. If no license has this setting then the first one in the
+list will be treated as the primary license. If more than one license has this setting the the first one of that set will
+be treated as the primary license.
+
+.Minpom
+[header, cols="5*"]
+|===
+| Name     | Type    | Required | Default Value | Description
+| enabled  | boolean | no       | true          | Disables `org.kordamp.gradle.minpom` plugin if `false`
+|===
+
+This block is optional.
+
+.Publishing
+[header, cols="5*"]
+|===
+| Name     | Type    | Required | Default Value | Description
+| enabled  | boolean | no       | true          | Disables `org.kordamp.gradle.publishing` plugin if `false`
+|===
+
+This block is optional.
+
+.Source
+[header, cols="5*"]
+|===
+| Name     | Type    | Required | Default Value | Description
+| enabled  | boolean | no       | true          | Disables `org.kordamp.gradle.source-jar` plugin if `false`
+|===
+
+This block is optional.
+
 === BuildInfo
 
 id: `org.kordamp.gradle.build-info`
 
 Responsibilities:
 
- * Defines a set of build related properties and attaches them to the `rootProject`. These properties are
+ * Defines a set of build related properties and attaches them to `rootProject.ext.buildinfo`. These properties are
 
 [header, cols="3*"]
 |===
@@ -329,9 +459,9 @@ Responsibilities:
  * Attaches the source JAR artifact to the custom `MavenPublication`.
  * Creates a composite `allSourceJars` tasks that triggers every other `sourceJar` in the current project.
 
-=== Apidocs
+=== Javadoc
 
-id: `org.kordamp.gradle.apidoc`
+id: `org.kordamp.gradle.javadoc`
 
 Responsibilities:
 
@@ -340,10 +470,27 @@ Responsibilities:
  * Configures a `MavenPublication` that matches the sourceSet's name.
  * Attaches the javadoc JAR artifact to the custom `MavenPublication`.
  * Creates a composite `allJavadocJars` tasks that triggers every other `javadocJar` in the current project.
- * Creates a `aggregateJavadocs` task that collects Javadoc from all projects.
- * Creates a `aggregateJavadocsJar` task that packages the collected Javadoc from all projects.
 
-TODO: Support `groovyDoc` and other JVM language specific doc tasks (Scala, Kotlin, etc).
+=== Groovydoc
+
+id: `org.kordamp.gradle.groovydoc`
+
+Responsibilities:
+
+ * Creates a `Groovydoc` task per `SourceSet`.
+ * Creates a `Jar` task that packages groovydoc per `SourceSet`.
+ * Configures a `MavenPublication` that matches the sourceSet's name.
+ * Attaches the groovydoc JAR artifact to the custom `MavenPublication`.
+ * Creates a composite `allGroovydocJars` tasks that triggers every other `groovydocJar` in the current project.
+
+=== Apidocs
+
+id: `org.kordamp.gradle.apidoc`
+
+Responsibilities:
+
+ * Creates a `aggregateApidocs` task that collects Javadoc from all projects.
+ * Creates a `aggregateApidocsJar` task that packages the collected Javadoc from all projects.
 
 === MinPom
 
@@ -452,7 +599,7 @@ id: `org.kordamp.gradle.guide`
 Responsibilities:
 
  * Applies and configures the `asciidoctor` plugin.
- * Creates a task named `guide` that assembles the documentation based on the output from `asciidoctor` and `aggregateJavadocs`tasks.
+ * Creates a task named `guide` that assembles the documentation based on the output from `asciidoctor` and `aggregateApidocs`tasks.
  * Creates a task named `guideZip` that packages the guide's contents.
  * Creates a task named `initGuide` that initializes the director/file structure.
 

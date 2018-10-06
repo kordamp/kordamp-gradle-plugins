@@ -113,4 +113,11 @@ class Javadoc {
     Map<String, Jar> javadocJarTasks() {
         javadocJarTasks
     }
+
+    void applyTo(org.gradle.api.tasks.javadoc.Javadoc javadoc) {
+        javadoc.title = title
+        javadoc.getIncludes().addAll(includes)
+        javadoc.getExcludes().addAll(excludes)
+        options.applyTo(javadoc.options)
+    }
 }
