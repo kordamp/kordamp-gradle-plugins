@@ -7,7 +7,6 @@ cache:
   directories:
   - $HOME/.gradle/caches/
   - $HOME/.gradle/wrapper/
-  - $HOME/.sonar/cache/
 
 before_script:
   - ./gradlew --version
