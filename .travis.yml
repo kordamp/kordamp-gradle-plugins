@@ -1,17 +1,16 @@
 language: java
-
 install: true
-
+jdk: oraclejdk8
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
-    directories:
-        - $HOME/.m2
-        - $HOME/.gradle
+  directories:
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
+  - $HOME/.sonar/cache/
 
 before_script:
-    - ./gradlew --version
+  - ./gradlew --version
 
 script:
-    - TERM=dumb ./gradlew build
-
-jdk:
-    - oraclejdk8
+  - TERM=dumb ./gradlew --build-cache --console=plain --no-daemon -S build

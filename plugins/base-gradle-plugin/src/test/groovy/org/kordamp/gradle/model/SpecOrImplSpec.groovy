@@ -74,7 +74,8 @@ class SpecOrImplSpec extends Specification {
         expected.enabled = true
 
         when:
-        SpecOrImpl actual = spec1.merge(spec2)
+        SpecOrImpl actual = spec1.copyOf()
+        SpecOrImpl.merge(actual, spec2)
 
         then:
         actual == expected
@@ -93,7 +94,8 @@ class SpecOrImplSpec extends Specification {
         SpecOrImpl expected = new SpecOrImpl(enabled: enabled)
 
         when:
-        SpecOrImpl actual = spec1.merge(spec2)
+        SpecOrImpl actual = spec1.copyOf()
+        SpecOrImpl.merge(actual, spec2)
 
         then:
         actual == expected
@@ -119,7 +121,8 @@ class SpecOrImplSpec extends Specification {
         SpecOrImpl expected = new SpecOrImpl(enabled: enabled)
 
         when:
-        SpecOrImpl actual = spec1.merge(spec2)
+        SpecOrImpl actual = spec1.copyOf()
+        SpecOrImpl.merge(actual, spec2)
 
         then:
         actual == expected
