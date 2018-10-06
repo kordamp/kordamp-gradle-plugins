@@ -25,7 +25,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.bundling.Zip
-import org.kordamp.gradle.model.Information
 
 /**
  * @author Andres Almiray
@@ -65,7 +64,7 @@ class GuidePlugin implements Plugin<Project> {
     private void configureAsciidoctorTask(Project project) {
         AsciidoctorTask asciidoctorTask = project.tasks.findByName(AsciidoctorPlugin.ASCIIDOCTOR)
 
-        Information info = project.ext.mergedInfo
+        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
         asciidoctorTask.configure {
             attributes += [
@@ -81,14 +80,20 @@ class GuidePlugin implements Plugin<Project> {
                 linkcss                : true,
                 'source-highlighter'   : 'coderay',
                 'coderay-linenums-mode': 'table',
-                'project-title'        : info.description,
-                'project-author'       : info.resolveAuthors().join(', '),
-                'project-url'          : info.url,
-                'project-scm'          : info.links.scm,
-                'project-issue-tracker': info.links.issueTracker,
+                'project-title'        : mergedConfiguration.info.description,
+                'project-author'       : mergedConfiguration.info.resolveAuthors().join(', '),
+                'project-url'          : mergedConfiguration.info.url,
+                'project-scm'          : mergedConfiguration.info.links.scm,
+                'project-issue-tracker': mergedConfiguration.info.links.issueTracker,
                 'project-group'        : project.group,
                 'project-version'      : project.version,
-                'project-name'         : project.rootProject.name
+                'project-name'         : project.rootProject.name,
+                'build-by'             : project.rootProject.ext.buildinfo.buildBy,
+                'build-date'           : project.rootProject.ext.buildinfo.buildDate,
+                'build-time'           : project.rootProject.ext.buildinfo.buildTime,
+                'build-revision'       : project.rootProject.ext.buildinfo.buildRevision,
+                'build-jdk'            : project.rootProject.ext.buildinfo.buildJdk,
+                'build-created-by'     : project.rootProject.ext.buildinfo.buildCreatedBy
             ]
 
             sources {
@@ -119,7 +124,7 @@ class GuidePlugin implements Plugin<Project> {
 
         Task guideZipTask = project.tasks.findByName('guideZip')
         if (!guideZipTask) {
-            guideTask = project.tasks.create('guideZip', Zip) {
+            guideZipTask = project.tasks.create('guideZip', Zip) {
                 dependsOn guideTask
                 group 'Documentation'
                 description 'An archive of the generated guide.'

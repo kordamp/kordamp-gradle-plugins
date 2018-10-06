@@ -110,17 +110,17 @@ class GroovydocOptions {
     }
 
     @CompileDynamic
-    GroovydocOptions merge(GroovydocOptions o1, GroovydocOptions o2) {
-        setNoTimestamp(o1?.noTimestampSet ? o1?.noTimestamp : o2.noTimestamp)
-        setNoVersionStamp(o1?.noVersionStampSet ? o1?.noVersionStamp : o2.noVersionStamp)
-        setIncludePrivate(o1?.includePrivateSet ? o1?.includePrivate : o2.includePrivate)
-        setUse(o1?.useSet ? o1?.use : o2.use)
-        setWindowTitle(o1?.windowTitle ?: o2?.windowTitle)
-        setDocTitle(o1?.docTitle ?: o2?.docTitle)
-        setHeader(o1?.header ?: o2?.header)
-        setFooter(o1?.footer ?: o2?.footer)
-        setOverviewText(o1?.overviewText ?: o2?.overviewText)
-        setLinks(((o1?.links ?: []) + (o2?.links ?: [])).unique())
+    static void merge(GroovydocOptions o1, GroovydocOptions o2) {
+        o1.setNoTimestamp((boolean) (o1.noTimestampSet ? o1.noTimestamp : o2.noTimestamp))
+        o1.setNoVersionStamp((boolean) (o1.noVersionStampSet ? o1.noVersionStamp : o2.noVersionStamp))
+        o1.setIncludePrivate((boolean) (o1.includePrivateSet ? o1.includePrivate : o2.includePrivate))
+        o1.setUse((boolean) (o1.useSet ? o1.use : o2.use))
+        o1.setWindowTitle(o1.windowTitle ?: o2.windowTitle)
+        o1.setDocTitle(o1.docTitle ?: o2.docTitle)
+        o1.setHeader(o1.header ?: o2.header)
+        o1.setFooter(o1.footer ?: o2.footer)
+        o1.setOverviewText(o1.overviewText ?: o2.overviewText)
+        o1.setLinks(((o1.links ?: []) + (o2.links ?: [])).unique())
     }
 
     void applyTo(Groovydoc groovydoc) {

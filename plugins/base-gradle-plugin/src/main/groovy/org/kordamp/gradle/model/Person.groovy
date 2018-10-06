@@ -47,14 +47,17 @@ class Person {
         copy
     }
 
-    Person merge(Person other) {
-        Person copy = new Person()
-        copy.id = id ?: other?.id
-        copy.name = name ?: other?.name
-        copy.email = email ?: other?.email
-        copy.url = url ?: other?.url
-        copy.roles.addAll((roles + other?.roles).unique())
-        copy.organization?.merge(organization, other?.organization)
-        copy
+    static Person merge(Person o1, Person o2) {
+        o1.id = o1.id ?: o2?.id
+        o1.name = o1.name ?: o2?.name
+        o1.email = o1.email ?: o2?.email
+        o1.url = o1.url ?: o2?.url
+        o1.roles.addAll((o1.roles + o2?.roles).unique())
+        if (o1.organization) {
+            Organization.merge(o1.organization, o2?.organization)
+        } else {
+            o1.organization = o2?.organization?.copyOf()
+        }
+        o1
     }
 }

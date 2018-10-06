@@ -130,31 +130,29 @@ class JarPlugin implements Plugin<Project> {
             }
         }
 
-        ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
-        ProjectConfigurationExtension rootExtension = project.rootProject.extensions.findByType(ProjectConfigurationExtension)
-        Information info = project.ext.mergedInfo
+        ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
 
-        if (ProjectConfigurationExtension.release(extension, rootExtension)) {
+        if (mergedConfiguration.release) {
             jarTask.configure {
                 Map<String, String> attributesMap = [
-                    'Created-By'    : project.rootProject.buildCreatedBy,
-                    'Built-By'      : project.rootProject.buildBy,
-                    'Build-Jdk'     : project.rootProject.buildJdk,
-                    'Build-Date'    : project.rootProject.buildDate,
-                    'Build-Time'    : project.rootProject.buildTime,
-                    'Build-Revision': project.rootProject.buildRevision
+                    'Created-By'    : project.rootProject.buildinfo.buildCreatedBy,
+                    'Built-By'      : project.rootProject.buildinfo.buildBy,
+                    'Build-Jdk'     : project.rootProject.buildinfo.buildJdk,
+                    'Build-Date'    : project.rootProject.buildinfo.buildDate,
+                    'Build-Time'    : project.rootProject.buildinfo.buildTime,
+                    'Build-Revision': project.rootProject.buildinfo.buildRevision
                 ]
 
-                if (info.specification.enabled) {
-                    attributesMap.'Specification-Title' = info.specification.title
-                    attributesMap.'Specification-Version' = info.specification.version
-                    if (info.specification.vendor) attributesMap.'Specification-Vendor' = info.specification.vendor
+                if (mergedConfiguration.info.specification.enabled) {
+                    attributesMap.'Specification-Title' = mergedConfiguration.info.specification.title
+                    attributesMap.'Specification-Version' = mergedConfiguration.info.specification.version
+                    if (mergedConfiguration.info.specification.vendor) attributesMap.'Specification-Vendor' = mergedConfiguration.info.specification.vendor
                 }
 
-                if (info.implementation.enabled) {
-                    attributesMap.'Implementation-Title' = info.implementation.title
-                    attributesMap.'Implementation-Version' = info.implementation.version
-                    if (info.implementation.vendor) attributesMap.'Implementation-Vendor' = info.implementation.vendor
+                if (mergedConfiguration.info.implementation.enabled) {
+                    attributesMap.'Implementation-Title' = mergedConfiguration.info.implementation.title
+                    attributesMap.'Implementation-Version' = mergedConfiguration.info.implementation.version
+                    if (mergedConfiguration.info.implementation.vendor) attributesMap.'Implementation-Vendor' = mergedConfiguration.info.implementation.vendor
                 }
 
                 manifest {
@@ -163,7 +161,7 @@ class JarPlugin implements Plugin<Project> {
             }
         }
 
-        if (ProjectConfigurationExtension.minpom(extension, rootExtension)) {
+        if (mergedConfiguration.minpom.enabled) {
             jarTask.configure {
                 dependsOn MinPomPlugin.resolveMinPomTaskName(sourceSet)
                 metaInf {

@@ -43,8 +43,15 @@ class Credentials {
         copy.password = password
     }
 
-    void merge(Credentials o1, Credentials o2) {
-        username = o1?.username ?: o2?.username
-        password = o1?.password ?: o2?.password
+    static Credentials merge(Credentials o1, Credentials o2) {
+        if (o1) {
+            o1.username = o1.username ?: o2?.username
+            o1.password = o1.password ?: o2?.password
+            return o1
+        } else if (o2) {
+            return o2.copyOf()
+        } else {
+            return null
+        }
     }
 }

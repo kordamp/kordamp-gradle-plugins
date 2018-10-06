@@ -55,14 +55,17 @@ class BasePlugin implements Plugin<Project> {
 
             List<String> errors = []
             if (isRootProject(project)) {
-                errors = extension.info.validate()
-                project.ext.mergedInfo = extension.info
+                errors = extension.validate()
+                project.ext.mergedConfiguration = extension
             } else {
                 ProjectConfigurationExtension rootExtension = project.rootProject.extensions.findByType(ProjectConfigurationExtension)
                 if (rootExtension) {
-                    Information merged = extension.info.merge(rootExtension.info)
+                    ProjectConfigurationExtension merged = extension.merge(rootExtension)
                     errors = merged.validate()
-                    project.ext.mergedInfo = merged
+                    project.ext.mergedConfiguration = merged
+                } else {
+                    errors = extension.validate()
+                    project.ext.mergedConfiguration = extension
                 }
             }
 

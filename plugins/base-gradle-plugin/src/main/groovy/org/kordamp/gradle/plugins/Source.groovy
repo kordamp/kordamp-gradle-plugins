@@ -15,26 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.model
+package org.kordamp.gradle.plugins
 
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import org.gradle.api.Project
 
 /**
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 0.4.0
  */
 @CompileStatic
 @Canonical
-@ToString(includeNames = true)
-class SpecOrImpl {
+@EqualsAndHashCode(excludes = ['project'])
+@ToString(includeNames = true, excludes = ['project'])
+class Source {
     boolean enabled = true
-    String title
-    String version
-    String vendor
 
     private boolean enabledSet
+
+    private final Project project
+
+    Source(Project project) {
+        this.project = project
+    }
 
     void setEnabled(boolean enabled) {
         this.enabled = enabled
@@ -45,20 +51,12 @@ class SpecOrImpl {
         this.enabledSet
     }
 
-    SpecOrImpl copyOf() {
-        SpecOrImpl copy = new SpecOrImpl()
+    void copyInto(Source copy) {
         copy.@enabled = enabled
         copy.@enabledSet = enabledSet
-        copy.title = title
-        copy.version = version
-        copy.vendor = vendor
-        copy
     }
 
-    static void merge(SpecOrImpl o1, SpecOrImpl o2) {
+    static void merge(Source o1, Source o2) {
         o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
-        o1.title = o1.title ?: o2.title
-        o1.version = o1.version ?: o2.version
-        o1.vendor = o1.vendor ?: o2.vendor
     }
 }

@@ -73,9 +73,9 @@ class ApidocPlugin implements Plugin<Project> {
         // GroovydocPlugin.applyIfMissing(project)
 
         project.afterEvaluate { Project prj ->
-            ProjectConfigurationExtension rootExtension = prj.rootProject.extensions.findByType(ProjectConfigurationExtension)
+            ProjectConfigurationExtension mergedConfiguration = prj.rootProject.ext.mergedConfiguration
 
-            if (!rootExtension.apidocs) {
+            if (!mergedConfiguration.apidoc.enabled) {
                 return
             }
 

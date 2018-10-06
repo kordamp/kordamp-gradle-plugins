@@ -42,17 +42,23 @@ class Links {
         copy.scm = scm
     }
 
-    void merge(Links o1, Links o2) {
-        website = o1.website ?: o2.website
-        issueTracker = o1.issueTracker ?: o2.issueTracker
-        scm = o1.scm ?: o2.scm
+    static void merge(Links o1, Links o2) {
+        o1.website = o1.website ?: o2.website
+        o1.issueTracker = o1.issueTracker ?: o2.issueTracker
+        o1.scm = o1.scm ?: o2.scm
     }
 
     List<String> validate(Project project) {
         List<String> errors = []
 
-        if(isBlank(website)) {
-            errors << "[${project.name}] Project website is blank".toString()
+        if (isBlank(website)) {
+            errors << "[${project.name}] Project links:website is blank".toString()
+        }
+        if (isBlank(issueTracker)) {
+            errors << "[${project.name}] Project links:issueTracker is blank".toString()
+        }
+        if (isBlank(scm)) {
+            errors << "[${project.name}] Project links:scm is blank".toString()
         }
 
         errors

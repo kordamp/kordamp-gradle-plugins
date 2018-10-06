@@ -49,18 +49,19 @@ class BuildInfoPlugin implements Plugin<Project> {
 
         if (!root.findProperty('buildTimeAndDate')) {
             root.plugins.apply(VersioningPlugin)
+
             VersioningExtension versioning = root.extensions.findByName('versioning')
 
             Date date = new Date()
-            root.ext {
-                buildTimeAndDate = date
-                buildBy = System.properties['user.name']
-                buildDate = new SimpleDateFormat('yyyy-MM-dd').format(date)
-                buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(date)
-                buildRevision = versioning.info.commit
-                buildJdk = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString()
-                buildCreatedBy = "Gradle ${root.gradle.gradleVersion}"
-            }
+            root.ext.buildinfo = [
+                buildTimeAndDate: date,
+                buildBy         : System.properties['user.name'],
+                buildDate       : new SimpleDateFormat('yyyy-MM-dd').format(date),
+                buildTime       : new SimpleDateFormat('HH:mm:ss.SSSZ').format(date),
+                buildRevision   : versioning.info.commit,
+                buildJdk        : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+                buildCreatedBy  : "Gradle ${root.gradle.gradleVersion}"
+            ]
         }
     }
 

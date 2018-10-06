@@ -20,7 +20,17 @@ package org.kordamp.gradle
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.model.Information
+import org.kordamp.gradle.plugins.Apidoc
+import org.kordamp.gradle.plugins.Bintray
+import org.kordamp.gradle.plugins.Groovydoc
+import org.kordamp.gradle.plugins.Jacoco
+import org.kordamp.gradle.plugins.Javadoc
+import org.kordamp.gradle.plugins.License
+import org.kordamp.gradle.plugins.Minpom
+import org.kordamp.gradle.plugins.Publishing
+import org.kordamp.gradle.plugins.Source
 
 /**
  * @author Andres Almiray
@@ -28,54 +38,114 @@ import org.kordamp.gradle.model.Information
  */
 @CompileStatic
 class ProjectConfigurationExtension {
-    /**
-     * Configures a {@code sourceJar} task per {@code SourceSet} if enabled.
-     */
-    boolean sources = true
-
-    /**
-     * Configures {@code javadoc} and {@code javadocJAr} tasks per {@code SourceSet} if enabled.
-     */
-    boolean apidocs = true
-
-    /**
-     * Configures a {@code minPom} task per {@code SourceSet} if enabled.
-     */
-    boolean minpom = true
-
-    /**
-     * Customizes Manifest and MetaInf entries of {@code jar} tasks if enabled.
-     */
     boolean release = false
 
+    final Project project
     final Information info
+    final Apidoc apidoc
+    final Bintray bintray
+    final Groovydoc groovydoc
+    final Jacoco jacoco
+    final Javadoc javadoc
+    final License license
+    final Minpom minpom
+    final Publishing publishing
+    final Source source
 
-    private boolean sourcesSet
-    private boolean apidocsSet
-    private boolean minpomSet
     private boolean releaseSet
 
     ProjectConfigurationExtension(Project project) {
+        this.project = project
         info = new Information(project)
+        apidoc = new Apidoc(project)
+        bintray = new Bintray(project)
+        groovydoc = new Groovydoc(project)
+        jacoco = new Jacoco(project)
+        javadoc = new Javadoc(project)
+        license = new License(project)
+        minpom = new Minpom(project)
+        publishing = new Publishing(project)
+        source = new Source(project)
     }
 
     void info(Action<? super Information> action) {
         action.execute(info)
     }
 
-    void setSources(boolean sources) {
-        this.sources = sources
-        this.sourcesSet = true
+    void info(@DelegatesTo(Information) Closure action) {
+        ConfigureUtil.configure(action, info)
     }
 
-    void setApidocs(boolean apidocs) {
-        this.apidocs = apidocs
-        this.apidocsSet = true
+    void apidoc(Action<? super Apidoc> action) {
+        action.execute(apidoc)
     }
 
-    void setMinpom(boolean minpom) {
-        this.minpom = minpom
-        this.minpomSet = true
+    void apidoc(@DelegatesTo(Apidoc) Closure action) {
+        ConfigureUtil.configure(action, apidoc)
+    }
+
+    void bintray(Action<? super Bintray> action) {
+        action.execute(bintray)
+    }
+
+    void bintray(@DelegatesTo(Bintray) Closure action) {
+        ConfigureUtil.configure(action, bintray)
+    }
+
+    void groovydoc(Action<? super Groovydoc> action) {
+        action.execute(groovydoc)
+    }
+
+    void groovydoc(@DelegatesTo(Groovydoc) Closure action) {
+        ConfigureUtil.configure(action, groovydoc)
+    }
+
+    void jacoco(Action<? super Jacoco> action) {
+        action.execute(jacoco)
+    }
+
+    void jacoco(@DelegatesTo(Jacoco) Closure action) {
+        ConfigureUtil.configure(action, jacoco)
+    }
+
+    void javadoc(Action<? super Javadoc> action) {
+        action.execute(javadoc)
+    }
+
+    void javadoc(@DelegatesTo(Javadoc) Closure action) {
+        ConfigureUtil.configure(action, javadoc)
+    }
+
+    void license(Action<? super License> action) {
+        action.execute(license)
+    }
+
+    void license(@DelegatesTo(License) Closure action) {
+        ConfigureUtil.configure(action, license)
+    }
+
+    void minpom(Action<? super Minpom> action) {
+        action.execute(minpom)
+    }
+
+    void minpom(@DelegatesTo(Minpom) Closure action) {
+        ConfigureUtil.configure(action, minpom)
+    }
+
+    void publishing(Action<? super Publishing> action) {
+        action.execute(publishing)
+    }
+
+    void publishing(@DelegatesTo(Publishing) Closure action) {
+        ConfigureUtil.configure(action, publishing)
+    }
+
+    void source(Action<? super Source> action) {
+        action.execute(source)
+    }
+
+    void source(@DelegatesTo(Source) Closure action) {
+        ConfigureUtil.configure(action, source)
     }
 
     void setRelease(boolean release) {
@@ -83,35 +153,53 @@ class ProjectConfigurationExtension {
         this.releaseSet = true
     }
 
-    boolean isSourcesSet() {
-        return sourcesSet
-    }
-
-    boolean isApidocsSet() {
-        return apidocsSet
-    }
-
-    boolean isMinpomSet() {
-        return minpomSet
-    }
-
     boolean isReleaseSet() {
         return releaseSet
     }
 
-    static boolean sources(ProjectConfigurationExtension child, ProjectConfigurationExtension parent) {
-        child.sourcesSet ? child.sources : parent.sources
+    ProjectConfigurationExtension copyOf() {
+        ProjectConfigurationExtension copy = new ProjectConfigurationExtension(project)
+        copy.@release = release
+        copy.@releaseSet = releaseSet
+        info.copyInto(copy.info)
+        apidoc.copyInto(copy.apidoc)
+        bintray.copyInto(copy.bintray)
+        groovydoc.copyInto(copy.groovydoc)
+        jacoco.copyInto(copy.jacoco)
+        javadoc.copyInto(copy.javadoc)
+        license.copyInto(copy.license)
+        minpom.copyInto(copy.minpom)
+        publishing.copyInto(copy.publishing)
+        source.copyInto(copy.source)
+
+        copy
     }
 
-    static boolean apidocs(ProjectConfigurationExtension child, ProjectConfigurationExtension parent) {
-        child.apidocsSet ? child.apidocs : parent.apidocs
+    ProjectConfigurationExtension merge(ProjectConfigurationExtension other) {
+        ProjectConfigurationExtension merged = copyOf()
+        merged.setRelease((boolean) (releaseSet ? release : other.release))
+        Information.merge(merged.info, other.info)
+        Apidoc.merge(merged.apidoc, other.apidoc)
+        Bintray.merge(merged.bintray, other.bintray)
+        Groovydoc.merge(merged.groovydoc, other.groovydoc)
+        Jacoco.merge(merged.jacoco, other.jacoco)
+        Javadoc.merge(merged.javadoc, other.javadoc)
+        License.merge(merged.license, other.license)
+        Minpom.merge(merged.minpom, other.minpom)
+        Publishing.merge(merged.publishing, other.publishing)
+        Source.merge(merged.source, other.source)
+
+        merged
     }
 
-    static boolean minpom(ProjectConfigurationExtension child, ProjectConfigurationExtension parent) {
-        child.minpomSet ? child.minpom : parent.minpom
-    }
+    List<String> validate() {
+        List<String> errors = []
 
-    static boolean release(ProjectConfigurationExtension child, ProjectConfigurationExtension parent) {
-        child.releaseSet ? child.release : parent.release
+        errors.addAll(info.validate())
+        errors.addAll(bintray.validate(info))
+        errors.addAll(license.validate(info))
+        errors.addAll(publishing.validate(info))
+
+        errors
     }
 }

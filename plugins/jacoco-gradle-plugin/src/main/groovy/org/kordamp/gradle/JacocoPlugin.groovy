@@ -24,7 +24,6 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.tasks.JacocoMerge
 import org.gradle.testing.jacoco.tasks.JacocoReport
-import org.kordamp.gradle.model.Information
 
 import static org.kordamp.gradle.BasePlugin.isRootProject
 
@@ -68,15 +67,15 @@ class JacocoPlugin implements Plugin<Project> {
         project.plugins.apply(org.gradle.testing.jacoco.plugins.JacocoPlugin)
 
         project.afterEvaluate { Project prj ->
-            Information info = project.rootProject.ext.mergedInfo
+            ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
 
             prj.plugins.withType(JavaBasePlugin) {
                 prj.tasks.withType(Test) { Test testTask ->
                     Task reportTask = configureJacocoReportTask(project, testTask)
                     if (reportTask.enabled) {
-                        info.jacoco.testTasks() << testTask
-                        info.jacoco.reportTasks() << reportTask
-                        info.jacoco.projects() << prj
+                        mergedConfiguration.jacoco.testTasks() << testTask
+                        mergedConfiguration.jacoco.reportTasks() << reportTask
+                        mergedConfiguration.jacoco.projects() << prj
                     }
                 }
             }
@@ -93,7 +92,7 @@ class JacocoPlugin implements Plugin<Project> {
     }
 
     private Task configureJacocoReportTask(Project project, Test testTask) {
-        Information info = project.ext.mergedInfo
+        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
         String taskName = resolveJacocoReportTaskName(testTask.name)
 
@@ -120,7 +119,7 @@ class JacocoPlugin implements Plugin<Project> {
         }
 
         jacocoReportTask.configure {
-            enabled = info.jacoco.enabled
+            enabled = mergedConfiguration.jacoco.enabled
             reports {
                 xml.enabled = true
                 csv.enabled = false
@@ -132,33 +131,33 @@ class JacocoPlugin implements Plugin<Project> {
     }
 
     private void applyJacocoMerge(Project project) {
-        Information info = project.ext.mergedInfo
+        ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
 
         Task jacocoRootMerge = project.tasks.create('jacocoRootMerge', JacocoMerge) {
-            enabled = info.jacoco.enabled
+            enabled = mergedConfiguration.jacoco.enabled
             group = 'Reporting'
             description = 'Aggregate Jacoco coverage reports.'
-            dependsOn info.jacoco.testTasks() + info.jacoco.reportTasks()
-            executionData info.jacoco.reportTasks().executionData.files.flatten()
-            destinationFile info.jacoco.mergeExecFile
+            dependsOn mergedConfiguration.jacoco.testTasks() + mergedConfiguration.jacoco.reportTasks()
+            executionData mergedConfiguration.jacoco.reportTasks().executionData.files.flatten()
+            destinationFile mergedConfiguration.jacoco.mergeExecFile
         }
 
         project.tasks.create('jacocoRootReport', JacocoReport) {
             dependsOn jacocoRootMerge
-            enabled = info.jacoco.enabled
+            enabled = mergedConfiguration.jacoco.enabled
             group = 'Reporting'
             description = 'Generate aggregate Jacoco coverage report.'
 
-            additionalSourceDirs = project.files(info.jacoco.projects().sourceSets.main.allSource.srcDirs)
-            sourceDirectories = project.files(info.jacoco.projects().sourceSets.main.allSource.srcDirs)
-            classDirectories = project.files(info.jacoco.projects().sourceSets.main.output)
+            additionalSourceDirs = project.files(mergedConfiguration.jacoco.projects().sourceSets.main.allSource.srcDirs)
+            sourceDirectories = project.files(mergedConfiguration.jacoco.projects().sourceSets.main.allSource.srcDirs)
+            classDirectories = project.files(mergedConfiguration.jacoco.projects().sourceSets.main.output)
             executionData project.files(jacocoRootMerge.destinationFile)
 
             reports {
                 html.enabled = true
                 xml.enabled = true
-                html.destination = info.jacoco.mergeReportHtmlFile
-                xml.destination = info.jacoco.mergeReportXmlFile
+                html.destination = mergedConfiguration.jacoco.mergeReportHtmlFile
+                xml.destination = mergedConfiguration.jacoco.mergeReportXmlFile
             }
         }
     }

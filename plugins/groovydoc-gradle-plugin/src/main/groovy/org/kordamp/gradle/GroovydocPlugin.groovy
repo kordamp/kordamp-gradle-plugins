@@ -29,7 +29,6 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.api.tasks.javadoc.Javadoc
-import org.kordamp.gradle.model.Information
 
 import static org.kordamp.gradle.BasePlugin.isRootProject
 
@@ -86,9 +85,9 @@ class GroovydocPlugin implements Plugin<Project> {
         }
 
         project.afterEvaluate { Project prj ->
-            Information info = prj.ext.mergedInfo
+            ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
-            if (!info.groovydoc.enabled) {
+            if (!mergedConfiguration.groovydoc.enabled) {
                 return
             }
 
@@ -100,15 +99,15 @@ class GroovydocPlugin implements Plugin<Project> {
                         // javadoc.enabled = false
 
                         Task groovydoc = createGroovydocTaskIfNeeded(prj, ss, javadoc)
-                        info.groovydoc.groovydocTasks().put(ss.name, groovydoc)
+                        mergedConfiguration.groovydoc.groovydocTasks().put(ss.name, groovydoc)
 
                         // Jar javadocJar = project.tasks.findByName(JavadocPlugin.resolveJavadocJarTaskName(ss))
                         // javadocJar.enabled = false
 
                         Task groovydocJar = createGroovydocJarTask(prj, ss, groovydoc)
-                        info.groovydoc.groovydocJarTasks().put(ss.name, groovydocJar)
+                        mergedConfiguration.groovydoc.groovydocJarTasks().put(ss.name, groovydocJar)
 
-                        info.groovydoc.projects().put(ss.name, prj)
+                        mergedConfiguration.groovydoc.projects().put(ss.name, prj)
 
                         updatePublications(prj, ss, groovydocJar)
                     }
@@ -116,24 +115,24 @@ class GroovydocPlugin implements Plugin<Project> {
             }
 
             project.tasks.withType(Groovydoc) { task ->
-                info.groovydoc.options.applyTo(task)
-                task.footer = "Copyright &copy; ${info.copyrightYear} ${info.resolveAuthors()}. All rights reserved."
+                mergedConfiguration.groovydoc.options.applyTo(task)
+                task.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.resolveAuthors()}. All rights reserved."
             }
 
             project.tasks.findByName(JavadocPlugin.ALL_JAVADOCS_TASK_NAME)?.enabled = false
             project.tasks.findByName(JavadocPlugin.ALL_JAVADOC_JARS_TASK_NAME)?.enabled = false
 
-            if (info.groovydoc.groovydocTasks()) {
+            if (mergedConfiguration.groovydoc.groovydocTasks()) {
                 project.tasks.create(ALL_GROOVYDOCS_TASK_NAME, DefaultTask) {
-                    dependsOn info.groovydoc.groovydocTasks()
+                    dependsOn mergedConfiguration.groovydoc.groovydocTasks()
                     group JavaBasePlugin.DOCUMENTATION_GROUP
                     description "Triggers all groovydoc tasks for project ${project.name}"
                 }
             }
 
-            if (info.groovydoc.groovydocJarTasks()) {
+            if (mergedConfiguration.groovydoc.groovydocJarTasks()) {
                 project.tasks.create(ALL_GROOVYDOC_JARS_TASK_NAME, DefaultTask) {
-                    dependsOn info.groovydoc.groovydocJarTasks()
+                    dependsOn mergedConfiguration.groovydoc.groovydocJarTasks()
                     group JavaBasePlugin.DOCUMENTATION_GROUP
                     description "Triggers all groovydocJar tasks for project ${project.name}"
                 }

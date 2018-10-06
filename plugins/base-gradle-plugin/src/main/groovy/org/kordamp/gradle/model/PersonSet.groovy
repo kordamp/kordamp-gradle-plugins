@@ -49,16 +49,16 @@ class PersonSet {
         personSet.people.addAll(people.collect { it.copyOf() })
     }
 
-    void merge(PersonSet o1, PersonSet o2) {
+    static void merge(PersonSet o1, PersonSet o2) {
         Map<String, Person> a = o1.people.collectEntries { [(it.name): it] }
         Map<String, Person> b = o2.people.collectEntries { [(it.name): it] }
 
         a.each { k, person ->
-            person.merge(b.remove(k))
+            Person.merge(person, b.remove(k))
         }
         a.putAll(b)
-        people.clear()
-        people.addAll(a.values())
+        o1.people.clear()
+        o1.people.addAll(a.values())
     }
 
     void forEach(Closure action) {

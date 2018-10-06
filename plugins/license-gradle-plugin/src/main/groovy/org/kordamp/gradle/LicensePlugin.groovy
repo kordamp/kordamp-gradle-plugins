@@ -20,7 +20,6 @@ package org.kordamp.gradle
 import nl.javadude.gradle.plugins.license.LicenseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.kordamp.gradle.model.Information
 import org.kordamp.gradle.model.License
 
 import static org.kordamp.gradle.BasePlugin.isRootProject
@@ -67,11 +66,11 @@ class LicensePlugin implements Plugin<Project> {
         }
 
         project.afterEvaluate { Project prj ->
-            Information info = prj.ext.mergedInfo
+            ProjectConfigurationExtension mergedConfiguration = prj.ext.mergedConfiguration
 
-            License lic = info.licenses.licenses[0]
-            if (info.licenses.licenses.size() > 1) {
-                lic = info.licenses.licenses.find { it.primary } ?: info.licenses.licenses[0]
+            License lic = mergedConfiguration.license.allLicenses()[0]
+            if (mergedConfiguration.license.allLicenses().size() > 1) {
+                lic = mergedConfiguration.license.allLicenses().find { it.primary } ?: mergedConfiguration.license.allLicenses()[0]
             }
 
             LicenseExtension licenseExtension = prj.extensions.findByType(LicenseExtension)
@@ -84,9 +83,9 @@ class LicensePlugin implements Plugin<Project> {
             }
             licenseExtension.ext.project = prj.name
             licenseExtension.ext {
-                projectName   = info.name
-                copyrightYear = info.copyrightYear
-                author        = info.resolveAuthors().join(', ')
+                projectName   = mergedConfiguration.info.name
+                copyrightYear = mergedConfiguration.info.copyrightYear
+                author        = mergedConfiguration.info.resolveAuthors().join(', ')
                 license       = lic.id?.spdx()
             }
             licenseExtension.exclude '**/*.png'

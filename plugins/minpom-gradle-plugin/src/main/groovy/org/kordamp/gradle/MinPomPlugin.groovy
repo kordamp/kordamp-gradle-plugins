@@ -67,10 +67,9 @@ class MinPomPlugin implements Plugin<Project> {
         BasePlugin.applyIfMissing(project)
 
         project.afterEvaluate { Project prj ->
-            ProjectConfigurationExtension extension = prj.extensions.findByType(ProjectConfigurationExtension)
-            ProjectConfigurationExtension rootExtension = prj.rootProject.extensions.findByType(ProjectConfigurationExtension)
+            ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
-            if (!ProjectConfigurationExtension.minpom(extension, rootExtension)) {
+            if (!mergedConfiguration.minpom.enabled) {
                 return
             }
 

@@ -33,8 +33,8 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(includes = ['specification', 'implementation'])
-@ToString(excludes = ['specification', 'implementation'], includeNames = true)
+@EqualsAndHashCode(includes = ['project', 'specification', 'implementation'])
+@ToString(excludes = ['project', 'specification', 'implementation'], includeNames = true)
 class Information {
     String name
     String description
@@ -43,15 +43,10 @@ class Information {
     List<String> tags = []
 
     final Project project
-    final LicenseSet licenses = new LicenseSet()
     final PersonSet people = new PersonSet()
     final Organization organization = new Organization()
     final Links links = new Links()
     final CredentialsSet credentials = new CredentialsSet()
-    final Bintray bintray
-    final Jacoco jacoco
-    final Javadoc javadoc
-    final Groovydoc groovydoc
 
     final SpecOrImpl specification = new SpecOrImpl()
     final SpecOrImpl implementation = new SpecOrImpl()
@@ -61,14 +56,15 @@ class Information {
 
     Information(Project project) {
         this.project = project
-        this.bintray = new Bintray(project)
-        this.jacoco = new Jacoco(project)
-        this.javadoc = new Javadoc(project)
-        this.groovydoc = new Groovydoc(project)
     }
 
     Information copyOf() {
         Information copy = new Information(project)
+        copyInto(copy)
+        copy
+    }
+
+    void copyInto(Information copy) {
         copy.name = name
         copy.description = description
         copy.inceptionYear = inceptionYear
@@ -77,38 +73,27 @@ class Information {
         copy.spec = spec.copyOf()
         copy.impl = impl.copyOf()
         organization.copyInto(copy.organization)
-        licenses.copyInto(copy.licenses)
         people.copyInto(copy.people)
         links.copyInto(copy.links)
         credentials.copyInto(copy.credentials)
-        bintray.copyInto(copy.bintray)
-        jacoco.copyInto(copy.jacoco)
-        javadoc.copyInto(copy.javadoc)
-        groovydoc.copyInto(copy.groovydoc)
 
         copy.normalize()
     }
 
-    Information merge(Information other) {
-        Information copy = new Information(project)
-        copy.name = name ?: other.name
-        copy.description = description ?: other.description
-        copy.inceptionYear = inceptionYear ?: other.inceptionYear
-        copy.vendor = vendor ?: other.vendor
-        copy.tags.addAll((tags + other.tags).unique())
-        copy.spec = spec.merge(other.spec)
-        copy.impl = impl.merge(other.impl)
-        copy.organization.merge(organization, other.organization)
-        copy.licenses.merge(licenses, other.licenses)
-        copy.people.merge(people, other.people)
-        copy.links.merge(links, other.links)
-        copy.credentials.merge(credentials, other.credentials)
-        copy.bintray.merge(bintray, other.bintray)
-        copy.jacoco.merge(jacoco, other.jacoco)
-        copy.javadoc.merge(javadoc, other.javadoc)
-        copy.groovydoc.merge(groovydoc, other.groovydoc)
-
-        copy.normalize()
+    static void merge(Information o1, Information o2) {
+        o2.normalize()
+        o1.name = o1.name ?: o2.name
+        o1.description = o1.description ?: o2.description
+        o1.inceptionYear = o1.inceptionYear ?: o2.inceptionYear
+        o1.vendor = o1.vendor ?: o2.vendor
+        o1.tags.addAll((o1.tags + o2.tags).unique())
+        SpecOrImpl.merge(o1.spec, o2.spec)
+        SpecOrImpl.merge(o1.impl, o2.impl)
+        Organization.merge(o1.organization, o2.organization)
+        PersonSet.merge(o1.people, o2.people)
+        Links.merge(o1.links, o2.links)
+        CredentialsSet.merge(o1.credentials, o2.credentials)
+        o1.normalize()
     }
 
     List<String> validate() {
@@ -120,15 +105,8 @@ class Information {
         if (isBlank(vendor)) {
             errors << "[${project.name}] Project vendor is blank".toString()
         }
-        errors.addAll(licenses.validate(project))
-        errors.addAll(links.validate(project))
-        errors.addAll(bintray.validate(project))
 
         errors
-    }
-
-    void licenses(Action<? super LicenseSet> action) {
-        action.execute(licenses)
     }
 
     void people(Action<? super PersonSet> action) {
@@ -137,14 +115,6 @@ class Information {
 
     void organization(Action<? super Organization> action) {
         action.execute(organization)
-    }
-
-    void bintray(Action<? super Bintray> action) {
-        action.execute(bintray)
-    }
-
-    void jacoco(Action<? super Jacoco> action) {
-        action.execute(jacoco)
     }
 
     void links(Action<? super Links> action) {
@@ -163,32 +133,12 @@ class Information {
         action.execute(impl)
     }
 
-    void javadoc(Action<? super Javadoc> action) {
-        action.execute(javadoc)
-    }
-
-    void groovydoc(Action<? super Groovydoc> action) {
-        action.execute(groovydoc)
-    }
-
-    void licenses(@DelegatesTo(LicenseSet) Closure action) {
-        ConfigureUtil.configure(action, licenses)
-    }
-
     void people(@DelegatesTo(PersonSet) Closure action) {
         ConfigureUtil.configure(action, people)
     }
 
     void organization(@DelegatesTo(Organization) Closure action) {
         ConfigureUtil.configure(action, organization)
-    }
-
-    void bintray(@DelegatesTo(Bintray) Closure action) {
-        ConfigureUtil.configure(action, bintray)
-    }
-
-    void jacoco(@DelegatesTo(Jacoco) Closure action) {
-        ConfigureUtil.configure(action, jacoco)
     }
 
     void links(@DelegatesTo(Links) Closure action) {
@@ -205,14 +155,6 @@ class Information {
 
     void implementation(@DelegatesTo(SpecOrImpl) Closure action) {
         ConfigureUtil.configure(action, impl)
-    }
-
-    void javadoc(@DelegatesTo(Javadoc) Closure action) {
-        ConfigureUtil.configure(action, javadoc)
-    }
-
-    void groovydoc(@DelegatesTo(Groovydoc) Closure action) {
-        ConfigureUtil.configure(action, groovydoc)
     }
 
     String getName() {

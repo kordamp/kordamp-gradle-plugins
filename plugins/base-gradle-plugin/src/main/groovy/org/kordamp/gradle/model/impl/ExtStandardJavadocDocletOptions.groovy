@@ -18,7 +18,6 @@
 package org.kordamp.gradle.model.impl
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.external.javadoc.MinimalJavadocOptions
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
@@ -267,28 +266,91 @@ class ExtStandardJavadocDocletOptions extends StandardJavadocDocletOptions {
         docFilesSubDirsSet = true
     }
 
+    private void doSetUse(boolean use) {
+        super.setUse(use)
+    }
+
+    private void doSetVersion(boolean version) {
+        super.setVersion(version)
+    }
+
+    private void doSetAuthor(boolean author) {
+        super.setAuthor(author)
+    }
+
+    private void doSetSplitIndex(boolean splitIndex) {
+        super.setSplitIndex(splitIndex)
+    }
+
+    private void doSetLinkSource(boolean linkSource) {
+        super.setLinkSource(linkSource)
+    }
+
+    private void doSetNoSince(boolean noSince) {
+        super.setNoSince(noSince)
+    }
+
+    private void doSetNoTree(boolean noTree) {
+        super.setNoTree(noTree)
+    }
+
+    private void doSetNoIndex(boolean noIndex) {
+        super.setNoIndex(noIndex)
+    }
+
+    private void doSetNoHelp(boolean noHelp) {
+        super.setNoHelp(noHelp)
+    }
+
+    private void doSetNoNavBar(boolean noNavBar) {
+        super.setNoNavBar(noNavBar)
+    }
+
+    private void doSetSerialWarn(boolean serialWarn) {
+        super.setSerialWarn(serialWarn)
+    }
+
+    private void doSetKeyWords(boolean keyWords) {
+        super.setKeyWords(keyWords)
+    }
+
+    private void doSetNoTimestamp(boolean noTimestamp) {
+        super.setNoTimestamp(noTimestamp)
+    }
+
+    private void doSetNoComment(boolean noComment) {
+        super.setNoComment(noComment)
+    }
+
+    private void doSetBreakIterator(boolean breakIterator) {
+        super.setBreakIterator(breakIterator)
+    }
+
+    private void doSetDocFilesSubDirs(boolean docFilesSubDirs) {
+        super.setDocFilesSubDirs(docFilesSubDirs)
+    }
+
     ExtStandardJavadocDocletOptions copyOf() {
         copyInto(new ExtStandardJavadocDocletOptions())
     }
 
-    @CompileDynamic
     ExtStandardJavadocDocletOptions copyInto(ExtStandardJavadocDocletOptions copy) {
-        copy.@author.setValue(author)
-        copy.@breakIterator.setValue(breakIterator)
-        copy.@docFilesSubDir.setValue(docFilesSubDirs)
-        copy.@keyWords.setValue(keyWords)
-        copy.@linkSource.setValue(linkSource)
-        copy.@noComment.setValue(noComment)
-        copy.@noHelp.setValue(noHelp)
-        copy.@noIndex.setValue(noIndex)
-        copy.@noNavBar.setValue(noNavBar)
-        copy.@noSince.setValue(noSince)
-        copy.@noTimestamp.setValue(noTimestamp)
-        copy.@noTree.setValue(noTree)
-        copy.@serialWarn.setValue(serialWarn)
-        copy.@splitIndex.setValue(splitIndex)
-        copy.@use.setValue(use)
-        copy.@version.setValue(version)
+        copy.doSetAuthor(isAuthor())
+        copy.doSetBreakIterator(isBreakIterator())
+        copy.doSetDocFilesSubDirs(isDocFilesSubDirs())
+        copy.doSetKeyWords(isKeyWords())
+        copy.doSetLinkSource(isLinkSource())
+        copy.doSetNoComment(isNoComment())
+        copy.doSetNoHelp(isNoHelp())
+        copy.doSetNoIndex(isNoIndex())
+        copy.doSetNoNavBar(isNoNavBar())
+        copy.doSetNoSince(isNoSince())
+        copy.doSetNoTimestamp(isNoTimestamp())
+        copy.doSetNoTree(isNoTree())
+        copy.doSetSerialWarn(isSerialWarn())
+        copy.doSetSplitIndex(isSplitIndex())
+        copy.doSetUse(isUse())
+        copy.doSetVersion(isVersion())
 
         copy.@authorSet = authorSet
         copy.@breakIteratorSet = breakIteratorSet
@@ -306,94 +368,92 @@ class ExtStandardJavadocDocletOptions extends StandardJavadocDocletOptions {
         copy.@useSet = useSet
         copy.@versionSet = versionSet
 
-        copy.setBootClasspath(list(bootClasspath))
-        copy.setBottom(bottom)
-        copy.setCharSet(charSet)
-        copy.setClasspath(list(classpath))
-        copy.setDestinationDirectory(destinationDirectory)
-        copy.setDocEncoding(docEncoding)
-        copy.setDoclet(doclet)
-        copy.setDocletpath(list(docletpath))
-        copy.setDocTitle(docTitle)
-        copy.setEncoding(encoding)
-        copy.setExcludeDocFilesSubDir(list(excludeDocFilesSubDir))
-        copy.setExtDirs(list(extDirs))
-        copy.setFooter(footer)
-        copy.setGroups(map(groups))
-        copy.setHeader(header)
-        copy.setHelpFile(helpFile)
+        copy.setBootClasspath(list(getBootClasspath()))
+        copy.setBottom(getBottom())
+        copy.setCharSet(getCharSet())
+        copy.setClasspath(list(getClasspath()))
+        copy.setDestinationDirectory(getDestinationDirectory())
+        copy.setDocEncoding(getDocEncoding())
+        copy.setDoclet(getDoclet())
+        copy.setDocletpath(list(getDocletpath()))
+        copy.setDocTitle(getDocTitle())
+        copy.setEncoding(getEncoding())
+        copy.setExcludeDocFilesSubDir(list(getExcludeDocFilesSubDir()))
+        copy.setExtDirs(list(getExtDirs()))
+        copy.setFooter(getFooter())
+        copy.setGroups(map(getGroups()))
+        copy.setHeader(getHeader())
+        copy.setHelpFile(getHelpFile())
         copy.setJFlags(list(getJFlags()))
-        copy.setLinks(list(links))
-        copy.setLinksOffline(list(linksOffline))
-        copy.setLocale(locale)
-        copy.setMemberLevel(memberLevel)
-        copy.setNoQualifiers(list(noQualifiers))
-        copy.setOptionFiles(list(optionFiles))
-        copy.setOutputLevel(outputLevel)
-        copy.setOverview(overview)
-        copy.setSource(source)
-        copy.setSourceNames(list(sourceNames))
-        copy.setStylesheetFile(stylesheetFile)
-        copy.setTagletPath(list(tagletPath))
-        copy.setTaglets(list(taglets))
-        copy.setTags(list(tags))
-        copy.setWindowTitle(windowTitle)
+        copy.setLinks(list(getLinks()))
+        copy.setLinksOffline(list(getLinksOffline()))
+        copy.setLocale(getLocale())
+        copy.setMemberLevel(getMemberLevel())
+        copy.setNoQualifiers(list(getNoQualifiers()))
+        copy.setOptionFiles(list(getOptionFiles()))
+        copy.setOutputLevel(getOutputLevel())
+        copy.setOverview(getOverview())
+        copy.setSource(getSource())
+        copy.setSourceNames(list(getSourceNames()))
+        copy.setStylesheetFile(getStylesheetFile())
+        copy.setTagletPath(list(getTagletPath()))
+        copy.setTaglets(list(getTaglets()))
+        copy.setTags(list(getTags()))
+        copy.setWindowTitle(getWindowTitle())
 
         copy
     }
 
-    ExtStandardJavadocDocletOptions merge(ExtStandardJavadocDocletOptions o1, ExtStandardJavadocDocletOptions o2) {
-        setAuthor((boolean) (authorSet ? o1?.isAuthor() : o2?.isAuthor()))
-        setBreakIterator((boolean) (breakIteratorSet ? o1?.isBreakIterator() : o2?.isBreakIterator()))
-        setDocFilesSubDirs((boolean) (docFilesSubDirsSet ? o1?.isDocFilesSubDirs() : o2?.isDocFilesSubDirs()))
-        setKeyWords((boolean) (keyWordsSet ? o1?.isKeyWords() : o2?.isKeyWords()))
-        setLinkSource((boolean) (linkSourceSet ? o1?.isLinkSource() : o2?.isLinkSource()))
-        setNoComment((boolean) (noCommentSet ? o1?.isNoComment() : o2?.isNoComment()))
-        setNoHelp((boolean) (noHelpSet ? o1?.isNoHelp() : o2?.isNoHelp()))
-        setNoIndex((boolean) (noIndexSet ? o1?.isNoIndex() : o2?.isNoIndex()))
-        setNoNavBar((boolean) (noNavBarSet ? o1?.isNoNavBar() : o2?.isNoNavBar()))
-        setNoSince((boolean) (noSinceSet ? o1?.isNoSince() : o2?.isNoSince()))
-        setNoTimestamp((boolean) (noTimestampSet ? o1?.isNoTimestamp() : o2?.isNoTimestamp()))
-        setNoTree((boolean) (noTreeSet ? o1?.isNoTree() : o2?.isNoTree()))
-        setSerialWarn((boolean) (serialWarnSet ? o1?.isSerialWarn() : o2?.isSerialWarn()))
-        setSplitIndex((boolean) (splitIndexSet ? o1?.isSplitIndex() : o2?.isSplitIndex()))
-        setUse((boolean) (useSet ? o1?.isUse() : o2?.isUse()))
-        setVersion((boolean) (versionSet ? o1?.isVersion() : o2?.isVersion()))
+    static void merge(ExtStandardJavadocDocletOptions o1, ExtStandardJavadocDocletOptions o2) {
+        o1.setAuthor((boolean) (o1.authorSet ? o1.isAuthor() : o2.isAuthor()))
+        o1.setBreakIterator((boolean) (o1.breakIteratorSet ? o1.isBreakIterator() : o2.isBreakIterator()))
+        o1.setDocFilesSubDirs((boolean) (o1.docFilesSubDirsSet ? o1.isDocFilesSubDirs() : o2.isDocFilesSubDirs()))
+        o1.setKeyWords((boolean) (o1.keyWordsSet ? o1.isKeyWords() : o2.isKeyWords()))
+        o1.setLinkSource((boolean) (o1.linkSourceSet ? o1.isLinkSource() : o2.isLinkSource()))
+        o1.setNoComment((boolean) (o1.noCommentSet ? o1.isNoComment() : o2.isNoComment()))
+        o1.setNoHelp((boolean) (o1.noHelpSet ? o1.isNoHelp() : o2.isNoHelp()))
+        o1.setNoIndex((boolean) (o1.noIndexSet ? o1.isNoIndex() : o2.isNoIndex()))
+        o1.setNoNavBar((boolean) (o1.noNavBarSet ? o1.isNoNavBar() : o2.isNoNavBar()))
+        o1.setNoSince((boolean) (o1.noSinceSet ? o1.isNoSince() : o2.isNoSince()))
+        o1.setNoTimestamp((boolean) (o1.noTimestampSet ? o1.isNoTimestamp() : o2.isNoTimestamp()))
+        o1.setNoTree((boolean) (o1.noTreeSet ? o1.isNoTree() : o2.isNoTree()))
+        o1.setSerialWarn((boolean) (o1.serialWarnSet ? o1.isSerialWarn() : o2.isSerialWarn()))
+        o1.setSplitIndex((boolean) (o1.splitIndexSet ? o1.isSplitIndex() : o2.isSplitIndex()))
+        o1.setUse((boolean) (o1.useSet ? o1.isUse() : o2.isUse()))
+        o1.setVersion((boolean) (o1.versionSet ? o1.isVersion() : o2.isVersion()))
 
-        setBootClasspath(list(o1?.bootClasspath ?: o2?.bootClasspath))
-        setBottom(o1?.getBottom() ?: o2?.getBottom())
-        setCharSet(o1?.getCharSet() ?: o2?.getCharSet())
-        setClasspath(list(o1?.classpath ?: o2?.classpath))
-        setDestinationDirectory(o1?.destinationDirectory ?: o2?.destinationDirectory)
-        setDocEncoding(o1?.getDocEncoding() ?: o2?.getDocEncoding())
-        setDoclet(o1?.doclet ?: o2?.doclet)
-        setDocletpath(list(o1?.docletpath ?: o2?.docletpath))
-        setDocTitle(o1?.getDocTitle() ?: o2?.getDocTitle())
-        setEncoding(o1?.encoding ?: o2?.encoding)
-        setExcludeDocFilesSubDir(list(o1?.getExcludeDocFilesSubDir() ?: o2?.getExcludeDocFilesSubDir()))
-        setExtDirs(list(o1?.extDirs ?: o2?.extDirs))
-        setFooter(o1?.getFooter() ?: o2?.getFooter())
-        setGroups(map(o1?.getGroups() ?: o2?.getGroups()))
-        setHeader(o1?.header ?: o2?.header)
-        setHelpFile(o1?.getHelpFile() ?: o2?.getHelpFile())
-        setJFlags(list(o1?.getJFlags() ?: o2?.getJFlags()))
-        setLinks(list(o1?.getLinks() ?: o2?.getLinks()))
-        setLinksOffline(list(o1?.getLinksOffline() ?: o2?.getLinksOffline()))
-        setLocale(o1?.locale ?: o2?.locale)
-        setMemberLevel(o1?.getMemberLevel() ?: o2?.getMemberLevel())
-        setNoQualifiers(list(o1?.getNoQualifiers() ?: o2?.getNoQualifiers()))
-        setOptionFiles(list(o1?.getOptionFiles() ?: o2?.getOptionFiles()))
-        setOutputLevel(o1?.getOutputLevel() ?: o2?.getOutputLevel())
-        setOverview(o1?.getOverview() ?: o2?.getOverview())
-        setSource(o1?.getSource() ?: o2?.getSource())
-        setSourceNames(list(o1?.getSourceNames() ?: o2?.getSourceNames()))
-        setStylesheetFile(o1?.getStylesheetFile() ?: o2?.getStylesheetFile())
-        setTagletPath(list(o1?.getTagletPath() ?: o2?.getTagletPath()))
-        setTaglets(list(o1?.getTaglets() ?: o2?.getTaglets()))
-        setTags(list(o1?.getTags() ?: o2?.getTags()))
-        setWindowTitle(o1?.getWindowTitle() ?: o2?.getWindowTitle())
-
-        this
+        o1.setBootClasspath(list(o1.getBootClasspath() ?: o2.getBootClasspath()))
+        o1.setBottom(o1.getBottom() ?: o2.getBottom())
+        o1.setCharSet(o1.getCharSet() ?: o2.getCharSet())
+        o1.setClasspath(list(o1.getClasspath() ?: o2.getClasspath()))
+        o1.setDestinationDirectory(o1.getDestinationDirectory() ?: o2.getDestinationDirectory())
+        o1.setDocEncoding(o1.getDocEncoding() ?: o2.getDocEncoding())
+        o1.setDoclet(o1.getDoclet() ?: o2.getDoclet())
+        o1.setDocletpath(list(o1.getDocletpath() ?: o2.getDocletpath()))
+        o1.setDocTitle(o1.getDocTitle() ?: o2.getDocTitle())
+        o1.setEncoding(o1.getEncoding() ?: o2.getEncoding())
+        o1.setExcludeDocFilesSubDir(list(o1.getExcludeDocFilesSubDir() ?: o2.getExcludeDocFilesSubDir()))
+        o1.setExtDirs(list(o1.getExtDirs() ?: o2.getExtDirs()))
+        o1.setFooter(o1.getFooter() ?: o2.getFooter())
+        o1.setGroups(map(o1.getGroups() ?: o2.getGroups()))
+        o1.setHeader(o1.getHeader() ?: o2.getHeader())
+        o1.setHelpFile(o1.getHelpFile() ?: o2.getHelpFile())
+        o1.setJFlags(list(o1.getJFlags() ?: o2.getJFlags()))
+        o1.setLinks(list(o1.getLinks() ?: o2.getLinks()))
+        o1.setLinksOffline(list(o1.getLinksOffline() ?: o2.getLinksOffline()))
+        o1.setLocale(o1.getLocale() ?: o2.getLocale())
+        o1.setMemberLevel(o1.getMemberLevel() ?: o2.getMemberLevel())
+        o1.setNoQualifiers(list(o1.getNoQualifiers() ?: o2.getNoQualifiers()))
+        o1.setOptionFiles(list(o1.getOptionFiles() ?: o2.getOptionFiles()))
+        o1.setOutputLevel(o1.getOutputLevel() ?: o2.getOutputLevel())
+        o1.setOverview(o1.getOverview() ?: o2.getOverview())
+        o1.setSource(o1.getSource() ?: o2.getSource())
+        o1.setSourceNames(list(o1.getSourceNames() ?: o2.getSourceNames()))
+        o1.setStylesheetFile(o1.getStylesheetFile() ?: o2.getStylesheetFile())
+        o1.setTagletPath(list(o1.getTagletPath() ?: o2.getTagletPath()))
+        o1.setTaglets(list(o1.getTaglets() ?: o2.getTaglets()))
+        o1.setTags(list(o1.getTags() ?: o2.getTags()))
+        o1.setWindowTitle(o1.getWindowTitle() ?: o2.getWindowTitle())
     }
 
 

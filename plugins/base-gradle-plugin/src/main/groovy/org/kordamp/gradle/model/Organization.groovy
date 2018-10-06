@@ -45,9 +45,9 @@ class Organization {
         copy.url = url
     }
 
-    void merge(Organization o1, Organization o2) {
-        name = o1?.name ?: o2?.name
-        url = o1?.url ?: o2?.url
+    static void merge(Organization o1, Organization o2) {
+        o1.name = o1.name ?: o2?.name
+        o1.url = o1.url ?: o2?.url
     }
 
     boolean isEmpty() {

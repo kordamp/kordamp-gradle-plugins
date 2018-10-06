@@ -15,14 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.model
+package org.kordamp.gradle.plugins
 
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.gradle.api.Project
-import org.gradle.api.Task
+import org.gradle.api.tasks.testing.Test
+import org.gradle.testing.jacoco.tasks.JacocoReport
 
 /**
  * @author Andres Almiray
@@ -30,17 +31,17 @@ import org.gradle.api.Task
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['projects', 'testTasks', 'reportTasks'])
-@ToString(includeNames = true, excludes = ['projects', 'testTasks', 'reportTasks'])
+@EqualsAndHashCode(excludes = ['project', 'projects', 'testTasks', 'reportTasks'])
+@ToString(includeNames = true, excludes = ['project', 'projects', 'testTasks', 'reportTasks'])
 class Jacoco {
     boolean enabled = true
     File mergeExecFile
     File mergeReportHtmlFile
     File mergeReportXmlFile
 
-    private final List<Project> projects = []
-    private final List<Task> testTasks = []
-    private final List<Task> reportTasks = []
+    private final Set<Project> projects = new LinkedHashSet<>()
+    private final Set<Test> testTasks = new LinkedHashSet<>()
+    private final Set<JacocoReport> reportTasks = new LinkedHashSet<>()
 
     private boolean enabledSet
 
@@ -68,22 +69,23 @@ class Jacoco {
         copy.mergeReportXmlFile = mergeReportXmlFile
     }
 
-    void merge(Jacoco o1, Jacoco o2) {
-        setEnabled(o1?.enabledSet ? o1.enabled : o2?.enabled)
-        mergeExecFile = o1?.mergeExecFile ?: o2?.mergeExecFile
-        mergeReportHtmlFile = o1?.mergeReportHtmlFile ?: o2?.mergeReportHtmlFile
-        mergeReportXmlFile = o1?.mergeReportXmlFile ?: o2?.mergeReportXmlFile
+    static void merge(Jacoco o1, Jacoco o2) {
+        o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
+        o1.mergeExecFile = o1.mergeExecFile ?: o2.mergeExecFile
+        o1.mergeReportHtmlFile = o1.mergeReportHtmlFile ?: o2.mergeReportHtmlFile
+        o1.mergeReportXmlFile = o1.mergeReportXmlFile ?: o2.mergeReportXmlFile
+        o1.projects().addAll(o2.projects())
     }
 
-    List<Project> projects() {
+    Set<Project> projects() {
         projects
     }
 
-    List<Task> testTasks() {
+    Set<Test> testTasks() {
         testTasks
     }
 
-    List<Task> reportTasks() {
+    Set<JacocoReport> reportTasks() {
         reportTasks
     }
 }

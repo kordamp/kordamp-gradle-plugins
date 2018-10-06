@@ -416,7 +416,7 @@ enum LicenseId {
     private String url
 
     LicenseId(String spdx, String description) {
-        this(spdx, null, description)
+        this(spdx, '', description)
     }
 
     LicenseId(String spdx, String bintray, String description) {
@@ -424,6 +424,18 @@ enum LicenseId {
         this.bintray = bintray
         this.description = description
         this.url = 'https://spdx.org/licenses/' + spdx + '.html'
+    }
+
+    static LicenseId findByLiteral(String id) {
+        try {
+            return valueOf(id.toUpperCase())
+        } catch (Exception ignored) {
+            LicenseId license = values().find { LicenseId e -> e.spdx() == id || e.bintray() == id }
+            if (license) {
+                return license
+            }
+        }
+        throw new IllegalStateException("Invalid license id '$id'")
     }
 
     String spdx() { spdx }

@@ -79,10 +79,9 @@ class SourceJarPlugin implements Plugin<Project> {
         }
 
         project.afterEvaluate { Project prj ->
-            ProjectConfigurationExtension extension = prj.extensions.findByType(ProjectConfigurationExtension)
-            ProjectConfigurationExtension rootExtension = prj.rootProject.extensions.findByType(ProjectConfigurationExtension)
+            ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
-            if (!ProjectConfigurationExtension.sources(extension, rootExtension)) {
+            if (!mergedConfiguration.source.enabled) {
                 return
             }
 

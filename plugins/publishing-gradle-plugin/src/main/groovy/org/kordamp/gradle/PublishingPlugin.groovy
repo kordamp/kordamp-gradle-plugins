@@ -23,7 +23,6 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.SourceSet
-import org.kordamp.gradle.model.Information
 
 import static org.kordamp.gradle.BasePlugin.isRootProject
 
@@ -87,7 +86,11 @@ class PublishingPlugin implements Plugin<Project> {
     }
 
     private void updatePublications(Project project, SourceSet sourceSet) {
-        Information info = project.ext.mergedInfo
+        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+
+        if (!mergedConfiguration.publishing.enabled) {
+            return
+        }
 
         project.publishing {
             publications {
@@ -97,34 +100,34 @@ class PublishingPlugin implements Plugin<Project> {
                     version project.version
 
                     pom {
-                        name = info.name
-                        description = info.description
-                        url = info.url
-                        inceptionYear = info.inceptionYear
+                        name = mergedConfiguration.info.name
+                        description = mergedConfiguration.info.description
+                        url = mergedConfiguration.info.url
+                        inceptionYear = mergedConfiguration.info.inceptionYear
                         licenses {
-                            info.licenses.forEach { lic ->
+                            mergedConfiguration.license.licenses.forEach { lic ->
                                 license {
                                     name = lic.name
-                                    if (lic.url) url = lic.url
+                                    url = lic.url
                                     distribution = lic.distribution
                                     if (lic.comments) comments = lic.comments
                                 }
                             }
                         }
-                        if(info.links.scm) {
+                        if (mergedConfiguration.info.links.scm) {
                             scm {
-                                url = info.links.scm
+                                url = mergedConfiguration.info.links.scm
                             }
                         }
-                        if (!info.organization.isEmpty()) {
+                        if (!mergedConfiguration.info.organization.isEmpty()) {
                             organization {
-                                name = info.organization.name
-                                url = info.organization.url
+                                name = mergedConfiguration.info.organization.name
+                                url = mergedConfiguration.info.organization.url
                             }
                         }
                         developers {
-                            info.people.forEach { person ->
-                                if('developer' in person.roles*.toLowerCase()) {
+                            mergedConfiguration.info.people.forEach { person ->
+                                if ('developer' in person.roles*.toLowerCase()) {
                                     developer {
                                         if (person.id) id = person.id
                                         if (person.name) name = person.name
@@ -138,8 +141,8 @@ class PublishingPlugin implements Plugin<Project> {
                             }
                         }
                         contributors {
-                            info.people.forEach { person ->
-                                if('contributor' in person.roles*.toLowerCase()) {
+                            mergedConfiguration.info.people.forEach { person ->
+                                if ('contributor' in person.roles*.toLowerCase()) {
                                     contributor {
                                         if (person.name) name = person.name
                                         if (person.url) url = person.url

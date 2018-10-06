@@ -61,9 +61,12 @@ class CredentialsSet {
         credentials.each { k, v -> credentialsSet.credentials.put(k, v.copyOf()) }
     }
 
-    void merge(CredentialsSet o1, CredentialsSet o2) {
-        getGithub()?.merge(o1.getGithub(), o2.getGithub())
-        getSonatype()?.merge(o1.getSonatype(), o2.getSonatype())
+    static void merge(CredentialsSet o1, CredentialsSet o2) {
+        Credentials github = Credentials.merge(o1?.getGithub(), o2?.getGithub())
+        Credentials sonatype = Credentials.merge(o1?.getSonatype(), o2?.getSonatype())
+
+        if (github) o1.credentials.put('github', github)
+        if (sonatype) o1.credentials.put('sonatype', sonatype)
     }
 
     boolean isEmpty() {

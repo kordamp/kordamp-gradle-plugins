@@ -36,6 +36,18 @@ class License {
     String comments
     boolean primary
 
+    void setId(LicenseId id) {
+        this.id = id
+    }
+
+    String getUrl() {
+        id?.url() ?: url
+    }
+
+    void setId(CharSequence id) {
+        this.id = LicenseId.findByLiteral(id.toString().trim())
+    }
+
     License copyOf() {
         License copy = new License()
         copy.id = id
@@ -47,12 +59,12 @@ class License {
         copy
     }
 
-    void merge(License other) {
-        id = id ?: other.id
-        name = name ?: other?.name
-        url = url ?: other?.url
-        distribution = distribution ?: other?.distribution
-        comments = comments ?: other?.comments
-        primary = primary ?: other?. primary
+    static void merge(License o1, License o2) {
+        o1.id = o1.id ?: o2.id
+        o1.name = o1.name ?: o2?.name
+        o1.url = o1.url ?: o2?.url
+        o1.distribution = o1.distribution ?: o2?.distribution
+        o1.comments = o1.comments ?: o2?.comments
+        o1.primary = o1.primary ?: o2?.primary
     }
 }

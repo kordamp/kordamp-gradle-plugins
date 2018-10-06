@@ -51,16 +51,16 @@ class LicenseSet {
         licenseSet.licenses.addAll(licenses.collect { it.copyOf() })
     }
 
-    void merge(LicenseSet o1, LicenseSet o2) {
+    static void merge(LicenseSet o1, LicenseSet o2) {
         Map<String, License> a = o1.licenses.collectEntries { [(it.name): it] }
         Map<String, License> b = o2.licenses.collectEntries { [(it.name): it] }
 
         a.each { k, license ->
-            license.merge(b.remove(k))
+            License.merge(license, b.remove(k))
         }
         a.putAll(b)
-        licenses.clear()
-        licenses.addAll(a.values())
+        o1.licenses.clear()
+        o1.licenses.addAll(a.values())
     }
 
     void forEach(Closure action) {

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.model
+package org.kordamp.gradle.plugins
 
 import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
@@ -24,7 +24,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.Task
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.model.impl.ExtStandardJavadocDocletOptions
 
@@ -34,8 +34,8 @@ import org.kordamp.gradle.model.impl.ExtStandardJavadocDocletOptions
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['projects', 'javadocTasks', 'javadocJarTasks'])
-@ToString(includeNames = true, excludes = ['projects', 'javadocTasks', 'javadocJarTasks'])
+@EqualsAndHashCode(excludes = ['project', 'projects', 'javadocTasks', 'javadocJarTasks'])
+@ToString(includeNames = true, excludes = ['project', 'projects', 'javadocTasks', 'javadocJarTasks'])
 class Javadoc {
     boolean enabled = true
     Set<String> excludes = new LinkedHashSet<>()
@@ -44,21 +44,24 @@ class Javadoc {
     final ExtStandardJavadocDocletOptions options = new ExtStandardJavadocDocletOptions()
 
     private final Map<String, Project> projects = [:]
-    private final Map<String, Task> javadocTasks = [:]
-    private final Map<String, Task> javadocJarTasks = [:]
+    private final Map<String, org.gradle.api.tasks.javadoc.Javadoc> javadocTasks = [:]
+    private final Map<String, Jar> javadocJarTasks = [:]
 
     private boolean enabledSet
 
+    private final Project project
+
     Javadoc(Project project) {
-        options.use = true
-        options.splitIndex = true
-        options.encoding = 'UTF-8'
-        options.author = true
-        options.version = true
+        this.project = project
+        options.use         = true
+        options.splitIndex  = true
+        options.encoding    = 'UTF-8'
+        options.author      = true
+        options.version     = true
         options.windowTitle = "${project.name} ${project.version}"
-        options.docTitle = "${project.name} ${project.version}"
-        options.header = "${project.name} ${project.version}"
-        options.links 'https://docs.oracle.com/javase/8/docs/java/'
+        options.docTitle    = "${project.name} ${project.version}"
+        options.header      = "${project.name} ${project.version}"
+        options.links 'http://docs.oracle.com/javase/8/docs/api/'
     }
 
     void setEnabled(boolean enabled) {
@@ -88,23 +91,26 @@ class Javadoc {
     }
 
     @CompileDynamic
-    void merge(Javadoc o1, Javadoc o2) {
-        setEnabled(o1?.enabledSet ? o1.enabled : o2?.enabled)
-        excludes.addAll(((o1?.excludes ?: []) + (o2?.excludes ?: [])).unique())
-        includes.addAll(((o1?.includes ?: []) + (o2?.includes ?: [])).unique())
-        title = o1?.title ?: o2?.title
-        options.merge(o1?.options, o2?.options)
+    static void merge(Javadoc o1, Javadoc o2) {
+        o1.setEnabled((boolean)(o1.enabledSet ? o1.enabled : o2.enabled))
+        o1.excludes.addAll(((o1.excludes ?: []) + (o2.excludes ?: [])).unique())
+        o1.includes.addAll(((o1.includes ?: []) + (o2.includes ?: [])).unique())
+        o1.title = o1.title ?: o2.title
+        ExtStandardJavadocDocletOptions.merge(o1.options, o2.options)
+        o1.projects().putAll(o2.projects())
+        o1.javadocTasks().putAll(o2.javadocTasks())
+        o1.javadocJarTasks().putAll(o2.javadocJarTasks())
     }
 
     Map<String, Project> projects() {
         projects
     }
 
-    Map<String, Task> javadocTasks() {
+    Map<String, org.gradle.api.tasks.javadoc.Javadoc> javadocTasks() {
         javadocTasks
     }
 
-    Map<String, Task> javadocJarTasks() {
+    Map<String, Jar> javadocJarTasks() {
         javadocJarTasks
     }
 }

@@ -85,32 +85,32 @@ class BintrayPlugin implements Plugin<Project> {
     }
 
     private void updatePublications(Project project, SourceSet sourceSet) {
-        Information info = project.ext.mergedInfo
+        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
         project.bintray {
-            user = info.bintray.credentials.username
-            key = info.bintray.credentials.password
+            user = mergedConfiguration.bintray.credentials.username
+            key = mergedConfiguration.bintray.credentials.password
             publications = [sourceSet.name]
             pkg {
-                repo = info.bintray.repo
-                userOrg = info.bintray.userOrg
-                name = info.bintray.name
-                desc = info.description
-                licenses = info.licenses.resolveBintrayLicenseIds()
-                labels = info.tags
-                websiteUrl = info.url
-                issueTrackerUrl = info.links.issueTracker
-                vcsUrl = info.links.scm
+                repo = mergedConfiguration.bintray.repo
+                userOrg = mergedConfiguration.bintray.userOrg
+                name = mergedConfiguration.bintray.name
+                desc = mergedConfiguration.info.description
+                licenses = mergedConfiguration.license.resolveBintrayLicenseIds()
+                labels = mergedConfiguration.info.tags
+                websiteUrl = mergedConfiguration.info.url
+                issueTrackerUrl = mergedConfiguration.info.links.issueTracker
+                vcsUrl = mergedConfiguration.info.links.scm
                 publicDownloadNumbers = true
-                githubRepo = info.bintray.githubRepo
+                githubRepo = mergedConfiguration.bintray.githubRepo
                 version {
                     name = project.version
-                    vcsTag = "${info.bintray.name}-${project.version}"
-                    if (info.credentials.sonatype)
+                    vcsTag = "${mergedConfiguration.bintray.name}-${project.version}"
+                    if (mergedConfiguration.info.credentials.sonatype)
                         mavenCentralSync {
                             sync = true
-                            user = info.credentials.sonatype.username
-                            password = info.credentials.sonatype.password
+                            user = mergedConfiguration.info.credentials.sonatype.username
+                            password = mergedConfiguration.info.credentials.sonatype.password
                         }
                 }
             }

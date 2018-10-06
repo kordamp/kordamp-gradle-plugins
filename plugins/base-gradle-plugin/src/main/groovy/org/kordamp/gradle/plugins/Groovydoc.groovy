@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.model
+package org.kordamp.gradle.plugins
 
 import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
@@ -24,7 +24,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.Task
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.model.impl.GroovydocOptions
 
@@ -34,8 +34,8 @@ import org.kordamp.gradle.model.impl.GroovydocOptions
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['projects', 'groovydocTasks', 'groovydocJarTasks'])
-@ToString(includeNames = true, excludes = ['projects', 'groovydocTasks', 'groovydocJarTasks'])
+@EqualsAndHashCode(excludes = ['project', 'projects', 'groovydocTasks', 'groovydocJarTasks'])
+@ToString(includeNames = true, excludes = ['project', 'projects', 'groovydocTasks', 'groovydocJarTasks'])
 class Groovydoc {
     boolean enabled = true
     Set<String> excludes = new LinkedHashSet<>()
@@ -43,18 +43,22 @@ class Groovydoc {
     final GroovydocOptions options = new GroovydocOptions()
 
     private final Map<String, Project> projects = [:]
-    private final Map<String, Task> groovydocTasks = [:]
-    private final Map<String, Task> groovydocJarTasks = [:]
+    private final Map<String, org.gradle.api.tasks.javadoc.Groovydoc> groovydocTasks = [:]
+    private final Map<String, Jar> groovydocJarTasks = [:]
 
     private boolean enabledSet
 
+    private final Project project
+
     Groovydoc(Project project) {
+        this.project = project
         options.use            = true
         options.windowTitle    = "${project.name} ${project.version}"
         options.docTitle       = "${project.name} ${project.version}"
         options.header         = "${project.name} ${project.version}"
         options.includePrivate = false
         options.link 'http://docs.oracle.com/javase/8/docs/api/', 'java.', 'org.xml.', 'javax.', 'org.w3c.'
+        options.link 'http://docs.groovy-lang.org/2.5.2/html/api/', 'groovy.', 'org.codehaus.groovy.', 'org.apache.groovy.'
     }
 
     void setEnabled(boolean enabled) {
@@ -83,22 +87,25 @@ class Groovydoc {
     }
 
     @CompileDynamic
-    void merge(Groovydoc o1, Groovydoc o2) {
-        setEnabled(o1?.enabledSet ? o1.enabled : o2?.enabled)
-        excludes.addAll(((o1?.excludes ?: []) + (o2?.excludes ?: [])).unique())
-        includes.addAll(((o1?.includes ?: []) + (o2?.includes ?: [])).unique())
-        options.merge(o1?.options, o2?.options)
+    static void merge(Groovydoc o1, Groovydoc o2) {
+        o1.setEnabled((boolean)(o1.enabledSet ? o1.enabled : o2.enabled))
+        o1.excludes.addAll(((o1.excludes ?: []) + (o2?.excludes ?: [])).unique())
+        o1.includes.addAll(((o1.includes ?: []) + (o2?.includes ?: [])).unique())
+        GroovydocOptions.merge(o1.options, o2.options)
+        o1.projects().putAll(o2.projects())
+        o1.groovydocTasks().putAll(o2.groovydocTasks())
+        o1.groovydocJarTasks().putAll(o2.groovydocJarTasks())
     }
 
     Map<String, Project> projects() {
         projects
     }
 
-    Map<String, Task> groovydocTasks() {
+    Map<String, org.gradle.api.tasks.javadoc.Groovydoc> groovydocTasks() {
         groovydocTasks
     }
 
-    Map<String, Task> groovydocJarTasks() {
+    Map<String, Jar> groovydocJarTasks() {
         groovydocJarTasks
     }
 }

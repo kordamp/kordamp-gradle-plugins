@@ -83,9 +83,9 @@ class JavadocPlugin implements Plugin<Project> {
         }
 
         project.afterEvaluate { Project prj ->
-            Information info = prj.ext.mergedInfo
+            ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
-            if (!info.javadoc.enabled) {
+            if (!mergedConfiguration.javadoc.enabled) {
                 return
             }
 
@@ -94,12 +94,12 @@ class JavadocPlugin implements Plugin<Project> {
                     // skip generating a javadoc task for SourceSets that may contain tests
                     if (!ss.name.toLowerCase().contains('test')) {
                         Task javadoc = createJavadocTaskIfNeeded(prj, ss)
-                        info.javadoc.javadocTasks().put(ss.name, javadoc)
+                        mergedConfiguration.javadoc.javadocTasks().put(ss.name, javadoc)
 
                         Task javadocJar = createJavadocJarTask(prj, ss, javadoc)
-                        info.javadoc.javadocJarTasks().put(ss.name, javadocJar)
+                        mergedConfiguration.javadoc.javadocJarTasks().put(ss.name, javadocJar)
 
-                        info.javadoc.projects().put(ss.name, prj)
+                        mergedConfiguration.javadoc.projects().put(ss.name, prj)
 
                         updatePublications(prj, ss, javadocJar)
                     }
@@ -107,25 +107,25 @@ class JavadocPlugin implements Plugin<Project> {
             }
 
             project.tasks.withType(Javadoc) {
-                info.javadoc.options.applyTo(options)
-                options.footer = "Copyright &copy; ${info.copyrightYear} ${info.resolveAuthors()}. All rights reserved."
+                mergedConfiguration.javadoc.options.applyTo(options)
+                options.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.resolveAuthors()}. All rights reserved."
 
                 if (JavaVersion.current().isJava8Compatible()) {
                     options.addStringOption('Xdoclint:none', '-quiet')
                 }
             }
 
-            if (info.javadoc.javadocTasks()) {
+            if (mergedConfiguration.javadoc.javadocTasks()) {
                 project.tasks.create(ALL_JAVADOCS_TASK_NAME, DefaultTask) {
-                    dependsOn info.javadoc.javadocTasks()
+                    dependsOn mergedConfiguration.javadoc.javadocTasks()
                     group JavaBasePlugin.DOCUMENTATION_GROUP
                     description "Triggers all javadoc tasks for project ${project.name}"
                 }
             }
 
-            if (info.javadoc.javadocJarTasks()) {
+            if (mergedConfiguration.javadoc.javadocJarTasks()) {
                 project.tasks.create(ALL_JAVADOC_JARS_TASK_NAME, DefaultTask) {
-                    dependsOn info.javadoc.javadocJarTasks()
+                    dependsOn mergedConfiguration.javadoc.javadocJarTasks()
                     group JavaBasePlugin.DOCUMENTATION_GROUP
                     description "Triggers all javadocJar tasks for project ${project.name}"
                 }
