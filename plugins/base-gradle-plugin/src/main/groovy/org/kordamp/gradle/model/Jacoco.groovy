@@ -30,8 +30,8 @@ import org.gradle.api.Task
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['projects'])
-@ToString(includeNames = true, excludes = ['projects'])
+@EqualsAndHashCode(excludes = ['projects', 'testTasks', 'reportTasks'])
+@ToString(includeNames = true, excludes = ['projects', 'testTasks', 'reportTasks'])
 class Jacoco {
     boolean enabled = true
     File mergeExecFile

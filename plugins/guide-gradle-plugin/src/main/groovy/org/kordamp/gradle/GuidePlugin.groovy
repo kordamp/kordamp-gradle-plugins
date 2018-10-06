@@ -111,12 +111,9 @@ class GuidePlugin implements Plugin<Project> {
             }
         }
 
-        Task aggregateJavadocs = project.rootProject.tasks.findByName(ApidocPlugin.AGGREGATE_JAVADOCS_TASK_NAME)
         guideTask.configure {
-            dependsOn aggregateJavadocs
             dependsOn project.tasks.findByName(AsciidoctorPlugin.ASCIIDOCTOR)
             destinationDir project.file("${project.buildDir}/guide")
-            from(aggregateJavadocs.destinationDir) { into 'api' }
             from("${project.tasks.asciidoctor.outputDir}/html5")
         }
 
@@ -124,8 +121,21 @@ class GuidePlugin implements Plugin<Project> {
         if (!guideZipTask) {
             guideTask = project.tasks.create('guideZip', Zip) {
                 dependsOn guideTask
+                group 'Documentation'
+                description 'An archive of the generated guide.'
                 baseName = project.rootProject.name + '-guide'
                 from guideTask.destinationDir
+            }
+        }
+
+        project.rootProject.tasks.whenTaskAdded { Task task ->
+            if (task.name != ApidocPlugin.AGGREGATE_APIDOCS_TASK_NAME) {
+                return
+            }
+
+            guideTask.configure {
+                dependsOn task
+                from(task.destinationDir) { into 'api' }
             }
         }
     }

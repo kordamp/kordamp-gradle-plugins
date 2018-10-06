@@ -18,6 +18,4 @@
 
 dependencies {
     compile project(':base-gradle-plugin')
-    compile project(':javadoc-gradle-plugin')
-    compile project(':groovydoc-gradle-plugin')
 }

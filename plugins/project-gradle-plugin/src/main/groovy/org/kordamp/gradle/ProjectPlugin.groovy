@@ -56,6 +56,7 @@ class ProjectPlugin implements Plugin<Project> {
         JarPlugin.applyIfMissing(project)
         PublishingPlugin.applyIfMissing(project)
         BintrayPlugin.applyIfMissing(project)
+
         project.plugins.apply(VersionsPlugin)
     }
 }

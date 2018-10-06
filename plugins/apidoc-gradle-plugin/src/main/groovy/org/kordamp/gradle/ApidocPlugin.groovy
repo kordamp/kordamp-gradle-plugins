@@ -17,15 +17,10 @@
  */
 package org.kordamp.gradle
 
-import org.gradle.api.DefaultTask
-import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
 
@@ -40,10 +35,8 @@ import static org.kordamp.gradle.BasePlugin.isRootProject
  * @since 0.1.0
  */
 class ApidocPlugin implements Plugin<Project> {
-    static final String ALL_JAVADOCS_TASK_NAME = 'allJavadocs'
-    static final String ALL_JAVADOC_JARS_TASK_NAME = 'allJavadocJars'
-    static final String AGGREGATE_JAVADOCS_TASK_NAME = 'aggregateJavadocs'
-    static final String AGGREGATE_JAVADOCS_JAR_TASK_NAME = 'aggregateJavadocsJar'
+    static final String AGGREGATE_APIDOCS_TASK_NAME = 'aggregateApidocs'
+    static final String AGGREGATE_APIDOCS_JAR_TASK_NAME = 'aggregateApidocsJar'
 
     private static final String VISITED = ApidocPlugin.class.name.replace('.', '_') + '_VISITED'
 
@@ -53,12 +46,12 @@ class ApidocPlugin implements Plugin<Project> {
         this.project = project
 
         if (isRootProject(project)) {
-            createJavadocJarTaskIfCompatible(project)
+            applyPlugins(project)
             project.childProjects.values().each { prj ->
-                createJavadocJarTaskIfCompatible(prj)
+                applyPlugins(prj)
             }
         } else {
-            createJavadocJarTaskIfCompatible(project)
+            applyPlugins(project)
         }
     }
 
@@ -68,7 +61,7 @@ class ApidocPlugin implements Plugin<Project> {
         }
     }
 
-    private void createJavadocJarTaskIfCompatible(Project project) {
+    private void applyPlugins(Project project) {
         String visitedPropertyName = VISITED + '_' + project.name
         if (project.findProperty(visitedPropertyName)) {
             return
@@ -76,62 +69,14 @@ class ApidocPlugin implements Plugin<Project> {
         project.ext[visitedPropertyName] = true
 
         BasePlugin.applyIfMissing(project)
-
-        project.plugins.withType(JavaBasePlugin) {
-            if (!project.plugins.findPlugin(MavenPublishPlugin)) {
-                project.plugins.apply(MavenPublishPlugin)
-            }
-        }
-
-        List<Task> aggregateTasks = []
-        if (isRootProject(project) && !project.childProjects.isEmpty()) {
-            aggregateTasks = createAggregateJavadocsTask(project)
-        }
+        JavadocPlugin.applyIfMissing(project)
+        // GroovydocPlugin.applyIfMissing(project)
 
         project.afterEvaluate { Project prj ->
-            ProjectConfigurationExtension extension = prj.extensions.findByType(ProjectConfigurationExtension)
             ProjectConfigurationExtension rootExtension = prj.rootProject.extensions.findByType(ProjectConfigurationExtension)
 
-            if (!ProjectConfigurationExtension.apidocs(extension, rootExtension)) {
+            if (!rootExtension.apidocs) {
                 return
-            }
-
-            List<Task> javadocTasks = []
-            List<Task> javadocJarTasks = []
-
-            prj.plugins.withType(JavaBasePlugin) {
-                prj.sourceSets.each { SourceSet ss ->
-                    // skip generating a javadoc task for SourceSets that may contain tests
-                    if (!ss.name.toLowerCase().contains('test')) {
-                        Task javadoc = createJavadocTaskIfNeeded(prj, ss)
-                        javadocTasks << javadoc
-                        Task javadocJar = createJavadocJarTask(prj, ss, javadoc)
-                        javadocJarTasks << javadocJar
-                        updatePublications(prj, ss, javadocJar)
-                    }
-                }
-            }
-
-            if (javadocTasks) {
-                project.tasks.create(ALL_JAVADOCS_TASK_NAME, DefaultTask) {
-                    dependsOn javadocTasks
-                    group JavaBasePlugin.DOCUMENTATION_GROUP
-                    description "Triggers all javadoc tasks for project ${project.name}"
-                }
-            }
-
-            if (javadocJarTasks) {
-                project.tasks.create(ALL_JAVADOC_JARS_TASK_NAME, DefaultTask) {
-                    dependsOn javadocJarTasks
-                    group JavaBasePlugin.DOCUMENTATION_GROUP
-                    description "Triggers all javadocJar tasks for project ${project.name}"
-                }
-            }
-
-            if (JavaVersion.current().isJava8Compatible()) {
-                project.tasks.withType(Javadoc) {
-                    options.addStringOption('Xdoclint:none', '-quiet')
-                }
             }
 
             if (isRootProject(project) && !project.childProjects.isEmpty()) {
@@ -139,7 +84,7 @@ class ApidocPlugin implements Plugin<Project> {
 
                 List<Javadoc> javadocs = []
 
-                project.tasks.withType(Javadoc) { Javadoc javadoc -> if (javadoc.name != AGGREGATE_JAVADOCS_TASK_NAME) javadocs << javadoc }
+                project.tasks.withType(Javadoc) { Javadoc javadoc -> if (javadoc.name != AGGREGATE_APIDOCS_TASK_NAME) javadocs << javadoc }
 
                 project.childProjects.values().each { Project p ->
                     p.tasks.withType(Javadoc) { Javadoc javadoc -> javadocs << javadoc }
@@ -147,7 +92,9 @@ class ApidocPlugin implements Plugin<Project> {
 
                 javadocs = javadocs.unique()
 
-                if(javadocs) {
+                List<Task> aggregateTasks = createAggregateJavadocsTask(project)
+
+                if (javadocs) {
                     aggregateTasks[0].configure {
                         enabled true
                         dependsOn javadocs
@@ -163,89 +110,15 @@ class ApidocPlugin implements Plugin<Project> {
         }
     }
 
-    private Task createJavadocTaskIfNeeded(Project project, SourceSet sourceSet) {
-        String taskName = resolveJavadocTaskName(sourceSet)
-
-        Task javadocTask = project.tasks.findByName(taskName)
-
-        if (!javadocTask) {
-            String classesTaskName = sourceSet.name == 'main' ? 'classes' : sourceSet.name + 'Classes'
-
-            javadocTask = project.tasks.create(taskName, Javadoc) {
-                dependsOn project.tasks.getByName(classesTaskName)
-                group JavaBasePlugin.DOCUMENTATION_GROUP
-                description "Generates Javadoc API documentation [sourceSet ${sourceSet.name}]"
-                source sourceSet.allSource
-                destinationDir project.file("${project.buildDir}/docs/${sourceSet.name}/javadoc")
-            }
-        }
-
-        project.tasks.withType(Javadoc) {
-            options.use = true
-            options.splitIndex = true
-            options.encoding = 'UTF-8'
-            options.author = true
-            options.version = true
-            options.windowTitle = "${project.name} ${project.version}"
-            options.docTitle = "${project.name} ${project.version}"
-            options.links 'https://docs.oracle.com/javase/8/docs/api/'
-        }
-
-        javadocTask
-    }
-
-    static String resolveJavadocTaskName(SourceSet sourceSet) {
-        return sourceSet.name == 'main' ? 'javadoc' : sourceSet.name + 'Javadoc'
-    }
-
-    private Task createJavadocJarTask(Project project, SourceSet sourceSet, Task javadoc) {
-        String taskName = resolveJavadocJarTaskName(sourceSet)
-
-        Task javadocJarTask = project.tasks.findByName(taskName)
-
-        if (!javadocJarTask) {
-            String archiveBaseName = sourceSet.name == 'main' ? project.name : project.name + '-' + sourceSet.name
-
-            javadocJarTask = project.tasks.create(taskName, Jar) {
-                dependsOn javadoc
-                group JavaBasePlugin.DOCUMENTATION_GROUP
-                description "An archive of the API docs [sourceSet ${sourceSet.name}]"
-                baseName = archiveBaseName
-                classifier 'javadoc'
-                from javadoc.destinationDir
-            }
-        }
-
-        javadocJarTask
-    }
-
-    static String resolveJavadocJarTaskName(SourceSet sourceSet) {
-        return sourceSet.name == 'main' ? 'javadocJar' : sourceSet.name + 'JavadocJar'
-    }
-
-    private void updatePublications(Project project, SourceSet sourceSet, Task javadocJar) {
-        project.publishing {
-            publications {
-                "${sourceSet.name}"(MavenPublication) {
-                    artifact javadocJar
-                }
-            }
-        }
-
-        project.artifacts {
-            javadocJar
-        }
-    }
-
     private List<Task> createAggregateJavadocsTask(Project project) {
-        Task aggregateJavadocs = project.tasks.create(AGGREGATE_JAVADOCS_TASK_NAME, Javadoc) {
+        Task aggregateJavadocs = project.tasks.create(AGGREGATE_APIDOCS_TASK_NAME, Javadoc) {
             enabled false
             group JavaBasePlugin.DOCUMENTATION_GROUP
             description 'Aggregates API docs for all projects.'
             destinationDir project.file("${project.buildDir}/docs/javadoc")
         }
 
-        Task aggregateJavadocsJar = project.tasks.create(AGGREGATE_JAVADOCS_JAR_TASK_NAME, Jar) {
+        Task aggregateJavadocsJar = project.tasks.create(AGGREGATE_APIDOCS_JAR_TASK_NAME, Jar) {
             enabled false
             dependsOn aggregateJavadocs
             group JavaBasePlugin.DOCUMENTATION_GROUP

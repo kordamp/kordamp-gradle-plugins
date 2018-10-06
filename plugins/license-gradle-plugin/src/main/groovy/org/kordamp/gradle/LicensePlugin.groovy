@@ -69,13 +69,6 @@ class LicensePlugin implements Plugin<Project> {
         project.afterEvaluate { Project prj ->
             Information info = prj.ext.mergedInfo
 
-            String initialYear = info.inceptionYear
-            String currentYear = currentYear()
-            String year = initialYear
-            if (initialYear != currentYear) {
-                year += '-' + currentYear
-            }
-
             License lic = info.licenses.licenses[0]
             if (info.licenses.licenses.size() > 1) {
                 lic = info.licenses.licenses.find { it.primary } ?: info.licenses.licenses[0]
@@ -92,19 +85,12 @@ class LicensePlugin implements Plugin<Project> {
             licenseExtension.ext.project = prj.name
             licenseExtension.ext {
                 projectName   = info.name
-                copyrightYear = year
+                copyrightYear = info.copyrightYear
                 author        = info.resolveAuthors().join(', ')
                 license       = lic.id?.spdx()
             }
             licenseExtension.exclude '**/*.png'
             licenseExtension.exclude 'META-INF/services/*'
         }
-    }
-
-    static String currentYear() {
-        Date now = new Date()
-        Calendar c = Calendar.getInstance()
-        c.setTime(now)
-        return c.get(Calendar.YEAR).toString()
     }
 }

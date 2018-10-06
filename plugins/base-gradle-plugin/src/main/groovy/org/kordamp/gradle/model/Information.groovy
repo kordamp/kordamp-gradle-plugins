@@ -50,6 +50,8 @@ class Information {
     final CredentialsSet credentials = new CredentialsSet()
     final Bintray bintray
     final Jacoco jacoco
+    final Javadoc javadoc
+    final Groovydoc groovydoc
 
     final SpecOrImpl specification = new SpecOrImpl()
     final SpecOrImpl implementation = new SpecOrImpl()
@@ -61,6 +63,8 @@ class Information {
         this.project = project
         this.bintray = new Bintray(project)
         this.jacoco = new Jacoco(project)
+        this.javadoc = new Javadoc(project)
+        this.groovydoc = new Groovydoc(project)
     }
 
     Information copyOf() {
@@ -79,6 +83,8 @@ class Information {
         credentials.copyInto(copy.credentials)
         bintray.copyInto(copy.bintray)
         jacoco.copyInto(copy.jacoco)
+        javadoc.copyInto(copy.javadoc)
+        groovydoc.copyInto(copy.groovydoc)
 
         copy.normalize()
     }
@@ -99,6 +105,8 @@ class Information {
         copy.credentials.merge(credentials, other.credentials)
         copy.bintray.merge(bintray, other.bintray)
         copy.jacoco.merge(jacoco, other.jacoco)
+        copy.javadoc.merge(javadoc, other.javadoc)
+        copy.groovydoc.merge(groovydoc, other.groovydoc)
 
         copy.normalize()
     }
@@ -155,6 +163,14 @@ class Information {
         action.execute(impl)
     }
 
+    void javadoc(Action<? super Javadoc> action) {
+        action.execute(javadoc)
+    }
+
+    void groovydoc(Action<? super Groovydoc> action) {
+        action.execute(groovydoc)
+    }
+
     void licenses(@DelegatesTo(LicenseSet) Closure action) {
         ConfigureUtil.configure(action, licenses)
     }
@@ -191,6 +207,14 @@ class Information {
         ConfigureUtil.configure(action, impl)
     }
 
+    void javadoc(@DelegatesTo(Javadoc) Closure action) {
+        ConfigureUtil.configure(action, javadoc)
+    }
+
+    void groovydoc(@DelegatesTo(Groovydoc) Closure action) {
+        ConfigureUtil.configure(action, groovydoc)
+    }
+
     String getName() {
         name ?: project.name
     }
@@ -204,13 +228,7 @@ class Information {
     }
 
     String getInceptionYear() {
-        if (!inceptionYear) {
-            Date now = new Date()
-            Calendar c = Calendar.getInstance()
-            c.setTime(now)
-            return c.get(Calendar.YEAR).toString()
-        }
-        inceptionYear
+        inceptionYear ?: currentYear()
     }
 
     Information normalize() {
@@ -241,5 +259,22 @@ class Information {
         }
 
         authors
+    }
+
+    String getCopyrightYear() {
+        String initialYear = getInceptionYear()
+        String currentYear = currentYear()
+        String year = initialYear
+        if (initialYear != currentYear) {
+            year += '-' + currentYear
+        }
+        year
+    }
+
+    static String currentYear() {
+        Date now = new Date()
+        Calendar c = Calendar.getInstance()
+        c.setTime(now)
+        return c.get(Calendar.YEAR).toString()
     }
 }
