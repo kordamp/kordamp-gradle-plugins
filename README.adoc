@@ -61,7 +61,7 @@ other plugins. This extension has the following properties
 | bintray    | Bintray     |               | Configures the `org.kordamp.gradle.bintray` plugin
 | groovydoc  | Groovydoc   |               | Configures the `org.kordamp.gradle.groovydoc` plugin
 | jacoco     | Jacoco      |               | Configures the `org.kordamp.gradle.jacoco` plugin
-| javadoc    | Javadoc     |               | Configures the `org.kordamp.gradle.javadoc` plugin
+| javadoc    | Javadoc     |               | Configures the `org.kordamp.gradle.javadoc` plugin
 | license    | License     |               | Configures the `org.kordamp.gradle.license` plugin
 | minpom     | Minpom      |               | Configures the `org.kordamp.gradle.minpom` plugin
 | publishing | Publishing  |               | Configures the `org.kordamp.gradle.publishing` plugin

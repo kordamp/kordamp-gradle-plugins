@@ -31,30 +31,33 @@ import org.gradle.util.ConfigureUtil
 @Canonical
 @ToString(includeNames = true)
 class CredentialsSet {
+    static final String GITHUB = 'github'
+    static final String SONATYPE = 'sonatype'
+
     final Map<String, Credentials> credentials = new LinkedHashMap<>()
 
     void github(Action<? super Credentials> action) {
-        action.execute(credentials.computeIfAbsent('github', { k -> new Credentials() }))
+        action.execute(credentials.computeIfAbsent(GITHUB, { k -> new Credentials() }))
     }
 
     void sonatype(Action<? super Credentials> action) {
-        action.execute(credentials.computeIfAbsent('sonatype', { k -> new Credentials() }))
+        action.execute(credentials.computeIfAbsent(SONATYPE, { k -> new Credentials() }))
     }
 
     void github(@DelegatesTo(Credentials) Closure action) {
-        ConfigureUtil.configure(action, credentials.computeIfAbsent('github', { k -> new Credentials() }))
+        ConfigureUtil.configure(action, credentials.computeIfAbsent(GITHUB, { k -> new Credentials() }))
     }
 
     void sonatype(@DelegatesTo(Credentials) Closure action) {
-        ConfigureUtil.configure(action, credentials.computeIfAbsent('sonatype', { k -> new Credentials() }))
+        ConfigureUtil.configure(action, credentials.computeIfAbsent(SONATYPE, { k -> new Credentials() }))
     }
 
     Credentials getGithub() {
-        credentials.get('github')
+        credentials.get(GITHUB)
     }
 
     Credentials getSonatype() {
-        credentials.get('sonatype')
+        credentials.get(SONATYPE)
     }
 
     void copyInto(CredentialsSet credentialsSet) {
@@ -65,8 +68,8 @@ class CredentialsSet {
         Credentials github = Credentials.merge(o1?.getGithub(), o2?.getGithub())
         Credentials sonatype = Credentials.merge(o1?.getSonatype(), o2?.getSonatype())
 
-        if (github) o1.credentials.put('github', github)
-        if (sonatype) o1.credentials.put('sonatype', sonatype)
+        if (github) o1.credentials.put(GITHUB, github)
+        if (sonatype) o1.credentials.put(SONATYPE, sonatype)
     }
 
     boolean isEmpty() {
