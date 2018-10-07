@@ -17,15 +17,11 @@
  */
 package org.kordamp.gradle
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.GroovyBasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -33,16 +29,14 @@ import org.gradle.api.tasks.javadoc.Javadoc
 import static org.kordamp.gradle.BasePlugin.isRootProject
 
 /**
- * Configures a {@code groovydocJar} for each {@code SourceSet}.
- * <strong>NOTE:</strong> any sources with the word "test" will be skipped.
- * Applies the {@code maven-publish} plugin if it has not been applied before.
+ * Configures {@code groovydoc} and {@code groovydocJar} tasks.
  *
  * @author Andres Almiray
  * @since 0.4.0
  */
 class GroovydocPlugin implements Plugin<Project> {
-    static final String ALL_GROOVYDOCS_TASK_NAME = 'allGroovydocs'
-    static final String ALL_GROOVYDOC_JARS_TASK_NAME = 'allGroovydocJars'
+    static final String GROOVYDOC_TASK_NAME = 'groovydoc'
+    static final String GROOVYDOC_JAR_TASK_NAME = 'groovydocJar'
 
     private static final String VISITED = GroovydocPlugin.class.name.replace('.', '_') + '_VISITED'
 
@@ -52,12 +46,15 @@ class GroovydocPlugin implements Plugin<Project> {
         this.project = project
 
         if (isRootProject(project)) {
-            createGroovydocJarTaskIfCompatible(project)
-            project.childProjects.values().each { prj ->
-                createGroovydocJarTaskIfCompatible(prj)
+            if (project.childProjects.size()) {
+                project.childProjects.values().each {
+                    configureProject(it)
+                }
+            } else {
+                configureProject(project)
             }
         } else {
-            createGroovydocJarTaskIfCompatible(project)
+            configureProject(project)
         }
     }
 
@@ -67,7 +64,7 @@ class GroovydocPlugin implements Plugin<Project> {
         }
     }
 
-    private void createGroovydocJarTaskIfCompatible(Project project) {
+    private void configureProject(Project project) {
         String visitedPropertyName = VISITED + '_' + project.name
         if (project.findProperty(visitedPropertyName)) {
             return
@@ -78,83 +75,47 @@ class GroovydocPlugin implements Plugin<Project> {
         // apply first then we can be certain javadoc tasks can be located on time
         JavadocPlugin.applyIfMissing(project)
 
-        project.plugins.withType(GroovyBasePlugin) {
-            if (!project.plugins.findPlugin(MavenPublishPlugin)) {
-                project.plugins.apply(MavenPublishPlugin)
-            }
-        }
-
-        project.afterEvaluate { Project prj ->
+        project.afterEvaluate {
             ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
             if (!mergedConfiguration.groovydoc.enabled) {
                 return
             }
 
-            prj.plugins.withType(GroovyBasePlugin) {
-                prj.sourceSets.each { SourceSet ss ->
-                    // skip generating a groovydoc task for SourceSets that may contain tests
-                    if (!ss.name.toLowerCase().contains('test')) {
-                        Javadoc javadoc = project.tasks.findByName(JavadocPlugin.resolveJavadocTaskName(ss))
-                        // javadoc.enabled = false
+            project.plugins.withType(GroovyBasePlugin) {
+                Javadoc javadoc = project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)
+                if (!javadoc) return
 
-                        Task groovydoc = createGroovydocTaskIfNeeded(prj, ss, javadoc)
-                        mergedConfiguration.groovydoc.groovydocTasks().put(ss.name, groovydoc)
+                Task groovydoc = createGroovydocTaskIfNeeded(project, javadoc)
+                if (!groovydoc) return
+                mergedConfiguration.groovydoc.groovydocTasks() << groovydoc
 
-                        // Jar javadocJar = project.tasks.findByName(JavadocPlugin.resolveJavadocJarTaskName(ss))
-                        // javadocJar.enabled = false
+                Task groovydocJar = createGroovydocJarTask(project, groovydoc)
+                mergedConfiguration.groovydoc.groovydocJarTasks() << groovydocJar
 
-                        Task groovydocJar = createGroovydocJarTask(prj, ss, groovydoc)
-                        mergedConfiguration.groovydoc.groovydocJarTasks().put(ss.name, groovydocJar)
-
-                        mergedConfiguration.groovydoc.projects().put(ss.name, prj)
-
-                        updatePublications(prj, ss, groovydocJar)
-                    }
-                }
+                mergedConfiguration.groovydoc.projects() << project
             }
 
             project.tasks.withType(Groovydoc) { task ->
                 mergedConfiguration.groovydoc.applyTo(task)
                 task.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.resolveAuthors().join(', ')}. All rights reserved."
             }
-
-            project.tasks.findByName(JavadocPlugin.ALL_JAVADOCS_TASK_NAME)?.enabled = false
-            project.tasks.findByName(JavadocPlugin.ALL_JAVADOC_JARS_TASK_NAME)?.enabled = false
-
-            if (mergedConfiguration.groovydoc.groovydocTasks()) {
-                project.tasks.create(ALL_GROOVYDOCS_TASK_NAME, DefaultTask) {
-                    dependsOn mergedConfiguration.groovydoc.groovydocTasks()
-                    group JavaBasePlugin.DOCUMENTATION_GROUP
-                    description "Triggers all groovydoc tasks for project ${project.name}"
-                }
-            }
-
-            if (mergedConfiguration.groovydoc.groovydocJarTasks()) {
-                project.tasks.create(ALL_GROOVYDOC_JARS_TASK_NAME, DefaultTask) {
-                    dependsOn mergedConfiguration.groovydoc.groovydocJarTasks()
-                    group JavaBasePlugin.DOCUMENTATION_GROUP
-                    description "Triggers all groovydocJar tasks for project ${project.name}"
-                }
-            }
         }
     }
 
-    private Task createGroovydocTaskIfNeeded(Project project, SourceSet sourceSet, Javadoc javadoc) {
-        String taskName = resolveGroovydocTaskName(sourceSet)
+    private Task createGroovydocTaskIfNeeded(Project project, Javadoc javadoc) {
+        String taskName = GROOVYDOC_TASK_NAME
 
         Task groovydocTask = project.tasks.findByName(taskName)
+        Task classesTask = project.tasks.findByName('classes')
 
-        if (!groovydocTask) {
-            String classesTaskName = sourceSet.name == 'main' ? 'classes' : sourceSet.name + 'Classes'
-
-
+        if (classesTask && !groovydocTask) {
             groovydocTask = project.tasks.create(taskName, Groovydoc) {
-                dependsOn project.tasks.getByName(classesTaskName)
+                dependsOn classesTask
                 group JavaBasePlugin.DOCUMENTATION_GROUP
-                description "Generates Groovydoc API documentation [sourceSet ${sourceSet.name}]"
-                source sourceSet.allSource
-                destinationDir project.file("${project.buildDir}/docs/${sourceSet.name}/groovydoc")
+                description 'Generates Groovydoc API documentation'
+                source project.sourceSets.main.allSource
+                destinationDir project.file("${project.buildDir}/docs/main/groovydoc")
             }
         }
 
@@ -165,46 +126,27 @@ class GroovydocPlugin implements Plugin<Project> {
         groovydocTask
     }
 
-    static String resolveGroovydocTaskName(SourceSet sourceSet) {
-        return sourceSet.name == 'main' ? 'groovydoc' : sourceSet.name + 'Groovydoc'
-    }
-
-    private Task createGroovydocJarTask(Project project, SourceSet sourceSet, Task groovydoc) {
-        String taskName = resolveGroovydocJarTaskName(sourceSet)
+    private Task createGroovydocJarTask(Project project, Task groovydoc) {
+        String taskName = GROOVYDOC_JAR_TASK_NAME
 
         Task groovydocJarTask = project.tasks.findByName(taskName)
 
         if (!groovydocJarTask) {
-            String archiveBaseName = sourceSet.name == 'main' ? project.name : project.name + '-' + sourceSet.name
-
             groovydocJarTask = project.tasks.create(taskName, Jar) {
                 dependsOn groovydoc
                 group JavaBasePlugin.DOCUMENTATION_GROUP
-                description "An archive of the API docs [sourceSet ${sourceSet.name}]"
-                baseName = archiveBaseName
-                classifier 'javadoc'
+                description 'An archive of the Groovydoc API docs'
+                classifier 'groovydoc'
                 from groovydoc.destinationDir
             }
         }
 
+        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        if (mergedConfiguration.groovydoc.replaceJavadoc) {
+            groovydocJarTask.classifier = 'javadoc'
+            project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
+        }
+
         groovydocJarTask
-    }
-
-    static String resolveGroovydocJarTaskName(SourceSet sourceSet) {
-        return sourceSet.name == 'main' ? 'groovydocJar' : sourceSet.name + 'GroovydocJar'
-    }
-
-    private void updatePublications(Project project, SourceSet sourceSet, Task groovydocJar) {
-        project.publishing {
-            publications {
-                "${sourceSet.name}"(MavenPublication) {
-                    artifact groovydocJar
-                }
-            }
-        }
-
-        project.artifacts {
-            groovydocJar
-        }
     }
 }

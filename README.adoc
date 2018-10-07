@@ -152,6 +152,7 @@ groovydoc {
     enabled
     includes
     excludes
+    replaceJavadoc
     options {
         windowTitle
         docTitle
@@ -331,6 +332,7 @@ Values for `info.links` are mapped to their matching entries in `bintray.pkg`.
 | enabled                | boolean      | no       | true                                 | Disables `org.kordamp.gradle.groovydoc` plugin if `false`
 | includes               | Set<String>  | no       | []                                   |
 | excludes               | Set<String>  | no       | []                                   |
+| replaceJavadoc         | boolean      | no       | false                                | Disables `javadocJar` and applies the `javadoc` classifier.
 | options.windowTitle    | String       | no       | "${project.name} ${project.version}" |
 | options.docTitle       | String       | no       | "${project.name} ${project.version}" |
 | options.header         | String       | no       | "${project.name} ${project.version}" |
@@ -454,10 +456,7 @@ id: `org.kordamp.gradle.source-jar`
 
 Responsibilities:
 
- * Creates a `Jar` task that packages sources per `SourceSet`.
- * Configures a `MavenPublication` that matches the sourceSet's name.
- * Attaches the source JAR artifact to the custom `MavenPublication`.
- * Creates a composite `allSourceJars` tasks that triggers every other `sourceJar` in the current project.
+ * Creates a `Jar` task that packages all sources.
 
 === Javadoc
 
@@ -465,11 +464,8 @@ id: `org.kordamp.gradle.javadoc`
 
 Responsibilities:
 
- * Creates a `Javadoc` task per `SourceSet`.
- * Creates a `Jar` task that packages javadoc per `SourceSet`.
- * Configures a `MavenPublication` that matches the sourceSet's name.
- * Attaches the javadoc JAR artifact to the custom `MavenPublication`.
- * Creates a composite `allJavadocJars` tasks that triggers every other `javadocJar` in the current project.
+ * Creates a `javadoc` task for all Java sources.
+ * Creates a `javadocJar` task that packages the output of the `javadoc` task.
 
 === Groovydoc
 
@@ -477,11 +473,8 @@ id: `org.kordamp.gradle.groovydoc`
 
 Responsibilities:
 
- * Creates a `Groovydoc` task per `SourceSet`.
- * Creates a `Jar` task that packages groovydoc per `SourceSet`.
- * Configures a `MavenPublication` that matches the sourceSet's name.
- * Attaches the groovydoc JAR artifact to the custom `MavenPublication`.
- * Creates a composite `allGroovydocJars` tasks that triggers every other `groovydocJar` in the current project.
+ * Creates a `groovydoc` task for all Groovy sources
+ * Creates a `groovydocJar` task that packages the output of the `groovydoc` task.
 
 === Apidocs
 
@@ -498,8 +491,9 @@ id: `org.kordamp.gradle.minpom`
 
 Responsibilities:
 
- * Creates a minimum `pom.xml` file per `SourceSet`.
- * Creates a minimum `pom.properties` file per `SourceSet`.
+ * Creates a `minpom` task.
+ * Creates a minimum `pom.xml` file.
+ * Creates a minimum `pom.properties`.
 
 === Jar
 
@@ -507,7 +501,7 @@ id: `org.kordamp.gradle.jar`
 
 Responsibilities:
 
- * Creates a `Jar` task per `SourceSet`.
+ * Creates a `jar` task.
  * If the `release` property is enabled, configures manifest entries provided by `BuildInfo`.
  * If the `release` property is enabled, adds the output of the matching `minpom` task to `metaInf`.
 
@@ -528,7 +522,7 @@ id: `org.kordamp.gradle.publishing`
 
 Responsibilities:
 
- * Configures a `MavenPublication` per `SourceSet`.
+ * Configures a `MavenPublication` named "mainPublication".
  * Configures POM entries based on data available from `config.info`. See DSL for more options.
 
 === Bintray
@@ -537,7 +531,7 @@ id: `org.kordamp.gradle.bintray`
 
 Responsibilities:
 
- * Configures a Bintray publication per `SourceSet`.
+ * Configures a Bintray publication for "mainPublication".
  * Configuration values based on data available from `config.info.bintray. See DSL for more options.
  * Automatic synchronization with Maven Central if `config.credentials.sonatype` is provided.
 

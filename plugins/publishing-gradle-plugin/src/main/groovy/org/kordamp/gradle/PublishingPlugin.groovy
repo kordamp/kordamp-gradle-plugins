@@ -19,14 +19,16 @@ package org.kordamp.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
-import org.gradle.api.tasks.SourceSet
 
 import static org.kordamp.gradle.BasePlugin.isRootProject
 
 /**
+ * Configures artifact publication.
+ *
  * @author Andres Almiray
  * @since 0.2.0
  */
@@ -39,12 +41,15 @@ class PublishingPlugin implements Plugin<Project> {
         this.project = project
 
         if (isRootProject(project)) {
-            createPublicationsIfNeeded(project)
-            project.childProjects.values().each { prj ->
-                createPublicationsIfNeeded(prj)
+            if (project.childProjects.size()) {
+                project.childProjects.values().each {
+                    configureProject(it)
+                }
+            } else {
+                configureProject(project)
             }
         } else {
-            createPublicationsIfNeeded(project)
+            configureProject(project)
         }
     }
 
@@ -54,7 +59,7 @@ class PublishingPlugin implements Plugin<Project> {
         }
     }
 
-    private void createPublicationsIfNeeded(Project project) {
+    private void configureProject(Project project) {
         String visitedPropertyName = VISITED + '_' + project.name
         if (project.findProperty(visitedPropertyName)) {
             return
@@ -73,31 +78,35 @@ class PublishingPlugin implements Plugin<Project> {
             }
         }
 
-        project.afterEvaluate { Project prj ->
-            prj.plugins.withType(JavaBasePlugin) {
-                prj.sourceSets.each { SourceSet ss ->
-                    // skip generating a publication for SourceSets that may contain tests
-                    if (!ss.name.toLowerCase().contains('test')) {
-                        updatePublications(prj, ss)
-                    }
-                }
+        project.afterEvaluate {
+            project.plugins.withType(JavaBasePlugin) {
+               updatePublications(project)
             }
         }
     }
 
-    private void updatePublications(Project project, SourceSet sourceSet) {
+    private void updatePublications(Project project) {
         ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
-        if (!mergedConfiguration.publishing.enabled) {
+        if (!mergedConfiguration.publishing.enabled || !project.sourceSets.findByName('main')) {
             return
         }
 
+        Task javadocJar = project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)
+        Task groovydocJar = project.tasks.findByName(GroovydocPlugin.GROOVYDOC_JAR_TASK_NAME)
+        Task sourceJar = project.tasks.findByName(SourceJarPlugin.SOURCE_JAR_TASK_NAME)
+
         project.publishing {
             publications {
-                "${sourceSet.name}"(MavenPublication) {
+                mainPublication(MavenPublication) {
                     groupId project.group
-                    artifactId project.tasks.findByName(JarPlugin.resolveJarTaskName(sourceSet)).baseName
+                    artifactId project.name
                     version project.version
+
+                    from project.components.java
+                    if (javadocJar?.enabled) artifact javadocJar
+                    if (groovydocJar?.enabled) artifact groovydocJar
+                    if (sourceJar?.enabled) artifact sourceJar
 
                     pom {
                         name = mergedConfiguration.info.name

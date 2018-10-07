@@ -38,15 +38,17 @@ import org.kordamp.gradle.model.impl.GroovydocOptions
 @ToString(includeNames = true, excludes = ['project', 'projects', 'groovydocTasks', 'groovydocJarTasks'])
 class Groovydoc {
     boolean enabled = true
+    boolean replaceJavadoc = false
     Set<String> excludes = new LinkedHashSet<>()
     Set<String> includes = new LinkedHashSet<>()
     final GroovydocOptions options = new GroovydocOptions()
 
-    private final Map<String, Project> projects = [:]
-    private final Map<String, org.gradle.api.tasks.javadoc.Groovydoc> groovydocTasks = [:]
-    private final Map<String, Jar> groovydocJarTasks = [:]
+    private final Set<Project> projects = new LinkedHashSet<>()
+    private final Set<org.gradle.api.tasks.javadoc.Groovydoc> groovydocTasks = new LinkedHashSet<>()
+    private final Set<Jar> groovydocJarTasks = new LinkedHashSet<>()
 
     private boolean enabledSet
+    private boolean replaceJavadocSet
 
     private final Project project
 
@@ -70,6 +72,15 @@ class Groovydoc {
         this.enabledSet
     }
 
+    void setReplaceJavadoc(boolean replaceJavadoc) {
+        this.replaceJavadoc = replaceJavadoc
+        this.replaceJavadocSet = true
+    }
+
+    boolean isReplaceJavadocSet() {
+        this.replaceJavadocSet
+    }
+
     void options(Action<? super GroovydocOptions> action) {
         action.execute(options)
     }
@@ -81,6 +92,8 @@ class Groovydoc {
     void copyInto(Groovydoc copy) {
         copy.@enabled = enabled
         copy.@enabledSet = enabledSet
+        copy.@replaceJavadoc = replaceJavadoc
+        copy.@replaceJavadocSet = replaceJavadocSet
         copy.excludes.addAll(excludes)
         copy.includes.addAll(includes)
         options.copyInto(copy.options)
@@ -88,24 +101,25 @@ class Groovydoc {
 
     @CompileDynamic
     static void merge(Groovydoc o1, Groovydoc o2) {
-        o1.setEnabled((boolean)(o1.enabledSet ? o1.enabled : o2.enabled))
+        o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
+        o1.setReplaceJavadoc((boolean) (o1.replaceJavadocSet ? o1.replaceJavadoc : o2.replaceJavadoc))
         o1.excludes.addAll(((o1.excludes ?: []) + (o2?.excludes ?: [])).unique())
         o1.includes.addAll(((o1.includes ?: []) + (o2?.includes ?: [])).unique())
         GroovydocOptions.merge(o1.options, o2.options)
-        o1.projects().putAll(o2.projects())
-        o1.groovydocTasks().putAll(o2.groovydocTasks())
-        o1.groovydocJarTasks().putAll(o2.groovydocJarTasks())
+        o1.projects().addAll(o2.projects())
+        o1.groovydocTasks().addAll(o2.groovydocTasks())
+        o1.groovydocJarTasks().addAll(o2.groovydocJarTasks())
     }
 
-    Map<String, Project> projects() {
+    Set<Project> projects() {
         projects
     }
 
-    Map<String, org.gradle.api.tasks.javadoc.Groovydoc> groovydocTasks() {
+    Set<org.gradle.api.tasks.javadoc.Groovydoc> groovydocTasks() {
         groovydocTasks
     }
 
-    Map<String, Jar> groovydocJarTasks() {
+    Set<Jar> groovydocJarTasks() {
         groovydocJarTasks
     }
 

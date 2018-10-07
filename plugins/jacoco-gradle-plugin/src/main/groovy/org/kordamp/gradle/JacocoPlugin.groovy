@@ -41,12 +41,15 @@ class JacocoPlugin implements Plugin<Project> {
         this.project = project
 
         if (isRootProject(project)) {
-            applyJacocoIfCompatible(project)
-            project.childProjects.values().each { prj ->
-                applyJacocoIfCompatible(prj)
+            if (project.childProjects.size()) {
+                project.childProjects.values().each {
+                    configureProject(it)
+                }
+            } else {
+                configureProject(project)
             }
         } else {
-            applyJacocoIfCompatible(project)
+            configureProject(project)
         }
     }
 
@@ -56,7 +59,7 @@ class JacocoPlugin implements Plugin<Project> {
         }
     }
 
-    private void applyJacocoIfCompatible(Project project) {
+    private void configureProject(Project project) {
         String visitedPropertyName = VISITED + '_' + project.name
         if (project.findProperty(visitedPropertyName)) {
             return

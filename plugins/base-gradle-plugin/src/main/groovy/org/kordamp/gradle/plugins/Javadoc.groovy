@@ -43,9 +43,9 @@ class Javadoc {
     String title
     final ExtStandardJavadocDocletOptions options = new ExtStandardJavadocDocletOptions()
 
-    private final Map<String, Project> projects = [:]
-    private final Map<String, org.gradle.api.tasks.javadoc.Javadoc> javadocTasks = [:]
-    private final Map<String, Jar> javadocJarTasks = [:]
+    private final Set<Project> projects = new LinkedHashSet<>()
+    private final Set<org.gradle.api.tasks.javadoc.Javadoc> javadocTasks = new LinkedHashSet<>()
+    private final Set<Jar> javadocJarTasks = new LinkedHashSet<>()
 
     private boolean enabledSet
 
@@ -92,25 +92,25 @@ class Javadoc {
 
     @CompileDynamic
     static void merge(Javadoc o1, Javadoc o2) {
-        o1.setEnabled((boolean)(o1.enabledSet ? o1.enabled : o2.enabled))
+        o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
         o1.excludes.addAll(((o1.excludes ?: []) + (o2.excludes ?: [])).unique())
         o1.includes.addAll(((o1.includes ?: []) + (o2.includes ?: [])).unique())
         o1.title = o1.title ?: o2.title
         ExtStandardJavadocDocletOptions.merge(o1.options, o2.options)
-        o1.projects().putAll(o2.projects())
-        o1.javadocTasks().putAll(o2.javadocTasks())
-        o1.javadocJarTasks().putAll(o2.javadocJarTasks())
+        o1.projects().addAll(o2.projects())
+        o1.javadocTasks().addAll(o2.javadocTasks())
+        o1.javadocJarTasks().addAll(o2.javadocJarTasks())
     }
 
-    Map<String, Project> projects() {
+    Set<Project> projects() {
         projects
     }
 
-    Map<String, org.gradle.api.tasks.javadoc.Javadoc> javadocTasks() {
+    Set<org.gradle.api.tasks.javadoc.Javadoc> javadocTasks() {
         javadocTasks
     }
 
-    Map<String, Jar> javadocJarTasks() {
+    Set<Jar> javadocJarTasks() {
         javadocJarTasks
     }
 

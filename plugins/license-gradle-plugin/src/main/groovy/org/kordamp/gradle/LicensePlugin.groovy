@@ -37,12 +37,15 @@ class LicensePlugin implements Plugin<Project> {
         this.project = project
 
         if (isRootProject(project)) {
-            applyLicensePlugin(project)
-            project.childProjects.values().each { prj ->
-                applyLicensePlugin(prj)
+            if (project.childProjects.size()) {
+                project.childProjects.values().each {
+                    configureProject(it)
+                }
+            } else {
+                configureProject(project)
             }
         } else {
-            applyLicensePlugin(project)
+            configureProject(project)
         }
     }
 
@@ -52,7 +55,7 @@ class LicensePlugin implements Plugin<Project> {
         }
     }
 
-    private void applyLicensePlugin(Project project) {
+    private void configureProject(Project project) {
         String visitedPropertyName = VISITED + '_' + project.name
         if (project.findProperty(visitedPropertyName)) {
             return
@@ -65,23 +68,23 @@ class LicensePlugin implements Plugin<Project> {
             project.plugins.apply(nl.javadude.gradle.plugins.license.LicensePlugin)
         }
 
-        project.afterEvaluate { Project prj ->
-            ProjectConfigurationExtension mergedConfiguration = prj.ext.mergedConfiguration
+        project.afterEvaluate {
+            ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
             License lic = mergedConfiguration.license.allLicenses()[0]
             if (mergedConfiguration.license.allLicenses().size() > 1) {
                 lic = mergedConfiguration.license.allLicenses().find { it.primary } ?: mergedConfiguration.license.allLicenses()[0]
             }
 
-            LicenseExtension licenseExtension = prj.extensions.findByType(LicenseExtension)
+            LicenseExtension licenseExtension = project.extensions.findByType(LicenseExtension)
 
-            licenseExtension.header = prj.rootProject.file('gradle/LICENSE_HEADER')
+            licenseExtension.header = project.rootProject.file('gradle/LICENSE_HEADER')
             licenseExtension.strictCheck = true
             licenseExtension.mapping {
                 java   = 'SLASHSTAR_STYLE'
                 groovy = 'SLASHSTAR_STYLE'
             }
-            licenseExtension.ext.project = prj.name
+            licenseExtension.ext.project = project.name
             licenseExtension.ext {
                 projectName   = mergedConfiguration.info.name
                 copyrightYear = mergedConfiguration.info.copyrightYear

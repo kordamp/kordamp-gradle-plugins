@@ -20,12 +20,12 @@ package org.kordamp.gradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.tasks.SourceSet
-import org.kordamp.gradle.model.Information
 
 import static org.kordamp.gradle.BasePlugin.isRootProject
 
 /**
+ * Configures artifact publication via Bintray.
+ *
  * @author Andres Almiray
  * @since 0.2.0
  */
@@ -38,12 +38,15 @@ class BintrayPlugin implements Plugin<Project> {
         this.project = project
 
         if (isRootProject(project)) {
-            configureBintrayIfNeeded(project)
-            project.childProjects.values().each { prj ->
-                configureBintrayIfNeeded(prj)
+            if (project.childProjects.size()) {
+                project.childProjects.values().each {
+                    configureProject(it)
+                }
+            } else {
+                configureProject(project)
             }
         } else {
-            configureBintrayIfNeeded(project)
+            configureProject(project)
         }
     }
 
@@ -53,7 +56,7 @@ class BintrayPlugin implements Plugin<Project> {
         }
     }
 
-    private void configureBintrayIfNeeded(Project project) {
+    private void configureProject(Project project) {
         String visitedPropertyName = VISITED + '_' + project.name
         if (project.findProperty(visitedPropertyName)) {
             return
@@ -72,25 +75,24 @@ class BintrayPlugin implements Plugin<Project> {
             }
         }
 
-        project.afterEvaluate { Project prj ->
-            prj.plugins.withType(JavaBasePlugin) {
-                prj.sourceSets.each { SourceSet ss ->
-                    // skip generating a publication for SourceSets that may contain tests
-                    if (!ss.name.toLowerCase().contains('test')) {
-                        updatePublications(prj, ss)
-                    }
-                }
+        project.afterEvaluate {
+            project.plugins.withType(JavaBasePlugin) {
+                updatePublications(project)
             }
         }
     }
 
-    private void updatePublications(Project project, SourceSet sourceSet) {
+    private void updatePublications(Project project) {
         ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+
+        if (!mergedConfiguration.bintray.enabled || !project.sourceSets.findByName('main')) {
+            return
+        }
 
         project.bintray {
             user = mergedConfiguration.bintray.credentials.username
             key = mergedConfiguration.bintray.credentials.password
-            publications = [sourceSet.name]
+            publications = ['mainPublication']
             pkg {
                 repo = mergedConfiguration.bintray.repo
                 userOrg = mergedConfiguration.bintray.userOrg

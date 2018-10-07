@@ -17,28 +17,22 @@
  */
 package org.kordamp.gradle
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Jar
 
 import static org.kordamp.gradle.BasePlugin.isRootProject
 
 /**
- * Configures a {@code sourceJar} for each {@code SourceSet}.
- * <strong>NOTE:</strong> any sources with the word "test" will be skipped.
- * Applies the {@code maven-publish} plugin if it has not been applied before.
+ * Configures a {@code sourceJar} task.
  *
  * @author Andres Almiray
  * @since 0.1.0
  */
 class SourceJarPlugin implements Plugin<Project> {
-    static final String ALL_SOURCE_JARS_TASK_NAME = 'allSourceJars'
+    static final String SOURCE_JAR_TASK_NAME = 'sourceJar'
 
     private static final String VISITED = SourceJarPlugin.class.name.replace('.', '_') + '_VISITED'
 
@@ -48,12 +42,15 @@ class SourceJarPlugin implements Plugin<Project> {
         this.project = project
 
         if (isRootProject(project)) {
-            createSourceJarTaskIfCompatible(project)
-            project.childProjects.values().each { prj ->
-                createSourceJarTaskIfCompatible(prj)
+            if (project.childProjects.size()) {
+                project.childProjects.values().each {
+                    configureProject(it)
+                }
+            } else {
+                configureProject(project)
             }
         } else {
-            createSourceJarTaskIfCompatible(project)
+            configureProject(project)
         }
     }
 
@@ -63,7 +60,7 @@ class SourceJarPlugin implements Plugin<Project> {
         }
     }
 
-    private void createSourceJarTaskIfCompatible(Project project) {
+    private void configureProject(Project project) {
         String visitedPropertyName = VISITED + '_' + project.name
         if (project.findProperty(visitedPropertyName)) {
             return
@@ -72,79 +69,35 @@ class SourceJarPlugin implements Plugin<Project> {
 
         BasePlugin.applyIfMissing(project)
 
-        project.plugins.withType(JavaBasePlugin) {
-            if (!project.plugins.findPlugin(MavenPublishPlugin)) {
-                project.plugins.apply(MavenPublishPlugin)
-            }
-        }
-
-        project.afterEvaluate { Project prj ->
+        project.afterEvaluate {
             ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
             if (!mergedConfiguration.source.enabled) {
                 return
             }
 
-            List<Task> sourceJarTasks = []
-
-            prj.plugins.withType(JavaBasePlugin) {
-                prj.sourceSets.each { SourceSet ss ->
-                    // skip generating a source task for SourceSets that may contain tests
-                    if (!ss.name.toLowerCase().contains('test')) {
-                        Task sourceJar = createSourceJarTask(prj, ss)
-                        sourceJarTasks << sourceJar
-                        updatePublications(prj, ss, sourceJar)
-                    }
-                }
-            }
-
-            if (sourceJarTasks) {
-                project.tasks.create(ALL_SOURCE_JARS_TASK_NAME, DefaultTask) {
-                    dependsOn sourceJarTasks
-                    group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-                    description "Triggers all sourceJar tasks for project ${project.name}"
-                }
+            project.plugins.withType(JavaBasePlugin) {
+                createSourceJarTask(project)
             }
         }
     }
 
-    private Task createSourceJarTask(Project project, SourceSet sourceSet) {
-        String taskName = resolveSourceJarTaskName(sourceSet)
+    private Task createSourceJarTask(Project project) {
+        String taskName = SOURCE_JAR_TASK_NAME
 
         Task sourceJarTask = project.tasks.findByName(taskName)
+        Task classesTask = project.tasks.findByName('classes')
 
-        if (!sourceJarTask) {
-            String classesTaskName = sourceSet.name == 'main' ? 'classes' : sourceSet.name + 'Classes'
-            String archiveBaseName = sourceSet.name == 'main' ? project.name : project.name + '-' + sourceSet.name
-
-            sourceJarTask = project.tasks.create(taskName, Jar) {
-                dependsOn project.tasks.getByName(classesTaskName)
+        if (classesTask && !sourceJarTask) {
+            sourceJarTask = project.tasks.create(SOURCE_JAR_TASK_NAME, Jar) {
+                dependsOn classesTask
                 group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-                description "An archive of the source code [sourceSet ${sourceSet.name}]"
-                baseName = archiveBaseName
+                description 'An archive of the source code'
                 classifier 'sources'
-                from sourceSet.allSource
+                from project.sourceSets.main.allSource
             }
         }
 
         sourceJarTask
-    }
-
-    static String resolveSourceJarTaskName(SourceSet sourceSet) {
-        return sourceSet.name == 'main' ? 'sourceJar' : sourceSet.name + 'SourceJar'
-    }
-
-    private void updatePublications(Project project, SourceSet sourceSet, Task sourceJar) {
-        project.publishing {
-            publications {
-                "${sourceSet.name}"(MavenPublication) {
-                    artifact sourceJar
-                }
-            }
-        }
-
-        project.artifacts {
-            sourceJar
-        }
     }
 }

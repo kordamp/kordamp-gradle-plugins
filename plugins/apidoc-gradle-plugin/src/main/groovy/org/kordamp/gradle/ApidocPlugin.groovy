@@ -27,9 +27,7 @@ import org.gradle.api.tasks.javadoc.Javadoc
 import static org.kordamp.gradle.BasePlugin.isRootProject
 
 /**
- * Configures a {@code javadocJar} for each {@code SourceSet}.
- * <strong>NOTE:</strong> any sources with the word "test" will be skipped.
- * Applies the {@code maven-publish} plugin if it has not been applied before.
+ * Configures {@code aggregateApidocs} {@code aggregateApidocsJar} tasks on the root project.
  *
  * @author Andres Almiray
  * @since 0.1.0
@@ -46,12 +44,15 @@ class ApidocPlugin implements Plugin<Project> {
         this.project = project
 
         if (isRootProject(project)) {
-            applyPlugins(project)
-            project.childProjects.values().each { prj ->
-                applyPlugins(prj)
+            if (project.childProjects.size()) {
+                project.childProjects.values().each {
+                    configureProject(it)
+                }
+            } else {
+                configureProject(project)
             }
         } else {
-            applyPlugins(project)
+            configureProject(project)
         }
     }
 
@@ -61,7 +62,7 @@ class ApidocPlugin implements Plugin<Project> {
         }
     }
 
-    private void applyPlugins(Project project) {
+    private void configureProject(Project project) {
         String visitedPropertyName = VISITED + '_' + project.name
         if (project.findProperty(visitedPropertyName)) {
             return
@@ -70,7 +71,7 @@ class ApidocPlugin implements Plugin<Project> {
 
         BasePlugin.applyIfMissing(project)
         JavadocPlugin.applyIfMissing(project)
-        // GroovydocPlugin.applyIfMissing(project)
+        GroovydocPlugin.applyIfMissing(project)
 
         project.afterEvaluate { Project prj ->
             ProjectConfigurationExtension mergedConfiguration = prj.rootProject.ext.mergedConfiguration

@@ -37,8 +37,8 @@ class ProjectPlugin implements Plugin<Project> {
 
         if (isRootProject(project)) {
             applyPlugins(project)
-            project.childProjects.values().each { prj ->
-                applyPlugins(prj)
+            project.childProjects.values().each {
+                applyPlugins(it)
             }
         } else {
             applyPlugins(project)

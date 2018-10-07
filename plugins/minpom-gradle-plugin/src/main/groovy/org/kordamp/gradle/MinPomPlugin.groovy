@@ -22,11 +22,11 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.tasks.SourceSet
 
 import static org.kordamp.gradle.BasePlugin.isRootProject
 
 /**
+ * Configures a {@code minpom} task.
  * Calculates {@code pom.xml} and {@code pom.properties} for each {@code SourceSet}.
  * These files should be packaged under {@code /META-INF/maven}.
 
@@ -34,6 +34,8 @@ import static org.kordamp.gradle.BasePlugin.isRootProject
  * @since 0.1.0
  */
 class MinPomPlugin implements Plugin<Project> {
+    static final String MINPOM_TASK_NAME = 'minpom'
+
     private static final String VISITED = MinPomPlugin.class.name.replace('.', '_') + '_VISITED'
 
     Project project
@@ -42,12 +44,15 @@ class MinPomPlugin implements Plugin<Project> {
         this.project = project
 
         if (isRootProject(project)) {
-            createMinPomTaskIdCompatible(project)
-            project.childProjects.values().each { prj ->
-                createMinPomTaskIdCompatible(prj)
+            if (project.childProjects.size()) {
+                project.childProjects.values().each {
+                    configureProject(it)
+                }
+            } else {
+                configureProject(project)
             }
         } else {
-            createMinPomTaskIdCompatible(project)
+            configureProject(project)
         }
     }
 
@@ -57,7 +62,7 @@ class MinPomPlugin implements Plugin<Project> {
         }
     }
 
-    private void createMinPomTaskIdCompatible(Project project) {
+    private void configureProject(Project project) {
         String visitedPropertyName = VISITED + '_' + project.name
         if (project.findProperty(visitedPropertyName)) {
             return
@@ -66,50 +71,34 @@ class MinPomPlugin implements Plugin<Project> {
 
         BasePlugin.applyIfMissing(project)
 
-        project.afterEvaluate { Project prj ->
+        project.afterEvaluate {
             ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
             if (!mergedConfiguration.minpom.enabled) {
                 return
             }
 
-            List<Task> minPomTasks = []
-
-            prj.plugins.withType(JavaBasePlugin) {
-                prj.sourceSets.each { SourceSet ss ->
-                    // skip generating a task for SourceSets that may contain tests
-                    if (!ss.name.toLowerCase().contains('test')) {
-                        minPomTasks << createMinPomTask(prj, ss)
-                    }
-                }
-            }
-
-            if (minPomTasks) {
-                project.tasks.create('allMinPoms', DefaultTask) {
-                    dependsOn minPomTasks
-                    group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-                    description "Triggers all minPom tasks for project ${project.name}"
-                }
+            project.plugins.withType(JavaBasePlugin) {
+                createMinPomTask(project)
             }
         }
     }
 
-    private Task createMinPomTask(Project project, SourceSet sourceSet) {
-        String taskName = resolveMinPomTaskName(sourceSet)
+    private Task createMinPomTask(Project project) {
+        String taskName = MINPOM_TASK_NAME
 
         Task minPomTask = project.tasks.findByName(taskName)
+        Task classesTask = project.tasks.findByName('classes')
 
-        if (!minPomTask) {
-            String classesTaskName = sourceSet.name == 'main' ? 'classes' : sourceSet.name + 'Classes'
-
-            File minPomDestinationDir = resolveMinPomDestinationDir(project, sourceSet)
+        if (classesTask && !minPomTask) {
+            File minPomDestinationDir = resolveMinPomDestinationDir(project)
             File minPomfile = project.file("${minPomDestinationDir}/pom.xml")
             File minPomProps = project.file("${minPomDestinationDir}/pom.properties")
 
             minPomTask = project.tasks.create(taskName, DefaultTask) {
-                dependsOn project.tasks.getByName(classesTaskName)
+                dependsOn classesTask
                 group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-                description "Generates a minimum POM file [sourceSet ${sourceSet.name}]"
+                description 'Generates a minimum POM file'
                 outputs.dir(minPomDestinationDir)
                 inputs.property('projectName', project.name)
                 inputs.property('projectGroup', project.group)
@@ -170,11 +159,7 @@ class MinPomPlugin implements Plugin<Project> {
         minPomTask
     }
 
-    static String resolveMinPomTaskName(SourceSet sourceSet) {
-        sourceSet.name == 'main' ? 'minPom' : sourceSet.name + 'MinPom'
-    }
-
-    static File resolveMinPomDestinationDir(Project project, SourceSet sourceSet) {
-        project.file("${project.buildDir}/pom/${sourceSet.name}/maven")
+    static File resolveMinPomDestinationDir(Project project) {
+        project.file("${project.buildDir}/pom/main/maven")
     }
 }
