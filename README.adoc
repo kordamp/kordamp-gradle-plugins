@@ -66,6 +66,7 @@ other plugins. This extension has the following properties
 | minpom     | Minpom      |               | Configures the `org.kordamp.gradle.minpom` plugin
 | publishing | Publishing  |               | Configures the `org.kordamp.gradle.publishing` plugin
 | source     | Source      |               | Configures the `org.kordamp.gradle.source-jar` plugin
+| stats      | Stats       |               | Configures the `org.kordamp.gradle.source-stats` plugin
 |===
 
 ==== DSL
@@ -206,6 +207,13 @@ publishing {
 
 source {
     enabled
+}
+
+stats {
+    enabled
+    counters
+    formats
+    paths
 }
 ----
 
@@ -428,6 +436,18 @@ This block is optional.
 
 This block is optional.
 
+.Stats
+[header, cols="5*"]
+|===
+| Name     | Type                             | Required | Default Value | Description
+| enabled  | boolean                          | no       | true          | Disables `org.kordamp.gradle.source-stats` plugin if `false`
+| counters | Map<String, String>              | no       | [:]           | Additional `org.kordamp.gradle.plugin.stats.Counter` implementations, keyed by extension.
+| formats  | List<String>                     | no       | []            | List of output formats. Valid values are `xml`, `html`, `txt`.
+| paths    | Map<String, Map<String, String>> | no       | [:]           | Maps of additional source paths that contain sources to be counted.
+|===
+
+This block is optional.
+
 === BuildInfo
 
 id: `org.kordamp.gradle.build-info`
@@ -586,6 +606,15 @@ The following variables become available to the license header template
 
 NOTE: This plugin implicitly applies `com.github.hierynomus.license` to all projects.
 
+=== SourceStats
+
+id: `org.kordamp.gradle.source-stats`
+
+Responsibilities:
+
+ * Create a `SourceStatsTask` named `stats` per project.
+ * Create a `AggregateSourceStatsReportTask` named `aggregateStats` at the root project.
+
 === Guide
 
 id: `org.kordamp.gradle.guide`
@@ -607,6 +636,6 @@ id: `org.kordamp.gradle.project`
 
 Responsibilities:
 
- * Applies all previous projects except `IntegrationTest`, `FunctionalTest`.
+ * Applies all previous projects except `IntegrationTest`, `FunctionalTest`, `Guide`.
 
 This plugin implicitly applies `com.github.ben-manes.versions` to all projects.

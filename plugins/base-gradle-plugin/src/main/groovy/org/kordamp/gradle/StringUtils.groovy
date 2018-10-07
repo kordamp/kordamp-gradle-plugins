@@ -35,12 +35,12 @@ class StringUtils {
      */
     static String capitalize(String str) {
         if (isBlank(str)) {
-            return str;
+            return str
         }
         if (str.length() == 1) {
-            return str.toUpperCase();
+            return str.toUpperCase()
         }
-        return str.substring(0, 1).toUpperCase(Locale.ENGLISH) + str.substring(1);
+        return str.substring(0, 1).toUpperCase(Locale.ENGLISH) + str.substring(1)
     }
 
     /**
@@ -80,5 +80,114 @@ class StringUtils {
      */
     static boolean isNotBlank(String str) {
         return !isBlank(str)
+    }
+
+    static String getFilenameExtension(String path) {
+        if (path == null) {
+            return null
+        }
+        int extIndex = path.lastIndexOf(".")
+        if (extIndex == -1) {
+            return null
+        }
+        int folderIndex = path.lastIndexOf("/")
+        if (folderIndex > extIndex) {
+            return null
+        }
+        return path.substring(extIndex + 1)
+    }
+
+    static String getNaturalName(String name) {
+        name = getShortName(name)
+        if (isBlank(name)) return name
+        List<String> words = new ArrayList<>()
+        int i = 0
+        char[] chars = name.toCharArray()
+        for (char c : chars) {
+            String w
+            if (i >= words.size()) {
+                w = ""
+                words.add(i, w)
+            } else {
+                w = words.get(i)
+            }
+
+            if (Character.isLowerCase(c) || Character.isDigit(c)) {
+                if (Character.isLowerCase(c) && w.length() == 0) {
+                    c = Character.toUpperCase(c)
+                } else if (w.length() > 1 && Character.isUpperCase(w.charAt(w.length() - 1))) {
+                    w = ""
+                    words.add(++i, w)
+                }
+
+                words.set(i, w + c)
+            } else if (Character.isUpperCase(c)) {
+                if ((i == 0 && w.length() == 0) || Character.isUpperCase(w.charAt(w.length() - 1))) {
+                    words.set(i, w + c)
+                } else {
+                    words.add(++i, String.valueOf(c))
+                }
+            }
+        }
+
+        StringBuilder buf = new StringBuilder()
+        for (Iterator<String> j = words.iterator(); j.hasNext();) {
+            String word = j.next()
+            buf.append(word)
+            if (j.hasNext()) {
+                buf.append(' ')
+            }
+        }
+        return buf.toString()
+    }
+
+    static String getShortName(String className) {
+        if (isBlank(className)) return className
+        int i = className.lastIndexOf(".")
+        if (i > -1) {
+            className = className.substring(i + 1, className.length())
+        }
+        return className
+    }
+
+    static String getPropertyNameForLowerCaseHyphenSeparatedName(String name) {
+        return getPropertyName(getClassNameForLowerCaseHyphenSeparatedName(name))
+    }
+
+    static String getClassNameForLowerCaseHyphenSeparatedName(String name) {
+        // Handle null and empty strings.
+        if (isBlank(name)) return name
+
+        if (name.indexOf('-') > -1) {
+            StringBuilder buf = new StringBuilder()
+            String[] tokens = name.split("-")
+            for (String token : tokens) {
+                if (token == null || token.length() == 0) continue
+                buf.append(capitalize(token))
+            }
+            return buf.toString()
+        }
+
+        return capitalize(name)
+    }
+
+    static String getPropertyName(String name) {
+        if (isBlank(name)) return name
+        // Strip any package from the name.
+        int pos = name.lastIndexOf('.')
+        if (pos != -1) {
+            name = name.substring(pos + 1)
+        }
+
+        // Check whether the name begins with two upper case letters.
+        if (name.length() > 1 && Character.isUpperCase(name.charAt(0)) && Character.isUpperCase(name.charAt(1))) {
+            return name
+        }
+
+        String propertyName = name.substring(0, 1).toLowerCase(Locale.ENGLISH) + name.substring(1)
+        if (propertyName.indexOf(' ') > -1) {
+            propertyName = propertyName.replaceAll("\\s", "")
+        }
+        return propertyName
     }
 }

@@ -1,0 +1,7 @@
+# HEADER
+key: # comment
+  - value line 1
+  # comment
+  - value line 2
+  # comment
+  - value line 3
