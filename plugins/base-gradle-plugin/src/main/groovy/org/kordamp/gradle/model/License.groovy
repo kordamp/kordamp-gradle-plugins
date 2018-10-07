@@ -40,6 +40,10 @@ class License {
         this.id = id
     }
 
+    String getName() {
+        id?.spdx() ?: name
+    }
+
     String getUrl() {
         id?.url() ?: url
     }
