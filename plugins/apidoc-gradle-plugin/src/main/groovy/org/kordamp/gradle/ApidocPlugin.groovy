@@ -91,8 +91,8 @@ class ApidocPlugin implements Plugin<Project> {
 
         BasePlugin.applyIfMissing(project)
 
-        project.afterEvaluate { Project prj ->
-            ProjectConfigurationExtension mergedConfiguration = prj.rootProject.ext.mergedConfiguration
+        project.afterEvaluate {
+            ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
 
             if (!mergedConfiguration.apidoc.enabled) {
                 return

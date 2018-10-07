@@ -17,9 +17,11 @@
  */
 package org.kordamp.gradle
 
+import org.gradle.BuildAdapter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
 
@@ -74,9 +76,14 @@ class JarPlugin implements Plugin<Project> {
             project.plugins.withType(JavaBasePlugin) {
                 createJarTaskIfNeeded(project)
             }
-            project.tasks.withType(Jar) { Jar jarTask ->
-                configureJarManifest(jarTask)
-            }
+            project.rootProject.gradle.addBuildListener(new BuildAdapter() {
+                @Override
+                void projectsEvaluated(Gradle gradle) {
+                    project.tasks.withType(Jar) { Jar jarTask ->
+                        configureJarManifest(project, jarTask)
+                    }
+                }
+            })
         }
     }
 
@@ -105,21 +112,26 @@ class JarPlugin implements Plugin<Project> {
             }
         }
 
-        ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
+        project.rootProject.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
 
-        if (mergedConfiguration.minpom.enabled) {
-            jarTask.configure {
-                dependsOn MinPomPlugin.MINPOM_TASK_NAME
-                metaInf {
-                    from(MinPomPlugin.resolveMinPomDestinationDir(project)) {
-                        into "maven/${project.group}/${project.name}"
+                if (mergedConfiguration.minpom.enabled) {
+                    jarTask.configure {
+                        dependsOn MinPomPlugin.MINPOM_TASK_NAME
+                        metaInf {
+                            from(MinPomPlugin.resolveMinPomDestinationDir(project)) {
+                                into "maven/${project.group}/${project.name}"
+                            }
+                        }
                     }
                 }
             }
-        }
+        })
     }
 
-    private void configureJarManifest(Jar jarTask) {
+    private void configureJarManifest(Project project, Jar jarTask) {
         ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
 
         if (mergedConfiguration.release) {
