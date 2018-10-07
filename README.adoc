@@ -52,7 +52,7 @@ Responsibilities:
  * Creates an extension named `config` that serves as the central point of configuration for all
 other plugins. This extension has the following properties
 
-[header, cols="5*"]
+[header, cols="4*"]
 |===
 | Name       | Type        | Default Value | Description
 | release    | boolean     | false         | Customizes Jar manifest and metainf if active
