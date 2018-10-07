@@ -592,9 +592,11 @@ id: `org.kordamp.gradle.guide`
 
 Responsibilities:
 
+ * Creates an extension with name `guide` and type `GuideExtension`.
  * Applies and configures the `asciidoctor` plugin.
- * Creates a task named `guide` that assembles the documentation based on the output from `asciidoctor` and `aggregateApidocs`tasks.
- * Creates a task named `guideZip` that packages the guide's contents.
+ * Creates a task named `createGuide` that assembles the documentation based on the output from `asciidoctor` and
+   `aggregateApidocs` tasks.
+ * Creates a task named `zipGuide` that packages the guide's contents.
  * Creates a task named `initGuide` that initializes the director/file structure.
 
 NOTE: This plugin implicitly applies the `org.asciidoctor.convert` plugin.

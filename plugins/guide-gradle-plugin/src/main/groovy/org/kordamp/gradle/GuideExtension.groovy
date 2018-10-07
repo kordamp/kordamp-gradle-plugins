@@ -29,8 +29,6 @@ class GuideExtension {
     String javadocApiDir = 'api'
     String groovydocApiDir = 'gapi'
 
-    private boolean releaseSet
-
     GuideExtension(Project project) {
     }
 }

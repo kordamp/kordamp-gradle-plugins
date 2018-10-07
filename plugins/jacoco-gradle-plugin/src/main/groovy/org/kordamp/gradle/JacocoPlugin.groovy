@@ -24,6 +24,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.tasks.JacocoMerge
 import org.gradle.testing.jacoco.tasks.JacocoReport
+import org.kordamp.gradle.plugins.Jacoco
 
 import static org.kordamp.gradle.BasePlugin.isRootProject
 
@@ -41,16 +42,11 @@ class JacocoPlugin implements Plugin<Project> {
         this.project = project
 
         if (isRootProject(project)) {
-            if (project.childProjects.size()) {
-                project.childProjects.values().each {
-                    configureProject(it)
-                }
-            } else {
-                configureProject(project)
+            project.childProjects.values().each {
+                configureProject(it)
             }
-        } else {
-            configureProject(project)
         }
+        configureProject(project)
     }
 
     static void applyIfMissing(Project project) {
@@ -70,7 +66,7 @@ class JacocoPlugin implements Plugin<Project> {
         project.plugins.apply(org.gradle.testing.jacoco.plugins.JacocoPlugin)
 
         project.afterEvaluate { Project prj ->
-            ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
+            ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
             prj.plugins.withType(JavaBasePlugin) {
                 prj.tasks.withType(Test) { Test testTask ->
@@ -134,14 +130,24 @@ class JacocoPlugin implements Plugin<Project> {
     }
 
     private void applyJacocoMerge(Project project) {
-        ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
+        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+
+        Set<Project> projects = new LinkedHashSet<>(mergedConfiguration.jacoco.projects())
+        Set<Test> testTasks = new LinkedHashSet<>(mergedConfiguration.jacoco.testTasks())
+        Set<JacocoReport> reportTasks = new LinkedHashSet<>(mergedConfiguration.jacoco.reportTasks())
+
+        project.childProjects.values()*.mergedConfiguration.jacoco.each { Jacoco e ->
+            projects.addAll(e.projects())
+            testTasks.addAll(e.testTasks())
+            reportTasks.addAll(e.reportTasks())
+        }
 
         Task jacocoRootMerge = project.tasks.create('jacocoRootMerge', JacocoMerge) {
             enabled = mergedConfiguration.jacoco.enabled
             group = 'Reporting'
             description = 'Aggregate Jacoco coverage reports.'
-            dependsOn mergedConfiguration.jacoco.testTasks() + mergedConfiguration.jacoco.reportTasks()
-            executionData mergedConfiguration.jacoco.reportTasks().executionData.files.flatten()
+            dependsOn testTasks + reportTasks
+            executionData reportTasks.executionData.files.flatten()
             destinationFile mergedConfiguration.jacoco.mergeExecFile
         }
 
@@ -151,9 +157,9 @@ class JacocoPlugin implements Plugin<Project> {
             group = 'Reporting'
             description = 'Generate aggregate Jacoco coverage report.'
 
-            additionalSourceDirs = project.files(mergedConfiguration.jacoco.projects().sourceSets.main.allSource.srcDirs)
-            sourceDirectories = project.files(mergedConfiguration.jacoco.projects().sourceSets.main.allSource.srcDirs)
-            classDirectories = project.files(mergedConfiguration.jacoco.projects().sourceSets.main.output)
+            additionalSourceDirs = project.files(projects.sourceSets.main.allSource.srcDirs)
+            sourceDirectories = project.files(projects.sourceSets.main.allSource.srcDirs)
+            classDirectories = project.files(projects.sourceSets.main.output)
             executionData project.files(jacocoRootMerge.destinationFile)
 
             reports {
