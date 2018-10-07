@@ -19,10 +19,12 @@ package org.kordamp.gradle
 
 import org.asciidoctor.gradle.AsciidoctorPlugin
 import org.asciidoctor.gradle.AsciidoctorTask
+import org.gradle.BuildAdapter
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.bundling.Zip
 
@@ -32,6 +34,12 @@ import org.gradle.api.tasks.bundling.Zip
  */
 class GuidePlugin implements Plugin<Project> {
     private static final String VISITED = GuidePlugin.class.name.replace('.', '_') + '_VISITED'
+
+    static final String CREATE_GUIDE_TASK_NAME = 'createGuide'
+    static final String INIT_GUIDE_TASK_NAME = 'initGuide'
+    static final String ZIP_GUIDE_TASK_NAME = 'zipGuide'
+    static final String ASCIIDOCTOR_SRC_DIR = 'src/docs/asciidoc'
+    static final String ASCIIDOCTOR_RESOURCE_DIR = 'src/docs/resources'
 
     Project project
 
@@ -47,6 +55,8 @@ class GuidePlugin implements Plugin<Project> {
         BasePlugin.applyIfMissing(project)
         ApidocPlugin.applyIfMissing(project.rootProject)
         project.plugins.apply(AsciidoctorPlugin)
+
+        project.extensions.create('guide', GuideExtension, project)
 
         project.afterEvaluate {
             configureAsciidoctorTask(project)
@@ -101,16 +111,16 @@ class GuidePlugin implements Plugin<Project> {
             }
 
             resources {
-                from project.file('src/docs/resources')
+                from project.file(ASCIIDOCTOR_RESOURCE_DIR)
             }
         }
     }
 
     private void createGuideTaskIfNeeded(Project project) {
-        Task guideTask = project.tasks.findByName('guide')
+        Task guideTask = project.tasks.findByName(CREATE_GUIDE_TASK_NAME)
 
         if (!guideTask) {
-            guideTask = project.tasks.create('guide', Copy) {
+            guideTask = project.tasks.create(CREATE_GUIDE_TASK_NAME, Copy) {
                 group 'Documentation'
                 description 'Creates an Asciidoctor based guide.'
             }
@@ -122,9 +132,9 @@ class GuidePlugin implements Plugin<Project> {
             from("${project.tasks.asciidoctor.outputDir}/html5")
         }
 
-        Task guideZipTask = project.tasks.findByName('guideZip')
-        if (!guideZipTask) {
-            guideZipTask = project.tasks.create('guideZip', Zip) {
+        Task zipGuideTask = project.tasks.findByName(ZIP_GUIDE_TASK_NAME)
+        if (!zipGuideTask) {
+            zipGuideTask = project.tasks.create(ZIP_GUIDE_TASK_NAME, Zip) {
                 dependsOn guideTask
                 group 'Documentation'
                 description 'An archive of the generated guide.'
@@ -133,24 +143,36 @@ class GuidePlugin implements Plugin<Project> {
             }
         }
 
-        project.rootProject.tasks.whenTaskAdded { Task task ->
-            if (task.name != ApidocPlugin.AGGREGATE_APIDOCS_TASK_NAME) {
-                return
-            }
+        project.rootProject.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                GuideExtension extension = project.extensions.findByType(GuideExtension)
 
-            guideTask.configure {
-                dependsOn task
-                from(task.destinationDir) { into 'api' }
+                Task task = project.rootProject.tasks.findByName(ApidocPlugin.AGGREGATE_JAVADOCS_TASK_NAME)
+                if (task?.enabled) {
+                    guideTask.configure {
+                        dependsOn task
+                        from(task.destinationDir) { into extension.javadocApiDir }
+                    }
+                }
+
+                task = project.rootProject.tasks.findByName(ApidocPlugin.AGGREGATE_GROOVYDOCS_TASK_NAME)
+                if (task?.enabled) {
+                    guideTask.configure {
+                        dependsOn task
+                        from(task.destinationDir) { into extension.groovydocApiDir }
+                    }
+                }
             }
-        }
+        })
     }
 
     private void createInitGuideTask(Project project) {
-        project.tasks.create('initGuide', DefaultTask) {
+        project.tasks.create(INIT_GUIDE_TASK_NAME, DefaultTask) {
             group 'Project Setup'
             description 'Initializes directories and files required by the guide.'
-            outputs.dir('src/docs/asciidoc')
-            outputs.dir('src/docs/resources')
+            outputs.dir(ASCIIDOCTOR_SRC_DIR)
+            outputs.dir(ASCIIDOCTOR_RESOURCE_DIR)
             doFirst {
                 GuidePlugin.initGuide(project)
             }
@@ -158,8 +180,8 @@ class GuidePlugin implements Plugin<Project> {
     }
 
     static void initGuide(Project project) {
-        project.file('src/docs/resources').mkdirs()
-        File asciidocDir = project.file('src/docs/asciidoc')
+        project.file(ASCIIDOCTOR_RESOURCE_DIR).mkdirs()
+        File asciidocDir = project.file(ASCIIDOCTOR_SRC_DIR)
         asciidocDir.mkdirs()
 
         touchFile(project.file("${asciidocDir}/_links.adoc"))

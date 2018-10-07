@@ -33,8 +33,11 @@ import org.gradle.api.Project
 @ToString(includeNames = true, excludes = ['project'])
 class Apidoc {
     boolean enabled = true
+    boolean replaceJavadoc = false
 
     private boolean enabledSet
+    private boolean replaceJavadocSet
+
     private final Project project
 
     Apidoc(Project project) {
@@ -50,12 +53,24 @@ class Apidoc {
         this.enabledSet
     }
 
+    void setReplaceJavadoc(boolean replaceJavadoc) {
+        this.replaceJavadoc = replaceJavadoc
+        this.replaceJavadocSet = true
+    }
+
+    boolean isReplaceJavadocSet() {
+        this.replaceJavadocSet
+    }
+
     void copyInto(Apidoc copy) {
         copy.@enabled = enabled
         copy.@enabledSet = enabledSet
+        copy.@replaceJavadoc = replaceJavadoc
+        copy.@replaceJavadocSet = replaceJavadocSet
     }
 
     static void merge(Apidoc o1, Apidoc o2) {
         o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
+        o1.setReplaceJavadoc((boolean) (o1.replaceJavadocSet ? o1.replaceJavadoc : o2.replaceJavadoc))
     }
 }
