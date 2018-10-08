@@ -34,4 +34,5 @@ dependencies {
     compile project(':publishing-gradle-plugin')
     compile project(':source-gradle-plugin')
     compile project(':sourcestats-gradle-plugin')
+    compile project(':sourcehtml-gradle-plugin')
 }

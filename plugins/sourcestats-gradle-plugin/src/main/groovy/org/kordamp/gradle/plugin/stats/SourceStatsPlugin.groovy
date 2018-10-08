@@ -17,9 +17,11 @@
  */
 package org.kordamp.gradle.plugin.stats
 
+import org.gradle.BuildAdapter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.invocation.Gradle
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.Stats
@@ -71,11 +73,15 @@ class SourceStatsPlugin implements Plugin<Project> {
             } catch (MissingPropertyException ignored) {
                 // incompatible project, skip it
             }
+        }
 
-            if (isRootProject(project) && !project.childProjects.isEmpty()) {
-                project.evaluationDependsOnChildren()
-                applyAggregateStats(project)
-            }
+        if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            project.gradle.addBuildListener(new BuildAdapter() {
+                @Override
+                void projectsEvaluated(Gradle gradle) {
+                    applyAggregateStats(project)
+                }
+            })
         }
     }
 
@@ -91,7 +97,7 @@ class SourceStatsPlugin implements Plugin<Project> {
             counters = mergedConfiguration.stats.counters
         }
 
-        if(mergedConfiguration.stats.enabled) {
+        if (mergedConfiguration.stats.enabled) {
             mergedConfiguration.stats.projects() << project
             mergedConfiguration.stats.statsTasks() << statsTask
         }
@@ -104,8 +110,10 @@ class SourceStatsPlugin implements Plugin<Project> {
         Set<Task> allStatsTasks = new LinkedHashSet<>(mergedConfiguration.stats.statsTasks())
 
         project.childProjects.values()*.mergedConfiguration.stats.each { Stats e ->
-            allProjects.addAll(e.projects())
-            allStatsTasks.addAll(e.statsTasks())
+            if (e.enabled) {
+                allProjects.addAll(e.projects())
+                allStatsTasks.addAll(e.statsTasks())
+            }
         }
 
         project.tasks.create(AGGREGATE_STATS_TASK_NAME, AggregateSourceStatsReportTask) {

@@ -17,11 +17,13 @@
  */
 package org.kordamp.gradle.plugin.apidoc
 
+import org.gradle.BuildAdapter
 import org.gradle.api.DefaultTask
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Groovydoc
@@ -95,72 +97,79 @@ class ApidocPlugin implements Plugin<Project> {
 
         BasePlugin.applyIfMissing(project)
 
-        project.afterEvaluate {
-            ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
+        if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            project.gradle.addBuildListener(new BuildAdapter() {
+                @Override
+                void projectsEvaluated(Gradle gradle) {
+                    doConfigureRootProject(project)
+                }
+            })
+        }
+    }
 
-            if (!mergedConfiguration.apidoc.enabled) {
-                return
+    private void doConfigureRootProject(Project project) {
+        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+
+        if (!mergedConfiguration.apidoc.enabled) {
+            return
+        }
+
+        if (!project.childProjects.isEmpty()) {
+            List<Javadoc> javadocs = []
+            project.tasks.withType(Javadoc) { Javadoc javadoc -> if (javadoc.name != AGGREGATE_JAVADOCS_TASK_NAME && javadoc.enabled) javadocs << javadoc }
+            project.childProjects.values().each { Project p ->
+                p.tasks.withType(Javadoc) { Javadoc javadoc -> if (javadoc.enabled) javadocs << javadoc }
+            }
+            javadocs = javadocs.unique()
+
+            List<Groovydoc> groovydocs = []
+            project.tasks.withType(Groovydoc) { Groovydoc groovydoc -> if (groovydoc.name != AGGREGATE_GROOVYDOCS_TASK_NAME && groovydoc.enabled) groovydocs << groovydoc }
+            project.childProjects.values().each { Project p ->
+                p.tasks.withType(Groovydoc) { Groovydoc groovydoc -> if (groovydoc.enabled) groovydocs << groovydoc }
+            }
+            groovydocs = groovydocs.unique()
+
+            List<Task> aggregateJavadocTasks = createAggregateJavadocsTask(project)
+            List<Task> aggregateGroovydocTasks = createAggregateGroovydocsTask(project, aggregateJavadocTasks[0])
+            Task aggregateApidocTask = createAggregateApidocTask(project)
+
+            if (javadocs) {
+                aggregateJavadocTasks[0].configure { task ->
+                    task.enabled true
+                    task.dependsOn javadocs
+                    task.source javadocs.source
+                    task.classpath = project.files(javadocs.classpath)
+
+                    mergedConfiguration.javadoc.applyTo(task)
+                    task.options.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.resolveAuthors().join(', ')}. All rights reserved."
+                }
+                aggregateJavadocTasks[1].configure {
+                    enabled true
+                    from aggregateJavadocTasks[0].destinationDir
+                }
+
+                aggregateApidocTask.enabled = true
+                aggregateApidocTask.dependsOn aggregateJavadocTasks[0]
             }
 
-            if (!project.childProjects.isEmpty()) {
-                project.evaluationDependsOnChildren()
+            if (groovydocs) {
+                aggregateGroovydocTasks[0].configure { task ->
+                    task.enabled true
+                    task.dependsOn groovydocs
+                    task.source groovydocs.source
+                    task.classpath = project.files(groovydocs.classpath)
+                    task.groovyClasspath = project.files(groovydocs.groovyClasspath.flatten().unique())
 
-                List<Javadoc> javadocs = []
-                project.tasks.withType(Javadoc) { Javadoc javadoc -> if (javadoc.name != AGGREGATE_JAVADOCS_TASK_NAME && javadoc.enabled) javadocs << javadoc }
-                project.childProjects.values().each { Project p ->
-                    p.tasks.withType(Javadoc) { Javadoc javadoc -> if (javadoc.enabled) javadocs << javadoc }
+                    mergedConfiguration.groovydoc.applyTo(task)
+                    task.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.resolveAuthors().join(', ')}. All rights reserved."
                 }
-                javadocs = javadocs.unique()
-
-                List<Groovydoc> groovydocs = []
-                project.tasks.withType(Groovydoc) { Groovydoc groovydoc -> if (groovydoc.name != AGGREGATE_GROOVYDOCS_TASK_NAME && groovydoc.enabled) groovydocs << groovydoc }
-                project.childProjects.values().each { Project p ->
-                    p.tasks.withType(Groovydoc) { Groovydoc groovydoc -> if (groovydoc.enabled) groovydocs << groovydoc }
-                }
-                groovydocs = groovydocs.unique()
-
-                List<Task> aggregateJavadocTasks = createAggregateJavadocsTask(project)
-                List<Task> aggregateGroovydocTasks = createAggregateGroovydocsTask(project, aggregateJavadocTasks[0])
-                Task aggregateApidocTask = createAggregateApidocTask(project)
-
-                if (javadocs) {
-                    aggregateJavadocTasks[0].configure { task ->
-                        task.enabled true
-                        task.dependsOn javadocs
-                        task.source javadocs.source
-                        task.classpath = project.files(javadocs.classpath)
-
-                        mergedConfiguration.javadoc.applyTo(task)
-                        task.options.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.resolveAuthors().join(', ')}. All rights reserved."
-                    }
-                    aggregateJavadocTasks[1].configure {
-                        enabled true
-                        from aggregateJavadocTasks[0].destinationDir
-                    }
-
-                    aggregateApidocTask.enabled = true
-                    aggregateApidocTask.dependsOn aggregateJavadocTasks[0]
+                aggregateGroovydocTasks[1].configure {
+                    enabled true
+                    from aggregateGroovydocTasks[0].destinationDir
                 }
 
-                if (groovydocs) {
-                    aggregateGroovydocTasks[0].configure { task ->
-                        task.enabled true
-                        task.dependsOn groovydocs
-                        task.source groovydocs.source
-                        task.classpath = project.files(groovydocs.classpath)
-                        task.groovyClasspath = project.files(groovydocs.groovyClasspath.flatten().unique())
-
-                        mergedConfiguration.groovydoc.applyTo(task)
-                        task.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.resolveAuthors().join(', ')}. All rights reserved."
-                    }
-                    aggregateGroovydocTasks[1].configure {
-                        enabled true
-                        from aggregateGroovydocTasks[0].destinationDir
-                    }
-
-                    aggregateApidocTask.enabled = true
-                    aggregateApidocTask.dependsOn aggregateGroovydocTasks[0]
-                }
+                aggregateApidocTask.enabled = true
+                aggregateApidocTask.dependsOn aggregateGroovydocTasks[0]
             }
         }
     }

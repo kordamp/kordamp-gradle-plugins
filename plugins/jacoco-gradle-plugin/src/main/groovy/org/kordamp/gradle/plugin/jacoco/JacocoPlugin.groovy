@@ -17,9 +17,11 @@
  */
 package org.kordamp.gradle.plugin.jacoco
 
+import org.gradle.BuildAdapter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.tasks.JacocoMerge
@@ -70,6 +72,9 @@ class JacocoPlugin implements Plugin<Project> {
 
         project.afterEvaluate {
             ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+            if (!mergedConfiguration.jacoco.enabled) {
+                return
+            }
 
             project.plugins.withType(JavaBasePlugin) {
                 project.tasks.withType(Test) { Test testTask ->
@@ -81,11 +86,15 @@ class JacocoPlugin implements Plugin<Project> {
                     }
                 }
             }
+        }
 
-            if (isRootProject(project) && !project.childProjects.isEmpty()) {
-                project.evaluationDependsOnChildren()
-                applyJacocoMerge(project)
-            }
+        if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            project.gradle.addBuildListener(new BuildAdapter() {
+                @Override
+                void projectsEvaluated(Gradle gradle) {
+                    applyJacocoMerge(project)
+                }
+            })
         }
     }
 
@@ -140,9 +149,11 @@ class JacocoPlugin implements Plugin<Project> {
         Set<JacocoReport> reportTasks = new LinkedHashSet<>(mergedConfiguration.jacoco.reportTasks())
 
         project.childProjects.values()*.mergedConfiguration.jacoco.each { Jacoco e ->
-            projects.addAll(e.projects())
-            testTasks.addAll(e.testTasks())
-            reportTasks.addAll(e.reportTasks())
+            if (e.enabled) {
+                projects.addAll(e.projects())
+                testTasks.addAll(e.testTasks())
+                reportTasks.addAll(e.reportTasks())
+            }
         }
 
         Task jacocoRootMerge = project.tasks.create('jacocoRootMerge', JacocoMerge) {

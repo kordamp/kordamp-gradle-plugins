@@ -67,6 +67,7 @@ other plugins. This extension has the following properties
 | publishing | Publishing  |               | Configures the `org.kordamp.gradle.publishing` plugin
 | source     | Source      |               | Configures the `org.kordamp.gradle.source-jar` plugin
 | stats      | Stats       |               | Configures the `org.kordamp.gradle.source-stats` plugin
+| sourceHtml | SourceHtml  |               | Configures the `org.kordamp.gradle.source-html` plugin
 |===
 
 ==== DSL
@@ -214,6 +215,37 @@ stats {
     counters
     formats
     paths
+}
+
+sourceHtml {
+    conversion {
+        srcDirs
+        destDir
+        includes
+        outputFormat
+        tabs
+        style
+        lineAnchorPrefix
+        horizontalAlignment
+        showLineNumbers
+        showFileName
+        showDefaultTitle
+        showTableBorder
+        includeDocumentHeader
+        includeDocumentFooter
+        addLineAnchors
+        useShortFileName
+        overwrite
+    }
+    overview {
+        destDir
+        pattern
+        windowTitle
+        docTitle
+        docDescription
+        icon
+        stylesheet
+    }
 }
 ----
 
@@ -448,6 +480,39 @@ This block is optional.
 
 This block is optional.
 
+.SourceHtml
+[header, cols="5*"]
+|===
+| Name                             | Type           | Required | Default Value                          | Description
+| enabled                          | boolean        | no       | true                                   | Disables `org.kordamp.gradle.source-html` plugin if `false`
+| conversion.srcDirs               | FileCollection | no       |                                        |
+| conversion.destDir               | File           | no       | "${project.buildDir}/docs/source-html" |
+| conversion.includes              | String         | no       | '**/*.java,**/*.groovy'                |
+| conversion.outputFormat          | String         | no       | 'html'                                 |
+| conversion.tabs                  | int            | no       | 4                                      |
+| conversion.style                 | String         | no       | 'kawa'                                 | Valid values are 'kawa', 'monochrome', 'eclipse'
+| conversion.lineAnchorPrefix      | String         | no       | ''                                     |
+| conversion.horizontalAlignment   | String         | no       | 'left'                                 |
+| conversion.showLineNumbers       | boolean        | no       | true                                   |
+| conversion.showFileName          | boolean        | no       | true                                   |
+| conversion.showDefaultTitle      | boolean        | no       | true                                   |
+| conversion.showTableBorder       | boolean        | no       | false                                  |
+| conversion.includeDocumentHeader | boolean        | no       | true                                   |
+| conversion.includeDocumentFooter | boolean        | no       | true                                   |
+| conversion.addLineAnchors        | boolean        | no       | true                                   |
+| conversion.useShortFileName      | boolean        | no       | true                                   |
+| conversion.overwrite             | boolean        | no       | true                                   |
+| overview.destDir                 | File           | no       | "${project.buildDir}/docs/source-html" |
+| overview.pattern                 | String         | no       | '**/*.html'                            |
+| overview.windowTitle             | String         | no       | "$project.name $project.version"       |
+| overview.docTitle                | String         | no       | "$project.name $project.version"       |
+| overview.docDescription          | String         | no       |                                        |
+| overview.icon                    | File           | no       |                                        |
+| overview.stylesheet              | File           | no       |                                        |
+|===
+
+This block is optional.
+
 === BuildInfo
 
 id: `org.kordamp.gradle.build-info`
@@ -614,6 +679,22 @@ Responsibilities:
 
  * Create a `SourceStatsTask` named `stats` per project.
  * Create a `AggregateSourceStatsReportTask` named `aggregateStats` at the root project.
+
+=== SourceHtml
+
+id: `org.kordamp.gradle.source-html`
+
+Responsibilities:
+
+ * Adds a `java2html` configuration.
+ * Creates a `ConvertCodeTask` named `convertCodeToHtml` task per project.
+ * Creates a `GenerateOverviewTask` named `generateSourceHtmlOverview` task per project.
+ * Creates a task named `sourceHtml` task that depends on `convertCodeToHtml` and `generateSourceHtmlOverview`.
+ * Creates a `ConvertCodeTask` task on the `rootProject` with name `aggregateConvertCodeToHtml` that aggregates all source code.
+ * Creates a `GenerateOverviewTask`task on the `rootProject` with name `aggregateGenerateSourceHtmlOverview` that generates an aggregate overview.
+ * Creates a task named `aggregateSourceHtml` on the root project that depends on `aggregateConvertCodeToHtml` and `aggregateGenerateSourceHtmlOverview`.
+
+NOTE: This plugin relies on the `com.bmuschko.java2html` plugin but does not apply it.
 
 === Guide
 

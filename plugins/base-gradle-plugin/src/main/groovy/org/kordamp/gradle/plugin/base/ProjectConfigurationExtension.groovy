@@ -31,6 +31,7 @@ import org.kordamp.gradle.plugin.base.plugins.License
 import org.kordamp.gradle.plugin.base.plugins.Minpom
 import org.kordamp.gradle.plugin.base.plugins.Publishing
 import org.kordamp.gradle.plugin.base.plugins.Source
+import org.kordamp.gradle.plugin.base.plugins.SourceHtml
 import org.kordamp.gradle.plugin.base.plugins.Stats
 
 /**
@@ -53,6 +54,7 @@ class ProjectConfigurationExtension {
     final Publishing publishing
     final Source source
     final Stats stats
+    final SourceHtml sourceHtml
 
     private boolean releaseSet
 
@@ -69,6 +71,7 @@ class ProjectConfigurationExtension {
         publishing = new Publishing(project)
         source = new Source(project)
         stats = new Stats(project)
+        sourceHtml = new SourceHtml(project)
     }
 
     void info(Action<? super Information> action) {
@@ -159,6 +162,14 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, stats)
     }
 
+    void sourceHtml(Action<? super SourceHtml> action) {
+        action.execute(sourceHtml)
+    }
+
+    void sourceHtml(@DelegatesTo(SourceHtml) Closure action) {
+        ConfigureUtil.configure(action, sourceHtml)
+    }
+
     void setRelease(boolean release) {
         this.release = release
         this.releaseSet = true
@@ -183,6 +194,7 @@ class ProjectConfigurationExtension {
         publishing.copyInto(copy.publishing)
         source.copyInto(copy.source)
         stats.copyInto(copy.stats)
+        sourceHtml.copyInto(copy.sourceHtml)
 
         copy
     }
@@ -201,6 +213,7 @@ class ProjectConfigurationExtension {
         Publishing.merge(merged.publishing, other.publishing)
         Source.merge(merged.source, other.source)
         Stats.merge(merged.stats, other.stats)
+        SourceHtml.merge(merged.sourceHtml, other.sourceHtml)
 
         merged
     }

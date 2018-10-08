@@ -33,8 +33,8 @@ import static org.kordamp.gradle.StringUtils.getPropertyNameForLowerCaseHyphenSe
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['project'])
-@ToString(includeNames = true, excludes = ['project'])
+@EqualsAndHashCode(excludes = ['project', 'projects', 'statsTasks'])
+@ToString(includeNames = true, excludes = ['project', 'projects', 'statsTasks'])
 class Stats {
     static final String XML = 'xml'
     static final String HTML = 'html'

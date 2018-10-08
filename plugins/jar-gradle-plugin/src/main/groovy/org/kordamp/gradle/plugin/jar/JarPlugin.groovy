@@ -80,19 +80,21 @@ class JarPlugin implements Plugin<Project> {
             project.plugins.withType(JavaBasePlugin) {
                 createJarTaskIfNeeded(project)
             }
-            project.rootProject.gradle.addBuildListener(new BuildAdapter() {
-                @Override
-                void projectsEvaluated(Gradle gradle) {
-                    project.tasks.withType(Jar) { Jar jarTask ->
-                        configureJarManifest(project, jarTask)
-                    }
-                }
-            })
         }
+
+        project.rootProject.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                project.tasks.withType(Jar) { Jar jarTask ->
+                    if(jarTask.name == 'jar') configureJarMetainf(project, jarTask)
+                    configureJarManifest(project, jarTask)
+                }
+            }
+        })
     }
 
     private void createJarTaskIfNeeded(Project project) {
-        if(!project.sourceSets.findByName('main')) return
+        if (!project.sourceSets.findByName('main')) return
 
         String taskName = 'jar'
 
@@ -115,24 +117,21 @@ class JarPlugin implements Plugin<Project> {
                 }
             }
         }
+    }
 
-        project.rootProject.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
+    private void configureJarMetainf(Project project, Jar jarTask) {
+        ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
 
-                if (mergedConfiguration.minpom.enabled) {
-                    jarTask.configure {
-                        dependsOn MinPomPlugin.MINPOM_TASK_NAME
-                        metaInf {
-                            from(MinPomPlugin.resolveMinPomDestinationDir(project)) {
-                                into "maven/${project.group}/${project.name}"
-                            }
-                        }
+        if (mergedConfiguration.minpom.enabled) {
+            jarTask.configure {
+                dependsOn MinPomPlugin.MINPOM_TASK_NAME
+                metaInf {
+                    from(MinPomPlugin.resolveMinPomDestinationDir(project)) {
+                        into "maven/${project.group}/${project.name}"
                     }
                 }
             }
-        })
+        }
     }
 
     private void configureJarManifest(Project project, Jar jarTask) {

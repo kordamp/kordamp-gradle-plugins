@@ -30,6 +30,7 @@ import org.kordamp.gradle.plugin.license.LicensePlugin
 import org.kordamp.gradle.plugin.minpom.MinPomPlugin
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 import org.kordamp.gradle.plugin.source.SourceJarPlugin
+import org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
 import org.kordamp.gradle.plugin.stats.SourceStatsPlugin
 
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
@@ -68,6 +69,7 @@ class ProjectPlugin implements Plugin<Project> {
         PublishingPlugin.applyIfMissing(project)
         BintrayPlugin.applyIfMissing(project)
         SourceStatsPlugin.applyIfMissing(project)
+        SourceHtmlPlugin.applyIfMissing(project)
 
         project.plugins.apply(VersionsPlugin)
     }
