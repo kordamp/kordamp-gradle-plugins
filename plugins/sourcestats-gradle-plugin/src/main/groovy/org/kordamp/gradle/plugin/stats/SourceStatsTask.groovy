@@ -52,7 +52,7 @@ class SourceStatsTask extends DefaultTask {
     int totalLOC = 0
 
     SourceStatsTask() {
-        reportDir = project.file("${project.buildDir}/reports/stats")
+        reportDir = project.file("${project.reporting.baseDir.path}/stats")
         xmlReport = project.file("${reportDir}/${project.name}.xml")
     }
 

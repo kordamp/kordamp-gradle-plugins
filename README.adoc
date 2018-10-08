@@ -657,6 +657,7 @@ Responsibilities:
  * Configures the `license` extension per project.
  * Expects the license header template to be located at `rootProject.file('gradle/LICENSE_HEADER')`.
  * Automatically excludes `*/*.png` and `META-INF/services/*`.
+ * Creates a task named `aggregateLicenseReport` on the root project that aggregates all license reports.
 
 The following variables become available to the license header template
 
@@ -677,8 +678,8 @@ id: `org.kordamp.gradle.source-stats`
 
 Responsibilities:
 
- * Create a `SourceStatsTask` named `stats` per project.
- * Create a `AggregateSourceStatsReportTask` named `aggregateStats` at the root project.
+ * Create a `SourceStatsTask` named `sourceStats` per project.
+ * Create a `AggregateSourceStatsReportTask` named `aggregateSourceStats` at the root project.
 
 === SourceHtml
 

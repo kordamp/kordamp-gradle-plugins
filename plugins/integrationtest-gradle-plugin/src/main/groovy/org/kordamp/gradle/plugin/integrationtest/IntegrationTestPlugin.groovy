@@ -125,7 +125,7 @@ class IntegrationTestPlugin implements Plugin<Project> {
             integrationTestReport = project.tasks.create('integrationTestReport', TestReport) {
                 group 'Reporting'
                 description 'Generates a report on integration tests.'
-                destinationDir = project.file("${project.buildDir}/reports/integration-tests")
+                destinationDir = project.file("${project.reporting.baseDir.path}/integration-tests")
                 reportOn integrationTest.binResultsDir
             }
         }

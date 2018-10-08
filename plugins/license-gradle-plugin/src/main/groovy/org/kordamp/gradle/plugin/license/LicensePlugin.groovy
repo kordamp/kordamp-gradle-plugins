@@ -17,9 +17,12 @@
  */
 package org.kordamp.gradle.plugin.license
 
+import nl.javadude.gradle.plugins.license.DownloadLicenses
 import nl.javadude.gradle.plugins.license.LicenseExtension
+import org.gradle.BuildAdapter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.License
@@ -43,9 +46,8 @@ class LicensePlugin implements Plugin<Project> {
                 project.childProjects.values().each {
                     configureProject(it)
                 }
-            } else {
-                configureProject(project)
             }
+            configureProject(project)
         } else {
             configureProject(project)
         }
@@ -95,6 +97,33 @@ class LicensePlugin implements Plugin<Project> {
             }
             licenseExtension.exclude '**/*.png'
             licenseExtension.exclude 'META-INF/services/*'
+        }
+
+        if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            project.gradle.addBuildListener(new BuildAdapter() {
+                @Override
+                void projectsEvaluated(Gradle gradle) {
+                    configureAggregateLicenseReportTask(project)
+                }
+            })
+        }
+    }
+
+    private void configureAggregateLicenseReportTask(Project project) {
+        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        if(!mergedConfiguration.license.enabled) {
+            return
+        }
+
+        Set<DownloadLicenses> tasks = new LinkedHashSet<>()
+        project.subprojects.each { prj ->
+           tasks.addAll( prj.tasks.withType(DownloadLicenses))
+        }
+
+        project.tasks.create('aggregateLicenseReport', AggregateLicenseReportTask) {
+            dependsOn tasks
+            group 'Reporting'
+            description 'Generates an aggregate license report'
         }
     }
 }

@@ -40,7 +40,7 @@ class AggregateSourceStatsReportTask extends DefaultTask {
     File xmlReport
 
     AggregateSourceStatsReportTask() {
-        reportDir = project.file("${project.buildDir}/reports/stats")
+        reportDir = project.file("${project.reporting.baseDir.path}/stats")
         xmlReport = project.file("${reportDir}/${project.name}-all.xml")
         projects = project.subprojects
     }

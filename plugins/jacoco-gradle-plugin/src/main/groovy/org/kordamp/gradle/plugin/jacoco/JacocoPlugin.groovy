@@ -123,8 +123,8 @@ class JacocoPlugin implements Plugin<Project> {
                 executionData testTask
 
                 reports {
-                    html.destination = project.file("${project.buildDir}/reports/jacoco/${testTask.name}/html")
-                    xml.destination = project.file("${project.buildDir}/reports/jacoco/${testTask.name}/jacocoTestReport.xml")
+                    html.destination = project.file("${project.reporting.baseDir.path}/jacoco/${testTask.name}/html")
+                    xml.destination = project.file("${project.reporting.baseDir.path}/jacoco/${testTask.name}/jacocoTestReport.xml")
                 }
             }
         }
@@ -143,6 +143,9 @@ class JacocoPlugin implements Plugin<Project> {
 
     private void applyJacocoMerge(Project project) {
         ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        if (!mergedConfiguration.jacoco.enabled) {
+            return
+        }
 
         Set<Project> projects = new LinkedHashSet<>(mergedConfiguration.jacoco.projects())
         Set<Test> testTasks = new LinkedHashSet<>(mergedConfiguration.jacoco.testTasks())

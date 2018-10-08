@@ -116,6 +116,11 @@ class SourceHtmlPlugin implements Plugin<Project> {
     }
 
     private Task configureSourceHtmlTask(Project project, Configuration configuration) {
+        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        if (!mergedConfiguration.sourceHtml.enabled) {
+            return
+        }
+
         Task classesTask = project.tasks.findByName('classes')
         if (!classesTask) {
             return project.tasks.create(SOURCE_HTML_TASK_NAME, DefaultTask) {
@@ -125,7 +130,6 @@ class SourceHtmlPlugin implements Plugin<Project> {
             }
         }
 
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
         mergedConfiguration.sourceHtml.srcDirs = resolveSrcDirs(project, mergedConfiguration.sourceHtml.conversion.srcDirs)
 
         Task convertCodeTask = project.tasks.create('convertCodeToHtml', ConvertCodeTask) {

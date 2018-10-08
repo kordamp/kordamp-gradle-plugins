@@ -35,7 +35,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 class SourceStatsPlugin implements Plugin<Project> {
     private static final String VISITED = SourceStatsPlugin.class.name.replace('.', '_') + '_VISITED'
 
-    static final String AGGREGATE_STATS_TASK_NAME = 'aggregateStats'
+    static final String AGGREGATE_STATS_TASK_NAME = 'aggregateSourceStats'
 
     Project project
 
@@ -88,7 +88,7 @@ class SourceStatsPlugin implements Plugin<Project> {
     private void createStatsTask(Project project) {
         ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
-        SourceStatsTask statsTask = project.tasks.create('stats', SourceStatsTask) {
+        SourceStatsTask statsTask = project.tasks.create('sourceStats', SourceStatsTask) {
             enabled = mergedConfiguration.stats.enabled
             group = 'Reporting'
             description = 'Generates a report on lines of code'

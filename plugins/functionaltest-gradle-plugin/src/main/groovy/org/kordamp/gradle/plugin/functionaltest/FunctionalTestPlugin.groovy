@@ -125,7 +125,7 @@ class FunctionalTestPlugin implements Plugin<Project> {
             functionalTestReport = project.tasks.create('functionalTestReport', TestReport) {
                 group 'Reporting'
                 description 'Generates a report on functional tests.'
-                destinationDir = project.file("${project.buildDir}/reports/functional-tests")
+                destinationDir = project.file("${project.reporting.baseDir.path}/functional-tests")
                 reportOn functionalTest.binResultsDir
             }
         }
