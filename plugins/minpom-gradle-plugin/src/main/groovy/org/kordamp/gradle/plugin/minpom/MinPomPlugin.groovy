@@ -75,7 +75,6 @@ class MinPomPlugin implements Plugin<Project> {
 
         project.afterEvaluate {
             ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
-
             if (!mergedConfiguration.minpom.enabled) {
                 return
             }

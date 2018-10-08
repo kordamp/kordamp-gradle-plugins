@@ -43,7 +43,7 @@ class Stats {
     boolean enabled = true
     Map<String, String> counters = [:]
     Map<String, Map<String, String>> paths = [:]
-    List<String> formats = []
+    List<String> formats = ['xml', 'txt']
 
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<Task> statsTasks = new LinkedHashSet<>()
