@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.bintray
 
+import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
@@ -92,6 +93,7 @@ class BintrayPlugin implements Plugin<Project> {
         ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
         if (!mergedConfiguration.bintray.enabled || !project.sourceSets.findByName('main')) {
+            project.getTasks().findByName(BintrayUploadTask.TASK_NAME)?.enabled = false
             return
         }
 
