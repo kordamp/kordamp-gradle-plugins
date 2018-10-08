@@ -66,12 +66,16 @@ class SourceStatsPlugin implements Plugin<Project> {
         BasePlugin.applyIfMissing(project)
 
         project.afterEvaluate {
-            try {
-                // see if the project supports sourceSets
-                project.sourceSets
-                createStatsTask(project)
-            } catch (MissingPropertyException ignored) {
-                // incompatible project, skip it
+            ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+
+            if (mergedConfiguration.stats.enabled && !isRootProject(project)) {
+                try {
+                    // see if the project supports sourceSets
+                    project.sourceSets
+                    createStatsTask(project)
+                } catch (MissingPropertyException ignored) {
+                    // incompatible project, skip it
+                }
             }
         }
 
@@ -111,7 +115,6 @@ class SourceStatsPlugin implements Plugin<Project> {
 
         project.childProjects.values()*.mergedConfiguration.stats.each { Stats e ->
             if (e.enabled) {
-                allProjects.addAll(e.projects())
                 allStatsTasks.addAll(e.statsTasks())
             }
         }
@@ -122,7 +125,6 @@ class SourceStatsPlugin implements Plugin<Project> {
             description = 'Aggregate source stats reports.'
             dependsOn allStatsTasks
             formats = mergedConfiguration.stats.formats
-            projects = allProjects
         }
     }
 }

@@ -94,8 +94,8 @@ class SourceHtmlPlugin implements Plugin<Project> {
         project.afterEvaluate {
             ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
-            project.plugins.withType(JavaBasePlugin) {
-                if (mergedConfiguration.sourceHtml.enabled) {
+            if (mergedConfiguration.sourceHtml.enabled) {
+                project.plugins.withType(JavaBasePlugin) {
                     if (configureSourceHtmlTask(project, configuration).enabled) {
                         mergedConfiguration.sourceHtml.projects() << project
                     } else {

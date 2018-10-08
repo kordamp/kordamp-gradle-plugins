@@ -19,9 +19,9 @@ package org.kordamp.gradle.plugin.stats
 
 import groovy.xml.MarkupBuilder
 import org.gradle.api.DefaultTask
-import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
 import static org.kordamp.gradle.plugin.base.plugins.Stats.HTML
@@ -33,31 +33,31 @@ import static org.kordamp.gradle.plugin.base.plugins.Stats.XML
  * @since 0.5.0
  */
 class AggregateSourceStatsReportTask extends DefaultTask {
-    @Optional @Input Collection<Project> projects = []
     @Optional @Input List<String> formats = []
-    @Optional @Input File reportDir
+    @Optional @OutputDirectory File reportDir
 
     File xmlReport
 
     AggregateSourceStatsReportTask() {
         reportDir = project.file("${project.reporting.baseDir.path}/stats")
         xmlReport = project.file("${reportDir}/${project.name}-all.xml")
-        projects = project.subprojects
     }
 
     @TaskAction
     void computeAggregate() {
         Map<String, Map<String, Integer>> stats = [:]
 
-        projects.each { p ->
-            SourceStatsTask t = p.tasks.findByName('stats')
-            if (!t || !t.xmlReport.exists()) return
-            def xml = new XmlSlurper().parse(t.xmlReport)
-            xml.category.each { category ->
-                String n = category.@name.text() ? category.@name.text() : 'Totals'
-                Map<String, Integer> map = stats.get(n, [fileCount: 0, locCount: 0])
-                map.fileCount += category.fileCount.text().toInteger()
-                map.locCount += category.loc.text().toInteger()
+        project.subprojects.each { subprj ->
+            subprj.tasks.withType(SourceStatsTask) { SourceStatsTask t ->
+                if (!t.enabled || !t.xmlReport.exists()) return
+
+                def xml = new XmlSlurper().parse(t.xmlReport)
+                xml.category.each { category ->
+                    String n = category.@name.text() ? category.@name.text() : 'Totals'
+                    Map<String, Integer> map = stats.get(n, [fileCount: 0, locCount: 0])
+                    map.fileCount += category.fileCount.text().toInteger()
+                    map.locCount += category.loc.text().toInteger()
+                }
             }
         }
 
