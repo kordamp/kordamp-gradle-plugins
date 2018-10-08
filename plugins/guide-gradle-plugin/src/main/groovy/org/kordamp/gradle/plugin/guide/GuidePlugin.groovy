@@ -79,35 +79,38 @@ class GuidePlugin implements Plugin<Project> {
 
         ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
+        Map attrs = [:]
+        checkAttribute(attrs, asciidoctorTask.attributes, 'toc', 'left')
+        checkAttribute(attrs, asciidoctorTask.attributes, 'doctype', 'book')
+        checkAttribute(attrs, asciidoctorTask.attributes, 'icons', 'font')
+        checkAttribute(attrs, asciidoctorTask.attributes, 'encoding', 'utf-8')
+        checkAttribute(attrs, asciidoctorTask.attributes, 'sectlink', true)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'sectanchors', true)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'numbered', true)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'linkattrs', true)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'imagesdir', 'images')
+        checkAttribute(attrs, asciidoctorTask.attributes, 'linkcss', true)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'source-highlighter', 'coderay')
+        checkAttribute(attrs, asciidoctorTask.attributes, 'coderay-linenums-mode', 'table')
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-title', mergedConfiguration.info.description)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-inception-year', mergedConfiguration.info.inceptionYear)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-copyright-year', mergedConfiguration.info.copyrightYear)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-author', mergedConfiguration.info.resolveAuthors().join(', '))
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-url', mergedConfiguration.info.url)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-scm', mergedConfiguration.info.links.scm)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-issue-tracker', mergedConfiguration.info.links.issueTracker)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-group', project.group)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-version', project.version)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-name', project.rootProject.name)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'build-by', project.rootProject.ext.buildinfo.buildBy)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'build-date', project.rootProject.ext.buildinfo.buildDate)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'build-time', project.rootProject.ext.buildinfo.buildTime)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'build-revision', project.rootProject.ext.buildinfo.buildRevision)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'build-jdk', project.rootProject.ext.buildinfo.buildJdk)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'build-created-by', project.rootProject.ext.buildinfo.buildCreatedBy)
+
         asciidoctorTask.configure {
-            attributes += [
-                toc                    : 'left',
-                doctype                : 'book',
-                icons                  : 'font',
-                encoding               : 'utf-8',
-                sectlink               : true,
-                sectanchors            : true,
-                numbered               : true,
-                linkattrs              : true,
-                imagesdir              : 'images',
-                linkcss                : true,
-                'source-highlighter'   : 'coderay',
-                'coderay-linenums-mode': 'table',
-                'project-title'        : mergedConfiguration.info.description,
-                'project-author'       : mergedConfiguration.info.resolveAuthors().join(', '),
-                'project-url'          : mergedConfiguration.info.url,
-                'project-scm'          : mergedConfiguration.info.links.scm,
-                'project-issue-tracker': mergedConfiguration.info.links.issueTracker,
-                'project-group'        : project.group,
-                'project-version'      : project.version,
-                'project-name'         : project.rootProject.name,
-                'build-by'             : project.rootProject.ext.buildinfo.buildBy,
-                'build-date'           : project.rootProject.ext.buildinfo.buildDate,
-                'build-time'           : project.rootProject.ext.buildinfo.buildTime,
-                'build-revision'       : project.rootProject.ext.buildinfo.buildRevision,
-                'build-jdk'            : project.rootProject.ext.buildinfo.buildJdk,
-                'build-created-by'     : project.rootProject.ext.buildinfo.buildCreatedBy
-            ]
+            attributes.putAll(attrs)
 
             sources {
                 include 'index.adoc'
@@ -117,6 +120,10 @@ class GuidePlugin implements Plugin<Project> {
                 from project.file(ASCIIDOCTOR_RESOURCE_DIR)
             }
         }
+    }
+
+    private static void checkAttribute(Map dest, Map src, String key, value) {
+        if(!src.containsKey(key)) dest[key] = value
     }
 
     private void createGuideTaskIfNeeded(Project project) {
