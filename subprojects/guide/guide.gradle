@@ -22,11 +22,15 @@ guide {
 }
 
 afterEvaluate {
+    project.tasks.findByName('createGuide')
+
     gitPublish {
         repoUri = rootProject.extensions.findByName('config').info.links.scm
         branch  = 'gh-pages'
         contents {
-            from project.tasks.findByName('createGuide').outputs.files
+            from(project.tasks.findByName('createGuide').outputs.files) {
+                into "guide/${project.version}"
+            }
         }
         commitMessage = "Publish guide for $version"
     }
