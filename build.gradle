@@ -21,6 +21,7 @@ buildscript {
 
     dependencies {
         classpath 'org.kordamp.gradle:project-gradle-plugin:0.5.0'
+        classpath 'org.ajoberstar:gradle-git-publish:0.3.2'
     }
 }
 

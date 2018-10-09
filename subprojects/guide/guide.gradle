@@ -15,13 +15,21 @@
  */
 
 apply plugin: 'org.kordamp.gradle.guide'
+apply plugin: 'org.ajoberstar.git-publish'
 
 guide {
     groovydocApiDir = 'api'
 }
 
-tasks.configureEach { task ->
-    if (task.name == 'createGuide') {
-
+afterEvaluate {
+    gitPublish {
+        repoUri = rootProject.extensions.findByName('config').info.links.scm
+        branch  = 'gh-pages'
+        contents {
+            from project.tasks.findByName('createGuide').outputs.files
+        }
+        commitMessage = "Publish guide for $version"
     }
+
+    gitPublishCommit.dependsOn(project.tasks.findByName('createGuide'))
 }
