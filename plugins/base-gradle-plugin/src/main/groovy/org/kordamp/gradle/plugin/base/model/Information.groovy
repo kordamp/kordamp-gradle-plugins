@@ -65,10 +65,10 @@ class Information {
     }
 
     void copyInto(Information copy) {
-        copy.name = name
+        copy.@name = this.@name
         copy.description = description
-        copy.inceptionYear = inceptionYear
-        copy.vendor = vendor
+        copy.@inceptionYear = this.@inceptionYear
+        copy.@vendor = this.@vendor
         copy.tags.addAll(tags)
         copy.spec = spec.copyOf()
         copy.impl = impl.copyOf()
@@ -82,10 +82,10 @@ class Information {
 
     static void merge(Information o1, Information o2) {
         o2.normalize()
-        o1.name = o1.name ?: o2.name
+        o1.name = o1.@name ?: o2.name
         o1.description = o1.description ?: o2.description
-        o1.inceptionYear = o1.inceptionYear ?: o2.inceptionYear
-        o1.vendor = o1.vendor ?: o2.vendor
+        o1.inceptionYear = o1.@inceptionYear ?: o2.inceptionYear
+        o1.vendor = o1.@vendor ?: o2.vendor
         o1.tags.addAll((o1.tags + o2.tags).unique())
         SpecOrImpl.merge(o1.spec, o2.spec)
         SpecOrImpl.merge(o1.impl, o2.impl)

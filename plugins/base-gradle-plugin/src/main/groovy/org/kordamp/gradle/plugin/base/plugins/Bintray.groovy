@@ -84,17 +84,19 @@ class Bintray {
     void copyInto(Bintray copy) {
         copy.@enabled = enabled
         copy.@enabledSet = enabledSet
-        copy.repo = repo
+        copy.@repo = this.@repo
+        copy.@name = this.@name
         copy.userOrg = userOrg
-        copy.githubRepo = githubRepo
+        copy.@githubRepo = this.@githubRepo
         credentials.copyInto(copy.credentials)
     }
 
     static void merge(Bintray o1, Bintray o2) {
         o1.setEnabled((boolean)(o1.enabledSet ? o1.enabled : o2.enabled))
-        o1.repo = o1.repo ?: o2.repo
+        o1.name = o1.@name ?: o2.@name
+        o1.repo = o1.@repo ?: o2.@repo
         o1.userOrg = o1.userOrg ?: o2.userOrg
-        o1.githubRepo = o1.githubRepo ?: o2.githubRepo
+        o1.githubRepo = o1.@githubRepo ?: o2.githubRepo
         o1.credentials.merge(o1.credentials, o2.credentials)
     }
 
