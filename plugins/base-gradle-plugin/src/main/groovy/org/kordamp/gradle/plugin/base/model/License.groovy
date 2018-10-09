@@ -35,6 +35,7 @@ class License {
     String distribution = 'repo'
     String comments
     boolean primary
+    List<String> aliases = []
 
     void setId(LicenseId id) {
         this.id = id
@@ -60,6 +61,7 @@ class License {
         copy.distribution = distribution
         copy.comments = comments
         copy.primary
+        copy.aliases.addAll(aliases)
         copy
     }
 
@@ -70,5 +72,6 @@ class License {
         o1.distribution = o1.distribution ?: o2?.distribution
         o1.comments = o1.comments ?: o2?.comments
         o1.primary = o1.primary ?: o2?.primary
+        o1.aliases = (o1.aliases + o2.aliases).unique()
     }
 }

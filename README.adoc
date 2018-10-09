@@ -194,6 +194,7 @@ license {
             url
             distribution
             comments
+            aliases
         }
     }
 }
@@ -425,13 +426,14 @@ This block maps to the `<licenses>` block in POM. At least one nested `license` 
 .License.licenses.license
 [header, cols="5*"]
 |===
-| Name         | Type      | Required | Default Value | Description
-| id           | LicenseId | no*      |               |
-| primary      | boolean   | no*      | false         | Identifies this as the main license if there are more than one
-| name         | String    | yes      |               | Maps to the `<name>` block
-| url          | String    | no       |               | Maps to the `<url>` block
-| distribution | String    | no       | 'repo'        | Maps to the `<distribution>` block
-| comments     | String    | no       |               | Maps to the `<comments>` block
+| Name         | Type         | Required | Default Value | Description
+| id           | LicenseId    | no*      |               |
+| primary      | boolean      | no*      | false         | Identifies this as the main license if there are more than one
+| name         | String       | yes      |               | Maps to the `<name>` block
+| url          | String       | no       |               | Maps to the `<url>` block
+| distribution | String       | no       | 'repo'        | Maps to the `<distribution>` block
+| comments     | String       | no       |               | Maps to the `<comments>` block
+| aliases      | List<String> | no       | []            | List of license aliases
 |===
 
 This entry maps to a `<license>` block nested inside `<licenses>` in POM.
