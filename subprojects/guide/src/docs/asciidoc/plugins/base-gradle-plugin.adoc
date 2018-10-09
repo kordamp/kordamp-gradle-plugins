@@ -63,10 +63,12 @@ class:: `org.kordamp.gradle.plugin.base.BasePlugin`
             email
             url
             roles
+            timezone
             <<_base_info_organization,organization>> {
                 name
                 url
             }
+            properties
         }
     }
 }
@@ -172,13 +174,15 @@ This block is optional if none of the following plugins are used: `<<_org_kordam
 
 [options="header", cols="5*"]
 |===
-| Name         | Type         | Required | Default Value | Description
-| id           | String       | no*      |               | Mapped to the `<id>` block in POM
-| name         | String       | no*      |               | Mapped to the `<name>` block in POM
-| email        | String       | no       |               | Mapped to the `<email>` block in POM
-| url          | String       | no       |               | Mapped to the `<url>` block in POM
-| organization | Organization | no       |               | Mapped to the `<organizationName>` and `<organizationUrl>` blocks in POM
-| roles        | List<String> | no       |               | Mapped to the `<roles>` block in POM
+| Name         | Type                | Required | Default Value | Description
+| id           | String              | no*      |               | Mapped to the `<id>` block in POM
+| name         | String              | no*      |               | Mapped to the `<name>` block in POM
+| email        | String              | no       |               | Mapped to the `<email>` block in POM
+| url          | String              | no       |               | Mapped to the `<url>` block in POM
+| organization | Organization        | no       |               | Mapped to the `<organizationName>` and `<organizationUrl>` blocks in POM
+| roles        | List<String>        | no       |               | Mapped to the `<roles>` block in POM
+| timezone     | String              | no       |               | Mapped to the `<timezone>` block in POM
+| properties   | Map<String, Object> | no       | [:]           | Mapped to the `<properties>` block in POM
 |===
 
 At least `id` or `name` must be defined. If a `developer` role exists then the person instance is mapped to a `<developer>`

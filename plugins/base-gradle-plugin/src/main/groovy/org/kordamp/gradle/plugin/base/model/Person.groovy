@@ -33,8 +33,10 @@ class Person {
     String name
     String email
     String url
+    String timezone
     Organization organization
     List<String> roles = []
+    Map<String,Object> properties = [:]
 
     Person copyOf() {
         Person copy = new Person()
@@ -42,8 +44,10 @@ class Person {
         copy.name = name
         copy.email = email
         copy.url = url
+        copy.timezone = timezone
         copy.organization = organization?.copyOf()
         copy.roles.addAll(roles)
+        copy.properties.putAll(properties)
         copy
     }
 
@@ -52,12 +56,18 @@ class Person {
         o1.name = o1.name ?: o2?.name
         o1.email = o1.email ?: o2?.email
         o1.url = o1.url ?: o2?.url
+        o1.timezone = o1.timezone ?: o2?.timezone
         o1.roles.addAll((o1.roles + o2?.roles).unique())
         if (o1.organization) {
             Organization.merge(o1.organization, o2?.organization)
         } else {
             o1.organization = o2?.organization?.copyOf()
         }
+
+        Map<String,Object> map = new LinkedHashMap<>()
+        if (o2?.properties) map.putAll(o2.properties)
+        map.putAll(o1.properties)
+
         o1
     }
 }

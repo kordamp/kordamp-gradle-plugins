@@ -26,6 +26,7 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.model.Person
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.groovydoc.GroovydocPlugin
 import org.kordamp.gradle.plugin.jar.JarPlugin
@@ -140,7 +141,7 @@ class PublishingPlugin implements Plugin<Project> {
                             }
                         }
                         developers {
-                            mergedConfiguration.info.people.forEach { person ->
+                            mergedConfiguration.info.people.forEach { Person person ->
                                 if ('developer' in person.roles*.toLowerCase()) {
                                     developer {
                                         if (person.id) id = person.id
@@ -150,12 +151,13 @@ class PublishingPlugin implements Plugin<Project> {
                                         if (person.organization?.name) organizationName = person.organization.name
                                         if (person.organization?.url) organizationUrl = person.organization.url
                                         if (person.roles) roles = person.roles as Set
+                                        if (person.properties) properties.set(person.properties)
                                     }
                                 }
                             }
                         }
                         contributors {
-                            mergedConfiguration.info.people.forEach { person ->
+                            mergedConfiguration.info.people.forEach { Person person ->
                                 if ('contributor' in person.roles*.toLowerCase()) {
                                     contributor {
                                         if (person.name) name = person.name
@@ -164,6 +166,7 @@ class PublishingPlugin implements Plugin<Project> {
                                         if (person.organization?.name) organizationName = person.organization.name
                                         if (person.organization?.url) organizationUrl = person.organization.url
                                         if (person.roles) roles = person.roles as Set
+                                        if (person.properties) properties.set(person.properties)
                                     }
                                 }
                             }
