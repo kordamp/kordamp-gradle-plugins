@@ -47,6 +47,8 @@ class SourceHtmlPlugin implements Plugin<Project> {
     private static final String VISITED = SourceHtmlPlugin.class.name.replace('.', '_') + '_VISITED'
 
     static final String AGGREGATE_SOURCE_HTML_TASK_NAME = 'aggregateSourceHtml'
+    static final String AGGREGATE_CONVERT_CODE_TO_HTML_TASK_NAME = 'aggregateConvertCodeToHtml'
+    static final String AGGREGATE_GENERATE_SOURCE_HTML_OVERVIEW_TASK_NAME = 'aggregateGenerateSourceHtmlOverview'
     static final String SOURCE_HTML_TASK_NAME = 'sourceHtml'
     static final String CONFIGURATION_NAME = 'java2html'
 
@@ -193,7 +195,7 @@ class SourceHtmlPlugin implements Plugin<Project> {
             }
         }
 
-        Task convertCodeTask = project.tasks.create('aggregateConvertCodeToHtml', ConvertCodeTask) {
+        Task convertCodeTask = project.tasks.create(AGGREGATE_CONVERT_CODE_TO_HTML_TASK_NAME, ConvertCodeTask) {
             dependsOn projects.sourceHtml
             group 'Documentation'
             description 'Converts source code into HTML'
@@ -217,7 +219,7 @@ class SourceHtmlPlugin implements Plugin<Project> {
             overwrite = mergedConfiguration.sourceHtml.conversion.overwrite
         }
 
-        Task generateOverviewTask = project.tasks.create('aggregateGenerateSourceHtmlOverview', GenerateOverviewTask) {
+        Task generateOverviewTask = project.tasks.create(AGGREGATE_GENERATE_SOURCE_HTML_OVERVIEW_TASK_NAME, GenerateOverviewTask) {
             dependsOn convertCodeTask
             group 'Documentation'
             description 'Generate an overview of converted source code'
@@ -250,9 +252,17 @@ class SourceHtmlPlugin implements Plugin<Project> {
         try {
             if (project.sourceSets.main) {
                 if (hasGroovyPlugin(project)) {
-                    return project.files(files, project.sourceSets.main.groovy.srcDirs, project.sourceSets.main.java.srcDirs)
+                    return project.files(project.files(files,
+                        project.sourceSets.main.groovy.srcDirs,
+                        project.sourceSets.main.java.srcDirs).files.findAll { file ->
+                        file.exists()
+                    })
                 } else if (hasJavaPlugin(project)) {
-                    return project.files(files, project.sourceSets.main.java.srcDirs)
+                    return project.files(
+                        project.files(files,
+                            project.sourceSets.main.java.srcDirs).files.findAll { file ->
+                            file.exists()
+                        })
                 }
             }
         } catch (Exception ignored) {
