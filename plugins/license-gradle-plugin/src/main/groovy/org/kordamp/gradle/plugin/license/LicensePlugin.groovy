@@ -18,6 +18,8 @@
 package org.kordamp.gradle.plugin.license
 
 import com.hierynomus.gradle.license.LicenseReportingPlugin
+import com.hierynomus.gradle.license.tasks.LicenseCheck
+import com.hierynomus.gradle.license.tasks.LicenseFormat
 import nl.javadude.gradle.plugins.license.DownloadLicenses
 import nl.javadude.gradle.plugins.license.DownloadLicensesExtension
 import nl.javadude.gradle.plugins.license.LicenseExtension
@@ -97,6 +99,12 @@ class LicensePlugin implements Plugin<Project> {
 
     private void configureLicenseExtension(Project project) {
         ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+
+        if (!mergedConfiguration.license.enabled) {
+            project.tasks.withType(LicenseCheck).each { it.enabled = false }
+            project.tasks.withType(LicenseFormat).each { it.enabled = false }
+            return
+        }
 
         License lic = mergedConfiguration.license.allLicenses()[0]
         if (mergedConfiguration.license.allLicenses().size() > 1) {
