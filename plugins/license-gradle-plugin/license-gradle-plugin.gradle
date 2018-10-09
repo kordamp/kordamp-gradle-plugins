@@ -18,5 +18,5 @@
 
 dependencies {
     compile project(':base-gradle-plugin')
-    compile 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
+    compile 'gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.14.0'
 }
