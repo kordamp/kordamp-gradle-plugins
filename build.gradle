@@ -1,7 +1,5 @@
-import java.text.SimpleDateFormat
-
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,31 +14,80 @@ import java.text.SimpleDateFormat
  * limitations under the License.
  */
 
-plugins {
-    id 'net.nemerosa.versioning'        version '2.7.1'
-    id 'com.jfrog.bintray'              version '1.8.4'  apply false
-    id 'com.gradle.plugin-publish'      version '0.10.0' apply false
-    id 'com.github.ben-manes.versions'  version '0.20.0' apply false
-    id 'com.github.hierynomus.license'  version '0.14.0' apply false
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.kordamp.gradle:project-gradle-plugin:0.5.0'
+    }
 }
 
-apply from: 'gradle/credentials.gradle'
+plugins {
+    id 'com.gradle.plugin-publish' version '0.10.0' apply false
+}
 
-Date buildTimeAndDate = new Date()
-ext {
-    buildBy = System.properties['user.name']
-    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
-    buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
-    buildRevision = versioning.info.commit
-    buildJdk = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString()
-    buildCreatedBy = "Gradle ${gradle.gradleVersion}"
+apply plugin: 'org.kordamp.gradle.project'
+
+if (!project.hasProperty('bintrayUsername')) ext.bintrayUsername = ''
+if (!project.hasProperty('bintrayApiKey')) ext.bintrayApiKey = ''
+
+config {
+    release = (rootProject.findProperty('release') ?: false).toBoolean()
+
+    info {
+        name          = rootProject.name
+        vendor        = 'Kordamp'
+        description   = 'A collection of opinionated Gradle plugins'
+        inceptionYear = '2018'
+        tags          = ['project', 'configuration']
+
+        links {
+            website      = "https://github.com/aalmiray/${rootProject.name}"
+            issueTracker = "https://github.com/aalmiray/${rootProject.name}/issues"
+            scm          = "https://github.com/aalmiray/${rootProject.name}.git"
+        }
+
+        specification {
+            enabled = false
+        }
+
+        implementation {
+            enabled = false
+        }
+
+        people {
+            person {
+                id    = 'aalmiray'
+                name  = 'Andres Almiray'
+                roles = ['developer']
+            }
+        }
+    }
+
+    license {
+        licenses {
+            license {
+                id = 'Apache-2.0'
+            }
+        }
+    }
+
+    bintray {
+        credentials {
+            username = project.bintrayUsername
+            password = project.bintrayApiKey
+        }
+        repo    = 'kordamp'
+        userOrg = 'aalmiray'
+        name    = rootProject.name
+    }
 }
 
 allprojects {
     apply plugin: 'base'
     apply plugin: 'idea'
-    apply plugin: 'com.github.ben-manes.versions'
-    apply from: rootProject.file('gradle/license.gradle')
 
     repositories {
         jcenter()
@@ -62,87 +109,76 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'groovy'
-    apply plugin: 'java-gradle-plugin'
+    if (project.name.endsWith('-plugin')) {
+        apply plugin: 'groovy'
+        apply plugin: 'java-gradle-plugin'
+        config {
+            info {
+                description = project.project_description
+            }
 
-    dependencies {
-        compile gradleApi()
-
-        testCompile("org.spockframework:spock-core:$spockVersion") {
-            exclude group: 'org.codehaus.groovy'
-        }
-    }
-
-    compileGroovy {
-        sourceCompatibility = project.sourceCompatibility
-        targetCompatibility = project.targetCompatibility
-    }
-
-    groovydoc {
-        use             = true
-        source          = project.sourceSets.main.allSource
-        classpath       = javadoc.classpath
-        ext.windowtitle = "$project.name $project.version API"
-        ext.doctitle    = "$project.name $project.version API"
-        header          = "$project.name $project.version API"
-        footer          = "Copyright &copy; ${copyrightYear} the original author or authors. All rights reserved."
-        includePrivate  = false
-        link 'https://docs.gradle.org/4.0/javadoc/', 'org.gradle.'
-        link 'http://docs.oracle.com/javase/8/docs/api/', 'java.', 'org.xml.', 'javax.', 'org.w3c.'
-    }
-
-    task sourcesJar(type: Jar) {
-        group 'Build'
-        description 'An archive of the source code'
-        classifier 'sources'
-        from sourceSets.main.allSource
-    }
-
-    task javadocJar(type: Jar, dependsOn: groovydoc) {
-        group 'Build'
-        description 'An archive of the javadoc'
-        classifier 'javadoc'
-        dependsOn javadoc
-        from groovydoc.destinationDir
-    }
-
-    jar.finalizedBy sourcesJar
-    jar.finalizedBy javadocJar
-
-    artifacts {
-        sourcesJar
-        javadocJar
-    }
-
-    gradlePlugin {
-        plugins {
-            "${project.pluginShortName}Plugin" {
-                id = project.pluginId
-                implementationClass = project.pluginImplementationClass
+            groovydoc {
+                replaceJavadoc = true
+                options {
+                    link 'https://docs.gradle.org/4.0/javadoc/', 'org.gradle.'
+                }
             }
         }
-    }
 
-    project.tasks.withType(Test) {
-        beforeTest { descriptor ->
-            logger.lifecycle("Running test: " + descriptor)
+        dependencies {
+            compile gradleApi()
+
+            testCompile("org.spockframework:spock-core:$spockVersion") {
+                exclude group: 'org.codehaus.groovy'
+            }
         }
 
-        onOutput { descriptor, event ->
-            logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
+        compileGroovy {
+            sourceCompatibility = project.sourceCompatibility
+            targetCompatibility = project.targetCompatibility
         }
 
-        testLogging {
-            showStandardStreams = true
-            afterSuite { desc, result ->
-                if (!desc.parent) {
-                    println "Test results ${project.name}: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+        bintray {
+            pkg {
+                version {
+                    attributes = ['gradle-plugin': "${project.pluginId}:${project.group}:${project.name}"]
+                }
+            }
+        }
+
+        apply plugin: 'com.gradle.plugin-publish'
+
+        gradlePlugin {
+            plugins {
+                "${project.pluginShortName}Plugin" {
+                    id = project.pluginId
+                    implementationClass = project.pluginImplementationClass
+                }
+            }
+        }
+
+        task publishRelease(dependsOn: [bintrayUpload, publishPlugins]) {}
+
+        afterEvaluate {
+            pluginBundle {
+                website = project.mergedConfiguration.info.links.website
+                vcsUrl = project.mergedConfiguration.info.links.scm
+                description = project.mergedConfiguration.info.description
+                tags = project.mergedConfiguration.info.tags
+
+                plugins {
+                    "${project.pluginShortName}Plugin" {
+                        id = project.pluginId
+                        displayName = project.displayName
+                    }
+                }
+
+                mavenCoordinates {
+                    groupId = project.group
+                    artifactId = project.name
+                    version = project.version
                 }
             }
         }
     }
-
-    apply from: rootProject.file('gradle/publishing.gradle')
-
-    task publishRelease(dependsOn: [bintrayUpload, publishPlugins]) {}
 }
