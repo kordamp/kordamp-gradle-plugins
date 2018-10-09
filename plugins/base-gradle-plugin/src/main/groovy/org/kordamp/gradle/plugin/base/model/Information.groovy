@@ -174,10 +174,12 @@ class Information {
     }
 
     Information normalize() {
+        if(spec.isEnabledSet()) specification.setEnabled(spec.enabled)
         specification.title = spec.title ?: project.name
         specification.version = spec.version ?: project.version
         specification.vendor = spec.vendor ?: getVendor()
 
+        if(impl.isEnabledSet()) implementation.setEnabled(impl.enabled)
         implementation.title = impl.title ?: project.name
         implementation.version = impl.version ?: project.version
         implementation.vendor = impl.vendor ?: getVendor()
