@@ -66,6 +66,14 @@ config {
         }
     }
 
+    javadoc {
+        enabled = false
+    }
+
+    groovydoc {
+        replaceJavadoc = true
+    }
+
     license {
         licenses {
             license {

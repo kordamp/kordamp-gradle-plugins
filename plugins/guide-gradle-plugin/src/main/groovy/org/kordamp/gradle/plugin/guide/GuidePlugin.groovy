@@ -30,6 +30,7 @@ import org.gradle.api.tasks.bundling.Zip
 import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
 
 /**
  * @author Andres Almiray
@@ -173,6 +174,14 @@ class GuidePlugin implements Plugin<Project> {
                         from(task.destinationDir) { into extension.groovydocApiDir }
                     }
                 }
+
+                task = project.rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_CONVERT_CODE_TO_HTML_TASK_NAME)
+                if (task?.enabled) {
+                    guideTask.configure {
+                        dependsOn project.rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)
+                        from(task.destDir) { into extension.sourceHtmlDir }
+                    }
+                }
             }
         })
     }
@@ -190,6 +199,8 @@ class GuidePlugin implements Plugin<Project> {
     }
 
     static void initGuide(Project project) {
+        GuideExtension extension = project.extensions.findByType(GuideExtension)
+
         project.file(ASCIIDOCTOR_RESOURCE_DIR).mkdirs()
         File asciidocDir = project.file(ASCIIDOCTOR_SRC_DIR)
         asciidocDir.mkdirs()
@@ -212,7 +223,9 @@ class GuidePlugin implements Plugin<Project> {
                             |
                             |= Links
                             |
-                            |link:api/index.html[Javadoc, window="_blank"]""".stripMargin('|')
+                            |link:${extension.javadocApiDir}/index.html[Javadoc, window="_blank"]
+                            |
+                            |link:${extension.sourceHtmlDir}/index.html[Source, window="_blank"]""".stripMargin('|')
         }
 
         File introduction = touchFile(project.file("${asciidocDir}/introduction.adoc"))
