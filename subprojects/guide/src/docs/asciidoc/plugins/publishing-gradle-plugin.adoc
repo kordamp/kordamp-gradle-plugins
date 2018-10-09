@@ -1,0 +1,6 @@
+
+[[_org_kordamp_gradle_publishing]]
+= Publishing
+
+id: `org.kordamp.gradle.publishing`
+

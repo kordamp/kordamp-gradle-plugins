@@ -1,0 +1,6 @@
+
+[[_org_kordamp_gradle_groovydoc]]
+= Groovydoc
+
+id: `org.kordamp.gradle.groovydoc`
+

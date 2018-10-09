@@ -21,12 +21,13 @@ Option #1
 buildscript {
     repositories {
         jcenter()
+        maven {  url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
         classpath 'org.kordamp.gradle:{plugin-id}:{plugin-version}'
     }
 }
-apply plugin: 'org.kordamp.jdeps'
+apply plugin: '{plugin-id}'
 ----
 
 Option #2

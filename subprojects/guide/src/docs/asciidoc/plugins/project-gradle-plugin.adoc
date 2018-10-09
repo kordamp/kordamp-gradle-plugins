@@ -1,0 +1,6 @@
+
+[[_org_kordamp_gradle_project]]
+= Project
+
+id: `org.kordamp.gradle.project`
+

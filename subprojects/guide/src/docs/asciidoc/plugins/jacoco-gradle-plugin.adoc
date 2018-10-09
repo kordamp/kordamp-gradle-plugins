@@ -1,0 +1,6 @@
+
+[[_org_kordamp_gradle_jacoco]]
+= JaCoCo
+
+id: `org.kordamp.gradle.jacoco`
+

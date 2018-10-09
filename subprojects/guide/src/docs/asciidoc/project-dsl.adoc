@@ -1,0 +1,76 @@
+
+[[_project_dsl]]
+= Project DSL
+
+Most plugins take their configuration from a centralized point: the Project DSL. This feature is added by the
+`<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>` which is automatically applied by all plugins.
+
+The DSL is comprised by the following elements
+
+[source,groovy]
+----
+config {
+    info { ... }       //<1>
+    source { ... }     //<2>
+    sourceHtml { ... } //<3>
+    stats { ... }      //<4>
+    license { ... }    //<5>
+    minpom { ... }     //<6>
+    javadoc { ... }    //<7>
+    groovydoc { ... }  //<8>
+    apidoc { ... }     //<9>
+    jacoco { ... }     //<10>
+    publishing { ... } //<11>
+    bintray { ... }    //<12>
+}
+----
+<1> See <<_org_kordamp_gradle_base,Base>> plugin
+<2> See <<_org_kordamp_gradle_source,Source>> plugin
+<3> See <<_org_kordamp_gradle_sourcehtml,SourceHtml>> plugin
+<4> See <<_org_kordamp_gradle_sourcestats,SourceStat>> plugin
+<5> See <<_org_kordamp_gradle_license,License>> plugin
+<6> See <<_org_kordamp_gradle_minpom,Minpom>> plugin
+<7> See <<_org_kordamp_gradle_javadoc,Javadoc>> plugin
+<8> See <<_org_kordamp_gradle_groovydoc,Groovydoc>> plugin
+<9> See <<_org_kordamp_gradle_apidoc,Apidoc>> plugin
+<10> See <<_org_kordamp_gradle_jacoco,JaCoCo>> plugin
+<11> See <<_org_kordamp_gradle_publishing,Publishing>> plugin
+<12> See <<_org_kordamp_gradle_bintray,Bintray>> plugin
+
+Each one of these elements (except for `info`) expose a property named `enabled` that can be used to turn on or
+off all of the behavior provided by the associated plugin. This property is set to `true` by default.
+
+Most of the time it's enough to configure the DSL on the root project, as settings are automatically applied to all subprojects.
+However it's also possible to override a particular root setting should the need arises, just define a `config` block
+on the subproject's build file and override the settings you need. Here's for example how a child project may skip
+publications completely:
+
+[source,groovy]
+[subs="attributes"]
+.build.gradle (root)
+----
+plugins {
+    id 'org.kordamp.gradle.project' version '{project-version}'
+}
+
+config {
+    info { ... }
+    // additional configuration
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+----
+
+[source,groovy]
+.build.gradle (child)
+----
+config {
+    bintray    { enabled = false }
+    publishing { enabled = false }
+}
+----
+

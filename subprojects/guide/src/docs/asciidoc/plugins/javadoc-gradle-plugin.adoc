@@ -1,0 +1,6 @@
+
+[[_org_kordamp_gradle_javadoc]]
+= Javadoc
+
+id: `org.kordamp.gradle.javadoc`
+

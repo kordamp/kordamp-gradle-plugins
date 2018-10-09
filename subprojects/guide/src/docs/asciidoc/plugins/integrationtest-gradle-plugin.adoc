@@ -1,0 +1,6 @@
+
+[[_org_kordamp_gradle_integrationtest]]
+= IntegrationTest
+
+id: `org.kordamp.gradle.integration-test`
+

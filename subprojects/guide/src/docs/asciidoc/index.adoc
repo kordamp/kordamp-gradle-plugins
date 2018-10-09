@@ -1,0 +1,20 @@
+= {project-title}
+:author: {project-author}
+:revnumber: {project-version}
+:toclevels: 4
+:docinfo1:
+
+include::_links.adoc[]
+
+:leveloffset: 1
+include::introduction.adoc[]
+include::usage.adoc[]
+include::project-structure.adoc[]
+include::project-dsl.adoc[]
+include::plugins.adoc[]
+
+= Links
+
+link:api/index.html[Javadoc, window="_blank"]
+
+link:api-html/index.html[Source, window="_blank"]

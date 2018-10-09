@@ -1,0 +1,24 @@
+
+[[_plugins]]
+= Plugins
+
+:leveloffset: 2
+include::plugins/apidoc-gradle-plugin.adoc[]
+include::plugins/base-gradle-plugin.adoc[]
+include::plugins/bintray-gradle-plugin.adoc[]
+include::plugins/buildinfo-gradle-plugin.adoc[]
+include::plugins/functionaltest-gradle-plugin.adoc[]
+include::plugins/groovydoc-gradle-plugin.adoc[]
+include::plugins/guide-gradle-plugin.adoc[]
+include::plugins/integrationtest-gradle-plugin.adoc[]
+include::plugins/jacoco-gradle-plugin.adoc[]
+include::plugins/jar-gradle-plugin.adoc[]
+include::plugins/javadoc-gradle-plugin.adoc[]
+include::plugins/license-gradle-plugin.adoc[]
+include::plugins/minpom-gradle-plugin.adoc[]
+include::plugins/project-gradle-plugin.adoc[]
+include::plugins/publishing-gradle-plugin.adoc[]
+include::plugins/source-gradle-plugin.adoc[]
+include::plugins/sourcehtml-gradle-plugin.adoc[]
+include::plugins/sourcestats-gradle-plugin.adoc[]
+:leveloffset: 1

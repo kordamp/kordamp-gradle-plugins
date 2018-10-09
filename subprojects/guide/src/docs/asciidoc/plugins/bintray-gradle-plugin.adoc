@@ -1,0 +1,6 @@
+
+[[_org_kordamp_gradle_bintray]]
+= Bintray
+
+id: `org.kordamp.gradle.bintray`
+

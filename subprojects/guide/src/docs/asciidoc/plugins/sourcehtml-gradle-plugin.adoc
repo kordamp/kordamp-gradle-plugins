@@ -1,0 +1,6 @@
+
+[[_org_kordamp_gradle_sourcehtml]]
+= SourceHtml
+
+id: `org.kordamp.gradle.source-html`
+

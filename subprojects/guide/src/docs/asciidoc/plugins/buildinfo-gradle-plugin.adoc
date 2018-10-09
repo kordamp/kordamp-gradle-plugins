@@ -1,0 +1,6 @@
+
+[[_org_kordamp_gradle_buildinfo]]
+= BuildInfo
+
+id: `org.kordamp.gradle.build-info`
+

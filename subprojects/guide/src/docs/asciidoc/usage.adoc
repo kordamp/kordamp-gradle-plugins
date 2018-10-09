@@ -1,0 +1,36 @@
+
+[[_usage]]
+= Usage
+
+There are two choices for applying any of the plugins described in this document
+
+Option #1
+[source,groovy]
+[subs="attributes"]
+----
+buildscript {
+    repositories {
+        // Gradle Plugin Portal
+        maven {  url 'https://plugins.gradle.org/m2/' }
+        // required for additional dependencies, may use mavenCentral() instead
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.kordamp.gradle:{plugin-id}:{project-version}'
+    }
+}
+apply plugin: '{plugin-id}'
+----
+
+Option #2
+[source,groovy]
+[subs="attributes"]
+----
+plugins {
+    id '{plugin-id}' version '{project-version}'
+}
+----
+
+Where `{plugin-id}` stands for any of the ids described in the following sections. Most times it's enough to simply apply
+the `org.kordamp.gradle.project` at the root. All plugins may be applied independently as well.
+

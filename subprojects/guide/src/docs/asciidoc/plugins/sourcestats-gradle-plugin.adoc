@@ -1,0 +1,6 @@
+
+[[_org_kordamp_gradle_sourcestats]]
+= SourceStats
+
+id: `org.kordamp.gradle.source-stats`
+

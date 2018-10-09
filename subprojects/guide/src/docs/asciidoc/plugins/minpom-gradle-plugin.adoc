@@ -1,0 +1,6 @@
+
+[[_org_kordamp_gradle_minpom]]
+= Minpom
+
+id: `org.kordamp.gradle.minpom`
+

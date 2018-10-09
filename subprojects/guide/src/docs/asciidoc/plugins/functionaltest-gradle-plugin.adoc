@@ -1,0 +1,6 @@
+
+[[_org_kordamp_gradle_functionaltest]]
+= FunctionalTest
+
+id: `org.kordamp.gradle.functional-test`
+
