@@ -49,7 +49,9 @@ class AggregateLicenseReportTask extends DefaultTask {
                 allDependencies.sort({ it.value.file.text() }).each { name, dep ->
                     dependency(name: dep.@name) {
                         file(dep.file.text())
-                        license(name: dep.license.@name, url: dep.license.@url)
+                        dep.license.each { lic ->
+                            license(name: lic.@name, url: lic.@url)
+                        }
                     }
                 }
             }
