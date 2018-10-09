@@ -33,10 +33,12 @@ def includeProject = { String projectDirName, String projectName ->
     project(":${projectName}").buildFileName = buildFileName
 }
 
-File subdir = new File(rootDir, 'plugins')
-subdir.eachDir { dir ->
-    File buildFile = new File(dir, "${dir.name}.gradle")
-    if (buildFile.exists()) {
-        includeProject 'plugins', dir.name
+['plugins', 'subprojects'].each { dirName ->
+    File subdir = new File(rootDir, dirName)
+    subdir.eachDir { dir ->
+        File buildFile = new File(dir, "${dir.name}.gradle")
+        if (buildFile.exists()) {
+            includeProject dirName, dir.name
+        }
     }
 }
