@@ -52,6 +52,10 @@ class Bintray {
         this.project = project
     }
 
+    String getRepo() {
+        repo ?: 'maven'
+    }
+
     String getName() {
         name ?: project.name
     }
@@ -99,9 +103,6 @@ class Bintray {
 
         if (!enabled) return errors
 
-        if (isBlank(repo)) {
-            errors << "[${project.name}] Bintray repo is blank".toString()
-        }
         if (isBlank(userOrg)) {
             errors << "[${project.name}] Bintray userOrg is blank".toString()
         }
