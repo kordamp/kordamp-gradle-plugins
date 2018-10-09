@@ -2,5 +2,7 @@
 [[_org_kordamp_gradle_integrationtest]]
 = IntegrationTest
 
-id: `org.kordamp.gradle.integration-test`
+[horizontal]
+id:: `org.kordamp.gradle.integration-test`
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 

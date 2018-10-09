@@ -2,5 +2,6 @@
 [[_org_kordamp_gradle_javadoc]]
 = Javadoc
 
-id: `org.kordamp.gradle.javadoc`
-
+[horizontal]
+id:: `org.kordamp.gradle.javadoc`
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`

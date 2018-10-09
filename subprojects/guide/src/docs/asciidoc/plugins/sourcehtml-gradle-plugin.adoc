@@ -2,5 +2,10 @@
 [[_org_kordamp_gradle_sourcehtml]]
 = SourceHtml
 
-id: `org.kordamp.gradle.source-html`
+[horizontal]
+id:: `org.kordamp.gradle.source-html`
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 
+////
+https://github.com/bmuschko/gradle-java2html-plugin
+////

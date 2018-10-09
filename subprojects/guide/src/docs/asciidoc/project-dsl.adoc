@@ -8,34 +8,23 @@ Most plugins take their configuration from a centralized point: the Project DSL.
 The DSL is comprised by the following elements
 
 [source,groovy]
+[subs="+macros"]
 ----
 config {
-    info { ... }       //<1>
-    source { ... }     //<2>
-    sourceHtml { ... } //<3>
-    stats { ... }      //<4>
-    license { ... }    //<5>
-    minpom { ... }     //<6>
-    javadoc { ... }    //<7>
-    groovydoc { ... }  //<8>
-    apidoc { ... }     //<9>
-    jacoco { ... }     //<10>
-    publishing { ... } //<11>
-    bintray { ... }    //<12>
+    <<_org_kordamp_gradle_base,info>> { ... }
+    <<_org_kordamp_gradle_source,source>> { ... }
+    <<_org_kordamp_gradle_sourcehtml,sourceHtml>> { ... }
+    <<_org_kordamp_gradle_sourcestats,stats>> { ... }
+    <<_org_kordamp_gradle_license,license>> { ... }
+    <<_org_kordamp_gradle_minpom,minpom>> { ... }
+    <<_org_kordamp_gradle_javadoc,javadoc>> { ... }
+    <<_org_kordamp_gradle_groovydoc,groovydoc>> { ... }
+    <<_org_kordamp_gradle_apidoc,apidoc>> { ... }
+    <<_org_kordamp_gradle_jacoco,jacoco>> { ... }
+    <<_org_kordamp_gradle_publishing,publishing>> { ... }
+    <<_org_kordamp_gradle_bintray,bintray>> { ... }
 }
 ----
-<1> See <<_org_kordamp_gradle_base,Base>> plugin
-<2> See <<_org_kordamp_gradle_source,Source>> plugin
-<3> See <<_org_kordamp_gradle_sourcehtml,SourceHtml>> plugin
-<4> See <<_org_kordamp_gradle_sourcestats,SourceStat>> plugin
-<5> See <<_org_kordamp_gradle_license,License>> plugin
-<6> See <<_org_kordamp_gradle_minpom,Minpom>> plugin
-<7> See <<_org_kordamp_gradle_javadoc,Javadoc>> plugin
-<8> See <<_org_kordamp_gradle_groovydoc,Groovydoc>> plugin
-<9> See <<_org_kordamp_gradle_apidoc,Apidoc>> plugin
-<10> See <<_org_kordamp_gradle_jacoco,JaCoCo>> plugin
-<11> See <<_org_kordamp_gradle_publishing,Publishing>> plugin
-<12> See <<_org_kordamp_gradle_bintray,Bintray>> plugin
 
 Each one of these elements (except for `info`) expose a property named `enabled` that can be used to turn on or
 off all of the behavior provided by the associated plugin. This property is set to `true` by default.

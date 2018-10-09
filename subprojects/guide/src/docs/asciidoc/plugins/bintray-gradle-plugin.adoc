@@ -2,5 +2,12 @@
 [[_org_kordamp_gradle_bintray]]
 = Bintray
 
-id: `org.kordamp.gradle.bintray`
-
+[horizontal]
+id:: `org.kordamp.gradle.bintray`
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
+`<<_org_kordamp_gradle_buildinfo,org.kordamp.gradle.build-info>>`, +
+`<<_org_kordamp_gradle_source,org.kordamp.gradle.source-jar>>`, +
+`<<_org_kordamp_gradle_javadoc,org.kordamp.gradle.javadoc>>`, +
+`<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>`, +
+`<<_org_kordamp_gradle_apidoc,org.kordamp.gradle.apidoc>>`, +
+`<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>`

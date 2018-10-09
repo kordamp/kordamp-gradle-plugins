@@ -2,5 +2,7 @@
 [[_org_kordamp_gradle_functionaltest]]
 = FunctionalTest
 
-id: `org.kordamp.gradle.functional-test`
+[horizontal]
+id:: `org.kordamp.gradle.functional-test`
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 

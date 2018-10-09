@@ -2,5 +2,7 @@
 [[_org_kordamp_gradle_minpom]]
 = Minpom
 
-id: `org.kordamp.gradle.minpom`
+[horizontal]
+id:: `org.kordamp.gradle.minpom`
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 

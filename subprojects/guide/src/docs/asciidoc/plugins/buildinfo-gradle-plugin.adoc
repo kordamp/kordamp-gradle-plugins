@@ -2,5 +2,7 @@
 [[_org_kordamp_gradle_buildinfo]]
 = BuildInfo
 
-id: `org.kordamp.gradle.build-info`
+[horizontal]
+id:: `org.kordamp.gradle.build-info`
+applies:: `link:https://github.com/nemerosa/versioning[net.nemerosa.versioning]`
 

@@ -2,5 +2,10 @@
 [[_org_kordamp_gradle_guide]]
 = Guide
 
-id: `org.kordamp.gradle.guide`
-
+[horizontal]
+id:: `org.kordamp.gradle.guide`
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
+`<<_org_kordamp_gradle_javadoc,org.kordamp.gradle.javadoc>>`, (on root project) +
+`<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>`, (on root project) +
+`<<_org_kordamp_gradle_apidoc,org.kordamp.gradle.apidoc>>`, (on root project) +
+`link:https://github.com/asciidoctor/asciidoctor-gradle-plugin[org.asciidoctor.convert]`

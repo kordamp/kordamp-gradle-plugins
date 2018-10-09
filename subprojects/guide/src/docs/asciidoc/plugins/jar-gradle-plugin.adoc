@@ -2,5 +2,7 @@
 [[_org_kordamp_gradle_jar]]
 = Jar
 
-id: `org.kordamp.gradle.Jar`
+[horizontal]
+id:: `org.kordamp.gradle.Jar`
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 

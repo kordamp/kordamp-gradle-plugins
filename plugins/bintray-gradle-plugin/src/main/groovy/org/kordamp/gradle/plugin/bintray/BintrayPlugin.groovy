@@ -21,12 +21,8 @@ import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
-import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
-import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
-import org.kordamp.gradle.plugin.jar.JarPlugin
-import org.kordamp.gradle.plugin.source.SourceJarPlugin
+import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -70,11 +66,7 @@ class BintrayPlugin implements Plugin<Project> {
         }
         project.ext[visitedPropertyName] = true
 
-        BasePlugin.applyIfMissing(project)
-        BuildInfoPlugin.applyIfMissing(project)
-        SourceJarPlugin.applyIfMissing(project)
-        ApidocPlugin.applyIfMissing(project)
-        JarPlugin.applyIfMissing(project)
+        PublishingPlugin.applyIfMissing(project)
 
         project.plugins.withType(JavaBasePlugin) {
             if (!project.plugins.findPlugin(com.jfrog.bintray.gradle.BintrayPlugin)) {

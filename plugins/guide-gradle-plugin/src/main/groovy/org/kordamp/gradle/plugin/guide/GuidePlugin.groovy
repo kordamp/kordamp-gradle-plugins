@@ -58,6 +58,7 @@ class GuidePlugin implements Plugin<Project> {
 
         BasePlugin.applyIfMissing(project)
         ApidocPlugin.applyIfMissing(project.rootProject)
+        SourceHtmlPlugin.applyIfMissing(project.rootProject)
         project.plugins.apply(AsciidoctorPlugin)
 
         project.extensions.create('guide', GuideExtension, project)

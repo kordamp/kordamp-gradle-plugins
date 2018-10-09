@@ -53,7 +53,7 @@ Responsibilities:
  * Creates an extension named `config` that serves as the central point of configuration for all
 other plugins. This extension has the following properties
 
-[header, cols="4*"]
+[options="header", cols="4*"]
 |===
 | Name       | Type        | Default Value | Description
 | release    | boolean     | false         | Customizes Jar manifest and metainf if active
@@ -252,7 +252,7 @@ sourceHtml {
 ----
 
 .General Properties
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name          | Type         | Required | Default Value | Description
 | name          | String       | no       | project.name  | Mapped to the `<name>` block in POM
@@ -265,7 +265,7 @@ sourceHtml {
 The value for `vendor` may be omitted if a value for `organization.name` is given.
 
 .Links
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name         | Type   | Required | Default Value | Description
 | website      | String | yes      | empty         | Mapped to the `<url>` block in POM.
@@ -278,7 +278,7 @@ The value for `vendor` may be omitted if a value for `organization.name` is give
 Values for `issueTracker` and `scm` should be defined if the `org.kordamp.gradle.bintray` plugin is used.
 
 .Organization
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name | Type   | Required | Default Value | Description
 | name | String | no       |               | The name of the organization
@@ -288,7 +288,7 @@ Values for `issueTracker` and `scm` should be defined if the `org.kordamp.gradle
 This block is optional.
 
 .Specification
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name    | Type    | Required | Default Value   | Description
 | enabled | boolean | no       | true            | JAR manifest entries will be updated if `true`
@@ -298,7 +298,7 @@ This block is optional.
 |===
 
 .Implementation
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name    | Type    | Required | Default Value   | Description
 | enabled | boolean | no       | true            | JAR manifest entries will be updated if `true`
@@ -310,7 +310,7 @@ This block is optional.
 This block is optional.
 
 .Credentials
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name     | Type        | Required | Default Value   | Description
 | github   | Credentials | no*      |                 | Username/Password for connecting to GitHub
@@ -327,7 +327,7 @@ This block defines data associated with a particular person.
 This block is optional.
 
 .Person
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name         | Type         | Required | Default Value | Description
 | id           | String       | no*      |               | Mapped to the `<id>` block in POM
@@ -343,7 +343,7 @@ block in the POM. If a `contributor` role exists then the person instance is map
 
 .Apidoc
 
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name                | Type    | Required | Default Value | Description
 | enabled             | boolean | no       | true          | Disables `org.kordamp.gradle.apidoc` plugin if `false`
@@ -352,7 +352,7 @@ block in the POM. If a `contributor` role exists then the person instance is map
 This block is optional.
 
 .Bintray
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name         | Type        | Required | Default Value | Description
 | enabled      | boolean     | no       | true          | Disables `org.kordamp.gradle.bintray` plugin if `false`
@@ -368,7 +368,7 @@ The value of `info.tags` is mapped to `bintray.pkg.labels`.
 Values for `info.links` are mapped to their matching entries in `bintray.pkg`.
 
 .Groovydoc
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name                   | Type         | Required | Default Value                        | Description
 | enabled                | boolean      | no       | true                                 | Disables `org.kordamp.gradle.groovydoc` plugin if `false`
@@ -390,7 +390,7 @@ Values for `info.links` are mapped to their matching entries in `bintray.pkg`.
 This block is optional.
 
 .Jacoco
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name                | Type    | Required | Default Value                                                | Description
 | enabled             | boolean | no       | true                                                         | Disables `org.kordamp.gradle.jacoco` plugin if `false`
@@ -402,7 +402,7 @@ This block is optional.
 This block is optional.
 
 .Javadoc
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name     | Type                  | Required | Default Value | Description
 | enabled  | boolean               | no       | true          | Disables `org.kordamp.gradle.javaydoc` plugin if `false`
@@ -415,7 +415,7 @@ This block is optional.
 This block is optional.
 
 .License
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name     | Type    | Required | Default Value | Description
 | enabled  | boolean | no       | true          | Disables `org.kordamp.gradle.javadoc` plugin if `false`
@@ -425,7 +425,7 @@ This block is optional.
 This block maps to the `<licenses>` block in POM. At least one nested `license` block must be defined.
 
 .License.licenses.license
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name         | Type         | Required | Default Value | Description
 | id           | LicenseId    | no*      |               |
@@ -445,7 +445,7 @@ list will be treated as the primary license. If more than one license has this s
 be treated as the primary license.
 
 .Minpom
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name     | Type    | Required | Default Value | Description
 | enabled  | boolean | no       | true          | Disables `org.kordamp.gradle.minpom` plugin if `false`
@@ -454,7 +454,7 @@ be treated as the primary license.
 This block is optional.
 
 .Publishing
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name     | Type    | Required | Default Value | Description
 | enabled  | boolean | no       | true          | Disables `org.kordamp.gradle.publishing` plugin if `false`
@@ -463,7 +463,7 @@ This block is optional.
 This block is optional.
 
 .Source
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name     | Type    | Required | Default Value | Description
 | enabled  | boolean | no       | true          | Disables `org.kordamp.gradle.source-jar` plugin if `false`
@@ -472,7 +472,7 @@ This block is optional.
 This block is optional.
 
 .Stats
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name     | Type                             | Required | Default Value | Description
 | enabled  | boolean                          | no       | true          | Disables `org.kordamp.gradle.source-stats` plugin if `false`
@@ -484,7 +484,7 @@ This block is optional.
 This block is optional.
 
 .SourceHtml
-[header, cols="5*"]
+[options="header", cols="5*"]
 |===
 | Name                             | Type           | Required | Default Value                          | Description
 | enabled                          | boolean        | no       | true                                   | Disables `org.kordamp.gradle.source-html` plugin if `false`
@@ -524,7 +524,7 @@ Responsibilities:
 
  * Defines a set of build related properties and attaches them to `rootProject.ext.buildinfo`. These properties are
 
-[header, cols="3*"]
+[options="header", cols="3*"]
 |===
 | Name             | Type             | Description
 | buildTimeAndDate | `java.util.Date` | A `java.util.Date` instance representing the current time

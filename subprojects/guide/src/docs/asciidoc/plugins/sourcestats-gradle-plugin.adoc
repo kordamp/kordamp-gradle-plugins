@@ -2,5 +2,7 @@
 [[_org_kordamp_gradle_sourcestats]]
 = SourceStats
 
-id: `org.kordamp.gradle.source-stats`
+[horizontal]
+id:: `org.kordamp.gradle.source-stats`
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 

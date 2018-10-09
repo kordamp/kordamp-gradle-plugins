@@ -2,5 +2,101 @@
 [[_org_kordamp_gradle_apidoc]]
 = Apidoc
 
-id: `org.kordamp.gradle.apidoc`
+[horizontal]
+id:: `org.kordamp.gradle.apidoc`
+class:: `org.kordamp.gradle.plugin.apidoc.ApidocPlugin`
+    (link:api/org/kordamp/gradle/plugin/apidoc/ApidocPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/apidoc/ApidocPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
+`<<_org_kordamp_gradle_javadoc,org.kordamp.gradle.javadoc>>`, +
+`<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>`
+
+Responsible for aggregating API docs. Currently Javadocs (Java) and Groovydocs (Groovy) are supported.
+
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+apidoc {
+    enabled
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name                | Type    | Required | Default Value | Description
+| enabled             | boolean | no       | true          | Disables `org.kordamp.gradle.apidoc` plugin if `false`
+|===
+
+This block is optional.
+
+== Tasks
+
+[[_task_aggregate_javadocs]]
+=== AggregateJavadocs
+
+Aggregates Javadoc API docs for all projects. +
+Consumes settings from `config.<<_org_kordamp_gradle_javadoc,javadoc>>` defined at the root project.
+
+[horizontal]
+Name:: aggregateJavadocs
+Type:: `org.gradle.api.tasks.javadoc.Javadoc`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.buildDir}/docs/javadoc`
+
+[[_task_aggregate_javadocs_jar]]
+=== AggregateJavadocsJar
+
+An archive of the aggregate Javadoc API docs.
+
+[horizontal]
+Name:: aggregateJavadocsJar
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+classifier:: javadoc
+destinationDir:: `${rootProject.buildDir}/build/libs`
+
+[[_task_aggregate_groovydocs]]
+=== AggregateGroovydocs
+
+Aggregates Groovy API docs for all projects. +
+Consumes settings from `config.<<_org_kordamp_gradle_groovydoc,groovydoc>>` defined at the root project.
+
+[horizontal]
+Name:: aggregateGroovydocs
+Type:: `org.gradle.api.tasks.javadoc.Groovydoc`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.buildDir}/docs/groovydoc`
+
+[[_task_aggregate_groovydocs_jar]]
+=== AggregateGroovydocsJar
+
+An archive of the aggregate Groovy API docs.
+
+[horizontal]
+Name:: aggregateGroovydocsJar
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+classifier:: groovydoc
+destinationDir:: `${rootProject.buildDir}/build/libs`
+
+[[_task_aggregate_apidocs]]
+=== AggregateApidocs
+
+Aggregates all API docs for all projects.
+
+[horizontal]
+Name:: aggregateApidocs
+Type:: `org.gradle.api.DefaultTask`
+DependsOn:: `<<_task_aggregate_javadocs,aggregateJavadocs>>` (if enabled) +
+           `<<_task_aggregate_groovydocs,aggregateGroovydocs>>` (if enabled)
 

@@ -2,5 +2,7 @@
 [[_org_kordamp_gradle_license]]
 = License
 
-id: `org.kordamp.gradle.license`
-
+[horizontal]
+id:: `org.kordamp.gradle.license`
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
+`link:https://github.com/hierynomus/license-gradle-plugin[com.github.hierynomus.license]`

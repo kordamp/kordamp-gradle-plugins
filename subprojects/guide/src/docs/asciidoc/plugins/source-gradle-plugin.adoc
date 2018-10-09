@@ -2,5 +2,7 @@
 [[_org_kordamp_gradle_source]]
 = SourceJar
 
-id: `org.kordamp.gradle.source-jar`
+[horizontal]
+id:: `org.kordamp.gradle.source-jar`
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 
