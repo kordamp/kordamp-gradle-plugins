@@ -4,5 +4,44 @@
 
 [horizontal]
 id:: `org.kordamp.gradle.Jar`
-applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+class:: `org.kordamp.gradle.plugin.jar.JarPlugin`
+    (link:api/org/kordamp/gradle/plugin/jar/JarPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/jar/JarPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
+`<<_org_kordamp_gradle_buildinfo,org.kordamp.gradle.build-info>>`, +
+`<<_org_kordamp_gradle_minpom,org.kordamp.gradle.minpom>>`
+
+Configures additional Manifest entries and files in the `META-INF` directory.
+
+Any files that match `LICENSE*` will be added to `META-INF` automatically.
+
+If `config.<<_org_kordamp_gradle_minpom_dsl,minpom>>.enabled` is `true` then the outputs of the <<_task_minpom,minpo,>> task
+will be mapped to `META-INF/maven/${project.group}/${project.name}`.
+
+If `config.<<_org_kordamp_gradle_base_dsl,release>>` is `true` then the following entries are added to the Manifest of
+all generated JAR files:
+
+[horizontal]
+Created-By    :: rootProject.buildinfo.buildCreatedBy
+Built-By      :: rootProject.buildinfo.buildBy
+Build-Jdk     :: rootProject.buildinfo.buildJdk
+Build-Date    :: rootProject.buildinfo.buildDate
+Build-Time    :: rootProject.buildinfo.buildTime
+Build-Revision:: rootProject.buildinfo.buildRevision
+
+If `config.<<_org_kordamp_gradle_base_dsl,release>>` is `true` and  `config.info.<<_base_info_specification,specification>>`
+is enabled then the following entries are also added to the Manifest of all generated JAR files
+
+[horizontal]
+Specification-Title  :: config.info.specification.title
+Specification-Version:: config.info.specification.version
+Specification-Vendor :: config.info.specification.vendor
+
+If `config.<<_org_kordamp_gradle_base_dsl,release>>` is `true` and  `config.info.<<_base_info_implementation,implementation>>`
+is enabled then the following entries are also added to the Manifest of all generated JAR files
+
+[horizontal]
+Implementation-Title  :: config.info.implementation.title
+Implementation-Version:: config.info.implementation.version
+Implementation-Vendor :: config.info.implementation.vendor
 

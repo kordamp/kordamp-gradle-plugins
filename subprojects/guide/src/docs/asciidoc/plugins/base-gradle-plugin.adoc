@@ -8,67 +8,71 @@ class:: `org.kordamp.gradle.plugin.base.BasePlugin`
     (link:api/org/kordamp/gradle/plugin/base/BasePlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/base/BasePlugin.html[source])
 
+[[_org_kordamp_gradle_base_dsl]]
 == DSL
 
 [source,groovy]
 [subs="+macros"]
 ----
-<<_base_info,info>> {
-    name
-    description
-    inceptionYear
-    vendor
-    tags
-
-    <<_base_info_links,links>> {
-        website
-        issueTracker
-        scm
-    }
-
-    <<_base_info_organization,organization>> {
+config {
+    release
+    <<_base_info,info>> {
         name
-        url
-    }
-
-    <<_base_info_specification,specification>> {
-        enabled
-        title
-        version
+        description
+        inceptionYear
         vendor
-    }
+        tags
 
-    <<_base_info_implementation,implementation>> {
-        enabled
-        title
-        version
-        vendor
-    }
-
-    <<_base_info_credentials,credentials>> {
-        github {
-            username
-            password
+        <<_base_info_links,links>> {
+            website
+            issueTracker
+            scm
         }
-        sonatype {
-            username
-            password
-        }
-    }
 
-    <<_base_info_people,people>> {
-        <<_base_info_person,person>> {
-            id
+        <<_base_info_organization,organization>> {
             name
-            email
             url
-            roles
-            timezone
-            <<_base_info_organization,organization>> {
-                name
-                url
+        }
+
+        <<_base_info_specification,specification>> {
+            enabled
+            title
+            version
+            vendor
+        }
+
+        <<_base_info_implementation,implementation>> {
+            enabled
+            title
+            version
+            vendor
+        }
+
+        <<_base_info_credentials,credentials>> {
+            github {
+                username
+                password
             }
-            properties
+            sonatype {
+                username
+                password
+            }
+        }
+
+        <<_base_info_people,people>> {
+            <<_base_info_person,person>> {
+                id
+                name
+                email
+                url
+                roles
+                timezone
+                <<_base_info_organization,organization>> {
+                    name
+                    url
+                }
+                properties
+            }
         }
     }
 }

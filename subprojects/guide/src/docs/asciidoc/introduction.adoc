@@ -2,4 +2,21 @@
 [[_introduction]]
 = Introduction
 
-Lorem ipsum dolor sit amet
+This project provides a set of Gradle plugins that follow an opinionated way to build Java and Groovy projects.
+The conventions define by these plugins closely follow common practices observed in many Open Source projects.
+
+== Rationale
+
+The Gradle Build Tool is a very flexible and extensible tool, allowing developers to micro-manage every single aspect
+of a particular build. However with great power comes great responsibility, and in this case higher maintenance as at
+some point many Gradle builds turn out to be custom builds, that is, each one follows their own conventions and/or
+are written with a slightly different style, making it difficult to understand the pattern and apply the conventions
+to another build.
+
+In contrast, the Apache Maven built tool follows a much stricter yet still somehow flexible path to define builds.
+Many developers have cited Maven's "strictness" or "inflexibility" as a feature rather than a limitation of the tool.
+Personally I prefer a highly flexible tool (such as Gradle) while at the same time applying a structure on top that can
+still be bended to a certain degree. The plugins found in this project provide such structure.
+
+The following sections describe the conventions and each one of the plugins.
+

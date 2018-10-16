@@ -4,5 +4,24 @@
 
 [horizontal]
 id:: `org.kordamp.gradle.build-info`
+class:: `org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin`
+    (link:api/org/kordamp/gradle/plugin/buildinfo/BuildInfoPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/buildinfo/BuildInfoPlugin.html[source])
 applies:: `link:https://github.com/nemerosa/versioning[net.nemerosa.versioning]`
 
+Defines a set of build related properties and attaches them to `rootProject.ext.buildinfo`. These properties are
+
+[options="header", cols="3*"]
+|===
+| Name             | Type             | Description
+| buildTimeAndDate | `java.util.Date` | A `java.util.Date` instance representing the current time
+| buildDate        | String           | The value of `buildTimeAndDate` formatted with "yyyy-MM-dd"
+| buildTime        | String           | The value of `buildTimeAndDate` formatted with "HH:mm:ss.SSSZ"
+| buildBy          | String           | The value of the `user.name` System property
+| buildRevision    | String           | The value of the latest commit hash
+| buildJdk         | String           | Concatenation of the following System properties [`java.version`, `java.vendor`, `java.vm.version`]
+| buildCreatedBy   | String           | The Gradle version used in the build
+|===
+
+These properties are consumed by the `<<_org_kordamp_gradle_jar,org.kordamp.gradle.jar>>` plugin when enhancing the
+`MANIFEST.MF` file of generated JARs.

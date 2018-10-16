@@ -4,5 +4,99 @@
 
 [horizontal]
 id:: `org.kordamp.gradle.groovydoc`
+class:: `org.kordamp.gradle.plugin.groovydoc.GroovydocPlugin`
+    (link:api/org/kordamp/gradle/plugin/groovydoc/GroovydocPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/groovydoc/GroovydocPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `link:https://docs.gradle.org/current/userguide/groovy_plugin.html[groovy]`
+
+Generates and packages Groovydoc documentation.
+
+[[_org_kordamp_gradle_groovydoc_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    groovydoc {
+        enabled
+        includes
+        excludes
+        replaceJavadoc
+        <<_groovy_options,options>> {
+            windowTitle
+            docTitle
+            header
+            footer
+            overviewText
+            links
+            noTimestamp
+            noVersionStamp
+            includePrivate
+            use
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name           | Type         | Required | Default Value | Description
+| enabled        | boolean      | no       | true          | Disables `org.kordamp.gradle.groovydoc` plugin if `false`
+| includes       | Set<String>  | no       | []            |
+| excludes       | Set<String>  | no       | []            |
+| replaceJavadoc | boolean      | no       | false         | Disables `javadocJar` and applies the `javadoc` classifier.
+|===
+
+[[_groovy_options]]
+*options*
+
+[options="header", cols="5*"]
+|===
+| Name           | Type         | Required | Default Value                        | Description
+| windowTitle    | String       | no       | "${project.name} ${project.version}" |
+| docTitle       | String       | no       | "${project.name} ${project.version}" |
+| header         | String       | no       | "${project.name} ${project.version}" |
+| footer         | String       | no       |                                      |
+| overviewText   | TextResource | no       |                                      |
+| links          | Set<Link>    | no       | []                                   |
+| noTimestamp    | boolean      | no       |                                      |
+| noVersionStamp | boolean      | no       |                                      |
+| includePrivate | boolean      | no       | true                                 |
+| use            | boolean      | no       | true                                 |
+|===
+
+This block is optional.
+
+[[_org_kordamp_gradle_groovydoc_tasks]]
+== Tasks
+
+[[_task_groovydoc]]
+=== Groovydoc
+
+Generates Groovydoc API documentation. +
+Consumes settings from `config.<<_org_kordamp_gradle_groovydoc_dsl,groovydoc>>`.
+
+[horizontal]
+Name:: groovydoc
+Type:: `org.gradle.api.tasks.javadoc.Groovydoc`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.buildDir}/docs/groovydoc`
+
+[[_task_groovydoc_jar]]
+=== GroovydocJar
+
+An archive of the Groovydoc API docs.
+
+[horizontal]
+Name:: groovydocJar
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+classifier:: groovydoc | javadoc
+destinationDir:: `${rootProject.buildDir}/build/libs`
+

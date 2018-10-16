@@ -21,6 +21,12 @@ guide {
     groovydocApiDir = 'api'
 }
 
+asciidoctor {
+    attributes = [
+        'gradle-version': project.gradle.gradleVersion
+    ]
+}
+
 afterEvaluate {
     project.tasks.findByName('createGuide')
 

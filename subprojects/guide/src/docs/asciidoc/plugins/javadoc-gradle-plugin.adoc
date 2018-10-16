@@ -4,4 +4,70 @@
 
 [horizontal]
 id:: `org.kordamp.gradle.javadoc`
+class:: `org.kordamp.gradle.plugin.javadoc.JavadocPlugin`
+    (link:api/org/kordamp/gradle/plugin/javadoc/JavadocPlugin.html[javadoc],
+     link:api-html/org/kordamp/gradle/plugin/javadoc/JavadocPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+
+
+Generates and packages Javadoc documentation.
+
+[[_org_kordamp_gradle_javadoc_dsl]]
+== DSL
+
+[source,groovy]
+----
+config {
+    javadoc {
+        enabled
+        includes
+        excludes
+        title
+        options { ... }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name     | Type                  | Required | Default Value | Description
+| enabled  | boolean               | no       | true          | Disables `org.kordamp.gradle.javadoc` plugin if `false`
+| includes | Set<String>           | no       | []            |
+| excludes | Set<String>           | no       | []            |
+| title    | String                | no       |               |
+| options  | MinimalJavadocOptions | no       |               | Supports all options from `link:https://docs.gradle.org/4.10/javadoc/org/gradle/external/javadoc/StandardJavadocDocletOptions.html[StandardJavadocDocletOptions]`.
+|===
+
+This block is optional.
+
+[[_org_kordamp_gradle_javadoc_tasks]]
+== Tasks
+
+[[_task_javadoc]]
+=== Javadoc
+
+Generates Javadoc API documentation. +
+Consumes settings from `config.<<_org_kordamp_gradle_javadoc_dsl,javadoc>>`.
+
+[horizontal]
+Name:: javadoc
+Type:: `org.gradle.api.tasks.javadoc.Javadoc`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.buildDir}/docs/javadoc`
+
+[[_task_javadoc_jar]]
+=== JavadocJar
+
+An archive of the Javadoc API docs.
+
+[horizontal]
+Name:: javadocJar
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+classifier:: javadoc
+destinationDir:: `${rootProject.buildDir}/build/libs`
+

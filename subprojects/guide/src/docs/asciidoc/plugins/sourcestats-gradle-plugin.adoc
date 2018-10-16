@@ -4,5 +4,12 @@
 
 [horizontal]
 id:: `org.kordamp.gradle.source-stats`
+class:: `org.kordamp.gradle.plugin.stats.SourceStatsPlugin`
+    (link:api/org/kordamp/gradle/plugin/stats/SourceStatsPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/stats/SourceStatsPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+
+== DSL
+
+== Tasks
 

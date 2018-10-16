@@ -13,13 +13,15 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 
 Responsible for aggregating API docs. Currently Javadocs (Java) and Groovydocs (Groovy) are supported.
 
+[[_org_kordamp_gradle_apidoc_dsl]]
 == DSL
 
 [source,groovy]
-[subs="+macros"]
 ----
-apidoc {
-    enabled
+config {
+    apidoc {
+        enabled
+    }
 }
 ----
 
@@ -31,13 +33,15 @@ apidoc {
 
 This block is optional.
 
+[[_org_kordamp_gradle_apidoc_tasks]]
 == Tasks
 
 [[_task_aggregate_javadocs]]
 === AggregateJavadocs
 
 Aggregates Javadoc API docs for all projects. +
-Consumes settings from `config.<<_org_kordamp_gradle_javadoc,javadoc>>` defined at the root project.
+Consumes settings from `config.<<_org_kordamp_gradle_javadoc,javadoc>>` defined in the root project. +
+This task is added to the root project.
 
 [horizontal]
 Name:: aggregateJavadocs
@@ -50,7 +54,8 @@ destinationDir:: `${rootProject.buildDir}/docs/javadoc`
 [[_task_aggregate_javadocs_jar]]
 === AggregateJavadocsJar
 
-An archive of the aggregate Javadoc API docs.
+An archive of the aggregate Javadoc API docs. +
+This task is added to the root project.
 
 [horizontal]
 Name:: aggregateJavadocsJar
@@ -65,7 +70,8 @@ destinationDir:: `${rootProject.buildDir}/build/libs`
 === AggregateGroovydocs
 
 Aggregates Groovy API docs for all projects. +
-Consumes settings from `config.<<_org_kordamp_gradle_groovydoc,groovydoc>>` defined at the root project.
+Consumes settings from `config.<<_org_kordamp_gradle_groovydoc,groovydoc>>` defined in the root project. +
+This task is added to the root project.
 
 [horizontal]
 Name:: aggregateGroovydocs
@@ -78,7 +84,8 @@ destinationDir:: `${rootProject.buildDir}/docs/groovydoc`
 [[_task_aggregate_groovydocs_jar]]
 === AggregateGroovydocsJar
 
-An archive of the aggregate Groovy API docs.
+An archive of the aggregate Groovy API docs. +
+This task is added to the root project.
 
 [horizontal]
 Name:: aggregateGroovydocsJar
@@ -92,7 +99,8 @@ destinationDir:: `${rootProject.buildDir}/build/libs`
 [[_task_aggregate_apidocs]]
 === AggregateApidocs
 
-Aggregates all API docs for all projects.
+Aggregates all API docs for all projects. +
+This task is added to the root project.
 
 [horizontal]
 Name:: aggregateApidocs

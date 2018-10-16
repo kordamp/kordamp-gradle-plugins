@@ -4,5 +4,129 @@
 
 [horizontal]
 id:: `org.kordamp.gradle.license`
+class:: `org.kordamp.gradle.plugin.license.LicensePlugin`
+    (link:api/org/kordamp/gradle/plugin/license/LicensePlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/license/LicensePlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `link:https://github.com/hierynomus/license-gradle-plugin[com.github.hierynomus.license]`
+
+Configures license checks and reports on the target project. +
+Configures aggregate license reports on the root project.
+
+[[_org_kordamp_gradle_license_dsl]]
+== DSL
+
+[source,groovy]
+----
+config {
+    license {
+        enabled
+        licenses {
+            license {
+                id
+                primary
+                name
+                url
+                distribution
+                comments
+                aliases
+            }
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name     | Type       | Required | Default Value | Description
+| enabled  | boolean    | no       | true          | Disables `org.kordamp.gradle.javadoc` plugin if `false`
+| licenses | LicenseSet | yes      |               | This block maps to the `<licenses>` block in POM. +
+                                                     At least one nested `license` block must be defined.
+|===
+
+[[_license_licenses_license]]
+*license*
+
+[options="header", cols="5*"]
+|===
+| Name         | Type         | Required | Default Value | Description
+| id           | LicenseId    | no*      |               |
+| primary      | boolean      | no*      | false         | Identifies this as the main license if there are more than one
+| name         | String       | yes      |               | Maps to the `<name>` block
+| url          | String       | no       |               | Maps to the `<url>` block
+| distribution | String       | no       | 'repo'        | Maps to the `<distribution>` block
+| comments     | String       | no       |               | Maps to the `<comments>` block
+| aliases      | List<String> | no       | []            | List of license aliases
+|===
+
+This entry maps to a `<license>` block nested inside `<licenses>` in POM.
+
+Prefer setting a value for the `id` property. +
+Only a single license entry must have `primary = true`. If no license has this setting then the first one in the
+list will be treated as the primary license. If more than one license has this setting the the first one on that set will
+be treated as the primary license.
+
+[[_org_kordamp_gradle_license_extensions]]
+== Extensions
+
+[[_extension_license]]
+=== LicenseExtension
+
+This extension is added by the `com.github.hierynomus.license` plugin, enhanced with the following data
+
+[horizontal]
+header:: project.rootProject.file('gradle/LICENSE_HEADER')
+strictCheck::true
+mapping.java:: 'SLASHSTAR_STYLE'
+mapping.groovy:: 'SLASHSTAR_STYLE'
+
+The following extra properties become available to license templates
+
+[horizontal]
+project:: project.name
+projectName:: config.info.name
+copyrightYear:: config.info.copyrightYear
+author:: config.info.resolveAuthors().join(', ')
+license:: primaryLicense.id?.spdx()
+
+The following exclusions patterns are added by default: '**/*.png', 'META-INF/services/*'.
+
+[[_extension_download_licenses]]
+=== DownloadLicensesExtension
+
+This extension is added by the `com.github.hierynomus.license` plugin, enhanced with the following license
+aliases:
+
+The Apache Software License, Version 2.0:: The Apache Software License, Version 2.0, The Apache Software License, version 2.0,
+Apache Software License - Version 2.0, Apache Software License - version 2.0, the Apache License, ASL Version 2.0,
+The Apache License, Version 2.0, The Apache License Version 2.0, Apache License, Version 2.0, Apache License, version 2.0,
+Apache License Version 2.0, Apache License version 2.0, The Apache License 2.0, Apache 2.0 License, Apache License 2.0,
+Apache 2.0, Apache-2.0, Apache 2
+Eclipse Public License v1.0:: Eclipse Public License - Version 1.0, Eclipse Public License v1.0, Eclipse Public License 1.0,
+Eclipse Public License, EPL v1.0, EPL 1.0, EPL-1.0
+Eclipse Public License v2.0:: Eclipse Public License v2.0, Eclipse Public License 2.0, EPL v2.0, EPL 2.0, EPL-2.0
+GNU Lesser General Public License v2.1 or later:: GNU Library General Public License v2.1 or later,
+GNU Lesser General Public License v2.1 or later, GNU Lesser General Public License, Version 2.1, LGPL 2.1, LGPL-2.1
+MIT License:: The MIT License, The MIT license, MIT License, MIT license, MIT
+BSD 2-Clause FreeBSD License:: BSD 2-Clause FreeBSD License, The BSD License, The BSD license
+BSD 3-Clause "New" or "Revised" License:: BSD 3-Clause "New" or "Revised" License, 3-Clause BSD License, 3-Clause BSD license,
+Revised BSD License, Revised BSD license, BSD Revised License, BSD Revised license, New BSD License, New BSD license,
+BSD New License, BSD New license, BSD 3-Clause, BSD 3-clause
+
+[[_org_kordamp_gradle_license_tasks]]
+== Tasks
+
+[[_task_aggregate_javadocs_jar]]
+=== AggregateLicenseReport
+
+Generates an aggregate license report. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateLicenseReport
+Type:: `org.kordamp.gradle.plugin.license.AggregateLicenseReportTask`
+
+.Properties
+[horizontal]
+outputDir:: `"${project.reporting.baseDir.path}/license"`
+

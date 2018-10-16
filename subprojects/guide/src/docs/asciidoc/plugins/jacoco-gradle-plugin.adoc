@@ -4,5 +4,95 @@
 
 [horizontal]
 id:: `org.kordamp.gradle.jacoco`
+class:: `org.kordamp.gradle.plugin.jacoco.JacocoPlugin`
+    (link:api/org/kordamp/gradle/plugin/jacoco/JacocoPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/jacoco/JacocoPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `link:https://docs.gradle.org/current/userguide/jacoco_plugin.html[jacoco]`
+
+Configures JaCoCo on all subprojects that contains tests. +
+Configures aggregate reports on the root project.
+
+[[_org_kordamp_gradle_jacoco_dsl]]
+== DSL
+
+[source,groovy]
+----
+config {
+    jacoco {
+        enabled
+        mergeExecFile
+        mergeReportHtmlFile
+        mergeReportXmlFile
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name                | Type    | Required | Default Value                                                | Description
+| enabled             | boolean | no       | true                                                         | Disables `org.kordamp.gradle.jacoco` plugin if `false`
+| mergeExecFile       | File    | no       | ${project.buildDir}/jacoco/root.exec                         | Location for the root merge execution data file
+| mergeReportHtmlFile | File    | no       | ${project.buildDir}/reports/jacoco/root/html                 | Location for root HTML reports
+| mergeReportXmlFile  | File    | no       | ${project.buildDir}/reports/jacoco/root/jacocoTestReport.xml | Location for the root XML report
+|===
+
+This block is optional.
+
+[[_org_kordamp_gradle_jacoco_tasks]]
+== Tasks
+
+[[_task_jacoco_report]]
+=== Jacoco<Test>Report
+
+Generates code coverage report for a task of type `link:https://docs.gradle.org/4.10/dsl/org.gradle.api.tasks.testing.Test.html[Test]`. +
+
+[horizontal]
+Name:: jacoco<Name>Report, where `Name` stands for the name of the matching `Test` task.
+Type:: `org.gradle.testing.jacoco.tasks.JacocoReport`
+
+.Properties
+[horizontal]
+additionalSourceDirs:: project.sourceSets.main.allSource.srcDirs
+sourceDirectories:: project.sourceSets.main.allSource.srcDirs
+classDirectories:: project.sourceSets.main.output.classesDirs*.path
+executionData:: testTask
+reports.html.destination:: "${project.reporting.baseDir.path}/jacoco/${testTask.name}/html"
+reports.xml.destination:: "${project.reporting.baseDir.path}/jacoco/${testTask.name}/jacocoTestReport.xml"
+reports.csv.enabled:: false
+reports.html.enabled:: true
+reports.xml.enabled:: true
+
+[[_task_jacoco_root_merge]]
+=== JacocoRootMerge
+
+Aggregates all execution data into a single file. +
+Consumes settings from `config.<<_org_kordamp_gradle_jacoco_dsl,jacoco>>` defined in the root project. +
+This task is added to the root project.
+
+[horizontal]
+Name:: jacocoRootMerge
+Type:: `org.gradle.testing.jacoco.tasks.JacocoMerge`
+
+.Properties
+[horizontal]
+destinationFile:: config.jacoco.mergeExecFile
+
+[[_task_jacoco_root_report]]
+=== JacocoRootReport
+
+Aggregates all coverage reports into a single report. +
+Consumes settings from `config.<<_org_kordamp_gradle_jacoco_dsl,jacoco>>` defined in the root project. +
+This task is added to the root project.
+
+[horizontal]
+Name:: jacocoRootReport
+Type:: `org.gradle.testing.jacoco.tasks.JacocoReport`
+
+.Properties
+[horizontal]
+reports.html.destination:: config.jacoco.mergeReportHtmlFile
+reports.xml.destination:: config..jacoco.mergeReportXmlFile
+reports.html.enabled:: true
+reports.xml.enabled:: true
+

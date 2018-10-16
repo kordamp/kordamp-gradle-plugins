@@ -4,5 +4,12 @@
 
 [horizontal]
 id:: `org.kordamp.gradle.source-jar`
+class:: `org.kordamp.gradle.plugin.source.SourceJarPlugin`
+    (link:api/org/kordamp/gradle/plugin/source/SourceJarPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/source/SourceJarPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+
+== DSL
+
+== Tasks
 

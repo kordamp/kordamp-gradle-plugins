@@ -4,10 +4,17 @@
 
 [horizontal]
 id:: `org.kordamp.gradle.publishing`
+class:: `org.kordamp.gradle.plugin.publishing.PublishingPlugin`
+    (link:api/org/kordamp/gradle/plugin/publishing/PublishingPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/publishing/PublishingPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `<<_org_kordamp_gradle_buildinfo,org.kordamp.gradle.build-info>>`, +
+`<<_org_kordamp_gradle_jar,org.kordamp.gradle.jar>>`, +
+`<<_org_kordamp_gradle_minpom,org.kordamp.gradle.minpom>>`, +
 `<<_org_kordamp_gradle_source,org.kordamp.gradle.source-jar>>`, +
 `<<_org_kordamp_gradle_javadoc,org.kordamp.gradle.javadoc>>`, +
 `<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>`, +
-`<<_org_kordamp_gradle_apidoc,org.kordamp.gradle.apidoc>>`, +
+`<<_org_kordamp_gradle_apidoc,org.kordamp.gradle.apidoc>>`
+
+== DSL
 

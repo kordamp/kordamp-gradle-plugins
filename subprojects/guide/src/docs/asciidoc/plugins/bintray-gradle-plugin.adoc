@@ -4,10 +4,60 @@
 
 [horizontal]
 id:: `org.kordamp.gradle.bintray`
+class:: `org.kordamp.gradle.plugin.bintray.BintrayPlugin`
+    (link:api/org/kordamp/gradle/plugin/bintray/BintrayPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/bintray/BintrayPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `<<_org_kordamp_gradle_buildinfo,org.kordamp.gradle.build-info>>`, +
+`<<_org_kordamp_gradle_jar,org.kordamp.gradle.jar>>`, +
+`<<_org_kordamp_gradle_minpom,org.kordamp.gradle.minpom>>`, +
 `<<_org_kordamp_gradle_source,org.kordamp.gradle.source-jar>>`, +
 `<<_org_kordamp_gradle_javadoc,org.kordamp.gradle.javadoc>>`, +
 `<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>`, +
 `<<_org_kordamp_gradle_apidoc,org.kordamp.gradle.apidoc>>`, +
-`<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>`
+`<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>`, +
+`link:https://github.com/bintray/gradle-bintray-plugin[com.jfrog.bintray]`
+
+Configures artifact publications using Bintray. Relies on the publication configured by the
+`<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>` plugin.
+
+[[_org_kordamp_gradle_bintray_dsl]]
+== DSL
+
+[source,groovy]
+----
+config {
+    bintray {
+        enabled
+        credentials {
+            username
+            password
+        }
+        name
+        repo
+        userOrg
+        githubRepo
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name         | Type        | Required | Default Value | Description
+| enabled      | boolean     | no       | true          | Disables `org.kordamp.gradle.bintray` plugin if `false`
+| credentials  | Credentials | yes      |               | Values map to `bintray.user` and `bintray.key`
+| repo         | String      | yes      |               | Mapped to `bintray.pkg.repo`
+| userOrg      | String      | yes      |               | Mapped to `bintray.pkg.userOrg`
+| name         | String      | no       | project.name  | Mapped to `bintray.pkg.name`
+| githubRepo   | String      | no       |               | Mapped to `bintray.pkg.githubRepo`
+|===
+
+The value of `info.tags` is mapped to `bintray.pkg.labels`.
+
+The value for `githubRepo` may be inferred by using `"$userOrg/$name"`.
+
+Values for `info.links` are mapped to their matching entries in `bintray.pkg`.
+
+Sync with Maven Central will happen automatically if Sonatype <<_base_info_credentials,credentials>> are defined
+in the <<_org_kordamp_gradle_base_dsl,config>> DSL.
+
