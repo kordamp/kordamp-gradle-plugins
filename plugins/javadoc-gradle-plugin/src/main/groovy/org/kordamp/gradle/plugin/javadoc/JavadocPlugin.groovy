@@ -106,7 +106,7 @@ class JavadocPlugin implements Plugin<Project> {
     private Task createJavadocTaskIfNeeded(Project project) {
         String taskName = JAVADOC_TASK_NAME
 
-        Task javadocTask = project.tasks.findByName(taskName)
+        Javadoc javadocTask = project.tasks.findByName(taskName)
         Task classesTask = project.tasks.findByName('classes')
 
         if (classesTask && !javadocTask) {
@@ -115,8 +115,14 @@ class JavadocPlugin implements Plugin<Project> {
                 group JavaBasePlugin.DOCUMENTATION_GROUP
                 description 'Generates Javadoc API documentation'
                 source project.sourceSets.main.allSource
-                destinationDir project.file("${project.buildDir}/docs/main/javadoc")
+                destinationDir project.file("${project.buildDir}/docs/javadoc")
             }
+        }
+
+        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        javadocTask.configure {
+            include(mergedConfiguration.javadoc.includes)
+            exclude(mergedConfiguration.javadoc.excludes)
         }
 
         javadocTask

@@ -234,7 +234,7 @@ class LicensePlugin implements Plugin<Project> {
                 }
 
                 List<Object> aliases = defaultAliases.get(licenseMetadata)
-                if(!aliases) {
+                if (!aliases) {
                     aliases = []
                     defaultAliases.put(licenseMetadata, aliases)
                 }

@@ -109,7 +109,7 @@ class GroovydocPlugin implements Plugin<Project> {
     private Task createGroovydocTaskIfNeeded(Project project, Javadoc javadoc) {
         String taskName = GROOVYDOC_TASK_NAME
 
-        Task groovydocTask = project.tasks.findByName(taskName)
+        Groovydoc groovydocTask = project.tasks.findByName(taskName)
         Task classesTask = project.tasks.findByName('classes')
 
         if (classesTask && !groovydocTask) {
@@ -118,12 +118,15 @@ class GroovydocPlugin implements Plugin<Project> {
                 group JavaBasePlugin.DOCUMENTATION_GROUP
                 description 'Generates Groovydoc API documentation'
                 source project.sourceSets.main.allSource
-                destinationDir project.file("${project.buildDir}/docs/main/groovydoc")
+                destinationDir project.file("${project.buildDir}/docs/groovydoc")
             }
         }
 
+        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
         groovydocTask.configure {
             classpath = javadoc.classpath
+            include(mergedConfiguration.groovydoc.includes)
+            exclude(mergedConfiguration.groovydoc.excludes)
         }
 
         groovydocTask
