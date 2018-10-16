@@ -33,6 +33,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.GroovyBasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.tasks.Copy
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.SourceHtml
@@ -174,11 +175,14 @@ class SourceHtmlPlugin implements Plugin<Project> {
             stylesheet = mergedConfiguration.sourceHtml.overview.stylesheet
         }
 
-        project.tasks.create(SOURCE_HTML_TASK_NAME, DefaultTask) {
+        project.tasks.create(SOURCE_HTML_TASK_NAME, Copy) {
             enabled = !mergedConfiguration.sourceHtml.srcDirs.isEmpty()
             dependsOn generateOverviewTask
             group 'Documentation'
             description 'Generates a HTML report of the source code'
+            destinationDir = project.file("${project.buildDir}/docs/source-html")
+            from convertCodeTask.destDir
+            from generateOverviewTask.destDir
         }
     }
 
@@ -233,10 +237,13 @@ class SourceHtmlPlugin implements Plugin<Project> {
             stylesheet = mergedConfiguration.sourceHtml.overview.stylesheet
         }
 
-        project.tasks.create(AGGREGATE_SOURCE_HTML_TASK_NAME, DefaultTask) {
+        project.tasks.create(AGGREGATE_SOURCE_HTML_TASK_NAME, Copy) {
             dependsOn generateOverviewTask
             group 'Documentation'
             description 'Generates a HTML report of the source code'
+            destinationDir = project.file("${project.buildDir}/docs/source-html")
+            from convertCodeTask.destDir
+            from generateOverviewTask.destDir
         }
     }
 

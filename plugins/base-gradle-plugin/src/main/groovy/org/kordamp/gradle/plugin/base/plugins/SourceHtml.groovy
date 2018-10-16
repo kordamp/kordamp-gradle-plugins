@@ -135,7 +135,7 @@ class SourceHtml {
 
         Conversion(Project project) {
             this.project = project
-            destDir = project.file("${project.buildDir}/docs/source-html")
+            destDir = project.file("${project.buildDir}/tmp/source-html/conversion")
         }
 
         boolean isShowLineNumbersSet() {
@@ -290,7 +290,7 @@ class SourceHtml {
 
         Overview(Project project) {
             this.project = project
-            destDir = project.file("${project.buildDir}/docs/source-html")
+            destDir = project.file("${project.buildDir}/tmp/source-html/overview")
             windowTitle = "$project.name $project.version"
             docTitle = "$project.name $project.version"
         }
