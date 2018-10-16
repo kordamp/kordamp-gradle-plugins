@@ -409,7 +409,7 @@ This block is optional.
 [options="header", cols="5*"]
 |===
 | Name     | Type                  | Required | Default Value | Description
-| enabled  | boolean               | no       | true          | Disables `org.kordamp.gradle.javaydoc` plugin if `false`
+| enabled  | boolean               | no       | true          | Disables `org.kordamp.gradle.javadoc` plugin if `false`
 | includes | Set<String>           | no       | []            |
 | excludes | Set<String>           | no       | []            |
 | title    | String                | no       |               |
@@ -533,7 +533,7 @@ Responsibilities:
 | Name             | Type             | Description
 | buildTimeAndDate | `java.util.Date` | A `java.util.Date` instance representing the current time
 | buildDate        | String           | The value of `buildTimeAndDate` formatted with "yyyy-MM-dd"
-| buildtime        | String           | The value of `buildTimeAndDate` formatted with "HH:mm:ss.SSSZ"
+| buildTime        | String           | The value of `buildTimeAndDate` formatted with "HH:mm:ss.SSSZ"
 | buildBy          | String           | The value of the `user.name` System property
 | buildRevision    | String           | The value of the latest commit hash
 | buildJdk         | String           | Concatenation of the following System properties [`java.version`, `java.vendor`, `java.vm.version`]
