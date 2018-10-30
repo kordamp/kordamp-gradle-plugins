@@ -176,7 +176,7 @@ class GuidePlugin implements Plugin<Project> {
                     }
                 }
 
-                task = project.rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_CONVERT_CODE_TO_HTML_TASK_NAME)
+                task = project.rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)
                 if (task?.enabled) {
                     guideTask.configure {
                         dependsOn project.rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)

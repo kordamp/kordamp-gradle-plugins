@@ -55,7 +55,7 @@ Type:: `org.gradle.api.tasks.javadoc.Javadoc`
 
 .Properties
 [horizontal]
-destinationDir:: `${rootProject.buildDir}/docs/javadoc`
+destinationDir:: `${project.buildDir}/docs/javadoc`
 
 [[_task_javadoc_jar]]
 === JavadocJar
@@ -69,5 +69,6 @@ Type:: `org.gradle.api.tasks.bundling.Jar`
 .Properties
 [horizontal]
 classifier:: javadoc
-destinationDir:: `${rootProject.buildDir}/build/libs`
+destinationDir:: `${project.buildDir}/build/libs`
+from:: `javadoc.destinationDir`
 

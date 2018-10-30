@@ -24,7 +24,7 @@ config {
         includes
         excludes
         replaceJavadoc
-        <<_groovy_options,options>> {
+        <<_groovydoc_options,options>> {
             windowTitle
             docTitle
             header
@@ -49,7 +49,7 @@ config {
 | replaceJavadoc | boolean      | no       | false         | Disables `javadocJar` and applies the `javadoc` classifier.
 |===
 
-[[_groovy_options]]
+[[_groovydoc_options]]
 *options*
 
 [options="header", cols="5*"]
@@ -84,7 +84,7 @@ Type:: `org.gradle.api.tasks.javadoc.Groovydoc`
 
 .Properties
 [horizontal]
-destinationDir:: `${rootProject.buildDir}/docs/groovydoc`
+destinationDir:: `${project.buildDir}/docs/groovydoc`
 
 [[_task_groovydoc_jar]]
 === GroovydocJar
@@ -98,5 +98,6 @@ Type:: `org.gradle.api.tasks.bundling.Jar`
 .Properties
 [horizontal]
 classifier:: groovydoc | javadoc
-destinationDir:: `${rootProject.buildDir}/build/libs`
+destinationDir:: `${project.buildDir}/build/libs`
+from:: `groovydoc.destinationDir`
 

@@ -9,7 +9,87 @@ class:: `org.kordamp.gradle.plugin.stats.SourceStatsPlugin`
      link:api-html/org/kordamp/gradle/plugin/stats/SourceStatsPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 
+Generates reports on source code statistics both at individual and aggregate levels.
+
+[[_org_kordamp_gradle_sourcestats_example]]
+== Example
+
+The following configuration may be used in a Griffon project for example
+
+[source,groovy]
+----
+config {
+    stats {
+        formats = ['xml', 'html', 'txt']
+        paths = [
+            model:      [name: 'Models',      path: 'griffon-app/models'],
+            view:       [name: 'Views',       path: 'griffon-app/views'],
+            controller: [name: 'Controllers', path: 'griffon-app/controllers'],
+            service:    [name: 'Services',    path: 'griffon-app/services'],
+            config:     [name: 'Config',      path: 'griffon-app/conf'],
+            lifecycle:  [name: 'Lifecycle',   path: 'griffon-app/lifecycle']
+        ]
+    }
+}
+----
+
+[[_org_kordamp_gradle_sourcestats_dsl]]
 == DSL
 
+[source,groovy]
+----
+config {
+    stats {
+        enabled
+        counters
+        formats
+        paths
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name     | Type                             | Required | Default Value | Description
+| enabled  | boolean                          | no       | true          | Disables `org.kordamp.gradle.source-stats` plugin if `false`
+| counters | Map<String, String>              | no       | [:]           | Additional `org.kordamp.gradle.plugin.stats.Counter` implementations, keyed by extension.
+| formats  | List<String>                     | no       | []            | List of output formats. Valid values are `xml`, `html`, `txt`.
+| paths    | Map<String, Map<String, String>> | no       | [:]           | Maps of additional source paths that contain sources to be counted.
+|===
+
+This block is optional.
+
+[[_org_kordamp_gradle_sourcestats_tasks]]
 == Tasks
+
+[[_task_source_stats]]
+=== SourceStats
+
+Generates a source code statistics report
+
+[horizontal]
+Name:: sourceStats
+Type:: `org.kordamp.gradle.plugin.stats.SourceStatsTask`
+
+.Properties
+[horizontal]
+formats:: List of output formats. Valid values are +xml+, +html+ and +txt+.
+reportDir:: `${project.reporting.baseDir.path}/stats`
+counters:: a Map of additional `org.kordamp.gradle.plugin.stats.Counter` implementations, keyed by extension.
+paths:: Maps of additional source paths that contain sources to be counted.
+
+[[_task_aggregate_source_stats]]
+=== AggregateSourceStats
+
+Aggregates sources statistics for all projects. +
+XML stats report must exist for each child project. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateSourceStats
+Type:: `org.kordamp.gradle.plugin.stats.AggregateSourceStatsReportTask`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.reporting.baseDir.path}/stats`
 

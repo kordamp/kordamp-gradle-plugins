@@ -9,7 +9,8 @@ class:: `org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin`
      link:api-html/org/kordamp/gradle/plugin/buildinfo/BuildInfoPlugin.html[source])
 applies:: `link:https://github.com/nemerosa/versioning[net.nemerosa.versioning]`
 
-Defines a set of build related properties and attaches them to `rootProject.ext.buildinfo`. These properties are
+Defines a set of build related properties and attaches them to a `Map` identified as `rootProject.ext.buildinfo`.
+These properties are
 
 [options="header", cols="3*"]
 |===

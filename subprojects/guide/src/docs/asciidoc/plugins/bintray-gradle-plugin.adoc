@@ -19,7 +19,8 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `link:https://github.com/bintray/gradle-bintray-plugin[com.jfrog.bintray]`
 
 Configures artifact publications using Bintray. Relies on the publication configured by the
-`<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>` plugin.
+`<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>` plugin. The name of the publication
+matches `"mainPublication"`.
 
 [[_org_kordamp_gradle_bintray_dsl]]
 == DSL

@@ -9,5 +9,13 @@ class:: `org.kordamp.gradle.plugin.functionaltest.FunctionalTestPlugin`
      link:api-html/org/kordamp/gradle/plugin/functionaltest/FunctionalTestPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 
-== Tasks
+Responsibilities:
+
+ * Create two additional configurations: `functionalTestCompile` and `functionalTestRuntime`. These configurations
+   extend from `compile` and `runtime` respectively.
+ * Create a `SourceSet` named `functionalTest`.
+ * Create a `Test` task named `functionalTest`.
+ * Create a `TestReport` task named `functionalTestReport`. This task is added as a dependency to `check`.
+
+NOTE: You must add testing dependencies to `functionalTestCompile` as this configuration is independent from `testCompile`.
 

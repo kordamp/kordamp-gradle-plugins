@@ -128,5 +128,5 @@ Type:: `org.kordamp.gradle.plugin.license.AggregateLicenseReportTask`
 
 .Properties
 [horizontal]
-outputDir:: `"${project.reporting.baseDir.path}/license"`
+outputDir:: `${rootProject.reporting.baseDir.path}/license`
 

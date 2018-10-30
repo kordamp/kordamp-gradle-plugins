@@ -9,7 +9,43 @@ class:: `org.kordamp.gradle.plugin.source.SourceJarPlugin`
      link:api-html/org/kordamp/gradle/plugin/source/SourceJarPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 
+Packages the project's source code into a single JAR file.
+
+[[_org_kordamp_gradle_source_dsl]]
 == DSL
 
+[source,groovy]
+----
+config {
+    source {
+        enabled
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name     | Type    | Required | Default Value | Description
+| enabled  | boolean | no       | true          | Disables `org.kordamp.gradle.source-jar` plugin if `false`
+|===
+
+This block is optional.
+
+[[_org_kordamp_gradle_source_tasks]]
 == Tasks
+
+[[_task_source_jar]]
+=== SourceJar
+
+An archive of the source code.
+
+[horizontal]
+Name:: sourceJar
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+classifier:: sources
+destinationDir:: `${project.buildDir}/build/libs`
+from:: `project.sourceSets.main.allSource`
 

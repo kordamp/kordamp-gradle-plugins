@@ -9,11 +9,175 @@ class:: `org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin`
      link:api-html/org/kordamp/gradle/plugin/sourcehtml/SourceHtmlPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 
-////
-https://github.com/bmuschko/gradle-java2html-plugin
-////
+Converts source code into HTML with syntax highlighting.
 
+NOTE: This plugin relies on the `com.bmuschko.java2html` plugin but does not apply it.
+
+[[_org_kordamp_gradle_sourcehtml_dsl]]
 == DSL
 
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    sourceHtml {
+        <<_sourcehtml_conversion,conversion>> {
+            srcDirs
+            destDir
+            includes
+            outputFormat
+            tabs
+            style
+            lineAnchorPrefix
+            horizontalAlignment
+            showLineNumbers
+            showFileName
+            showDefaultTitle
+            showTableBorder
+            includeDocumentHeader
+            includeDocumentFooter
+            addLineAnchors
+            useShortFileName
+            overwrite
+        }
+        <<_sourcehtml_overview,overview>> {
+            destDir
+            pattern
+            windowTitle
+            docTitle
+            docDescription
+            icon
+            stylesheet
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name    | Type    | Required | Default Value | Description
+| enabled | boolean | no       | true          | Disables `org.kordamp.gradle.source-html` plugin if `false`
+|===
+
+[[_sourcehtml_conversion]]
+*conversion*
+
+[options="header", cols="5*"]
+|===
+| Name                  | Type           | Required | Default Value                          | Description
+| srcDirs               | FileCollection | no       |                                        |
+| destDir               | File           | no       | "${project.buildDir}/docs/source-html" |
+| includes              | String         | no       | '**/*.java,**/*.groovy'                |
+| outputFormat          | String         | no       | 'html'                                 |
+| tabs                  | int            | no       | 4                                      |
+| style                 | String         | no       | 'kawa'                                 | Valid values are 'kawa', 'monochrome', 'eclipse'
+| lineAnchorPrefix      | String         | no       | ''                                     |
+| horizontalAlignment   | String         | no       | 'left'                                 |
+| showLineNumbers       | boolean        | no       | true                                   |
+| showFileName          | boolean        | no       | true                                   |
+| showDefaultTitle      | boolean        | no       | true                                   |
+| showTableBorder       | boolean        | no       | false                                  |
+| includeDocumentHeader | boolean        | no       | true                                   |
+| includeDocumentFooter | boolean        | no       | true                                   |
+| addLineAnchors        | boolean        | no       | true                                   |
+| useShortFileName      | boolean        | no       | true                                   |
+| overwrite             | boolean        | no       | true                                   |
+|===
+
+[[_sourcehtml_overview]]
+*overview*
+
+[options="header", cols="5*"]
+|===
+| Name           | Type   | Required | Default Value                          | Description
+| destDir        | File   | no       | "${project.buildDir}/docs/source-html" |
+| pattern        | String | no       | '**/*.html'                            |
+| windowTitle    | String | no       | "$project.name $project.version"       |
+| docTitle       | String | no       | "$project.name $project.version"       |
+| docDescription | String | no       |                                        |
+| icon           | File   | no       |                                        |
+| stylesheet     | File   | no       |                                        |
+|===
+
+This block is optional.
+
+[[_org_kordamp_gradle_sourcehtml_tasks]]
 == Tasks
+
+[[_task_convert_code_to_html]]
+=== ConvertCodeToHtml
+
+Converts source code files to Java2HTML documentation.
+
+[horizontal]
+Name:: convertCodeToHtml
+Type:: `com.bmuschko.gradle.java2html.ConvertCodeTask`
+
+.Properties
+Consumes all settings found in the `config.sourceHtml.conversion` block.
+
+[[_task_generate_source_html_overview]]
+=== GenerateSourceHtmlOverview
+
+Generates HTML overview files for Java2HTML documentation.
+
+[horizontal]
+Name:: generateSourceHtmlOverview
+Type:: `com.bmuschko.gradle.java2html.GenerateOverviewTask`
+
+.Properties
+Consumes all settings found in the `config.sourceHtml.overview` block.
+
+[[_task_source_html]]
+=== SourceHtml
+
+Collects the results of the `convertCodeToHtml` and `generateSourceHtmlOverview` tasks.
+
+[horizontal]
+Name:: sourceHtml
+Type:: `org.gradle.api.tasks.Copy`
+
+.Properties
+[horizontal]
+destinationDir:: `${project.buildDir}/docs/source-html`
+
+[[_task_aggregate_convert_code_to_html]]
+=== AggregateConvertCodeToHtml
+
+Converts source code files to Java2HTML documentation. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateConvertCodeToHtml
+Type:: `com.bmuschko.gradle.java2html.ConvertCodeTask`
+
+.Properties
+Consumes all settings found in the `config.sourceHtml.conversion` block.
+
+[[_task_aggregate_generate_source_html_overview]]
+=== AggregateGenerateSourceHtmlOverview
+
+Generates HTML overview files for Java2HTML documentation. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateGenerateSourceHtmlOverview
+Type:: `com.bmuschko.gradle.java2html.GenerateOverviewTask`
+
+.Properties
+Consumes all settings found in the `config.sourceHtml.overview` block.
+
+[[_task_aggregate_source_html]]
+=== AggregateSourceHtml
+
+Collects the results of the `aggregateConvertCodeToHtml` and `aggregateGenerateSourceHtmlOverview` tasks. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateSourceHtml
+Type:: `org.gradle.api.tasks.Copy`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.buildDir}/docs/source-html`
 

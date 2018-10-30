@@ -13,5 +13,89 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `<<_org_kordamp_gradle_apidoc,org.kordamp.gradle.apidoc>>`, (on root project) +
 `link:https://github.com/asciidoctor/asciidoctor-gradle-plugin[org.asciidoctor.convert]`
 
+Generates a User Manual or Guide with Asciidoctor as the source format. Applies the `org.asciidoctor.convert` plugin.
+
+The following attributes will be added to the default `asciidoctor` task if they have no explicit value defined:
+
+[options="header", cols="2*"]
+|===
+| Name                   | Value
+| toc                    | 'left'
+| doctype                | 'book'
+| icons                  | 'font'
+| encoding               | 'utf-8'
+| sectlink               | true
+| sectanchors            | true
+| numbered               | true
+| linkattrs              | true
+| imagesdir              | 'images'
+| linkcss                | true
+| source-highlighter     | 'coderay'
+| coderay-linenums-mode  | 'table'
+| project-title          | config.info.description
+| project-inception-year | config.info.inceptionYear
+| project-copyright-year | config.info.copyrightYear
+| project-author         | config.info.resolveAuthors().join(', ')
+| project-url            | config.info.url
+| project-scm            | config.info.links.scm
+| project-issue-tracker  | config.info.links.issueTracker
+| project-group          | project.group
+| project-version        | project.version
+| project-name           | rootProject.name
+| build-by               | rootProject.ext.buildinfo.buildBy
+| build-date             | rootProject.ext.buildinfo.buildDate
+| build-time             | rootProject.ext.buildinfo.buildTime
+| build-revision         | rootProject.ext.buildinfo.buildRevision
+| build-jdk              | rootProject.ext.buildinfo.buildJdk
+| build-created-by       | rootProject.ext.buildinfo.buildCreatedBy
+|===
+
+[[_org_kordamp_gradle_guide_tasks]]
 == Tasks
+
+[[_task_init_guide]]
+=== InitGuide
+
+Initializes directories and files required by the guide.
+
+[horizontal]
+Name:: initGuide
+Type:: `org.gradle.api.DefaultTask`
+
+.Properties
+[horizontal]
+destinationDir:: `${project.projectDir}/src/docs/asciidoc`
+
+[[_task_create_guide]]
+=== CreateGuide
+
+Creates an Asciidoctor based guide. Depends on the output of the following tasks:
+
+ * `asciidoctor`
+ * `aggregateJavadocs` (if enabled)
+ * `aggregateGroovydocs` (if enabled)
+ * `aggregateSourceHtml` (if enabled)
+
+[horizontal]
+Name:: createGuide
+Type:: `org.gradle.api.tasks.Copy`
+
+.Properties
+[horizontal]
+destinationDir:: `${project.buildDir}/guide`
+from:: `${project.tasks.asciidoctor.outputDir}/html5`
+
+[[_task_zip_guide]]
+=== ZipGuide
+
+An archive of the generated guide.
+
+[horizontal]
+Name:: zipGuide
+Type:: `org.gradle.api.tasks.bundling.Zip`
+
+.Properties
+[horizontal]
+destinationDir:: `${project.buildDir}/distributions`
+from:: `${project.tasks.createGuide.destinationDir}`
 

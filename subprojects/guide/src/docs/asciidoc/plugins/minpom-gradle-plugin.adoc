@@ -12,6 +12,7 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 Generates a minimum POM file and a companion `pom.properties` file that are usually packaged in the main JAR produced by
 the project.
 
+[[_org_kordamp_gradle_minpom_example]]
 == Example
 
 For a project defined as follows
@@ -105,5 +106,5 @@ Type:: `org.kordamp.gradle.plugin.minpom.MinpomTask`
 projectArtifactId:: project.name
 projectGroupId:: project.group
 projectVersion:: project.version
-destinationDir:: `"${project.buildDir}/pom/maven"`
+destinationDir:: `${project.buildDir}/pom/maven`
 
