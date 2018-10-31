@@ -180,7 +180,7 @@ class GuidePlugin implements Plugin<Project> {
                 if (task?.enabled) {
                     guideTask.configure {
                         dependsOn project.rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)
-                        from(task.destDir) { into extension.sourceHtmlDir }
+                        from(task.destinationDir) { into extension.sourceHtmlDir }
                     }
                 }
             }
