@@ -42,5 +42,5 @@ plugins {
 Where `{plugin-id}` stands for any of the ids described in the following section. Most times it's enough to simply apply
 the `org.kordamp.gradle.project` at the root. All plugins may be applied independently as well.
 
-Refer to the link:http://aalmiray.github.io/{project-name}/[guide, window="_blank"] for further information on configuration
+Refer to the link:http://aalmiray.github.io/{project-name}/guide/{plugin-version}[guide, window="_blank"] for further information on configuration
 and usage.
