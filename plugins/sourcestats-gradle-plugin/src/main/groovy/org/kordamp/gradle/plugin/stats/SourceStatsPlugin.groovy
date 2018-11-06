@@ -68,13 +68,11 @@ class SourceStatsPlugin implements Plugin<Project> {
         project.afterEvaluate {
             ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
-            if (mergedConfiguration.stats.enabled && !isRootProject(project)) {
-                try {
-                    // see if the project supports sourceSets
-                    project.sourceSets
-                    createStatsTask(project)
-                } catch (MissingPropertyException ignored) {
-                    // incompatible project, skip it
+            if (mergedConfiguration.stats.enabled) {
+                if(isRootProject(project) && project.childProjects.isEmpty()) {
+                    maybeCreateStatsTask(project)
+                } else if (!isRootProject(project)) {
+                    maybeCreateStatsTask(project)
                 }
             }
         }
@@ -86,6 +84,16 @@ class SourceStatsPlugin implements Plugin<Project> {
                     applyAggregateStats(project)
                 }
             })
+        }
+    }
+
+    private void maybeCreateStatsTask(Project project) {
+        try {
+            // see if the project supports sourceSets
+            project.sourceSets
+            createStatsTask(project)
+        } catch (MissingPropertyException ignored) {
+            // incompatible project, skip it
         }
     }
 
