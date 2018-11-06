@@ -122,6 +122,15 @@ class GroovydocPlugin implements Plugin<Project> {
             }
         }
 
+        try {
+            // project may not have 'sourceSets' property
+            if (project.sourceSets.main.java) {
+                groovydocTask.source(project.files(project.sourceSets.main.java.srcDirs))
+            }
+        } catch(Exception ignored) {
+            // ignored
+        }
+
         ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
         groovydocTask.configure {
             classpath = javadoc.classpath

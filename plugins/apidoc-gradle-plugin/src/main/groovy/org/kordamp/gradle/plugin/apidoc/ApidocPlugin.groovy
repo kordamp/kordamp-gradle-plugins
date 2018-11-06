@@ -155,9 +155,9 @@ class ApidocPlugin implements Plugin<Project> {
             if (groovydocs) {
                 aggregateGroovydocTasks[0].configure { task ->
                     task.enabled true
-                    task.dependsOn groovydocs
-                    task.source groovydocs.source
-                    task.classpath = project.files(groovydocs.classpath)
+                    task.dependsOn groovydocs + javadocs
+                    task.source groovydocs.source + javadocs.source
+                    task.classpath = project.files(groovydocs.classpath + javadocs.classpath)
                     task.groovyClasspath = project.files(groovydocs.groovyClasspath.flatten().unique())
 
                     mergedConfiguration.groovydoc.applyTo(task)
