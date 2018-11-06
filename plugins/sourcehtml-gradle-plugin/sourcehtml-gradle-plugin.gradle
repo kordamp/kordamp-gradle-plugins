@@ -18,5 +18,5 @@
 
 dependencies {
     compile project(':base-gradle-plugin')
-    compile 'com.bmuschko:gradle-java2html-plugin:2.0'
+    compile 'com.bmuschko:gradle-java2html-plugin:2.0.2'
 }
