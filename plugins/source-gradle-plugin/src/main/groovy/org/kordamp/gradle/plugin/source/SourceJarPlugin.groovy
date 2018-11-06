@@ -100,6 +100,8 @@ class SourceJarPlugin implements Plugin<Project> {
             }
         }
 
+        project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(sourceJarTask)
+
         sourceJarTask
     }
 }

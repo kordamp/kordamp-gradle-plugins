@@ -94,6 +94,7 @@ class GroovydocPlugin implements Plugin<Project> {
                 mergedConfiguration.groovydoc.groovydocTasks() << groovydoc
 
                 Task groovydocJar = createGroovydocJarTask(project, groovydoc)
+                project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(groovydocJar)
                 mergedConfiguration.groovydoc.groovydocJarTasks() << groovydocJar
 
                 mergedConfiguration.groovydoc.projects() << project

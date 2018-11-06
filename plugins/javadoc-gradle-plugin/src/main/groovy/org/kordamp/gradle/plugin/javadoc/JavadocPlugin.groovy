@@ -87,6 +87,7 @@ class JavadocPlugin implements Plugin<Project> {
                 mergedConfiguration.javadoc.javadocTasks() << javadoc
 
                 Task javadocJar = createJavadocJarTask(project, javadoc)
+                project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(javadocJar)
                 mergedConfiguration.javadoc.javadocJarTasks() << javadocJar
 
                 mergedConfiguration.javadoc.projects() << project
