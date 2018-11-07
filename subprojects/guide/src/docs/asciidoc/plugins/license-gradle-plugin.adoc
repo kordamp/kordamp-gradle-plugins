@@ -116,7 +116,7 @@ BSD New License, BSD New license, BSD 3-Clause, BSD 3-clause
 [[_org_kordamp_gradle_license_tasks]]
 == Tasks
 
-[[_task_aggregate_javadocs_jar]]
+[[_task_aggregate_license_report]]
 === AggregateLicenseReport
 
 Generates an aggregate license report. +

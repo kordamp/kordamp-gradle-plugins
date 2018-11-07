@@ -23,7 +23,8 @@ guide {
 
 asciidoctor {
     attributes = [
-        'gradle-version': project.gradle.gradleVersion
+        'gradle-version': project.gradle.gradleVersion,
+        'source-highlighter': 'prettify'
     ]
 }
 

@@ -16,7 +16,7 @@ to another build.
 In contrast, the Apache Maven built tool follows a much stricter yet still somehow flexible path to define builds.
 Many developers have cited Maven's "strictness" or "inflexibility" as a feature rather than a limitation of the tool.
 Personally I prefer a highly flexible tool (such as Gradle) while at the same time applying a structure on top that can
-still be bended to a certain degree. The plugins found in this project provide such structure.
+still be bent to a certain degree. The plugins found in this project provide such structure.
 
 The following sections describe the conventions and each one of the plugins.
 

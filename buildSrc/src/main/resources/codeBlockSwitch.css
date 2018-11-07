@@ -1,0 +1,23 @@
+.hidden {
+    display: none;
+}
+
+.switch {
+    border-width: 1px 1px 0 1px;
+    border-style: solid;
+    border-color: #1b1e7a;
+    display: inline-block;
+}
+
+.switch--item {
+    padding: 10px;
+    background-color: #ffffff;
+    color: #1b1e7a;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.switch--item.selected {
+    background-color: #1b1e7b;
+    color: #ffffff;
+}

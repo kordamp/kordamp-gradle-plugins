@@ -73,6 +73,9 @@ config {
 
     groovydoc {
         replaceJavadoc = true
+        options {
+            link 'https://docs.gradle.org/4.0/javadoc/', 'org.gradle.'
+        }
     }
 
     license {
@@ -124,13 +127,6 @@ subprojects {
         config {
             info {
                 description = project.project_description
-            }
-
-            groovydoc {
-                replaceJavadoc = true
-                options {
-                    link 'https://docs.gradle.org/4.0/javadoc/', 'org.gradle.'
-                }
             }
         }
 

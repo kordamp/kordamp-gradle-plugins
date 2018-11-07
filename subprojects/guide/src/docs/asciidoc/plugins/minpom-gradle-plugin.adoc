@@ -17,9 +17,8 @@ the project.
 
 For a project defined as follows
 
-[source,groovy]
-[subs="verbatim,attributes"]
-.sample/build.gradle
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
 ----
 plugins {
     id 'groovy'
@@ -31,6 +30,22 @@ version = '1.0.0'
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.5.3'
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+plugins {
+    `groovy`
+    id("org.kordamp.gradle.minpom") version "{project-version}"
+}
+
+group   = "com.acme"
+version = "1.0.0"
+
+dependencies {
+    compile("org.codehaus.groovy:groovy-all:2.5.3")
 }
 ----
 

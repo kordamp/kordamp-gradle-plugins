@@ -2,7 +2,7 @@
 [[_project_structure]]
 = Project Structure
 
-It's expected that projects that make use of these plugins follow a certain directory structure that allows them to gain
+It's expected of projects that make use of these plugins to follow a certain directory structure that enables them to gain
 higher benefits via conventions rather than writing lots of custom configuration elements.
 
 To begin with, projects should have a multi-project nature, i.e, be comprised of a root project and at least 1 subproject
@@ -26,11 +26,10 @@ may be added at later stages during development. Thus the minimum structure coul
         ├── build.gradle
         └── src
             └── main
-                └── java
 ----
 
 There are many ways to structure a multi-project build. Some prefer adding all submodule directories at the root level,
-others prefer a two or more level structure. None of the plugins enforce a particular directory structure, you're free
+others prefer a two or more levels structure. None of the plugins enforce a particular directory structure, you're free
 pick the structure that suits your style better. Personally I prefer the following structure
 
 [source,groovy]
@@ -57,19 +56,18 @@ pick the structure that suits your style better. Personally I prefer the followi
     │   ├── project1.gradle
     │   └── src
     │       └── main
-    │           └── java
     └── project2
         ├── project2.gradle
         └── src
             └── main
-                └── java
 ----
 
 You'll notice that source code projects are placed under `subprojects` while documentation projects are placed under `docs`.
 Also, the names of the build files have been changed to reflect the name of the project they belong to. This change must
-be reflected in the `settings.gradle` file, using code similar to
+be reflected in the `settings.gradle` (Groovy) or `settings.gradle.kts` (Kotlin) file, using code similar to
 
-[source,groovy]
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
 ----
 rootProject.name = 'root'
 
@@ -97,11 +95,39 @@ def includeProject = { String projectDirName, String projectName ->
 }
 ----
 
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+rootProject.name = "root"
+
+fun includeProject(projectDirName: String, projectName: String) {
+    val baseDir = File(settingsDir, projectDirName)
+    val projectDir = File(baseDir, projectName)
+    val buildFileName = "${projectName}.gradle.kts"
+
+    assert(projectDir.isDirectory())
+    assert(File(projectDir, buildFileName).isFile())
+
+    include(projectName)
+    project(":${projectName}").projectDir = projectDir
+    project(":${projectName}").buildFileName = buildFileName
+}
+
+listOf("docs", "subprojects").forEach { dirName ->
+    val subdir = File(rootDir, dirName)
+    subdir.walkTopDown().forEach { dir ->
+        val buildFile = File(dir, "${dir.name}.gradle.kts")
+        if (buildFile.exists()) {
+            includeProject(dirName, dir.name)
+        }
+    }
+}
+----
+
 With this structure in place the next step would be to setup the minimum configuration on the root project's build file
 
-[source,groovy]
-[subs="verbatim,attributes"]
-.build.gradle
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
 ----
 plugins {
     id 'org.kordamp.gradle.project' version '{project-version}'            //<1>
@@ -161,6 +187,72 @@ allprojects {
 <4> License details
 <5> Publishing specific information
 
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+plugins {
+    id("org.kordamp.gradle.project") version "{project-version}"          //<1>
+}
+
+val bintrayUsername: String by project
+val bintrayApiKey: String by project
+val releaseActive: Boolean? = rootProject.findProperty("release") as Boolean?
+
+config {
+    release = if (releaseActive != null) releaseActive!! else false       //<2>
+
+    info {                                                                //<3>
+        name        = "Sample"
+        vendor      = "Acme"
+        description = "Sample project"
+
+        links {
+            website      = "https://github.com/joecool/sample"
+            issueTracker = "https://github.com/joecool/sample/issues"
+            scm          = "https://github.com/joecool/sample.git"
+        }
+
+        people {
+            person {
+                id    = "joecool"
+                name  = "Joe Cool"
+                roles = listOf("developer")
+            }
+        }
+    }
+
+    license {                                                             //<4>
+        licenses {
+            license {
+                id = org.kordamp.gradle.plugin.base.model.LicenseId.APACHE_2_0
+            }
+        }
+    }
+
+    bintray {                                                             // <5>
+        credentials {
+            username = project.bintrayUsername
+            password = project.bintrayApiKey
+        }
+        userOrg    = "joecool"
+        name       = rootProject.name
+        githubRepo = "joecool/sample"
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+}
+----
+<1> Download and apply plugin to root project
+<2> Conditionally enable some features related to publishing
+<3> General information for all projects
+<4> License details
+<5> Publishing specific information
+
 This minimal configuration enables the following features:
 
  * Generate additional JAR manifest entries if [conum,data-value=2]_2_ is enabled.
@@ -183,16 +275,22 @@ This minimal configuration enables the following features:
 
 The build file for the `guide` project can be as simple as
 
-[source,groovy]
-.guide.gradle
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
 ----
 apply plugin: 'org.kordamp.gradle.guide'
 ----
 
-And each one of the subprojects files may look like
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+apply(plugin = "org.kordamp.gradle.guide")
+----
 
-[source,groovy]
-.project1.gradle
+And the build file for each subproject may look like
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
 ----
 apply plugin: 'java'
 
@@ -201,5 +299,13 @@ dependencies {
 }
 ----
 
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+apply(plugin = "java")
 
+dependencies {
+    // dependencies
+}
+----
 

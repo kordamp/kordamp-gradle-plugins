@@ -5,8 +5,9 @@
 There are two choices for applying any of the plugins described in this document
 
 Option #1
-[source,groovy]
-[subs="attributes"]
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
 ----
 buildscript {
     repositories {
@@ -22,12 +23,38 @@ buildscript {
 apply plugin: '{plugin-id}'
 ----
 
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+buildscript {
+    repositories {
+        // Gradle Plugin Portal
+        maven(url = "https://plugins.gradle.org/m2/")
+        // required for additional dependencies, may use mavenCentral() instead
+        jcenter()
+    }
+    dependencies {
+        classpath("org.kordamp.gradle:{plugin-id}:{project-version}")
+    }
+}
+apply(plugin = "{plugin-id}")
+----
+
 Option #2
-[source,groovy]
-[subs="attributes"]
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
 ----
 plugins {
     id '{plugin-id}' version '{project-version}'
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+plugins {
+    id("{plugin-id}") version "{project-version}"
 }
 ----
 

@@ -16,12 +16,13 @@ Generates reports on source code statistics both at individual and aggregate lev
 
 The following configuration may be used in a Griffon project for example
 
-[source,groovy]
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
 ----
 config {
     stats {
         formats = ['xml', 'html', 'txt']
-        paths = [
+        paths   = [
             model:      [name: 'Models',      path: 'griffon-app/models'],
             view:       [name: 'Views',       path: 'griffon-app/views'],
             controller: [name: 'Controllers', path: 'griffon-app/controllers'],
@@ -29,6 +30,24 @@ config {
             config:     [name: 'Config',      path: 'griffon-app/conf'],
             lifecycle:  [name: 'Lifecycle',   path: 'griffon-app/lifecycle']
         ]
+    }
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+config {
+    stats {
+        formats = listOf("xml", "html", "txt")
+        paths   = mapOf(
+            "model"      to mapOf("name" to "Models",      "path" to "griffon-app/models"),
+            "view"       to mapOf("name" to "Views",       "path" to "griffon-app/views"),
+            "controller" to mapOf("name" to "Controllers", "path" to "griffon-app/controllers"),
+            "service"    to mapOf("name" to "Services",    "path" to "griffon-app/services"),
+            "config"     to mapOf("name" to "Config",      "path" to "griffon-app/conf"),
+            "lifecycle"  to mapOf("name" to "Lifecycle",   "path" to "griffon-app/lifecycle")
+        )
     }
 }
 ----

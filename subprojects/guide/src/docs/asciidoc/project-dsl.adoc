@@ -34,8 +34,7 @@ However it's also possible to override a particular root setting should the need
 on the subproject's build file and override the settings you need. Here's for example how a child project may skip
 publications completely:
 
-[source,groovy]
-[subs="attributes"]
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
 .build.gradle (root)
 ----
 plugins {
@@ -54,8 +53,36 @@ allprojects {
 }
 ----
 
-[source,groovy]
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.build.gradle.kts (root)
+----
+plugins {
+    id("org.kordamp.gradle.project") version "{project-version}"
+}
+
+config {
+    info { ... }
+    // additional configuration
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
 .build.gradle (child)
+----
+config {
+    bintray    { enabled = false }
+    publishing { enabled = false }
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.build.gradle.kts (child)
 ----
 config {
     bintray    { enabled = false }
