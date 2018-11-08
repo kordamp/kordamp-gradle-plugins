@@ -49,15 +49,16 @@ class BasePlugin implements Plugin<Project> {
             }
             project.ext[visitedPropertyName] = true
 
+            ProjectConfigurationExtension rootExtension = project.rootProject.extensions.findByType(ProjectConfigurationExtension)
             ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
             extension.info.normalize()
 
             List<String> errors = []
             if (isRootProject(project)) {
-                errors = extension.validate()
-                project.ext.mergedConfiguration = extension
+                ProjectConfigurationExtension merged = extension.merge(rootExtension)
+                errors = merged.validate()
+                project.ext.mergedConfiguration = merged
             } else {
-                ProjectConfigurationExtension rootExtension = project.rootProject.extensions.findByType(ProjectConfigurationExtension)
                 if (rootExtension) {
                     ProjectConfigurationExtension merged = extension.merge(rootExtension)
                     errors = merged.validate()

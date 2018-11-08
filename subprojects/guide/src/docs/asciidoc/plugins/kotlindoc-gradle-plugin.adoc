@@ -1,0 +1,194 @@
+
+[[_org_kordamp_gradle_kotlindoc]]
+= Kotlindoc
+
+[horizontal]
+id:: `org.kordamp.gradle.kotlindoc`
+class:: `org.kordamp.gradle.plugin.kotlindoc.KotlindocPlugin`
+    (link:api/org/kordamp/gradle/plugin/kotlindoc/KotlindocPlugin.html[kotlindoc],
+     link:api-html/org/kordamp/gradle/plugin/kotlindoc/KotlindocPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+
+Generates and packages Kotlin documentation via link:https://github.com/Kotlin/dokka[Dokka].
+
+NOTE: This plugin relies on the `org.jetbrains.dokka` plugin but does not apply it.
+
+[[_org_kordamp_gradle_kotlindoc_dsl]]
+== DSL
+
+[source,kotlin]
+[subs="+macros"]
+----
+config {
+    kotlindoc {
+        enabled
+        moduleName
+        outputFormats
+        outputDirectory
+        includes
+        samples
+        jdkVersion
+        cacheRoot
+        languageVersion
+        apiVersion
+        includeNonPublic
+        skipDeprecated
+        reportUndocumented
+        skipEmptyPackages
+        noStdlibLink
+        impliedPlatforms
+        replaceJavadoc
+        <<_kotlindoc_link_mappings,linkMappings>> {
+            <<_kotlindoc_link_mapping,linkMapping>> {
+                dir
+                url
+                path
+            }
+        }
+        <<_kotlindoc_external_documentation_links,externalDocumentationLinks>> {
+            <<_kotlindoc_external_documentation_link,externalDocumentationLink>> {
+                url
+                packageListUrl
+            }
+        }
+        <<_kotlindoc_package_options,packageOptions>> {
+            <<_kotlindoc_package_option,packageOption>> {
+                prefix
+                includeNonPublic
+                reportUndocumented
+                skipEmptyPackages
+                suppress
+            }
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name               | Type         | Required | Default Value                        | Description
+| enabled            | boolean      | no       | true                                 | Disables `org.kordamp.gradle.kotlindoc` plugin if `false`
+| moduleName         | String       | no       |                                      |
+| outputFormats      | List<String> | no       | ['html']                             | Valid values are 'html', 'javadoc', 'html-as-java', 'markdown', 'gfm', 'jekyll'.
+| outputDirectory    | File         | no       | `${project.buildDir}/docs/kotlindoc` | Value of `outputFormat` is appended.
+| includes           | List<Object> | no       | []                                   | List of files with module and package documentation
+| samples            | List<Object> | no       | []                                   | The list of files or directories containing sample code (referenced with @sample tags)
+| jdkVersion         | int          | no       | 6                                    | Used for linking to JDK
+| cacheRoot          | String       | no       |                                      |
+| languageVersion    | String       | no       |                                      |
+| apiVersion         | String       | no       |                                      |
+| includeNonPublic   | boolean      | no       | false                                | Use to include or exclude non public members.
+| skipDeprecated     | boolean      | no       | false                                | Do not output deprecated members. Applies globally, can be overridden by packageOptions.
+| reportUndocumented | boolean      | no       | true                                 | Emit warnings about not documented members. Applies globally, also can be overridden by packageOptions.
+| skipEmptyPackages  | boolean      | no       | true                                 | Do not create index pages for empty packages.
+| noStdlibLink       | boolean      | no       | false                                | o default documentation link to kotlin-stdlib
+| impliedPlatforms   | List<String> | no       | ['JVM']                              | Valid values are 'Common', 'JVM', 'JS', 'Native'.
+| replaceJavadoc     | boolean      | no       | false                                | Disables `javadocJar` and applies the `javadoc` classifier.
+|===
+
+[[_kotlindoc_link_mappings]]
+*linkMappings*
+
+This block defines data associated with `org.jetbrains.dokka.gradle.LinkMapping` instances. +
+Each linkMapping instance specifies the location of the project source code on the Web. +
+If provided, Dokka generates "source" links for each declaration.
+
+[[_kotlindoc_link_mapping]]
+*linkMapping*
+
+[options="header", cols="5*"]
+|===
+| Name           | Type   | Required | Default Value | Description
+| dir            | String | yes      |               | Source directory, i.e, `src/main/kotlin`.
+| url            | String | yes      |               | URL showing where the source code can be accessed through the web browser.
+| path           | String | yes      |               |
+| suffix         | String | no       |               | Suffix which is used to append the line number to the URL. Use #L for GitHub.
+|===
+
+This block is optional.
+
+[[_kotlindoc_external_documentation_links]]
+*externalDocumentationLinks*
+
+This block defines data associated with `org.jetbrains.dokka.DokkaConfiguration.ExternalDocumentationLink` instances. +
+Allows linking to documentation of the project's dependencies (generated with Javadoc or Dokka).
+
+[[_kotlindoc_external_documentation_link]]
+*externalDocumentationLink*
+
+[options="header", cols="5*"]
+|===
+| Name           | Type   | Required | Default Value | Description
+| url            | String | yes      |               | Root URL of the generated documentation to link with. Trailing slash is required!
+| packageListUrl | String | no       |               | If package-list file located in non-standard location.
+|===
+
+This block is optional.
+
+[[_kotlindoc_package_options]]
+*packageOptions*
+
+This block defines data associated with `org.jetbrains.dokka.gradle.PackageOptions` instances. +
+Allows to customize documentation generation options on a per-package basis.
+
+[[_kotlindoc_package_option]]
+*packageOption*
+
+[options="header", cols="5*"]
+|===
+| Name               | Type    | Required | Default Value | Description
+| prefix             | String  | no       | ''            |
+| includeNonPublic   | boolean | no       | false         | Use to include or exclude non public members.
+| skipDeprecated     | boolean | no       | false         | Do not output deprecated members.
+| reportUndocumented | boolean | no       | true          | Emit warnings about not documented members.
+| suppress           | boolean | no       | false         |
+|===
+
+This block is optional.
+
+[[_org_kordamp_gradle_kotlindoc_tasks]]
+== Tasks
+
+[[_task_kotlindoc]]
+=== Kotlindoc
+
+Generates Kotlindoc API documentation. +
+Consumes settings from `config.<<_org_kordamp_gradle_kotlindoc_dsl,kotlindoc>>`.
+
+[horizontal]
+Name:: The actual name of this task depends on the configured formats. Possible names are:
+ * kotlindocHtml
+ * kotlindocJavadoc
+ * kotlindocHtmljava
+ * kotlindocMarkdown
+ * kotlindocGfm
+ * kotlindocJekyll
+
+Type:: `org.jetbrains.dokka.gradle.DokkaTask`
+
+.Properties
+[horizontal]
+outputDirectory:: `${project.buildDir}/docs/kotlindoc/${format}`
+
+[[_task_kotlindoc_jar]]
+=== KotlindocJar
+
+An archive of the Kotlindoc API docs.
+
+[horizontal]
+Name:: The actual name of this task depends on the configured formats. Possible names are:
+ * kotlindocHtmlJar
+ * kotlindocJavadocJar
+ * kotlindocHtmljavaJar
+ * kotlindocMarkdownJar
+ * kotlindocGfmJar
+ * kotlindocJekyllJar
+
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+classifier:: kotlindoc | javadoc
+destinationDir:: `${project.buildDir}/build/libs`
+from:: `kotlindoc.outputDirectory`
+

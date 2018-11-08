@@ -98,11 +98,11 @@ class GroovydocPlugin implements Plugin<Project> {
                 mergedConfiguration.groovydoc.groovydocJarTasks() << groovydocJar
 
                 mergedConfiguration.groovydoc.projects() << project
-            }
 
-            project.tasks.withType(Groovydoc) { task ->
-                mergedConfiguration.groovydoc.applyTo(task)
-                task.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.resolveAuthors().join(', ')}. All rights reserved."
+                project.tasks.withType(Groovydoc) { task ->
+                    mergedConfiguration.groovydoc.applyTo(task)
+                    task.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.resolveAuthors().join(', ')}. All rights reserved."
+                }
             }
         }
     }
@@ -128,7 +128,7 @@ class GroovydocPlugin implements Plugin<Project> {
             if (project.sourceSets.main.java) {
                 groovydocTask.source(project.files(project.sourceSets.main.java.srcDirs))
             }
-        } catch(Exception ignored) {
+        } catch (Exception ignored) {
             // ignored
         }
 
@@ -160,6 +160,7 @@ class GroovydocPlugin implements Plugin<Project> {
         ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
         if (mergedConfiguration.groovydoc.replaceJavadoc) {
             groovydocJarTask.classifier = 'javadoc'
+            project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
             project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
         }
 

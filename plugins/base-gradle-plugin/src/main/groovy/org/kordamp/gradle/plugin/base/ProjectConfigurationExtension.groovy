@@ -27,6 +27,7 @@ import org.kordamp.gradle.plugin.base.plugins.Bintray
 import org.kordamp.gradle.plugin.base.plugins.Groovydoc
 import org.kordamp.gradle.plugin.base.plugins.Jacoco
 import org.kordamp.gradle.plugin.base.plugins.Javadoc
+import org.kordamp.gradle.plugin.base.plugins.Kotlindoc
 import org.kordamp.gradle.plugin.base.plugins.License
 import org.kordamp.gradle.plugin.base.plugins.Minpom
 import org.kordamp.gradle.plugin.base.plugins.Publishing
@@ -47,6 +48,7 @@ class ProjectConfigurationExtension {
     final Apidoc apidoc
     final Bintray bintray
     final Groovydoc groovydoc
+    final Kotlindoc kotlindoc
     final Jacoco jacoco
     final Javadoc javadoc
     final License license
@@ -64,6 +66,7 @@ class ProjectConfigurationExtension {
         apidoc = new Apidoc(project)
         bintray = new Bintray(project)
         groovydoc = new Groovydoc(project)
+        kotlindoc = new Kotlindoc(project)
         jacoco = new Jacoco(project)
         javadoc = new Javadoc(project)
         license = new License(project)
@@ -104,6 +107,14 @@ class ProjectConfigurationExtension {
 
     void groovydoc(@DelegatesTo(Groovydoc) Closure action) {
         ConfigureUtil.configure(action, groovydoc)
+    }
+
+    void kotlindoc(Action<? super Kotlindoc> action) {
+        action.execute(kotlindoc)
+    }
+
+    void kotlindoc(@DelegatesTo(Kotlindoc) Closure action) {
+        ConfigureUtil.configure(action, kotlindoc)
     }
 
     void jacoco(Action<? super Jacoco> action) {
@@ -187,6 +198,7 @@ class ProjectConfigurationExtension {
         apidoc.copyInto(copy.apidoc)
         bintray.copyInto(copy.bintray)
         groovydoc.copyInto(copy.groovydoc)
+        kotlindoc.copyInto(copy.kotlindoc)
         jacoco.copyInto(copy.jacoco)
         javadoc.copyInto(copy.javadoc)
         license.copyInto(copy.license)
@@ -206,6 +218,7 @@ class ProjectConfigurationExtension {
         Apidoc.merge(merged.apidoc, other.apidoc)
         Bintray.merge(merged.bintray, other.bintray)
         Groovydoc.merge(merged.groovydoc, other.groovydoc)
+        Kotlindoc.merge(merged.kotlindoc, other.kotlindoc)
         Jacoco.merge(merged.jacoco, other.jacoco)
         Javadoc.merge(merged.javadoc, other.javadoc)
         License.merge(merged.license, other.license)
@@ -225,6 +238,7 @@ class ProjectConfigurationExtension {
         errors.addAll(bintray.validate(info))
         errors.addAll(license.validate(info))
         errors.addAll(publishing.validate(info))
+        errors.addAll(kotlindoc.validate())
 
         errors
     }
