@@ -15,7 +15,7 @@ Configures additional Manifest entries and files in the `META-INF` directory.
 
 Any files that match `LICENSE*` will be added to `META-INF` automatically.
 
-If `config.<<_org_kordamp_gradle_minpom_dsl,minpom>>.enabled` is `true` then the outputs of the <<_task_minpom,minpo,>> task
+If `config.<<_org_kordamp_gradle_minpom_dsl,minpom>>.enabled` is `true` then the outputs of the <<_task_minpom,minpom>> task
 will be mapped to `META-INF/maven/${project.group}/${project.name}`.
 
 If `config.<<_org_kordamp_gradle_base_dsl,release>>` is `true` then the following entries are added to the Manifest of
