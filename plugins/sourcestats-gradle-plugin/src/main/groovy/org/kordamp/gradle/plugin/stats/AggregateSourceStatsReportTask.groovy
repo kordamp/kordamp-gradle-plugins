@@ -19,9 +19,12 @@ package org.kordamp.gradle.plugin.stats
 
 import groovy.xml.MarkupBuilder
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 
 import static org.kordamp.gradle.plugin.base.plugins.Stats.HTML
@@ -32,8 +35,11 @@ import static org.kordamp.gradle.plugin.base.plugins.Stats.XML
  * @author Andres Almiray
  * @since 0.5.0
  */
+@CacheableTask
 class AggregateSourceStatsReportTask extends DefaultTask {
     @Optional @Input List<String> formats = []
+
+    @PathSensitive(PathSensitivity.RELATIVE)
     @Optional @OutputDirectory File reportDir
 
     File xmlReport

@@ -170,7 +170,7 @@ class SourceHtmlPlugin implements Plugin<Project> {
             pattern = mergedConfiguration.sourceHtml.overview.pattern
             windowTitle = mergedConfiguration.sourceHtml.overview.windowTitle
             docTitle = mergedConfiguration.sourceHtml.overview.docTitle
-            docDescription = mergedConfiguration.sourceHtml.overview.docDescription
+            docDescription = mergedConfiguration.sourceHtml.overview.docDescription ?: ''
             icon = mergedConfiguration.sourceHtml.overview.icon
             stylesheet = mergedConfiguration.sourceHtml.overview.stylesheet
         }
@@ -232,7 +232,7 @@ class SourceHtmlPlugin implements Plugin<Project> {
             pattern = mergedConfiguration.sourceHtml.overview.pattern
             windowTitle = mergedConfiguration.sourceHtml.overview.windowTitle
             docTitle = mergedConfiguration.sourceHtml.overview.docTitle
-            docDescription = mergedConfiguration.sourceHtml.overview.docDescription
+            docDescription = mergedConfiguration.sourceHtml.overview.docDescription ?: ''
             icon = mergedConfiguration.sourceHtml.overview.icon
             stylesheet = mergedConfiguration.sourceHtml.overview.stylesheet
         }

@@ -21,19 +21,25 @@ import groovy.xml.MarkupBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 
 /**
  * @author Andres Almiray
  * @sinde 0.6.0
  */
+@CacheableTask
 class MinpomTask extends DefaultTask {
     @Optional @Input String projectGroupId
     @Optional @Input String projectArtifactId
     @Optional @Input String projectVersion
+
+    @PathSensitive(PathSensitivity.RELATIVE)
     @Optional @OutputDirectory File destinationDir
 
     MinpomTask() {

@@ -19,8 +19,11 @@ package org.kordamp.gradle.plugin.stats
 
 import groovy.xml.MarkupBuilder
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.base.plugins.Stats
 import org.kordamp.gradle.plugin.stats.counter.CssCounter
@@ -40,10 +43,13 @@ import static org.kordamp.gradle.plugin.base.plugins.Stats.XML
  * @author Andres Almiray
  * @since 0.5.0
  */
+@CacheableTask
 class SourceStatsTask extends DefaultTask {
     @Optional @Input Map<String, String> counters = [:]
     @Optional @Input Map<String, Map<String, String>> paths = [:]
     @Optional @Input List<String> formats = []
+
+    @PathSensitive(PathSensitivity.RELATIVE)
     @Optional @Input File reportDir
 
     File xmlReport

@@ -23,15 +23,20 @@ import groovy.xml.StreamingMarkupBuilder
 import groovy.xml.XmlUtil
 import nl.javadude.gradle.plugins.license.DownloadLicensesExtension
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 
 /**
  * @author Andres Almiray
  * @since 0.5.0
  */
+@CacheableTask
 class AggregateLicenseReportTask extends DefaultTask {
+    @PathSensitive(PathSensitivity.RELATIVE)
     @Optional @OutputDirectory File reportDir
 
     AggregateLicenseReportTask() {
