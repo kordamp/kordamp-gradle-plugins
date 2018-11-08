@@ -213,6 +213,7 @@ class LicensePlugin implements Plugin<Project> {
             license       = lic.id?.spdx()
         }
         licenseExtension.exclude '**/*.png'
+        licenseExtension.exclude '**/*.gif'
         licenseExtension.exclude 'META-INF/services/*'
     }
 

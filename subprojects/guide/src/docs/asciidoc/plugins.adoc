@@ -21,5 +21,6 @@ include::plugins/project-gradle-plugin.adoc[]
 include::plugins/publishing-gradle-plugin.adoc[]
 include::plugins/source-gradle-plugin.adoc[]
 include::plugins/sourcehtml-gradle-plugin.adoc[]
+include::plugins/sourcexref-gradle-plugin.adoc[]
 include::plugins/sourcestats-gradle-plugin.adoc[]
 :leveloffset: 1

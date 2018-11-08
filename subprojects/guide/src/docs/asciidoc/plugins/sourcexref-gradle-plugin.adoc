@@ -1,0 +1,84 @@
+
+[[_org_kordamp_gradle_sourcexref]]
+= SourceXref
+
+[horizontal]
+id:: `org.kordamp.gradle.source-xref`
+class:: `org.kordamp.gradle.plugin.sourcexref.SourceXrefPlugin`
+    (link:api/org/kordamp/gradle/plugin/sourcexref/SourceXrefPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/sourcexref/SourceXrefPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+
+Converts source code into HTML with syntax highlighting using the
+link:https://maven.apache.org/jxr/index.html[Maven JXR] project.
+
+[[_org_kordamp_gradle_sourcexref_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    enabled
+    templateDir
+    inputEncoding
+    outputEncoding
+    windowTitle
+    docTitle
+    bottom
+    stylesheet
+    javaVersion
+    excludes
+    includes
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name           | Type        | Required | Default Value                                  | Description
+| enabled        | boolean     | no       | true                                           | Disables `org.kordamp.gradle.source-xref` plugin if `false`
+| templateDir    | String      | no       |                                                |
+| inputEncoding  | String      | no       | UTF-8                                          |
+| outputEncoding | String      | no       | UTF-8                                          |
+| windowTitle    | String      | no       | "${project.name} ${project.version} Reference" |
+| docTitle       | String      | no       | "${project.name} ${project.version} Reference" |
+| bottom         | String      | no       |                                                |
+| stylesheet     | String      | no       |                                                |
+| javaVersion    | String      | no       | `JavaVersion.current()`                        |
+| excludes       | Set<String> | no       | []                                             |
+| includes       | Set<String> | no       | []                                             |
+|===
+
+[[_org_kordamp_gradle_sourcexref_tasks]]
+== Tasks
+
+[[_task_source_xref]]
+=== SourceXref
+
+Generates a JXR report of all Java source code found in this project.
+
+[horizontal]
+Name:: sourceXref
+Type:: `org.kordamp.gradle.plugin.sourcexref.JxrTask`
+
+.Properties
+[horizontal]
+outputDir:: `${project.buildDir}/docs/source-xref`
+
+Consumes all settings found in the `config.sourceXref.conversion` block.
+
+[[_task_aggregate_source_xref]]
+=== AggregateSourceXref
+
+Generates a JXR report of all Java source code found in all projects. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateSourceXref
+Type:: `org.kordamp.gradle.plugin.sourcexref.JxrTask`
+
+.Properties
+[horizontal]
+outputDir:: `${project.buildDir}/docs/source-xref`
+
+Consumes all settings found in the `config.sourceXref.conversion` block.

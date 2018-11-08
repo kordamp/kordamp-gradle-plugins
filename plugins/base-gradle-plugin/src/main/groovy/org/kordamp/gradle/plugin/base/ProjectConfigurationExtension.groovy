@@ -33,6 +33,7 @@ import org.kordamp.gradle.plugin.base.plugins.Minpom
 import org.kordamp.gradle.plugin.base.plugins.Publishing
 import org.kordamp.gradle.plugin.base.plugins.Source
 import org.kordamp.gradle.plugin.base.plugins.SourceHtml
+import org.kordamp.gradle.plugin.base.plugins.SourceXref
 import org.kordamp.gradle.plugin.base.plugins.Stats
 
 /**
@@ -57,6 +58,7 @@ class ProjectConfigurationExtension {
     final Source source
     final Stats stats
     final SourceHtml sourceHtml
+    final SourceXref sourceXref
 
     private boolean releaseSet
 
@@ -75,6 +77,7 @@ class ProjectConfigurationExtension {
         source = new Source(project)
         stats = new Stats(project)
         sourceHtml = new SourceHtml(project)
+        sourceXref = new SourceXref()
     }
 
     void info(Action<? super Information> action) {
@@ -181,6 +184,14 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, sourceHtml)
     }
 
+    void sourceXref(Action<? super SourceXref> action) {
+        action.execute(sourceXref)
+    }
+
+    void sourceXref(@DelegatesTo(SourceXref) Closure action) {
+        ConfigureUtil.configure(action, sourceXref)
+    }
+
     void setRelease(boolean release) {
         this.release = release
         this.releaseSet = true
@@ -207,6 +218,7 @@ class ProjectConfigurationExtension {
         source.copyInto(copy.source)
         stats.copyInto(copy.stats)
         sourceHtml.copyInto(copy.sourceHtml)
+        sourceXref.copyInto(copy.sourceXref)
 
         copy
     }
@@ -227,6 +239,7 @@ class ProjectConfigurationExtension {
         Source.merge(merged.source, other.source)
         Stats.merge(merged.stats, other.stats)
         SourceHtml.merge(merged.sourceHtml, other.sourceHtml)
+        SourceXref.merge(merged.sourceXref, other.sourceXref)
 
         merged
     }
