@@ -57,7 +57,7 @@ class JxrTask extends DefaultTask {
     @Input @Optional String stylesheet
     @Input @Optional List<String> includes = []
     @Input @Optional List<String> excludes = []
-    @Input @Optional String javaVersion
+    @Input @Optional JavaVersion javaVersion
 
     JxrTask() {
         windowTitle = "${project.name} ${project.version} Reference"
@@ -130,7 +130,7 @@ class JxrTask extends DefaultTask {
     }
 
     JavaVersion resolveJavadocTemplatesVersion() {
-        !isBlank(javaVersion) ? JavaVersion.valueOf(javaVersion) : JavaVersion.current()
+        javaVersion ?: JavaVersion.current()
     }
 
     private void copyResources(String dir) {

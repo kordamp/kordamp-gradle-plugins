@@ -157,7 +157,7 @@ class SourceXrefPlugin implements Plugin<Project> {
             if (!isBlank(docTitle)) jxrTask.docTitle = docTitle
             if (!isBlank(bottom)) jxrTask.bottom = bottom
             if (!isBlank(stylesheet)) jxrTask.stylesheet = stylesheet
-            if (!isBlank(javaVersion)) jxrTask.javaVersion = javaVersion
+            if (javaVersion) jxrTask.javaVersion = javaVersion
             if (excludes) jxrTask.excludes.addAll(excludes)
             if (includes) jxrTask.includes.addAll(includes)
         }

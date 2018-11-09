@@ -22,6 +22,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.Task
 
@@ -42,7 +43,7 @@ class SourceXref {
     String docTitle
     String bottom
     String stylesheet
-    String javaVersion
+    JavaVersion javaVersion
     Set<String> excludes = new LinkedHashSet<>()
     Set<String> includes = new LinkedHashSet<>()
 
@@ -58,6 +59,10 @@ class SourceXref {
 
     boolean isEnabledSet() {
         this.enabledSet
+    }
+
+    void setJavaVersion(String javaVersion) {
+        this.javaVersion = JavaVersion.toVersion(javaVersion)
     }
 
     void copyInto(SourceXref copy) {
