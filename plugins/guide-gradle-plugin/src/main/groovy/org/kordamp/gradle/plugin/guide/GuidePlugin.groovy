@@ -104,12 +104,14 @@ class GuidePlugin implements Plugin<Project> {
         checkAttribute(attrs, asciidoctorTask.attributes, 'project-group', project.group)
         checkAttribute(attrs, asciidoctorTask.attributes, 'project-version', project.version)
         checkAttribute(attrs, asciidoctorTask.attributes, 'project-name', project.rootProject.name)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'build-by', project.rootProject.ext.buildinfo.buildBy)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'build-date', project.rootProject.ext.buildinfo.buildDate)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'build-time', project.rootProject.ext.buildinfo.buildTime)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'build-revision', project.rootProject.ext.buildinfo.buildRevision)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'build-jdk', project.rootProject.ext.buildinfo.buildJdk)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'build-created-by', project.rootProject.ext.buildinfo.buildCreatedBy)
+
+        Map buildinfo = project.rootProject.findProperty('buildinfo') ?: [:]
+        checkAttribute(attrs, asciidoctorTask.attributes, 'build-by', buildinfo.buildBy)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'build-date', buildinfo.buildDate)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'build-time', buildinfo.buildTime)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'build-revision', buildinfo.buildRevision)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'build-jdk', buildinfo.buildJdk)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'build-created-by', buildinfo.buildCreatedBy)
 
         asciidoctorTask.configure {
             attributes.putAll(attrs)

@@ -7,7 +7,8 @@ id:: `org.kordamp.gradle.build-info`
 class:: `org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin`
     (link:api/org/kordamp/gradle/plugin/buildinfo/BuildInfoPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/buildinfo/BuildInfoPlugin.html[source])
-applies:: `link:https://github.com/nemerosa/versioning[net.nemerosa.versioning]`
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
+`link:https://github.com/nemerosa/versioning[net.nemerosa.versioning]`
 
 Defines a set of build related properties and attaches them to a `Map` identified as `rootProject.ext.buildinfo`.
 These properties are
@@ -26,3 +27,35 @@ These properties are
 
 These properties are consumed by the `<<_org_kordamp_gradle_jar,org.kordamp.gradle.jar>>` plugin when enhancing the
 `MANIFEST.MF` file of generated JARs.
+
+[[_org_kordamp_gradle_buildinfo_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    buildInfo {
+        enabled
+        skipBuildBy
+        skipBuildDate
+        skipBuildTime
+        skipBuildRevision
+        skipBuildJdk
+        skipBuildCreatedBy
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name               | Type    | Required | Default Value | Description
+| enabled            | boolean | no       | true          | Disables `org.kordamp.gradle.build-info` plugin if `false`
+| skipBuildBy        | boolean | no       | false         | Skips calculating this value
+| skipBuildDate      | boolean | no       | false         | Skips calculating this value
+| skipBuildTime      | boolean | no       | false         | Skips calculating this value
+| skipBuildRevision  | boolean | no       | false         | Skips calculating this value
+| skipBuildJdk       | boolean | no       | false         | Skips calculating this value
+| skipBuildCreatedBy | boolean | no       | false         | Skips calculating this value
+|===
+

@@ -21,8 +21,12 @@ import net.nemerosa.versioning.VersioningExtension
 import net.nemerosa.versioning.VersioningPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.kordamp.gradle.plugin.base.BasePlugin
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import java.text.SimpleDateFormat
+
+import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
  * Calculates build properties and attaches them to the root {@code Project}.
@@ -40,28 +44,70 @@ import java.text.SimpleDateFormat
  * @since 0.1.0
  */
 class BuildInfoPlugin implements Plugin<Project> {
+    private static final String VISITED = BuildInfoPlugin.class.name.replace('.', '_') + '_VISITED'
+
     Project project
 
     void apply(Project project) {
         this.project = project
 
-        Project root = project.rootProject
+        if (isRootProject(project)) {
+            configureProject(project)
+        }
+    }
 
-        if (!root.findProperty('buildTimeAndDate')) {
-            root.plugins.apply(VersioningPlugin)
+    private void configureProject(Project project) {
+        String visitedPropertyName = VISITED + '_' + project.name
+        if (project.findProperty(visitedPropertyName)) {
+            return
+        }
+        project.ext[visitedPropertyName] = true
 
-            VersioningExtension versioning = root.extensions.findByName('versioning')
+        BasePlugin.applyIfMissing(project)
 
+        project.afterEvaluate {
+            configureBuildProperties(project)
+        }
+    }
+
+    private void configureBuildProperties(Project project) {
+        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+
+        if (!mergedConfiguration.buildInfo.enabled) {
+            return
+        }
+
+        if (!project.findProperty('buildinfo')) {
             Date date = new Date()
-            root.ext.buildinfo = [
-                buildTimeAndDate: date,
-                buildBy         : System.properties['user.name'],
-                buildDate       : new SimpleDateFormat('yyyy-MM-dd').format(date),
-                buildTime       : new SimpleDateFormat('HH:mm:ss.SSSZ').format(date),
-                buildRevision   : versioning.info.commit,
-                buildJdk        : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
-                buildCreatedBy  : "Gradle ${root.gradle.gradleVersion}"
-            ]
+            Map<String, Object> buildinfoMap = [buildTimeAndDate: date]
+
+            if (!mergedConfiguration.buildInfo.skipBuildBy) {
+                buildinfoMap.buildBy = System.properties['user.name']
+            }
+
+            if (!mergedConfiguration.buildInfo.skipBuildDate) {
+                buildinfoMap.buildDate = new SimpleDateFormat('yyyy-MM-dd').format(date)
+            }
+
+            if (!mergedConfiguration.buildInfo.skipBuildTime) {
+                buildinfoMap.buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(date)
+            }
+
+            if (!mergedConfiguration.buildInfo.skipBuildRevision) {
+                project.plugins.apply(VersioningPlugin)
+                VersioningExtension versioning = project.extensions.findByName('versioning')
+                buildinfoMap.buildRevision = versioning.info.commit
+            }
+
+            if (!mergedConfiguration.buildInfo.skipBuildJdk) {
+                buildinfoMap.buildJdk = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString()
+            }
+
+            if (!mergedConfiguration.buildInfo.skipBuildCreatedBy) {
+                buildinfoMap.buildCreatedBy = "Gradle ${project.gradle.gradleVersion}"
+            }
+
+            project.ext.buildinfo = buildinfoMap
         }
     }
 

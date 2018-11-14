@@ -24,6 +24,7 @@ import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.model.Information
 import org.kordamp.gradle.plugin.base.plugins.Apidoc
 import org.kordamp.gradle.plugin.base.plugins.Bintray
+import org.kordamp.gradle.plugin.base.plugins.BuildInfo
 import org.kordamp.gradle.plugin.base.plugins.Groovydoc
 import org.kordamp.gradle.plugin.base.plugins.Jacoco
 import org.kordamp.gradle.plugin.base.plugins.Javadoc
@@ -48,6 +49,7 @@ class ProjectConfigurationExtension {
     final Information info
     final Apidoc apidoc
     final Bintray bintray
+    final BuildInfo buildInfo
     final Groovydoc groovydoc
     final Kotlindoc kotlindoc
     final Jacoco jacoco
@@ -67,6 +69,7 @@ class ProjectConfigurationExtension {
         info = new Information(project)
         apidoc = new Apidoc(project)
         bintray = new Bintray(project)
+        buildInfo = new BuildInfo()
         groovydoc = new Groovydoc(project)
         kotlindoc = new Kotlindoc(project)
         jacoco = new Jacoco(project)
@@ -102,6 +105,14 @@ class ProjectConfigurationExtension {
 
     void bintray(@DelegatesTo(Bintray) Closure action) {
         ConfigureUtil.configure(action, bintray)
+    }
+
+    void buildInfo(Action<? super BuildInfo> action) {
+        action.execute(buildInfo)
+    }
+
+    void buildInfo(@DelegatesTo(BuildInfo) Closure action) {
+        ConfigureUtil.configure(action, buildInfo)
     }
 
     void groovydoc(Action<? super Groovydoc> action) {
@@ -208,6 +219,7 @@ class ProjectConfigurationExtension {
         info.copyInto(copy.info)
         apidoc.copyInto(copy.apidoc)
         bintray.copyInto(copy.bintray)
+        buildInfo.copyInto(copy.buildInfo)
         groovydoc.copyInto(copy.groovydoc)
         kotlindoc.copyInto(copy.kotlindoc)
         jacoco.copyInto(copy.jacoco)
@@ -229,6 +241,7 @@ class ProjectConfigurationExtension {
         Information.merge(merged.info, other.info)
         Apidoc.merge(merged.apidoc, other.apidoc)
         Bintray.merge(merged.bintray, other.bintray)
+        BuildInfo.merge(merged.buildInfo, other.buildInfo)
         Groovydoc.merge(merged.groovydoc, other.groovydoc)
         Kotlindoc.merge(merged.kotlindoc, other.kotlindoc)
         Jacoco.merge(merged.jacoco, other.jacoco)
