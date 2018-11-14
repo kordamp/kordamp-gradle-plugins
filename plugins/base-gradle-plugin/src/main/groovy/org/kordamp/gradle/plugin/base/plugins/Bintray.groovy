@@ -44,8 +44,10 @@ class Bintray {
     String githubRepo
     final Credentials credentials = new Credentials()
     boolean enabled = true
+    boolean skipMavenSync = false
 
     private boolean enabledSet
+    private boolean skipMavenSyncSet
     private final Project project
 
     Bintray(Project project) {
@@ -73,6 +75,15 @@ class Bintray {
         this.enabledSet
     }
 
+    void setSkipMavenSync(boolean skipMavenSync) {
+        this.skipMavenSync = skipMavenSync
+        this.skipMavenSyncSet = true
+    }
+
+    boolean isSkipMavenSyncSet() {
+        this.skipMavenSyncSet
+    }
+
     void credentials(Action<? super Credentials> action) {
         action.execute(credentials)
     }
@@ -84,6 +95,9 @@ class Bintray {
     void copyInto(Bintray copy) {
         copy.@enabled = enabled
         copy.@enabledSet = enabledSet
+
+        copy.@skipMavenSync = skipMavenSync
+        copy.@skipMavenSyncSet = skipMavenSyncSet
         copy.@repo = this.@repo
         copy.@name = this.@name
         copy.userOrg = userOrg
@@ -93,6 +107,7 @@ class Bintray {
 
     static void merge(Bintray o1, Bintray o2) {
         o1.setEnabled((boolean)(o1.enabledSet ? o1.enabled : o2.enabled))
+        o1.setSkipMavenSync((boolean)(o1.skipMavenSyncSet ? o1.skipMavenSync : o2.skipMavenSync))
         o1.name = o1.@name ?: o2.@name
         o1.repo = o1.@repo ?: o2.@repo
         o1.userOrg = o1.userOrg ?: o2.userOrg

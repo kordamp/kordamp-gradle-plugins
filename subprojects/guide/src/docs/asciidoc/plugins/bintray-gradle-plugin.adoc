@@ -44,13 +44,14 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name         | Type        | Required | Default Value   | Description
-| enabled      | boolean     | no       | true            | Disables `org.kordamp.gradle.bintray` plugin if `false`
-| credentials  | Credentials | yes      |                 | Values map to `bintray.user` and `bintray.key`
-| repo         | String      | no       | maven           | Mapped to `bintray.pkg.repo`
-| userOrg      | String      | yes      |                 | Mapped to `bintray.pkg.userOrg`
-| name         | String      | no       | project.name    | Mapped to `bintray.pkg.name`
-| githubRepo   | String      | no       | $userOrg/$name  | Mapped to `bintray.pkg.githubRepo`
+| Name          | Type        | Required | Default Value   | Description
+| enabled       | boolean     | no       | true            | Disables `org.kordamp.gradle.bintray` plugin if `false`
+| credentials   | Credentials | yes      |                 | Values map to `bintray.user` and `bintray.key`
+| repo          | String      | no       | maven           | Mapped to `bintray.pkg.repo`
+| userOrg       | String      | yes      |                 | Mapped to `bintray.pkg.userOrg`
+| name          | String      | no       | project.name    | Mapped to `bintray.pkg.name`
+| githubRepo    | String      | no       | $userOrg/$name  | Mapped to `bintray.pkg.githubRepo`
+| skipMavenSync | boolean     | no       | false           | No not sync with Maven Central
 |===
 
 The value of `info.tags` is mapped to `bintray.pkg.labels`.
@@ -60,5 +61,5 @@ The value for `githubRepo` may be inferred by using `"$userOrg/$name"`.
 Values for `info.links` are mapped to their matching entries in `bintray.pkg`.
 
 Sync with Maven Central will happen automatically if Sonatype <<_base_info_credentials,credentials>> are defined
-in the <<_org_kordamp_gradle_base_dsl,config>> DSL.
+in the <<_org_kordamp_gradle_base_dsl,config>> DSL and if `skipMavenSync` is set to `false` (default).
 

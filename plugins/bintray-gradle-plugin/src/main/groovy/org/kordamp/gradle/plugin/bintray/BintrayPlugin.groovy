@@ -108,7 +108,7 @@ class BintrayPlugin implements Plugin<Project> {
                 version {
                     name = project.version
                     vcsTag = "${mergedConfiguration.bintray.name}-${project.version}"
-                    if (mergedConfiguration.info.credentials.sonatype)
+                    if (mergedConfiguration.info.credentials.sonatype && !mergedConfiguration.bintray.skipMavenSync)
                         mavenCentralSync {
                             sync = true
                             user = mergedConfiguration.info.credentials.sonatype.username
