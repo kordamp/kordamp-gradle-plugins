@@ -33,6 +33,7 @@ import org.kordamp.gradle.plugin.jar.JarPlugin
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 import org.kordamp.gradle.plugin.source.SourceJarPlugin
 
+import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
@@ -170,6 +171,24 @@ class PublishingPlugin implements Plugin<Project> {
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+
+            if (mergedConfiguration.release) {
+                if (!isBlank(mergedConfiguration.publishing.releasesRepoUrl)) {
+                    repositories {
+                        maven {
+                            url = mergedConfiguration.publishing.releasesRepoUrl
+                        }
+                    }
+                }
+            } else {
+                if (!isBlank(mergedConfiguration.publishing.snapshotsRepoUrl)) {
+                    repositories {
+                        maven {
+                            url = mergedConfiguration.publishing.snapshotsRepoUrl
                         }
                     }
                 }

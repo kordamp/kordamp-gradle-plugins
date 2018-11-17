@@ -32,6 +32,9 @@ import org.kordamp.gradle.plugin.base.plugins.Publishing
 @Canonical
 @EqualsAndHashCode(excludes = ['project'])
 class MutablePublishing extends AbstractFeature implements Publishing {
+    String releasesRepoUrl
+    String snapshotsRepoUrl
+
     MutablePublishing(Project project) {
         super(project)
     }
@@ -44,12 +47,26 @@ class MutablePublishing extends AbstractFeature implements Publishing {
     @Override
     @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        ['publishing': [
-            enabled: enabled
-        ]]
+        Map map = [enabled: enabled]
+
+        if (enabled) {
+            map.releasesRepoUrl = releasesRepoUrl
+            map.snapshotsRepoUrl = snapshotsRepoUrl
+        }
+
+        ['publishing': map]
+    }
+
+    void copyInto(MutablePublishing copy) {
+        super.copyInto(copy)
+
+        copy.@releasesRepoUrl = releasesRepoUrl
+        copy.@snapshotsRepoUrl = snapshotsRepoUrl
     }
 
     static void merge(MutablePublishing o1, MutablePublishing o2) {
         AbstractFeature.merge(o1, o2)
+        o1.releasesRepoUrl = o1.@releasesRepoUrl ?: o2.@releasesRepoUrl
+        o1.snapshotsRepoUrl = o1.@snapshotsRepoUrl ?: o2.@snapshotsRepoUrl
     }
 }

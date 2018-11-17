@@ -18,7 +18,7 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 
 Configures a MavenPublication for the project's artifacts using the core `maven-publish` plugin.
 The name of the publication matches `"mainPublication"`. Published artifacts include the main JAR, sources,
-javadoc/groovydoc JARs.
+javadoc/groovydoc/kotlindoc JARs.
 
 Data defined in the DSL's `config.info` and `config.license` blocks will be used to fill out information required by the
 generated POM file.
@@ -31,14 +31,18 @@ generated POM file.
 config {
     publishing {
         enabled
+        releasesRepoUrl
+        snapshotsRepoUrl
     }
 }
 ----
 
 [options="header", cols="5*"]
 |===
-| Name     | Type    | Required | Default Value | Description
-| enabled  | boolean | no       | true          | Disables `org.kordamp.gradle.publishing` plugin if `false`
+| Name             | Type    | Required | Default Value | Description
+| enabled          | boolean | no       | true          | Disables `org.kordamp.gradle.publishing` plugin if `false`
+| releasesRepoUrl  | String  | no       |               | Location of Maven compatible repository for publishing releases
+| snapshotsRepoUrl | String  | no       |               | Location of Maven compatible repository for publishing snapshots
 |===
 
 This block is optional.
