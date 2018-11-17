@@ -37,6 +37,7 @@ These properties are consumed by the `<<_org_kordamp_gradle_jar,org.kordamp.grad
 config {
     buildInfo {
         enabled
+        clearTime
         skipBuildBy
         skipBuildDate
         skipBuildTime

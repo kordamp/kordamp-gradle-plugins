@@ -35,9 +35,7 @@ afterEvaluate {
         repoUri = rootProject.extensions.findByName('config').info.links.scm
         branch  = 'gh-pages'
         contents {
-            from(project.tasks.findByName('createGuide').outputs.files) {
-                into "guide/${project.version}"
-            }
+            from project.tasks.findByName('createGuide').outputs.files
         }
         commitMessage = "Publish guide for $version"
     }
