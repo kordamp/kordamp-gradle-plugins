@@ -28,7 +28,7 @@ import org.gradle.api.plugins.GroovyBasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.plugins.SourceXref
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableSourceXref
 
 import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
@@ -129,7 +129,7 @@ class SourceXrefPlugin implements Plugin<Project> {
         Set<Task> xrefTasks = new LinkedHashSet<>()
         FileCollection srcdirs = project.files()
 
-        project.childProjects.values()*.mergedConfiguration.sourceXref.each { SourceXref e ->
+        project.childProjects.values()*.mergedConfiguration.sourceXref.each { MutableSourceXref e ->
             if (e.enabled) {
                 projects.addAll(e.projects())
                 xrefTasks.addAll(e.xrefTasks())
@@ -148,7 +148,7 @@ class SourceXrefPlugin implements Plugin<Project> {
         configureTask(mergedConfiguration.sourceXref, jxrTask)
     }
 
-    private JxrTask configureTask(SourceXref sourceXref, JxrTask jxrTask) {
+    private JxrTask configureTask(MutableSourceXref sourceXref, JxrTask jxrTask) {
         sourceXref.with {
             if (!isBlank(templateDir)) jxrTask.templateDir = templateDir
             if (!isBlank(inputEncoding)) jxrTask.inputEncoding = inputEncoding

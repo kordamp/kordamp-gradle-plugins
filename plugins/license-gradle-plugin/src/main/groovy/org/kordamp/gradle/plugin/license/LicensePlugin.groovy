@@ -209,7 +209,7 @@ class LicensePlugin implements Plugin<Project> {
         licenseExtension.ext {
             projectName   = mergedConfiguration.info.name
             copyrightYear = mergedConfiguration.info.copyrightYear
-            author        = mergedConfiguration.info.resolveAuthors().join(', ')
+            author        = mergedConfiguration.info.getAuthors().join(', ')
             license       = lic.id?.spdx()
         }
         licenseExtension.exclude '**/*.png'

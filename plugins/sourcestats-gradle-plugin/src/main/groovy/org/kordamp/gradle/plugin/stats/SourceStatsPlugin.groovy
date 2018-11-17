@@ -24,7 +24,7 @@ import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.plugins.Stats
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableStats
 
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -121,7 +121,7 @@ class SourceStatsPlugin implements Plugin<Project> {
         Set<Project> allProjects = new LinkedHashSet<>(mergedConfiguration.stats.projects())
         Set<Task> allStatsTasks = new LinkedHashSet<>(mergedConfiguration.stats.statsTasks())
 
-        project.childProjects.values()*.mergedConfiguration.stats.each { Stats e ->
+        project.childProjects.values()*.mergedConfiguration.stats.each { MutableStats e ->
             if (e.enabled) {
                 allStatsTasks.addAll(e.statsTasks())
             }

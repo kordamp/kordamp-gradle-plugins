@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
+import org.kordamp.gradle.plugin.base.model.mutable.MutableSpecification
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -27,11 +28,11 @@ import spock.lang.Unroll
 class SpecOrImplSpec extends Specification {
     def "Verify copy method with defaults"() {
         given:
-        SpecOrImpl spec = new SpecOrImpl()
-        SpecOrImpl expected = new SpecOrImpl()
+        MutableSpecification spec = new MutableSpecification()
+        MutableSpecification expected = new MutableSpecification()
 
         when:
-        SpecOrImpl actual = spec.copyOf()
+        MutableSpecification actual = spec.copyOf()
 
         then:
         actual == expected
@@ -45,13 +46,13 @@ class SpecOrImplSpec extends Specification {
 
     def "Verify copy method (enabled = #enabled)"() {
         given:
-        SpecOrImpl spec = new SpecOrImpl()
-        SpecOrImpl expected = new SpecOrImpl()
+        MutableSpecification spec = new MutableSpecification()
+        MutableSpecification expected = new MutableSpecification()
         expected.enabled = enabled
 
         when:
         spec.enabled = enabled
-        SpecOrImpl actual = spec.copyOf()
+        MutableSpecification actual = spec.copyOf()
 
         then:
         actual == expected
@@ -68,14 +69,14 @@ class SpecOrImplSpec extends Specification {
 
     def "Verify merge method with defaults"() {
         given:
-        SpecOrImpl spec1 = new SpecOrImpl()
-        SpecOrImpl spec2 = new SpecOrImpl()
-        SpecOrImpl expected = new SpecOrImpl()
+        MutableSpecification spec1 = new MutableSpecification()
+        MutableSpecification spec2 = new MutableSpecification()
+        MutableSpecification expected = new MutableSpecification()
         expected.enabled = true
 
         when:
-        SpecOrImpl actual = spec1.copyOf()
-        SpecOrImpl.merge(actual, spec2)
+        MutableSpecification actual = spec1.copyOf()
+        MutableSpecification.merge(actual, spec2)
 
         then:
         actual == expected
@@ -89,13 +90,13 @@ class SpecOrImplSpec extends Specification {
 
     def "Verify merge method (enabled1 = #enabled1, enabled2 = #enabled2, enabled = #enabled)"() {
         given:
-        SpecOrImpl spec1 = new SpecOrImpl(enabled: enabled1)
-        SpecOrImpl spec2 = new SpecOrImpl(enabled: enabled2)
-        SpecOrImpl expected = new SpecOrImpl(enabled: enabled)
+        MutableSpecification spec1 = new MutableSpecification(enabled: enabled1)
+        MutableSpecification spec2 = new MutableSpecification(enabled: enabled2)
+        MutableSpecification expected = new MutableSpecification(enabled: enabled)
 
         when:
-        SpecOrImpl actual = spec1.copyOf()
-        SpecOrImpl.merge(actual, spec2)
+        MutableSpecification actual = spec1.copyOf()
+        MutableSpecification.merge(actual, spec2)
 
         then:
         actual == expected
@@ -116,13 +117,13 @@ class SpecOrImplSpec extends Specification {
 
     def "Verify merge method (enabled2 = #enabled2, enabled = #enabled)"() {
         given:
-        SpecOrImpl spec1 = new SpecOrImpl()
-        SpecOrImpl spec2 = new SpecOrImpl(enabled: enabled2)
-        SpecOrImpl expected = new SpecOrImpl(enabled: enabled)
+        MutableSpecification spec1 = new MutableSpecification()
+        MutableSpecification spec2 = new MutableSpecification(enabled: enabled2)
+        MutableSpecification expected = new MutableSpecification(enabled: enabled)
 
         when:
-        SpecOrImpl actual = spec1.copyOf()
-        SpecOrImpl.merge(actual, spec2)
+        MutableSpecification actual = spec1.copyOf()
+        MutableSpecification.merge(actual, spec2)
 
         then:
         actual == expected

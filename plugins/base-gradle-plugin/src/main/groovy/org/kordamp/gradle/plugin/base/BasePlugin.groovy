@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base
 
+
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -42,6 +43,11 @@ class BasePlugin implements Plugin<Project> {
             project.extensions.create('config', ProjectConfigurationExtension, project)
         }
 
+        project.tasks.create('effectiveSettings', EffectiveSettingsTask) {
+            group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
+            description 'Displays resolved settings'
+        }
+
         project.afterEvaluate {
             String visitedPropertyName = VISITED + '_' + project.name
             if (project.findProperty(visitedPropertyName)) {
@@ -51,7 +57,7 @@ class BasePlugin implements Plugin<Project> {
 
             ProjectConfigurationExtension rootExtension = project.rootProject.extensions.findByType(ProjectConfigurationExtension)
             ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
-            extension.info.normalize()
+            extension.normalize()
 
             List<String> errors = []
             if (isRootProject(project)) {

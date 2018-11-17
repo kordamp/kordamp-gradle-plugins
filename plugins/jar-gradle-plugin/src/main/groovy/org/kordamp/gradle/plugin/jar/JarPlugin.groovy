@@ -26,7 +26,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.plugins.BuildInfo
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableBuildInfo
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.minpom.MinPomPlugin
 
@@ -142,12 +142,12 @@ class JarPlugin implements Plugin<Project> {
             jarTask.configure {
                 Map<String, String> attributesMap = [:]
 
-                checkBuildInfoAttribute(project.rootProject, mergedConfiguration.buildInfo, 'buildCreatedBy', attributesMap, 'Created-By')
-                checkBuildInfoAttribute(project.rootProject, mergedConfiguration.buildInfo, 'buildBy', attributesMap, 'Build-By')
-                checkBuildInfoAttribute(project.rootProject, mergedConfiguration.buildInfo, 'buildRevision', attributesMap, 'Build-Jdk')
-                checkBuildInfoAttribute(project.rootProject, mergedConfiguration.buildInfo, 'buildDate', attributesMap, 'Build-Date')
-                checkBuildInfoAttribute(project.rootProject, mergedConfiguration.buildInfo, 'buildTime', attributesMap, 'Build-Time')
-                checkBuildInfoAttribute(project.rootProject, mergedConfiguration.buildInfo, 'buildRevision', attributesMap, 'Build-Revision')
+                checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildCreatedBy', attributesMap, 'Created-By')
+                checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildBy', attributesMap, 'Build-By')
+                checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildRevision', attributesMap, 'Build-Jdk')
+                checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildDate', attributesMap, 'Build-Date')
+                checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildTime', attributesMap, 'Build-Time')
+                checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildRevision', attributesMap, 'Build-Revision')
 
                 if (mergedConfiguration.info.specification.enabled) {
                     attributesMap.'Specification-Title' = mergedConfiguration.info.specification.title
@@ -168,9 +168,9 @@ class JarPlugin implements Plugin<Project> {
         }
     }
 
-    private static void checkBuildInfoAttribute(Project rootProject, BuildInfo buildInfo, String key, Map map, String manifestKey) {
+    private static void checkBuildInfoAttribute(MutableBuildInfo buildInfo, String key, Map map, String manifestKey) {
         if (!buildInfo."skip${key.capitalize()}") {
-            map[manifestKey] = rootProject.buildinfo[key]
+            map[manifestKey] = buildInfo[key]
         }
     }
 }

@@ -36,7 +36,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.Copy
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.plugins.SourceHtml
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableSourceHtml
 
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -192,7 +192,7 @@ class SourceHtmlPlugin implements Plugin<Project> {
         Set<Project> projects = new LinkedHashSet<>()
         FileCollection srcdirs = project.files()
 
-        project.childProjects.values()*.mergedConfiguration.sourceHtml.each { SourceHtml e ->
+        project.childProjects.values()*.mergedConfiguration.sourceHtml.each { MutableSourceHtml e ->
             if (e.enabled) {
                 projects.addAll(e.projects())
                 srcdirs = project.files(srcdirs, e.srcDirs)

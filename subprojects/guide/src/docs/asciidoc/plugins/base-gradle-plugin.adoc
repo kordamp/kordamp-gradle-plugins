@@ -194,4 +194,22 @@ This block is optional if none of the following plugins are used: `<<_org_kordam
 At least `id` or `name` must be defined. If a `developer` role exists then the person instance is mapped to a `<developer>`
 block in the POM. If a `contributor` role exists then the person instance is maped to a `<contributor>` block in the POM.
 
+[[_org_kordamp_gradle_base_tasks]]
+== Tasks
 
+[[_task_effective_settings]]
+=== EffectiveSettings
+
+Displays resolved settings
+
+[horizontal]
+Name:: effectiveSettings
+Type:: `org.kordamp.gradle.plugin.base.EffectiveSettingsTask`
+
+.Options
+[horizontal]
+section:: The section to generate the report for.
+sections:: The section to generate the report for.
+
+You may specify either of the two, be advised that `sections` has precedence over `section`. All sections will be displayed
+if neither of these options is specified. Section names match entries found in the <<_project_dsl,DSL>>.

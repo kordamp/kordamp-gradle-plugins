@@ -101,7 +101,7 @@ class GroovydocPlugin implements Plugin<Project> {
 
                 project.tasks.withType(Groovydoc) { task ->
                     mergedConfiguration.groovydoc.applyTo(task)
-                    task.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.resolveAuthors().join(', ')}. All rights reserved."
+                    task.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.getAuthors().join(', ')}. All rights reserved."
                 }
             }
         }

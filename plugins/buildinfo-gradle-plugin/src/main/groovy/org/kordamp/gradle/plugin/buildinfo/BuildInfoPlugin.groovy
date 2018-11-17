@@ -34,7 +34,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * <ul>
  *     <li>buildTimeAndDate: a {@code java.util.Date} instance.</li>
  *     <li>buildDate: the value of {@code buildTimeAndDate} formatted with "yyyy-MM-dd".</li>
- *     <li>buildtime: the value of {@code buildTimeAndDate} formatted with "HH:mm:ss.SSSZ".</li>
+ *     <li>buildTime: the value of {@code buildTimeAndDate} formatted with "HH:mm:ss.SSSZ".</li>
  *     <li>buildBy: the value of the "user.name" System property.</li>
  *     <li>buildRevision: the value of the latest commit hash.</li>
  *     <li>buildJdk: concatenation of the following System properties [java.version, java.vendor, java.vm.version].</li>
@@ -77,37 +77,32 @@ class BuildInfoPlugin implements Plugin<Project> {
             return
         }
 
-        if (!project.findProperty('buildinfo')) {
-            Date date = new Date()
-            Map<String, Object> buildinfoMap = [buildTimeAndDate: date]
+        Date date = new Date()
 
-            if (!mergedConfiguration.buildInfo.skipBuildBy) {
-                buildinfoMap.buildBy = System.properties['user.name']
-            }
+        if (!mergedConfiguration.buildInfo.skipBuildBy) {
+            mergedConfiguration.buildInfo.buildBy = System.properties['user.name']
+        }
 
-            if (!mergedConfiguration.buildInfo.skipBuildDate) {
-                buildinfoMap.buildDate = new SimpleDateFormat('yyyy-MM-dd').format(date)
-            }
+        if (!mergedConfiguration.buildInfo.skipBuildDate) {
+            mergedConfiguration.buildInfo.buildDate = new SimpleDateFormat('yyyy-MM-dd').format(date)
+        }
 
-            if (!mergedConfiguration.buildInfo.skipBuildTime) {
-                buildinfoMap.buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(date)
-            }
+        if (!mergedConfiguration.buildInfo.skipBuildTime) {
+            mergedConfiguration.buildInfo.buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(date)
+        }
 
-            if (!mergedConfiguration.buildInfo.skipBuildRevision) {
-                project.plugins.apply(VersioningPlugin)
-                VersioningExtension versioning = project.extensions.findByName('versioning')
-                buildinfoMap.buildRevision = versioning.info.commit
-            }
+        if (!mergedConfiguration.buildInfo.skipBuildRevision) {
+            project.plugins.apply(VersioningPlugin)
+            VersioningExtension versioning = project.extensions.findByName('versioning')
+            mergedConfiguration.buildInfo.buildRevision = versioning.info.commit
+        }
 
-            if (!mergedConfiguration.buildInfo.skipBuildJdk) {
-                buildinfoMap.buildJdk = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString()
-            }
+        if (!mergedConfiguration.buildInfo.skipBuildJdk) {
+            mergedConfiguration.buildInfo.buildJdk = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString()
+        }
 
-            if (!mergedConfiguration.buildInfo.skipBuildCreatedBy) {
-                buildinfoMap.buildCreatedBy = "Gradle ${project.gradle.gradleVersion}"
-            }
-
-            project.ext.buildinfo = buildinfoMap
+        if (!mergedConfiguration.buildInfo.skipBuildCreatedBy) {
+            mergedConfiguration.buildInfo.buildCreatedBy = "Gradle ${project.gradle.gradleVersion}"
         }
     }
 

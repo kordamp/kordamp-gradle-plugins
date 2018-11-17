@@ -95,7 +95,7 @@ class JavadocPlugin implements Plugin<Project> {
 
             project.tasks.withType(Javadoc) { task ->
                 mergedConfiguration.javadoc.applyTo(task)
-                options.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.resolveAuthors().join(', ')}. All rights reserved."
+                options.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.getAuthors().join(', ')}. All rights reserved."
 
                 if (JavaVersion.current().isJava8Compatible()) {
                     options.addStringOption('Xdoclint:none', '-quiet')

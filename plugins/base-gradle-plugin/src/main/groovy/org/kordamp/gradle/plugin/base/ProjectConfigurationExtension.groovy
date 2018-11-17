@@ -17,11 +17,13 @@
  */
 package org.kordamp.gradle.plugin.base
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.model.Information
+import org.kordamp.gradle.plugin.base.model.mutable.MutableInformation
 import org.kordamp.gradle.plugin.base.plugins.Apidoc
 import org.kordamp.gradle.plugin.base.plugins.Bintray
 import org.kordamp.gradle.plugin.base.plugins.BuildInfo
@@ -36,6 +38,20 @@ import org.kordamp.gradle.plugin.base.plugins.Source
 import org.kordamp.gradle.plugin.base.plugins.SourceHtml
 import org.kordamp.gradle.plugin.base.plugins.SourceXref
 import org.kordamp.gradle.plugin.base.plugins.Stats
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableApidoc
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableBintray
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableBuildInfo
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableGroovydoc
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableJacoco
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableJavadoc
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableKotlindoc
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableLicense
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableMinpom
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutablePublishing
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableSource
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableSourceHtml
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableSourceXref
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableStats
 
 /**
  * @author Andres Almiray
@@ -46,112 +62,199 @@ class ProjectConfigurationExtension {
     boolean release = false
 
     final Project project
-    final Information info
-    final Apidoc apidoc
-    final Bintray bintray
-    final BuildInfo buildInfo
-    final Groovydoc groovydoc
-    final Kotlindoc kotlindoc
-    final Jacoco jacoco
-    final Javadoc javadoc
-    final License license
-    final Minpom minpom
-    final Publishing publishing
-    final Source source
-    final Stats stats
-    final SourceHtml sourceHtml
-    final SourceXref sourceXref
+    final MutableInformation info
+    final MutableApidoc apidoc
+    final MutableBintray bintray
+    final MutableBuildInfo buildInfo
+    final MutableGroovydoc groovydoc
+    final MutableKotlindoc kotlindoc
+    final MutableJacoco jacoco
+    final MutableJavadoc javadoc
+    final MutableLicense license
+    final MutableMinpom minpom
+    final MutablePublishing publishing
+    final MutableSource source
+    final MutableSourceHtml sourceHtml
+    final MutableSourceXref sourceXref
+    final MutableStats stats
 
     private boolean releaseSet
 
     ProjectConfigurationExtension(Project project) {
         this.project = project
-        info = new Information(project)
-        apidoc = new Apidoc(project)
-        bintray = new Bintray(project)
-        buildInfo = new BuildInfo()
-        groovydoc = new Groovydoc(project)
-        kotlindoc = new Kotlindoc(project)
-        jacoco = new Jacoco(project)
-        javadoc = new Javadoc(project)
-        license = new License(project)
-        minpom = new Minpom(project)
-        publishing = new Publishing(project)
-        source = new Source(project)
-        stats = new Stats(project)
-        sourceHtml = new SourceHtml(project)
-        sourceXref = new SourceXref()
+        info = new MutableInformation(project)
+        apidoc = new MutableApidoc(project)
+        bintray = new MutableBintray(project)
+        buildInfo = new MutableBuildInfo(project)
+        groovydoc = new MutableGroovydoc(project)
+        kotlindoc = new MutableKotlindoc(project)
+        jacoco = new MutableJacoco(project)
+        javadoc = new MutableJavadoc(project)
+        license = new MutableLicense(project)
+        minpom = new MutableMinpom(project)
+        publishing = new MutablePublishing(project)
+        source = new MutableSource(project)
+        sourceHtml = new MutableSourceHtml(project)
+        sourceXref = new MutableSourceXref(project)
+        stats = new MutableStats(project)
     }
 
-    void info(Action<? super Information> action) {
+    String toString() {
+        toMap().toString()
+    }
+
+    @CompileDynamic
+    Map<String, Object> toMap() {
+        Map<String, Object> map = [release: release]
+
+        map.putAll(info.toMap())
+        map.putAll(apidoc.toMap())
+        map.putAll(bintray.toMap())
+        map.putAll(buildInfo.toMap())
+        map.putAll(groovydoc.toMap())
+        map.putAll(kotlindoc.toMap())
+        map.putAll(jacoco.toMap())
+        map.putAll(javadoc.toMap())
+        map.putAll(license.toMap())
+        map.putAll(minpom.toMap())
+        map.putAll(publishing.toMap())
+        map.putAll(source.toMap())
+        map.putAll(sourceHtml.toMap())
+        map.putAll(sourceXref.toMap())
+        map.putAll(stats.toMap())
+
+        map
+    }
+
+    Information getInfo() {
+        info
+    }
+
+    Apidoc getApidoc() {
+        apidoc
+    }
+
+    Bintray getBintray() {
+        bintray
+    }
+
+    BuildInfo getBuildInfo() {
+        buildInfo
+    }
+
+    Groovydoc getGroovydoc() {
+        groovydoc
+    }
+
+    Kotlindoc getKotlindoc() {
+        kotlindoc
+    }
+
+    Jacoco getJacoco() {
+        jacoco
+    }
+
+    Javadoc getJavadoc() {
+        javadoc
+    }
+
+    License getLicense() {
+        license
+    }
+
+    Minpom getMinpom() {
+        minpom
+    }
+
+    Publishing getPublishing() {
+        publishing
+    }
+
+    Source getSource() {
+        source
+    }
+
+    SourceHtml getSourceHtml() {
+        sourceHtml
+    }
+
+    SourceXref getSourceXref() {
+        sourceXref
+    }
+
+    Stats getStats() {
+        stats
+    }
+
+    void info(Action<? super MutableInformation> action) {
         action.execute(info)
     }
 
-    void info(@DelegatesTo(Information) Closure action) {
+    void info(@DelegatesTo(MutableInformation) Closure action) {
         ConfigureUtil.configure(action, info)
     }
 
-    void apidoc(Action<? super Apidoc> action) {
+    void apidoc(Action<? super MutableApidoc> action) {
         action.execute(apidoc)
     }
 
-    void apidoc(@DelegatesTo(Apidoc) Closure action) {
+    void apidoc(@DelegatesTo(MutableApidoc) Closure action) {
         ConfigureUtil.configure(action, apidoc)
     }
 
-    void bintray(Action<? super Bintray> action) {
+    void bintray(Action<? super MutableBintray> action) {
         action.execute(bintray)
     }
 
-    void bintray(@DelegatesTo(Bintray) Closure action) {
+    void bintray(@DelegatesTo(MutableBintray) Closure action) {
         ConfigureUtil.configure(action, bintray)
     }
 
-    void buildInfo(Action<? super BuildInfo> action) {
+    void buildInfo(Action<? super MutableBuildInfo> action) {
         action.execute(buildInfo)
     }
 
-    void buildInfo(@DelegatesTo(BuildInfo) Closure action) {
+    void buildInfo(@DelegatesTo(MutableBuildInfo) Closure action) {
         ConfigureUtil.configure(action, buildInfo)
     }
 
-    void groovydoc(Action<? super Groovydoc> action) {
+    void groovydoc(Action<? super MutableGroovydoc> action) {
         action.execute(groovydoc)
     }
 
-    void groovydoc(@DelegatesTo(Groovydoc) Closure action) {
+    void groovydoc(@DelegatesTo(MutableGroovydoc) Closure action) {
         ConfigureUtil.configure(action, groovydoc)
     }
 
-    void kotlindoc(Action<? super Kotlindoc> action) {
+    void kotlindoc(Action<? super MutableKotlindoc> action) {
         action.execute(kotlindoc)
     }
 
-    void kotlindoc(@DelegatesTo(Kotlindoc) Closure action) {
+    void kotlindoc(@DelegatesTo(MutableKotlindoc) Closure action) {
         ConfigureUtil.configure(action, kotlindoc)
     }
 
-    void jacoco(Action<? super Jacoco> action) {
+    void jacoco(Action<? super MutableJacoco> action) {
         action.execute(jacoco)
     }
 
-    void jacoco(@DelegatesTo(Jacoco) Closure action) {
+    void jacoco(@DelegatesTo(MutableJacoco) Closure action) {
         ConfigureUtil.configure(action, jacoco)
     }
 
-    void javadoc(Action<? super Javadoc> action) {
+    void javadoc(Action<? super MutableJavadoc> action) {
         action.execute(javadoc)
     }
 
-    void javadoc(@DelegatesTo(Javadoc) Closure action) {
+    void javadoc(@DelegatesTo(MutableJavadoc) Closure action) {
         ConfigureUtil.configure(action, javadoc)
     }
 
-    void license(Action<? super License> action) {
+    void license(Action<? super MutableLicense> action) {
         action.execute(license)
     }
 
-    void license(@DelegatesTo(License) Closure action) {
+    void license(@DelegatesTo(MutableLicense) Closure action) {
         ConfigureUtil.configure(action, license)
     }
 
@@ -163,43 +266,43 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, minpom)
     }
 
-    void publishing(Action<? super Publishing> action) {
+    void publishing(Action<? super MutablePublishing> action) {
         action.execute(publishing)
     }
 
-    void publishing(@DelegatesTo(Publishing) Closure action) {
+    void publishing(@DelegatesTo(MutablePublishing) Closure action) {
         ConfigureUtil.configure(action, publishing)
     }
 
-    void source(Action<? super Source> action) {
+    void source(Action<? super MutableSource> action) {
         action.execute(source)
     }
 
-    void source(@DelegatesTo(Source) Closure action) {
+    void source(@DelegatesTo(MutableSource) Closure action) {
         ConfigureUtil.configure(action, source)
     }
 
-    void stats(Action<? super Stats> action) {
+    void stats(Action<? super MutableStats> action) {
         action.execute(stats)
     }
 
-    void stats(@DelegatesTo(Stats) Closure action) {
+    void stats(@DelegatesTo(MutableStats) Closure action) {
         ConfigureUtil.configure(action, stats)
     }
 
-    void sourceHtml(Action<? super SourceHtml> action) {
+    void sourceHtml(Action<? super MutableSourceHtml> action) {
         action.execute(sourceHtml)
     }
 
-    void sourceHtml(@DelegatesTo(SourceHtml) Closure action) {
+    void sourceHtml(@DelegatesTo(MutableSourceHtml) Closure action) {
         ConfigureUtil.configure(action, sourceHtml)
     }
 
-    void sourceXref(Action<? super SourceXref> action) {
+    void sourceXref(Action<? super MutableSourceXref> action) {
         action.execute(sourceXref)
     }
 
-    void sourceXref(@DelegatesTo(SourceXref) Closure action) {
+    void sourceXref(@DelegatesTo(MutableSourceXref) Closure action) {
         ConfigureUtil.configure(action, sourceXref)
     }
 
@@ -214,45 +317,45 @@ class ProjectConfigurationExtension {
 
     ProjectConfigurationExtension copyOf() {
         ProjectConfigurationExtension copy = new ProjectConfigurationExtension(project)
-        copy.@release = release
-        copy.@releaseSet = releaseSet
-        info.copyInto(copy.info)
-        apidoc.copyInto(copy.apidoc)
-        bintray.copyInto(copy.bintray)
-        buildInfo.copyInto(copy.buildInfo)
-        groovydoc.copyInto(copy.groovydoc)
-        kotlindoc.copyInto(copy.kotlindoc)
-        jacoco.copyInto(copy.jacoco)
-        javadoc.copyInto(copy.javadoc)
-        license.copyInto(copy.license)
-        minpom.copyInto(copy.minpom)
-        publishing.copyInto(copy.publishing)
-        source.copyInto(copy.source)
-        stats.copyInto(copy.stats)
-        sourceHtml.copyInto(copy.sourceHtml)
-        sourceXref.copyInto(copy.sourceXref)
+        copy.@release = this.@release
+        copy.@releaseSet = this.@releaseSet
+        this.@info.copyInto(copy.@info)
+        this.@apidoc.copyInto(copy.@apidoc)
+        this.@bintray.copyInto(copy.@bintray)
+        this.@buildInfo.copyInto(copy.@buildInfo)
+        this.@groovydoc.copyInto(copy.@groovydoc)
+        this.@kotlindoc.copyInto(copy.@kotlindoc)
+        this.@jacoco.copyInto(copy.@jacoco)
+        this.@javadoc.copyInto(copy.@javadoc)
+        this.@license.copyInto(copy.@license)
+        this.@minpom.copyInto(copy.@minpom)
+        this.@publishing.copyInto(copy.@publishing)
+        this.@source.copyInto(copy.@source)
+        this.@sourceHtml.copyInto(copy.@sourceHtml)
+        this.@sourceXref.copyInto(copy.@sourceXref)
+        this.@stats.copyInto(copy.@stats)
 
         copy
     }
 
     ProjectConfigurationExtension merge(ProjectConfigurationExtension other) {
         ProjectConfigurationExtension merged = copyOf()
-        merged.setRelease((boolean) (releaseSet ? release : other.release))
-        Information.merge(merged.info, other.info)
-        Apidoc.merge(merged.apidoc, other.apidoc)
-        Bintray.merge(merged.bintray, other.bintray)
-        BuildInfo.merge(merged.buildInfo, other.buildInfo)
-        Groovydoc.merge(merged.groovydoc, other.groovydoc)
-        Kotlindoc.merge(merged.kotlindoc, other.kotlindoc)
-        Jacoco.merge(merged.jacoco, other.jacoco)
-        Javadoc.merge(merged.javadoc, other.javadoc)
-        License.merge(merged.license, other.license)
-        Minpom.merge(merged.minpom, other.minpom)
-        Publishing.merge(merged.publishing, other.publishing)
-        Source.merge(merged.source, other.source)
-        Stats.merge(merged.stats, other.stats)
-        SourceHtml.merge(merged.sourceHtml, other.sourceHtml)
-        SourceXref.merge(merged.sourceXref, other.sourceXref)
+        merged.setRelease((boolean) (merged.@releaseSet ? merged.@release : other.@release))
+        MutableInformation.merge(merged.@info, other.@info)
+        MutableApidoc.merge(merged.@apidoc, other.@apidoc)
+        MutableBintray.merge(merged.@bintray, other.@bintray)
+        MutableBuildInfo.merge(merged.@buildInfo, other.@buildInfo)
+        MutableGroovydoc.merge(merged.@groovydoc, other.@groovydoc)
+        MutableKotlindoc.merge(merged.@kotlindoc, other.@kotlindoc)
+        MutableJacoco.merge(merged.@jacoco, other.@jacoco)
+        MutableJavadoc.merge(merged.@javadoc, other.@javadoc)
+        MutableLicense.merge(merged.@license, other.@license)
+        MutableMinpom.merge(merged.@minpom, other.@minpom)
+        MutablePublishing.merge(merged.@publishing, other.@publishing)
+        MutableSource.merge(merged.@source, other.@source)
+        MutableSourceHtml.merge(merged.@sourceHtml, other.@sourceHtml)
+        MutableSourceXref.merge(merged.@sourceXref, other.@sourceXref)
+        MutableStats.merge(merged.@stats, other.@stats)
 
         merged
     }
@@ -260,12 +363,17 @@ class ProjectConfigurationExtension {
     List<String> validate() {
         List<String> errors = []
 
-        errors.addAll(info.validate())
-        errors.addAll(bintray.validate(info))
-        errors.addAll(license.validate(info))
-        errors.addAll(publishing.validate(info))
-        errors.addAll(kotlindoc.validate())
+        errors.addAll(this.@info.validate())
+        errors.addAll(this.@bintray.validate(this.@info))
+        errors.addAll(this.@license.validate(this.@info))
+        errors.addAll(this.@kotlindoc.validate())
 
         errors
+    }
+
+    void normalize() {
+        info.normalize()
+        groovydoc.normalize()
+        kotlindoc.normalize()
     }
 }

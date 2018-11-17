@@ -29,7 +29,7 @@ import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.kordamp.gradle.StringUtils
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.plugins.Jacoco
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableJacoco
 
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -151,7 +151,7 @@ class JacocoPlugin implements Plugin<Project> {
         Set<Test> testTasks = new LinkedHashSet<>(mergedConfiguration.jacoco.testTasks())
         Set<JacocoReport> reportTasks = new LinkedHashSet<>(mergedConfiguration.jacoco.reportTasks())
 
-        project.childProjects.values()*.mergedConfiguration.jacoco.each { Jacoco e ->
+        project.childProjects.values()*.mergedConfiguration.jacoco.each { MutableJacoco e ->
             if (e.enabled) {
                 projects.addAll(e.projects())
                 testTasks.addAll(e.testTasks())

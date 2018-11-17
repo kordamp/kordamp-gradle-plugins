@@ -141,7 +141,7 @@ class ApidocPlugin implements Plugin<Project> {
                     task.classpath = project.files(javadocs.classpath)
 
                     mergedConfiguration.javadoc.applyTo(task)
-                    task.options.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.resolveAuthors().join(', ')}. All rights reserved."
+                    task.options.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.authors.join(', ')}. All rights reserved."
                 }
                 aggregateJavadocTasks[1].configure {
                     enabled true
@@ -161,7 +161,7 @@ class ApidocPlugin implements Plugin<Project> {
                     task.groovyClasspath = project.files(groovydocs.groovyClasspath.flatten().unique())
 
                     mergedConfiguration.groovydoc.applyTo(task)
-                    task.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.resolveAuthors().join(', ')}. All rights reserved."
+                    task.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.authors.join(', ')}. All rights reserved."
                 }
                 aggregateGroovydocTasks[1].configure {
                     enabled true

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.kordamp.gradle.StringUtils
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.plugins.Kotlindoc
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableKotlindoc
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
@@ -177,7 +177,7 @@ class KotlindocPlugin implements Plugin<Project> {
         kotlindocJarTask
     }
 
-    static void applyConfiguration(Kotlindoc kotlindoc, DokkaTask task, String format, String formatName) {
+    static void applyConfiguration(MutableKotlindoc kotlindoc, DokkaTask task, String format, String formatName) {
         task.moduleName = kotlindoc.moduleName
         task.outputFormat = format
         task.outputDirectory = kotlindoc.outputDirectory.absolutePath + File.separator + formatName

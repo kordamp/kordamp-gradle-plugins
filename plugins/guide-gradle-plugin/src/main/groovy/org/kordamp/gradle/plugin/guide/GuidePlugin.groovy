@@ -97,7 +97,7 @@ class GuidePlugin implements Plugin<Project> {
         checkAttribute(attrs, asciidoctorTask.attributes, 'project-title', mergedConfiguration.info.description)
         checkAttribute(attrs, asciidoctorTask.attributes, 'project-inception-year', mergedConfiguration.info.inceptionYear)
         checkAttribute(attrs, asciidoctorTask.attributes, 'project-copyright-year', mergedConfiguration.info.copyrightYear)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-author', mergedConfiguration.info.resolveAuthors().join(', '))
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-author', mergedConfiguration.info.getAuthors().join(', '))
         checkAttribute(attrs, asciidoctorTask.attributes, 'project-url', mergedConfiguration.info.url)
         checkAttribute(attrs, asciidoctorTask.attributes, 'project-scm', mergedConfiguration.info.links.scm)
         checkAttribute(attrs, asciidoctorTask.attributes, 'project-issue-tracker', mergedConfiguration.info.links.issueTracker)
