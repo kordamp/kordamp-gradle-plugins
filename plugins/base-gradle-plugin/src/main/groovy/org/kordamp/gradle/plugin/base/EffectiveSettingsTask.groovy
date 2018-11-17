@@ -53,7 +53,7 @@ class EffectiveSettingsTask extends DefaultTask {
                 EffectiveSettingsTask.printSection(map, s)
             }
         } else if (section) {
-            printSection(section)
+            printSection(map, section)
         } else {
             doPrint(map, 0)
         }
