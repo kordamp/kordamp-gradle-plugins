@@ -515,7 +515,7 @@ class ExtStandardJavadocDocletOptions extends StandardJavadocDocletOptions {
     }
 
     static <T> List<T> list(List<T> src) {
-        new ArrayList<>(src)
+        new ArrayList<>(src.unique())
     }
 
     static <K, V> Map<K, V> map(Map<K, V> src) {
