@@ -48,8 +48,8 @@ class MutableCredentialsSet implements CredentialsSet {
         if (isEmpty()) return [:]
 
         [
-            github  : github.toMap(),
-            sonatype: sonatype.toMap()
+            github  : github?.toMap(),
+            sonatype: sonatype?.toMap()
         ]
     }
 
