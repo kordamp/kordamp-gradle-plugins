@@ -22,6 +22,8 @@ package org.kordamp.gradle.plugin.base.plugins;
  * @since 0.8.0
  */
 public interface Publishing extends Feature {
+    boolean isSigning();
+
     String getReleasesRepoUrl();
 
     String getSnapshotsRepoUrl();

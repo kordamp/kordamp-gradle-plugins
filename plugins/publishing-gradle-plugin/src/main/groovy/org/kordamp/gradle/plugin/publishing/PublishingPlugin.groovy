@@ -23,6 +23,7 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.gradle.plugins.signing.SigningPlugin
 import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -66,6 +67,9 @@ class PublishingPlugin implements Plugin<Project> {
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(PublishingPlugin)) {
             project.plugins.apply(PublishingPlugin)
+        }
+        if (!project.plugins.findPlugin(SigningPlugin)) {
+            project.plugins.apply(SigningPlugin)
         }
     }
 
@@ -192,6 +196,12 @@ class PublishingPlugin implements Plugin<Project> {
                         }
                     }
                 }
+            }
+        }
+
+        if (mergedConfiguration.publishing.signing) {
+            project.signing {
+                sign project.publishing.publications.mainPublication
             }
         }
     }

@@ -34,6 +34,9 @@ import org.kordamp.gradle.plugin.base.plugins.Publishing
 class MutablePublishing extends AbstractFeature implements Publishing {
     String releasesRepoUrl
     String snapshotsRepoUrl
+    boolean signing = false
+
+    private boolean signingSet
 
     MutablePublishing(Project project) {
         super(project)
@@ -50,6 +53,7 @@ class MutablePublishing extends AbstractFeature implements Publishing {
         Map map = [enabled: enabled]
 
         if (enabled) {
+            map.signing = signing
             map.releasesRepoUrl = releasesRepoUrl
             map.snapshotsRepoUrl = snapshotsRepoUrl
         }
@@ -57,16 +61,28 @@ class MutablePublishing extends AbstractFeature implements Publishing {
         ['publishing': map]
     }
 
+    void setSigning(boolean signing) {
+        this.signing = signing
+        this.signingSet = true
+    }
+
+    boolean isSigningSet() {
+        this.signingSet
+    }
+
     void copyInto(MutablePublishing copy) {
         super.copyInto(copy)
 
         copy.@releasesRepoUrl = releasesRepoUrl
         copy.@snapshotsRepoUrl = snapshotsRepoUrl
+        copy.@signing = this.signing
+        copy.@signingSet = this.signingSet
     }
 
     static void merge(MutablePublishing o1, MutablePublishing o2) {
         AbstractFeature.merge(o1, o2)
         o1.releasesRepoUrl = o1.@releasesRepoUrl ?: o2.@releasesRepoUrl
         o1.snapshotsRepoUrl = o1.@snapshotsRepoUrl ?: o2.@snapshotsRepoUrl
+        o1.setSigning((boolean) (o1.signingSet ? o1.signing : o2.signing))
     }
 }

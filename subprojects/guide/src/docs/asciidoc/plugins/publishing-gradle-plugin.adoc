@@ -14,7 +14,9 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `<<_org_kordamp_gradle_source,org.kordamp.gradle.source-jar>>`, +
 `<<_org_kordamp_gradle_javadoc,org.kordamp.gradle.javadoc>>`, +
 `<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>`, +
-`<<_org_kordamp_gradle_apidoc,org.kordamp.gradle.apidoc>>`
+`<<_org_kordamp_gradle_apidoc,org.kordamp.gradle.apidoc>>`, +
+`link:https://docs.gradle.org/current/userguide/publishing_maven.html[maven-publish]`, +
+`link:https://docs.gradle.org/current/userguide/signing_plugin.html[signing]`
 
 Configures a MavenPublication for the project's artifacts using the core `maven-publish` plugin.
 The name of the publication matches `"mainPublication"`. Published artifacts include the main JAR, sources,
@@ -31,6 +33,7 @@ generated POM file.
 config {
     publishing {
         enabled
+        signing
         releasesRepoUrl
         snapshotsRepoUrl
     }
@@ -41,6 +44,7 @@ config {
 |===
 | Name             | Type    | Required | Default Value | Description
 | enabled          | boolean | no       | true          | Disables `org.kordamp.gradle.publishing` plugin if `false`
+| signing          | boolean | no       | false         | Enables signing of all artifacts associated with `mainPublication`
 | releasesRepoUrl  | String  | no       |               | Location of Maven compatible repository for publishing releases
 | snapshotsRepoUrl | String  | no       |               | Location of Maven compatible repository for publishing snapshots
 |===
