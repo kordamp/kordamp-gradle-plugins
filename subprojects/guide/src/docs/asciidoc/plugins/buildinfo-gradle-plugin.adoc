@@ -10,15 +10,13 @@ class:: `org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin`
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `link:https://github.com/nemerosa/versioning[net.nemerosa.versioning]`
 
-Defines a set of build related properties and attaches them to a `Map` identified as `rootProject.ext.buildinfo`.
-These properties are
+Defines a set of build related properties. These properties are
 
 [options="header", cols="3*"]
 |===
 | Name             | Type             | Description
-| buildTimeAndDate | `java.util.Date` | A `java.util.Date` instance representing the current time
-| buildDate        | String           | The value of `buildTimeAndDate` formatted with "yyyy-MM-dd"
-| buildTime        | String           | The value of `buildTimeAndDate` formatted with "HH:mm:ss.SSSZ"
+| buildDate        | String           | The value of current timestamp formatted with "yyyy-MM-dd"
+| buildTime        | String           | The value of current timestamp formatted with "HH:mm:ss.SSSZ"
 | buildBy          | String           | The value of the `user.name` System property
 | buildRevision    | String           | The value of the latest commit hash
 | buildJdk         | String           | Concatenation of the following System properties [`java.version`, `java.vendor`, `java.vm.version`]
