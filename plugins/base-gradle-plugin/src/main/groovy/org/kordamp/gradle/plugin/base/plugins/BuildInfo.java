@@ -22,6 +22,8 @@ package org.kordamp.gradle.plugin.base.plugins;
  * @since 0.8.0
  */
 public interface BuildInfo extends Feature {
+    boolean isClearTime();
+
     boolean isSkipBuildBy();
 
     boolean isSkipBuildDate();

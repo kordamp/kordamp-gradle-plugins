@@ -51,6 +51,7 @@ config {
 |===
 | Name               | Type    | Required | Default Value | Description
 | enabled            | boolean | no       | true          | Disables `org.kordamp.gradle.build-info` plugin if `false`
+| clearTime          | boolean | no       | false         | Sets the value of `buildTime` to zero.
 | skipBuildBy        | boolean | no       | false         | Skips calculating this value
 | skipBuildDate      | boolean | no       | false         | Skips calculating this value
 | skipBuildTime      | boolean | no       | false         | Skips calculating this value

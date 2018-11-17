@@ -78,6 +78,13 @@ class BuildInfoPlugin implements Plugin<Project> {
         }
 
         Date date = new Date()
+        if (mergedConfiguration.buildInfo.clearTime) {
+            date = date.clearTime()
+            Calendar calendar = Calendar.instance
+            calendar.time = date
+            calendar.clear(Calendar.ZONE_OFFSET)
+            date = calendar.time
+        }
 
         if (!mergedConfiguration.buildInfo.skipBuildBy) {
             mergedConfiguration.buildInfo.buildBy = System.properties['user.name']

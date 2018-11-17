@@ -32,6 +32,7 @@ import org.kordamp.gradle.plugin.base.plugins.BuildInfo
 @Canonical
 @EqualsAndHashCode(excludes = ['project'])
 class MutableBuildInfo extends AbstractFeature implements BuildInfo {
+    boolean clearTime
     boolean skipBuildBy
     boolean skipBuildDate
     boolean skipBuildTime
@@ -46,6 +47,7 @@ class MutableBuildInfo extends AbstractFeature implements BuildInfo {
     String buildJdk
     String buildCreatedBy
 
+    private boolean clearTimeSet
     private boolean skipBuildBySet
     private boolean skipBuildDateSet
     private boolean skipBuildTimeSet
@@ -70,6 +72,7 @@ class MutableBuildInfo extends AbstractFeature implements BuildInfo {
         Map map = [enabled: enabled]
 
         if (enabled) {
+            map.clearTime = clearTime
             if (!skipBuildBy) map.buildBy = buildBy
             if (!skipBuildDate) map.buildDate = buildDate
             if (!skipBuildTime) map.buildTime = buildTime
@@ -79,6 +82,15 @@ class MutableBuildInfo extends AbstractFeature implements BuildInfo {
         }
 
         ['buildInfo': map]
+    }
+
+    void setClearTime(boolean clearTime) {
+        this.clearTime = clearTime
+        this.clearTimeSet = true
+    }
+
+    boolean isClearTimeSet() {
+        this.clearTimeSet
     }
 
     void setSkipBuildBy(boolean skipBuildBy) {
@@ -137,6 +149,8 @@ class MutableBuildInfo extends AbstractFeature implements BuildInfo {
 
     void copyInto(MutableBuildInfo copy) {
         super.copyInto(copy)
+        copy.@clearTime = clearTime
+        copy.@clearTimeSet = clearTimeSet
         copy.@skipBuildBy = skipBuildBy
         copy.@skipBuildBySet = skipBuildBySet
         copy.@skipBuildDate = skipBuildDate
@@ -153,6 +167,7 @@ class MutableBuildInfo extends AbstractFeature implements BuildInfo {
 
     static void merge(MutableBuildInfo o1, MutableBuildInfo o2) {
         AbstractFeature.merge(o1, o2)
+        o1.setClearTime((boolean) (o1.clearTimeSet ? o1.clearTime : o2.clearTime))
         o1.setSkipBuildBy((boolean) (o1.skipBuildBySet ? o1.skipBuildBy : o2.skipBuildBy))
         o1.setSkipBuildDate((boolean) (o1.skipBuildDateSet ? o1.skipBuildDate : o2.skipBuildDate))
         o1.setSkipBuildTime((boolean) (o1.skipBuildTimeSet ? o1.skipBuildTime : o2.skipBuildTime))
