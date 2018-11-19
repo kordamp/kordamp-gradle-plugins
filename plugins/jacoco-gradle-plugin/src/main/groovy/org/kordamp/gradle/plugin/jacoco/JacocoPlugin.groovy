@@ -26,6 +26,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.tasks.JacocoMerge
 import org.gradle.testing.jacoco.tasks.JacocoReport
+import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.StringUtils
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -117,8 +118,8 @@ class JacocoPlugin implements Plugin<Project> {
 
                 jacocoClasspath = project.configurations.jacocoAnt
 
-                additionalSourceDirs = project.files(project.sourceSets.main.allSource.srcDirs)
-                sourceDirectories = project.files(project.sourceSets.main.allSource.srcDirs)
+                additionalSourceDirs = project.files(PluginUtils.resolveMainSourceDirs(project))
+                sourceDirectories = project.files(PluginUtils.resolveMainSourceDirs(project))
                 classDirectories = project.files(project.sourceSets.main.output.classesDirs*.path)
                 executionData testTask
 
@@ -174,8 +175,8 @@ class JacocoPlugin implements Plugin<Project> {
             group = 'Reporting'
             description = 'Generate aggregate Jacoco coverage report.'
 
-            additionalSourceDirs = project.files(projects.sourceSets.main.allSource.srcDirs)
-            sourceDirectories = project.files(projects.sourceSets.main.allSource.srcDirs)
+            additionalSourceDirs = project.files(PluginUtils.resolveMainSourceDirs(projects))
+            sourceDirectories = project.files(PluginUtils.resolveMainSourceDirs(projects))
             classDirectories = project.files(projects.sourceSets.main.output)
             executionData project.files(jacocoRootMerge.destinationFile)
 

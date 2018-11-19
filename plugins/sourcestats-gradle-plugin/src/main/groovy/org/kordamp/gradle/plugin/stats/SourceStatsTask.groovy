@@ -25,6 +25,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.base.plugins.mutable.MutableStats
 import org.kordamp.gradle.plugin.stats.counter.CssCounter
 import org.kordamp.gradle.plugin.stats.counter.HashCounter
@@ -70,21 +71,19 @@ class SourceStatsTask extends DefaultTask {
         merged.putAll(MutableStats.defaultPaths())
         merged.putAll(paths)
 
-        project.sourceSets.each { sourceSet ->
-            sourceSet.allSource.srcDirs.each { File dir ->
-                if (!dir.exists()) return
-                dir.eachFileRecurse { File file ->
-                    if (file.file) {
-                        String extension = getFilenameExtension(file.name)
-                        Map map = merged.find { file.absolutePath =~ it.value.path && !it.value.extension }?.value
-                        if (!map) map = merged.find {
-                            file.absolutePath =~ it.value.path && extension == it.value.extension
-                        }?.value
-                        if (!map) map = merged.find { file.absolutePath =~ it.value.path }?.value
-                        if (!map || (map.extension && extension != map.extension)) return
-                        if (counterInstances.containsKey(extension)) {
-                            SourceStatsTask.countLines(map, counterInstances[extension], file)
-                        }
+        PluginUtils.resolveSrcDirs(project).each { File dir ->
+            if (!dir.exists()) return
+            dir.eachFileRecurse { File file ->
+                if (file.file) {
+                    String extension = getFilenameExtension(file.name)
+                    Map map = merged.find { file.absolutePath =~ it.value.path && !it.value.extension }?.value
+                    if (!map) map = merged.find {
+                        file.absolutePath =~ it.value.path && extension == it.value.extension
+                    }?.value
+                    if (!map) map = merged.find { file.absolutePath =~ it.value.path }?.value
+                    if (!map || (map.extension && extension != map.extension)) return
+                    if (counterInstances.containsKey(extension)) {
+                        SourceStatsTask.countLines(map, counterInstances[extension], file)
                     }
                 }
             }

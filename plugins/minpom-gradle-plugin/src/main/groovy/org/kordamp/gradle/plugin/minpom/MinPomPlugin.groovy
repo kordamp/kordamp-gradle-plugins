@@ -29,7 +29,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
  * Configures a {@code minpom} task.
- * Calculates {@code pom.xml} and {@code pom.properties} for each {@code SourceSet}.
+ * Calculates {@code pom.xml} and {@code pom.properties}.
  * These files should be packaged under {@code /META-INF/maven}.
 
  * @author Andres Almiray
