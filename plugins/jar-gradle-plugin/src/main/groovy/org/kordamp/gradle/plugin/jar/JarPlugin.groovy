@@ -144,7 +144,7 @@ class JarPlugin implements Plugin<Project> {
 
                 checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildCreatedBy', attributesMap, 'Created-By')
                 checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildBy', attributesMap, 'Build-By')
-                checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildRevision', attributesMap, 'Build-Jdk')
+                checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildJdk', attributesMap, 'Build-Jdk')
                 checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildDate', attributesMap, 'Build-Date')
                 checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildTime', attributesMap, 'Build-Time')
                 checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildRevision', attributesMap, 'Build-Revision')
