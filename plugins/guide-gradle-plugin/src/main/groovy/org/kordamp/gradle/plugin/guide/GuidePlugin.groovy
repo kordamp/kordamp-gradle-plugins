@@ -127,7 +127,7 @@ class GuidePlugin implements Plugin<Project> {
     }
 
     private static void checkAttribute(Map dest, Map src, String key, value) {
-        if(!src.containsKey(key)) dest[key] = value
+        if(!src.containsKey(key)) dest[key + '@'] = value
     }
 
     private void createGuideTaskIfNeeded(Project project) {
