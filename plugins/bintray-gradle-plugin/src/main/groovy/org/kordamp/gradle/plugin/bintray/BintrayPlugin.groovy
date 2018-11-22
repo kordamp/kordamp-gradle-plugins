@@ -24,6 +24,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 
+import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
@@ -102,7 +103,7 @@ class BintrayPlugin implements Plugin<Project> {
                 labels = mergedConfiguration.info.tags
                 websiteUrl = mergedConfiguration.info.url
                 issueTrackerUrl = mergedConfiguration.info.links.issueTracker
-                vcsUrl = mergedConfiguration.info.links.scm
+                vcsUrl = BintrayPlugin.resolveScmLink(mergedConfiguration)
                 publicDownloadNumbers = true
                 githubRepo = mergedConfiguration.bintray.githubRepo
                 version {
@@ -117,5 +118,12 @@ class BintrayPlugin implements Plugin<Project> {
                 }
             }
         }
+    }
+
+    private static resolveScmLink(ProjectConfigurationExtension mergedConfiguration) {
+        if (!isBlank(mergedConfiguration.info.scm.url)) {
+            return mergedConfiguration.info.scm.url
+        }
+        return mergedConfiguration.info.links.scm
     }
 }

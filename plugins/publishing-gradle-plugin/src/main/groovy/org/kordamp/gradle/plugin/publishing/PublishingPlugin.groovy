@@ -134,7 +134,17 @@ class PublishingPlugin implements Plugin<Project> {
                                 }
                             }
                         }
-                        if (mergedConfiguration.info.links.scm) {
+                        if (!isBlank(mergedConfiguration.info.scm.url)) {
+                            scm {
+                                url = mergedConfiguration.info.scm.url
+                                if (mergedConfiguration.info.scm.connection) {
+                                    connection = mergedConfiguration.info.scm.connection
+                                }
+                                if (mergedConfiguration.info.scm.connection) {
+                                    developerConnection = mergedConfiguration.info.scm.developerConnection
+                                }
+                            }
+                        } else if (mergedConfiguration.info.links.scm) {
                             scm {
                                 url = mergedConfiguration.info.links.scm
                             }

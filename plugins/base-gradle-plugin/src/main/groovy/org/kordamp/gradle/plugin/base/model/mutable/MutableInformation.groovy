@@ -48,6 +48,7 @@ class MutableInformation implements Information {
     final MutablePersonSet people = new MutablePersonSet()
     final MutableOrganization organization = new MutableOrganization()
     final MutableLinks links = new MutableLinks()
+    final MutableScm scm = new MutableScm()
     final MutableCredentialsSet credentials = new MutableCredentialsSet()
 
     final MutableSpecification specification = new MutableSpecification()
@@ -78,6 +79,7 @@ class MutableInformation implements Information {
             organization: organization.toMap(),
             people: people.toMap(),
             links: links.toMap(),
+            scm: scm.toMap(),
             specification: specification.toMap(),
             implementation: implementation.toMap(),
             credentials: credentials.toMap()
@@ -101,6 +103,7 @@ class MutableInformation implements Information {
         organization.copyInto(copy.organization)
         people.copyInto(copy.people)
         links.copyInto(copy.links)
+        scm.copyInto(copy.scm)
         credentials.copyInto(copy.credentials)
 
         copy.normalize()
@@ -118,6 +121,7 @@ class MutableInformation implements Information {
         MutableOrganization.merge(o1.organization, o2.organization)
         MutablePersonSet.merge(o1.people, o2.people)
         MutableLinks.merge(o1.links, o2.links)
+        MutableScm.merge(o1.scm, o2.scm)
         MutableCredentialsSet.merge(o1.credentials, o2.credentials)
         o1.normalize()
     }
@@ -147,6 +151,10 @@ class MutableInformation implements Information {
         action.execute(links)
     }
 
+    void scm(Action<? super MutableScm> action) {
+        action.execute(scm)
+    }
+
     void credentials(Action<? super MutableCredentialsSet> action) {
         action.execute(credentials)
     }
@@ -169,6 +177,10 @@ class MutableInformation implements Information {
 
     void links(@DelegatesTo(MutableLinks) Closure action) {
         ConfigureUtil.configure(action, links)
+    }
+
+    void scm(@DelegatesTo(MutableScm) Closure action) {
+        ConfigureUtil.configure(action, scm)
     }
 
     void credentials(@DelegatesTo(MutableCredentialsSet) Closure action) {

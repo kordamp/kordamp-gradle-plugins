@@ -17,40 +17,14 @@
  */
 package org.kordamp.gradle.plugin.base.model;
 
-import java.util.List;
-
 /**
  * @author Andres Almiray
- * @since 0.8.0
+ * @since 0.9.0
  */
-public interface Information {
-    String getName();
-
+public interface Scm {
     String getUrl();
 
-    String getDescription();
+    String getConnection();
 
-    String getInceptionYear();
-
-    String getVendor();
-
-    List<String> getTags();
-
-    PersonSet getPeople();
-
-    Organization getOrganization();
-
-    Links getLinks();
-
-    Scm getScm();
-
-    CredentialsSet getCredentials();
-
-    Specification getSpecification();
-
-    Implementation getImplementation();
-
-    List<String> getAuthors();
-
-    String getCopyrightYear();
+    String getDeveloperConnection();
 }

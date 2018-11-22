@@ -31,6 +31,12 @@ config {
             scm
         }
 
+        <<_base_info_scm,scm>> {
+            url
+            connection
+            developerConnection
+        }
+
         <<_base_info_organization,organization>> {
             name
             url
@@ -110,6 +116,19 @@ The value for `vendor` may be omitted if a value for `organization.name` is give
 
 Values for `issueTracker` and `scm` should be defined if the `<<_org_kordamp_gradle_bintray,org.kordamp.gradle.bintray>>`
 plugin is used.
+
+[[_base_info_scm]]
+*scm*
+
+[options="header", cols="5*"]
+|===
+| Name                | Type   | Required | Default Value | Description
+| url                 | String | yes      | empty         | Mapped to the `<scm><url>` block in POM.OM.
+| connection          | String | no*      | empty         | Mapped to the `<scm><connection>` block in POM.`
+| developerconnection | String | no*      | empty         | Mapped to the `<scm><developerConnection>` block in POM.
+|===
+
+This block has precedence over `links.scm`.
 
 [[_base_info_organization]]
 *organization*
