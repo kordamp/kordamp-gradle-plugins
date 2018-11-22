@@ -20,9 +20,7 @@ dependencies {
     compile 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
     compile project(':apidoc-gradle-plugin')
     compile project(':base-gradle-plugin')
-    compile project(':bintray-gradle-plugin')
     compile project(':buildinfo-gradle-plugin')
-    compile project(':groovydoc-gradle-plugin')
     compile project(':jacoco-gradle-plugin')
     compile project(':jar-gradle-plugin')
     compile project(':javadoc-gradle-plugin')

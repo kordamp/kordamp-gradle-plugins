@@ -38,6 +38,8 @@ import static org.kordamp.gradle.StringUtils.isBlank
 @Canonical
 @EqualsAndHashCode(excludes = ['project'])
 class MutableBintray extends AbstractFeature implements Bintray {
+    private static final String PLUGIN_ID = 'org.kordamp.gradle.bintray'
+
     String repo
     String userOrg
     String name
@@ -50,6 +52,7 @@ class MutableBintray extends AbstractFeature implements Bintray {
 
     MutableBintray(Project project) {
         super(project)
+        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
     }
 
     @Override
@@ -77,6 +80,12 @@ class MutableBintray extends AbstractFeature implements Bintray {
         }
 
         ['bintray': map]
+    }
+
+    void normalize() {
+        if (!enabledSet) {
+            setEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        }
     }
 
     String getRepo() {

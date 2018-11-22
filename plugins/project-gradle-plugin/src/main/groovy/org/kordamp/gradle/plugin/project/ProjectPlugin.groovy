@@ -22,7 +22,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
-import org.kordamp.gradle.plugin.bintray.BintrayPlugin
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.jacoco.JacocoPlugin
 import org.kordamp.gradle.plugin.jar.JarPlugin
@@ -67,7 +66,6 @@ class ProjectPlugin implements Plugin<Project> {
         MinPomPlugin.applyIfMissing(project)
         JarPlugin.applyIfMissing(project)
         PublishingPlugin.applyIfMissing(project)
-        BintrayPlugin.applyIfMissing(project)
         SourceStatsPlugin.applyIfMissing(project)
         SourceHtmlPlugin.applyIfMissing(project)
 
