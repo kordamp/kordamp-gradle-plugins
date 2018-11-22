@@ -1,0 +1,170 @@
+
+[[_org_kordamp_gradle_bom]]
+= Bom
+
+[horizontal]
+id:: `org.kordamp.gradle.bom`
+class:: `org.kordamp.gradle.plugin.bom.BomPlugin`
+    (link:api/org/kordamp/gradle/plugin/bom/BomPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/bom/BomPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
+`link:https://docs.gradle.org/current/userguide/bom_maven.html[maven-publish]`, +
+`link:https://docs.gradle.org/current/userguide/signing_plugin.html[signing]`
+
+Configures a MavenPublication for the project using the core `maven-publish` plugin.
+The name of the publication matches `"mainPublication"`.
+
+Data defined in the DSL's `config.info` and `config.license` blocks will be used to fill out information required by the
+generated BOM file.
+
+[[_org_kordamp_gradle_bom_example]]
+== Example
+
+Using the following project layout as an example
+
+[source,groovy]
+----
+.
+├── build.gradle
+├── gradle
+│   └── wrapper
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties
+├── gradle.properties
+├── gradlew
+├── gradlew.bat
+├── settings.gradle
+├── docs
+│   └── guide
+│       ├── guide.gradle
+│       └── src
+│           └── docs
+│               ├── asciidoc
+│               └── resources
+└── subprojects
+    ├── sample-bom
+    │   └── sample.bom.gradle
+    ├── project1
+    │   ├── project1.gradle
+    │   └── src
+    │       └── main
+    └── project2
+        ├── project2.gradle
+        └── src
+            └── main
+----
+
+With the following content set in the `sample-bom.gradle` build file
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.sample-bom.gradle (child)
+----
+apply plugin: 'org.kordamp.gradle.bom'
+
+config {
+    bom {
+        exclude('guide')
+    }
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.sample-bom.gradle.kts (child)
+----
+apply(plugin = "org.kordamp.gradle.bom")
+
+config {
+    bom {
+        exclude("guide")
+    }
+}
+----
+
+Results in the following BOM when invoking `gradle :sample-bom:publish`
+
+[source,xml,subs="verbatim"]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.kordamp.sample.acme</groupId>
+  <artifactId>sample-bom</artifactId>
+  <version>0.0.0</version>
+  <packaging>pom</packaging>
+  <name>Sample</name>
+  <description>sample-bom</description>
+  <url>https://github.com/joecool/sample</url>
+  <inceptionYear>2018</inceptionYear>
+  <licenses>
+    <license>
+      <name>Apache-2.0</name>
+      <url>https://spdx.org/licenses/Apache-2.0.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>joecool</id>
+      <name>Joe Cool</name>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+  <scm>
+    <url>https://github.com/joecool/sample.git</url>
+  </scm>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>project1</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>project2</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>
+----
+
+[[_org_kordamp_gradle_bom_dsl]]
+== DSL
+
+[source,groovy]
+----
+config {
+    bom {
+        enabled
+        compile
+        runtime
+        test
+        excludes
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name     | Type        | Required | Default Value | Description
+| enabled  | boolean     | no       | true          | Disables `org.kordamp.gradle.bom` plugin if `false`
+| compile  | Set<String> | no       | []            | Dependencies that should be added to the `compile` scope
+| runtime  | Set<String> | no       | []            | Dependencies that should be added to the `runtime` scope
+| test     | Set<String> | no       | []            | Dependencies that should be added to the `test` scope
+| excludes | Set<String> | no       | []            | Names of subprojects tat should not be included
+|===
+
+This block is optional.
+
+[[_org_kordamp_gradle_bom_dsl_methods]]
+=== Methods
+
+[horizontal]
+compile(String):: Add a dependency to the `compile` scope. Its value may be a project name or a dependency definition such as 'group:artifactId:version'.
+runtime(String):: Add a dependency to the `runtime` scope. Its value may be a project name or a dependency definition such as 'group:artifactId:version'.
+test(String):: Add a dependency to the `test` scope. Its value may be a project name or a dependency definition such as 'group:artifactId:version'.
+exclude(String):: Skips the named project from being added to the BOM.
+

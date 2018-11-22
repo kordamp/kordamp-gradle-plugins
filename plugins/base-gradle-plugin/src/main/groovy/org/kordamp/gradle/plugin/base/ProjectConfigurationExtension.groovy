@@ -26,6 +26,7 @@ import org.kordamp.gradle.plugin.base.model.Information
 import org.kordamp.gradle.plugin.base.model.mutable.MutableInformation
 import org.kordamp.gradle.plugin.base.plugins.Apidoc
 import org.kordamp.gradle.plugin.base.plugins.Bintray
+import org.kordamp.gradle.plugin.base.plugins.Bom
 import org.kordamp.gradle.plugin.base.plugins.BuildInfo
 import org.kordamp.gradle.plugin.base.plugins.Groovydoc
 import org.kordamp.gradle.plugin.base.plugins.Jacoco
@@ -40,6 +41,7 @@ import org.kordamp.gradle.plugin.base.plugins.SourceXref
 import org.kordamp.gradle.plugin.base.plugins.Stats
 import org.kordamp.gradle.plugin.base.plugins.mutable.MutableApidoc
 import org.kordamp.gradle.plugin.base.plugins.mutable.MutableBintray
+import org.kordamp.gradle.plugin.base.plugins.mutable.MutableBom
 import org.kordamp.gradle.plugin.base.plugins.mutable.MutableBuildInfo
 import org.kordamp.gradle.plugin.base.plugins.mutable.MutableGroovydoc
 import org.kordamp.gradle.plugin.base.plugins.mutable.MutableJacoco
@@ -64,6 +66,7 @@ class ProjectConfigurationExtension {
     final Project project
     final MutableInformation info
     final MutableApidoc apidoc
+    final MutableBom bom
     final MutableBintray bintray
     final MutableBuildInfo buildInfo
     final MutableGroovydoc groovydoc
@@ -84,6 +87,7 @@ class ProjectConfigurationExtension {
         this.project = project
         info = new MutableInformation(project)
         apidoc = new MutableApidoc(project)
+        bom = new MutableBom(project)
         bintray = new MutableBintray(project)
         buildInfo = new MutableBuildInfo(project)
         groovydoc = new MutableGroovydoc(project)
@@ -99,6 +103,10 @@ class ProjectConfigurationExtension {
         stats = new MutableStats(project)
     }
 
+    void init() {
+        bom.init()
+    }
+
     String toString() {
         toMap().toString()
     }
@@ -109,6 +117,7 @@ class ProjectConfigurationExtension {
 
         map.putAll(info.toMap())
         map.putAll(apidoc.toMap())
+        map.putAll(bom.toMap())
         map.putAll(bintray.toMap())
         map.putAll(buildInfo.toMap())
         map.putAll(groovydoc.toMap())
@@ -132,6 +141,10 @@ class ProjectConfigurationExtension {
 
     Apidoc getApidoc() {
         apidoc
+    }
+
+    Bom getBom() {
+        bom
     }
 
     Bintray getBintray() {
@@ -200,6 +213,14 @@ class ProjectConfigurationExtension {
 
     void apidoc(@DelegatesTo(MutableApidoc) Closure action) {
         ConfigureUtil.configure(action, apidoc)
+    }
+
+    void bom(Action<? super MutableBom> action) {
+        action.execute(bom)
+    }
+
+    void bom(@DelegatesTo(MutableBom) Closure action) {
+        ConfigureUtil.configure(action, bom)
     }
 
     void bintray(Action<? super MutableBintray> action) {
@@ -321,6 +342,7 @@ class ProjectConfigurationExtension {
         copy.@releaseSet = this.@releaseSet
         this.@info.copyInto(copy.@info)
         this.@apidoc.copyInto(copy.@apidoc)
+        this.@bom.copyInto(copy.@bom)
         this.@bintray.copyInto(copy.@bintray)
         this.@buildInfo.copyInto(copy.@buildInfo)
         this.@groovydoc.copyInto(copy.@groovydoc)
@@ -343,6 +365,7 @@ class ProjectConfigurationExtension {
         merged.setRelease((boolean) (merged.@releaseSet ? merged.@release : other.@release))
         MutableInformation.merge(merged.@info, other.@info)
         MutableApidoc.merge(merged.@apidoc, other.@apidoc)
+        MutableBom.merge(merged.@bom, other.@bom)
         MutableBintray.merge(merged.@bintray, other.@bintray)
         MutableBuildInfo.merge(merged.@buildInfo, other.@buildInfo)
         MutableGroovydoc.merge(merged.@groovydoc, other.@groovydoc)
@@ -364,6 +387,7 @@ class ProjectConfigurationExtension {
         List<String> errors = []
 
         errors.addAll(this.@info.validate())
+        errors.addAll(this.@bom.validate(this.@info))
         errors.addAll(this.@bintray.validate(this.@info))
         errors.addAll(this.@license.validate(this.@info))
         errors.addAll(this.@kotlindoc.validate())

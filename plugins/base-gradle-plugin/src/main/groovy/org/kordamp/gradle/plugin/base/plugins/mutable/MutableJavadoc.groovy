@@ -46,7 +46,7 @@ class MutableJavadoc extends AbstractFeature implements Javadoc{
     private final Set<Jar> javadocJarTasks = new LinkedHashSet<>()
 
     MutableJavadoc(Project project) {
-       super(project)
+        super(project)
         options.use         = true
         options.splitIndex  = true
         options.encoding    = 'UTF-8'

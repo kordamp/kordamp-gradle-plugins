@@ -26,6 +26,7 @@ config {
     <<_org_kordamp_gradle_jacoco,jacoco>> { ... }
     <<_org_kordamp_gradle_publishing,publishing>> { ... }
     <<_org_kordamp_gradle_bintray,bintray>> { ... }
+    <<_org_kordamp_gradle_bom,bom>> { ... }
 }
 ----
 

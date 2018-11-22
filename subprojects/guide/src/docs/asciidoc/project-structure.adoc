@@ -259,7 +259,7 @@ This minimal configuration enables the following features:
 
  * Generate additional JAR manifest entries if [conum,data-value=2]_2_ is enabled.
  * Generate a `-sources` JAR file with all sources per project.
- * Configure the `javadoc` task for eahc project using information found in the config block, such as author, copyright
+ * Configure the `javadoc` task for each project using information found in the config block, such as author, copyright
    year, default settings.
  * Generate a `-javadoc` JAR file with the output of the `javadoc` task, per project.
  * Generate a task on the root project that collects all Javadocs.
