@@ -48,7 +48,7 @@ class MutableLicense implements License {
     @CompileDynamic
     Map<String, Object> toMap() {
         [
-            id          : id.name(),
+            id          : id?.name(),
             name        : name,
             url         : url,
             distribution: distribution,
@@ -87,12 +87,12 @@ class MutableLicense implements License {
     }
 
     static void merge(MutableLicense o1, MutableLicense o2) {
-        o1.id = o1.id ?: o2.id
+        o1.id = o1.id ?: o2?.id
         o1.name = o1.@name ?: o2?.name
         o1.url = o1.@url ?: o2?.url
         o1.distribution = o1.distribution ?: o2?.distribution
         o1.comments = o1.comments ?: o2?.comments
         o1.primary = o1.primary ?: o2?.primary
-        o1.aliases = (o1.aliases + o2.aliases).unique()
+        o1.aliases = (o1.aliases + o2?.aliases).unique()
     }
 }

@@ -52,7 +52,7 @@ class MutableLicense extends AbstractFeature implements License {
         Map map = [enabled: enabled]
 
         map.licenses = licenses.licenses.collectEntries { org.kordamp.gradle.plugin.base.model.mutable.MutableLicense license ->
-            [(license.id.name() ?: license.name): license.toMap()]
+            [(license.id?.name() ?: license.name): license.toMap()]
         }
 
         ['license': map]
