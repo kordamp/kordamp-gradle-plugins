@@ -40,8 +40,7 @@ class BasePlugin implements Plugin<Project> {
         }
 
         if (!project.extensions.findByType(ProjectConfigurationExtension)) {
-            ProjectConfigurationExtension extension = project.extensions.create('config', ProjectConfigurationExtension, project)
-            extension.init()
+            project.extensions.create('config', ProjectConfigurationExtension, project)
         }
 
         project.tasks.create('effectiveSettings', EffectiveSettingsTask) {

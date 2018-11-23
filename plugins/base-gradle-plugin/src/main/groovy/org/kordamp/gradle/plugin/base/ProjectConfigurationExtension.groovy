@@ -103,10 +103,6 @@ class ProjectConfigurationExtension {
         stats = new MutableStats(project)
     }
 
-    void init() {
-        bom.init()
-    }
-
     String toString() {
         toMap().toString()
     }

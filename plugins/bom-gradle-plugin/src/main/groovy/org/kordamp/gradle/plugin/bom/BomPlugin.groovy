@@ -69,6 +69,8 @@ class BomPlugin implements Plugin<Project> {
             project.plugins.apply(MavenPublishPlugin)
         }
 
+        project.extensions.findByType(ProjectConfigurationExtension).publishing.enabled = false
+
         project.afterEvaluate {
             updatePublications(project)
         }

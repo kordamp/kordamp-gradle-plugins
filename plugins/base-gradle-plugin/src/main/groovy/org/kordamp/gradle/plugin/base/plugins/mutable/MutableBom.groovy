@@ -21,9 +21,7 @@ import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
-import org.gradle.api.Action
 import org.gradle.api.Project
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.mutable.MutableInformation
 import org.kordamp.gradle.plugin.base.plugins.Bom
 
@@ -42,16 +40,6 @@ class MutableBom extends AbstractFeature implements Bom {
 
     MutableBom(Project project) {
         super(project)
-    }
-
-    @CompileDynamic
-    void init() {
-        project.extensions.configure(ProjectConfigurationExtension, new Action<ProjectConfigurationExtension>() {
-            @Override
-            void execute(ProjectConfigurationExtension extension) {
-                extension.publishing.enabled = false
-            }
-        })
     }
 
     @Override
