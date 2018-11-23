@@ -52,7 +52,7 @@ class MutableBintray extends AbstractFeature implements Bintray {
 
     MutableBintray(Project project) {
         super(project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        doSetEnabled(false)
     }
 
     @Override
@@ -80,12 +80,6 @@ class MutableBintray extends AbstractFeature implements Bintray {
         }
 
         ['bintray': map]
-    }
-
-    void normalize() {
-        if (!enabledSet) {
-            setEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
-        }
     }
 
     String getRepo() {

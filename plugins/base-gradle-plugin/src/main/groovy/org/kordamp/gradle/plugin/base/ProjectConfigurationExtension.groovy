@@ -393,7 +393,6 @@ class ProjectConfigurationExtension {
 
     void normalize() {
         info.normalize()
-        bintray.normalize()
         groovydoc.normalize()
         kotlindoc.normalize()
     }

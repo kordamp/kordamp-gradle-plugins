@@ -30,4 +30,5 @@ dependencies {
     compile project(':source-gradle-plugin')
     compile project(':sourcestats-gradle-plugin')
     compile project(':sourcehtml-gradle-plugin')
+    compile project(':bintray-gradle-plugin')
 }

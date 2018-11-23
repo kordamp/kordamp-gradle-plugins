@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-apply plugin: 'org.kordamp.gradle.guide'
-apply plugin: 'org.ajoberstar.git-publish'
+plugins {
+    id 'org.kordamp.gradle.guide'   version '0.9.0'
+    id 'org.ajoberstar.git-publish' version '0.3.2'
+}
 
 guide {
     groovydocApiDir = 'api'
