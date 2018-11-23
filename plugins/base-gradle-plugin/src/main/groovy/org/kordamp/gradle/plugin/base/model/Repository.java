@@ -19,14 +19,12 @@ package org.kordamp.gradle.plugin.base.model;
 
 /**
  * @author Andres Almiray
- * @since 0.8.0
+ * @since 0.9.0
  */
-public interface Credentials {
+public interface Repository {
     String getName();
 
-    String getUsername();
+    String getUrl();
 
-    String getPassword();
-
-    boolean isEmpty();
+    Credentials getCredentials();
 }

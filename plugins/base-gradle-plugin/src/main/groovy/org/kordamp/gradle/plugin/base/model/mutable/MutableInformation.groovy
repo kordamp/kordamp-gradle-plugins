@@ -46,6 +46,7 @@ class MutableInformation implements Information {
 
     final Project project
     final MutablePersonSet people = new MutablePersonSet()
+    final MutableRepositorySet repositories = new MutableRepositorySet()
     final MutableOrganization organization = new MutableOrganization()
     final MutableLinks links = new MutableLinks()
     final MutableScm scm = new MutableScm()
@@ -78,6 +79,7 @@ class MutableInformation implements Information {
             authors: authors,
             organization: organization.toMap(),
             people: people.toMap(),
+            repositories: repositories.toMap(),
             links: links.toMap(),
             scm: scm.toMap(),
             specification: specification.toMap(),
@@ -102,6 +104,7 @@ class MutableInformation implements Information {
         copy.impl = impl.copyOf()
         organization.copyInto(copy.organization)
         people.copyInto(copy.people)
+        repositories.copyInto(copy.repositories)
         links.copyInto(copy.links)
         scm.copyInto(copy.scm)
         credentials.copyInto(copy.credentials)
@@ -120,6 +123,7 @@ class MutableInformation implements Information {
         MutableImplementation.merge(o1.impl, o2.impl)
         MutableOrganization.merge(o1.organization, o2.organization)
         MutablePersonSet.merge(o1.people, o2.people)
+        MutableRepositorySet.merge(o1.repositories, o2.repositories)
         MutableLinks.merge(o1.links, o2.links)
         MutableScm.merge(o1.scm, o2.scm)
         MutableCredentialsSet.merge(o1.credentials, o2.credentials)
@@ -141,6 +145,10 @@ class MutableInformation implements Information {
 
     void people(Action<? super MutablePersonSet> action) {
         action.execute(people)
+    }
+
+    void repositories(Action<? super MutableRepositorySet> action) {
+        action.execute(repositories)
     }
 
     void organization(Action<? super MutableOrganization> action) {
@@ -169,6 +177,10 @@ class MutableInformation implements Information {
 
     void people(@DelegatesTo(MutablePersonSet) Closure action) {
         ConfigureUtil.configure(action, people)
+    }
+
+    void repositories(@DelegatesTo(MutableRepositorySet) Closure action) {
+        ConfigureUtil.configure(action, repositories)
     }
 
     void organization(@DelegatesTo(MutableOrganization) Closure action) {

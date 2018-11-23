@@ -17,16 +17,14 @@
  */
 package org.kordamp.gradle.plugin.base.model;
 
+import java.util.List;
+
 /**
  * @author Andres Almiray
- * @since 0.8.0
+ * @since 0.9.0
  */
-public interface Credentials {
-    String getName();
+public interface RepositorySet {
+    List<Repository> getRepositories();
 
-    String getUsername();
-
-    String getPassword();
-
-    boolean isEmpty();
+    Repository getRepository(String name);
 }

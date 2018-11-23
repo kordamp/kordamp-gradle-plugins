@@ -26,7 +26,9 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.plugins.signing.SigningPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.model.Credentials
 import org.kordamp.gradle.plugin.base.model.Person
+import org.kordamp.gradle.plugin.base.model.Repository
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -228,19 +230,27 @@ class BomPlugin implements Plugin<Project> {
                 }
             }
 
-            if (mergedConfiguration.release) {
-                if (!isBlank(mergedConfiguration.publishing.releasesRepoUrl)) {
-                    repositories {
-                        maven {
-                            url = mergedConfiguration.publishing.releasesRepoUrl
-                        }
-                    }
+            String repositoryName = mergedConfiguration.release ? mergedConfiguration.publishing.releasesRepository : mergedConfiguration.publishing.snapshotsRepository
+            if (!isBlank(repositoryName)) {
+                Repository repo = mergedConfiguration.info.repositories.getRepository(repositoryName)
+                if (repo == null) {
+                    throw new IllegalStateException("Repository '${repositoryName}' was not found")
                 }
-            } else {
-                if (!isBlank(mergedConfiguration.publishing.snapshotsRepoUrl)) {
-                    repositories {
-                        maven {
-                            url = mergedConfiguration.publishing.snapshotsRepoUrl
+
+                repositories {
+                    maven {
+                        url = repo.url
+                        Credentials creds = mergedConfiguration.info.credentials.getCredentials(repo.name)
+                        if (repo.credentials) {
+                            credentials {
+                                username = repo.credentials.username
+                                password = repo.credentials.password
+                            }
+                        } else if (creds) {
+                            credentials {
+                                username = creds.username
+                                password = creds.password
+                            }
                         }
                     }
                 }

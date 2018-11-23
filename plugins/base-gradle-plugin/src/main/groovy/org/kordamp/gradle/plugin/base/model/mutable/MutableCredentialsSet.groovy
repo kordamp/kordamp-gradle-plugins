@@ -36,7 +36,7 @@ class MutableCredentialsSet implements CredentialsSet {
     static final String GITHUB = 'github'
     static final String SONATYPE = 'sonatype'
 
-    final Map<String, MutableCredentials> credentials = new LinkedHashMap<>()
+    final Map<String, MutableCredentials> credentialsMap = new LinkedHashMap<>()
 
     @Override
     String toString() {
@@ -47,52 +47,77 @@ class MutableCredentialsSet implements CredentialsSet {
     Map<String, Map<String, Object>> toMap() {
         if (isEmpty()) return [:]
 
-        [
-            github  : github?.toMap(),
-            sonatype: sonatype?.toMap()
-        ]
+        credentialsMap.collectEntries { k, v ->
+            [(k): v.toMap()]
+        }
     }
 
     void github(Action<? super MutableCredentials> action) {
-        action.execute(credentials.computeIfAbsent(GITHUB, { k -> new MutableCredentials() }))
+        action.execute(credentialsMap.computeIfAbsent(GITHUB, { k -> new MutableCredentials() }))
     }
 
     void sonatype(Action<? super MutableCredentials> action) {
-        action.execute(credentials.computeIfAbsent(SONATYPE, { k -> new MutableCredentials() }))
+        action.execute(credentialsMap.computeIfAbsent(SONATYPE, { k -> new MutableCredentials() }))
     }
 
     void github(@DelegatesTo(MutableCredentials) Closure action) {
-        ConfigureUtil.configure(action, credentials.computeIfAbsent(GITHUB, { k -> new MutableCredentials() }))
+        ConfigureUtil.configure(action, credentialsMap.computeIfAbsent(GITHUB, { k -> new MutableCredentials() }))
     }
 
     void sonatype(@DelegatesTo(MutableCredentials) Closure action) {
-        ConfigureUtil.configure(action, credentials.computeIfAbsent(SONATYPE, { k -> new MutableCredentials() }))
+        ConfigureUtil.configure(action, credentialsMap.computeIfAbsent(SONATYPE, { k -> new MutableCredentials() }))
+    }
+
+    void named(Action<? super MutableCredentials> action) {
+        MutableCredentials c = new MutableCredentials()
+        action.execute(c)
+        credentialsMap.put(c.name, MutableCredentials.merge(c, getCredentials(c.name)))
+    }
+
+    void named(@DelegatesTo(MutableCredentials) Closure action) {
+        MutableCredentials c = new MutableCredentials()
+        ConfigureUtil.configure(action, c)
+        credentialsMap.put(c.name, MutableCredentials.merge(c, getCredentials(c.name)))
     }
 
     @Override
     MutableCredentials getGithub() {
-        credentials.get(GITHUB)
+        credentialsMap.get(GITHUB)
     }
 
     @Override
     MutableCredentials getSonatype() {
-        credentials.get(SONATYPE)
+        credentialsMap.get(SONATYPE)
+    }
+
+    MutableCredentials getCredentials(String name) {
+        credentialsMap.get(name)
     }
 
     void copyInto(MutableCredentialsSet credentialsSet) {
-        credentials.each { k, v -> credentialsSet.credentials.put(k, v.copyOf()) }
+        credentialsMap.each { k, v -> credentialsSet.credentialsMap.put(k, v.copyOf()) }
     }
 
     static void merge(MutableCredentialsSet o1, MutableCredentialsSet o2) {
-        MutableCredentials github = MutableCredentials.merge(o1?.getGithub(), o2?.getGithub())
-        MutableCredentials sonatype = MutableCredentials.merge(o1?.getSonatype(), o2?.getSonatype())
-
-        if (github) o1.credentials.put(GITHUB, github)
-        if (sonatype) o1.credentials.put(SONATYPE, sonatype)
+        if (!o1.credentialsMap) {
+            if (o2?.credentialsMap) {
+                o1.credentialsMap.putAll(o2.credentialsMap)
+            }
+        } else {
+            o1.credentialsMap.each { k, v ->
+                MutableCredentials merged = MutableCredentials.merge(v, o2?.credentialsMap?.get(k))
+                o1.credentialsMap.put(k, merged)
+            }
+            o2?.credentialsMap.each { k, v ->
+                if (!o1.credentialsMap.containsKey(k)) {
+                    o1.credentialsMap.put(k, v.copyOf())
+                }
+            }
+        }
     }
 
     @Override
     boolean isEmpty() {
-        credentials.isEmpty()
+        credentialsMap.isEmpty()
     }
 }

@@ -26,5 +26,7 @@ public interface CredentialsSet {
 
     Credentials getSonatype();
 
+    Credentials getCredentials(String name);
+
     boolean isEmpty();
 }

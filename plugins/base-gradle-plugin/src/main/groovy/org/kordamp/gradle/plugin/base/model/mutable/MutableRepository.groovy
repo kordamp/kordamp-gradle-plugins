@@ -21,7 +21,9 @@ import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
-import org.kordamp.gradle.plugin.base.model.Credentials
+import org.gradle.api.Action
+import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.plugin.base.model.Repository
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -32,10 +34,10 @@ import static org.kordamp.gradle.StringUtils.isBlank
 @CompileStatic
 @Canonical
 @ToString(includeNames = true)
-class MutableCredentials implements Credentials {
+class MutableRepository implements Repository {
     String name
-    String username
-    String password
+    String url
+    final MutableCredentials credentials = new MutableCredentials()
 
     @Override
     String toString() {
@@ -44,40 +46,52 @@ class MutableCredentials implements Credentials {
 
     @CompileDynamic
     Map<String, Object> toMap() {
-        [
-            name    : name,
-            username: username,
-            password: ('*' * 12)
+        Map map = [
+            name: name,
+            url : url
         ]
+
+        if (!credentials.empty) {
+            map.credentials = [
+                username: credentials.username,
+                password: ('*' * 12)
+            ]
+        }
+
+        map
     }
 
-    MutableCredentials copyOf() {
-        MutableCredentials copy = new MutableCredentials()
+    String getName() {
+        !isBlank(this.@name) ? this.@name : url
+    }
+
+    void credentials(Action<? super MutableCredentials> action) {
+        action.execute(credentials)
+    }
+
+    void credentials(@DelegatesTo(MutableCredentials) Closure action) {
+        ConfigureUtil.configure(action, credentials)
+    }
+
+    MutableRepository copyOf() {
+        MutableRepository copy = new MutableRepository()
         copyInto(copy)
         copy
     }
 
-    void copyInto(MutableCredentials copy) {
+    void copyInto(MutableRepository copy) {
         copy.name = name
-        copy.username = username
-        copy.password = password
+        copy.url = url
+        credentials.copyInto(copy.credentials)
     }
 
-    static MutableCredentials merge(MutableCredentials o1, MutableCredentials o2) {
-        if (o1) {
-            o1.name = o1.name ?: o2?.name
-            o1.username = o1.username ?: o2?.username
-            o1.password = o1.password ?: o2?.password
-            return o1
-        } else if (o2) {
-            return o2.copyOf()
-        } else {
-            return null
-        }
+    static void merge(MutableRepository o1, MutableRepository o2) {
+        o1.name = o1.name ?: o2?.name
+        o1.url = o1.url ?: o2?.url
+        o1.credentials.merge(o1.credentials, o2.credentials)
     }
 
-    @Override
     boolean isEmpty() {
-        isBlank(username) && isBlank(password)
+        isBlank(url)
     }
 }

@@ -65,6 +65,22 @@ config {
                 username
                 password
             }
+            named {
+                name
+                username
+                password
+            }
+        }
+
+        <<_base_info_repositories,repositories>> {
+            <<_base_info_repository,repository>> {
+                name
+                url
+                credentials {
+                    username
+                    passsword
+                }
+            }
         }
 
         <<_base_info_people,people>> {
@@ -178,12 +194,34 @@ This block is optional.
 | Name     | Type        | Required | Default Value   | Description
 | github   | Credentials | no*      |                 | Username/Password for connecting to GitHub
 | sonatype | Credentials | no*      |                 | Username/Password for connecting to Maven Central
+| named    | Credentials | no*      |                 | Defines a named credentials entry. Name may match a repository entry.
 |===
 
 The `sonatype` entry may be used by the `<<_org_kordamp_gradle_bintray,org.kordamp.gradle.bintray>>` plugin to configure
-auto-sync with Maven Central when pushing a publication.
+auto-sync with Maven Central when pushing a publication. Named credentials my match the name of a repository, in which
+case they will be used during artifact publication on the matching repository.
 
 This block is optional.
+
+[[_base_info_repositories]]
+*repositories*
+
+This block defines data associated with a particular repository. Entries may be used during publication.
+
+[[_base_info_repository]]
+*repository*
+
+[options="header", cols="5*"]
+|===
+| Name        | Type        | Required | Default Value | Description
+| name        | String      | no*      |               | The name of the repository
+| url         | String      | no*      |               | The URL of the repository
+| credentials | Credentials | no*      |               | Values mapped to `credentials` block
+|===
+
+The `credentials` entry is optional. Credentials may be defined locally to the repository or globally using the
+<<_base_info_credentials,credentials>> block. Local credentials have precedence over global credentials that match
+the repository name.
 
 [[_base_info_people]]
 *people*

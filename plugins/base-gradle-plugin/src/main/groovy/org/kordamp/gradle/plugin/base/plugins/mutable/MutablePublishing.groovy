@@ -32,8 +32,8 @@ import org.kordamp.gradle.plugin.base.plugins.Publishing
 @Canonical
 @EqualsAndHashCode(excludes = ['project'])
 class MutablePublishing extends AbstractFeature implements Publishing {
-    String releasesRepoUrl
-    String snapshotsRepoUrl
+    String releasesRepository
+    String snapshotsRepository
     boolean signing = false
 
     private boolean signingSet
@@ -54,8 +54,8 @@ class MutablePublishing extends AbstractFeature implements Publishing {
 
         if (enabled) {
             map.signing = signing
-            map.releasesRepoUrl = releasesRepoUrl
-            map.snapshotsRepoUrl = snapshotsRepoUrl
+            map.releasesRepository = releasesRepository
+            map.snapshotsRepository = snapshotsRepository
         }
 
         ['publishing': map]
@@ -73,16 +73,16 @@ class MutablePublishing extends AbstractFeature implements Publishing {
     void copyInto(MutablePublishing copy) {
         super.copyInto(copy)
 
-        copy.@releasesRepoUrl = releasesRepoUrl
-        copy.@snapshotsRepoUrl = snapshotsRepoUrl
+        copy.@releasesRepository = releasesRepository
+        copy.@snapshotsRepository = snapshotsRepository
         copy.@signing = this.signing
         copy.@signingSet = this.signingSet
     }
 
     static void merge(MutablePublishing o1, MutablePublishing o2) {
         AbstractFeature.merge(o1, o2)
-        o1.releasesRepoUrl = o1.@releasesRepoUrl ?: o2.@releasesRepoUrl
-        o1.snapshotsRepoUrl = o1.@snapshotsRepoUrl ?: o2.@snapshotsRepoUrl
+        o1.releasesRepository = o1.@releasesRepository ?: o2.@releasesRepository
+        o1.snapshotsRepository = o1.@snapshotsRepository ?: o2.@snapshotsRepository
         o1.setSigning((boolean) (o1.signingSet ? o1.signing : o2.signing))
     }
 }

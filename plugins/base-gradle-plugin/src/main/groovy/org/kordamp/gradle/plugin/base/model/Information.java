@@ -38,6 +38,8 @@ public interface Information {
 
     PersonSet getPeople();
 
+    RepositorySet getRepositories();
+
     Organization getOrganization();
 
     Links getLinks();
