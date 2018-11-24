@@ -102,6 +102,10 @@ config {
 }
 ----
 
+The `release` flag should be set to `true` (default is `false`) when a release (any kind of release, even snapshot) is
+needed. At the moment this flag controls enrichment of JAR manifests as explained in the <<_org_kordamp_gradle_jar,Jar>>
+plugin. Other plugins may hook into this flag to provide additional configuration and behavior.
+
 [[_base_info]]
 *general*
 
