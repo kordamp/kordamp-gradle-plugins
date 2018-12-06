@@ -27,9 +27,9 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 
-import static org.kordamp.gradle.plugin.base.plugins.mutable.MutableStats.HTML
-import static org.kordamp.gradle.plugin.base.plugins.mutable.MutableStats.TXT
-import static org.kordamp.gradle.plugin.base.plugins.mutable.MutableStats.XML
+import static org.kordamp.gradle.plugin.base.plugins.Stats.HTML
+import static org.kordamp.gradle.plugin.base.plugins.Stats.TXT
+import static org.kordamp.gradle.plugin.base.plugins.Stats.XML
 
 /**
  * @author Andres Almiray

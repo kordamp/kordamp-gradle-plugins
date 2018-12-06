@@ -17,7 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import org.kordamp.gradle.plugin.base.model.mutable.MutableSpecification
+
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -28,11 +28,11 @@ import spock.lang.Unroll
 class SpecOrImplSpec extends Specification {
     def "Verify copy method with defaults"() {
         given:
-        MutableSpecification spec = new MutableSpecification()
-        MutableSpecification expected = new MutableSpecification()
+        org.kordamp.gradle.plugin.base.model.Specification spec = new org.kordamp.gradle.plugin.base.model.Specification()
+        org.kordamp.gradle.plugin.base.model.Specification expected = new org.kordamp.gradle.plugin.base.model.Specification()
 
         when:
-        MutableSpecification actual = spec.copyOf()
+        org.kordamp.gradle.plugin.base.model.Specification actual = spec.copyOf()
 
         then:
         actual == expected
@@ -46,13 +46,13 @@ class SpecOrImplSpec extends Specification {
 
     def "Verify copy method (enabled = #enabled)"() {
         given:
-        MutableSpecification spec = new MutableSpecification()
-        MutableSpecification expected = new MutableSpecification()
+        org.kordamp.gradle.plugin.base.model.Specification spec = new org.kordamp.gradle.plugin.base.model.Specification()
+        org.kordamp.gradle.plugin.base.model.Specification expected = new org.kordamp.gradle.plugin.base.model.Specification()
         expected.enabled = enabled
 
         when:
         spec.enabled = enabled
-        MutableSpecification actual = spec.copyOf()
+        org.kordamp.gradle.plugin.base.model.Specification actual = spec.copyOf()
 
         then:
         actual == expected
@@ -69,14 +69,14 @@ class SpecOrImplSpec extends Specification {
 
     def "Verify merge method with defaults"() {
         given:
-        MutableSpecification spec1 = new MutableSpecification()
-        MutableSpecification spec2 = new MutableSpecification()
-        MutableSpecification expected = new MutableSpecification()
+        org.kordamp.gradle.plugin.base.model.Specification spec1 = new org.kordamp.gradle.plugin.base.model.Specification()
+        org.kordamp.gradle.plugin.base.model.Specification spec2 = new org.kordamp.gradle.plugin.base.model.Specification()
+        org.kordamp.gradle.plugin.base.model.Specification expected = new org.kordamp.gradle.plugin.base.model.Specification()
         expected.enabled = true
 
         when:
-        MutableSpecification actual = spec1.copyOf()
-        MutableSpecification.merge(actual, spec2)
+        org.kordamp.gradle.plugin.base.model.Specification actual = spec1.copyOf()
+        org.kordamp.gradle.plugin.base.model.Specification.merge(actual, spec2)
 
         then:
         actual == expected
@@ -90,13 +90,13 @@ class SpecOrImplSpec extends Specification {
 
     def "Verify merge method (enabled1 = #enabled1, enabled2 = #enabled2, enabled = #enabled)"() {
         given:
-        MutableSpecification spec1 = new MutableSpecification(enabled: enabled1)
-        MutableSpecification spec2 = new MutableSpecification(enabled: enabled2)
-        MutableSpecification expected = new MutableSpecification(enabled: enabled)
+        org.kordamp.gradle.plugin.base.model.Specification spec1 = new org.kordamp.gradle.plugin.base.model.Specification(enabled: enabled1)
+        org.kordamp.gradle.plugin.base.model.Specification spec2 = new org.kordamp.gradle.plugin.base.model.Specification(enabled: enabled2)
+        org.kordamp.gradle.plugin.base.model.Specification expected = new org.kordamp.gradle.plugin.base.model.Specification(enabled: enabled)
 
         when:
-        MutableSpecification actual = spec1.copyOf()
-        MutableSpecification.merge(actual, spec2)
+        org.kordamp.gradle.plugin.base.model.Specification actual = spec1.copyOf()
+        org.kordamp.gradle.plugin.base.model.Specification.merge(actual, spec2)
 
         then:
         actual == expected
@@ -117,13 +117,13 @@ class SpecOrImplSpec extends Specification {
 
     def "Verify merge method (enabled2 = #enabled2, enabled = #enabled)"() {
         given:
-        MutableSpecification spec1 = new MutableSpecification()
-        MutableSpecification spec2 = new MutableSpecification(enabled: enabled2)
-        MutableSpecification expected = new MutableSpecification(enabled: enabled)
+        org.kordamp.gradle.plugin.base.model.Specification spec1 = new org.kordamp.gradle.plugin.base.model.Specification()
+        org.kordamp.gradle.plugin.base.model.Specification spec2 = new org.kordamp.gradle.plugin.base.model.Specification(enabled: enabled2)
+        org.kordamp.gradle.plugin.base.model.Specification expected = new org.kordamp.gradle.plugin.base.model.Specification(enabled: enabled)
 
         when:
-        MutableSpecification actual = spec1.copyOf()
-        MutableSpecification.merge(actual, spec2)
+        org.kordamp.gradle.plugin.base.model.Specification actual = spec1.copyOf()
+        org.kordamp.gradle.plugin.base.model.Specification.merge(actual, spec2)
 
         then:
         actual == expected

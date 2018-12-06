@@ -26,7 +26,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.plugins.mutable.MutableBuildInfo
+import org.kordamp.gradle.plugin.base.plugins.BuildInfo
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.minpom.MinPomPlugin
 
@@ -168,7 +168,7 @@ class JarPlugin implements Plugin<Project> {
         }
     }
 
-    private static void checkBuildInfoAttribute(MutableBuildInfo buildInfo, String key, Map map, String manifestKey) {
+    private static void checkBuildInfoAttribute(BuildInfo buildInfo, String key, Map map, String manifestKey) {
         if (!buildInfo."skip${key.capitalize()}") {
             map[manifestKey] = buildInfo[key]
         }

@@ -26,7 +26,7 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.PluginUtils
-import org.kordamp.gradle.plugin.base.plugins.mutable.MutableStats
+import org.kordamp.gradle.plugin.base.plugins.Stats
 import org.kordamp.gradle.plugin.stats.counter.CssCounter
 import org.kordamp.gradle.plugin.stats.counter.HashCounter
 import org.kordamp.gradle.plugin.stats.counter.JavaCounter
@@ -36,9 +36,9 @@ import org.kordamp.gradle.plugin.stats.counter.SqlCounter
 import org.kordamp.gradle.plugin.stats.counter.XmlCounter
 
 import static org.kordamp.gradle.StringUtils.getFilenameExtension
-import static org.kordamp.gradle.plugin.base.plugins.mutable.MutableStats.HTML
-import static org.kordamp.gradle.plugin.base.plugins.mutable.MutableStats.TXT
-import static org.kordamp.gradle.plugin.base.plugins.mutable.MutableStats.XML
+import static org.kordamp.gradle.plugin.base.plugins.Stats.HTML
+import static org.kordamp.gradle.plugin.base.plugins.Stats.TXT
+import static org.kordamp.gradle.plugin.base.plugins.Stats.XML
 
 /**
  * @author Andres Almiray
@@ -68,7 +68,7 @@ class SourceStatsTask extends DefaultTask {
         Map<String, Counter> counterInstances = resolveCounterInstances()
 
         Map merged = [:]
-        merged.putAll(MutableStats.defaultPaths())
+        merged.putAll(Stats.defaultPaths())
         merged.putAll(paths)
 
         PluginUtils.resolveSrcDirs(project).each { File dir ->
