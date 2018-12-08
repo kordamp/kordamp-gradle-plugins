@@ -16,7 +16,7 @@
 <h1>A collection of opinionated Gradle plugins</h1>
 <div class="details">
 <span id="author" class="author">Andres Almiray</span><br>
-<span id="revnumber">version 0.9.0</span>
+<span id="revnumber">version 0.10.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -191,7 +191,7 @@ still be bent to a certain degree. The plugins found in this project provide suc
         jcenter()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:{plugin-id}:0.9.0'
+        classpath 'org.kordamp.gradle:{plugin-id}:0.10.0'
     }
 }
 apply plugin: '{plugin-id}'</code></pre>
@@ -208,7 +208,7 @@ apply plugin: '{plugin-id}'</code></pre>
         jcenter()
     }
     dependencies {
-        classpath("org.kordamp.gradle:{plugin-id}:0.9.0")
+        classpath("org.kordamp.gradle:{plugin-id}:0.10.0")
     }
 }
 apply(plugin = "{plugin-id}")</code></pre>
@@ -221,7 +221,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id '{plugin-id}' version '0.9.0'
+    id '{plugin-id}' version '0.10.0'
 }</code></pre>
 </div>
 </div>
@@ -229,7 +229,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("{plugin-id}") version "0.9.0"
+    id("{plugin-id}") version "0.10.0"
 }</code></pre>
 </div>
 </div>
@@ -375,8 +375,8 @@ listOf("docs", "subprojects").forEach { dirName -&gt;
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.9.0'            <i class="conum" data-value="1"></i><b>(1)</b>
-    id 'org.kordamp.gradle.bintray' version '0.9.0'            <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.project' version '0.10.0'            <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.bintray' version '0.10.0'            <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 config {
@@ -456,8 +456,8 @@ allprojects {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.9.0"          <i class="conum" data-value="1"></i><b>(1)</b>
-    id("org.kordamp.gradle.bintray") version "0.9.0"          <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.project") version "0.10.0"          <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.bintray") version "0.10.0"          <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 val bintrayUsername: String by project
@@ -678,7 +678,7 @@ publications completely:</p>
 <div class="title">build.gradle (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.9.0'
+    id 'org.kordamp.gradle.project' version '0.10.0'
 }
 
 config {
@@ -697,7 +697,7 @@ allprojects {
 <div class="title">build.gradle.kts (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.9.0"
+    id("org.kordamp.gradle.project") version "0.10.0"
 }
 
 config {
@@ -1148,6 +1148,11 @@ class
     }
 }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>The <code>release</code> flag should be set to <code>true</code> (default is <code>false</code>) when a release (any kind of release, even snapshot) is
+needed. At the moment this flag controls enrichment of JAR manifests as explained in the <a href="#_org_kordamp_gradle_jar">Jar</a>
+plugin. Other plugins may hook into this flag to provide additional configuration and behavior.</p>
 </div>
 <div id="_base_info" class="paragraph">
 <p><strong>general</strong></p>
@@ -4707,7 +4712,7 @@ the project.</p>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
     id 'groovy'
-    id 'org.kordamp.gradle.minpom' version '0.9.0'
+    id 'org.kordamp.gradle.minpom' version '0.10.0'
 }
 
 group   = 'com.acme'
@@ -4723,7 +4728,7 @@ dependencies {
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
     `groovy`
-    id("org.kordamp.gradle.minpom") version "0.9.0"
+    id("org.kordamp.gradle.minpom") version "0.10.0"
 }
 
 group   = "com.acme"
@@ -6220,8 +6225,8 @@ destinationDir
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.9.0<br>
-Last updated 2018-11-21 08:54:10 +0100
+Version 0.10.0<br>
+Last updated 2018-11-23 18:48:30 +0100
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

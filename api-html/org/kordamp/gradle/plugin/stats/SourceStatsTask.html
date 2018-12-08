@@ -57,7 +57,7 @@ SourceStatsTask.groovy
 <a name="26"><font color="#808080">026</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.gradle.api.tasks.PathSensitivity</font><br />
 <a name="27"><font color="#808080">027</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.gradle.api.tasks.TaskAction</font><br />
 <a name="28"><font color="#808080">028</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.PluginUtils</font><br />
-<a name="29"><font color="#808080">029</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.base.plugins.mutable.MutableStats</font><br />
+<a name="29"><font color="#808080">029</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.base.plugins.Stats</font><br />
 <a name="30"><font color="#808080">030</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.stats.counter.CssCounter</font><br />
 <a name="31"><font color="#808080">031</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.stats.counter.HashCounter</font><br />
 <a name="32"><font color="#808080">032</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.stats.counter.JavaCounter</font><br />
@@ -67,9 +67,9 @@ SourceStatsTask.groovy
 <a name="36"><font color="#808080">036</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.stats.counter.XmlCounter</font><br />
 <a name="37"><font color="#808080">037</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="38"><font color="#808080">038</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.StringUtils.getFilenameExtension</font><br />
-<a name="39"><font color="#808080">039</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.base.plugins.mutable.MutableStats.HTML</font><br />
-<a name="40"><font color="#808080">040</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.base.plugins.mutable.MutableStats.TXT</font><br />
-<a name="41"><font color="#808080">041</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.base.plugins.mutable.MutableStats.XML</font><br />
+<a name="39"><font color="#808080">039</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.base.plugins.Stats.HTML</font><br />
+<a name="40"><font color="#808080">040</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.base.plugins.Stats.TXT</font><br />
+<a name="41"><font color="#808080">041</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.base.plugins.Stats.XML</font><br />
 <a name="42"><font color="#808080">042</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="43"><font color="#808080">043</font>&nbsp;</a><font color="#008000">/**</font><br />
 <a name="44"><font color="#808080">044</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;</font><font color="#005500">@author&nbsp;</font><font color="#008000">Andres&nbsp;Almiray</font><br />
@@ -99,7 +99,7 @@ SourceStatsTask.groovy
 <a name="68"><font color="#808080">068</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Map&lt;String,&nbsp;Counter&gt;&nbsp;counterInstances&nbsp;=&nbsp;resolveCounterInstances</font><font color="#000000">()</font><br />
 <a name="69"><font color="#808080">069</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="70"><font color="#808080">070</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Map&nbsp;merged&nbsp;=&nbsp;</font><font color="#000000">[</font><font color="#000000">:</font><font color="#000000">]</font><br />
-<a name="71"><font color="#808080">071</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">merged.putAll</font><font color="#000000">(</font><font color="#000000">MutableStats.defaultPaths</font><font color="#000000">())</font><br />
+<a name="71"><font color="#808080">071</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">merged.putAll</font><font color="#000000">(</font><font color="#000000">Stats.defaultPaths</font><font color="#000000">())</font><br />
 <a name="72"><font color="#808080">072</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">merged.putAll</font><font color="#000000">(</font><font color="#000000">paths</font><font color="#000000">)</font><br />
 <a name="73"><font color="#808080">073</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="74"><font color="#808080">074</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">PluginUtils.resolveSrcDirs</font><font color="#000000">(</font><font color="#000000">project</font><font color="#000000">)</font><font color="#000000">.each&nbsp;</font><font color="#000000">{&nbsp;</font><font color="#000000">File&nbsp;dir&nbsp;-&gt;</font><br />

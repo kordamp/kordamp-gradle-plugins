@@ -3,9 +3,7 @@ org.kordamp.gradle.plugin.apidoc
 org.kordamp.gradle.plugin.base
 org.kordamp.gradle.plugin.base.model
 org.kordamp.gradle.plugin.base.model.impl
-org.kordamp.gradle.plugin.base.model.mutable
 org.kordamp.gradle.plugin.base.plugins
-org.kordamp.gradle.plugin.base.plugins.mutable
 org.kordamp.gradle.plugin.bintray
 org.kordamp.gradle.plugin.bom
 org.kordamp.gradle.plugin.buildinfo
