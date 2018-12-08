@@ -366,11 +366,11 @@ class ProjectConfigurationExtension {
     List<String> validate() {
         List<String> errors = []
 
-        errors.addAll(this.@info.validate())
-        errors.addAll(this.@bom.validate(this.@info))
-        errors.addAll(this.@bintray.validate(this.@info))
-        errors.addAll(this.@license.validate(this.@info))
-        errors.addAll(this.@kotlindoc.validate())
+        errors.addAll(this.@info.validate(this))
+        errors.addAll(this.@bom.validate(this))
+        errors.addAll(this.@bintray.validate(this))
+        errors.addAll(this.@license.validate(this))
+        errors.addAll(this.@kotlindoc.validate(this))
 
         errors
     }

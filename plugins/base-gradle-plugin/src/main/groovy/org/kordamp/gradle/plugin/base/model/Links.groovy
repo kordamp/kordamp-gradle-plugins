@@ -21,7 +21,7 @@ import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
-import org.gradle.api.Project
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -63,17 +63,19 @@ class Links {
         o1.scm = o1.scm ?: o2.scm
     }
 
-    List<String> validate(Project project) {
+    List<String> validate(ProjectConfigurationExtension extension) {
         List<String> errors = []
 
-        if (isBlank(website)) {
-            errors << "[${project.name}] Project links:website is blank".toString()
+        if (isBlank(website) && isBlank(extension.info.organization.url) &&
+            (extension.publishing.enabled || extension.bintray.enabled)) {
+            errors << "[${extension.project.name}] Project links.website is blank".toString()
         }
-        if (isBlank(issueTracker)) {
-            errors << "[${project.name}] Project links:issueTracker is blank".toString()
+        if (isBlank(issueTracker) && extension.bintray.enabled) {
+            errors << "[${extension.project.name}] Project links.issueTracker is blank".toString()
         }
-        if (isBlank(scm)) {
-            errors << "[${project.name}] Project links:scm is blank".toString()
+        if (isBlank(scm) && isBlank(extension.info.scm.url) &&
+            (extension.publishing.enabled || extension.bintray.enabled)) {
+            errors << "[${extension.project.name}] Project links.scm is blank".toString()
         }
 
         errors

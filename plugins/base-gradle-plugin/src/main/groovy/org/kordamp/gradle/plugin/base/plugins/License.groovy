@@ -24,7 +24,7 @@ import groovy.transform.EqualsAndHashCode
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
-import org.kordamp.gradle.plugin.base.model.Information
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.LicenseSet
 
 /**
@@ -75,12 +75,12 @@ class License extends AbstractFeature {
         LicenseSet.merge(o1.licenses, o2.licenses)
     }
 
-    List<String> validate(Information info) {
+    List<String> validate(ProjectConfigurationExtension extension) {
         List<String> errors = []
 
         if (!enabled) return errors
 
-        errors = licenses.validate(project)
+        errors = licenses.validate(extension)
 
         errors
     }

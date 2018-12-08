@@ -25,6 +25,7 @@ import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -69,21 +70,21 @@ class Information {
     @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
         ['info': [
-            name: getName(),
-            description: description,
-            url: url,
-            inceptionYear: getInceptionYear(),
-            copyrightYear: copyrightYear,
-            vendor: getVendor(),
-            authors: authors,
-            organization: organization.toMap(),
-            people: people.toMap(),
-            repositories: repositories.toMap(),
-            links: links.toMap(),
-            scm: scm.toMap(),
-            specification: specification.toMap(),
+            name          : getName(),
+            description   : description,
+            url           : url,
+            inceptionYear : getInceptionYear(),
+            copyrightYear : copyrightYear,
+            vendor        : getVendor(),
+            authors       : authors,
+            organization  : organization.toMap(),
+            people        : people.toMap(),
+            repositories  : repositories.toMap(),
+            links         : links.toMap(),
+            scm           : scm.toMap(),
+            specification : specification.toMap(),
             implementation: implementation.toMap(),
-            credentials: credentials.toMap()
+            credentials   : credentials.toMap()
         ]]
     }
 
@@ -129,7 +130,7 @@ class Information {
         o1.normalize()
     }
 
-    List<String> validate() {
+    List<String> validate(ProjectConfigurationExtension extension) {
         List<String> errors = []
 
         if (isBlank(description)) {
@@ -137,6 +138,14 @@ class Information {
         }
         if (isBlank(vendor)) {
             errors << "[${project.name}] Project vendor is blank".toString()
+        }
+        if (isBlank(organization.url) && isBlank(links.website) &&
+            (extension.publishing.enabled || extension.bintray.enabled)) {
+            errors << "[${project.name}] Project organization.url is blank".toString()
+        }
+        if (isBlank(scm.url) && isBlank(links.scm) &&
+            (extension.publishing.enabled || extension.bintray.enabled)) {
+            errors << "[${project.name}] Project scm.url is blank".toString()
         }
 
         errors

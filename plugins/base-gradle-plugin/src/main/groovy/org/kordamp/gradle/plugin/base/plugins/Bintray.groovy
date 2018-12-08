@@ -24,6 +24,7 @@ import groovy.transform.EqualsAndHashCode
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Credentials
 import org.kordamp.gradle.plugin.base.model.Information
 
@@ -132,7 +133,7 @@ class Bintray extends AbstractFeature {
         o1.credentials.merge(o1.credentials, o2.credentials)
     }
 
-    List<String> validate(Information info) {
+    List<String> validate(ProjectConfigurationExtension extension) {
         List<String> errors = []
 
         if (!enabled) return errors
@@ -148,7 +149,7 @@ class Bintray extends AbstractFeature {
             errors << "[${project.name}] Bintray credentials.password is blank".toString()
         }
 
-        errors.addAll(info.links.validate(project))
+        errors.addAll(extension.info.links.validate(extension))
 
         errors
     }

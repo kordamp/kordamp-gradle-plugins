@@ -22,8 +22,8 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.gradle.api.Action
-import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
@@ -88,11 +88,11 @@ class LicenseSet {
         ids
     }
 
-    List<String> validate(Project project) {
+    List<String> validate(ProjectConfigurationExtension extension) {
         List<String> errors = []
 
         if (licenses.isEmpty()) {
-            errors << "[${project.name}] No licenses have been defined".toString()
+            errors << "[${extension.project.name}] No licenses have been defined".toString()
         }
 
         errors

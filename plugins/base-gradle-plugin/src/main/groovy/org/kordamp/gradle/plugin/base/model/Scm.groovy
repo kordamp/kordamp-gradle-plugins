@@ -72,4 +72,8 @@ class Scm {
 
         errors
     }
+
+    boolean isEmpty() {
+        isBlank(url)
+    }
 }

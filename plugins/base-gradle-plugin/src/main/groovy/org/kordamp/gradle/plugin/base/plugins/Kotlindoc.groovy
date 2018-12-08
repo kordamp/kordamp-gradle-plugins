@@ -27,6 +27,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -287,7 +288,7 @@ class Kotlindoc extends AbstractFeature {
         o1.normalize()
     }
 
-    List<String> validate() {
+    List<String> validate(ProjectConfigurationExtension extension) {
         List<String> errors = []
 
         if (!enabled) return errors

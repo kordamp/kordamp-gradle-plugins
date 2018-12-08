@@ -22,7 +22,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import org.gradle.api.Project
-import org.kordamp.gradle.plugin.base.model.Information
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
@@ -94,7 +94,7 @@ class Bom extends AbstractFeature {
         o1.excludes.addAll(((o1.excludes ?: []) + (o2.excludes ?: [])).unique())
     }
 
-    List<String> validate(Information info) {
+    List<String> validate(ProjectConfigurationExtension extension) {
         List<String> errors = []
 
         if (!enabled) return errors
