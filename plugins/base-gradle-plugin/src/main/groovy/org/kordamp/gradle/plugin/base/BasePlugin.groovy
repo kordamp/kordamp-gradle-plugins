@@ -21,6 +21,11 @@ package org.kordamp.gradle.plugin.base
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask
+import org.kordamp.gradle.plugin.base.tasks.ExtensionsTask
+import org.kordamp.gradle.plugin.base.tasks.PluginsTask
+import org.kordamp.gradle.plugin.base.tasks.ProjectPropertiesTask
+import org.kordamp.gradle.plugin.base.tasks.RepositoriesTask
 
 /**
  *
@@ -43,10 +48,31 @@ class BasePlugin implements Plugin<Project> {
             project.extensions.create('config', ProjectConfigurationExtension, project)
         }
 
-        project.tasks.create('effectiveSettings', EffectiveSettingsTask) {
-            group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-            description 'Displays resolved settings'
+        project.tasks.register('effectiveSettings', EffectiveSettingsTask) {
+            group 'Insight'
+            description "Displays resolved settings for project '$project.name'"
         }
+
+        project.tasks.register('repositories', RepositoriesTask) {
+            group 'Insight'
+            description "Displays all repositories for project '$project.name'"
+        }
+
+        project.tasks.register('plugins', PluginsTask) {
+            group 'Insight'
+            description "Displays all plugins applied to project '$project.name'"
+        }
+
+        project.tasks.register('extensions', ExtensionsTask) {
+            group 'Insight'
+            description "Displays all extensions applied to project '$project.name'"
+        }
+
+        project.tasks.register('projectProperties', ProjectPropertiesTask) {
+            group 'Insight'
+            description "Displays all properties found in project '$project.name'"
+        }
+
 
         project.afterEvaluate {
             String visitedPropertyName = VISITED + '_' + project.name

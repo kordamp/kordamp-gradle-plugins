@@ -265,7 +265,7 @@ Displays resolved settings
 
 [horizontal]
 Name:: effectiveSettings
-Type:: `org.kordamp.gradle.plugin.base.EffectiveSettingsTask`
+Type:: `org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask`
 
 .Options
 [horizontal]
@@ -274,3 +274,46 @@ sections:: The section to generate the report for.
 
 You may specify either of the two, be advised that `sections` has precedence over `section`. All sections will be displayed
 if neither of these options is specified. Section names match entries found in the <<_project_dsl,DSL>>.
+
+[[_task_extensions]]
+=== Extensions
+
+Displays all extensions applied to a project
+
+[horizontal]
+Name:: effectiveSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.ExtensionsTask`
+
+[[_task_plugins]]
+=== Plugins
+
+Displays all plugins applied to a project
+
+[horizontal]
+Name:: plugins
+Type:: `org.kordamp.gradle.plugin.base.tasks.PluginsTask`
+
+[[_task_properties]]
+=== ProjectProperties
+
+Displays all properties found in a project
+
+[horizontal]
+Name:: projectProperties
+Type:: `org.kordamp.gradle.plugin.base.tasks.PropertiesTask`
+
+.Options
+[horizontal]
+section:: The section to generate the report for.
+
+Valid values for `section` are: project, ext.
+
+[[_task_repositories]]
+=== Repositories
+
+Displays all repositories used for resolving project dependencies
+
+[horizontal]
+Name:: repositories
+Type:: `org.kordamp.gradle.plugin.base.tasks.RepositoriesTask`
+
