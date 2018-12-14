@@ -18,10 +18,10 @@
 package org.kordamp.gradle.plugin.stats
 
 import org.gradle.BuildAdapter
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.Stats
@@ -32,9 +32,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.5.0
  */
-class SourceStatsPlugin implements Plugin<Project> {
-    private static final String VISITED = SourceStatsPlugin.class.name.replace('.', '_') + '_VISITED'
-
+class SourceStatsPlugin extends AbstractKordampPlugin {
     static final String AGGREGATE_STATS_TASK_NAME = 'aggregateSourceStats'
 
     Project project
@@ -57,18 +55,18 @@ class SourceStatsPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
 
         project.afterEvaluate {
             ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+            setEnabled(mergedConfiguration.stats.enabled)
 
-            if (mergedConfiguration.stats.enabled) {
+            if (enabled) {
                 if(isRootProject(project) && project.childProjects.isEmpty()) {
                     maybeCreateStatsTask(project)
                 } else if (!isRootProject(project)) {

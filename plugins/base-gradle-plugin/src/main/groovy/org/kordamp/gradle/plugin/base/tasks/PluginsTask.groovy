@@ -22,6 +22,7 @@ import org.gradle.api.artifacts.repositories.FlatDirectoryArtifactRepository
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.tasks.TaskAction
+import org.kordamp.gradle.plugin.KordampPlugin
 
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -70,6 +71,9 @@ class PluginsTask extends AbstractReportingTask {
 
         map.id = pluginMetadata[plugin.class.name]
         map.implementationClass = plugin.class
+        if (plugin instanceof KordampPlugin) {
+            map.enabled = plugin.enabled
+        }
 
         [('plugin ' + index): map]
     }

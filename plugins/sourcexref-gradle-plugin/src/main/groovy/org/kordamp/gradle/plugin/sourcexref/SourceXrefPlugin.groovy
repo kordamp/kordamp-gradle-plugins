@@ -19,13 +19,13 @@ package org.kordamp.gradle.plugin.sourcexref
 
 import org.gradle.BuildAdapter
 import org.gradle.api.DefaultTask
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.GroovyBasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.SourceXref
@@ -37,9 +37,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.7.0
  */
-class SourceXrefPlugin implements Plugin<Project> {
-    private static final String VISITED = SourceXrefPlugin.class.name.replace('.', '_') + '_VISITED'
-
+class SourceXrefPlugin extends AbstractKordampPlugin {
     static final String SOURCE_XREF_TASK_NAME = 'sourceXref'
     static final String AGGREGATE_SOURCE_XREF_TASK_NAME = 'aggregateSourceXref'
 
@@ -63,11 +61,10 @@ class SourceXrefPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
 
@@ -85,6 +82,7 @@ class SourceXrefPlugin implements Plugin<Project> {
                     }
                 }
             }
+            setEnabled(mergedConfiguration.sourceXref.enabled)
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {

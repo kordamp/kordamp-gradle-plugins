@@ -70,7 +70,7 @@ class ProjectPropertiesTask extends AbstractReportingTask {
 
         props.ext = new TreeMap<>()
         project.extensions.findByType(ExtraPropertiesExtension).properties.each { key, value ->
-            if (key == 'mergedConfiguration' || key =~ /org_kordamp_gradle_plugin_.+_VISITED/) {
+            if (key == 'mergedConfiguration') {
                 return
             }
             props.ext[key] = value

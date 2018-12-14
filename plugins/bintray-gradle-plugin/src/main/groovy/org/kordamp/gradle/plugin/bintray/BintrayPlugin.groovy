@@ -18,9 +18,9 @@
 package org.kordamp.gradle.plugin.bintray
 
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 
@@ -33,9 +33,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.2.0
  */
-class BintrayPlugin implements Plugin<Project> {
-    private static final String VISITED = BintrayPlugin.class.name.replace('.', '_') + '_VISITED'
-
+class BintrayPlugin extends AbstractKordampPlugin {
     Project project
 
     void apply(Project project) {
@@ -61,11 +59,10 @@ class BintrayPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         PublishingPlugin.applyIfMissing(project)
 
@@ -87,6 +84,7 @@ class BintrayPlugin implements Plugin<Project> {
 
         if (!mergedConfiguration.bintray.enabled || !project.sourceSets.findByName('main')) {
             project.getTasks().findByName(BintrayUploadTask.TASK_NAME)?.enabled = false
+            setEnabled(false)
             return
         }
 

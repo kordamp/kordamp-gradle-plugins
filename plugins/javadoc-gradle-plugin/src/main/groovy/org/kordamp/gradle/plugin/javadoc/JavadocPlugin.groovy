@@ -18,12 +18,12 @@
 package org.kordamp.gradle.plugin.javadoc
 
 import org.gradle.api.JavaVersion
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
@@ -35,11 +35,9 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.1.0
  */
-class JavadocPlugin implements Plugin<Project> {
+class JavadocPlugin extends AbstractKordampPlugin {
     static final String JAVADOC_TASK_NAME = 'javadoc'
     static final String JAVADOC_JAR_TASK_NAME = 'javadocJar'
-
-    private static final String VISITED = JavadocPlugin.class.name.replace('.', '_') + '_VISITED'
 
     Project project
 
@@ -66,18 +64,18 @@ class JavadocPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
 
         project.afterEvaluate {
             ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+            setEnabled(mergedConfiguration.javadoc.enabled)
 
-            if (!mergedConfiguration.javadoc.enabled) {
+            if (!enabled) {
                 return
             }
 

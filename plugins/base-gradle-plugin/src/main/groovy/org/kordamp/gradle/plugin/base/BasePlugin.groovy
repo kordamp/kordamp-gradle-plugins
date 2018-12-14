@@ -17,10 +17,9 @@
  */
 package org.kordamp.gradle.plugin.base
 
-
 import org.gradle.api.GradleException
-import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ExtensionsTask
 import org.kordamp.gradle.plugin.base.tasks.PluginsTask
@@ -32,9 +31,7 @@ import org.kordamp.gradle.plugin.base.tasks.RepositoriesTask
  * @author Andres Almiray
  * @since 0.1.0
  */
-class BasePlugin implements Plugin<Project> {
-    private static final String VISITED = BasePlugin.class.name.replace('.', '_') + '_VISITED'
-
+class BasePlugin extends AbstractKordampPlugin {
     Project project
 
     void apply(Project project) {
@@ -75,11 +72,10 @@ class BasePlugin implements Plugin<Project> {
 
 
         project.afterEvaluate {
-            String visitedPropertyName = VISITED + '_' + project.name
-            if (project.findProperty(visitedPropertyName)) {
+            if (hasBeenVisited(project)) {
                 return
             }
-            project.ext[visitedPropertyName] = true
+            setVisited(project, true)
 
             ProjectConfigurationExtension rootExtension = project.rootProject.extensions.findByType(ProjectConfigurationExtension)
             ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)

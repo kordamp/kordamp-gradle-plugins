@@ -25,9 +25,9 @@ import nl.javadude.gradle.plugins.license.DownloadLicensesExtension
 import nl.javadude.gradle.plugins.license.LicenseExtension
 import nl.javadude.gradle.plugins.license.LicenseMetadata
 import org.gradle.BuildAdapter
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.License
@@ -39,9 +39,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.2.0
  */
-class LicensePlugin implements Plugin<Project> {
-    private static final String VISITED = LicensePlugin.class.name.replace('.', '_') + '_VISITED'
-
+class LicensePlugin extends AbstractKordampPlugin {
     private static final LicenseMetadata LICENSE_APACHE_TWO = new LicenseMetadata('The Apache Software License, Version 2.0', LicenseId.APACHE_2_0.url())
     private static final LicenseMetadata LICENSE_EPL1 = new LicenseMetadata('Eclipse Public License v1.0', LicenseId.EPL_1_0.url())
     private static final LicenseMetadata LICENSE_EPL2 = new LicenseMetadata('Eclipse Public License v2.0', LicenseId.EPL_2_0.url())
@@ -149,11 +147,10 @@ class LicensePlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
 
@@ -183,8 +180,9 @@ class LicensePlugin implements Plugin<Project> {
 
     private void configureLicenseExtension(Project project) {
         ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        setEnabled(mergedConfiguration.license.enabled)
 
-        if (!mergedConfiguration.license.enabled) {
+        if (!enabled) {
             project.tasks.withType(LicenseCheck).each { it.enabled = false }
             project.tasks.withType(LicenseFormat).each { it.enabled = false }
             return

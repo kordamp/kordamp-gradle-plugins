@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.jacoco
 
 import org.gradle.BuildAdapter
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
@@ -28,6 +27,7 @@ import org.gradle.testing.jacoco.tasks.JacocoMerge
 import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.StringUtils
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.Jacoco
@@ -39,9 +39,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.2.0
  */
-class JacocoPlugin implements Plugin<Project> {
-    private static final String VISITED = JacocoPlugin.class.name.replace('.', '_') + '_VISITED'
-
+class JacocoPlugin extends AbstractKordampPlugin {
     Project project
 
     void apply(Project project) {
@@ -62,18 +60,19 @@ class JacocoPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
         project.plugins.apply(org.gradle.testing.jacoco.plugins.JacocoPlugin)
 
         project.afterEvaluate {
             ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
-            if (!mergedConfiguration.jacoco.enabled) {
+            setEnabled(mergedConfiguration.jacoco.enabled)
+
+            if (!enabled) {
                 return
             }
 

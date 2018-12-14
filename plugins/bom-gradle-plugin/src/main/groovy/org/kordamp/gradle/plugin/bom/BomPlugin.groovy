@@ -19,11 +19,11 @@ package org.kordamp.gradle.plugin.bom
 
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.plugins.signing.SigningPlugin
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Credentials
@@ -38,9 +38,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @author Andres Almiray
  * @since 0.9.0
  */
-class BomPlugin implements Plugin<Project> {
-    private static final String VISITED = BomPlugin.class.name.replace('.', '_') + '_VISITED'
-
+class BomPlugin extends AbstractKordampPlugin {
     Project project
 
     void apply(Project project) {
@@ -59,11 +57,10 @@ class BomPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
 
@@ -80,8 +77,9 @@ class BomPlugin implements Plugin<Project> {
 
     private void updatePublications(Project project) {
         ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        setEnabled(mergedConfiguration.bom.enabled)
 
-        if (!mergedConfiguration.bom.enabled) {
+        if (!enabled) {
             return
         }
 

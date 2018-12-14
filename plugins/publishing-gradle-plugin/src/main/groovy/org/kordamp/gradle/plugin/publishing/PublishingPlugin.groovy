@@ -17,13 +17,13 @@
  */
 package org.kordamp.gradle.plugin.publishing
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.plugins.signing.SigningPlugin
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -45,9 +45,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.2.0
  */
-class PublishingPlugin implements Plugin<Project> {
-    private static final String VISITED = PublishingPlugin.class.name.replace('.', '_') + '_VISITED'
-
+class PublishingPlugin extends AbstractKordampPlugin {
     Project project
 
     void apply(Project project) {
@@ -76,11 +74,10 @@ class PublishingPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
         BuildInfoPlugin.applyIfMissing(project)
@@ -105,6 +102,7 @@ class PublishingPlugin implements Plugin<Project> {
         ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
 
         if (!mergedConfiguration.publishing.enabled || !project.sourceSets.findByName('main')) {
+            setEnabled(false)
             return
         }
 

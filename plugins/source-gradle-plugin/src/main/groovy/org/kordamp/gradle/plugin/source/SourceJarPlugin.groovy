@@ -17,11 +17,11 @@
  */
 package org.kordamp.gradle.plugin.source
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
@@ -33,10 +33,8 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.1.0
  */
-class SourceJarPlugin implements Plugin<Project> {
+class SourceJarPlugin extends AbstractKordampPlugin {
     static final String SOURCE_JAR_TASK_NAME = 'sourceJar'
-
-    private static final String VISITED = SourceJarPlugin.class.name.replace('.', '_') + '_VISITED'
 
     Project project
 
@@ -63,18 +61,18 @@ class SourceJarPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
 
         project.afterEvaluate {
             ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+            setEnabled(mergedConfiguration.source.enabled)
 
-            if (!mergedConfiguration.source.enabled) {
+            if (!enabled) {
                 return
             }
 

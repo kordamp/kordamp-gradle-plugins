@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.groovydoc
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.GroovyBasePlugin
@@ -25,6 +24,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.api.tasks.javadoc.Javadoc
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
@@ -37,11 +37,9 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.4.0
  */
-class GroovydocPlugin implements Plugin<Project> {
+class GroovydocPlugin extends AbstractKordampPlugin {
     static final String GROOVYDOC_TASK_NAME = 'groovydoc'
     static final String GROOVYDOC_JAR_TASK_NAME = 'groovydocJar'
-
-    private static final String VISITED = GroovydocPlugin.class.name.replace('.', '_') + '_VISITED'
 
     Project project
 
@@ -68,11 +66,10 @@ class GroovydocPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
         // apply first then we can be certain javadoc tasks can be located on time
@@ -80,8 +77,9 @@ class GroovydocPlugin implements Plugin<Project> {
 
         project.afterEvaluate {
             ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+            setEnabled(mergedConfiguration.groovydoc.enabled)
 
-            if (!mergedConfiguration.groovydoc.enabled) {
+            if (!enabled) {
                 return
             }
 

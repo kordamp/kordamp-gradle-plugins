@@ -18,12 +18,12 @@
 package org.kordamp.gradle.plugin.jar
 
 import org.gradle.BuildAdapter
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.BuildInfo
@@ -39,9 +39,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.1.0
  */
-class JarPlugin implements Plugin<Project> {
-    private static final String VISITED = JarPlugin.class.name.replace('.', '_') + '_VISITED'
-
+class JarPlugin extends AbstractKordampPlugin {
     Project project
 
     void apply(Project project) {
@@ -67,11 +65,10 @@ class JarPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
         BuildInfoPlugin.applyIfMissing(project)
@@ -122,8 +119,9 @@ class JarPlugin implements Plugin<Project> {
 
     private void configureJarMetainf(Project project, Jar jarTask) {
         ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
+        setEnabled(mergedConfiguration.minpom.enabled)
 
-        if (mergedConfiguration.minpom.enabled) {
+        if (enabled) {
             jarTask.configure {
                 dependsOn MinPomPlugin.MINPOM_TASK_NAME
                 metaInf {

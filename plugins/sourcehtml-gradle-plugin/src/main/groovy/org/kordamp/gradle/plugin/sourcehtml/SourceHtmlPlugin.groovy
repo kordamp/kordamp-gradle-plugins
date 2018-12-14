@@ -22,7 +22,6 @@ import com.bmuschko.gradle.java2html.GenerateOverviewTask
 import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
@@ -34,6 +33,7 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.GroovyBasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.Copy
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.SourceHtml
@@ -44,9 +44,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.5.0
  */
-class SourceHtmlPlugin implements Plugin<Project> {
-    private static final String VISITED = SourceHtmlPlugin.class.name.replace('.', '_') + '_VISITED'
-
+class SourceHtmlPlugin extends AbstractKordampPlugin {
     static final String AGGREGATE_SOURCE_HTML_TASK_NAME = 'aggregateSourceHtml'
     static final String AGGREGATE_CONVERT_CODE_TO_HTML_TASK_NAME = 'aggregateConvertCodeToHtml'
     static final String AGGREGATE_GENERATE_SOURCE_HTML_OVERVIEW_TASK_NAME = 'aggregateGenerateSourceHtmlOverview'
@@ -73,11 +71,10 @@ class SourceHtmlPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
 
@@ -106,6 +103,7 @@ class SourceHtmlPlugin implements Plugin<Project> {
                     }
                 }
             }
+            setEnabled(mergedConfiguration.sourceHtml.enabled)
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {

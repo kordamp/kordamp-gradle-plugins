@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.kotlindoc
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
@@ -30,6 +29,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.DokkaVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.kordamp.gradle.StringUtils
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.Kotlindoc
@@ -43,10 +43,9 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.7.0
  */
-class KotlindocPlugin implements Plugin<Project> {
+class KotlindocPlugin extends AbstractKordampPlugin {
     static final String KOTLINDOC_BASENAME = 'kotlindoc'
 
-    private static final String VISITED = KotlindocPlugin.class.name.replace('.', '_') + '_VISITED'
     private static final DokkaVersion DOKKA_VERSION = new DokkaVersion()
 
     static {
@@ -78,11 +77,10 @@ class KotlindocPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
         // apply first then we can be certain javadoc tasks can be located on time
@@ -90,8 +88,9 @@ class KotlindocPlugin implements Plugin<Project> {
 
         project.afterEvaluate {
             ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+            setEnabled(mergedConfiguration.kotlindoc.enabled)
 
-            if (!mergedConfiguration.kotlindoc.enabled) {
+            if (!enabled) {
                 return
             }
 

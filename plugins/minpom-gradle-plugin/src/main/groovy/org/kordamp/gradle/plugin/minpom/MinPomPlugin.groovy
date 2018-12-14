@@ -17,11 +17,10 @@
  */
 package org.kordamp.gradle.plugin.minpom
 
-
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
@@ -35,10 +34,8 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.1.0
  */
-class MinPomPlugin implements Plugin<Project> {
+class MinPomPlugin extends AbstractKordampPlugin {
     static final String MINPOM_TASK_NAME = 'minpom'
-
-    private static final String VISITED = MinPomPlugin.class.name.replace('.', '_') + '_VISITED'
 
     Project project
 
@@ -65,17 +62,18 @@ class MinPomPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
 
         project.afterEvaluate {
             ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
-            if (!mergedConfiguration.minpom.enabled) {
+            setEnabled(mergedConfiguration.minpom.enabled)
+
+            if (!enabled) {
                 return
             }
 

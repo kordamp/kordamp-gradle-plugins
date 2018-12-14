@@ -21,12 +21,12 @@ import org.asciidoctor.gradle.AsciidoctorPlugin
 import org.asciidoctor.gradle.AsciidoctorTask
 import org.gradle.BuildAdapter
 import org.gradle.api.DefaultTask
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.bundling.Zip
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -36,9 +36,7 @@ import org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
  * @author Andres Almiray
  * @since 0.3.0
  */
-class GuidePlugin implements Plugin<Project> {
-    private static final String VISITED = GuidePlugin.class.name.replace('.', '_') + '_VISITED'
-
+class GuidePlugin extends AbstractKordampPlugin {
     static final String CREATE_GUIDE_TASK_NAME = 'createGuide'
     static final String INIT_GUIDE_TASK_NAME = 'initGuide'
     static final String ZIP_GUIDE_TASK_NAME = 'zipGuide'
@@ -50,11 +48,10 @@ class GuidePlugin implements Plugin<Project> {
     void apply(Project project) {
         this.project = project
 
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
         ApidocPlugin.applyIfMissing(project.rootProject)

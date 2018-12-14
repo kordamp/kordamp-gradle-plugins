@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.apidoc
 import org.gradle.BuildAdapter
 import org.gradle.api.DefaultTask
 import org.gradle.api.JavaVersion
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
@@ -28,6 +27,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.api.tasks.javadoc.Javadoc
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.groovydoc.GroovydocPlugin
@@ -41,14 +41,12 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.1.0
  */
-class ApidocPlugin implements Plugin<Project> {
+class ApidocPlugin extends AbstractKordampPlugin {
     static final String AGGREGATE_APIDOCS_TASK_NAME = 'aggregateApidocs'
     static final String AGGREGATE_JAVADOCS_TASK_NAME = 'aggregateJavadocs'
     static final String AGGREGATE_JAVADOCS_JAR_TASK_NAME = 'aggregateJavadocsJar'
     static final String AGGREGATE_GROOVYDOCS_TASK_NAME = 'aggregateGroovydocs'
     static final String AGGREGATE_GROOVYDOCS_JAR_TASK_NAME = 'aggregateGroovydocsJar'
-
-    private static final String VISITED = ApidocPlugin.class.name.replace('.', '_') + '_VISITED'
 
     Project project
 
@@ -77,11 +75,10 @@ class ApidocPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
         JavadocPlugin.applyIfMissing(project)
@@ -89,11 +86,10 @@ class ApidocPlugin implements Plugin<Project> {
     }
 
     private void configureRootProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
 
@@ -109,8 +105,9 @@ class ApidocPlugin implements Plugin<Project> {
 
     private void doConfigureRootProject(Project project) {
         ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        setEnabled(mergedConfiguration.apidoc.enabled)
 
-        if (!mergedConfiguration.apidoc.enabled) {
+        if (!enabled) {
             return
         }
 

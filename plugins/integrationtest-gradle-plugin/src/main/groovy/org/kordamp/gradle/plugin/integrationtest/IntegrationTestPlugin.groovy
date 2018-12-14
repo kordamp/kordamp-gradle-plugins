@@ -17,31 +17,29 @@
  */
 package org.kordamp.gradle.plugin.integrationtest
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.TestReport
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 
 /**
  * @author Andres Almiray
  * @since 0.2.0
  */
-class IntegrationTestPlugin implements Plugin<Project> {
-    private static final String VISITED = IntegrationTestPlugin.class.name.replace('.', '_') + '_VISITED'
+class IntegrationTestPlugin extends AbstractKordampPlugin {
     Project project
 
     void apply(Project project) {
         this.project = project
 
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
 

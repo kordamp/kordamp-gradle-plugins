@@ -19,8 +19,8 @@ package org.kordamp.gradle.plugin.buildinfo
 
 import net.nemerosa.versioning.VersioningExtension
 import net.nemerosa.versioning.VersioningPlugin
-import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
@@ -43,9 +43,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.1.0
  */
-class BuildInfoPlugin implements Plugin<Project> {
-    private static final String VISITED = BuildInfoPlugin.class.name.replace('.', '_') + '_VISITED'
-
+class BuildInfoPlugin extends AbstractKordampPlugin {
     Project project
 
     void apply(Project project) {
@@ -57,11 +55,10 @@ class BuildInfoPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        String visitedPropertyName = VISITED + '_' + project.name
-        if (project.findProperty(visitedPropertyName)) {
+        if (hasBeenVisited(project)) {
             return
         }
-        project.ext[visitedPropertyName] = true
+        setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
 
@@ -72,8 +69,9 @@ class BuildInfoPlugin implements Plugin<Project> {
 
     private void configureBuildProperties(Project project) {
         ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        setEnabled(mergedConfiguration.buildInfo.enabled)
 
-        if (!mergedConfiguration.buildInfo.enabled) {
+        if (!enabled) {
             return
         }
 
