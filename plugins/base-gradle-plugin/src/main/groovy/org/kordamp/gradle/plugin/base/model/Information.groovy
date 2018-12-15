@@ -133,10 +133,12 @@ class Information {
     List<String> validate(ProjectConfigurationExtension extension) {
         List<String> errors = []
 
-        if (isBlank(description)) {
+        if (isBlank(description) &&
+            (extension.publishing.enabled || extension.bintray.enabled)) {
             errors << "[${project.name}] Project description is blank".toString()
         }
-        if (isBlank(vendor)) {
+        if (isBlank(vendor) &&
+            (extension.publishing.enabled || extension.bintray.enabled)) {
             errors << "[${project.name}] Project vendor is blank".toString()
         }
         if (isBlank(organization.url) && isBlank(links.website) &&

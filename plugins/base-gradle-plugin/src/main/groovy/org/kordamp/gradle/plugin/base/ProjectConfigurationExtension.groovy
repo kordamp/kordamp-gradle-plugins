@@ -108,6 +108,7 @@ class ProjectConfigurationExtension {
         this.sourceHtml = other.sourceHtml
         this.sourceXref = other.sourceXref
         this.stats = other.stats
+        setRelease(other.release)
     }
 
     String toString() {
