@@ -39,4 +39,8 @@ abstract class AbstractKordampPlugin implements KordampPlugin {
     protected void setVisited(Project project, boolean visited) {
         project.ext.set(visitedKey + '_' + project.name, visited)
     }
+
+    protected void setEnabled(boolean enabled) {
+        this.enabled = enabled
+    }
 }

@@ -69,12 +69,7 @@ class ProjectPropertiesTask extends AbstractReportingTask {
         ]
 
         props.ext = new TreeMap<>()
-        project.extensions.findByType(ExtraPropertiesExtension).properties.each { key, value ->
-            if (key == 'mergedConfiguration') {
-                return
-            }
-            props.ext[key] = value
-        }
+        props.ext.putAll(project.extensions.findByType(ExtraPropertiesExtension).properties)
 
         props
     }

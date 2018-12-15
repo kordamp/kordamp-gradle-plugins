@@ -63,8 +63,8 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         project.afterEvaluate {
-            ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
-            setEnabled(mergedConfiguration.stats.enabled)
+            ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+            setEnabled(effectiveConfig.stats.enabled)
 
             if (enabled) {
                 if(isRootProject(project) && project.childProjects.isEmpty()) {
@@ -96,41 +96,41 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
     }
 
     private void createStatsTask(Project project) {
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
 
         SourceStatsTask statsTask = project.tasks.create('sourceStats', SourceStatsTask) {
-            enabled = mergedConfiguration.stats.enabled
+            enabled = effectiveConfig.stats.enabled
             group = 'Reporting'
             description = 'Generates a report on lines of code'
-            paths = mergedConfiguration.stats.paths
-            formats = mergedConfiguration.stats.formats
-            counters = mergedConfiguration.stats.counters
+            paths = effectiveConfig.stats.paths
+            formats = effectiveConfig.stats.formats
+            counters = effectiveConfig.stats.counters
         }
 
-        if (mergedConfiguration.stats.enabled) {
-            mergedConfiguration.stats.projects() << project
-            mergedConfiguration.stats.statsTasks() << statsTask
+        if (effectiveConfig.stats.enabled) {
+            effectiveConfig.stats.projects() << project
+            effectiveConfig.stats.statsTasks() << statsTask
         }
     }
 
     private void applyAggregateStats(Project project) {
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
 
-        Set<Project> allProjects = new LinkedHashSet<>(mergedConfiguration.stats.projects())
-        Set<Task> allStatsTasks = new LinkedHashSet<>(mergedConfiguration.stats.statsTasks())
+        Set<Project> allProjects = new LinkedHashSet<>(effectiveConfig.stats.projects())
+        Set<Task> allStatsTasks = new LinkedHashSet<>(effectiveConfig.stats.statsTasks())
 
-        project.childProjects.values()*.mergedConfiguration.stats.each { Stats e ->
+        project.childProjects.values()*.effectiveConfig.stats.each { Stats e ->
             if (e.enabled) {
                 allStatsTasks.addAll(e.statsTasks())
             }
         }
 
         project.tasks.create(AGGREGATE_STATS_TASK_NAME, AggregateSourceStatsReportTask) {
-            enabled = mergedConfiguration.stats.enabled
+            enabled = effectiveConfig.stats.enabled
             group = 'Reporting'
             description = 'Aggregate source stats reports.'
             dependsOn allStatsTasks
-            formats = mergedConfiguration.stats.formats
+            formats = effectiveConfig.stats.formats
         }
     }
 }

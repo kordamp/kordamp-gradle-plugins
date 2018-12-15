@@ -76,8 +76,8 @@ class GroovydocPlugin extends AbstractKordampPlugin {
         JavadocPlugin.applyIfMissing(project)
 
         project.afterEvaluate {
-            ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
-            setEnabled(mergedConfiguration.groovydoc.enabled)
+            ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+            setEnabled(effectiveConfig.groovydoc.enabled)
 
             if (!enabled) {
                 return
@@ -89,17 +89,17 @@ class GroovydocPlugin extends AbstractKordampPlugin {
 
                 Task groovydoc = createGroovydocTaskIfNeeded(project, javadoc)
                 if (!groovydoc) return
-                mergedConfiguration.groovydoc.groovydocTasks() << groovydoc
+                effectiveConfig.groovydoc.groovydocTasks() << groovydoc
 
                 Task groovydocJar = createGroovydocJarTask(project, groovydoc)
                 project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(groovydocJar)
-                mergedConfiguration.groovydoc.groovydocJarTasks() << groovydocJar
+                effectiveConfig.groovydoc.groovydocJarTasks() << groovydocJar
 
-                mergedConfiguration.groovydoc.projects() << project
+                effectiveConfig.groovydoc.projects() << project
 
                 project.tasks.withType(Groovydoc) { task ->
-                    mergedConfiguration.groovydoc.applyTo(task)
-                    task.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.getAuthors().join(', ')}. All rights reserved."
+                    effectiveConfig.groovydoc.applyTo(task)
+                    task.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
                 }
             }
         }
@@ -130,11 +130,11 @@ class GroovydocPlugin extends AbstractKordampPlugin {
             // ignored
         }
 
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
         groovydocTask.configure {
             classpath = javadoc.classpath
-            include(mergedConfiguration.groovydoc.includes)
-            exclude(mergedConfiguration.groovydoc.excludes)
+            include(effectiveConfig.groovydoc.includes)
+            exclude(effectiveConfig.groovydoc.excludes)
         }
 
         groovydocTask
@@ -155,8 +155,8 @@ class GroovydocPlugin extends AbstractKordampPlugin {
             }
         }
 
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
-        if (mergedConfiguration.groovydoc.replaceJavadoc) {
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        if (effectiveConfig.groovydoc.replaceJavadoc) {
             groovydocJarTask.classifier = 'javadoc'
             project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
             project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false

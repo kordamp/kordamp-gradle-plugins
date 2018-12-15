@@ -69,20 +69,20 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         project.afterEvaluate {
-            ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+            ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
 
-            if (mergedConfiguration.sourceXref.enabled) {
+            if (effectiveConfig.sourceXref.enabled) {
                 project.plugins.withType(JavaBasePlugin) {
                     JxrTask xrefTask = configureSourceXrefTask(project)
                     if (xrefTask.enabled) {
-                        mergedConfiguration.sourceXref.projects() << project
-                        mergedConfiguration.sourceXref.xrefTasks() << xrefTask
+                        effectiveConfig.sourceXref.projects() << project
+                        effectiveConfig.sourceXref.xrefTasks() << xrefTask
                     } else {
-                        mergedConfiguration.sourceXref.enabled = false
+                        effectiveConfig.sourceXref.enabled = false
                     }
                 }
             }
-            setEnabled(mergedConfiguration.sourceXref.enabled)
+            setEnabled(effectiveConfig.sourceXref.enabled)
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
@@ -96,8 +96,8 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
     }
 
     private Task configureSourceXrefTask(Project project) {
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
-        if (!mergedConfiguration.sourceXref.enabled) {
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        if (!effectiveConfig.sourceXref.enabled) {
             return
         }
 
@@ -117,17 +117,17 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
             sourceDirs = resolveSrcDirs(project)
         }
 
-        configureTask(mergedConfiguration.sourceXref, jxrTask)
+        configureTask(effectiveConfig.sourceXref, jxrTask)
     }
 
     private void configureAggregateSourceXrefTask(Project project) {
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
 
         Set<Project> projects = new LinkedHashSet<>()
         Set<Task> xrefTasks = new LinkedHashSet<>()
         FileCollection srcdirs = project.files()
 
-        project.childProjects.values()*.mergedConfiguration.sourceXref.each { SourceXref e ->
+        project.childProjects.values()*.effectiveConfig.sourceXref.each { SourceXref e ->
             if (e.enabled) {
                 projects.addAll(e.projects())
                 xrefTasks.addAll(e.xrefTasks())
@@ -143,7 +143,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
             sourceDirs = srcdirs
         }
 
-        configureTask(mergedConfiguration.sourceXref, jxrTask)
+        configureTask(effectiveConfig.sourceXref, jxrTask)
     }
 
     private JxrTask configureTask(SourceXref sourceXref, JxrTask jxrTask) {

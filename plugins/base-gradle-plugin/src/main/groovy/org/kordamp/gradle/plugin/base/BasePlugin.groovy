@@ -42,7 +42,7 @@ class BasePlugin extends AbstractKordampPlugin {
         }
 
         if (!project.extensions.findByType(ProjectConfigurationExtension)) {
-            project.extensions.create('config', ProjectConfigurationExtension, project)
+            project.extensions.create(ProjectConfigurationExtension.CONFIG_NAME, ProjectConfigurationExtension, project)
         }
 
         project.tasks.register('effectiveSettings', EffectiveSettingsTask) {
@@ -85,15 +85,15 @@ class BasePlugin extends AbstractKordampPlugin {
             if (isRootProject(project)) {
                 ProjectConfigurationExtension merged = extension.merge(rootExtension)
                 errors = merged.validate()
-                project.ext.mergedConfiguration = merged
+                project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged)
             } else {
                 if (rootExtension) {
                     ProjectConfigurationExtension merged = extension.merge(rootExtension)
                     errors = merged.validate()
-                    project.ext.mergedConfiguration = merged
+                    project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged)
                 } else {
                     errors = extension.validate()
-                    project.ext.mergedConfiguration = extension
+                    project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, extension)
                 }
             }
 

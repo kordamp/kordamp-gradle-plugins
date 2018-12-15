@@ -68,15 +68,15 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
     }
 
     private void configureBuildProperties(Project project) {
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
-        setEnabled(mergedConfiguration.buildInfo.enabled)
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        setEnabled(effectiveConfig.buildInfo.enabled)
 
         if (!enabled) {
             return
         }
 
         Date date = new Date()
-        if (mergedConfiguration.buildInfo.clearTime) {
+        if (effectiveConfig.buildInfo.clearTime) {
             date = date.clearTime()
             Calendar calendar = Calendar.instance
             calendar.time = date
@@ -84,30 +84,30 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
             date = calendar.time
         }
 
-        if (!mergedConfiguration.buildInfo.skipBuildBy) {
-            mergedConfiguration.buildInfo.buildBy = System.properties['user.name']
+        if (!effectiveConfig.buildInfo.skipBuildBy) {
+            effectiveConfig.buildInfo.buildBy = System.properties['user.name']
         }
 
-        if (!mergedConfiguration.buildInfo.skipBuildDate) {
-            mergedConfiguration.buildInfo.buildDate = new SimpleDateFormat('yyyy-MM-dd').format(date)
+        if (!effectiveConfig.buildInfo.skipBuildDate) {
+            effectiveConfig.buildInfo.buildDate = new SimpleDateFormat('yyyy-MM-dd').format(date)
         }
 
-        if (!mergedConfiguration.buildInfo.skipBuildTime) {
-            mergedConfiguration.buildInfo.buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(date)
+        if (!effectiveConfig.buildInfo.skipBuildTime) {
+            effectiveConfig.buildInfo.buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(date)
         }
 
-        if (!mergedConfiguration.buildInfo.skipBuildRevision) {
+        if (!effectiveConfig.buildInfo.skipBuildRevision) {
             project.plugins.apply(VersioningPlugin)
             VersioningExtension versioning = project.extensions.findByName('versioning')
-            mergedConfiguration.buildInfo.buildRevision = versioning.info.commit
+            effectiveConfig.buildInfo.buildRevision = versioning.info.commit
         }
 
-        if (!mergedConfiguration.buildInfo.skipBuildJdk) {
-            mergedConfiguration.buildInfo.buildJdk = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString()
+        if (!effectiveConfig.buildInfo.skipBuildJdk) {
+            effectiveConfig.buildInfo.buildJdk = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString()
         }
 
-        if (!mergedConfiguration.buildInfo.skipBuildCreatedBy) {
-            mergedConfiguration.buildInfo.buildCreatedBy = "Gradle ${project.gradle.gradleVersion}"
+        if (!effectiveConfig.buildInfo.skipBuildCreatedBy) {
+            effectiveConfig.buildInfo.buildCreatedBy = "Gradle ${project.gradle.gradleVersion}"
         }
     }
 

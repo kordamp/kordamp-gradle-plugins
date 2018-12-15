@@ -19,6 +19,7 @@ package org.kordamp.gradle.plugin.base.tasks
 
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -44,7 +45,7 @@ class EffectiveSettingsTask extends AbstractReportingTask {
 
     @TaskAction
     void displayEffectiveSettings() {
-        Map<String, Object> map = project.ext.mergedConfiguration.toMap()
+        Map<String, Object> map = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME).toMap()
 
         if (sections) {
             sections.each { s ->

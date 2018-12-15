@@ -72,8 +72,8 @@ class JavadocPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         project.afterEvaluate {
-            ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
-            setEnabled(mergedConfiguration.javadoc.enabled)
+            ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+            setEnabled(effectiveConfig.javadoc.enabled)
 
             if (!enabled) {
                 return
@@ -82,18 +82,18 @@ class JavadocPlugin extends AbstractKordampPlugin {
             project.plugins.withType(JavaBasePlugin) {
                 Task javadoc = createJavadocTaskIfNeeded(project)
                 if (!javadoc) return
-                mergedConfiguration.javadoc.javadocTasks() << javadoc
+                effectiveConfig.javadoc.javadocTasks() << javadoc
 
                 Task javadocJar = createJavadocJarTask(project, javadoc)
                 project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(javadocJar)
-                mergedConfiguration.javadoc.javadocJarTasks() << javadocJar
+                effectiveConfig.javadoc.javadocJarTasks() << javadocJar
 
-                mergedConfiguration.javadoc.projects() << project
+                effectiveConfig.javadoc.projects() << project
             }
 
             project.tasks.withType(Javadoc) { task ->
-                mergedConfiguration.javadoc.applyTo(task)
-                options.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.getAuthors().join(', ')}. All rights reserved."
+                effectiveConfig.javadoc.applyTo(task)
+                options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
 
                 if (JavaVersion.current().isJava8Compatible()) {
                     options.addStringOption('Xdoclint:none', '-quiet')
@@ -118,10 +118,10 @@ class JavadocPlugin extends AbstractKordampPlugin {
             }
         }
 
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
         javadocTask.configure {
-            include(mergedConfiguration.javadoc.includes)
-            exclude(mergedConfiguration.javadoc.excludes)
+            include(effectiveConfig.javadoc.includes)
+            exclude(effectiveConfig.javadoc.excludes)
         }
 
         javadocTask

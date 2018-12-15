@@ -70,8 +70,8 @@ class MinPomPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         project.afterEvaluate {
-            ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
-            setEnabled(mergedConfiguration.minpom.enabled)
+            ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+            setEnabled(effectiveConfig.minpom.enabled)
 
             if (!enabled) {
                 return

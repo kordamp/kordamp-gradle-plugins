@@ -118,8 +118,8 @@ class JarPlugin extends AbstractKordampPlugin {
     }
 
     private void configureJarMetainf(Project project, Jar jarTask) {
-        ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
-        setEnabled(mergedConfiguration.minpom.enabled)
+        ProjectConfigurationExtension effectiveConfig = project.rootProject.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        setEnabled(effectiveConfig.minpom.enabled)
 
         if (enabled) {
             jarTask.configure {
@@ -134,29 +134,29 @@ class JarPlugin extends AbstractKordampPlugin {
     }
 
     private void configureJarManifest(Project project, Jar jarTask) {
-        ProjectConfigurationExtension mergedConfiguration = project.rootProject.ext.mergedConfiguration
+        ProjectConfigurationExtension effectiveConfig = project.rootProject.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
 
-        if (mergedConfiguration.release) {
+        if (effectiveConfig.release) {
             jarTask.configure {
                 Map<String, String> attributesMap = [:]
 
-                checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildCreatedBy', attributesMap, 'Created-By')
-                checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildBy', attributesMap, 'Build-By')
-                checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildJdk', attributesMap, 'Build-Jdk')
-                checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildDate', attributesMap, 'Build-Date')
-                checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildTime', attributesMap, 'Build-Time')
-                checkBuildInfoAttribute(mergedConfiguration.buildInfo, 'buildRevision', attributesMap, 'Build-Revision')
+                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildCreatedBy', attributesMap, 'Created-By')
+                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildBy', attributesMap, 'Build-By')
+                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildJdk', attributesMap, 'Build-Jdk')
+                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildDate', attributesMap, 'Build-Date')
+                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildTime', attributesMap, 'Build-Time')
+                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildRevision', attributesMap, 'Build-Revision')
 
-                if (mergedConfiguration.info.specification.enabled) {
-                    attributesMap.'Specification-Title' = mergedConfiguration.info.specification.title
-                    attributesMap.'Specification-Version' = mergedConfiguration.info.specification.version
-                    if (mergedConfiguration.info.specification.vendor) attributesMap.'Specification-Vendor' = mergedConfiguration.info.specification.vendor
+                if (effectiveConfig.info.specification.enabled) {
+                    attributesMap.'Specification-Title' = effectiveConfig.info.specification.title
+                    attributesMap.'Specification-Version' = effectiveConfig.info.specification.version
+                    if (effectiveConfig.info.specification.vendor) attributesMap.'Specification-Vendor' = effectiveConfig.info.specification.vendor
                 }
 
-                if (mergedConfiguration.info.implementation.enabled) {
-                    attributesMap.'Implementation-Title' = mergedConfiguration.info.implementation.title
-                    attributesMap.'Implementation-Version' = mergedConfiguration.info.implementation.version
-                    if (mergedConfiguration.info.implementation.vendor) attributesMap.'Implementation-Vendor' = mergedConfiguration.info.implementation.vendor
+                if (effectiveConfig.info.implementation.enabled) {
+                    attributesMap.'Implementation-Title' = effectiveConfig.info.implementation.title
+                    attributesMap.'Implementation-Version' = effectiveConfig.info.implementation.version
+                    if (effectiveConfig.info.implementation.vendor) attributesMap.'Implementation-Vendor' = effectiveConfig.info.implementation.vendor
                 }
 
                 manifest {

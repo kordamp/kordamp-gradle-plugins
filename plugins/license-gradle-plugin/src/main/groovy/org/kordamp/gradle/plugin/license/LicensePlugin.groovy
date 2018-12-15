@@ -179,8 +179,8 @@ class LicensePlugin extends AbstractKordampPlugin {
     }
 
     private void configureLicenseExtension(Project project) {
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
-        setEnabled(mergedConfiguration.license.enabled)
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        setEnabled(effectiveConfig.license.enabled)
 
         if (!enabled) {
             project.tasks.withType(LicenseCheck).each { it.enabled = false }
@@ -188,11 +188,11 @@ class LicensePlugin extends AbstractKordampPlugin {
             return
         }
 
-        License lic = mergedConfiguration.license.allLicenses()[0]
-        if (mergedConfiguration.license.allLicenses().size() > 1) {
-            lic = mergedConfiguration.license.allLicenses().find {
+        License lic = effectiveConfig.license.allLicenses()[0]
+        if (effectiveConfig.license.allLicenses().size() > 1) {
+            lic = effectiveConfig.license.allLicenses().find {
                 it.primary
-            } ?: mergedConfiguration.license.allLicenses()[0]
+            } ?: effectiveConfig.license.allLicenses()[0]
         }
 
         LicenseExtension licenseExtension = project.extensions.findByType(LicenseExtension)
@@ -205,9 +205,9 @@ class LicensePlugin extends AbstractKordampPlugin {
         }
         licenseExtension.ext.project = project.name
         licenseExtension.ext {
-            projectName   = mergedConfiguration.info.name
-            copyrightYear = mergedConfiguration.info.copyrightYear
-            author        = mergedConfiguration.info.getAuthors().join(', ')
+            projectName   = effectiveConfig.info.name
+            copyrightYear = effectiveConfig.info.copyrightYear
+            author        = effectiveConfig.info.getAuthors().join(', ')
             license       = lic.id?.spdx()
         }
         licenseExtension.exclude '**/*.png'
@@ -221,10 +221,10 @@ class LicensePlugin extends AbstractKordampPlugin {
     }
 
     private void postConfigureDownloadLicensesExtension(Project project) {
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
 
         Map<Object, List<Object>> defaultAliases = new LinkedHashMap<>(DEFAULT_ALIASES)
-        mergedConfiguration.license.licenses.licenses.each { license ->
+        effectiveConfig.license.licenses.licenses.each { license ->
             if (license.id && license.aliases) {
                 LicenseMetadata licenseMetadata = LICENSES_MAP.get(license.id)
                 if (!licenseMetadata) {
@@ -252,8 +252,8 @@ class LicensePlugin extends AbstractKordampPlugin {
     }
 
     private void configureAggregateLicenseReportTask(Project project) {
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
-        if (!mergedConfiguration.license.enabled) {
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        if (!effectiveConfig.license.enabled) {
             return
         }
 

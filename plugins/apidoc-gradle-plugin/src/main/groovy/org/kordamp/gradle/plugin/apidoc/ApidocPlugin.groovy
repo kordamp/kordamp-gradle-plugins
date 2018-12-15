@@ -104,8 +104,8 @@ class ApidocPlugin extends AbstractKordampPlugin {
     }
 
     private void doConfigureRootProject(Project project) {
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
-        setEnabled(mergedConfiguration.apidoc.enabled)
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        setEnabled(effectiveConfig.apidoc.enabled)
 
         if (!enabled) {
             return
@@ -137,8 +137,8 @@ class ApidocPlugin extends AbstractKordampPlugin {
                     task.source javadocs.source
                     task.classpath = project.files(javadocs.classpath)
 
-                    mergedConfiguration.javadoc.applyTo(task)
-                    task.options.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.authors.join(', ')}. All rights reserved."
+                    effectiveConfig.javadoc.applyTo(task)
+                    task.options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.authors.join(', ')}. All rights reserved."
                 }
                 aggregateJavadocTasks[1].configure {
                     enabled true
@@ -157,8 +157,8 @@ class ApidocPlugin extends AbstractKordampPlugin {
                     task.classpath = project.files(groovydocs.classpath + javadocs.classpath)
                     task.groovyClasspath = project.files(groovydocs.groovyClasspath.flatten().unique())
 
-                    mergedConfiguration.groovydoc.applyTo(task)
-                    task.footer = "Copyright &copy; ${mergedConfiguration.info.copyrightYear} ${mergedConfiguration.info.authors.join(', ')}. All rights reserved."
+                    effectiveConfig.groovydoc.applyTo(task)
+                    task.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.authors.join(', ')}. All rights reserved."
                 }
                 aggregateGroovydocTasks[1].configure {
                     enabled true

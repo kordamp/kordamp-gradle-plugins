@@ -76,7 +76,7 @@ class GuidePlugin extends AbstractKordampPlugin {
     private void configureAsciidoctorTask(Project project) {
         AsciidoctorTask asciidoctorTask = project.tasks.findByName(AsciidoctorPlugin.ASCIIDOCTOR)
 
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
 
         Map attrs = [:]
         checkAttribute(attrs, asciidoctorTask.attributes, 'toc', 'left')
@@ -91,13 +91,13 @@ class GuidePlugin extends AbstractKordampPlugin {
         checkAttribute(attrs, asciidoctorTask.attributes, 'linkcss', true)
         checkAttribute(attrs, asciidoctorTask.attributes, 'source-highlighter', 'coderay')
         checkAttribute(attrs, asciidoctorTask.attributes, 'coderay-linenums-mode', 'table')
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-title', mergedConfiguration.info.description)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-inception-year', mergedConfiguration.info.inceptionYear)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-copyright-year', mergedConfiguration.info.copyrightYear)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-author', mergedConfiguration.info.getAuthors().join(', '))
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-url', mergedConfiguration.info.url)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-scm', mergedConfiguration.info.links.scm)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-issue-tracker', mergedConfiguration.info.links.issueTracker)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-title', effectiveConfig.info.description)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-inception-year', effectiveConfig.info.inceptionYear)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-copyright-year', effectiveConfig.info.copyrightYear)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-author', effectiveConfig.info.getAuthors().join(', '))
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-url', effectiveConfig.info.url)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-scm', effectiveConfig.info.links.scm)
+        checkAttribute(attrs, asciidoctorTask.attributes, 'project-issue-tracker', effectiveConfig.info.links.issueTracker)
         checkAttribute(attrs, asciidoctorTask.attributes, 'project-group', project.group)
         checkAttribute(attrs, asciidoctorTask.attributes, 'project-version', project.version)
         checkAttribute(attrs, asciidoctorTask.attributes, 'project-name', project.rootProject.name)

@@ -22,12 +22,12 @@ If `config.<<_org_kordamp_gradle_base_dsl,release>>` is `true` then the followin
 all generated JAR files:
 
 [horizontal]
-Created-By    :: rootProject.mergedConfiguration.buildInfo.buildCreatedBy
-Built-By      :: rootProject.mergedConfiguration.buildInfo.buildBy
-Build-Jdk     :: rootProject.mergedConfiguration.buildInfo.buildJdk
-Build-Date    :: rootProject.mergedConfiguration.buildInfo.buildDate
-Build-Time    :: rootProject.mergedConfiguration.buildInfo.buildTime
-Build-Revision:: rootProject.mergedConfiguration.buildInfo.buildRevision
+Created-By    :: rootProject.extensions.effectiveConfig.buildInfo.buildCreatedBy
+Built-By      :: rootProject.extensions.effectiveConfig.buildInfo.buildBy
+Build-Jdk     :: rootProject.extensions.effectiveConfig.buildInfo.buildJdk
+Build-Date    :: rootProject.extensions.effectiveConfig.buildInfo.buildDate
+Build-Time    :: rootProject.extensions.effectiveConfig.buildInfo.buildTime
+Build-Revision:: rootProject.extensions.effectiveConfig.buildInfo.buildRevision
 
 If `config.<<_org_kordamp_gradle_base_dsl,release>>` is `true` and  `config.info.<<_base_info_specification,specification>>`
 is enabled then the following entries are also added to the Manifest of all generated JAR files

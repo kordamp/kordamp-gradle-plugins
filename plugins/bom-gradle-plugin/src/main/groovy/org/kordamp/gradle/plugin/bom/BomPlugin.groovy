@@ -76,8 +76,8 @@ class BomPlugin extends AbstractKordampPlugin {
     }
 
     private void updatePublications(Project project) {
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
-        setEnabled(mergedConfiguration.bom.enabled)
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        setEnabled(effectiveConfig.bom.enabled)
 
         if (!enabled) {
             return
@@ -108,9 +108,9 @@ class BomPlugin extends AbstractKordampPlugin {
             }
         }
 
-        Set<Dependency> compileDeps = mergedConfiguration.bom.compile.collect(parseDependency)
-        Set<Dependency> runtimeDeps = mergedConfiguration.bom.runtime.collect(parseDependency)
-        Set<Dependency> testDeps = mergedConfiguration.bom.test.collect(parseDependency)
+        Set<Dependency> compileDeps = effectiveConfig.bom.compile.collect(parseDependency)
+        Set<Dependency> runtimeDeps = effectiveConfig.bom.runtime.collect(parseDependency)
+        Set<Dependency> testDeps = effectiveConfig.bom.test.collect(parseDependency)
 
         project.rootProject.subprojects.each { Project prj ->
             if (prj == project) return
@@ -118,7 +118,7 @@ class BomPlugin extends AbstractKordampPlugin {
             Closure<Boolean> predicate = {
                 it.artifactId == prj.name && (it.groupId == project.group || it.groupId == '${project.groupId}')
             }
-            if ((!mergedConfiguration.bom.excludes.contains(prj.name) && !mergedConfiguration.bom.excludes.contains(':' + prj.name)) &&
+            if ((!effectiveConfig.bom.excludes.contains(prj.name) && !effectiveConfig.bom.excludes.contains(':' + prj.name)) &&
                 !compileDeps.find(predicate) && !runtimeDeps.find(predicate) && !testDeps.find(predicate)) {
                 compileDeps << new Dependency('${project.groupId}', prj.name, '${project.version}')
             }
@@ -130,13 +130,13 @@ class BomPlugin extends AbstractKordampPlugin {
                     artifacts = []
 
                     pom {
-                        name = mergedConfiguration.info.name
-                        description = mergedConfiguration.info.description
-                        url = mergedConfiguration.info.url
-                        inceptionYear = mergedConfiguration.info.inceptionYear
+                        name = effectiveConfig.info.name
+                        description = effectiveConfig.info.description
+                        url = effectiveConfig.info.url
+                        inceptionYear = effectiveConfig.info.inceptionYear
                         packaging = 'pom'
                         licenses {
-                            mergedConfiguration.license.licenses.forEach { lic ->
+                            effectiveConfig.license.licenses.forEach { lic ->
                                 license {
                                     name = lic.name
                                     url = lic.url
@@ -145,29 +145,29 @@ class BomPlugin extends AbstractKordampPlugin {
                                 }
                             }
                         }
-                        if (!isBlank(mergedConfiguration.info.scm.url)) {
+                        if (!isBlank(effectiveConfig.info.scm.url)) {
                             scm {
-                                url = mergedConfiguration.info.scm.url
-                                if (mergedConfiguration.info.scm.connection) {
-                                    connection = mergedConfiguration.info.scm.connection
+                                url = effectiveConfig.info.scm.url
+                                if (effectiveConfig.info.scm.connection) {
+                                    connection = effectiveConfig.info.scm.connection
                                 }
-                                if (mergedConfiguration.info.scm.connection) {
-                                    developerConnection = mergedConfiguration.info.scm.developerConnection
+                                if (effectiveConfig.info.scm.connection) {
+                                    developerConnection = effectiveConfig.info.scm.developerConnection
                                 }
                             }
-                        } else if (mergedConfiguration.info.links.scm) {
+                        } else if (effectiveConfig.info.links.scm) {
                             scm {
-                                url = mergedConfiguration.info.links.scm
+                                url = effectiveConfig.info.links.scm
                             }
                         }
-                        if (!mergedConfiguration.info.organization.isEmpty()) {
+                        if (!effectiveConfig.info.organization.isEmpty()) {
                             organization {
-                                name = mergedConfiguration.info.organization.name
-                                url = mergedConfiguration.info.organization.url
+                                name = effectiveConfig.info.organization.name
+                                url = effectiveConfig.info.organization.url
                             }
                         }
                         developers {
-                            mergedConfiguration.info.people.forEach { Person person ->
+                            effectiveConfig.info.people.forEach { Person person ->
                                 if ('developer' in person.roles*.toLowerCase()) {
                                     developer {
                                         if (person.id) id = person.id
@@ -183,7 +183,7 @@ class BomPlugin extends AbstractKordampPlugin {
                             }
                         }
                         contributors {
-                            mergedConfiguration.info.people.forEach { Person person ->
+                            effectiveConfig.info.people.forEach { Person person ->
                                 if ('contributor' in person.roles*.toLowerCase()) {
                                     contributor {
                                         if (person.name) name = person.name
@@ -228,9 +228,9 @@ class BomPlugin extends AbstractKordampPlugin {
                 }
             }
 
-            String repositoryName = mergedConfiguration.release ? mergedConfiguration.publishing.releasesRepository : mergedConfiguration.publishing.snapshotsRepository
+            String repositoryName = effectiveConfig.release ? effectiveConfig.publishing.releasesRepository : effectiveConfig.publishing.snapshotsRepository
             if (!isBlank(repositoryName)) {
-                Repository repo = mergedConfiguration.info.repositories.getRepository(repositoryName)
+                Repository repo = effectiveConfig.info.repositories.getRepository(repositoryName)
                 if (repo == null) {
                     throw new IllegalStateException("Repository '${repositoryName}' was not found")
                 }
@@ -238,7 +238,7 @@ class BomPlugin extends AbstractKordampPlugin {
                 repositories {
                     maven {
                         url = repo.url
-                        Credentials creds = mergedConfiguration.info.credentials.getCredentials(repo.name)
+                        Credentials creds = effectiveConfig.info.credentials.getCredentials(repo.name)
                         if (repo.credentials) {
                             credentials {
                                 username = repo.credentials.username
@@ -255,7 +255,7 @@ class BomPlugin extends AbstractKordampPlugin {
             }
         }
 
-        if (mergedConfiguration.publishing.signing) {
+        if (effectiveConfig.publishing.signing) {
             project.signing {
                 sign project.publishing.publications.mainPublication
             }

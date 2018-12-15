@@ -80,48 +80,48 @@ class BintrayPlugin extends AbstractKordampPlugin {
     }
 
     private void updatePublications(Project project) {
-        ProjectConfigurationExtension mergedConfiguration = project.ext.mergedConfiguration
+        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
 
-        if (!mergedConfiguration.bintray.enabled || !project.sourceSets.findByName('main')) {
+        if (!effectiveConfig.bintray.enabled || !project.sourceSets.findByName('main')) {
             project.getTasks().findByName(BintrayUploadTask.TASK_NAME)?.enabled = false
             setEnabled(false)
             return
         }
 
         project.bintray {
-            user = mergedConfiguration.bintray.credentials.username
-            key = mergedConfiguration.bintray.credentials.password
+            user = effectiveConfig.bintray.credentials.username
+            key = effectiveConfig.bintray.credentials.password
             publications = ['mainPublication']
             pkg {
-                repo = mergedConfiguration.bintray.repo
-                userOrg = mergedConfiguration.bintray.userOrg
-                name = mergedConfiguration.bintray.name
-                desc = mergedConfiguration.info.description
-                licenses = mergedConfiguration.license.resolveBintrayLicenseIds()
-                labels = mergedConfiguration.info.tags
-                websiteUrl = mergedConfiguration.info.url
-                issueTrackerUrl = mergedConfiguration.info.links.issueTracker
-                vcsUrl = BintrayPlugin.resolveScmLink(mergedConfiguration)
+                repo = effectiveConfig.bintray.repo
+                userOrg = effectiveConfig.bintray.userOrg
+                name = effectiveConfig.bintray.name
+                desc = effectiveConfig.info.description
+                licenses = effectiveConfig.license.resolveBintrayLicenseIds()
+                labels = effectiveConfig.info.tags
+                websiteUrl = effectiveConfig.info.url
+                issueTrackerUrl = effectiveConfig.info.links.issueTracker
+                vcsUrl = BintrayPlugin.resolveScmLink(effectiveConfig)
                 publicDownloadNumbers = true
-                githubRepo = mergedConfiguration.bintray.githubRepo
+                githubRepo = effectiveConfig.bintray.githubRepo
                 version {
                     name = project.version
-                    vcsTag = "${mergedConfiguration.bintray.name}-${project.version}"
-                    if (mergedConfiguration.info.credentials.sonatype && !mergedConfiguration.bintray.skipMavenSync)
+                    vcsTag = "${effectiveConfig.bintray.name}-${project.version}"
+                    if (effectiveConfig.info.credentials.sonatype && !effectiveConfig.bintray.skipMavenSync)
                         mavenCentralSync {
                             sync = true
-                            user = mergedConfiguration.info.credentials.sonatype.username
-                            password = mergedConfiguration.info.credentials.sonatype.password
+                            user = effectiveConfig.info.credentials.sonatype.username
+                            password = effectiveConfig.info.credentials.sonatype.password
                         }
                 }
             }
         }
     }
 
-    private static resolveScmLink(ProjectConfigurationExtension mergedConfiguration) {
-        if (!isBlank(mergedConfiguration.info.scm.url)) {
-            return mergedConfiguration.info.scm.url
+    private static resolveScmLink(ProjectConfigurationExtension effectiveConfig) {
+        if (!isBlank(effectiveConfig.info.scm.url)) {
+            return effectiveConfig.info.scm.url
         }
-        return mergedConfiguration.info.links.scm
+        return effectiveConfig.info.links.scm
     }
 }

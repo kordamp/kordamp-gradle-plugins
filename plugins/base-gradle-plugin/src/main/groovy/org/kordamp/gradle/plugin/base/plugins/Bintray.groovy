@@ -26,7 +26,6 @@ import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Credentials
-import org.kordamp.gradle.plugin.base.model.Information
 
 import static org.kordamp.gradle.StringUtils.isBlank
 

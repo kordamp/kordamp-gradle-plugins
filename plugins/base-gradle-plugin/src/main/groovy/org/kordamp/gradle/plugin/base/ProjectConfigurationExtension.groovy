@@ -45,6 +45,9 @@ import org.kordamp.gradle.plugin.base.plugins.Stats
  */
 @CompileStatic
 class ProjectConfigurationExtension {
+    static final String CONFIG_NAME = 'config'
+    static final String EFFECTIVE_CONFIG_NAME = 'effectiveConfig'
+
     boolean release = false
 
     final Project project
@@ -85,6 +88,26 @@ class ProjectConfigurationExtension {
         sourceHtml = new SourceHtml(project)
         sourceXref = new SourceXref(project)
         stats = new Stats(project)
+    }
+
+    ProjectConfigurationExtension(ProjectConfigurationExtension other) {
+        this.project = other.project
+        this.info = other.info
+        this.apidoc = other.apidoc
+        this.bom = other.bom
+        this.bintray = other.bintray
+        this.buildInfo = other.buildInfo
+        this.groovydoc = other.groovydoc
+        this.kotlindoc = other.kotlindoc
+        this.jacoco = other.jacoco
+        this.javadoc = other.javadoc
+        this.license = other.license
+        this.minpom = other.minpom
+        this.publishing = other.publishing
+        this.source = other.source
+        this.sourceHtml = other.sourceHtml
+        this.sourceXref = other.sourceXref
+        this.stats = other.stats
     }
 
     String toString() {
