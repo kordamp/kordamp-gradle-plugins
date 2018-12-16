@@ -45,3 +45,10 @@ Implementation-Title  :: config.info.implementation.title
 Implementation-Version:: config.info.implementation.version
 Implementation-Vendor :: config.info.implementation.vendor
 
+== Reproducible Builds
+
+It's worth noting that enriching JAR manifests with environment and/or temporary related data will result in non-reproducible
+builds. All elements calculated by the `<<_org_kordamp_gradle_buildinfo,buildInfo>>` plugin will affect build reproducibility
+(except for `buildRevision`). You can disable any of these values from being injected by configuring a `skip` flag that matches
+the particular value to be skipped.
+

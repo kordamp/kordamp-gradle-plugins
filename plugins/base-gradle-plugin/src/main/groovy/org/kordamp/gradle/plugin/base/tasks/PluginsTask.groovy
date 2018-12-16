@@ -70,7 +70,7 @@ class PluginsTask extends AbstractReportingTask {
         Map<String, Object> map = [:]
 
         map.id = pluginMetadata[plugin.class.name]
-        map.implementationClass = plugin.class
+        map.implementationClass = plugin.class.name
         if (plugin instanceof KordampPlugin) {
             map.enabled = plugin.enabled
         }
