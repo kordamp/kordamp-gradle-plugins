@@ -284,6 +284,81 @@ Displays all extensions applied to a project
 Name:: effectiveSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.ExtensionsTask`
 
+==== Example Output
+
+For a project defined as follows
+
+[source,groovy,subs="verbatim,attributes"]
+.build.gradle
+----
+plugins {
+    id 'org.kordamp.gradle.project' version '{project-version}'
+}
+
+config {
+    license    { enabled = false }
+
+    publishing { enabled = false }
+}
+----
+
+Invoking these command
+
+[source]
+----
+$ ./gradlew :extensions
+----
+
+Results in the following output
+
+[source]
+----
+> Task :extensions
+extension 0:
+    name: ext
+    type: org.gradle.api.plugins.ExtraPropertiesExtension
+
+extension 1:
+    name: defaultArtifacts
+    type: org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
+
+extension 2:
+    name: config
+    type: org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+
+extension 3:
+    name: reporting
+    type: org.gradle.api.reporting.ReportingExtension
+
+extension 4:
+    name: jacoco
+    type: org.gradle.testing.jacoco.plugins.JacocoPluginExtension
+
+extension 5:
+    name: downloadLicenses
+    type: nl.javadude.gradle.plugins.license.DownloadLicensesExtension
+
+extension 6:
+    name: license
+    type: nl.javadude.gradle.plugins.license.LicenseExtension
+
+extension 7:
+    name: signing
+    type: org.gradle.plugins.signing.SigningExtension
+
+extension 8:
+    name: effectiveConfig
+    type: org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+
+extension 9:
+    name: versioning
+    type: net.nemerosa.versioning.VersioningExtension
+
+extension 10:
+    name: bintray
+    type: com.jfrog.bintray.gradle.BintrayExtension
+----
+
 [[_task_plugins]]
 === Plugins
 
@@ -292,6 +367,143 @@ Displays all plugins applied to a project
 [horizontal]
 Name:: plugins
 Type:: `org.kordamp.gradle.plugin.base.tasks.PluginsTask`
+
+==== Example Output
+
+For a project defined as follows
+
+[source,groovy,subs="verbatim,attributes"]
+.build.gradle
+----
+plugins {
+    id 'org.kordamp.gradle.project' version '{project-version}'
+}
+
+config {
+    license    { enabled = false }
+
+    publishing { enabled = false }
+}
+----
+
+Invoking these command
+
+[source]
+----
+$ ./gradlew :plugins
+----
+
+Results in the following output
+
+[source]
+----
+> Task :plugins
+plugin 0:
+    implementationClass: org.gradle.api.plugins.HelpTasksPlugin
+
+plugin 1:
+    implementationClass: org.gradle.language.base.plugins.LifecycleBasePlugin
+
+plugin 2:
+    implementationClass: org.gradle.api.plugins.BasePlugin
+
+plugin 3:
+    id: org.kordamp.gradle.base
+    implementationClass: org.kordamp.gradle.plugin.base.BasePlugin
+    enabled: true
+
+plugin 4:
+    implementationClass: org.gradle.api.plugins.ReportingBasePlugin
+
+plugin 5:
+    implementationClass: org.gradle.testing.jacoco.plugins.JacocoPlugin
+
+plugin 6:
+    id: org.kordamp.gradle.jacoco
+    implementationClass: org.kordamp.gradle.plugin.jacoco.JacocoPlugin
+    enabled: true
+
+plugin 7:
+    id: com.github.hierynomus.license-report
+    implementationClass: com.hierynomus.gradle.license.LicenseReportingPlugin
+
+plugin 8:
+    id: com.github.hierynomus.license-base
+    implementationClass: com.hierynomus.gradle.license.LicenseBasePlugin
+
+plugin 9:
+    id: license
+    implementationClass: nl.javadude.gradle.plugins.license.LicensePlugin
+
+plugin 10:
+    id: org.kordamp.gradle.license
+    implementationClass: org.kordamp.gradle.plugin.license.LicensePlugin
+    enabled: false
+
+plugin 11:
+    id: org.kordamp.gradle.build-info
+    implementationClass: org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
+    enabled: true
+
+plugin 12:
+    id: org.kordamp.gradle.source-jar
+    implementationClass: org.kordamp.gradle.plugin.source.SourceJarPlugin
+    enabled: true
+
+plugin 13:
+    id: org.kordamp.gradle.apidoc
+    implementationClass: org.kordamp.gradle.plugin.apidoc.ApidocPlugin
+    enabled: true
+
+plugin 14:
+    id: org.kordamp.gradle.minpom
+    implementationClass: org.kordamp.gradle.plugin.minpom.MinPomPlugin
+    enabled: true
+
+plugin 15:
+    id: org.kordamp.gradle.jar
+    implementationClass: org.kordamp.gradle.plugin.jar.JarPlugin
+    enabled: true
+
+plugin 16:
+    id: org.kordamp.gradle.publishing
+    implementationClass: org.kordamp.gradle.plugin.publishing.PublishingPlugin
+    enabled: false
+
+plugin 17:
+    implementationClass: org.gradle.plugins.signing.SigningPlugin
+
+plugin 18:
+    id: org.kordamp.gradle.source-stats
+    implementationClass: org.kordamp.gradle.plugin.stats.SourceStatsPlugin
+    enabled: true
+
+plugin 19:
+    id: org.kordamp.gradle.source-html
+    implementationClass: org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
+    enabled: true
+
+plugin 20:
+    id: org.kordamp.gradle.bintray
+    implementationClass: org.kordamp.gradle.plugin.bintray.BintrayPlugin
+    enabled: false
+
+plugin 21:
+    id: com.github.ben-manes.versions
+    implementationClass: com.github.benmanes.gradle.versions.VersionsPlugin
+
+plugin 22:
+    id: org.kordamp.gradle.project
+    implementationClass: org.kordamp.gradle.plugin.project.ProjectPlugin
+
+plugin 23:
+    id: net.nemerosa.versioning
+    implementationClass: net.nemerosa.versioning.VersioningPlugin
+
+plugin 24:
+    id: com.jfrog.bintray
+    implementationClass: com.jfrog.bintray.gradle.BintrayPlugin
+----
 
 [[_task_properties]]
 === ProjectProperties
@@ -308,6 +520,69 @@ section:: The section to generate the report for.
 
 Valid values for `section` are: project, ext.
 
+==== Example Output
+
+For a project defined as follows
+
+[source,java]
+.~/.gradle/gradle.properties
+----
+global_property = global
+----
+
+[source,java]
+.gradle.properties
+----
+version        = 0.0.0
+group          = org.kordamp.sample.acme
+local_property = local
+----
+
+[source,groovy,subs="verbatim,attributes"]
+.build.gradle
+----
+plugins {
+    id 'org.kordamp.gradle.project' version '{project-version}'
+}
+
+ext.build_property = 'build'
+
+config {
+    license    { enabled = false }
+
+    publishing { enabled = false }
+}
+----
+
+Invoking these command
+
+[source]
+----
+$ ./gradlew :projectProperties -Pproject_property=project
+----
+
+Results in the following output
+
+[source]
+----
+> Task :projectProperties
+project:
+    name: sample
+    version: 0.0.0
+    group: org.kordamp.sample.acme
+    path: :
+    displayName: root project 'sample'
+    projectDir: /tmp/sample
+    buildFile: /tmp/sample/build.gradle
+    buildDir: /tmp/sample/build
+
+ext:
+    build_property: build
+    global_property: global
+    local_property: local
+    project_property: project
+----
+
 [[_task_repositories]]
 === Repositories
 
@@ -316,4 +591,57 @@ Displays all repositories used for resolving project dependencies
 [horizontal]
 Name:: repositories
 Type:: `org.kordamp.gradle.plugin.base.tasks.RepositoriesTask`
+
+==== Example Output
+
+For a project defined as follows
+
+[source,groovy,subs="verbatim,attributes"]
+.build.gradle
+----
+plugins {
+    id 'org.kordamp.gradle.project' version '{project-version}'
+}
+
+config {
+    license    { enabled = false }
+
+    publishing { enabled = false }
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+    flatDir { dirs 'lib' }
+}
+----
+
+Invoking these command
+
+[source]
+----
+$ ./gradlew :repositories
+----
+
+Results in the following output
+
+[source]
+----
+> Task :repositories
+repository 0:
+    type: maven
+    name: BintrayJCenter
+    url: https://jcenter.bintray.com/
+
+repository 1:
+    type: maven
+    name: MavenRepo
+    url: https://repo.maven.apache.org/maven2/
+
+repository 2:
+    type: flatDir
+    name: flatDir
+    dirs:
+        /tmp/sample/lib
+----
 
