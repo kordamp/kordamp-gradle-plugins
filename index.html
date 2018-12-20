@@ -16,7 +16,7 @@
 <h1>A collection of opinionated Gradle plugins</h1>
 <div class="details">
 <span id="author" class="author">Andres Almiray</span><br>
-<span id="revnumber">version 0.10.0</span>
+<span id="revnumber">version 0.11.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -78,7 +78,11 @@
 <li><a href="#_org_kordamp_gradle_jacoco_tasks">5.10.2. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_jar">5.11. Jar</a></li>
+<li><a href="#_org_kordamp_gradle_jar">5.11. Jar</a>
+<ul class="sectlevel3">
+<li><a href="#_reproducible_builds">5.11.1. Reproducible Builds</a></li>
+</ul>
+</li>
 <li><a href="#_org_kordamp_gradle_javadoc">5.12. Javadoc</a>
 <ul class="sectlevel3">
 <li><a href="#_org_kordamp_gradle_javadoc_dsl">5.12.1. DSL</a></li>
@@ -191,7 +195,7 @@ still be bent to a certain degree. The plugins found in this project provide suc
         jcenter()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:{plugin-id}:0.10.0'
+        classpath 'org.kordamp.gradle:{plugin-id}:0.11.0'
     }
 }
 apply plugin: '{plugin-id}'</code></pre>
@@ -208,7 +212,7 @@ apply plugin: '{plugin-id}'</code></pre>
         jcenter()
     }
     dependencies {
-        classpath("org.kordamp.gradle:{plugin-id}:0.10.0")
+        classpath("org.kordamp.gradle:{plugin-id}:0.11.0")
     }
 }
 apply(plugin = "{plugin-id}")</code></pre>
@@ -221,7 +225,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id '{plugin-id}' version '0.10.0'
+    id '{plugin-id}' version '0.11.0'
 }</code></pre>
 </div>
 </div>
@@ -229,7 +233,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("{plugin-id}") version "0.10.0"
+    id("{plugin-id}") version "0.11.0"
 }</code></pre>
 </div>
 </div>
@@ -375,8 +379,8 @@ listOf("docs", "subprojects").forEach { dirName -&gt;
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.10.0'            <i class="conum" data-value="1"></i><b>(1)</b>
-    id 'org.kordamp.gradle.bintray' version '0.10.0'            <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.project' version '0.11.0'            <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.bintray' version '0.11.0'            <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 config {
@@ -456,8 +460,8 @@ allprojects {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.10.0"          <i class="conum" data-value="1"></i><b>(1)</b>
-    id("org.kordamp.gradle.bintray") version "0.10.0"          <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.project") version "0.11.0"          <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.bintray") version "0.11.0"          <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 val bintrayUsername: String by project
@@ -678,7 +682,7 @@ publications completely:</p>
 <div class="title">build.gradle (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.10.0'
+    id 'org.kordamp.gradle.project' version '0.11.0'
 }
 
 config {
@@ -697,7 +701,7 @@ allprojects {
 <div class="title">build.gradle.kts (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.10.0"
+    id("org.kordamp.gradle.project") version "0.11.0"
 }
 
 config {
@@ -1684,7 +1688,7 @@ Name
 Type
 </td>
 <td class="hdlist2">
-<p><code>org.kordamp.gradle.plugin.base.EffectiveSettingsTask</code></p>
+<p><code>org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask</code></p>
 </td>
 </tr>
 </table>
@@ -1713,6 +1717,470 @@ sections
 <div class="paragraph">
 <p>You may specify either of the two, be advised that <code>sections</code> has precedence over <code>section</code>. All sections will be displayed
 if neither of these options is specified. Section names match entries found in the <a href="#_project_dsl">DSL</a>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_task_extensions"><a class="anchor" href="#_task_extensions"></a>Extensions</h5>
+<div class="paragraph">
+<p>Displays all extensions applied to a project</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>effectiveSettings</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.base.tasks.ExtensionsTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_example_output"><a class="anchor" href="#_example_output"></a>Example Output</h6>
+<div class="paragraph">
+<p>For a project defined as follows</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
+    id 'org.kordamp.gradle.project' version '0.11.0'
+}
+
+config {
+    license    { enabled = false }
+
+    publishing { enabled = false }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Invoking these command</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>$ ./gradlew :extensions</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Results in the following output</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>&gt; Task :extensions
+extension 0:
+    name: ext
+    type: org.gradle.api.plugins.ExtraPropertiesExtension
+
+extension 1:
+    name: defaultArtifacts
+    type: org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
+
+extension 2:
+    name: config
+    type: org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+
+extension 3:
+    name: reporting
+    type: org.gradle.api.reporting.ReportingExtension
+
+extension 4:
+    name: jacoco
+    type: org.gradle.testing.jacoco.plugins.JacocoPluginExtension
+
+extension 5:
+    name: downloadLicenses
+    type: nl.javadude.gradle.plugins.license.DownloadLicensesExtension
+
+extension 6:
+    name: license
+    type: nl.javadude.gradle.plugins.license.LicenseExtension
+
+extension 7:
+    name: signing
+    type: org.gradle.plugins.signing.SigningExtension
+
+extension 8:
+    name: effectiveConfig
+    type: org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+
+extension 9:
+    name: versioning
+    type: net.nemerosa.versioning.VersioningExtension
+
+extension 10:
+    name: bintray
+    type: com.jfrog.bintray.gradle.BintrayExtension</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_task_plugins"><a class="anchor" href="#_task_plugins"></a>Plugins</h5>
+<div class="paragraph">
+<p>Displays all plugins applied to a project</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>plugins</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.base.tasks.PluginsTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_example_output_2"><a class="anchor" href="#_example_output_2"></a>Example Output</h6>
+<div class="paragraph">
+<p>For a project defined as follows</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
+    id 'org.kordamp.gradle.project' version '0.11.0'
+}
+
+config {
+    license    { enabled = false }
+
+    publishing { enabled = false }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Invoking these command</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>$ ./gradlew :plugins</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Results in the following output</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>&gt; Task :plugins
+plugin 0:
+    implementationClass: org.gradle.api.plugins.HelpTasksPlugin
+
+plugin 1:
+    implementationClass: org.gradle.language.base.plugins.LifecycleBasePlugin
+
+plugin 2:
+    implementationClass: org.gradle.api.plugins.BasePlugin
+
+plugin 3:
+    id: org.kordamp.gradle.base
+    implementationClass: org.kordamp.gradle.plugin.base.BasePlugin
+    enabled: true
+
+plugin 4:
+    implementationClass: org.gradle.api.plugins.ReportingBasePlugin
+
+plugin 5:
+    implementationClass: org.gradle.testing.jacoco.plugins.JacocoPlugin
+
+plugin 6:
+    id: org.kordamp.gradle.jacoco
+    implementationClass: org.kordamp.gradle.plugin.jacoco.JacocoPlugin
+    enabled: true
+
+plugin 7:
+    id: com.github.hierynomus.license-report
+    implementationClass: com.hierynomus.gradle.license.LicenseReportingPlugin
+
+plugin 8:
+    id: com.github.hierynomus.license-base
+    implementationClass: com.hierynomus.gradle.license.LicenseBasePlugin
+
+plugin 9:
+    id: license
+    implementationClass: nl.javadude.gradle.plugins.license.LicensePlugin
+
+plugin 10:
+    id: org.kordamp.gradle.license
+    implementationClass: org.kordamp.gradle.plugin.license.LicensePlugin
+    enabled: false
+
+plugin 11:
+    id: org.kordamp.gradle.build-info
+    implementationClass: org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
+    enabled: true
+
+plugin 12:
+    id: org.kordamp.gradle.source-jar
+    implementationClass: org.kordamp.gradle.plugin.source.SourceJarPlugin
+    enabled: true
+
+plugin 13:
+    id: org.kordamp.gradle.apidoc
+    implementationClass: org.kordamp.gradle.plugin.apidoc.ApidocPlugin
+    enabled: true
+
+plugin 14:
+    id: org.kordamp.gradle.minpom
+    implementationClass: org.kordamp.gradle.plugin.minpom.MinPomPlugin
+    enabled: true
+
+plugin 15:
+    id: org.kordamp.gradle.jar
+    implementationClass: org.kordamp.gradle.plugin.jar.JarPlugin
+    enabled: true
+
+plugin 16:
+    id: org.kordamp.gradle.publishing
+    implementationClass: org.kordamp.gradle.plugin.publishing.PublishingPlugin
+    enabled: false
+
+plugin 17:
+    implementationClass: org.gradle.plugins.signing.SigningPlugin
+
+plugin 18:
+    id: org.kordamp.gradle.source-stats
+    implementationClass: org.kordamp.gradle.plugin.stats.SourceStatsPlugin
+    enabled: true
+
+plugin 19:
+    id: org.kordamp.gradle.source-html
+    implementationClass: org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
+    enabled: true
+
+plugin 20:
+    id: org.kordamp.gradle.bintray
+    implementationClass: org.kordamp.gradle.plugin.bintray.BintrayPlugin
+    enabled: false
+
+plugin 21:
+    id: com.github.ben-manes.versions
+    implementationClass: com.github.benmanes.gradle.versions.VersionsPlugin
+
+plugin 22:
+    id: org.kordamp.gradle.project
+    implementationClass: org.kordamp.gradle.plugin.project.ProjectPlugin
+
+plugin 23:
+    id: net.nemerosa.versioning
+    implementationClass: net.nemerosa.versioning.VersioningPlugin
+
+plugin 24:
+    id: com.jfrog.bintray
+    implementationClass: com.jfrog.bintray.gradle.BintrayPlugin</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_task_properties"><a class="anchor" href="#_task_properties"></a>ProjectProperties</h5>
+<div class="paragraph">
+<p>Displays all properties found in a project</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>projectProperties</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.base.tasks.PropertiesTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="hdlist">
+<div class="title">Options</div>
+<table>
+<tr>
+<td class="hdlist1">
+section
+</td>
+<td class="hdlist2">
+<p>The section to generate the report for.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Valid values for <code>section</code> are: project, ext.</p>
+</div>
+<div class="sect5">
+<h6 id="_example_output_3"><a class="anchor" href="#_example_output_3"></a>Example Output</h6>
+<div class="paragraph">
+<p>For a project defined as follows</p>
+</div>
+<div class="listingblock">
+<div class="title">~/.gradle/gradle.properties</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">global_property = global</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">gradle.properties</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">version        = 0.0.0
+group          = org.kordamp.sample.acme
+local_property = local</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
+    id 'org.kordamp.gradle.project' version '0.11.0'
+}
+
+ext.build_property = 'build'
+
+config {
+    license    { enabled = false }
+
+    publishing { enabled = false }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Invoking these command</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>$ ./gradlew :projectProperties -Pproject_property=project</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Results in the following output</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>&gt; Task :projectProperties
+project:
+    name: sample
+    version: 0.0.0
+    group: org.kordamp.sample.acme
+    path: :
+    displayName: root project 'sample'
+    projectDir: /tmp/sample
+    buildFile: /tmp/sample/build.gradle
+    buildDir: /tmp/sample/build
+
+ext:
+    build_property: build
+    global_property: global
+    local_property: local
+    project_property: project</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_task_repositories"><a class="anchor" href="#_task_repositories"></a>Repositories</h5>
+<div class="paragraph">
+<p>Displays all repositories used for resolving project dependencies</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>repositories</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.base.tasks.RepositoriesTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_example_output_4"><a class="anchor" href="#_example_output_4"></a>Example Output</h6>
+<div class="paragraph">
+<p>For a project defined as follows</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
+    id 'org.kordamp.gradle.project' version '0.11.0'
+}
+
+config {
+    license    { enabled = false }
+
+    publishing { enabled = false }
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+    flatDir { dirs 'lib' }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Invoking these command</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>$ ./gradlew :repositories</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Results in the following output</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>&gt; Task :repositories
+repository 0:
+    type: maven
+    name: BintrayJCenter
+    url: https://jcenter.bintray.com/
+
+repository 1:
+    type: maven
+    name: MavenRepo
+    url: https://repo.maven.apache.org/maven2/
+
+repository 2:
+    type: flatDir
+    name: flatDir
+    dirs:
+        /tmp/sample/lib</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -3437,7 +3905,7 @@ all generated JAR files:</p>
 Created-By    
 </td>
 <td class="hdlist2">
-<p>rootProject.mergedConfiguration.buildInfo.buildCreatedBy</p>
+<p>rootProject.extensions.effectiveConfig.buildInfo.buildCreatedBy</p>
 </td>
 </tr>
 <tr>
@@ -3445,7 +3913,7 @@ Created-By
 Built-By      
 </td>
 <td class="hdlist2">
-<p>rootProject.mergedConfiguration.buildInfo.buildBy</p>
+<p>rootProject.extensions.effectiveConfig.buildInfo.buildBy</p>
 </td>
 </tr>
 <tr>
@@ -3453,7 +3921,7 @@ Built-By
 Build-Jdk     
 </td>
 <td class="hdlist2">
-<p>rootProject.mergedConfiguration.buildInfo.buildJdk</p>
+<p>rootProject.extensions.effectiveConfig.buildInfo.buildJdk</p>
 </td>
 </tr>
 <tr>
@@ -3461,7 +3929,7 @@ Build-Jdk
 Build-Date    
 </td>
 <td class="hdlist2">
-<p>rootProject.mergedConfiguration.buildInfo.buildDate</p>
+<p>rootProject.extensions.effectiveConfig.buildInfo.buildDate</p>
 </td>
 </tr>
 <tr>
@@ -3469,7 +3937,7 @@ Build-Date
 Build-Time    
 </td>
 <td class="hdlist2">
-<p>rootProject.mergedConfiguration.buildInfo.buildTime</p>
+<p>rootProject.extensions.effectiveConfig.buildInfo.buildTime</p>
 </td>
 </tr>
 <tr>
@@ -3477,7 +3945,7 @@ Build-Time
 Build-Revision
 </td>
 <td class="hdlist2">
-<p>rootProject.mergedConfiguration.buildInfo.buildRevision</p>
+<p>rootProject.extensions.effectiveConfig.buildInfo.buildRevision</p>
 </td>
 </tr>
 </table>
@@ -3545,6 +4013,15 @@ Implementation-Vendor
 </td>
 </tr>
 </table>
+</div>
+<div class="sect3">
+<h4 id="_reproducible_builds"><a class="anchor" href="#_reproducible_builds"></a>5.11.1. Reproducible Builds</h4>
+<div class="paragraph">
+<p>It&#8217;s worth noting that enriching JAR manifests with environment and/or temporary related data will result in non-reproducible
+builds. All elements calculated by the <code><a href="#_org_kordamp_gradle_buildinfo">buildInfo</a></code> plugin will affect build reproducibility
+(except for <code>buildRevision</code>). You can disable any of these values from being injected by configuring a <code>skip</code> flag that matches
+the particular value to be skipped.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -4712,7 +5189,7 @@ the project.</p>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
     id 'groovy'
-    id 'org.kordamp.gradle.minpom' version '0.10.0'
+    id 'org.kordamp.gradle.minpom' version '0.11.0'
 }
 
 group   = 'com.acme'
@@ -4728,7 +5205,7 @@ dependencies {
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
     `groovy`
-    id("org.kordamp.gradle.minpom") version "0.10.0"
+    id("org.kordamp.gradle.minpom") version "0.11.0"
 }
 
 group   = "com.acme"
@@ -6225,8 +6702,8 @@ destinationDir
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.10.0<br>
-Last updated 2018-11-23 18:48:30 +0100
+Version 0.11.0<br>
+Last updated 2018-12-08 11:11:07 -0600
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
