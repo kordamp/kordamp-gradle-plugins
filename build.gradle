@@ -157,10 +157,10 @@ subprojects {
 
         afterEvaluate {
             pluginBundle {
-                website = project.mergedConfiguration.info.links.website
-                vcsUrl = project.mergedConfiguration.info.links.scm
-                description = project.mergedConfiguration.info.description
-                tags = project.mergedConfiguration.info.tags
+                website = project.extensions.findByName('config').info.links.website
+                vcsUrl = project.extensions.findByName('config').info.links.scm
+                description = project.extensions.findByName('config').info.description
+                tags = project.extensions.findByName('config').info.tags
 
                 plugins {
                     "${project.pluginShortName}Plugin" {
