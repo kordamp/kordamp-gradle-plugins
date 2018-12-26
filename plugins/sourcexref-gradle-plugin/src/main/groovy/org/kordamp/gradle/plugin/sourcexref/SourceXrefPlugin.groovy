@@ -25,6 +25,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.GroovyBasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.tasks.bundling.Jar
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -118,6 +119,14 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
         }
 
         configureTask(effectiveConfig.sourceXref, jxrTask)
+
+        project.tasks.create(SOURCE_XREF_TASK_NAME + 'Jar', Jar) {
+            dependsOn jxrTask
+            group 'Documentation'
+            description 'An archive of the JXR report the source code'
+            classifier 'sources-jxr'
+            from jxrTask.destinationDir
+        }
     }
 
     private void configureAggregateSourceXrefTask(Project project) {
@@ -144,6 +153,14 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
         }
 
         configureTask(effectiveConfig.sourceXref, jxrTask)
+
+        project.tasks.create(AGGREGATE_SOURCE_XREF_TASK_NAME + 'Jar', Jar) {
+            dependsOn jxrTask
+            group 'Documentation'
+            description 'An archive of the JXR report the source code'
+            classifier 'sources-jxr'
+            from jxrTask.destinationDir
+        }
     }
 
     private JxrTask configureTask(SourceXref sourceXref, JxrTask jxrTask) {
