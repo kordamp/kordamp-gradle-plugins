@@ -33,6 +33,7 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.GroovyBasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.bundling.Jar
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -173,7 +174,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             stylesheet = effectiveConfig.sourceHtml.overview.stylesheet
         }
 
-        project.tasks.create(SOURCE_HTML_TASK_NAME, Copy) {
+        Copy sourceHtmlTask = project.tasks.create(SOURCE_HTML_TASK_NAME, Copy) {
             enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
             dependsOn generateOverviewTask
             group 'Documentation'
@@ -181,6 +182,14 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             destinationDir = project.file("${project.buildDir}/docs/source-html")
             from convertCodeTask.destDir
             from generateOverviewTask.destDir
+        }
+
+        project.tasks.create(SOURCE_HTML_TASK_NAME + 'Jar', Jar) {
+            dependsOn sourceHtmlTask
+            group 'Documentation'
+            description 'An archive of the HTML report the source code'
+            classifier 'sources-html'
+            from sourceHtmlTask.destinationDir
         }
     }
 
@@ -235,13 +244,21 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             stylesheet = effectiveConfig.sourceHtml.overview.stylesheet
         }
 
-        project.tasks.create(AGGREGATE_SOURCE_HTML_TASK_NAME, Copy) {
+        Copy sourceHtmlTask = project.tasks.create(AGGREGATE_SOURCE_HTML_TASK_NAME, Copy) {
             dependsOn generateOverviewTask
             group 'Documentation'
             description 'Generates a HTML report of the source code'
             destinationDir = project.file("${project.buildDir}/docs/source-html")
             from convertCodeTask.destDir
             from generateOverviewTask.destDir
+        }
+
+        project.tasks.create(AGGREGATE_SOURCE_HTML_TASK_NAME + 'Jar', Jar) {
+            dependsOn sourceHtmlTask
+            group 'Documentation'
+            description 'An archive of the HTML report the source code'
+            classifier 'sources-html'
+            from sourceHtmlTask.destinationDir
         }
     }
 
