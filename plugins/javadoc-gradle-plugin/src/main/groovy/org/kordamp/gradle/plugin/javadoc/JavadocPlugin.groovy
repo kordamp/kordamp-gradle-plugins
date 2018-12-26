@@ -72,7 +72,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
             setEnabled(effectiveConfig.javadoc.enabled)
 
             if (!enabled) {
@@ -118,7 +118,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
             }
         }
 
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         javadocTask.configure {
             include(effectiveConfig.javadoc.includes)
             exclude(effectiveConfig.javadoc.excludes)

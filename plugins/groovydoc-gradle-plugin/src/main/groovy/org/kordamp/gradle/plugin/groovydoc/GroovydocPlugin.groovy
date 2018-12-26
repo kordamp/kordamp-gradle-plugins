@@ -76,7 +76,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
         JavadocPlugin.applyIfMissing(project)
 
         project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
             setEnabled(effectiveConfig.groovydoc.enabled)
 
             if (!enabled) {
@@ -130,7 +130,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
             // ignored
         }
 
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         groovydocTask.configure {
             classpath = javadoc.classpath
             include(effectiveConfig.groovydoc.includes)
@@ -155,7 +155,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
             }
         }
 
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (effectiveConfig.groovydoc.replaceJavadoc) {
             groovydocJarTask.classifier = 'javadoc'
             project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false

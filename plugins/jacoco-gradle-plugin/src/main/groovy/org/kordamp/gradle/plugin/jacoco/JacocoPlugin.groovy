@@ -69,7 +69,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
         project.plugins.apply(org.gradle.testing.jacoco.plugins.JacocoPlugin)
 
         project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
             setEnabled(effectiveConfig.jacoco.enabled)
 
             if (!enabled) {
@@ -103,7 +103,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
     }
 
     private Task configureJacocoReportTask(Project project, Test testTask) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         String taskName = resolveJacocoReportTaskName(testTask.name)
 
@@ -142,7 +142,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
     }
 
     private void applyJacocoMerge(Project project) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (!effectiveConfig.jacoco.enabled) {
             return
         }

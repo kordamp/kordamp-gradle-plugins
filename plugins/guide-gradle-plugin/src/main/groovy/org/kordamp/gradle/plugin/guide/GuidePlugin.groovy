@@ -76,7 +76,7 @@ class GuidePlugin extends AbstractKordampPlugin {
     private void configureAsciidoctorTask(Project project) {
         AsciidoctorTask asciidoctorTask = project.tasks.findByName(AsciidoctorPlugin.ASCIIDOCTOR)
 
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         Map attrs = [:]
         checkAttribute(attrs, asciidoctorTask.attributes, 'toc', 'left')

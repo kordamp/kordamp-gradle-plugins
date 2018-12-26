@@ -99,7 +99,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
     }
 
     private void updatePublications(Project project) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         if (!effectiveConfig.publishing.enabled || !project.sourceSets.findByName('main')) {
             setEnabled(false)

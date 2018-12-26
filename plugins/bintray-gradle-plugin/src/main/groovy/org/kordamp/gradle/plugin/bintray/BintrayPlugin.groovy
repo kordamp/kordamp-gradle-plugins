@@ -80,7 +80,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
     }
 
     private void updatePublications(Project project) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         if (!effectiveConfig.bintray.enabled || !project.sourceSets.findByName('main')) {
             project.getTasks().findByName(BintrayUploadTask.TASK_NAME)?.enabled = false

@@ -93,7 +93,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             }
         })
         project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
             if (effectiveConfig.sourceHtml.enabled) {
                 project.plugins.withType(JavaBasePlugin) {
@@ -118,7 +118,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
     }
 
     private Task configureSourceHtmlTask(Project project, Configuration configuration) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (!effectiveConfig.sourceHtml.enabled) {
             return
         }
@@ -194,7 +194,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
     }
 
     private void configureAggregateSourceHtmlTask(Project project, Configuration configuration) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         Set<Project> projects = new LinkedHashSet<>()
         FileCollection srcdirs = project.files()

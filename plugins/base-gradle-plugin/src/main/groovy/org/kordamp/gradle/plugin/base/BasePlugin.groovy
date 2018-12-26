@@ -17,8 +17,10 @@
  */
 package org.kordamp.gradle.plugin.base
 
+import org.gradle.BuildAdapter
 import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ExtensionsTask
@@ -36,6 +38,11 @@ class BasePlugin extends AbstractKordampPlugin {
 
     void apply(Project project) {
         this.project = project
+
+        if (hasBeenVisited(project)) {
+            return
+        }
+        setVisited(project, true)
 
         if (!project.plugins.findPlugin(org.gradle.api.plugins.BasePlugin)) {
             project.plugins.apply(org.gradle.api.plugins.BasePlugin)
@@ -70,13 +77,19 @@ class BasePlugin extends AbstractKordampPlugin {
             description "Displays all properties found in project '$project.name'"
         }
 
+        if (isRootProject(project)) {
+            project.gradle.addBuildListener(new BuildAdapter() {
+                @Override
+                void projectsEvaluated(Gradle gradle) {
+                    project.subprojects.each { Project subproject ->
+                        subproject.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME).rootReady()
+                    }
+                    project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME).rootReady()
+                }
+            })
+        }
 
         project.afterEvaluate {
-            if (hasBeenVisited(project)) {
-                return
-            }
-            setVisited(project, true)
-
             ProjectConfigurationExtension rootExtension = project.rootProject.extensions.findByType(ProjectConfigurationExtension)
             ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
             extension.normalize()
@@ -85,15 +98,15 @@ class BasePlugin extends AbstractKordampPlugin {
             if (isRootProject(project)) {
                 ProjectConfigurationExtension merged = extension.merge(rootExtension)
                 errors = merged.validate()
-                project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged)
+                project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged).ready()
             } else {
                 if (rootExtension) {
                     ProjectConfigurationExtension merged = extension.merge(rootExtension)
                     errors = merged.validate()
-                    project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged)
+                    project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged).ready()
                 } else {
                     errors = extension.validate()
-                    project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, extension)
+                    project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, extension).ready()
                 }
             }
 

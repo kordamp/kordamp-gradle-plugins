@@ -76,7 +76,7 @@ class BomPlugin extends AbstractKordampPlugin {
     }
 
     private void updatePublications(Project project) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         setEnabled(effectiveConfig.bom.enabled)
 
         if (!enabled) {

@@ -63,7 +63,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
             setEnabled(effectiveConfig.stats.enabled)
 
             if (enabled) {
@@ -96,7 +96,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
     }
 
     private void createStatsTask(Project project) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         SourceStatsTask statsTask = project.tasks.create('sourceStats', SourceStatsTask) {
             enabled = effectiveConfig.stats.enabled
@@ -114,7 +114,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
     }
 
     private void applyAggregateStats(Project project) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         Set<Project> allProjects = new LinkedHashSet<>(effectiveConfig.stats.projects())
         Set<Task> allStatsTasks = new LinkedHashSet<>(effectiveConfig.stats.statsTasks())

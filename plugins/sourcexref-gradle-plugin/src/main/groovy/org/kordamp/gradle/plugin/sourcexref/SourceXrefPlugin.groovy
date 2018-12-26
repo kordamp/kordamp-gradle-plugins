@@ -70,7 +70,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
             if (effectiveConfig.sourceXref.enabled) {
                 project.plugins.withType(JavaBasePlugin) {
@@ -97,7 +97,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
     }
 
     private Task configureSourceXrefTask(Project project) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (!effectiveConfig.sourceXref.enabled) {
             return
         }
@@ -130,7 +130,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
     }
 
     private void configureAggregateSourceXrefTask(Project project) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         Set<Project> projects = new LinkedHashSet<>()
         Set<Task> xrefTasks = new LinkedHashSet<>()

@@ -179,7 +179,7 @@ class LicensePlugin extends AbstractKordampPlugin {
     }
 
     private void configureLicenseExtension(Project project) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         setEnabled(effectiveConfig.license.enabled)
 
         if (!enabled) {
@@ -221,7 +221,7 @@ class LicensePlugin extends AbstractKordampPlugin {
     }
 
     private void postConfigureDownloadLicensesExtension(Project project) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         Map<Object, List<Object>> defaultAliases = new LinkedHashMap<>(DEFAULT_ALIASES)
         effectiveConfig.license.licenses.licenses.each { license ->
@@ -252,7 +252,7 @@ class LicensePlugin extends AbstractKordampPlugin {
     }
 
     private void configureAggregateLicenseReportTask(Project project) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (!effectiveConfig.license.enabled) {
             return
         }

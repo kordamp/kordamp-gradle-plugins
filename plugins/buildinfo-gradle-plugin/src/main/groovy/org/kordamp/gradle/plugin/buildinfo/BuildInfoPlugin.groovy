@@ -68,7 +68,7 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
     }
 
     private void configureBuildProperties(Project project) {
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         setEnabled(effectiveConfig.buildInfo.enabled)
 
         if (!enabled) {

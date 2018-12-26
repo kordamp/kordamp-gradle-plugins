@@ -87,7 +87,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         JavadocPlugin.applyIfMissing(project)
 
         project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
             setEnabled(effectiveConfig.kotlindoc.enabled)
 
             if (!enabled) {
@@ -129,7 +129,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
             }
         }
 
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         applyConfiguration(effectiveConfig.kotlindoc, kotlindocTask, format, formatName)
 
         kotlindocTask
@@ -139,7 +139,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         String formatName = format == 'html-as-java' ? 'htmljava' : format
         String resolvedClassifier = 'kotlindoc'
         String taskName = KOTLINDOC_BASENAME + StringUtils.capitalize(formatName) + 'Jar'
-        ProjectConfigurationExtension effectiveConfig = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         if (effectiveConfig.kotlindoc.outputFormats.size() > 1) {
             resolvedClassifier += '-' + formatName

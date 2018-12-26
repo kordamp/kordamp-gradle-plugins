@@ -118,7 +118,7 @@ class JarPlugin extends AbstractKordampPlugin {
     }
 
     private void configureJarMetainf(Project project, Jar jarTask) {
-        ProjectConfigurationExtension effectiveConfig = project.rootProject.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project.rootProject)
         setEnabled(effectiveConfig.minpom.enabled)
 
         if (enabled) {
@@ -134,7 +134,7 @@ class JarPlugin extends AbstractKordampPlugin {
     }
 
     private void configureJarManifest(Project project, Jar jarTask) {
-        ProjectConfigurationExtension effectiveConfig = project.rootProject.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project.rootProject)
 
         if (effectiveConfig.release) {
             jarTask.configure {

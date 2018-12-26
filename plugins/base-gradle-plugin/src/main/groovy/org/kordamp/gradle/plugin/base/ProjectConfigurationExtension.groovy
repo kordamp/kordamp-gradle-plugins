@@ -70,6 +70,9 @@ class ProjectConfigurationExtension {
 
     private boolean releaseSet
 
+    private final List<Action<? super Project>> projectActions = []
+    private final List<Action<? super Project>> rootProjectActions = []
+
     ProjectConfigurationExtension(Project project) {
         this.project = project
         info = new Information(project)
@@ -109,6 +112,16 @@ class ProjectConfigurationExtension {
         this.sourceXref = other.sourceXref
         this.stats = other.stats
         setRelease(other.release)
+        projectActions.addAll(other.projectActions)
+        rootProjectActions.addAll(other.rootProjectActions)
+    }
+
+    protected void ready() {
+        projectActions.each { Action action -> action.execute(project) }
+    }
+
+    protected void rootReady() {
+        rootProjectActions.each { Action action -> action.execute(project.rootProject) }
     }
 
     String toString() {
@@ -201,6 +214,16 @@ class ProjectConfigurationExtension {
 
     Stats getStats() {
         stats
+    }
+
+    ProjectConfigurationExtension whenProjectReady(Action<? super Project> action) {
+        projectActions.add(action)
+        this
+    }
+
+    ProjectConfigurationExtension whenRootProjectReady(Action<? super Project> action) {
+        rootProjectActions.add(action)
+        this
     }
 
     void info(Action<? super Information> action) {
@@ -360,6 +383,8 @@ class ProjectConfigurationExtension {
         this.@sourceHtml.copyInto(copy.@sourceHtml)
         this.@sourceXref.copyInto(copy.@sourceXref)
         this.@stats.copyInto(copy.@stats)
+        copy.projectActions.addAll(this.projectActions)
+        copy.rootProjectActions.addAll(this.rootProjectActions)
 
         copy
     }
