@@ -24,17 +24,21 @@ config {
         mergeExecFile
         mergeReportHtmlFile
         mergeReportXmlFile
+        additionalSourceDirs
+        additionalClassDirs
     }
 }
 ----
 
 [options="header", cols="5*"]
 |===
-| Name                | Type    | Required | Default Value                                                | Description
-| enabled             | boolean | no       | true                                                         | Disables `org.kordamp.gradle.jacoco` plugin if `false`
-| mergeExecFile       | File    | no       | ${project.buildDir}/jacoco/root.exec                         | Location for the root merge execution data file
-| mergeReportHtmlFile | File    | no       | ${project.buildDir}/reports/jacoco/root/html                 | Location for root HTML reports
-| mergeReportXmlFile  | File    | no       | ${project.buildDir}/reports/jacoco/root/jacocoTestReport.xml | Location for the root XML report
+| Name                 | Type           | Required | Default Value                                                | Description
+| enabled              | boolean        | no       | true                                                         | Disables `org.kordamp.gradle.jacoco` plugin if `false`
+| mergeExecFile        | File           | no       | ${project.buildDir}/jacoco/root.exec                         | Location for the root merge execution data file
+| mergeReportHtmlFile  | File           | no       | ${project.buildDir}/reports/jacoco/root/html                 | Location for root HTML reports
+| mergeReportXmlFile   | File           | no       | ${project.buildDir}/reports/jacoco/root/jacocoTestReport.xml | Location for the root XML report
+| additionalSourceDirs | FileCollection | no       | []                                                           | Additional source directories
+| additionalClassDirs  | FileCollection | no       | []                                                           | Additional class directories
 |===
 
 This block is optional.
@@ -53,9 +57,9 @@ Type:: `org.gradle.testing.jacoco.tasks.JacocoReport`
 
 .Properties
 [horizontal]
-additionalSourceDirs:: project.sourceSets.main.allSource.srcDirs
-sourceDirectories:: project.sourceSets.main.allSource.srcDirs
-classDirectories:: project.sourceSets.main.output.classesDirs*.path
+additionalSourceDirs:: jacoco.additionalSourceDirs
+sourceDirectories:: jacoco.additionalSourceDirs
+classDirectories:: jacoco.additionalClassDirs
 executionData:: testTask
 reports.html.destination:: "${project.reporting.baseDir.path}/jacoco/${testTask.name}/html"
 reports.xml.destination:: "${project.reporting.baseDir.path}/jacoco/${testTask.name}/jacocoTestReport.xml"

@@ -22,6 +22,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
@@ -31,7 +32,7 @@ import org.gradle.testing.jacoco.tasks.JacocoReport
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['project', 'projects', 'testTasks', 'reportTasks'])
+@EqualsAndHashCode(excludes = ['project', 'projects', 'testTasks', 'reportTasks', 'additionalSourceDirs', 'additionalClassDirs'])
 class Jacoco extends AbstractFeature {
     File mergeExecFile
     File mergeReportHtmlFile
@@ -41,12 +42,17 @@ class Jacoco extends AbstractFeature {
     private final Set<Test> testTasks = new LinkedHashSet<>()
     private final Set<JacocoReport> reportTasks = new LinkedHashSet<>()
 
+    final ConfigurableFileCollection additionalSourceDirs
+    final ConfigurableFileCollection additionalClassDirs
+
     Jacoco(Project project) {
         super(project)
         File destinationDir = project.file("${project.buildDir}/reports/jacoco/root")
         mergeExecFile = project.file("${project.buildDir}/jacoco/root.exec")
         mergeReportHtmlFile = project.file("${destinationDir}/html")
         mergeReportXmlFile = project.file("${destinationDir}/jacocoTestReport.xml")
+        additionalSourceDirs = project.files()
+        additionalClassDirs = project.files()
     }
 
     @Override
@@ -57,14 +63,17 @@ class Jacoco extends AbstractFeature {
     @Override
     @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        if (!isRoot()) return [:]
-
         Map map = [enabled: enabled]
 
         if (enabled) {
-            map.mergeExecFile = mergeExecFile
-            map.mergeReportHtmlFile = mergeReportHtmlFile
-            map.mergeReportXmlFile = mergeReportXmlFile
+            if (isRoot()) {
+                map.mergeExecFile = mergeExecFile
+                map.mergeReportHtmlFile = mergeReportHtmlFile
+                map.mergeReportXmlFile = mergeReportXmlFile
+            } else {
+                map.additionalSourceDirs = additionalSourceDirs.files.absolutePath
+                map.additionalClassDirs = additionalClassDirs.files.absolutePath
+            }
         }
 
         ['jacoco': map]
@@ -75,6 +84,8 @@ class Jacoco extends AbstractFeature {
         copy.mergeExecFile = mergeExecFile
         copy.mergeReportHtmlFile = mergeReportHtmlFile
         copy.mergeReportXmlFile = mergeReportXmlFile
+        copy.additionalSourceDirs.from(project.files(additionalSourceDirs))
+        copy.additionalClassDirs.from(project.files(additionalClassDirs))
     }
 
     static void merge(Jacoco o1, Jacoco o2) {
@@ -83,6 +94,8 @@ class Jacoco extends AbstractFeature {
         o1.mergeReportHtmlFile = o1.mergeReportHtmlFile ?: o2.mergeReportHtmlFile
         o1.mergeReportXmlFile = o1.mergeReportXmlFile ?: o2.mergeReportXmlFile
         o1.projects().addAll(o2.projects())
+        o1.additionalSourceDirs.from(o2.additionalSourceDirs)
+        o1.additionalClassDirs.from(o2.additionalClassDirs)
     }
 
     Set<Project> projects() {

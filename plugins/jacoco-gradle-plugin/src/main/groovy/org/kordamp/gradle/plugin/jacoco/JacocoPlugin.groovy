@@ -20,6 +20,7 @@ package org.kordamp.gradle.plugin.jacoco
 import org.gradle.BuildAdapter
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.testing.Test
@@ -78,7 +79,10 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
             project.plugins.withType(JavaBasePlugin) {
                 project.tasks.withType(Test) { Test testTask ->
-                    Task reportTask = configureJacocoReportTask(project, testTask)
+                    if (!testTask.enabled) {
+                        return
+                    }
+                    JacocoReport reportTask = configureJacocoReportTask(project, testTask)
                     if (reportTask.enabled) {
                         effectiveConfig.jacoco.testTasks() << testTask
                         effectiveConfig.jacoco.reportTasks() << reportTask
@@ -102,7 +106,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
         return 'jacoco' + StringUtils.capitalize(name) + 'Report'
     }
 
-    private Task configureJacocoReportTask(Project project, Test testTask) {
+    private JacocoReport configureJacocoReportTask(Project project, Test testTask) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         String taskName = resolveJacocoReportTaskName(testTask.name)
@@ -117,9 +121,9 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
                 jacocoClasspath = project.configurations.jacocoAnt
 
-                additionalSourceDirs = project.files(PluginUtils.resolveMainSourceDirs(project))
-                sourceDirectories = project.files(PluginUtils.resolveMainSourceDirs(project))
-                classDirectories = project.files(project.sourceSets.main.output.classesDirs*.path)
+                additionalSourceDirs.from project.files(resolveSourceDirs(effectiveConfig, project))
+                sourceDirectories.from project.files(resolveSourceDirs(effectiveConfig, project))
+                classDirectories.from project.files(resolveClassDirs(effectiveConfig, project))
                 executionData testTask
 
                 reports {
@@ -139,6 +143,24 @@ class JacocoPlugin extends AbstractKordampPlugin {
         }
 
         jacocoReportTask
+    }
+
+    private FileCollection resolveSourceDirs(ProjectConfigurationExtension effectiveConfig, Project project) {
+        project.files(PluginUtils.resolveMainSourceDirs(project))
+            .from(effectiveConfig.jacoco.additionalSourceDirs.files.flatten().unique())
+    }
+
+    private FileCollection resolveClassDirs(ProjectConfigurationExtension effectiveConfig, Project project) {
+        project.files(PluginUtils.resolveSourceSets(project).main.output.classesDirs*.path.flatten().unique())
+            .from(effectiveConfig.jacoco.additionalClassDirs.files.flatten().unique())
+    }
+
+    private FileCollection resolveSourceDirs(ProjectConfigurationExtension effectiveConfig, Collection<Project> projects) {
+        project.files(projects.collect { resolveSourceDirs(effectiveConfig, it) }.flatten().unique())
+    }
+
+    private FileCollection resolveClassDirs(ProjectConfigurationExtension effectiveConfig, Collection<Project> projects) {
+        project.files(projects.collect { resolveClassDirs(effectiveConfig, it) }.flatten().unique())
     }
 
     private void applyJacocoMerge(Project project) {
@@ -174,9 +196,9 @@ class JacocoPlugin extends AbstractKordampPlugin {
             group = 'Reporting'
             description = 'Generate aggregate Jacoco coverage report.'
 
-            additionalSourceDirs = project.files(PluginUtils.resolveMainSourceDirs(projects))
-            sourceDirectories = project.files(PluginUtils.resolveMainSourceDirs(projects))
-            classDirectories = project.files(projects.sourceSets.main.output)
+            additionalSourceDirs.from project.files(resolveSourceDirs(effectiveConfig, projects))
+            sourceDirectories.from project.files(resolveSourceDirs(effectiveConfig, projects))
+            classDirectories.from project.files(resolveClassDirs(effectiveConfig, projects))
             executionData project.files(jacocoRootMerge.destinationFile)
 
             reports {
