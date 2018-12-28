@@ -71,7 +71,7 @@ class SourceStatsTask extends DefaultTask {
         merged.putAll(Stats.defaultPaths())
         merged.putAll(paths)
 
-        PluginUtils.resolveSrcDirs(project).each { File dir ->
+        PluginUtils.resolveSourceDirs(project).each { File dir ->
             if (!dir.exists()) return
             dir.eachFileRecurse { File file ->
                 if (file.file) {

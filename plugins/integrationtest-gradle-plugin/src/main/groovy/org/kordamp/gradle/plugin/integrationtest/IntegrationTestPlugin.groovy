@@ -26,6 +26,8 @@ import org.gradle.api.tasks.testing.TestReport
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 
+import static org.kordamp.gradle.PluginUtils.resolveSourceSets
+
 /**
  * @author Andres Almiray
  * @since 0.2.0
@@ -68,7 +70,7 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
                 module {
                     scopes.TEST.plus += [project.configurations.integrationTestCompile]
                     scopes.TEST.plus += [project.configurations.integrationTestRuntime]
-                    testSourceDirs += project.sourceSets.integrationTest.allSource.srcDirs
+                    testSourceDirs += resolveSourceSets(project).integrationTest.allSource.srcDirs
                 }
             }
         }
@@ -76,20 +78,18 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
 
     private void createSourceSetsIfNeeded(Project project) {
         if (!project.sourceSets.findByName('integrationTest')) {
-            if (project.plugins.findPlugin('groovy')) {
-                project.file('src/integration-test/groovy').mkdirs()
-            }
-            project.file('src/integration-test/java').mkdirs()
-            project.file('src/integration-test/resources').mkdirs()
-
             project.sourceSets {
                 integrationTest {
-                    java.srcDirs project.file('src/integration-test/java')
+                    if (project.file('src/integration-test/java').exists()) {
+                        java.srcDirs project.file('src/integration-test/java')
+                    }
                     if (project.file('src/integration-test/groovy').exists()) {
                         groovy.srcDirs project.file('src/integration-test/groovy')
                     }
-                    resources.srcDir project.file('src/integration-test/resources')
-                    compileClasspath += project.sourceSets.main.output
+                    if (project.file('src/integration-test/resources').exists()) {
+                        resources.srcDir project.file('src/integration-test/resources')
+                    }
+                    compileClasspath += resolveSourceSets(project).main.output
                     compileClasspath += project.configurations.compileOnly
                     compileClasspath += project.configurations.testCompileOnly
                     runtimeClasspath += compileClasspath
@@ -101,14 +101,14 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
     private void createTasksIfNeeded(Project project) {
         Task jarTask = project.tasks.findByName('jar')
 
-        Task integrationTest = project.tasks.findByName('integrationTest')
+        Test integrationTest = project.tasks.findByName('integrationTest')
         if (!integrationTest) {
             integrationTest = project.tasks.create('integrationTest', Test) {
                 dependsOn jarTask
                 group 'Verification'
                 description 'Runs the integration tests.'
-                testClassesDirs = project.sourceSets.integrationTest.output.classesDirs
-                classpath = project.sourceSets.integrationTest.runtimeClasspath
+                testClassesDirs = resolveSourceSets(project).integrationTest.output.classesDirs
+                classpath = resolveSourceSets(project).integrationTest.runtimeClasspath
                 reports.html.enabled = false
                 forkEvery = Runtime.runtime.availableProcessors()
 
