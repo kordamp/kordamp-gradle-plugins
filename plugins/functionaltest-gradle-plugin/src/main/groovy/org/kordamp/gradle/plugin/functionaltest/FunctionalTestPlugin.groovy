@@ -46,8 +46,8 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         project.plugins.withType(JavaBasePlugin) {
-            createConfigurationsIfNeeded(project)
             createSourceSetsIfNeeded(project)
+            createConfigurationsIfNeeded(project)
             createTasksIfNeeded(project)
         }
     }
@@ -118,7 +118,7 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
             }
         }
 
-        Task functionalTestReport = project.tasks.findByName('functionalTestReport')
+        TestReport functionalTestReport = project.tasks.findByName('functionalTestReport')
         if (!functionalTestReport) {
             functionalTestReport = project.tasks.create('functionalTestReport', TestReport) {
                 group 'Reporting'

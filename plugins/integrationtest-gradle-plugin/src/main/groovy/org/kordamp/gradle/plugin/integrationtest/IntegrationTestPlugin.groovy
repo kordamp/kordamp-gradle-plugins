@@ -46,8 +46,8 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         project.plugins.withType(JavaBasePlugin) {
-            createConfigurationsIfNeeded(project)
             createSourceSetsIfNeeded(project)
+            createConfigurationsIfNeeded(project)
             createTasksIfNeeded(project)
         }
     }
@@ -118,7 +118,7 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
             }
         }
 
-        Task integrationTestReport = project.tasks.findByName('integrationTestReport')
+        TestReport integrationTestReport = project.tasks.findByName('integrationTestReport')
         if (!integrationTestReport) {
             integrationTestReport = project.tasks.create('integrationTestReport', TestReport) {
                 group 'Reporting'
