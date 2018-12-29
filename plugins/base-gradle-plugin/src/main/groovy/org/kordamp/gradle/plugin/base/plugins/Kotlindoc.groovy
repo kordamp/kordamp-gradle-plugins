@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -37,7 +36,6 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['project', 'projects', 'kotlindocTasks', 'kotlindocJarTasks'])
 class Kotlindoc extends AbstractFeature {
     private final Set<String> PLATFORMS = ['Common', 'JVM', 'JS', 'Native'] as Set
     private final Set<String> FORMATS = ['html', 'javadoc', 'html-as-java', 'markdown', 'gfm', 'jekyll'] as Set

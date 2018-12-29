@@ -32,7 +32,7 @@ import org.gradle.testing.jacoco.tasks.JacocoReport
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['project', 'projects', 'testTasks', 'reportTasks', 'additionalSourceDirs', 'additionalClassDirs'])
+@EqualsAndHashCode(excludes = ['additionalSourceDirs', 'additionalClassDirs'])
 class Jacoco extends AbstractFeature {
     File mergeExecFile
     File mergeReportHtmlFile

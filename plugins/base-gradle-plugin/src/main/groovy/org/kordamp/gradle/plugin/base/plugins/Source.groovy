@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
 import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Jar
 
@@ -30,7 +29,6 @@ import org.gradle.api.tasks.bundling.Jar
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['project', 'projects', 'sourceTasks'])
 class Source extends AbstractFeature {
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<Jar> sourceTasks = new LinkedHashSet<>()

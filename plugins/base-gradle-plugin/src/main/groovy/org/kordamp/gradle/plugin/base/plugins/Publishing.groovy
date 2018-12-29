@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
 import org.gradle.api.Project
 
 /**
@@ -29,7 +28,6 @@ import org.gradle.api.Project
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['project'])
 class Publishing extends AbstractFeature {
     String releasesRepository
     String snapshotsRepository

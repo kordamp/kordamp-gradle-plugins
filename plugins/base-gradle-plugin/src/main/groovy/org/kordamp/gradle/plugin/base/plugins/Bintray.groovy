@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
@@ -35,7 +34,6 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['project'])
 class Bintray extends AbstractFeature {
     private static final String PLUGIN_ID = 'org.kordamp.gradle.bintray'
 

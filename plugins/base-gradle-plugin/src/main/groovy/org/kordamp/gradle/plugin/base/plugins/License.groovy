@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
@@ -33,7 +32,6 @@ import org.kordamp.gradle.plugin.base.model.LicenseSet
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['project'])
 class License extends AbstractFeature {
     final LicenseSet licenses = new LicenseSet()
 

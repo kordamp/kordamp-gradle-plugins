@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
@@ -30,7 +29,6 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['project'])
 class Bom extends AbstractFeature {
     Set<String> compile = new LinkedHashSet<>()
     Set<String> runtime = new LinkedHashSet<>()

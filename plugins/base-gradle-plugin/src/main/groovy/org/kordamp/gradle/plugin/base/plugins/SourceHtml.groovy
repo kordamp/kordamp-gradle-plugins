@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -33,7 +32,6 @@ import org.gradle.util.ConfigureUtil
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['project', 'projects', 'srcDirs'])
 class SourceHtml extends AbstractFeature {
     final Conversion conversion
     final Overview overview
@@ -102,8 +100,7 @@ class SourceHtml extends AbstractFeature {
 
     @CompileStatic
     @Canonical
-    @EqualsAndHashCode(excludes = ['project'])
-    @ToString(includeNames = true, excludes = ['project'])
+    @ToString(includeNames = true)
     static class Conversion {
         FileCollection srcDirs
         File destDir
@@ -300,8 +297,7 @@ class SourceHtml extends AbstractFeature {
 
     @CompileStatic
     @Canonical
-    @EqualsAndHashCode(excludes = ['project'])
-    @ToString(includeNames = true, excludes = ['project'])
+    @ToString(includeNames = true)
     static class Overview {
         File destDir
         String pattern = '**/*.html'

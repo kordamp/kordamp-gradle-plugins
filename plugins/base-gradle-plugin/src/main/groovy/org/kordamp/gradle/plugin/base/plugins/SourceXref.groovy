@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -33,7 +32,6 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['projects', 'xrefTasks'])
 class SourceXref extends AbstractFeature {
     String templateDir
     String inputEncoding

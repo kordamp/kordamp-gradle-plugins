@@ -19,7 +19,6 @@ package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
 import org.gradle.api.Project
 
 /**
@@ -28,7 +27,6 @@ import org.gradle.api.Project
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['project'])
 abstract class AbstractFeature implements Feature {
     boolean enabled = true
 
