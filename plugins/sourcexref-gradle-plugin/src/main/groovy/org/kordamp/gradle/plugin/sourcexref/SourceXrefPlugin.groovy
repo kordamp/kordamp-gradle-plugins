@@ -75,7 +75,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
             if (effectiveConfig.sourceXref.enabled) {
                 project.plugins.withType(JavaBasePlugin) {
                     JxrTask xrefTask = configureSourceXrefTask(project)
-                    if (xrefTask.enabled) {
+                    if (xrefTask?.enabled) {
                         effectiveConfig.sourceXref.projects() << project
                         effectiveConfig.sourceXref.xrefTasks() << xrefTask
                     } else {
@@ -99,7 +99,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
                 group 'Documentation'
                 description 'An archive of the JXR report the source code'
                 classifier 'sources-jxr'
-                from jxrTask.destinationDir
+                from jxrTask.outputDirectory
                 enabled = false
             }
 
@@ -141,8 +141,10 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
             group 'Documentation'
             description 'An archive of the JXR report the source code'
             classifier 'sources-jxr'
-            from jxrTask.destinationDir
+            from jxrTask.outputDirectory
         }
+
+        jxrTask
     }
 
     private void configureAggregateSourceXrefTask(Project project, JxrTask jxrTask, Jar jxrJarTask) {

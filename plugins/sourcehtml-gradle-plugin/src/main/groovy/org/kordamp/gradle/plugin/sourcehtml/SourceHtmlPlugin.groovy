@@ -97,7 +97,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
 
             if (effectiveConfig.sourceHtml.enabled) {
                 project.plugins.withType(JavaBasePlugin) {
-                    if (configureSourceHtmlTask(project, configuration).enabled) {
+                    if (configureSourceHtmlTask(project, configuration)?.enabled) {
                         effectiveConfig.sourceHtml.projects() << project
                     } else {
                         effectiveConfig.sourceHtml.enabled = false
