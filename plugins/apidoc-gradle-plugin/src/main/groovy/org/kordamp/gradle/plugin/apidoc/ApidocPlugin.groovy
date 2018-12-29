@@ -94,6 +94,10 @@ class ApidocPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            List<Task> aggregateJavadocTasks = createAggregateJavadocsTask(project)
+            createAggregateGroovydocsTask(project, aggregateJavadocTasks[0])
+            createAggregateApidocTask(project)
+
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
                 void projectsEvaluated(Gradle gradle) {
@@ -126,12 +130,14 @@ class ApidocPlugin extends AbstractKordampPlugin {
             }
             groovydocs = groovydocs.unique()
 
-            List<Task> aggregateJavadocTasks = createAggregateJavadocsTask(project)
-            List<Task> aggregateGroovydocTasks = createAggregateGroovydocsTask(project, aggregateJavadocTasks[0])
-            Task aggregateApidocTask = createAggregateApidocTask(project)
+            Javadoc aggregateJavadocs = project.tasks.findByName(AGGREGATE_JAVADOCS_TASK_NAME)
+            Jar aggregateJavadocsJar = project.tasks.findByName(AGGREGATE_JAVADOCS_JAR_TASK_NAME)
+            Groovydoc aggregateGroovydocs = project.tasks.findByName(AGGREGATE_GROOVYDOCS_TASK_NAME)
+            Jar aggregateGroovydocsJar = project.tasks.findByName(AGGREGATE_GROOVYDOCS_JAR_TASK_NAME)
+            Task aggregateApidocTask = project.tasks.findByName(AGGREGATE_APIDOCS_TASK_NAME)
 
-            if (javadocs) {
-                aggregateJavadocTasks[0].configure { task ->
+            if (javadocs && !effectiveConfig.groovydoc.replaceJavadoc) {
+                aggregateJavadocs.configure { task ->
                     task.enabled true
                     task.dependsOn javadocs
                     task.source javadocs.source
@@ -140,17 +146,21 @@ class ApidocPlugin extends AbstractKordampPlugin {
                     effectiveConfig.javadoc.applyTo(task)
                     task.options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.authors.join(', ')}. All rights reserved."
                 }
-                aggregateJavadocTasks[1].configure {
+                aggregateJavadocsJar.configure {
                     enabled true
-                    from aggregateJavadocTasks[0].destinationDir
+                    from aggregateJavadocs.destinationDir
                 }
 
                 aggregateApidocTask.enabled = true
-                aggregateApidocTask.dependsOn aggregateJavadocTasks[0]
+                aggregateApidocTask.dependsOn aggregateJavadocs
             }
 
             if (groovydocs) {
-                aggregateGroovydocTasks[0].configure { task ->
+                if (effectiveConfig.groovydoc.replaceJavadoc) {
+                    aggregateGroovydocsJar.classifier = 'javadoc'
+                }
+
+                aggregateGroovydocs.configure { task ->
                     task.enabled true
                     task.dependsOn groovydocs + javadocs
                     task.source groovydocs.source + javadocs.source
@@ -160,13 +170,13 @@ class ApidocPlugin extends AbstractKordampPlugin {
                     effectiveConfig.groovydoc.applyTo(task)
                     task.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.authors.join(', ')}. All rights reserved."
                 }
-                aggregateGroovydocTasks[1].configure {
+                aggregateGroovydocsJar.configure {
                     enabled true
-                    from aggregateGroovydocTasks[0].destinationDir
+                    from aggregateGroovydocs.destinationDir
                 }
 
                 aggregateApidocTask.enabled = true
-                aggregateApidocTask.dependsOn aggregateGroovydocTasks[0]
+                aggregateApidocTask.dependsOn aggregateGroovydocs
             }
         }
     }

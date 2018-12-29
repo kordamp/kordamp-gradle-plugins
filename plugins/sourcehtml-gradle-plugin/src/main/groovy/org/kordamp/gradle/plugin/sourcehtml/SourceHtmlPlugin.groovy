@@ -108,10 +108,26 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            Copy sourceHtmlTask = project.tasks.create(AGGREGATE_SOURCE_HTML_TASK_NAME, Copy) {
+                group 'Documentation'
+                description 'Generates a HTML report of the source code'
+                destinationDir = project.file("${project.buildDir}/docs/source-html")
+                enabled = false
+            }
+
+            Jar sourceHtmlJarTask = project.tasks.create(AGGREGATE_SOURCE_HTML_TASK_NAME + 'Jar', Jar) {
+                dependsOn sourceHtmlTask
+                group 'Documentation'
+                description 'An archive of the HTML report the source code'
+                classifier 'sources-html'
+                from sourceHtmlTask.destinationDir
+                enabled = false
+            }
+
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
                 void projectsEvaluated(Gradle gradle) {
-                    configureAggregateSourceHtmlTask(project, configuration)
+                    configureAggregateSourceHtmlTask(project, configuration, sourceHtmlTask, sourceHtmlJarTask)
                 }
             })
         }
@@ -193,7 +209,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private void configureAggregateSourceHtmlTask(Project project, Configuration configuration) {
+    private void configureAggregateSourceHtmlTask(Project project, Configuration configuration, Copy sourceHtmlTask, Jar sourceHtmlJarTask) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         Set<Project> projects = new LinkedHashSet<>()
@@ -244,21 +260,15 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             stylesheet = effectiveConfig.sourceHtml.overview.stylesheet
         }
 
-        Copy sourceHtmlTask = project.tasks.create(AGGREGATE_SOURCE_HTML_TASK_NAME, Copy) {
+        sourceHtmlTask.configure {
             dependsOn generateOverviewTask
-            group 'Documentation'
-            description 'Generates a HTML report of the source code'
-            destinationDir = project.file("${project.buildDir}/docs/source-html")
             from convertCodeTask.destDir
             from generateOverviewTask.destDir
+            enabled = true
         }
 
-        project.tasks.create(AGGREGATE_SOURCE_HTML_TASK_NAME + 'Jar', Jar) {
-            dependsOn sourceHtmlTask
-            group 'Documentation'
-            description 'An archive of the HTML report the source code'
-            classifier 'sources-html'
-            from sourceHtmlTask.destinationDir
+        sourceHtmlJarTask.configure {
+            enabled = true
         }
     }
 

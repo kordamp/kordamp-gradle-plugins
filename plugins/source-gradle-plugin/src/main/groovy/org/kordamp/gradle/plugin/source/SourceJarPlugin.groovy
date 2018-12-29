@@ -85,10 +85,17 @@ class SourceJarPlugin extends AbstractKordampPlugin {
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            Jar sourceJarTask = project.tasks.create(AGGREGATE_SOURCE_JAR_TASK_NAME, Jar) {
+                group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
+                description 'An archive of all the source code'
+                classifier 'sources'
+                enabled = false
+            }
+
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
                 void projectsEvaluated(Gradle gradle) {
-                    configureAggregateSourceJarTask(project)
+                    configureAggregateSourceJarTask(project, sourceJarTask)
                 }
             })
         }
@@ -115,7 +122,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
         sourceJarTask
     }
 
-    private void configureAggregateSourceJarTask(Project project) {
+    private void configureAggregateSourceJarTask(Project project, Jar sourceJarTask) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         Set<Project> projects = new LinkedHashSet<>(effectiveConfig.source.projects())
@@ -126,12 +133,10 @@ class SourceJarPlugin extends AbstractKordampPlugin {
             sourceTasks.addAll(e.sourceTasks())
         }
 
-        project.tasks.create(AGGREGATE_SOURCE_JAR_TASK_NAME, Jar) {
+        sourceJarTask.configure {
             dependsOn sourceTasks
-            group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-            description 'An archive of all the source code'
-            classifier 'sources'
             from PluginUtils.resolveSourceSets(projects).main.allSource
+            enabled = true
         }
     }
 }

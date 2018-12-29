@@ -76,10 +76,16 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            AggregateSourceStatsReportTask task = project.tasks.create(AGGREGATE_STATS_TASK_NAME, AggregateSourceStatsReportTask) {
+                enabled = false
+                group = 'Reporting'
+                description = 'Aggregate source stats reports.'
+            }
+
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
                 void projectsEvaluated(Gradle gradle) {
-                    applyAggregateStats(project)
+                    applyAggregateStats(project, task)
                 }
             })
         }
@@ -113,7 +119,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private void applyAggregateStats(Project project) {
+    private void applyAggregateStats(Project project, AggregateSourceStatsReportTask task) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         Set<Project> allProjects = new LinkedHashSet<>(effectiveConfig.stats.projects())
@@ -125,10 +131,8 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
             }
         }
 
-        project.tasks.create(AGGREGATE_STATS_TASK_NAME, AggregateSourceStatsReportTask) {
+        task.configure {
             enabled = effectiveConfig.stats.enabled
-            group = 'Reporting'
-            description = 'Aggregate source stats reports.'
             dependsOn allStatsTasks
             formats = effectiveConfig.stats.formats
         }

@@ -87,10 +87,26 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            JxrTask jxrTask = project.tasks.create(AGGREGATE_SOURCE_XREF_TASK_NAME, JxrTask) {
+                group 'Documentation'
+                description 'Generates an aggregate JXR report of the source code'
+                outputDirectory = project.file("${project.buildDir}/docs/source-xref")
+                enabled = false
+            }
+
+            Jar jxrJarTask = project.tasks.create(AGGREGATE_SOURCE_XREF_TASK_NAME + 'Jar', Jar) {
+                dependsOn jxrTask
+                group 'Documentation'
+                description 'An archive of the JXR report the source code'
+                classifier 'sources-jxr'
+                from jxrTask.destinationDir
+                enabled = false
+            }
+
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
                 void projectsEvaluated(Gradle gradle) {
-                    configureAggregateSourceXrefTask(project)
+                    configureAggregateSourceXrefTask(project, jxrTask, jxrJarTask)
                 }
             })
         }
@@ -129,7 +145,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private void configureAggregateSourceXrefTask(Project project) {
+    private void configureAggregateSourceXrefTask(Project project, JxrTask jxrTask, Jar jxrJarTask) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         Set<Project> projects = new LinkedHashSet<>()
@@ -144,23 +160,15 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
             }
         }
 
-        JxrTask jxrTask = project.tasks.create(AGGREGATE_SOURCE_XREF_TASK_NAME, JxrTask) {
+        jxrTask.configure {
             dependsOn xrefTasks
-            group 'Documentation'
-            description 'Generates an aggregate JXR report of the source code'
-            outputDirectory = project.file("${project.buildDir}/docs/source-xref")
             sourceDirs = srcdirs
+            enabled = true
         }
 
         configureTask(effectiveConfig.sourceXref, jxrTask)
 
-        project.tasks.create(AGGREGATE_SOURCE_XREF_TASK_NAME + 'Jar', Jar) {
-            dependsOn jxrTask
-            group 'Documentation'
-            description 'An archive of the JXR report the source code'
-            classifier 'sources-jxr'
-            from jxrTask.destinationDir
-        }
+        jxrJarTask.enabled = true
     }
 
     private JxrTask configureTask(SourceXref sourceXref, JxrTask jxrTask) {
