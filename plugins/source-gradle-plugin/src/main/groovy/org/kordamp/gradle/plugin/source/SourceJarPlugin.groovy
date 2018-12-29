@@ -17,13 +17,17 @@
  */
 package org.kordamp.gradle.plugin.source
 
+import org.gradle.BuildAdapter
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
+import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Source
 
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -35,6 +39,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  */
 class SourceJarPlugin extends AbstractKordampPlugin {
     static final String SOURCE_JAR_TASK_NAME = 'sourceJar'
+    static final String AGGREGATE_SOURCE_JAR_TASK_NAME = 'aggregateSourceJar'
 
     Project project
 
@@ -42,16 +47,12 @@ class SourceJarPlugin extends AbstractKordampPlugin {
         this.project = project
 
         if (isRootProject(project)) {
-            if (project.childProjects.size()) {
-                project.childProjects.values().each {
-                    configureProject(it)
-                }
-            } else {
-                configureProject(project)
+            project.childProjects.values().each {
+                configureProject(it)
             }
-        } else {
-            configureProject(project)
         }
+        configureProject(project)
+
     }
 
     static void applyIfMissing(Project project) {
@@ -77,12 +78,23 @@ class SourceJarPlugin extends AbstractKordampPlugin {
             }
 
             project.plugins.withType(JavaBasePlugin) {
-                createSourceJarTask(project)
+                Jar sourceTask = createSourceJarTask(project)
+                effectiveConfig.source.sourceTasks() << sourceTask
+                effectiveConfig.source.projects() << project
             }
+        }
+
+        if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            project.gradle.addBuildListener(new BuildAdapter() {
+                @Override
+                void projectsEvaluated(Gradle gradle) {
+                    configureAggregateSourceJarTask(project)
+                }
+            })
         }
     }
 
-    private Task createSourceJarTask(Project project) {
+    private Jar createSourceJarTask(Project project) {
         String taskName = SOURCE_JAR_TASK_NAME
 
         Task sourceJarTask = project.tasks.findByName(taskName)
@@ -94,12 +106,32 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                 group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
                 description 'An archive of the source code'
                 classifier 'sources'
-                from project.sourceSets.main.allSource
+                from PluginUtils.resolveSourceSets(project).main.allSource
             }
         }
 
         project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(sourceJarTask)
 
         sourceJarTask
+    }
+
+    private void configureAggregateSourceJarTask(Project project) {
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+
+        Set<Project> projects = new LinkedHashSet<>(effectiveConfig.source.projects())
+        Set<Jar> sourceTasks = new LinkedHashSet<>(effectiveConfig.source.sourceTasks())
+
+        project.childProjects.values()*.effectiveConfig.source.each { Source e ->
+            projects.addAll(e.projects())
+            sourceTasks.addAll(e.sourceTasks())
+        }
+
+        project.tasks.create(AGGREGATE_SOURCE_JAR_TASK_NAME, Jar) {
+            dependsOn sourceTasks
+            group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
+            description 'An archive of all the source code'
+            classifier 'sources'
+            from PluginUtils.resolveSourceSets(projects).main.allSource
+        }
     }
 }

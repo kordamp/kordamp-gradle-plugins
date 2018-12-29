@@ -47,7 +47,7 @@ class PluginUtils {
 
     @CompileDynamic
     static resolveSourceSets(Collection<Project> projects) {
-        projects.collect { resolveSourceSets(it) }.flatten().unique()
+        projects.collect { resolveSourceSets(it) }
     }
 
     @CompileDynamic
@@ -63,15 +63,15 @@ class PluginUtils {
         if (isAndroidProject(project)) {
             return project.android.sourceSets.javaDirectories
         }
-        project.sourceSets.collect { it.allSource.srcDirs }.flatten().unique()
+        project.sourceSets.collect { it.allSource.srcDirs }
     }
 
     static resolveMainSourceDirs(Collection<Project> projects) {
-        projects.collect { resolveMainSourceDirs(it) }.flatten().unique()
+        projects.collect { resolveMainSourceDirs(it) }
     }
 
     static resolveSourceDirs(Collection<Project> projects) {
-        projects.collect { resolveSourceDirs(it) }.flatten().unique()
+        projects.collect { resolveSourceDirs(it) }
     }
 
     private static List<String> androidPlugins() {

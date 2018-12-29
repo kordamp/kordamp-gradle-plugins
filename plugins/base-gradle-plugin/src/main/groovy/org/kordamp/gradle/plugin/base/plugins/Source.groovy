@@ -22,6 +22,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import org.gradle.api.Project
+import org.gradle.api.tasks.bundling.Jar
 
 /**
  * @author Andres Almiray
@@ -29,8 +30,11 @@ import org.gradle.api.Project
  */
 @CompileStatic
 @Canonical
-@EqualsAndHashCode(excludes = ['project'])
+@EqualsAndHashCode(excludes = ['project', 'projects', 'sourceTasks'])
 class Source extends AbstractFeature {
+    private final Set<Project> projects = new LinkedHashSet<>()
+    private final Set<Jar> sourceTasks = new LinkedHashSet<>()
+
     Source(Project project) {
         super(project)
     }
@@ -50,5 +54,15 @@ class Source extends AbstractFeature {
 
     static void merge(Source o1, Source o2) {
         AbstractFeature.merge(o1, o2)
+        o1.projects().addAll(o2.projects())
+        o1.sourceTasks().addAll(o2.sourceTasks())
+    }
+
+    Set<Project> projects() {
+        projects
+    }
+
+    Set<Jar> sourceTasks() {
+        sourceTasks
     }
 }

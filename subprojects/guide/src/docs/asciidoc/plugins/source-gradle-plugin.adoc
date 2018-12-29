@@ -49,3 +49,17 @@ classifier:: sources
 destinationDir:: `${project.buildDir}/build/libs`
 from:: `project.sourceSets.main.allSource`
 
+[[_task_aggregate_source_jar]]
+=== AggregateSourceJar
+
+Collects the results of the `sourceJar` tasks. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateSourceJar
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.buildDir}/build/libs`
+

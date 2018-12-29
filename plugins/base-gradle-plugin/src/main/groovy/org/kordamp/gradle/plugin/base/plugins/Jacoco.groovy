@@ -94,6 +94,8 @@ class Jacoco extends AbstractFeature {
         o1.mergeReportHtmlFile = o1.mergeReportHtmlFile ?: o2.mergeReportHtmlFile
         o1.mergeReportXmlFile = o1.mergeReportXmlFile ?: o2.mergeReportXmlFile
         o1.projects().addAll(o2.projects())
+        o1.testTasks().addAll(o2.testTasks())
+        o1.reportTasks().addAll(o2.reportTasks())
         o1.additionalSourceDirs.from(o2.additionalSourceDirs)
         o1.additionalClassDirs.from(o2.additionalClassDirs)
     }
