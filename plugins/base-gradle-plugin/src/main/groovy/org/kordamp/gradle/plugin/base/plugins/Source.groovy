@@ -32,6 +32,7 @@ import org.gradle.api.tasks.bundling.Jar
 class Source extends AbstractFeature {
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<Jar> sourceTasks = new LinkedHashSet<>()
+    private final Set<Project> excludedProjects = new LinkedHashSet<>()
 
     Source(Project project) {
         super(project)
@@ -45,15 +46,26 @@ class Source extends AbstractFeature {
     @Override
     @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        ['source': [
-            enabled: enabled
-        ]]
+        Map map = [enabled: enabled]
+
+        if (isRoot()) {
+            if (enabled) {
+                map.excludedProjects = excludedProjects
+            }
+        }
+
+        ['source': map]
     }
 
     static void merge(Source o1, Source o2) {
         AbstractFeature.merge(o1, o2)
         o1.projects().addAll(o2.projects())
         o1.sourceTasks().addAll(o2.sourceTasks())
+        o1.excludedProjects().addAll(o2.excludedProjects())
+    }
+
+    Set<Project> excludedProjects() {
+        excludedProjects
     }
 
     Set<Project> projects() {

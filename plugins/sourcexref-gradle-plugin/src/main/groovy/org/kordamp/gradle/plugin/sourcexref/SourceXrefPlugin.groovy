@@ -153,11 +153,10 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
         FileCollection srcdirs = project.files()
 
         project.childProjects.values()*.effectiveConfig.sourceXref.each { SourceXref e ->
-            if (e.enabled) {
-                projects.addAll(e.projects())
-                xrefTasks.addAll(e.xrefTasks())
-                srcdirs = project.files(srcdirs, e.xrefTasks()*.sourceDirs)
-            }
+            if (!e.enabled || effectiveConfig.sourceXref.excludedProjects().intersect(e.projects())) return
+            projects.addAll(e.projects())
+            xrefTasks.addAll(e.xrefTasks())
+            srcdirs = project.files(srcdirs, e.xrefTasks()*.sourceDirs)
         }
 
         jxrTask.configure {

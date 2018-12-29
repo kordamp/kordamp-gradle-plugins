@@ -129,6 +129,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
         Set<Jar> sourceTasks = new LinkedHashSet<>(effectiveConfig.source.sourceTasks())
 
         project.childProjects.values()*.effectiveConfig.source.each { Source e ->
+            if (!e.enabled || effectiveConfig.source.excludedProjects().intersect(e.projects())) return
             projects.addAll(e.projects())
             sourceTasks.addAll(e.sourceTasks())
         }

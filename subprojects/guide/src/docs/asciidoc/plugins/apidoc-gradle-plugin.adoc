@@ -21,14 +21,18 @@ Responsible for aggregating API docs. Currently Javadocs (Java) and Groovydocs (
 config {
     apidoc {
         enabled
+        replaceJavadoc
+        excludedProjects
     }
 }
 ----
 
 [options="header", cols="5*"]
 |===
-| Name                | Type    | Required | Default Value | Description
-| enabled             | boolean | no       | true          | Disables `org.kordamp.gradle.apidoc` plugin if `false`
+| Name             | Type         | Required | Default Value | Description
+| enabled          | boolean      | no       | true          | Disables `org.kordamp.gradle.apidoc` plugin if `false`
+| replaceJavadoc   | boolean      | no       | false         | Disables `javadocJar` and applies the `javadoc` classifier
+| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
 |===
 
 This block is optional.

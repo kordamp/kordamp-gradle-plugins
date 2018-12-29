@@ -119,6 +119,7 @@ class ApidocPlugin extends AbstractKordampPlugin {
             List<Javadoc> javadocs = []
             project.tasks.withType(Javadoc) { Javadoc javadoc -> if (javadoc.name != AGGREGATE_JAVADOCS_TASK_NAME && javadoc.enabled) javadocs << javadoc }
             project.childProjects.values().each { Project p ->
+                if (p in effectiveConfig.apidoc.excludedProjects()) return
                 p.tasks.withType(Javadoc) { Javadoc javadoc -> if (javadoc.enabled) javadocs << javadoc }
             }
             javadocs = javadocs.unique()
@@ -126,6 +127,7 @@ class ApidocPlugin extends AbstractKordampPlugin {
             List<Groovydoc> groovydocs = []
             project.tasks.withType(Groovydoc) { Groovydoc groovydoc -> if (groovydoc.name != AGGREGATE_GROOVYDOCS_TASK_NAME && groovydoc.enabled) groovydocs << groovydoc }
             project.childProjects.values().each { Project p ->
+                if (p in effectiveConfig.apidoc.excludedProjects()) return
                 p.tasks.withType(Groovydoc) { Groovydoc groovydoc -> if (groovydoc.enabled) groovydocs << groovydoc }
             }
             groovydocs = groovydocs.unique()

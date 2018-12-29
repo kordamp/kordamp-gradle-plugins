@@ -46,6 +46,7 @@ class SourceXref extends AbstractFeature {
 
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<Task> xrefTasks = new LinkedHashSet<>()
+    private final Set<Project> excludedProjects = new LinkedHashSet<>()
 
     SourceXref(Project project) {
         super(project)
@@ -74,6 +75,12 @@ class SourceXref extends AbstractFeature {
             map.javaVersion = javaVersion?.name() ?: JavaVersion.current().name()
             map.excludes = excludes
             map.includes = includes
+        }
+
+        if (isRoot()) {
+            if (enabled) {
+                map.excludedProjects = excludedProjects
+            }
         }
 
         ['sourceXref': map]
@@ -128,6 +135,11 @@ class SourceXref extends AbstractFeature {
         o1.includes.addAll(((o1.includes ?: []) + (o2?.includes ?: [])).unique())
         o1.projects().addAll(o2.projects())
         o1.xrefTasks().addAll(o2.xrefTasks())
+        o1.excludedProjects().addAll(o2.excludedProjects())
+    }
+
+    Set<Project> excludedProjects() {
+        excludedProjects
     }
 
     Set<Project> projects() {

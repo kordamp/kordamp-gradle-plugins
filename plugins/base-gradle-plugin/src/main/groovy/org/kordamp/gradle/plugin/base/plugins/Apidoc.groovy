@@ -33,6 +33,8 @@ class Apidoc extends AbstractFeature {
 
     private boolean replaceJavadocSet
 
+    private final Set<Project> excludedProjects = new LinkedHashSet<>()
+
     Apidoc(Project project) {
         super(project)
     }
@@ -51,6 +53,7 @@ class Apidoc extends AbstractFeature {
 
         if (enabled) {
             map.replaceJavadoc = replaceJavadoc
+            map.excludedProjects = excludedProjects
         }
 
         ['apidoc': map]
@@ -74,5 +77,10 @@ class Apidoc extends AbstractFeature {
     static void merge(Apidoc o1, Apidoc o2) {
         AbstractFeature.merge(o1, o2)
         o1.setReplaceJavadoc((boolean) (o1.replaceJavadocSet ? o1.replaceJavadoc : o2.replaceJavadoc))
+        o1.excludedProjects().addAll(o2.excludedProjects())
+    }
+
+    Set<Project> excludedProjects() {
+        excludedProjects
     }
 }

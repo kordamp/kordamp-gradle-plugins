@@ -19,34 +19,38 @@ link:https://maven.apache.org/jxr/index.html[Maven JXR] project.
 [subs="+macros"]
 ----
 config {
-    enabled
-    templateDir
-    inputEncoding
-    outputEncoding
-    windowTitle
-    docTitle
-    bottom
-    stylesheet
-    javaVersion
-    excludes
-    includes
+    sourceXref {
+        enabled
+        excludedProjects
+        templateDir
+        inputEncoding
+        outputEncoding
+        windowTitle
+        docTitle
+        bottom
+        stylesheet
+        javaVersion
+        excludes
+        includes
+    }
 }
 ----
 
 [options="header", cols="5*"]
 |===
-| Name           | Type        | Required | Default Value                                  | Description
-| enabled        | boolean     | no       | true                                           | Disables `org.kordamp.gradle.source-xref` plugin if `false`
-| templateDir    | String      | no       |                                                |
-| inputEncoding  | String      | no       | UTF-8                                          |
-| outputEncoding | String      | no       | UTF-8                                          |
-| windowTitle    | String      | no       | "${project.name} ${project.version} Reference" |
-| docTitle       | String      | no       | "${project.name} ${project.version} Reference" |
-| bottom         | String      | no       |                                                |
-| stylesheet     | String      | no       |                                                |
-| javaVersion    | String      | no       | `JavaVersion.current()`                        |
-| excludes       | Set<String> | no       | []                                             |
-| includes       | Set<String> | no       | []                                             |
+| Name             | Type         | Required | Default Value                                  | Description
+| enabled          | boolean      | no       | true                                           | Disables `org.kordamp.gradle.source-xref` plugin if `false`
+| excludedProjects | Set<Project> |          | []                                             | Projects in the set are excluded from aggregation
+| templateDir      | String       | no       |                                                |
+| inputEncoding    | String       | no       | UTF-8                                          |
+| outputEncoding   | String       | no       | UTF-8                                          |
+| windowTitle      | String       | no       | "${project.name} ${project.version} Reference" |
+| docTitle         | String       | no       | "${project.name} ${project.version} Reference" |
+| bottom           | String       | no       |                                                |
+| stylesheet       | String       | no       |                                                |
+| javaVersion      | String       | no       | `JavaVersion.current()`                        |
+| excludes         | Set<String>  | no       | []                                             |
+| includes         | Set<String>  | no       | []                                             |
 |===
 
 [[_org_kordamp_gradle_sourcexref_tasks]]
@@ -82,3 +86,18 @@ Type:: `org.kordamp.gradle.plugin.sourcexref.JxrTask`
 outputDir:: `${project.buildDir}/docs/source-xref`
 
 Consumes all settings found in the `config.sourceXref.conversion` block.
+
+[[_task_aggregate_source_xref_jar]]
+=== AggregateSourceXrefJar
+
+Generates an archive of the `aggregateSourceXref` tasks. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateSourceXrefJar
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.buildDir}/build/libs`
+

@@ -46,7 +46,7 @@ config {
 | enabled        | boolean      | no       | true          | Disables `org.kordamp.gradle.groovydoc` plugin if `false`
 | includes       | Set<String>  | no       | []            |
 | excludes       | Set<String>  | no       | []            |
-| replaceJavadoc | boolean      | no       | false         | Disables `javadocJar` and applies the `javadoc` classifier.
+| replaceJavadoc | boolean      | no       | false         | Disables `javadocJar` and applies the `javadoc` classifier
 |===
 
 [[_groovydoc_options]]

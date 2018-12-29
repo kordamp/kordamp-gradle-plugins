@@ -21,6 +21,8 @@ NOTE: This plugin relies on the `com.bmuschko.java2html` plugin but does not app
 ----
 config {
     sourceHtml {
+        enabled
+        excludedProjects
         <<_sourcehtml_conversion,conversion>> {
             srcDirs
             destDir
@@ -55,8 +57,9 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name    | Type    | Required | Default Value | Description
-| enabled | boolean | no       | true          | Disables `org.kordamp.gradle.source-html` plugin if `false`
+| Name             | Type         | Required | Default Value | Description
+| enabled          | boolean      | no       | true          | Disables `org.kordamp.gradle.source-html` plugin if `false`
+| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
 |===
 
 [[_sourcehtml_conversion]]
@@ -180,4 +183,18 @@ Type:: `org.gradle.api.tasks.Copy`
 .Properties
 [horizontal]
 destinationDir:: `${rootProject.buildDir}/docs/source-html`
+
+[[_task_aggregate_source_html_jar]]
+=== AggregateSourceHtmlJar
+
+Generates an archive of the `aggregateSourceHtml` tasks. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateSourceHtmlJar
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.buildDir}/build/libs`
 

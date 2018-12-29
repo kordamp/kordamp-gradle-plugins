@@ -216,10 +216,9 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
         FileCollection srcdirs = project.files()
 
         project.childProjects.values()*.effectiveConfig.sourceHtml.each { SourceHtml e ->
-            if (e.enabled) {
-                projects.addAll(e.projects())
-                srcdirs = project.files(srcdirs, e.srcDirs)
-            }
+            if (!e.enabled || effectiveConfig.sourceHtml.excludedProjects().intersect(e.projects())) return
+            projects.addAll(e.projects())
+            srcdirs = project.files(srcdirs, e.srcDirs)
         }
 
         Task convertCodeTask = project.tasks.create(AGGREGATE_CONVERT_CODE_TO_HTML_TASK_NAME, ConvertCodeTask) {

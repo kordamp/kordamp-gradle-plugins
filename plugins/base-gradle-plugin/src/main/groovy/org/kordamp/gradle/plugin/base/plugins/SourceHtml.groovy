@@ -38,6 +38,7 @@ class SourceHtml extends AbstractFeature {
 
     FileCollection srcDirs
     private final Set<Project> projects = new LinkedHashSet<>()
+    private final Set<Project> excludedProjects = new LinkedHashSet<>()
 
     SourceHtml(Project project) {
         super(project)
@@ -61,6 +62,12 @@ class SourceHtml extends AbstractFeature {
             map.overview = overview.toMap()
         }
 
+        if (isRoot()) {
+            if (enabled) {
+                map.excludedProjects = excludedProjects
+            }
+        }
+
         ['sourceHtml': map]
     }
 
@@ -76,6 +83,11 @@ class SourceHtml extends AbstractFeature {
         Conversion.merge(o1.conversion, o2.conversion)
         Overview.merge(o1.overview, o2.overview)
         o1.projects().addAll(o2.projects())
+        o1.excludedProjects().addAll(o2.excludedProjects())
+    }
+
+    Set<Project> excludedProjects() {
+        excludedProjects
     }
 
     Set<Project> projects() {
