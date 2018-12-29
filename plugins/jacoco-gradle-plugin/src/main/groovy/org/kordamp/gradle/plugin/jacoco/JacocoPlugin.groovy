@@ -93,10 +93,28 @@ class JacocoPlugin extends AbstractKordampPlugin {
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            JacocoMerge jacocoRootMerge = project.tasks.create('jacocoRootMerge', JacocoMerge) {
+                enabled = false
+                group = 'Reporting'
+                description = 'Aggregate Jacoco coverage reports.'
+            }
+
+            JacocoReport jacocoRootReport = project.tasks.create('jacocoRootReport', JacocoReport) {
+                enabled = false
+                dependsOn jacocoRootMerge
+                group = 'Reporting'
+                description = 'Generate aggregate Jacoco coverage report.'
+
+                reports {
+                    html.enabled = true
+                    xml.enabled = true
+                }
+            }
+
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
                 void projectsEvaluated(Gradle gradle) {
-                    applyJacocoMerge(project)
+                    applyJacocoMerge(project, jacocoRootMerge, jacocoRootReport)
                 }
             })
         }
@@ -163,7 +181,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
         project.files(projects.collect { resolveClassDirs(effectiveConfig, it) }.flatten().unique())
     }
 
-    private void applyJacocoMerge(Project project) {
+    private void applyJacocoMerge(Project project, JacocoMerge jacocoRootMerge, JacocoReport jacocoRootReport) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (!effectiveConfig.jacoco.enabled) {
             return
@@ -181,20 +199,15 @@ class JacocoPlugin extends AbstractKordampPlugin {
             }
         }
 
-        Task jacocoRootMerge = project.tasks.create('jacocoRootMerge', JacocoMerge) {
+        jacocoRootMerge.configure {
             enabled = effectiveConfig.jacoco.enabled
-            group = 'Reporting'
-            description = 'Aggregate Jacoco coverage reports.'
             dependsOn testTasks + reportTasks
             executionData reportTasks.executionData.files.flatten()
             destinationFile effectiveConfig.jacoco.mergeExecFile
         }
 
-        project.tasks.create('jacocoRootReport', JacocoReport) {
-            dependsOn jacocoRootMerge
+        jacocoRootReport.configure {
             enabled = effectiveConfig.jacoco.enabled
-            group = 'Reporting'
-            description = 'Generate aggregate Jacoco coverage report.'
 
             additionalSourceDirs.from project.files(resolveSourceDirs(effectiveConfig, projects))
             sourceDirectories.from project.files(resolveSourceDirs(effectiveConfig, projects))
@@ -202,8 +215,6 @@ class JacocoPlugin extends AbstractKordampPlugin {
             executionData project.files(jacocoRootMerge.destinationFile)
 
             reports {
-                html.enabled = true
-                xml.enabled = true
                 html.destination = effectiveConfig.jacoco.mergeReportHtmlFile
                 xml.destination = effectiveConfig.jacoco.mergeReportXmlFile
             }

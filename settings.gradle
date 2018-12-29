@@ -24,8 +24,6 @@ pluginManagement {
     }
 }
 
-enableFeaturePreview('STABLE_PUBLISHING')
-
 rootProject.name = 'kordamp-gradle-plugins'
 
 def includeProject = { String projectDirName, String projectName ->
