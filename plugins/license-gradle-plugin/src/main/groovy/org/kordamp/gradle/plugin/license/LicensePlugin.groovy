@@ -169,10 +169,16 @@ class LicensePlugin extends AbstractKordampPlugin {
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            AggregateLicenseReportTask task = project.tasks.create('aggregateLicenseReport', AggregateLicenseReportTask) {
+                enabled = false
+                group 'Reporting'
+                description 'Generates an aggregate license report'
+            }
+
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
                 void projectsEvaluated(Gradle gradle) {
-                    configureAggregateLicenseReportTask(project)
+                    configureAggregateLicenseReportTask(project, task )
                 }
             })
         }
@@ -251,7 +257,7 @@ class LicensePlugin extends AbstractKordampPlugin {
         }
     }
 
-    private void configureAggregateLicenseReportTask(Project project) {
+    private void configureAggregateLicenseReportTask(Project project, AggregateLicenseReportTask task) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (!effectiveConfig.license.enabled) {
             return
@@ -262,10 +268,9 @@ class LicensePlugin extends AbstractKordampPlugin {
             tasks.addAll(prj.tasks.withType(DownloadLicenses))
         }
 
-        project.tasks.create('aggregateLicenseReport', AggregateLicenseReportTask) {
+        task.configure {
             dependsOn tasks
-            group 'Reporting'
-            description 'Generates an aggregate license report'
+            enabled = true
         }
     }
 }
