@@ -157,7 +157,7 @@ class ApidocPlugin extends AbstractKordampPlugin {
                 aggregateApidocTask.dependsOn aggregateJavadocs
             }
 
-            if (groovydocs) {
+            if (groovydocs && effectiveConfig.groovydoc.enabled) {
                 if (effectiveConfig.groovydoc.replaceJavadoc) {
                     aggregateGroovydocsJar.classifier = 'javadoc'
                 }
