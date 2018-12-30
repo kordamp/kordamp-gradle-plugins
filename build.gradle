@@ -92,6 +92,7 @@ allprojects {
     repositories {
         jcenter()
         maven {  url 'https://plugins.gradle.org/m2/' }
+        flatDir { dir rootProject.file('libraries') }
     }
 
     dependencyUpdates.resolutionStrategy = {

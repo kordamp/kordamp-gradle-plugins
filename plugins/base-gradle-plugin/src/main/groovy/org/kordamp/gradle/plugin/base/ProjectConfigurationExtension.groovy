@@ -27,6 +27,7 @@ import org.kordamp.gradle.plugin.base.plugins.Apidoc
 import org.kordamp.gradle.plugin.base.plugins.Bintray
 import org.kordamp.gradle.plugin.base.plugins.Bom
 import org.kordamp.gradle.plugin.base.plugins.BuildInfo
+import org.kordamp.gradle.plugin.base.plugins.Clirr
 import org.kordamp.gradle.plugin.base.plugins.Groovydoc
 import org.kordamp.gradle.plugin.base.plugins.Jacoco
 import org.kordamp.gradle.plugin.base.plugins.Javadoc
@@ -56,6 +57,7 @@ class ProjectConfigurationExtension {
     final Bom bom
     final Bintray bintray
     final BuildInfo buildInfo
+    final Clirr clirr
     final Groovydoc groovydoc
     final Kotlindoc kotlindoc
     final Jacoco jacoco
@@ -80,6 +82,7 @@ class ProjectConfigurationExtension {
         bom = new Bom(project)
         bintray = new Bintray(project)
         buildInfo = new BuildInfo(project)
+        clirr = new Clirr(project)
         groovydoc = new Groovydoc(project)
         kotlindoc = new Kotlindoc(project)
         jacoco = new Jacoco(project)
@@ -100,6 +103,7 @@ class ProjectConfigurationExtension {
         this.bom = other.bom
         this.bintray = other.bintray
         this.buildInfo = other.buildInfo
+        this.clirr = other.clirr
         this.groovydoc = other.groovydoc
         this.kotlindoc = other.kotlindoc
         this.jacoco = other.jacoco
@@ -137,6 +141,7 @@ class ProjectConfigurationExtension {
         map.putAll(bom.toMap())
         map.putAll(bintray.toMap())
         map.putAll(buildInfo.toMap())
+        map.putAll(clirr.toMap())
         map.putAll(groovydoc.toMap())
         map.putAll(kotlindoc.toMap())
         map.putAll(jacoco.toMap())
@@ -170,6 +175,10 @@ class ProjectConfigurationExtension {
 
     BuildInfo getBuildInfo() {
         buildInfo
+    }
+
+    Clirr getClirr() {
+        clirr
     }
 
     Groovydoc getGroovydoc() {
@@ -264,6 +273,14 @@ class ProjectConfigurationExtension {
 
     void buildInfo(@DelegatesTo(BuildInfo) Closure action) {
         ConfigureUtil.configure(action, buildInfo)
+    }
+
+    void clirr(Action<? super Clirr> action) {
+        action.execute(clirr)
+    }
+
+    void clirr(@DelegatesTo(Clirr) Closure action) {
+        ConfigureUtil.configure(action, clirr)
     }
 
     void groovydoc(Action<? super Groovydoc> action) {
@@ -372,6 +389,7 @@ class ProjectConfigurationExtension {
         this.@bom.copyInto(copy.@bom)
         this.@bintray.copyInto(copy.@bintray)
         this.@buildInfo.copyInto(copy.@buildInfo)
+        this.@clirr.copyInto(copy.@clirr)
         this.@groovydoc.copyInto(copy.@groovydoc)
         this.@kotlindoc.copyInto(copy.@kotlindoc)
         this.@jacoco.copyInto(copy.@jacoco)
@@ -397,6 +415,7 @@ class ProjectConfigurationExtension {
         Bom.merge(merged.@bom, other.@bom)
         Bintray.merge(merged.@bintray, other.@bintray)
         BuildInfo.merge(merged.@buildInfo, other.@buildInfo)
+        Clirr.merge(merged.@clirr, other.@clirr)
         Groovydoc.merge(merged.@groovydoc, other.@groovydoc)
         Kotlindoc.merge(merged.@kotlindoc, other.@kotlindoc)
         Jacoco.merge(merged.@jacoco, other.@jacoco)

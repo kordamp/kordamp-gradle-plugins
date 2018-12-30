@@ -16,21 +16,37 @@
  * limitations under the License.
  */
 
-dependencies {
-    compile 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
-    compile project(':apidoc-gradle-plugin')
-    compile project(':base-gradle-plugin')
-    compile project(':bom-gradle-plugin')
-    compile project(':buildinfo-gradle-plugin')
-    compile project(':clirr-gradle-plugin')
-    compile project(':jacoco-gradle-plugin')
-    compile project(':jar-gradle-plugin')
-    compile project(':license-gradle-plugin')
-    compile project(':minpom-gradle-plugin')
-    compile project(':publishing-gradle-plugin')
-    compile project(':source-gradle-plugin')
-    compile project(':sourcehtml-gradle-plugin')
-    compile project(':sourcestats-gradle-plugin')
-    compile project(':sourcexref-gradle-plugin')
-    compile project(':bintray-gradle-plugin')
+plugins {
+    id 'com.github.johnrengelman.shadow' version '4.0.3'
 }
+
+configurations {
+    uberjar
+}
+
+dependencies {
+    compile project(':base-gradle-plugin')
+    uberjar 'net.sf.clirr:clirr-core:0.6.2-uber'
+    compile 'org.yaml:snakeyaml:1.23'
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.uberjar
+        runtimeClasspath += compileClasspath
+    }
+}
+
+idea {
+    module {
+        scopes.PROVIDED.plus += [configurations.uberjar]
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.uberjar]
+    baseName = project.name
+    classifier = ''
+}
+
+jar.finalizedBy shadowJar

@@ -19,3 +19,10 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 
 Serves as central point of configuration for a project as it applies all dependent plugins. You may skip this plugin
 and apply plugins individually as needed.
+
+This plugin adds the following plugins to the classpath without applying them:
+
+ * `<<_org_kordamp_gradle_bintray,org.kordamp.gradle.bintray>>`
+ * `<<_org_kordamp_gradle_bom,org.kordamp.gradle.bom>>`
+ * `<<_org_kordamp_gradle_clirr,org.kordamp.gradle.clirr>>`
+ * `<<_org_kordamp_gradle_sourcexref,org.kordamp.gradle.source-xref>>`

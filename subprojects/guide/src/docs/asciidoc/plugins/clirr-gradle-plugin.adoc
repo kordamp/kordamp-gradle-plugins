@@ -1,0 +1,140 @@
+
+[[_org_kordamp_gradle_clirr]]
+= Clirr
+
+[horizontal]
+id:: `org.kordamp.gradle.clirr`
+class:: `org.kordamp.gradle.plugin.clirr.ClirrPlugin`
+    (link:api/org/kordamp/gradle/plugin/clirr/ClirrPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/clirr/ClirrPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+
+Configures link:http://clirr.sourceforge.net[Clirr] on all subprojects. +
+Configures aggregate reports on the root project.
+
+This plugin is a fork of the https://github.com/trnl/clirr-gradle-plugin[{project-name}] authored by
+https://github.com/trnl[Uladzimir Mihura] with Copyright `(c) 2008 - 2013 10gen, Inc. <http://10gen.com>`.
+
+[[_org_kordamp_gradle_clirr_dsl]]
+== DSL
+
+[source,groovy]
+----
+config {
+    clirr {
+        enabled
+        baseline
+        filterFile
+        filter
+        failOnErrors
+        failOnException
+        semver
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name                 | Type           | Required | Default Value | Description
+| enabled              | boolean        | no       | true          | Disables `org.kordamp.gradle.clirr` plugin if `false`
+| baseline             | String         | no       |               | Maven coordinates of the previous version, i.e, `groupId:artifactId:version`
+| filterFile           | File           | no       |               | A YAML file containing exclusions
+| filter               | Predicate      | no       |               | Excludes a compatibility issue if there’s a matching criteria
+| failOnErrors         | boolean        | no       | true          | Abort the build if a compatibility issue with severity "error" is found
+| failOnException      | boolean        | no       | false         | Abort the build if Clirr triggers an Exception during its checks
+| semver               | boolean        | no       | true          | Evaluates the project’s version using semver rules
+|===
+
+This block is optional.
+
+The `filter` predicate takes a single argument, which exposes the following properties
+
+  * severity; java.lang.String; info, warning, error.
+  * identifier; java.lang.String; severity id number.
+  * classname; java.lang.String; fully qualified classname.
+  * message; java.lang.String; formatted severity message.
+
+You may skip defining a value for `baseline` and let the `clirr` task figure out the the previous version according to the
+following rules
+
+ . remove trailing tag if it exists
+ . if the `semver` property is set to `true` (default)
+ .. if the `minor` version is `0` then `revision` is checked
+ ... if `revision` is `0` clirr is disabled.
+ ... if `revision` is > `0` decrement `revision` by `1`.
+ .. if the `minor` version is > `0` then `revision` is checked
+ ... if `revision` is `0` decrement `minor` by `1`.
+ ... if `revision` is > `0` decrement `revision` by `1`.
+
+ . if the `semver` property is set to `false`
+ . if `revision` is `0` then clirr is disabled.
+ . if `revision` is > `0` then `revision` is decremented by `1`.
+
+These rules produce the following outcomes given these inputs
+
+.semver = true
+----
+2.0.0 => disabled
+2.0.4 => 2.0.3
+2.1.0 => 2.0.0
+2.1.3 => 2.1.2
+----
+
+.semver = false
+----
+2.0.0 => disabled
+2.0.4 => 2.0.3
+2.1.0 => disabled
+2.1.3 => 2.1.2
+----
+
+[[_org_kordamp_gradle_clirrexample]]
+== Example
+
+The following example, taken from the Griffon build, calculates the clirr report of every submodule
+
+[source,groovy]
+.build.gradle
+----
+clirr {
+    failOnErrors = false
+    baseline = ['org.codehaus.griffon', subproj.name, '2.0.0'].join(':')
+}
+----
+
+== Error Codes
+
+Binary reports rely on a list of codes that determine the severity of a compatibility issue. The full list of codes
+and an explanation for each one can be found at http://clirr.sourceforge.net/clirr-core/exegesis.html
+
+[[_org_kordamp_gradle_clirr_tasks]]
+== Tasks
+
+[[_task_clirr]]
+=== Clirr
+
+Determines the binary compatibility of the current codebase against a previous release. +
+
+[horizontal]
+Name:: clirr
+Type:: `org.kordamp.gradle.plugin.clirr.tasks.ClirrTask`
+
+.Properties
+[horizontal]
+xmlReport:: `${rootProject.reporting.baseDir.path}/clirr/compatibility-report.xml`
+htmlReport:: `${rootProject.reporting.baseDir.path}/clirr/compatibility-report.html`
+
+[[_task_aggregate_clirr]]
+=== AggregateClirr
+
+Collects the results of the `clirr` tasks. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateClirr
+Type:: `org.kordamp.gradle.plugin.clirr.tasks.AggregateClirrReportTask`
+
+.Properties
+[horizontal]
+reportFile:: `${rootProject.reporting.baseDir.path}/clirr/aggregate-compatibility-report.html`
+
