@@ -9,6 +9,9 @@ org.kordamp.gradle.plugin.base.tasks
 org.kordamp.gradle.plugin.bintray
 org.kordamp.gradle.plugin.bom
 org.kordamp.gradle.plugin.buildinfo
+org.kordamp.gradle.plugin.clirr
+org.kordamp.gradle.plugin.clirr.reporters
+org.kordamp.gradle.plugin.clirr.tasks
 org.kordamp.gradle.plugin.functionaltest
 org.kordamp.gradle.plugin.groovydoc
 org.kordamp.gradle.plugin.guide
