@@ -61,3 +61,6 @@ plugins {
 Where `{plugin-id}` stands for any of the ids described in the following sections. Most times it's enough to simply apply
 the `org.kordamp.gradle.project` at the root. All plugins may be applied independently as well.
 
+== Requirements
+
+Java 8 and Gradle 5 are the monimum requirements to use any of these plugins.
