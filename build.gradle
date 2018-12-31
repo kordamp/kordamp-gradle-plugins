@@ -156,25 +156,23 @@ subprojects {
 
         task publishRelease(dependsOn: [bintrayUpload, publishPlugins]) {}
 
-        afterEvaluate {
-            pluginBundle {
-                website = project.extensions.findByName('config').info.links.website
-                vcsUrl = project.extensions.findByName('config').info.links.scm
-                description = project.extensions.findByName('config').info.description
-                tags = project.extensions.findByName('config').info.tags
+        pluginBundle {
+            website = "https://github.com/aalmiray/${rootProject.name}"
+            vcsUrl = "https://github.com/aalmiray/${rootProject.name}.git"
+            description = project.project_description
+            tags = ['project', 'configuration']
 
-                plugins {
-                    "${project.pluginShortName}Plugin" {
-                        id = project.pluginId
-                        displayName = project.displayName
-                    }
+            plugins {
+                "${project.pluginShortName}Plugin" {
+                    id = project.pluginId
+                    displayName = project.displayName
                 }
+            }
 
-                mavenCoordinates {
-                    groupId = project.group
-                    artifactId = project.name
-                    version = project.version
-                }
+            mavenCoordinates {
+                groupId = project.group
+                artifactId = project.name
+                version = project.version
             }
         }
     }
