@@ -237,14 +237,15 @@ class BomPlugin extends AbstractKordampPlugin {
 
                 repositories {
                     maven {
+                        name = repositoryName
                         url = repo.url
                         Credentials creds = effectiveConfig.info.credentials.getCredentials(repo.name)
-                        if (repo.credentials) {
+                        if (repo.credentials && !repo.credentials.empty) {
                             credentials {
                                 username = repo.credentials.username
                                 password = repo.credentials.password
                             }
-                        } else if (creds) {
+                        } else if (creds && !creds.empty) {
                             credentials {
                                 username = creds.username
                                 password = creds.password
