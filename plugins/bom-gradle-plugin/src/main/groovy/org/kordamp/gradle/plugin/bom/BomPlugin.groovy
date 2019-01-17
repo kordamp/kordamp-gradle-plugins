@@ -112,15 +112,17 @@ class BomPlugin extends AbstractKordampPlugin {
         Set<Dependency> runtimeDeps = effectiveConfig.bom.runtime.collect(parseDependency)
         Set<Dependency> testDeps = effectiveConfig.bom.test.collect(parseDependency)
 
-        project.rootProject.subprojects.each { Project prj ->
-            if (prj == project) return
+        if (effectiveConfig.bom.autoIncludes) {
+            project.rootProject.subprojects.each { Project prj ->
+                if (prj == project) return
 
-            Closure<Boolean> predicate = {
-                it.artifactId == prj.name && (it.groupId == project.group || it.groupId == '${project.groupId}')
-            }
-            if ((!effectiveConfig.bom.excludes.contains(prj.name) && !effectiveConfig.bom.excludes.contains(':' + prj.name)) &&
-                !compileDeps.find(predicate) && !runtimeDeps.find(predicate) && !testDeps.find(predicate)) {
-                compileDeps << new Dependency('${project.groupId}', prj.name, '${project.version}')
+                Closure<Boolean> predicate = {
+                    it.artifactId == prj.name && (it.groupId == project.group || it.groupId == '${project.groupId}')
+                }
+                if ((!effectiveConfig.bom.excludes.contains(prj.name) && !effectiveConfig.bom.excludes.contains(':' + prj.name)) &&
+                    !compileDeps.find(predicate) && !runtimeDeps.find(predicate) && !testDeps.find(predicate)) {
+                    compileDeps << new Dependency('${project.groupId}', prj.name, '${project.version}')
+                }
             }
         }
 

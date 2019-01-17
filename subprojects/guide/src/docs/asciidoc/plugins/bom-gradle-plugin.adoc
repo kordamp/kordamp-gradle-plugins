@@ -138,6 +138,7 @@ Results in the following BOM when invoking `gradle :sample-bom:publish`
 ----
 config {
     bom {
+        autoIncludes
         enabled
         compile
         runtime
@@ -149,12 +150,13 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name     | Type        | Required | Default Value | Description
-| enabled  | boolean     | no       | true          | Disables `org.kordamp.gradle.bom` plugin if `false`
-| compile  | Set<String> | no       | []            | Dependencies that should be added to the `compile` scope
-| runtime  | Set<String> | no       | []            | Dependencies that should be added to the `runtime` scope
-| test     | Set<String> | no       | []            | Dependencies that should be added to the `test` scope
-| excludes | Set<String> | no       | []            | Names of subprojects tat should not be included
+| Name          | Type        | Required | Default Value | Description
+| enabled       | boolean     | no       | true          | Disables `org.kordamp.gradle.bom` plugin if `false`
+| autoIncludes  | boolean     | no       | true          | Disables default inclusion of all projects
+| compile       | Set<String> | no       | []            | Dependencies that should be added to the `compile` scope
+| runtime       | Set<String> | no       | []            | Dependencies that should be added to the `runtime` scope
+| test          | Set<String> | no       | []            | Dependencies that should be added to the `test` scope
+| excludes      | Set<String> | no       | []            | Names of subprojects tat should not be included
 |===
 
 This block is optional.

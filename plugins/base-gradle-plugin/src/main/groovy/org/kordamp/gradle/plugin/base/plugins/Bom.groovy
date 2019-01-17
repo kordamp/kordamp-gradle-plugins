@@ -35,6 +35,9 @@ class Bom extends AbstractFeature {
     Set<String> test = new LinkedHashSet<>()
     Set<String> excludes = new LinkedHashSet<>()
 
+    boolean autoIncludes = true
+    private boolean autoIncludesSet
+
     Bom(Project project) {
         super(project)
     }
@@ -50,6 +53,7 @@ class Bom extends AbstractFeature {
         Map map = [enabled: enabled]
 
         if (enabled) {
+            map.autoIncludes = autoIncludes
             map.compile = compile
             map.runtime = runtime
             map.test = test
@@ -75,12 +79,23 @@ class Bom extends AbstractFeature {
         excludes << str
     }
 
+    void setAutoIncludes(boolean autoIncludes) {
+        this.autoIncludes = autoIncludes
+        this.autoIncludesSet = true
+    }
+
+    boolean isAutoIncludesSet() {
+        this.autoIncludesSet
+    }
+
     void copyInto(Bom copy) {
         super.copyInto(copy)
         copy.compile.addAll(compile)
         copy.runtime.addAll(runtime)
         copy.test.addAll(test)
         copy.excludes.addAll(excludes)
+        copy.@autoIncludes = this.autoIncludes
+        copy.@autoIncludesSet = this.autoIncludesSet
     }
 
     @CompileDynamic
@@ -90,6 +105,7 @@ class Bom extends AbstractFeature {
         o1.runtime.addAll(((o1.runtime ?: []) + (o2.runtime ?: [])).unique())
         o1.test.addAll(((o1.test ?: []) + (o2.test ?: [])).unique())
         o1.excludes.addAll(((o1.excludes ?: []) + (o2.excludes ?: [])).unique())
+        o1.setAutoIncludes((boolean) (o1.autoIncludesSet ? o1.autoIncludes : o2.autoIncludes))
     }
 
     List<String> validate(ProjectConfigurationExtension extension) {
