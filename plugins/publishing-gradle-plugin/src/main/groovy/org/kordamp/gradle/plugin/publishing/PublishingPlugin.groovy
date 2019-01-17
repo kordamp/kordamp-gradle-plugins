@@ -112,7 +112,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
 
         project.publishing {
             publications {
-                mainPublication(MavenPublication) {
+                main(MavenPublication) {
                     from project.components.java
 
                     if (javadocJar?.enabled) artifact javadocJar
@@ -220,7 +220,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
 
         if (effectiveConfig.publishing.signing) {
             project.signing {
-                sign project.publishing.publications.mainPublication
+                sign project.publishing.publications.main
             }
         }
     }

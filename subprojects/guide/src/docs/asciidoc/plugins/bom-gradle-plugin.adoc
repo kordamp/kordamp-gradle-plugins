@@ -12,7 +12,7 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `link:https://docs.gradle.org/current/userguide/signing_plugin.html[signing]`
 
 Configures a MavenPublication for the project using the core `maven-publish` plugin.
-The name of the publication matches `"mainPublication"`.
+The name of the publication matches `"main"`.
 
 Data defined in the DSL's `config.info` and `config.license` blocks will be used to fill out information required by the
 generated BOM file.
@@ -43,7 +43,7 @@ Using the following project layout as an example
 │               └── resources
 └── subprojects
     ├── sample-bom
-    │   └── sample.bom.gradle
+    │   └── sample-bom.gradle
     ├── project1
     │   ├── project1.gradle
     │   └── src

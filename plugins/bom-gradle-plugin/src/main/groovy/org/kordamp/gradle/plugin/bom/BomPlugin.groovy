@@ -126,7 +126,7 @@ class BomPlugin extends AbstractKordampPlugin {
 
         project.publishing {
             publications {
-                mainPublication(MavenPublication) {
+                main(MavenPublication) {
                     artifacts = []
 
                     pom {
@@ -257,7 +257,7 @@ class BomPlugin extends AbstractKordampPlugin {
 
         if (effectiveConfig.publishing.signing) {
             project.signing {
-                sign project.publishing.publications.mainPublication
+                sign project.publishing.publications.main
             }
         }
     }

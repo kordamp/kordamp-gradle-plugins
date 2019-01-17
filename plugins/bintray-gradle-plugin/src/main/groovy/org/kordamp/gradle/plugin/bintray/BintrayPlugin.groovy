@@ -91,7 +91,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
         project.bintray {
             user = effectiveConfig.bintray.credentials.username
             key = effectiveConfig.bintray.credentials.password
-            publications = ['mainPublication']
+            publications = ['main']
             pkg {
                 repo = effectiveConfig.bintray.repo
                 userOrg = effectiveConfig.bintray.userOrg

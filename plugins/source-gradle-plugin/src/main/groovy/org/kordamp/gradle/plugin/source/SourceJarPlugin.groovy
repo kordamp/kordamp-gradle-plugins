@@ -52,7 +52,6 @@ class SourceJarPlugin extends AbstractKordampPlugin {
             }
         }
         configureProject(project)
-
     }
 
     static void applyIfMissing(Project project) {

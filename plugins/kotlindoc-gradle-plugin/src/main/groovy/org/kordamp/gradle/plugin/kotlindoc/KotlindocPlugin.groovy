@@ -165,7 +165,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
             if (project.plugins.findPlugin(MavenPublishPlugin)) {
                 project.publishing {
                     publications {
-                        mainPublication(MavenPublication) {
+                        main(MavenPublication) {
                             artifact kotlindocJarTask
                         }
                     }

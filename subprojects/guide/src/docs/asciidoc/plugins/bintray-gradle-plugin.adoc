@@ -20,7 +20,7 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 
 Configures artifact publications using Bintray. Relies on the publication configured by the
 `<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>` plugin. The name of the publication
-matches `"mainPublication"`.
+matches `"main"`.
 
 [[_org_kordamp_gradle_bintray_dsl]]
 == DSL
