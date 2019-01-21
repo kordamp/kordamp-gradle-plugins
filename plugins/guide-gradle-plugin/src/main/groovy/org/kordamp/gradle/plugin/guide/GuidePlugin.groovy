@@ -32,6 +32,8 @@ import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
 
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+
 /**
  * @author Andres Almiray
  * @since 0.3.0

@@ -29,6 +29,7 @@ generated POM file.
 == DSL
 
 [source,groovy]
+[subs="+macros"]
 ----
 config {
     publishing {
@@ -36,6 +37,16 @@ config {
         signing
         releasesRepository
         snapshotsRepository
+        <<_publishing_pom,pom>>  {
+            parent
+            overwriteInceptionYear
+            overwriteUrl
+            overwriteLicenses
+            overwriteScm
+            overwriteOrganization
+            overwriteDevelopers
+            overwriteContributors
+        }
     }
 }
 ----
@@ -47,6 +58,31 @@ config {
 | signing             | boolean | no       | false         | Enables signing of all artifacts associated with `main`
 | releasesRepository  | String  | no       |               | Name of a Maven compatible repository for publishing releases
 | snapshotsRepository | String  | no       |               | Name of a Maven compatible repository for publishing snapshots
+|===
+
+This block is optional.
+
+[[_publishing_pom]]
+*pom*
+
+[options="header", cols="5*"]
+|===
+| Name                   | Type        | Required | Default Value | Description
+| parent                 | String      | no       |               | Defines the coordinates of the parent POM
+| overwriteInceptionYear | boolean     | no       | false         | Overwrite `<inceptionYear>` from parent POM
+| overwriteUrl           | boolean     | no       | false         | Overwrite `<url>` from parent POM
+| overwriteLicenses      | boolean     | no       | false         | Overwrite `<licenses>` from parent POM
+| overwriteScm           | boolean     | no       | false         | Overwrite `<scm>` from parent POM
+| overwriteOrganization  | boolean     | no       | false         | Overwrite `<organization>` from parent POM
+| overwriteDevelopers    | boolean     | no       | false         | Overwrite `<developers>` from parent POM
+| overwriteContributors  | boolean     | no       | false         | Overwrite `<contributors>` from parent POM
+|===
+
+The format for `parent` may be any of the following ones:
+
+ * Plain name of a project within the same multi-project, i.e, `kordamp-core`.
+ * Project path within the same multi-project, i.e, `:kordamp-core`.
+ * Full maven coordinates, i.e, `org.kordamp:kordamp-core:1.2.3`.
 |===
 
 This block is optional.

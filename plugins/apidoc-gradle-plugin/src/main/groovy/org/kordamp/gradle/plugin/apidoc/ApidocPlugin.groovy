@@ -33,6 +33,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.groovydoc.GroovydocPlugin
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**

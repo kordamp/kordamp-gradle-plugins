@@ -32,6 +32,7 @@ import org.kordamp.gradle.plugin.base.plugins.Clirr
 import org.kordamp.gradle.plugin.clirr.tasks.AggregateClirrReportTask
 import org.kordamp.gradle.plugin.clirr.tasks.ClirrTask
 
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**

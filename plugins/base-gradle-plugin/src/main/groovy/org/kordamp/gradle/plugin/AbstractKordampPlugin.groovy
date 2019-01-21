@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin
 
 import org.gradle.api.Project
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
@@ -43,13 +42,5 @@ abstract class AbstractKordampPlugin implements KordampPlugin {
 
     protected void setEnabled(boolean enabled) {
         this.enabled = enabled
-    }
-
-    protected ProjectConfigurationExtension resolveConfig(Project project) {
-        project.extensions.findByName(ProjectConfigurationExtension.CONFIG_NAME)
-    }
-
-    protected ProjectConfigurationExtension resolveEffectiveConfig(Project project) {
-        project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
     }
 }

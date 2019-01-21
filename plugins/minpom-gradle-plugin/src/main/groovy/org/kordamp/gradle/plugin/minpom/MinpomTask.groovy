@@ -28,6 +28,10 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
  * @author Andres Almiray
@@ -53,16 +57,13 @@ class MinpomTask extends DefaultTask {
     void generateFiles() {
         Map<String, Dependency> compileDependencies = project.configurations.compile.allDependencies.findAll({
             it.name != 'unspecified'
-        })
-            .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+        }).collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
         Map<String, Dependency> runtimeDependencies = project.configurations.runtime.allDependencies.findAll({
             it.name != 'unspecified'
-        })
-            .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+        }).collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
         Map<String, Dependency> testDependencies = project.configurations.testRuntime.allDependencies.findAll({
             it.name != 'unspecified'
-        })
-            .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+        }).collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
 
         compileDependencies.keySet().each { key ->
             runtimeDependencies.remove(key)
@@ -72,12 +73,26 @@ class MinpomTask extends DefaultTask {
             testDependencies.remove(key)
         }
 
+
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        boolean hasParent = !isBlank(effectiveConfig.publishing.pom.parent)
+
         StringWriter writer = new StringWriter()
         writer.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         new MarkupBuilder(writer).project(xmlns: 'http://maven.apache.org/POM/4.0.0',
             'xsi:schemaLocation': 'http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd',
             'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance') {
             modelVersion('4.0.0')
+
+            if (hasParent) {
+                org.kordamp.gradle.plugin.base.model.Dependency parentPom = org.kordamp.gradle.plugin.base.model.Dependency.parseDependency(effectiveConfig.project, effectiveConfig.publishing.pom.parent, true)
+                parent {
+                    groupId(parentPom.groupId)
+                    artifactId(parentPom.artifactId)
+                    version(parentPom.version)
+                }
+            }
+
             groupId(projectGroupId)
             artifactId(projectArtifactId)
             version(projectVersion)

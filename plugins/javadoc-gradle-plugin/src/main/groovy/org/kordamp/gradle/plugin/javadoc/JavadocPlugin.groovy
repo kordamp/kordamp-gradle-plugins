@@ -27,6 +27,7 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**

@@ -33,6 +33,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.License
 import org.kordamp.gradle.plugin.base.model.LicenseId
 
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**

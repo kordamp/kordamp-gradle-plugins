@@ -17,8 +17,7 @@
  */
 package org.kordamp.gradle.plugin.bom
 
-import groovy.transform.Canonical
-import groovy.transform.CompileStatic
+
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
@@ -27,9 +26,11 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Credentials
-import org.kordamp.gradle.plugin.base.model.Person
+import org.kordamp.gradle.plugin.base.model.Dependency
 import org.kordamp.gradle.plugin.base.model.Repository
+import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -83,34 +84,9 @@ class BomPlugin extends AbstractKordampPlugin {
             return
         }
 
-        def parseDependency = { String str ->
-            String[] parts = str.trim().split(':')
-            switch (parts.length) {
-                case 0:
-                    throw new IllegalStateException("Project '${str}' does not exist")
-                case 1:
-                    if (!isBlank(parts[0]) && project.rootProject.subprojects.find { it.name == parts[0] }) {
-                        return new Dependency('${project.groupId}', parts[0], '${project.version}')
-                    }
-                    throw new IllegalStateException("Project '${str}' does not exist")
-                case 2:
-                    if (isBlank(parts[0]) &&
-                        !isBlank(parts[1]) &&
-                        project.rootProject.subprojects.find { it.name == parts[1] }) {
-                        return new Dependency('${project.groupId}', parts[1], '${project.version}')
-                    }
-                    throw new IllegalStateException("Project '${str}' does not exist")
-                case 3:
-                    if (isBlank(parts[0]) || isBlank(parts[1]) || isBlank(parts[2])) {
-                        throw new IllegalStateException("Invalid BOM dependency '${str}'")
-                    }
-                    return new Dependency(parts[0], parts[1], parts[2])
-            }
-        }
-
-        Set<Dependency> compileDeps = effectiveConfig.bom.compile.collect(parseDependency)
-        Set<Dependency> runtimeDeps = effectiveConfig.bom.runtime.collect(parseDependency)
-        Set<Dependency> testDeps = effectiveConfig.bom.test.collect(parseDependency)
+        Set<Dependency> compileDeps = effectiveConfig.bom.compile.collect { Dependency.parseDependency(project, it) }
+        Set<Dependency> runtimeDeps = effectiveConfig.bom.runtime.collect { Dependency.parseDependency(project, it) }
+        Set<Dependency> testDeps = effectiveConfig.bom.test.collect { Dependency.parseDependency(project, it) }
 
         if (effectiveConfig.bom.autoIncludes) {
             project.rootProject.subprojects.each { Project prj ->
@@ -131,74 +107,10 @@ class BomPlugin extends AbstractKordampPlugin {
                 main(MavenPublication) {
                     artifacts = []
 
+                    PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.bom)
+
                     pom {
-                        name = effectiveConfig.info.name
-                        description = effectiveConfig.info.description
-                        url = effectiveConfig.info.url
-                        inceptionYear = effectiveConfig.info.inceptionYear
                         packaging = 'pom'
-                        licenses {
-                            effectiveConfig.license.licenses.forEach { lic ->
-                                license {
-                                    name = lic.name
-                                    url = lic.url
-                                    distribution = lic.distribution
-                                    if (lic.comments) comments = lic.comments
-                                }
-                            }
-                        }
-                        if (!isBlank(effectiveConfig.info.scm.url)) {
-                            scm {
-                                url = effectiveConfig.info.scm.url
-                                if (effectiveConfig.info.scm.connection) {
-                                    connection = effectiveConfig.info.scm.connection
-                                }
-                                if (effectiveConfig.info.scm.connection) {
-                                    developerConnection = effectiveConfig.info.scm.developerConnection
-                                }
-                            }
-                        } else if (effectiveConfig.info.links.scm) {
-                            scm {
-                                url = effectiveConfig.info.links.scm
-                            }
-                        }
-                        if (!effectiveConfig.info.organization.isEmpty()) {
-                            organization {
-                                name = effectiveConfig.info.organization.name
-                                url = effectiveConfig.info.organization.url
-                            }
-                        }
-                        developers {
-                            effectiveConfig.info.people.forEach { Person person ->
-                                if ('developer' in person.roles*.toLowerCase()) {
-                                    developer {
-                                        if (person.id) id = person.id
-                                        if (person.name) name = person.name
-                                        if (person.url) url = person.url
-                                        if (person.email) email = person.email
-                                        if (person.organization?.name) organizationName = person.organization.name
-                                        if (person.organization?.url) organizationUrl = person.organization.url
-                                        if (person.roles) roles = person.roles as Set
-                                        if (person.properties) properties.set(person.properties)
-                                    }
-                                }
-                            }
-                        }
-                        contributors {
-                            effectiveConfig.info.people.forEach { Person person ->
-                                if ('contributor' in person.roles*.toLowerCase()) {
-                                    contributor {
-                                        if (person.name) name = person.name
-                                        if (person.url) url = person.url
-                                        if (person.email) email = person.email
-                                        if (person.organization?.name) organizationName = person.organization.name
-                                        if (person.organization?.url) organizationUrl = person.organization.url
-                                        if (person.roles) roles = person.roles as Set
-                                        if (person.properties) properties.set(person.properties)
-                                    }
-                                }
-                            }
-                        }
                     }
 
                     pom.withXml {
@@ -263,13 +175,5 @@ class BomPlugin extends AbstractKordampPlugin {
                 sign project.publishing.publications.main
             }
         }
-    }
-
-    @CompileStatic
-    @Canonical
-    private static class Dependency {
-        String groupId
-        String artifactId
-        String version
     }
 }

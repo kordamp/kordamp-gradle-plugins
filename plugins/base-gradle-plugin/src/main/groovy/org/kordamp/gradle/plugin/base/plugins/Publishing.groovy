@@ -20,7 +20,11 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.plugin.base.model.DefaultPomOptions
+import org.kordamp.gradle.plugin.base.model.PomOptions
 
 /**
  * @author Andres Almiray
@@ -32,6 +36,7 @@ class Publishing extends AbstractFeature {
     String releasesRepository
     String snapshotsRepository
     boolean signing = false
+    DefaultPomOptions pom = new DefaultPomOptions()
 
     private boolean signingSet
 
@@ -53,9 +58,18 @@ class Publishing extends AbstractFeature {
             map.signing = signing
             map.releasesRepository = releasesRepository
             map.snapshotsRepository = snapshotsRepository
+            map.pom = pom.toMap()
         }
 
         ['publishing': map]
+    }
+
+    void pom(Action<? super PomOptions> action) {
+        action.execute(pom)
+    }
+
+    void pom(@DelegatesTo(PomOptions) Closure action) {
+        ConfigureUtil.configure(action, pom)
     }
 
     void setSigning(boolean signing) {
@@ -74,6 +88,7 @@ class Publishing extends AbstractFeature {
         copy.@snapshotsRepository = snapshotsRepository
         copy.@signing = this.signing
         copy.@signingSet = this.signingSet
+        this.@pom.copyInto(copy.@pom)
     }
 
     static void merge(Publishing o1, Publishing o2) {
@@ -81,5 +96,6 @@ class Publishing extends AbstractFeature {
         o1.releasesRepository = o1.@releasesRepository ?: o2.@releasesRepository
         o1.snapshotsRepository = o1.@snapshotsRepository ?: o2.@snapshotsRepository
         o1.setSigning((boolean) (o1.signingSet ? o1.signing : o2.signing))
+        DefaultPomOptions.merge(o1.pom, o2.pom)
     }
 }

@@ -26,6 +26,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import java.text.SimpleDateFormat
 
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**

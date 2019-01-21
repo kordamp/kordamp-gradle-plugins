@@ -30,12 +30,14 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Credentials
 import org.kordamp.gradle.plugin.base.model.Person
 import org.kordamp.gradle.plugin.base.model.Repository
+import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.groovydoc.GroovydocPlugin
 import org.kordamp.gradle.plugin.jar.JarPlugin
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 import org.kordamp.gradle.plugin.source.SourceJarPlugin
 
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -119,74 +121,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
                     if (groovydocJar?.enabled) artifact groovydocJar
                     if (sourceJar?.enabled) artifact sourceJar
 
-                    pom {
-                        name = effectiveConfig.info.name
-                        description = effectiveConfig.info.description
-                        url = effectiveConfig.info.url
-                        inceptionYear = effectiveConfig.info.inceptionYear
-                        licenses {
-                            effectiveConfig.license.licenses.forEach { lic ->
-                                license {
-                                    name = lic.name
-                                    url = lic.url
-                                    distribution = lic.distribution
-                                    if (lic.comments) comments = lic.comments
-                                }
-                            }
-                        }
-                        if (!isBlank(effectiveConfig.info.scm.url)) {
-                            scm {
-                                url = effectiveConfig.info.scm.url
-                                if (effectiveConfig.info.scm.connection) {
-                                    connection = effectiveConfig.info.scm.connection
-                                }
-                                if (effectiveConfig.info.scm.connection) {
-                                    developerConnection = effectiveConfig.info.scm.developerConnection
-                                }
-                            }
-                        } else if (effectiveConfig.info.links.scm) {
-                            scm {
-                                url = effectiveConfig.info.links.scm
-                            }
-                        }
-                        if (!effectiveConfig.info.organization.isEmpty()) {
-                            organization {
-                                name = effectiveConfig.info.organization.name
-                                url = effectiveConfig.info.organization.url
-                            }
-                        }
-                        developers {
-                            effectiveConfig.info.people.forEach { Person person ->
-                                if ('developer' in person.roles*.toLowerCase()) {
-                                    developer {
-                                        if (person.id) id = person.id
-                                        if (person.name) name = person.name
-                                        if (person.url) url = person.url
-                                        if (person.email) email = person.email
-                                        if (person.organization?.name) organizationName = person.organization.name
-                                        if (person.organization?.url) organizationUrl = person.organization.url
-                                        if (person.roles) roles = person.roles as Set
-                                        if (person.properties) properties.set(person.properties)
-                                    }
-                                }
-                            }
-                        }
-                        contributors {
-                            effectiveConfig.info.people.forEach { Person person ->
-                                if ('contributor' in person.roles*.toLowerCase()) {
-                                    contributor {
-                                        if (person.name) name = person.name
-                                        if (person.url) url = person.url
-                                        if (person.email) email = person.email
-                                        if (person.organization?.name) organizationName = person.organization.name
-                                        if (person.organization?.url) organizationUrl = person.organization.url
-                                        if (person.roles) roles = person.roles as Set
-                                        if (person.properties) properties.set(person.properties)
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.publishing.pom)
                 }
             }
 

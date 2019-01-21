@@ -15,32 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.base.plugins
+package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.gradle.api.Project
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.model.PomOptions
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
  * @author Andres Almiray
- * @since 0.9.0
+ * @since 0.13.0
  */
 @CompileStatic
-@Canonical
-class Bom extends AbstractFeature implements PomOptions {
-    Set<String> compile = new LinkedHashSet<>()
-    Set<String> runtime = new LinkedHashSet<>()
-    Set<String> test = new LinkedHashSet<>()
-    Set<String> excludes = new LinkedHashSet<>()
-
-    boolean autoIncludes = true
-    private boolean autoIncludesSet
-
+class DefaultPomOptions implements PomOptions {
     String parent
     boolean overwriteInceptionYear
     boolean overwriteUrl
@@ -57,68 +44,6 @@ class Bom extends AbstractFeature implements PomOptions {
     private boolean overwriteOrganizationSet
     private boolean overwriteDevelopersSet
     private boolean overwriteContributorsSet
-
-    Bom(Project project) {
-        super(project)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
-    }
-
-    @Override
-    @CompileDynamic
-    Map<String, Map<String, Object>> toMap() {
-        if (!isRoot()) return [:]
-
-        Map map = [enabled: enabled]
-
-        if (enabled) {
-            map.autoIncludes = autoIncludes
-            map.compile = compile
-            map.runtime = runtime
-            map.test = test
-            map.excludes = excludes
-            if (!isBlank(parent)) {
-                map.parent = parent
-                map.overwriteInceptionYear = overwriteInceptionYear
-                map.overwriteUrl = overwriteUrl
-                map.overwriteLicenses = overwriteLicenses
-                map.overwriteScm = overwriteScm
-                map.overwriteOrganization = overwriteOrganization
-                map.overwriteDevelopers = overwriteDevelopers
-                map.overwriteContributors = overwriteContributors
-            }
-        }
-
-        ['bom': map]
-    }
-
-    void compile(String str) {
-        compile << str
-    }
-
-    void runtime(String str) {
-        runtime << str
-    }
-
-    void test(String str) {
-        test << str
-    }
-
-    void exclude(String str) {
-        excludes << str
-    }
-
-    void setAutoIncludes(boolean autoIncludes) {
-        this.autoIncludes = autoIncludes
-        this.autoIncludesSet = true
-    }
-
-    boolean isAutoIncludesSet() {
-        this.autoIncludesSet
-    }
 
     boolean isOverwriteInceptionYearSet() {
         return overwriteInceptionYearSet
@@ -148,15 +73,26 @@ class Bom extends AbstractFeature implements PomOptions {
         return overwriteContributorsSet
     }
 
-    void copyInto(Bom copy) {
-        super.copyInto(copy)
-        copy.compile.addAll(compile)
-        copy.runtime.addAll(runtime)
-        copy.test.addAll(test)
-        copy.excludes.addAll(excludes)
-        copy.@autoIncludes = this.autoIncludes
-        copy.@autoIncludesSet = this.autoIncludesSet
+    @Override
+    @CompileDynamic
+    Map<String, Object> toMap() {
+        if (!isBlank(parent)) {
+            [
+                parent                : parent,
+                overwriteInceptionYear: overwriteInceptionYear,
+                overwriteUrl          : overwriteUrl,
+                overwriteLicenses     : overwriteLicenses,
+                overwriteScm          : overwriteScm,
+                overwriteOrganization : overwriteOrganization,
+                overwriteDevelopers   : overwriteDevelopers,
+                overwriteContributors : overwriteContributors
+            ]
+        } else {
+            [:]
+        }
+    }
 
+    void copyInto(DefaultPomOptions copy) {
         copy.parent = this.parent
         copy.@overwriteInceptionYear = this.overwriteInceptionYear
         copy.@overwriteInceptionYearSet = this.overwriteInceptionYearSet
@@ -174,15 +110,7 @@ class Bom extends AbstractFeature implements PomOptions {
         copy.@overwriteContributorsSet = this.overwriteContributorsSet
     }
 
-    @CompileDynamic
-    static void merge(Bom o1, Bom o2) {
-        AbstractFeature.merge(o1, o2)
-        o1.compile.addAll(((o1.compile ?: []) + (o2.compile ?: [])).unique())
-        o1.runtime.addAll(((o1.runtime ?: []) + (o2.runtime ?: [])).unique())
-        o1.test.addAll(((o1.test ?: []) + (o2.test ?: [])).unique())
-        o1.excludes.addAll(((o1.excludes ?: []) + (o2.excludes ?: [])).unique())
-        o1.setAutoIncludes((boolean) (o1.autoIncludesSet ? o1.autoIncludes : o2.autoIncludes))
-
+    static void merge(DefaultPomOptions o1, DefaultPomOptions o2) {
         o1.parent = o1.parent ?: o2?.parent
         o1.setOverwriteInceptionYear((boolean) (o1.overwriteInceptionYearSet ? o1.overwriteInceptionYear : o2.overwriteInceptionYear))
         o1.setOverwriteUrl((boolean) (o1.overwriteUrlSet ? o1.overwriteUrl : o2.overwriteUrl))
@@ -191,13 +119,5 @@ class Bom extends AbstractFeature implements PomOptions {
         o1.setOverwriteOrganization((boolean) (o1.overwriteOrganizationSet ? o1.overwriteOrganization : o2.overwriteOrganization))
         o1.setOverwriteDevelopers((boolean) (o1.overwriteDevelopersSet ? o1.overwriteDevelopers : o2.overwriteDevelopers))
         o1.setOverwriteContributors((boolean) (o1.overwriteContributorsSet ? o1.overwriteContributors : o2.overwriteContributors))
-    }
-
-    List<String> validate(ProjectConfigurationExtension extension) {
-        List<String> errors = []
-
-        if (!enabled) return errors
-
-        errors
     }
 }

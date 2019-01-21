@@ -20,6 +20,7 @@ package org.kordamp.gradle
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
@@ -82,5 +83,13 @@ class PluginUtils {
             'com.android.application',
             'com.android.test'
         ]
+    }
+
+    static ProjectConfigurationExtension resolveConfig(Project project) {
+        (ProjectConfigurationExtension) project.extensions.findByName(ProjectConfigurationExtension.CONFIG_NAME)
+    }
+
+    static ProjectConfigurationExtension resolveEffectiveConfig(Project project) {
+        (ProjectConfigurationExtension) project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
     }
 }
