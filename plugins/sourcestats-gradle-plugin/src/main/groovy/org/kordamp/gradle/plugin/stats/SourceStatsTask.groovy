@@ -67,9 +67,14 @@ class SourceStatsTask extends DefaultTask {
     void computeLoc() {
         Map<String, Counter> counterInstances = resolveCounterInstances()
 
-        Map merged = [:]
+        Map<String, Map<String, String>> merged = [:]
         merged.putAll(Stats.defaultPaths())
-        merged.putAll(paths)
+        // deep copy
+        paths.each { key, val ->
+            Map<String, String> map = [:]
+            map.putAll(val)
+            merged.put(key, map)
+        }
 
         PluginUtils.resolveSourceDirs(project).each { File dir ->
             if (!dir.exists()) return
@@ -89,12 +94,16 @@ class SourceStatsTask extends DefaultTask {
             }
         }
 
+        List<String> toBeRemoved = []
         merged.each { type, info ->
-            if (info.files) {
+            if (info.files && info.lines) {
                 totalFiles += info.files
                 totalLOC += info.lines
+            } else {
+                toBeRemoved << type
             }
         }
+        toBeRemoved.each { merged.remove(it) }
 
         if (totalFiles) {
             int max = 0
@@ -120,7 +129,7 @@ class SourceStatsTask extends DefaultTask {
     private Map<String, Counter> resolveCounterInstances() {
         Map<String, Counter> instances = [:]
         counters.collect { key, classname ->
-            instances[key] = Class.forName(classname).newInstance()
+            instances[key] = Class.forName(classname, true, SourceStatsTask.classLoader).newInstance()
         }
 
         if (!instances.java) instances.java = new JavaCounter()

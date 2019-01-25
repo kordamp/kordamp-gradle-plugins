@@ -28,7 +28,7 @@ import org.kordamp.gradle.plugin.stats.Counter
 class PropertiesCounter implements Counter {
     @Override
     int count(File file) {
-        def loc = 0
+        int loc = 0
         file.eachLine { line ->
             if (!(line.trim().length()) || line ==~ EMPTY || line.trim().startsWith('#')) return
             loc++

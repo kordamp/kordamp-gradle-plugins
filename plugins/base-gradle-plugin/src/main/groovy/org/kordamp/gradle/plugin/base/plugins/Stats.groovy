@@ -22,6 +22,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskProvider
 
 import static org.kordamp.gradle.StringUtils.getNaturalName
 import static org.kordamp.gradle.StringUtils.getPropertyNameForLowerCaseHyphenSeparatedName
@@ -42,7 +43,7 @@ class Stats extends AbstractFeature {
     List<String> formats = ['xml', 'txt']
 
     private final Set<Project> projects = new LinkedHashSet<>()
-    private final Set<Task> statsTasks = new LinkedHashSet<>()
+    private final Set<TaskProvider<Task>> statsTasks = new LinkedHashSet<>()
 
     Stats(Project project) {
         super(project)
@@ -135,7 +136,7 @@ class Stats extends AbstractFeature {
         projects
     }
 
-    Set<Task> statsTasks() {
+    Set<TaskProvider<Task>> statsTasks() {
         statsTasks
     }
 }

@@ -28,8 +28,8 @@ class SqlCounter implements Counter {
 
     @Override
     int count(File file) {
-        def loc = 0
-        def comment = 0
+        int loc = 0
+        int comment = 0
         file.eachLine { line ->
             if (!line.trim().length() || line ==~ EMPTY) return
             else if (line ==~ DASH_DASH) return

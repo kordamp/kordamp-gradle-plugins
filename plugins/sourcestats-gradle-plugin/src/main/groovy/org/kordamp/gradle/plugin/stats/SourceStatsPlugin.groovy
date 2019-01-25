@@ -21,6 +21,7 @@ import org.gradle.BuildAdapter
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -68,7 +69,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
             setEnabled(effectiveConfig.stats.enabled)
 
             if (enabled) {
-                if(isRootProject(project) && project.childProjects.isEmpty()) {
+                if (isRootProject(project) && project.childProjects.isEmpty()) {
                     maybeCreateStatsTask(project)
                 } else if (!isRootProject(project)) {
                     maybeCreateStatsTask(project)
@@ -77,7 +78,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
-            AggregateSourceStatsReportTask task = project.tasks.create(AGGREGATE_STATS_TASK_NAME, AggregateSourceStatsReportTask) {
+            TaskProvider<AggregateSourceStatsReportTask> task = project.tasks.register(AGGREGATE_STATS_TASK_NAME, AggregateSourceStatsReportTask) {
                 enabled = false
                 group = 'Reporting'
                 description = 'Aggregate source stats reports.'
@@ -105,7 +106,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
     private void createStatsTask(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
-        SourceStatsTask statsTask = project.tasks.create('sourceStats', SourceStatsTask) {
+        TaskProvider<SourceStatsTask> statsTask = project.tasks.register('sourceStats', SourceStatsTask) {
             enabled = effectiveConfig.stats.enabled
             group = 'Reporting'
             description = 'Generates a report on lines of code'
@@ -120,11 +121,10 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private void applyAggregateStats(Project project, AggregateSourceStatsReportTask task) {
+    private void applyAggregateStats(Project project, TaskProvider<AggregateSourceStatsReportTask> task) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
-        Set<Project> allProjects = new LinkedHashSet<>(effectiveConfig.stats.projects())
-        Set<Task> allStatsTasks = new LinkedHashSet<>(effectiveConfig.stats.statsTasks())
+        Set<TaskProvider<Task>> allStatsTasks = new LinkedHashSet<>(effectiveConfig.stats.statsTasks())
 
         project.childProjects.values()*.effectiveConfig.stats.each { Stats e ->
             if (e.enabled) {
