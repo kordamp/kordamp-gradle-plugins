@@ -17,9 +17,20 @@
  */
 package org.kordamp.gradle.plugin.base.plugins.util
 
+import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.publish.maven.MavenPom
+import org.gradle.api.publish.maven.MavenPomContributor
+import org.gradle.api.publish.maven.MavenPomContributorSpec
+import org.gradle.api.publish.maven.MavenPomDeveloper
+import org.gradle.api.publish.maven.MavenPomDeveloperSpec
+import org.gradle.api.publish.maven.MavenPomLicense
+import org.gradle.api.publish.maven.MavenPomLicenseSpec
+import org.gradle.api.publish.maven.MavenPomOrganization
+import org.gradle.api.publish.maven.MavenPomScm
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Dependency
+import org.kordamp.gradle.plugin.base.model.License
 import org.kordamp.gradle.plugin.base.model.Person
 import org.kordamp.gradle.plugin.base.model.PomOptions
 
@@ -29,90 +40,116 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @author Andres Almiray
  * @since 0.13.0
  */
+@CompileStatic
 class PublishingUtils {
     static void configurePom(MavenPom pom, ProjectConfigurationExtension effectiveConfig, PomOptions pomOptions) {
-        pom.with {
-            name = effectiveConfig.info.name
-            description = effectiveConfig.info.description
-            if (isOverwriteAllowed(pomOptions, pomOptions.overwriteUrl)) url = effectiveConfig.info.url
-            if (isOverwriteAllowed(pomOptions, pomOptions.overwriteInceptionYear)) inceptionYear = effectiveConfig.info.inceptionYear
+        pom.name.set(effectiveConfig.info.name)
+        pom.description.set(effectiveConfig.info.description)
+        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteUrl)) pom.url.set(effectiveConfig.info.url)
+        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteInceptionYear)) pom.inceptionYear.set(effectiveConfig.info.inceptionYear)
 
-            if (isOverwriteAllowed(pomOptions, pomOptions.overwriteLicenses)) {
-                licenses {
-                    effectiveConfig.license.licenses.forEach { lic ->
-                        license {
-                            name = lic.name
-                            url = lic.url
-                            distribution = lic.distribution
-                            if (lic.comments) comments = lic.comments
-                        }
+        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteLicenses)) {
+            pom.licenses(new Action<MavenPomLicenseSpec>() {
+                @Override
+                void execute(MavenPomLicenseSpec licenses) {
+                    effectiveConfig.license.licenses.forEach { License lic ->
+                        licenses.license(new Action<MavenPomLicense>() {
+                            @Override
+                            void execute(MavenPomLicense license) {
+                                license.name.set(lic.name)
+                                license.url.set(lic.url)
+                                license.distribution.set(lic.distribution)
+                                if (lic.comments) license.comments.set(lic.comments)
+                            }
+                        })
                     }
                 }
-            }
+            })
+        }
 
-            if (isOverwriteAllowed(pomOptions, pomOptions.overwriteScm)) {
-                if (!isBlank(effectiveConfig.info.scm.url)) {
-                    scm {
-                        url = effectiveConfig.info.scm.url
+        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteScm)) {
+            if (!isBlank(effectiveConfig.info.scm.url)) {
+                pom.scm(new Action<MavenPomScm>() {
+                    @Override
+                    void execute(MavenPomScm scm) {
+                        scm.url.set(effectiveConfig.info.scm.url)
                         if (effectiveConfig.info.scm.connection) {
-                            connection = effectiveConfig.info.scm.connection
+                            scm.connection.set(effectiveConfig.info.scm.connection)
                         }
                         if (effectiveConfig.info.scm.connection) {
-                            developerConnection = effectiveConfig.info.scm.developerConnection
+                            scm.developerConnection.set(effectiveConfig.info.scm.developerConnection)
                         }
                     }
-                } else if (effectiveConfig.info.links.scm) {
-                    scm {
-                        url = effectiveConfig.info.links.scm
+                })
+            } else if (effectiveConfig.info.links.scm) {
+                pom.scm(new Action<MavenPomScm>() {
+                    @Override
+                    void execute(MavenPomScm scm) {
+                        scm.url.set(effectiveConfig.info.links.scm)
                     }
-                }
+                })
             }
+        }
 
-            if (isOverwriteAllowed(pomOptions, pomOptions.overwriteOrganization)) {
-                if (!effectiveConfig.info.organization.isEmpty()) {
-                    organization {
-                        name = effectiveConfig.info.organization.name
-                        url = effectiveConfig.info.organization.url
+        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteOrganization)) {
+            if (!effectiveConfig.info.organization.isEmpty()) {
+                pom.organization(new Action<MavenPomOrganization>() {
+                    @Override
+                    void execute(MavenPomOrganization organization) {
+                        organization.name.set(effectiveConfig.info.organization.name)
+                        organization.url.set(effectiveConfig.info.organization.url)
                     }
-                }
+                })
             }
+        }
 
-            if (isOverwriteAllowed(pomOptions, pomOptions.overwriteDevelopers)) {
-                developers {
+        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteDevelopers)) {
+            pom.developers(new Action<MavenPomDeveloperSpec>() {
+                @Override
+                void execute(MavenPomDeveloperSpec developers) {
                     effectiveConfig.info.people.forEach { Person person ->
                         if ('developer' in person.roles*.toLowerCase()) {
-                            developer {
-                                if (person.id) id = person.id
-                                if (person.name) name = person.name
-                                if (person.url) url = person.url
-                                if (person.email) email = person.email
-                                if (person.organization?.name) organizationName = person.organization.name
-                                if (person.organization?.url) organizationUrl = person.organization.url
-                                if (person.roles) roles = person.roles as Set
-                                if (person.properties) properties.set(person.properties)
-                            }
+                            developers.developer(new Action<MavenPomDeveloper>() {
+                                @Override
+                                void execute(MavenPomDeveloper developer) {
+                                    if (person.id) developer.id.set(person.id)
+                                    if (person.name) developer.name.set(person.name)
+                                    if (person.url) developer.url.set(person.url)
+                                    if (person.email) developer.email.set(person.email)
+                                    if (person.organization?.name) developer.organization.set(person.organization.name)
+                                    if (person.organization?.url) developer.organizationUrl.set(person.organization.url)
+                                    if (person.roles) developer.roles.set(person.roles as Set)
+                                    if (person.properties) developer.properties.set(person.properties)
+                                }
+                            })
                         }
                     }
                 }
-            }
+            })
+        }
 
-            if (isOverwriteAllowed(pomOptions, pomOptions.overwriteContributors)) {
-                contributors {
+        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteContributors)) {
+            pom.contributors(new Action<MavenPomContributorSpec>() {
+                @Override
+                void execute(MavenPomContributorSpec contributors) {
                     effectiveConfig.info.people.forEach { Person person ->
                         if ('contributor' in person.roles*.toLowerCase()) {
-                            contributor {
-                                if (person.name) name = person.name
-                                if (person.url) url = person.url
-                                if (person.email) email = person.email
-                                if (person.organization?.name) organizationName = person.organization.name
-                                if (person.organization?.url) organizationUrl = person.organization.url
-                                if (person.roles) roles = person.roles as Set
-                                if (person.properties) properties.set(person.properties)
-                            }
+                            contributors.contributor(new Action<MavenPomContributor>() {
+                                @Override
+                                void execute(MavenPomContributor contributor) {
+                                    if (person.name) contributor.name.set(person.name)
+                                    if (person.url) contributor.url.set(person.url)
+                                    if (person.email) contributor.email.set(person.email)
+                                    if (person.organization?.name) contributor.organization.set(person.organization.name)
+                                    if (person.organization?.url) contributor.organizationUrl.set(person.organization.url)
+                                    if (person.roles) contributor.roles.set(person.roles as Set)
+                                    if (person.properties) contributor.properties.set(person.properties)
+                                }
+                            })
                         }
                     }
                 }
-            }
+            })
         }
 
         if (!isBlank(pomOptions.parent)) {
@@ -125,7 +162,7 @@ class PublishingUtils {
                         <version>${parentPom.version}</version>
                     </parent>
                 """)
-                asNode().children().add(1, parentNode)
+                it.asNode().children().add(1, parentNode)
             }
         }
     }

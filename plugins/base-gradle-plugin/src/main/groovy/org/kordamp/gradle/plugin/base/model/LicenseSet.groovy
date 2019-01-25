@@ -77,7 +77,7 @@ class LicenseSet {
         o1.licenses.addAll(a.values())
     }
 
-    void forEach(Closure action) {
+    void forEach(@DelegatesTo(License) Closure<Void> action) {
         licenses.each(action)
     }
 

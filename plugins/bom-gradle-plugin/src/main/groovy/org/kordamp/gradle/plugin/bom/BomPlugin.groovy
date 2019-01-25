@@ -17,7 +17,8 @@
  */
 package org.kordamp.gradle.plugin.bom
 
-
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
@@ -39,6 +40,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @author Andres Almiray
  * @since 0.9.0
  */
+@CompileStatic
 class BomPlugin extends AbstractKordampPlugin {
     Project project
 
@@ -76,6 +78,7 @@ class BomPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileDynamic
     private void updatePublications(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         setEnabled(effectiveConfig.bom.enabled)
@@ -84,16 +87,16 @@ class BomPlugin extends AbstractKordampPlugin {
             return
         }
 
-        Set<Dependency> compileDeps = effectiveConfig.bom.compile.collect { Dependency.parseDependency(project, it) }
-        Set<Dependency> runtimeDeps = effectiveConfig.bom.runtime.collect { Dependency.parseDependency(project, it) }
-        Set<Dependency> testDeps = effectiveConfig.bom.test.collect { Dependency.parseDependency(project, it) }
+        List<Dependency> compileDeps = effectiveConfig.bom.compile.collect { Dependency.parseDependency(project, it) }
+        List<Dependency> runtimeDeps = effectiveConfig.bom.runtime.collect { Dependency.parseDependency(project, it) }
+        List<Dependency> testDeps = effectiveConfig.bom.test.collect { Dependency.parseDependency(project, it) }
 
         if (effectiveConfig.bom.autoIncludes) {
             project.rootProject.subprojects.each { Project prj ->
                 if (prj == project) return
 
-                Closure<Boolean> predicate = {
-                    it.artifactId == prj.name && (it.groupId == project.group || it.groupId == '${project.groupId}')
+                Closure<Boolean> predicate = { Dependency d ->
+                    d.artifactId == prj.name && (d.groupId == project.group || d.groupId == '${project.groupId}')
                 }
                 if ((!effectiveConfig.bom.excludes.contains(prj.name) && !effectiveConfig.bom.excludes.contains(':' + prj.name)) &&
                     !compileDeps.find(predicate) && !runtimeDeps.find(predicate) && !testDeps.find(predicate)) {

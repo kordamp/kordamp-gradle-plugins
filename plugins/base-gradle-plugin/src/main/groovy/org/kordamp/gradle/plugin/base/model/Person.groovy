@@ -37,7 +37,7 @@ class Person {
     String timezone
     Organization organization
     List<String> roles = []
-    Map<String, Object> properties = [:]
+    Map<String, String> properties = [:]
 
     @Override
     String toString() {

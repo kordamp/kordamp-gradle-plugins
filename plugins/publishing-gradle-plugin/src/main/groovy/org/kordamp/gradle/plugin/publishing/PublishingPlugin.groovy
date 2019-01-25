@@ -17,6 +17,8 @@
  */
 package org.kordamp.gradle.plugin.publishing
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
@@ -28,7 +30,6 @@ import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Credentials
-import org.kordamp.gradle.plugin.base.model.Person
 import org.kordamp.gradle.plugin.base.model.Repository
 import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
@@ -47,6 +48,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.2.0
  */
+@CompileStatic
 class PublishingPlugin extends AbstractKordampPlugin {
     Project project
 
@@ -100,6 +102,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileDynamic
     private void updatePublications(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
