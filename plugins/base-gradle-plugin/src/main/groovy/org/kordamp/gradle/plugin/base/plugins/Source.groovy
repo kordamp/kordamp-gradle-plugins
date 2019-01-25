@@ -21,6 +21,7 @@ import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 
 /**
@@ -31,7 +32,7 @@ import org.gradle.api.tasks.bundling.Jar
 @Canonical
 class Source extends AbstractFeature {
     private final Set<Project> projects = new LinkedHashSet<>()
-    private final Set<Jar> sourceTasks = new LinkedHashSet<>()
+    private final Set<TaskProvider<Jar>> sourceTasks = new LinkedHashSet<>()
     private final Set<Project> excludedProjects = new LinkedHashSet<>()
 
     Source(Project project) {
@@ -72,7 +73,7 @@ class Source extends AbstractFeature {
         projects
     }
 
-    Set<Jar> sourceTasks() {
+    Set<TaskProvider<Jar>> sourceTasks() {
         sourceTasks
     }
 }
