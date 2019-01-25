@@ -17,6 +17,8 @@
  */
 package org.kordamp.gradle.plugin.sourcexref
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.apache.maven.jxr.JXR
 import org.apache.maven.jxr.log.Log
 import org.gradle.api.DefaultTask
@@ -41,6 +43,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.7.0
  */
 @CacheableTask
+@CompileStatic
 class JxrTask extends DefaultTask {
     @PathSensitive(PathSensitivity.RELATIVE)
     @OutputDirectory File outputDirectory
@@ -106,6 +109,7 @@ class JxrTask extends DefaultTask {
         copyResources(outputDirectory.absolutePath)
     }
 
+    @CompileDynamic
     List<String> resolveSourceDirs() {
         sourceDirs.files.flatten().findAll { it.exists() }*.absolutePath
     }
@@ -140,7 +144,7 @@ class JxrTask extends DefaultTask {
 
             try {
                 if (stylesheetFile.isAbsolute()) {
-                    Files.copy(Paths.get(stylesheetFile), Paths.get(destStylesheetFile))
+                    Files.copy(Paths.get(stylesheetFile.toURI()), Paths.get(destStylesheetFile.toURI()))
                 } else {
                     URL stylesheetUrl = JxrTask.class.classLoader.getResource(stylesheet)
                     destStylesheetFile.parentFile.mkdirs()

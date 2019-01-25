@@ -23,6 +23,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskProvider
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -45,13 +46,13 @@ class SourceXref extends AbstractFeature {
     Set<String> includes = new LinkedHashSet<>()
 
     private final Set<Project> projects = new LinkedHashSet<>()
-    private final Set<Task> xrefTasks = new LinkedHashSet<>()
+    private final Set<TaskProvider<? extends Task>> xrefTasks = new LinkedHashSet<>()
     private final Set<Project> excludedProjects = new LinkedHashSet<>()
 
     SourceXref(Project project) {
         super(project)
         windowTitle = "${project.name} ${project.version}"
-        docTitle    = "${project.name} ${project.version}"
+        docTitle = "${project.name} ${project.version}"
     }
 
     @Override
@@ -146,7 +147,7 @@ class SourceXref extends AbstractFeature {
         projects
     }
 
-    Set<Task> xrefTasks() {
+    Set<TaskProvider<? extends Task>> xrefTasks() {
         xrefTasks
     }
 }

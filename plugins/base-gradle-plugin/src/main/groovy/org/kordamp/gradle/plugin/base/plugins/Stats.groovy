@@ -43,7 +43,7 @@ class Stats extends AbstractFeature {
     List<String> formats = ['xml', 'txt']
 
     private final Set<Project> projects = new LinkedHashSet<>()
-    private final Set<TaskProvider<?>> statsTasks = new LinkedHashSet<>()
+    private final Set<TaskProvider<? extends Task>> statsTasks = new LinkedHashSet<>()
 
     Stats(Project project) {
         super(project)
@@ -136,7 +136,7 @@ class Stats extends AbstractFeature {
         projects
     }
 
-    Set<TaskProvider<?>> statsTasks() {
+    Set<TaskProvider<? extends Task>> statsTasks() {
         statsTasks
     }
 }
