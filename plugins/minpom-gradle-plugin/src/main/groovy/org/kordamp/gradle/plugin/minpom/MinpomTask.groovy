@@ -21,6 +21,8 @@ import groovy.xml.MarkupBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ExcludeRule
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
@@ -55,15 +57,21 @@ class MinpomTask extends DefaultTask {
 
     @TaskAction
     void generateFiles() {
-        Map<String, Dependency> compileDependencies = project.configurations.compile.allDependencies.findAll({
-            it.name != 'unspecified'
-        }).collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
-        Map<String, Dependency> runtimeDependencies = project.configurations.runtime.allDependencies.findAll({
-            it.name != 'unspecified'
-        }).collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
-        Map<String, Dependency> testDependencies = project.configurations.testRuntime.allDependencies.findAll({
-            it.name != 'unspecified'
-        }).collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+        Closure<Boolean> filter = { Dependency d ->
+            d.name != 'unspecified'
+        }
+
+        Map<String, Dependency> compileDependencies = project.configurations.findByName('compile')
+            .allDependencies.findAll(filter)
+            .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+
+        Map<String, Dependency> runtimeDependencies = project.configurations.findByName('runtime')
+            .allDependencies.findAll(filter)
+            .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+
+        Map<String, Dependency> testDependencies = project.configurations.findByName('testRuntime')
+            .allDependencies.findAll(filter)
+            .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
 
         compileDependencies.keySet().each { key ->
             runtimeDependencies.remove(key)
@@ -73,13 +81,13 @@ class MinpomTask extends DefaultTask {
             testDependencies.remove(key)
         }
 
-
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         boolean hasParent = !isBlank(effectiveConfig.publishing.pom.parent)
 
         StringWriter writer = new StringWriter()
         writer.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-        new MarkupBuilder(writer).project(xmlns: 'http://maven.apache.org/POM/4.0.0',
+        MarkupBuilder builder = new MarkupBuilder(writer)
+        builder.project(xmlns: 'http://maven.apache.org/POM/4.0.0',
             'xsi:schemaLocation': 'http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd',
             'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance') {
             modelVersion('4.0.0')
@@ -100,37 +108,13 @@ class MinpomTask extends DefaultTask {
             if (compileDependencies || runtimeDependencies || testDependencies) {
                 dependencies {
                     compileDependencies.values().each { Dependency dep ->
-                        dependency {
-                            groupId(dep.group)
-                            artifactId(dep.name)
-                            version(dep.version)
-                            scope('compile')
-                            if (MinpomTask.isOptional(project, dep)) {
-                                optional(true)
-                            }
-                        }
+                        MinpomTask.configureDependency(builder, project, dep, 'compile')
                     }
                     runtimeDependencies.values().each { Dependency dep ->
-                        dependency {
-                            groupId(dep.group)
-                            artifactId(dep.name)
-                            version(dep.version)
-                            scope('runtime')
-                            if (MinpomTask.isOptional(project, dep)) {
-                                optional(true)
-                            }
-                        }
+                        MinpomTask.configureDependency(builder, project, dep, 'runtime')
                     }
                     testDependencies.values().each { Dependency dep ->
-                        dependency {
-                            groupId(dep.group)
-                            artifactId(dep.name)
-                            version(dep.version)
-                            scope('test')
-                            if (MinpomTask.isOptional(project, dep)) {
-                                optional(true)
-                            }
-                        }
+                        MinpomTask.configureDependency(builder, project, dep, 'test')
                     }
                 }
             }
@@ -148,6 +132,32 @@ class MinpomTask extends DefaultTask {
                               |groupId=${projectGroupId}
                               |artifactId=${projectArtifactId}
                               |""".stripMargin('|')
+    }
+
+    static void configureDependency(MarkupBuilder builder, Project project, Dependency dep, String s) {
+        builder.dependency {
+            groupId(dep.group)
+            artifactId(dep.name)
+            version(dep.version)
+            scope(s)
+            if (MinpomTask.isOptional(project, dep)) {
+                optional(true)
+            }
+
+            if (dep instanceof ModuleDependency) {
+                ModuleDependency mdep = (ModuleDependency) dep
+                if (mdep.excludeRules.size() > 0) {
+                    exclusions {
+                        mdep.excludeRules.each { ExcludeRule rule ->
+                            exclusion {
+                                groupId(rule.group)
+                                artifactId(rule.module)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static boolean isOptional(Project project, Dependency dependency) {

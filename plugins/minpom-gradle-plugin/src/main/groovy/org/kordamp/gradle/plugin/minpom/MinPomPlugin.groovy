@@ -17,6 +17,8 @@
  */
 package org.kordamp.gradle.plugin.minpom
 
+import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
@@ -35,6 +37,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class MinPomPlugin extends AbstractKordampPlugin {
     static final String MINPOM_TASK_NAME = 'minpom'
 
@@ -84,21 +87,20 @@ class MinPomPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private Task createMinPomTask(Project project) {
-        String taskName = MINPOM_TASK_NAME
-
-        Task minPomTask = project.tasks.findByName(taskName)
+    private void createMinPomTask(Project project) {
         Task classesTask = project.tasks.findByName('classes')
 
-        if (classesTask && !minPomTask) {
-            minPomTask = project.tasks.create(taskName, MinpomTask) {
-                dependsOn classesTask
-                group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-                description 'Generates a minimum POM file'
-            }
+        if (classesTask) {
+            project.tasks.register(MINPOM_TASK_NAME, MinpomTask,
+                new Action<MinpomTask>() {
+                    @Override
+                    void execute(MinpomTask t) {
+                        t.dependsOn classesTask
+                        t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
+                        t.description = 'Generates a minimum POM file'
+                    }
+                })
         }
-
-        minPomTask
     }
 
     static File resolveMinPomDestinationDir(Project project) {
