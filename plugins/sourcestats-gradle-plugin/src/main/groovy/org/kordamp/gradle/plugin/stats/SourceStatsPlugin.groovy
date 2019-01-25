@@ -17,11 +17,13 @@
  */
 package org.kordamp.gradle.plugin.stats
 
+import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
+import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.TaskProvider
+import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -34,6 +36,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.5.0
  */
+@CompileStatic
 class SourceStatsPlugin extends AbstractKordampPlugin {
     static final String AGGREGATE_STATS_TASK_NAME = 'aggregateSourceStats'
 
@@ -78,11 +81,17 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
-            TaskProvider<AggregateSourceStatsReportTask> task = project.tasks.register(AGGREGATE_STATS_TASK_NAME, AggregateSourceStatsReportTask) {
-                enabled = false
-                group = 'Reporting'
-                description = 'Aggregate source stats reports.'
-            }
+            TaskProvider<AggregateSourceStatsReportTask> task = project.tasks.register(
+                AGGREGATE_STATS_TASK_NAME,
+                AggregateSourceStatsReportTask,
+                new Action<AggregateSourceStatsReportTask>() {
+                    @Override
+                    void execute(AggregateSourceStatsReportTask t) {
+                        t.enabled = false
+                        t.group = 'Reporting'
+                        t.description = 'Aggregate source stats reports.'
+                    }
+                })
 
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
@@ -96,7 +105,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
     private void maybeCreateStatsTask(Project project) {
         try {
             // see if the project supports sourceSets
-            project.sourceSets
+            PluginUtils.resolveSourceSets(project)
             createStatsTask(project)
         } catch (MissingPropertyException ignored) {
             // incompatible project, skip it
@@ -106,14 +115,18 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
     private void createStatsTask(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
-        TaskProvider<SourceStatsTask> statsTask = project.tasks.register('sourceStats', SourceStatsTask) {
-            enabled = effectiveConfig.stats.enabled
-            group = 'Reporting'
-            description = 'Generates a report on lines of code'
-            paths = effectiveConfig.stats.paths
-            formats = effectiveConfig.stats.formats
-            counters = effectiveConfig.stats.counters
-        }
+        TaskProvider<SourceStatsTask> statsTask = project.tasks.register('sourceStats', SourceStatsTask,
+            new Action<SourceStatsTask>() {
+                @Override
+                void execute(SourceStatsTask t) {
+                    t.enabled = effectiveConfig.stats.enabled
+                    t.group = 'Reporting'
+                    t.description = 'Generates a report on lines of code'
+                    t.paths = effectiveConfig.stats.paths
+                    t.formats = effectiveConfig.stats.formats
+                    t.counters = effectiveConfig.stats.counters
+                }
+            })
 
         if (effectiveConfig.stats.enabled) {
             effectiveConfig.stats.projects() << project
@@ -124,18 +137,22 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
     private void applyAggregateStats(Project project, TaskProvider<AggregateSourceStatsReportTask> task) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
-        Set<TaskProvider<Task>> allStatsTasks = new LinkedHashSet<>(effectiveConfig.stats.statsTasks())
+        Set<TaskProvider<?>> allStatsTasks = new LinkedHashSet<>(effectiveConfig.stats.statsTasks())
 
-        project.childProjects.values()*.effectiveConfig.stats.each { Stats e ->
-            if (e.enabled) {
-                allStatsTasks.addAll(e.statsTasks())
+        project.childProjects.values().each {
+            Stats stats = resolveEffectiveConfig(it).stats
+            if (stats.enabled) {
+                allStatsTasks.addAll(stats.statsTasks())
             }
         }
 
-        task.configure {
-            enabled = effectiveConfig.stats.enabled
-            dependsOn allStatsTasks
-            formats = effectiveConfig.stats.formats
-        }
+        task.configure(new Action<AggregateSourceStatsReportTask>() {
+            @Override
+            void execute(AggregateSourceStatsReportTask t) {
+                t.enabled = effectiveConfig.stats.enabled
+                t.dependsOn allStatsTasks
+                t.formats = effectiveConfig.stats.formats
+            }
+        })
     }
 }

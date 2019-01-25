@@ -17,12 +17,14 @@
  */
 package org.kordamp.gradle.plugin.stats.counter
 
+import groovy.transform.CompileStatic
 import org.kordamp.gradle.plugin.stats.Counter
 
 /**
  * @author Andres Almiray
  * @since 0.5.0
  */
+@CompileStatic
 class XmlCounter implements Counter {
     String OPEN_CARET_CLOSE_CARET = /^(.*)<!--(.*)-->(.*)$/
 
@@ -34,7 +36,7 @@ class XmlCounter implements Counter {
             if (!line.trim().length() || line ==~ EMPTY) return
 
             def m = line =~ OPEN_CARET_CLOSE_CARET
-            if (m.count && m[0][1] ==~ EMPTY && m[0][3] ==~ EMPTY) return
+            if (m.find() && m.group(1) ==~ EMPTY && m.group(3) ==~ EMPTY) return
             int open = line.indexOf('<!--')
             int close = line.indexOf('-->')
 

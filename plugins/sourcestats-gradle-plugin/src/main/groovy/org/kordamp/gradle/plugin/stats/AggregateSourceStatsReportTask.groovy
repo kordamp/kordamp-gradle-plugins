@@ -17,6 +17,8 @@
  */
 package org.kordamp.gradle.plugin.stats
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import groovy.xml.MarkupBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.CacheableTask
@@ -36,6 +38,7 @@ import static org.kordamp.gradle.plugin.base.plugins.Stats.XML
  * @since 0.5.0
  */
 @CacheableTask
+@CompileStatic
 class AggregateSourceStatsReportTask extends DefaultTask {
     @Optional @Input List<String> formats = []
 
@@ -44,12 +47,14 @@ class AggregateSourceStatsReportTask extends DefaultTask {
 
     File xmlReport
 
+    @CompileDynamic
     AggregateSourceStatsReportTask() {
         reportDir = project.file("${project.reporting.baseDir.path}/stats")
         xmlReport = project.file("${reportDir}/${project.name}-all.xml")
     }
 
     @TaskAction
+    @CompileDynamic
     void computeAggregate() {
         Map<String, Map<String, Integer>> stats = [:]
 
@@ -106,6 +111,7 @@ class AggregateSourceStatsReportTask extends DefaultTask {
         out.flush()
     }
 
+    @CompileDynamic
     private void xmlOutput(Map<String, Map<String, Object>> stats, String totalFiles, String totalLOC) {
         new MarkupBuilder(new FileWriter(getOutputFile(XML))).stats {
             stats.each { c, info ->
@@ -122,6 +128,7 @@ class AggregateSourceStatsReportTask extends DefaultTask {
         }
     }
 
+    @CompileDynamic
     private void htmlOutput(Map<String, Map<String, Object>> stats, String totalFiles, String totalLOC) {
         int i = 0
         new MarkupBuilder(new FileWriter(getOutputFile(HTML))).html {

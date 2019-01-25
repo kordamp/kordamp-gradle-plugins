@@ -17,12 +17,14 @@
  */
 package org.kordamp.gradle.plugin.stats.counter
 
+import groovy.transform.CompileStatic
 import org.kordamp.gradle.plugin.stats.Counter
 
 /**
  * @author Andres
  *  * @since 0.5.0
  */
+@CompileStatic
 class SqlCounter implements Counter {
     String DASH_DASH = /^\s*--.*/
 
@@ -35,7 +37,7 @@ class SqlCounter implements Counter {
             else if (line ==~ DASH_DASH) return
 
             def m = line =~ SLASH_STAR_STAR_SLASH
-            if (m.count && m[0][1] ==~ EMPTY && m[0][3] ==~ EMPTY) return
+            if (m.find() && m.group(1) ==~ EMPTY && m.group(3) ==~ EMPTY) return
             int open = line.indexOf('/*')
             int close = line.indexOf('*/')
             if (open != -1 && (close - open) <= 1) comment++
