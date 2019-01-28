@@ -42,7 +42,7 @@ class Version {
 
     static Version of(String str) {
         Matcher matcher = SEMVER.matcher(str)
-        if (matcher.find()) {
+        if (matcher.matches()) {
             return new Version(
                 Integer.parseInt(matcher.group(1)),
                 Integer.parseInt(matcher.group(2)),
