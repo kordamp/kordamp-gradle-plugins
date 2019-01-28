@@ -399,110 +399,130 @@ Results in the following output
 ----
 > Task :plugins
 plugin 0:
-    implementationClass: org.gradle.api.plugins.HelpTasksPlugin
+    id: build-init
+    implementationClass: org.gradle.buildinit.plugins.BuildInitPlugin
 
 plugin 1:
-    implementationClass: org.gradle.language.base.plugins.LifecycleBasePlugin
+    id: wrapper
+    implementationClass: org.gradle.buildinit.plugins.WrapperPlugin
 
 plugin 2:
-    implementationClass: org.gradle.api.plugins.BasePlugin
+    id: help-tasks
+    implementationClass: org.gradle.api.plugins.HelpTasksPlugin
 
 plugin 3:
+    id: lifecycle-base
+    implementationClass: org.gradle.language.base.plugins.LifecycleBasePlugin
+
+plugin 4:
+    id: base
+    implementationClass: org.gradle.api.plugins.BasePlugin
+
+plugin 5:
     id: org.kordamp.gradle.base
     implementationClass: org.kordamp.gradle.plugin.base.BasePlugin
     enabled: true
 
-plugin 4:
+plugin 6:
+    id: reporting-base
     implementationClass: org.gradle.api.plugins.ReportingBasePlugin
 
-plugin 5:
+plugin 7:
+    id: jacoco
     implementationClass: org.gradle.testing.jacoco.plugins.JacocoPlugin
 
-plugin 6:
+plugin 8:
     id: org.kordamp.gradle.jacoco
     implementationClass: org.kordamp.gradle.plugin.jacoco.JacocoPlugin
     enabled: true
 
-plugin 7:
+plugin 9:
     id: com.github.hierynomus.license-report
     implementationClass: com.hierynomus.gradle.license.LicenseReportingPlugin
 
-plugin 8:
+plugin 10:
     id: com.github.hierynomus.license-base
     implementationClass: com.hierynomus.gradle.license.LicenseBasePlugin
 
-plugin 9:
+plugin 11:
     id: license
     implementationClass: nl.javadude.gradle.plugins.license.LicensePlugin
 
-plugin 10:
+plugin 12:
     id: org.kordamp.gradle.license
     implementationClass: org.kordamp.gradle.plugin.license.LicensePlugin
     enabled: false
 
-plugin 11:
+plugin 13:
     id: org.kordamp.gradle.build-info
     implementationClass: org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
     enabled: true
 
-plugin 12:
+plugin 14:
     id: org.kordamp.gradle.source-jar
     implementationClass: org.kordamp.gradle.plugin.source.SourceJarPlugin
     enabled: true
 
-plugin 13:
+plugin 15:
+    id: org.kordamp.gradle.javadoc
+    implementationClass: org.kordamp.gradle.plugin.javadoc.JavadocPlugin
+    enabled: true
+
+plugin 16:
+    id: org.kordamp.gradle.groovydoc
+    implementationClass: org.kordamp.gradle.plugin.groovydoc.GroovydocPlugin
+    enabled: false
+
+plugin 17:
     id: org.kordamp.gradle.apidoc
     implementationClass: org.kordamp.gradle.plugin.apidoc.ApidocPlugin
     enabled: true
 
-plugin 14:
+plugin 18:
     id: org.kordamp.gradle.minpom
     implementationClass: org.kordamp.gradle.plugin.minpom.MinPomPlugin
     enabled: true
 
-plugin 15:
+plugin 19:
     id: org.kordamp.gradle.jar
     implementationClass: org.kordamp.gradle.plugin.jar.JarPlugin
     enabled: true
 
-plugin 16:
+plugin 20:
     id: org.kordamp.gradle.publishing
     implementationClass: org.kordamp.gradle.plugin.publishing.PublishingPlugin
-    enabled: false
+    enabled: true
 
-plugin 17:
+plugin 21:
+    id: signing
     implementationClass: org.gradle.plugins.signing.SigningPlugin
 
-plugin 18:
+plugin 22:
     id: org.kordamp.gradle.source-stats
     implementationClass: org.kordamp.gradle.plugin.stats.SourceStatsPlugin
     enabled: true
 
-plugin 19:
+plugin 23:
     id: org.kordamp.gradle.source-html
     implementationClass: org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
     enabled: true
 
-plugin 20:
+plugin 24:
     id: org.kordamp.gradle.bintray
     implementationClass: org.kordamp.gradle.plugin.bintray.BintrayPlugin
-    enabled: false
+    enabled: true
 
-plugin 21:
+plugin 25:
     id: com.github.ben-manes.versions
     implementationClass: com.github.benmanes.gradle.versions.VersionsPlugin
 
-plugin 22:
+plugin 26:
     id: org.kordamp.gradle.project
     implementationClass: org.kordamp.gradle.plugin.project.ProjectPlugin
 
-plugin 23:
+plugin 27:
     id: net.nemerosa.versioning
     implementationClass: net.nemerosa.versioning.VersioningPlugin
-
-plugin 24:
-    id: com.jfrog.bintray
-    implementationClass: com.jfrog.bintray.gradle.BintrayPlugin
 ----
 
 [[_task_properties]]
