@@ -83,7 +83,44 @@ The format for `parent` may be any of the following ones:
  * Plain name of a project within the same multi-project, i.e, `kordamp-core`.
  * Project path within the same multi-project, i.e, `:kordamp-core`.
  * Full maven coordinates, i.e, `org.kordamp:kordamp-core:1.2.3`.
-|===
 
 This block is optional.
+
+[[_org_kordamp_gradle_publishingexample]]
+== Example
+
+Publishing signed artifacts to Maven Central.
+
+[source,groovy]
+.build.gradle
+----
+config {
+    info {
+        repositories {
+            repository {
+                name = 'mavenRelease'
+                url  = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                credentials {
+                    username = ...
+                    password = ...
+                }
+            }
+            repository {
+                name = 'mavenSnapshot'
+                url  = 'https://oss.sonatype.org/content/repositories/snapshots/'
+                credentials {
+                    username = ...
+                    password = ...
+                }
+            }
+        }
+    }
+
+    publishing {
+        signing = true
+        releasesRepository  = 'mavenRelease'
+        snapshotsRepository = 'mavenSnapshot'
+    }
+}
+----
 
