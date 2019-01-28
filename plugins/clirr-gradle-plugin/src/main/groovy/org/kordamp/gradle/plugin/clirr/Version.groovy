@@ -18,6 +18,7 @@
 package org.kordamp.gradle.plugin.clirr
 
 import groovy.transform.Canonical
+import groovy.transform.CompileStatic
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -28,6 +29,7 @@ import java.util.regex.Pattern
  * @since 0.12.0
  */
 @Canonical
+@CompileStatic
 class Version {
     public static final Version ZERO = new Version(0, 0, 0, '')
 
@@ -40,12 +42,12 @@ class Version {
 
     static Version of(String str) {
         Matcher matcher = SEMVER.matcher(str)
-        if (matcher.matches()) {
+        if (matcher.find()) {
             return new Version(
-                Integer.parseInt(matcher[0][1]),
-                Integer.parseInt(matcher[0][2]),
-                Integer.parseInt(matcher[0][3]),
-                matcher[0][4] ?: ''
+                Integer.parseInt(matcher.group(1)),
+                Integer.parseInt(matcher.group(2)),
+                Integer.parseInt(matcher.group(3)),
+                matcher.group(4) ?: ''
             )
         }
 
@@ -68,7 +70,7 @@ class Version {
     }
 
     String toString() {
-        def v = [major, '.', minor, '.', revision]
+        List<String> v = [major.toString(), '.', minor.toString(), '.', revision.toString()]
         if (tag) {
             v << '-'
             v << tag

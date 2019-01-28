@@ -17,6 +17,8 @@
  */
 package org.kordamp.gradle.plugin.base.tasks
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.gradle.api.Plugin
 import org.gradle.api.artifacts.repositories.FlatDirectoryArtifactRepository
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
@@ -34,8 +36,10 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @author Andres Almiray
  * @since 0.11.0
  */
+@CompileStatic
 class PluginsTask extends AbstractReportingTask {
     @TaskAction
+    @CompileDynamic
     void report() {
         Map<String, Map<String, Object>> plugins = [:]
 
@@ -61,13 +65,14 @@ class PluginsTask extends AbstractReportingTask {
             if (matcher.find()) {
                 Properties props = new Properties()
                 props.load(jarFile.getInputStream(entry))
-                pluginMetadata[props.'implementation-class'] = matcher.group(1)
+                pluginMetadata.put((String) props.'implementation-class', matcher.group(1))
             }
         }
     }
 
-    private static Map<String, Map<String, Object>> doReport(Plugin plugin, int index, Map<String, String> pluginMetadata) {
-        Map<String, Object> map = [:]
+    @CompileDynamic
+    private static Map<String, Map<String, ?>> doReport(Plugin plugin, int index, Map<String, String> pluginMetadata) {
+        Map<String, ?> map = [:]
 
         map.id = pluginMetadata[plugin.class.name]
         map.implementationClass = plugin.class.name
@@ -78,8 +83,8 @@ class PluginsTask extends AbstractReportingTask {
         [('plugin ' + index): map]
     }
 
-    private static Map<String, Object> maven(MavenArtifactRepository repository) {
-        Map<String, Object> map = [type: 'maven']
+    private static Map<String, ?> maven(MavenArtifactRepository repository) {
+        Map<String, ?> map = [type: 'maven']
 
         if (!isBlank(repository.name)) {
             map.name = repository.name
@@ -90,8 +95,8 @@ class PluginsTask extends AbstractReportingTask {
         map
     }
 
-    private static Map<String, Object> ivy(IvyArtifactRepository repository) {
-        Map<String, Object> map = [type: 'ivy']
+    private static Map<String, ?> ivy(IvyArtifactRepository repository) {
+        Map<String, ?> map = [type: 'ivy']
 
         if (!isBlank(repository.name)) {
             map.name = repository.name
@@ -101,8 +106,8 @@ class PluginsTask extends AbstractReportingTask {
         map
     }
 
-    private static Map<String, Object> flatDir(FlatDirectoryArtifactRepository repository) {
-        Map<String, Object> map = [type: 'flatDir']
+    private static Map<String, ?> flatDir(FlatDirectoryArtifactRepository repository) {
+        Map<String, ?> map = [type: 'flatDir']
 
         map.dirs = repository.dirs
 

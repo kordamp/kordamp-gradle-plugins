@@ -17,6 +17,8 @@
  */
 package org.kordamp.gradle.plugin.javadoc
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -36,6 +38,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class JavadocPlugin extends AbstractKordampPlugin {
     static final String JAVADOC_TASK_NAME = 'javadoc'
     static final String JAVADOC_JAR_TASK_NAME = 'javadocJar'
@@ -64,6 +67,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileDynamic
     private void configureProject(Project project) {
         if (hasBeenVisited(project)) {
             return
@@ -103,6 +107,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileDynamic
     private Task createJavadocTaskIfNeeded(Project project) {
         String taskName = JAVADOC_TASK_NAME
 
@@ -128,6 +133,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
         javadocTask
     }
 
+    @CompileDynamic
     private Task createJavadocJarTask(Project project, Task javadoc) {
         String taskName = JAVADOC_JAR_TASK_NAME
 

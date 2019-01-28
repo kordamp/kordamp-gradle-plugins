@@ -30,10 +30,11 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @author Andres Almiray
  * @since 0.11.0
  */
+@CompileStatic
 class RepositoriesTask extends AbstractReportingTask {
     @TaskAction
     void report() {
-        Map<String, Map<String, Object>> repositories = [:]
+        Map<String, Map<String, ?>> repositories = [:]
 
         project.repositories.eachWithIndex { repository, index -> repositories.putAll(RepositoriesTask.doReport(repository, index)) }
 
@@ -41,8 +42,8 @@ class RepositoriesTask extends AbstractReportingTask {
     }
 
     @CompileStatic
-    private static Map<String, Map<String, Object>> doReport(ArtifactRepository repository, int index) {
-        Map<String, Object> map = [:]
+    private static Map<String, Map<String, ?>> doReport(ArtifactRepository repository, int index) {
+        Map<String, ?> map = [:]
 
         if (repository instanceof MavenArtifactRepository) {
             map = maven((MavenArtifactRepository) repository)
@@ -55,8 +56,8 @@ class RepositoriesTask extends AbstractReportingTask {
         [('repository ' + index): map]
     }
 
-    private static Map<String, Object> maven(MavenArtifactRepository repository) {
-        Map<String, Object> map = [type: 'maven']
+    private static Map<String, ?> maven(MavenArtifactRepository repository) {
+        Map<String, ?> map = [type: 'maven']
 
         if (!isBlank(repository.name)) {
             map.name = repository.name
@@ -67,8 +68,8 @@ class RepositoriesTask extends AbstractReportingTask {
         map
     }
 
-    private static Map<String, Object> ivy(IvyArtifactRepository repository) {
-        Map<String, Object> map = [type: 'ivy']
+    private static Map<String, ?> ivy(IvyArtifactRepository repository) {
+        Map<String, ?> map = [type: 'ivy']
 
         if (!isBlank(repository.name)) {
             map.name = repository.name
@@ -78,8 +79,8 @@ class RepositoriesTask extends AbstractReportingTask {
         map
     }
 
-    private static Map<String, Object> flatDir(FlatDirectoryArtifactRepository repository) {
-        Map<String, Object> map = [type: 'flatDir']
+    private static Map<String, ?> flatDir(FlatDirectoryArtifactRepository repository) {
+        Map<String, ?> map = [type: 'flatDir']
 
         if (!isBlank(repository.name)) {
             map.name = repository.name

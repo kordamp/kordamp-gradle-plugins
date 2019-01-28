@@ -19,9 +19,10 @@ package org.kordamp.gradle.plugin.sourcehtml
 
 import com.bmuschko.gradle.java2html.ConvertCodeTask
 import com.bmuschko.gradle.java2html.GenerateOverviewTask
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
 import org.gradle.api.Action
-import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
@@ -33,6 +34,7 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.GroovyBasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
@@ -46,6 +48,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.5.0
  */
+@CompileStatic
 class SourceHtmlPlugin extends AbstractKordampPlugin {
     static final String AGGREGATE_SOURCE_HTML_TASK_NAME = 'aggregateSourceHtml'
     static final String AGGREGATE_CONVERT_CODE_TO_HTML_TASK_NAME = 'aggregateConvertCodeToHtml'
@@ -98,7 +101,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
 
             if (effectiveConfig.sourceHtml.enabled) {
                 project.plugins.withType(JavaBasePlugin) {
-                    if (configureSourceHtmlTask(project, configuration)?.enabled) {
+                    if (configureSourceHtmlTask(project, configuration)) {
                         effectiveConfig.sourceHtml.projects() << project
                     } else {
                         effectiveConfig.sourceHtml.enabled = false
@@ -109,21 +112,29 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
-            Copy sourceHtmlTask = project.tasks.create(AGGREGATE_SOURCE_HTML_TASK_NAME, Copy) {
-                group 'Documentation'
-                description 'Generates a HTML report of the source code'
-                destinationDir = project.file("${project.buildDir}/docs/source-html")
-                enabled = false
-            }
+            TaskProvider<Copy> sourceHtmlTask = project.tasks.register(AGGREGATE_SOURCE_HTML_TASK_NAME, Copy,
+                new Action<Copy>() {
+                    @Override
+                    void execute(Copy t) {
+                        t.group = 'Documentation'
+                        t.description = 'Generates a HTML report of the source code'
+                        t.destinationDir = project.file("${project.buildDir}/docs/source-html")
+                        t.enabled = false
+                    }
+                })
 
-            Jar sourceHtmlJarTask = project.tasks.create(AGGREGATE_SOURCE_HTML_TASK_NAME + 'Jar', Jar) {
-                dependsOn sourceHtmlTask
-                group 'Documentation'
-                description 'An archive of the HTML report the source code'
-                classifier 'sources-html'
-                from sourceHtmlTask.destinationDir
-                enabled = false
-            }
+            TaskProvider<Jar> sourceHtmlJarTask = project.tasks.register(AGGREGATE_SOURCE_HTML_TASK_NAME + 'Jar', Jar,
+                new Action<Jar>() {
+                    @Override
+                    void execute(Jar t) {
+                        t.dependsOn sourceHtmlTask
+                        t.group = 'Documentation'
+                        t.description = 'An archive of the HTML report the source code'
+                        t.classifier = 'sources-html'
+                        t.from sourceHtmlTask.get().destinationDir
+                        t.enabled = false
+                    }
+                })
 
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
@@ -134,142 +145,177 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private Task configureSourceHtmlTask(Project project, Configuration configuration) {
+    private boolean configureSourceHtmlTask(Project project, Configuration configuration) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (!effectiveConfig.sourceHtml.enabled) {
-            return
+            return false
         }
 
         Task classesTask = project.tasks.findByName('classes')
         if (!classesTask) {
-            return project.tasks.create(SOURCE_HTML_TASK_NAME, DefaultTask) {
-                enabled = false
-                group 'Documentation'
-                description 'Generates a HTML report of the source code'
-            }
+            return false
         }
 
         effectiveConfig.sourceHtml.srcDirs = resolveSrcDirs(project, effectiveConfig.sourceHtml.conversion.srcDirs)
 
-        Task convertCodeTask = project.tasks.create('convertCodeToHtml', ConvertCodeTask) {
-            enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
-            dependsOn classesTask
-            group 'Documentation'
-            description 'Converts source code into HTML'
-            classpath = configuration.asFileTree
-            srcDirs = effectiveConfig.sourceHtml.srcDirs
-            destDir = effectiveConfig.sourceHtml.conversion.destDir
-            includes = effectiveConfig.sourceHtml.conversion.includes
-            outputFormat = effectiveConfig.sourceHtml.conversion.outputFormat
-            tabs = effectiveConfig.sourceHtml.conversion.tabs
-            style = effectiveConfig.sourceHtml.conversion.style
-            showLineNumbers = effectiveConfig.sourceHtml.conversion.showLineNumbers
-            showFileName = effectiveConfig.sourceHtml.conversion.showFileName
-            showDefaultTitle = effectiveConfig.sourceHtml.conversion.showDefaultTitle
-            showTableBorder = effectiveConfig.sourceHtml.conversion.showTableBorder
-            includeDocumentHeader = effectiveConfig.sourceHtml.conversion.includeDocumentHeader
-            includeDocumentFooter = effectiveConfig.sourceHtml.conversion.includeDocumentFooter
-            addLineAnchors = effectiveConfig.sourceHtml.conversion.addLineAnchors
-            lineAnchorPrefix = effectiveConfig.sourceHtml.conversion.lineAnchorPrefix
-            horizontalAlignment = effectiveConfig.sourceHtml.conversion.horizontalAlignment
-            useShortFileName = effectiveConfig.sourceHtml.conversion.useShortFileName
-            overwrite = effectiveConfig.sourceHtml.conversion.overwrite
-        }
+        TaskProvider<ConvertCodeTask> convertCodeTask = project.tasks.register('convertCodeToHtml', ConvertCodeTask,
+            new Action<ConvertCodeTask>() {
+                @Override
+                void execute(ConvertCodeTask t) {
+                    t.enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
+                    t.dependsOn classesTask
+                    t.group = 'Documentation'
+                    t.description = 'Converts source code into HTML'
+                    t.classpath = configuration.asFileTree
+                    t.srcDirs = effectiveConfig.sourceHtml.srcDirs
+                    t.destDir = effectiveConfig.sourceHtml.conversion.destDir
+                    t.includes = effectiveConfig.sourceHtml.conversion.includes
+                    t.outputFormat = effectiveConfig.sourceHtml.conversion.outputFormat
+                    t.tabs = effectiveConfig.sourceHtml.conversion.tabs
+                    t.style = effectiveConfig.sourceHtml.conversion.style
+                    t.showLineNumbers = effectiveConfig.sourceHtml.conversion.showLineNumbers
+                    t.showFileName = effectiveConfig.sourceHtml.conversion.showFileName
+                    t.showDefaultTitle = effectiveConfig.sourceHtml.conversion.showDefaultTitle
+                    t.showTableBorder = effectiveConfig.sourceHtml.conversion.showTableBorder
+                    t.includeDocumentHeader = effectiveConfig.sourceHtml.conversion.includeDocumentHeader
+                    t.includeDocumentFooter = effectiveConfig.sourceHtml.conversion.includeDocumentFooter
+                    t.addLineAnchors = effectiveConfig.sourceHtml.conversion.addLineAnchors
+                    t.lineAnchorPrefix = effectiveConfig.sourceHtml.conversion.lineAnchorPrefix
+                    t.horizontalAlignment = effectiveConfig.sourceHtml.conversion.horizontalAlignment
+                    t.useShortFileName = effectiveConfig.sourceHtml.conversion.useShortFileName
+                    t.overwrite = effectiveConfig.sourceHtml.conversion.overwrite
+                }
+            })
 
-        Task generateOverviewTask = project.tasks.create('generateSourceHtmlOverview', GenerateOverviewTask) {
-            enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
-            dependsOn convertCodeTask
-            group 'Documentation'
-            description 'Generate an overview of converted source code'
-            srcDirs = project.files(effectiveConfig.sourceHtml.conversion.destDir)
-            destDir = effectiveConfig.sourceHtml.overview.destDir
-            pattern = effectiveConfig.sourceHtml.overview.pattern
-            windowTitle = effectiveConfig.sourceHtml.overview.windowTitle
-            docTitle = effectiveConfig.sourceHtml.overview.docTitle
-            docDescription = effectiveConfig.sourceHtml.overview.docDescription ?: ''
-            icon = effectiveConfig.sourceHtml.overview.icon
-            stylesheet = effectiveConfig.sourceHtml.overview.stylesheet
-        }
+        TaskProvider<GenerateOverviewTask> generateOverviewTask = project.tasks.register('generateSourceHtmlOverview', GenerateOverviewTask,
+            new Action<GenerateOverviewTask>() {
+                @Override
+                void execute(GenerateOverviewTask t) {
+                    t.enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
+                    t.dependsOn convertCodeTask
+                    t.group = 'Documentation'
+                    t.description = 'Generate an overview of converted source code'
+                    t.srcDirs = project.files(effectiveConfig.sourceHtml.conversion.destDir)
+                    t.destDir = effectiveConfig.sourceHtml.overview.destDir
+                    t.pattern = effectiveConfig.sourceHtml.overview.pattern
+                    t.windowTitle = effectiveConfig.sourceHtml.overview.windowTitle
+                    t.docTitle = effectiveConfig.sourceHtml.overview.docTitle
+                    t.docDescription = effectiveConfig.sourceHtml.overview.docDescription ?: ''
+                    t.icon = effectiveConfig.sourceHtml.overview.icon
+                    t.stylesheet = effectiveConfig.sourceHtml.overview.stylesheet
+                }
+            })
 
-        Copy sourceHtmlTask = project.tasks.create(SOURCE_HTML_TASK_NAME, Copy) {
-            enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
-            dependsOn generateOverviewTask
-            group 'Documentation'
-            description 'Generates a HTML report of the source code'
-            destinationDir = project.file("${project.buildDir}/docs/source-html")
-            from convertCodeTask.destDir
-            from generateOverviewTask.destDir
-        }
+        TaskProvider<Copy> sourceHtmlTask = project.tasks.register(SOURCE_HTML_TASK_NAME, Copy,
+            new Action<Copy>() {
+                @Override
+                void execute(Copy t) {
+                    t.enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
+                    t.dependsOn generateOverviewTask
+                    t.group = 'Documentation'
+                    t.description = 'Generates a HTML report of the source code'
+                    t.destinationDir = project.file("${project.buildDir}/docs/source-html")
+                    t.from convertCodeTask.get().destDir
+                    t.from generateOverviewTask.get().destDir
+                }
+            })
 
-        project.tasks.create(SOURCE_HTML_TASK_NAME + 'Jar', Jar) {
-            dependsOn sourceHtmlTask
-            group 'Documentation'
-            description 'An archive of the HTML report the source code'
-            classifier 'sources-html'
-            from sourceHtmlTask.destinationDir
-        }
+        project.tasks.register(SOURCE_HTML_TASK_NAME + 'Jar', Jar,
+            new Action<Jar>() {
+                @Override
+                void execute(Jar t) {
+                    t.enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
+                    t.dependsOn sourceHtmlTask
+                    t.group = 'Documentation'
+                    t.description = 'An archive of the HTML report the source code'
+                    t.classifier = 'sources-html'
+                    t.from sourceHtmlTask.get().destinationDir
+                }
+            })
+
+        return !effectiveConfig.sourceHtml.srcDirs.isEmpty()
     }
 
-    private void configureAggregateSourceHtmlTask(Project project, Configuration configuration, Copy sourceHtmlTask, Jar sourceHtmlJarTask) {
+    private void configureAggregateSourceHtmlTask(Project project, Configuration configuration, TaskProvider<Copy> sourceHtmlTask, TaskProvider<Jar> sourceHtmlJarTask) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         Set<Project> projects = new LinkedHashSet<>()
         FileCollection srcdirs = project.files()
+        List<Task> sourceHtmlTasks = []
 
-        project.childProjects.values()*.effectiveConfig.sourceHtml.each { SourceHtml e ->
+        project.childProjects.values().each {
+            SourceHtml e = resolveEffectiveConfig(it).sourceHtml
             if (!e.enabled || effectiveConfig.sourceHtml.excludedProjects().intersect(e.projects())) return
             projects.addAll(e.projects())
             srcdirs = project.files(srcdirs, e.srcDirs)
         }
 
-        Task convertCodeTask = project.tasks.create(AGGREGATE_CONVERT_CODE_TO_HTML_TASK_NAME, ConvertCodeTask) {
-            dependsOn projects.sourceHtml
-            group 'Documentation'
-            description 'Converts source code into HTML'
-            classpath = configuration.asFileTree
-            srcDirs = srcdirs
-            destDir = effectiveConfig.sourceHtml.conversion.destDir
-            includes = effectiveConfig.sourceHtml.conversion.includes
-            outputFormat = effectiveConfig.sourceHtml.conversion.outputFormat
-            tabs = effectiveConfig.sourceHtml.conversion.tabs
-            style = effectiveConfig.sourceHtml.conversion.style
-            showLineNumbers = effectiveConfig.sourceHtml.conversion.showLineNumbers
-            showFileName = effectiveConfig.sourceHtml.conversion.showFileName
-            showDefaultTitle = effectiveConfig.sourceHtml.conversion.showDefaultTitle
-            showTableBorder = effectiveConfig.sourceHtml.conversion.showTableBorder
-            includeDocumentHeader = effectiveConfig.sourceHtml.conversion.includeDocumentHeader
-            includeDocumentFooter = effectiveConfig.sourceHtml.conversion.includeDocumentFooter
-            addLineAnchors = effectiveConfig.sourceHtml.conversion.addLineAnchors
-            lineAnchorPrefix = effectiveConfig.sourceHtml.conversion.lineAnchorPrefix
-            horizontalAlignment = effectiveConfig.sourceHtml.conversion.horizontalAlignment
-            useShortFileName = effectiveConfig.sourceHtml.conversion.useShortFileName
-            overwrite = effectiveConfig.sourceHtml.conversion.overwrite
+        projects.each { p ->
+            sourceHtmlTasks << p.tasks.findByName('sourceHtml')
         }
 
-        Task generateOverviewTask = project.tasks.create(AGGREGATE_GENERATE_SOURCE_HTML_OVERVIEW_TASK_NAME, GenerateOverviewTask) {
-            dependsOn convertCodeTask
-            group 'Documentation'
-            description 'Generate an overview of converted source code'
-            srcDirs = project.files(effectiveConfig.sourceHtml.conversion.destDir)
-            destDir = effectiveConfig.sourceHtml.overview.destDir
-            pattern = effectiveConfig.sourceHtml.overview.pattern
-            windowTitle = effectiveConfig.sourceHtml.overview.windowTitle
-            docTitle = effectiveConfig.sourceHtml.overview.docTitle
-            docDescription = effectiveConfig.sourceHtml.overview.docDescription ?: ''
-            icon = effectiveConfig.sourceHtml.overview.icon
-            stylesheet = effectiveConfig.sourceHtml.overview.stylesheet
-        }
+        TaskProvider<ConvertCodeTask> convertCodeTask = project.tasks.register(AGGREGATE_CONVERT_CODE_TO_HTML_TASK_NAME, ConvertCodeTask,
+            new Action<ConvertCodeTask>() {
+                @Override
+                void execute(ConvertCodeTask t) {
+                    t.dependsOn sourceHtmlTasks
+                    t.group = 'Documentation'
+                    t.description = 'Converts source code into HTML'
+                    t.classpath = configuration.asFileTree
+                    t.srcDirs = srcdirs
+                    t.destDir = effectiveConfig.sourceHtml.conversion.destDir
+                    t.includes = effectiveConfig.sourceHtml.conversion.includes
+                    t.outputFormat = effectiveConfig.sourceHtml.conversion.outputFormat
+                    t.tabs = effectiveConfig.sourceHtml.conversion.tabs
+                    t.style = effectiveConfig.sourceHtml.conversion.style
+                    t.showLineNumbers = effectiveConfig.sourceHtml.conversion.showLineNumbers
+                    t.showFileName = effectiveConfig.sourceHtml.conversion.showFileName
+                    t.showDefaultTitle = effectiveConfig.sourceHtml.conversion.showDefaultTitle
+                    t.showTableBorder = effectiveConfig.sourceHtml.conversion.showTableBorder
+                    t.includeDocumentHeader = effectiveConfig.sourceHtml.conversion.includeDocumentHeader
+                    t.includeDocumentFooter = effectiveConfig.sourceHtml.conversion.includeDocumentFooter
+                    t.addLineAnchors = effectiveConfig.sourceHtml.conversion.addLineAnchors
+                    t.lineAnchorPrefix = effectiveConfig.sourceHtml.conversion.lineAnchorPrefix
+                    t.horizontalAlignment = effectiveConfig.sourceHtml.conversion.horizontalAlignment
+                    t.useShortFileName = effectiveConfig.sourceHtml.conversion.useShortFileName
+                    t.overwrite = effectiveConfig.sourceHtml.conversion.overwrite
+                }
+            })
 
-        sourceHtmlTask.configure {
-            dependsOn generateOverviewTask
-            from convertCodeTask.destDir
-            from generateOverviewTask.destDir
-            enabled = true
-        }
+        TaskProvider<GenerateOverviewTask> generateOverviewTask = project.tasks.register(AGGREGATE_GENERATE_SOURCE_HTML_OVERVIEW_TASK_NAME, GenerateOverviewTask,
+            new Action<GenerateOverviewTask>() {
+                @Override
+                void execute(GenerateOverviewTask t) {
+                    t.dependsOn convertCodeTask
+                    t.group = 'Documentation'
+                    t.description = 'Generate an overview of converted source code'
+                    t.srcDirs = project.files(effectiveConfig.sourceHtml.conversion.destDir)
+                    t.destDir = effectiveConfig.sourceHtml.overview.destDir
+                    t.pattern = effectiveConfig.sourceHtml.overview.pattern
+                    t.windowTitle = effectiveConfig.sourceHtml.overview.windowTitle
+                    t.docTitle = effectiveConfig.sourceHtml.overview.docTitle
+                    t.docDescription = effectiveConfig.sourceHtml.overview.docDescription ?: ''
+                    t.icon = effectiveConfig.sourceHtml.overview.icon
+                    t.stylesheet = effectiveConfig.sourceHtml.overview.stylesheet
+                }
+            })
 
-        sourceHtmlJarTask.configure {
-            enabled = true
-        }
+        sourceHtmlTask.configure(new Action<Copy>() {
+            @Override
+            void execute(Copy t) {
+                t.dependsOn generateOverviewTask
+                t.from convertCodeTask.get().destDir
+                t.from generateOverviewTask.get().destDir
+                t.enabled = true
+            }
+        })
+
+        sourceHtmlJarTask.configure(new Action<Jar>() {
+            @Override
+            void execute(Jar t) {
+                t.enabled = true
+            }
+        })
     }
 
     private boolean hasJavaPlugin(Project project) {
@@ -280,6 +326,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
         project.plugins.hasPlugin(GroovyBasePlugin)
     }
 
+    @CompileDynamic
     private FileCollection resolveSrcDirs(Project project, FileCollection files) {
         try {
             if (project.sourceSets.main) {

@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base.tasks
 
+import groovy.transform.CompileStatic
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
@@ -25,6 +26,7 @@ import org.gradle.api.tasks.options.Option
  * @author Andres Almiray
  * @since 0.11.0
  */
+@CompileStatic
 class ProjectPropertiesTask extends AbstractReportingTask {
     private String section
 
@@ -35,7 +37,7 @@ class ProjectPropertiesTask extends AbstractReportingTask {
 
     @TaskAction
     void report() {
-        Map<String, Object> map = resolveProperties()
+        Map<String, ?> map = resolveProperties()
 
         if (section) {
             printSection(map, section)
@@ -44,17 +46,17 @@ class ProjectPropertiesTask extends AbstractReportingTask {
         }
     }
 
-    private void printSection(Map<String, Object> map, String section) {
+    private void printSection(Map<String, ?> map, String section) {
         if (map.containsKey(section)) {
             println "${section}:"
-            doPrint(map[section], 1)
+            doPrint((Map<String, ?>) map[section], 1)
         } else {
             throw new IllegalStateException("Unknown section '$section'")
         }
     }
 
-    private Map<String, Map<String, Object>> resolveProperties() {
-        Map<String, Map<String, Object>> props = [:]
+    private Map<String, Map<String, ?>> resolveProperties() {
+        Map<String, Map<String, ?>> props = [:]
         props.project = [
             name        : project.name,
             version     : project.version,

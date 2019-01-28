@@ -28,7 +28,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 abstract class AbstractReportingTask extends DefaultTask {
-    protected static void doPrint(Map<String, Object> map, int offset) {
+    protected static void doPrint(Map<String, ?> map, int offset) {
         map.each { key, value ->
             if (value instanceof Map) {
                 if (!value.isEmpty()) {
@@ -50,7 +50,7 @@ abstract class AbstractReportingTask extends DefaultTask {
         }
     }
 
-    protected static void doPrint(Collection<Object> collection, int offset) {
+    protected static void doPrint(Collection<?> collection, int offset) {
         collection.each { value ->
             if (value instanceof Map) {
                 if (!value.isEmpty()) {

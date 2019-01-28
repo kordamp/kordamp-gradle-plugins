@@ -17,6 +17,8 @@
  */
 package org.kordamp.gradle.plugin.kotlindoc
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
@@ -55,6 +57,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    @CompileStatic
     void apply(Project project) {
         this.project = project
 
@@ -71,12 +74,14 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileStatic
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(KotlindocPlugin)) {
             project.plugins.apply(KotlindocPlugin)
         }
     }
 
+    @CompileStatic
     private void configureProject(Project project) {
         if (hasBeenVisited(project)) {
             return
@@ -96,7 +101,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
             }
 
             project.plugins.withType(KotlinBasePluginWrapper) {
-                Javadoc javadoc = project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)
+                Javadoc javadoc = (Javadoc) project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)
                 if (!javadoc) return
 
                 effectiveConfig.kotlindoc.outputFormats.each { String format ->
@@ -104,7 +109,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                     if (!kotlindoc) return
                     effectiveConfig.kotlindoc.kotlindocTasks() << kotlindoc
 
-                    Task kotlindocJar = createKotlindocJarTask(project, kotlindoc, format)
+                    Jar kotlindocJar = createKotlindocJarTask(project, kotlindoc, format)
                     project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(kotlindocJar)
                     effectiveConfig.kotlindoc.kotlindocJarTasks() << kotlindocJar
 
@@ -114,6 +119,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileDynamic
     private Task createKotlindocTaskIfNeeded(Project project, String format) {
         String formatName = format == 'html-as-java' ? 'htmljava' : format
         String taskName = KOTLINDOC_BASENAME + StringUtils.capitalize(formatName)
@@ -136,7 +142,8 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         kotlindocTask
     }
 
-    private Task createKotlindocJarTask(Project project, Task kotlindoc, String format) {
+    @CompileDynamic
+    private Jar createKotlindocJarTask(Project project, Task kotlindoc, String format) {
         String formatName = format == 'html-as-java' ? 'htmljava' : format
         String resolvedClassifier = 'kotlindoc'
         String taskName = KOTLINDOC_BASENAME + StringUtils.capitalize(formatName) + 'Jar'
@@ -177,6 +184,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         kotlindocJarTask
     }
 
+    @CompileDynamic
     static void applyConfiguration(Kotlindoc kotlindoc, DokkaTask task, String format, String formatName) {
         task.moduleName = kotlindoc.moduleName
         task.outputFormat = format
@@ -196,28 +204,28 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         task.samples = new ArrayList<>(kotlindoc.samples)
 
         kotlindoc.linkMappings.resolveLinkMappings().each { linkMapping ->
-            task.linkMapping { lm ->
-                lm.dir = linkMapping.dir
-                lm.url = linkMapping.url
-                lm.path = linkMapping.path
-                lm.suffix = linkMapping.suffix
+            task.linkMapping {
+                delegate.dir = linkMapping.dir
+                delegate.url = linkMapping.url
+                delegate.path = linkMapping.path
+                delegate.suffix = linkMapping.suffix
             }
         }
 
         kotlindoc.externalDocumentationLinks.resolveExternalDocumentationLinks().each { link ->
-            task.externalDocumentationLink { edl ->
-                edl.url = link.url
-                edl.packageListUrl = link.packageListUrl
+            task.externalDocumentationLink {
+                delegate.url = link.url
+                delegate.packageListUrl = link.packageListUrl
             }
         }
 
         kotlindoc.packageOptions.resolvePackageOptions().each { packageOption ->
-            task.packageOptions { po ->
-                po.prefix = packageOption.prefix
-                po.includeNonPublic = packageOption.includeNonPublic
-                po.reportUndocumented = packageOption.reportUndocumented
-                po.skipDeprecated = packageOption.skipDeprecated
-                po.suppress = packageOption.suppress
+            task.packageOptions {
+                delegate.prefix = packageOption.prefix
+                delegate.includeNonPublic = packageOption.includeNonPublic
+                delegate.reportUndocumented = packageOption.reportUndocumented
+                delegate.skipDeprecated = packageOption.skipDeprecated
+                delegate.suppress = packageOption.suppress
             }
         }
     }

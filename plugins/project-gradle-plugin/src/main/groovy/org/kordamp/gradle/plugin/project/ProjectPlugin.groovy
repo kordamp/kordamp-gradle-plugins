@@ -18,6 +18,7 @@
 package org.kordamp.gradle.plugin.project
 
 import com.github.benmanes.gradle.versions.VersionsPlugin
+import groovy.transform.CompileStatic
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
@@ -41,6 +42,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class ProjectPlugin implements Plugin<Project> {
     Project project
 

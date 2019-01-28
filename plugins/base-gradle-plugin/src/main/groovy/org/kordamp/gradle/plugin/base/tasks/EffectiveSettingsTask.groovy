@@ -17,16 +17,18 @@
  */
 package org.kordamp.gradle.plugin.base.tasks
 
+import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
+@CompileStatic
 class EffectiveSettingsTask extends AbstractReportingTask {
     private String section
     private Set<String> sections
@@ -45,7 +47,7 @@ class EffectiveSettingsTask extends AbstractReportingTask {
 
     @TaskAction
     void displayEffectiveSettings() {
-        Map<String, Object> map = project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME).toMap()
+        Map<String, Object> map = resolveEffectiveConfig(project).toMap()
 
         if (sections) {
             sections.each { s ->
@@ -61,7 +63,7 @@ class EffectiveSettingsTask extends AbstractReportingTask {
     private static void printSection(Map<String, Object> map, String section) {
         if (map.containsKey(section)) {
             println "${section}:"
-            doPrint(map[section], 1)
+            doPrint((Map<String, ?>) map[section], 1)
         } else {
             throw new IllegalStateException("Unknown section '$section'")
         }

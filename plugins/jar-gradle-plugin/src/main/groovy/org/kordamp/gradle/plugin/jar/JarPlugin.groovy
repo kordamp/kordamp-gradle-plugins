@@ -17,6 +17,8 @@
  */
 package org.kordamp.gradle.plugin.jar
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -40,6 +42,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class JarPlugin extends AbstractKordampPlugin {
     Project project
 
@@ -92,6 +95,7 @@ class JarPlugin extends AbstractKordampPlugin {
         })
     }
 
+    @CompileDynamic
     private void createJarTaskIfNeeded(Project project) {
         if (!project.sourceSets.findByName('main')) return
 
@@ -118,6 +122,7 @@ class JarPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileDynamic
     private void configureJarMetainf(Project project, Jar jarTask) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project.rootProject)
         setEnabled(effectiveConfig.minpom.enabled)
@@ -134,32 +139,33 @@ class JarPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileDynamic
     private void configureJarManifest(Project project, Jar jarTask) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project.rootProject)
 
         if (effectiveConfig.release) {
+            Map<String, String> attributesMap = [:]
+
+            checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildCreatedBy', attributesMap, 'Created-By')
+            checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildBy', attributesMap, 'Build-By')
+            checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildJdk', attributesMap, 'Build-Jdk')
+            checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildDate', attributesMap, 'Build-Date')
+            checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildTime', attributesMap, 'Build-Time')
+            checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildRevision', attributesMap, 'Build-Revision')
+
+            if (effectiveConfig.info.specification.enabled) {
+                attributesMap.'Specification-Title' = effectiveConfig.info.specification.title
+                attributesMap.'Specification-Version' = effectiveConfig.info.specification.version
+                if (effectiveConfig.info.specification.vendor) attributesMap.'Specification-Vendor' = effectiveConfig.info.specification.vendor
+            }
+
+            if (effectiveConfig.info.implementation.enabled) {
+                attributesMap.'Implementation-Title' = effectiveConfig.info.implementation.title
+                attributesMap.'Implementation-Version' = effectiveConfig.info.implementation.version
+                if (effectiveConfig.info.implementation.vendor) attributesMap.'Implementation-Vendor' = effectiveConfig.info.implementation.vendor
+            }
+
             jarTask.configure {
-                Map<String, String> attributesMap = [:]
-
-                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildCreatedBy', attributesMap, 'Created-By')
-                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildBy', attributesMap, 'Build-By')
-                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildJdk', attributesMap, 'Build-Jdk')
-                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildDate', attributesMap, 'Build-Date')
-                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildTime', attributesMap, 'Build-Time')
-                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildRevision', attributesMap, 'Build-Revision')
-
-                if (effectiveConfig.info.specification.enabled) {
-                    attributesMap.'Specification-Title' = effectiveConfig.info.specification.title
-                    attributesMap.'Specification-Version' = effectiveConfig.info.specification.version
-                    if (effectiveConfig.info.specification.vendor) attributesMap.'Specification-Vendor' = effectiveConfig.info.specification.vendor
-                }
-
-                if (effectiveConfig.info.implementation.enabled) {
-                    attributesMap.'Implementation-Title' = effectiveConfig.info.implementation.title
-                    attributesMap.'Implementation-Version' = effectiveConfig.info.implementation.version
-                    if (effectiveConfig.info.implementation.vendor) attributesMap.'Implementation-Vendor' = effectiveConfig.info.implementation.vendor
-                }
-
                 manifest {
                     attributes(attributesMap)
                 }
@@ -167,6 +173,7 @@ class JarPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileDynamic
     private static void checkBuildInfoAttribute(BuildInfo buildInfo, String key, Map map, String manifestKey) {
         if (!buildInfo."skip${key.capitalize()}") {
             map[manifestKey] = buildInfo[key]

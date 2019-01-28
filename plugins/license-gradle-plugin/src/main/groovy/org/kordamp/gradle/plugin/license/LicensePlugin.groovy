@@ -20,13 +20,17 @@ package org.kordamp.gradle.plugin.license
 import com.hierynomus.gradle.license.LicenseReportingPlugin
 import com.hierynomus.gradle.license.tasks.LicenseCheck
 import com.hierynomus.gradle.license.tasks.LicenseFormat
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import nl.javadude.gradle.plugins.license.DownloadLicenses
 import nl.javadude.gradle.plugins.license.DownloadLicensesExtension
 import nl.javadude.gradle.plugins.license.LicenseExtension
 import nl.javadude.gradle.plugins.license.LicenseMetadata
 import org.gradle.BuildAdapter
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -40,6 +44,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.2.0
  */
+@CompileStatic
 class LicensePlugin extends AbstractKordampPlugin {
     private static final LicenseMetadata LICENSE_APACHE_TWO = new LicenseMetadata('The Apache Software License, Version 2.0', LicenseId.APACHE_2_0.url())
     private static final LicenseMetadata LICENSE_EPL1 = new LicenseMetadata('Eclipse Public License v1.0', LicenseId.EPL_1_0.url())
@@ -59,7 +64,7 @@ class LicensePlugin extends AbstractKordampPlugin {
         (LicenseId.BSD_3_CLAUSE)        : LICENSE_BSD3
     ]
 
-    private static final Map<Object, List<Object>> DEFAULT_ALIASES = [
+    private static final Map<LicenseMetadata, List<String>> DEFAULT_ALIASES = [
         (LICENSE_APACHE_TWO): ['The Apache Software License, Version 2.0',
                                'The Apache Software License, version 2.0',
                                'Apache Software License - Version 2.0',
@@ -76,38 +81,32 @@ class LicensePlugin extends AbstractKordampPlugin {
                                'Apache License 2.0',
                                'Apache 2.0',
                                'Apache-2.0',
-                               'Apache 2',
-                               LICENSE_APACHE_TWO],
+                               'Apache 2'],
         (LICENSE_EPL1)      : ['Eclipse Public License - Version 1.0',
                                'Eclipse Public License v1.0',
                                'Eclipse Public License 1.0',
                                'Eclipse Public License',
                                'EPL v1.0',
                                'EPL 1.0',
-                               'EPL-1.0',
-                               LICENSE_EPL1],
+                               'EPL-1.0'],
         (LICENSE_EPL2)      : ['Eclipse Public License v2.0',
                                'Eclipse Public License 2.0',
                                'EPL v2.0',
                                'EPL 2.0',
-                               'EPL-2.0',
-                               LICENSE_EPL2],
+                               'EPL-2.0'],
         (LICENSE_LGPL21)    : ['GNU Library General Public License v2.1 or later',
                                'GNU Lesser General Public License v2.1 or later',
                                'GNU Lesser General Public License, Version 2.1',
                                'LGPL 2.1',
-                               'LGPL-2.1',
-                               LICENSE_LGPL21],
+                               'LGPL-2.1'],
         (LICENSE_MIT)       : ['The MIT License',
                                'The MIT license',
                                'MIT License',
                                'MIT license',
-                               'MIT',
-                               LICENSE_MIT],
+                               'MIT',],
         (LICENSE_BSD2)      : ['BSD 2-Clause FreeBSD License',
                                'The BSD License',
-                               'The BSD license',
-                               LICENSE_BSD2],
+                               'The BSD license'],
         (LICENSE_BSD3)      : ['BSD 3-Clause "New" or "Revised" License',
                                '3-Clause BSD License',
                                '3-Clause BSD license',
@@ -120,8 +119,7 @@ class LicensePlugin extends AbstractKordampPlugin {
                                'BSD New License',
                                'BSD New license',
                                'BSD 3-Clause',
-                               'BSD 3-clause',
-                               LICENSE_BSD3]
+                               'BSD 3-clause']
     ]
 
     Project project
@@ -170,21 +168,26 @@ class LicensePlugin extends AbstractKordampPlugin {
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
-            AggregateLicenseReportTask task = project.tasks.create('aggregateLicenseReport', AggregateLicenseReportTask) {
-                enabled = false
-                group 'Reporting'
-                description 'Generates an aggregate license report'
-            }
+            TaskProvider<AggregateLicenseReportTask> task = project.tasks.register('aggregateLicenseReport', AggregateLicenseReportTask,
+                new Action<AggregateLicenseReportTask>() {
+                    @Override
+                    void execute(AggregateLicenseReportTask t) {
+                        t.enabled = false
+                        t.group = 'Reporting'
+                        t.description = 'Generates an aggregate license report'
+                    }
+                })
 
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
                 void projectsEvaluated(Gradle gradle) {
-                    configureAggregateLicenseReportTask(project, task )
+                    configureAggregateLicenseReportTask(project, task)
                 }
             })
         }
     }
 
+    @CompileDynamic
     private void configureLicenseExtension(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         setEnabled(effectiveConfig.license.enabled)
@@ -207,15 +210,15 @@ class LicensePlugin extends AbstractKordampPlugin {
         licenseExtension.header = project.rootProject.file('gradle/LICENSE_HEADER')
         licenseExtension.strictCheck = true
         licenseExtension.mapping {
-            java   = 'SLASHSTAR_STYLE'
+            java = 'SLASHSTAR_STYLE'
             groovy = 'SLASHSTAR_STYLE'
         }
         licenseExtension.ext.project = project.name
         licenseExtension.ext {
-            projectName   = effectiveConfig.info.name
+            projectName = effectiveConfig.info.name
             copyrightYear = effectiveConfig.info.copyrightYear
-            author        = effectiveConfig.info.getAuthors().join(', ')
-            license       = lic.id?.spdx()
+            author = effectiveConfig.info.getAuthors().join(', ')
+            license = lic.id?.spdx()
         }
         licenseExtension.exclude '**/*.png'
         licenseExtension.exclude '**/*.gif'
@@ -227,6 +230,7 @@ class LicensePlugin extends AbstractKordampPlugin {
         extension.aliases = new LinkedHashMap<>(DEFAULT_ALIASES)
     }
 
+    @CompileDynamic
     private void postConfigureDownloadLicensesExtension(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
@@ -258,7 +262,7 @@ class LicensePlugin extends AbstractKordampPlugin {
         }
     }
 
-    private void configureAggregateLicenseReportTask(Project project, AggregateLicenseReportTask task) {
+    private void configureAggregateLicenseReportTask(Project project, TaskProvider<AggregateLicenseReportTask> task) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (!effectiveConfig.license.enabled) {
             return
@@ -269,9 +273,12 @@ class LicensePlugin extends AbstractKordampPlugin {
             tasks.addAll(prj.tasks.withType(DownloadLicenses))
         }
 
-        task.configure {
-            dependsOn tasks
-            enabled = true
-        }
+        task.configure(new Action<AggregateLicenseReportTask>() {
+            @Override
+            void execute(AggregateLicenseReportTask t) {
+                t.dependsOn tasks
+                t.enabled = true
+            }
+        })
     }
 }

@@ -17,7 +17,7 @@
  */
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '4.0.3'
+    id 'com.github.johnrengelman.shadow' version '4.0.4'
 }
 
 configurations {

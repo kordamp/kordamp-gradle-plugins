@@ -34,8 +34,8 @@ class ExtensionsTask extends AbstractReportingTask {
         doPrint(extensions, 0)
     }
 
-    private static Map<String, Map<String, Object>> doReport(ExtensionsSchema.ExtensionSchema extension, int index) {
-        Map<String, Object> map = [:]
+    private static Map<String, Map<String, ?>> doReport(ExtensionsSchema.ExtensionSchema extension, int index) {
+        Map<String, ?> map = [:]
 
         map.name = extension.name
         map.type = extension.publicType.toString()

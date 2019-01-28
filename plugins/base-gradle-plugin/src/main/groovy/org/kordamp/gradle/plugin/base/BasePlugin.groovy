@@ -17,10 +17,13 @@
  */
 package org.kordamp.gradle.plugin.base
 
+import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
+import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
+import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ExtensionsTask
@@ -33,6 +36,7 @@ import org.kordamp.gradle.plugin.base.tasks.RepositoriesTask
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class BasePlugin extends AbstractKordampPlugin {
     Project project
 
@@ -52,39 +56,59 @@ class BasePlugin extends AbstractKordampPlugin {
             project.extensions.create(ProjectConfigurationExtension.CONFIG_NAME, ProjectConfigurationExtension, project)
         }
 
-        project.tasks.register('effectiveSettings', EffectiveSettingsTask) {
-            group 'Insight'
-            description "Displays resolved settings for project '$project.name'"
-        }
+        project.tasks.register('effectiveSettings', EffectiveSettingsTask,
+            new Action<EffectiveSettingsTask>() {
+                @Override
+                void execute(EffectiveSettingsTask t) {
+                    t.group = 'Insight'
+                    t.description = "Displays resolved settings for project '$project.name'"
+                }
+            })
 
-        project.tasks.register('repositories', RepositoriesTask) {
-            group 'Insight'
-            description "Displays all repositories for project '$project.name'"
-        }
+        project.tasks.register('repositories', RepositoriesTask,
+            new Action<RepositoriesTask>() {
+                @Override
+                void execute(RepositoriesTask t) {
+                    t.group = 'Insight'
+                    t.description = "Displays all repositories for project '$project.name'"
+                }
+            })
 
-        project.tasks.register('plugins', PluginsTask) {
-            group 'Insight'
-            description "Displays all plugins applied to project '$project.name'"
-        }
+        project.tasks.register('plugins', PluginsTask,
+            new Action<PluginsTask>() {
+                @Override
+                void execute(PluginsTask t) {
+                    t.group = 'Insight'
+                    t.description = "Displays all plugins applied to project '$project.name'"
+                }
+            })
 
-        project.tasks.register('extensions', ExtensionsTask) {
-            group 'Insight'
-            description "Displays all extensions applied to project '$project.name'"
-        }
+        project.tasks.register('extensions', ExtensionsTask,
+            new Action<ExtensionsTask>() {
+                @Override
+                void execute(ExtensionsTask t) {
+                    t.group = 'Insight'
+                    t.description = "Displays all extensions applied to project '$project.name'"
+                }
+            })
 
-        project.tasks.register('projectProperties', ProjectPropertiesTask) {
-            group 'Insight'
-            description "Displays all properties found in project '$project.name'"
-        }
+        project.tasks.register('projectProperties', ProjectPropertiesTask,
+            new Action<ProjectPropertiesTask>() {
+                @Override
+                void execute(ProjectPropertiesTask t) {
+                    t.group = 'Insight'
+                    t.description = "Displays all properties found in project '$project.name'"
+                }
+            })
 
         if (isRootProject(project)) {
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
                 void projectsEvaluated(Gradle gradle) {
                     project.subprojects.each { Project subproject ->
-                        subproject.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME).rootReady()
+                        PluginUtils.resolveEffectiveConfig(subproject).rootReady()
                     }
-                    project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME).rootReady()
+                    PluginUtils.resolveEffectiveConfig(project).rootReady()
                 }
             })
         }

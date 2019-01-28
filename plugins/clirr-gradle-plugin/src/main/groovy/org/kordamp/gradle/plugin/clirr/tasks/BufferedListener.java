@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.clirr.tasks;
 
+import groovy.transform.CompileStatic;
 import net.sf.clirr.core.ApiDifference;
 import net.sf.clirr.core.DiffListenerAdapter;
 
@@ -32,6 +33,7 @@ import java.util.regex.Pattern;
  * @author Andres Almiray
  * @since 0.12.0
  */
+@CompileStatic
 public class BufferedListener extends DiffListenerAdapter {
     public static final Pattern METHOD_PATTERN = Pattern.compile(
         "((public|private|protected|static|final|native|synchronized|abstract)\\s)*(.+\\s)?([\\$_\\w]+)\\((.*)\\)"

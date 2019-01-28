@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.stats
 
+import groovy.transform.CompileStatic
 import groovy.xml.MarkupBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.CacheableTask
@@ -126,10 +127,11 @@ class SourceStatsTask extends DefaultTask {
         work.lines = numLines + lines
     }
 
+    @CompileStatic
     private Map<String, Counter> resolveCounterInstances() {
         Map<String, Counter> instances = [:]
         counters.collect { key, classname ->
-            instances[key] = Class.forName(classname, true, SourceStatsTask.classLoader).newInstance()
+            instances[key] = (Counter) Class.forName(classname, true, SourceStatsTask.classLoader).newInstance()
         }
 
         if (!instances.java) instances.java = new JavaCounter()
@@ -142,10 +144,10 @@ class SourceStatsTask extends DefaultTask {
         if (!instances.xml) instances.xml = new XmlCounter()
         if (!instances.html) instances.html = new XmlCounter()
         if (!instances.fxml) instances.fxml = new XmlCounter()
-        if (!instances.properties) instances.properties = new PropertiesCounter()
         if (!instances.sql) instances.sql = new SqlCounter()
         if (!instances.yaml) instances.yaml = new HashCounter()
         if (!instances.clj) instances.clj = new SemiColonCounter()
+        if (!instances.get('properties')) instances.put('properties', new PropertiesCounter())
 
         instances
     }
@@ -223,6 +225,7 @@ class SourceStatsTask extends DefaultTask {
         }
     }
 
+    @CompileStatic
     private getOutputFile(String suffix) {
         reportDir.mkdirs()
         new File(reportDir, project.name + '.' + suffix)

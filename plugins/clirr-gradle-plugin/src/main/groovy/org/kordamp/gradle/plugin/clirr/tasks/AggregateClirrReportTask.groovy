@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.clirr.tasks
 import groovy.xml.MarkupBuilder
 import net.sf.clirr.core.Severity
 import org.gradle.api.DefaultTask
-import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputFiles
@@ -28,10 +27,11 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.Clirr
 
 import java.util.function.Predicate
+
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 
 /**
  *
@@ -179,9 +179,5 @@ class AggregateClirrReportTask extends DefaultTask {
             }
         }
         writer.flush()
-    }
-
-    private ProjectConfigurationExtension resolveEffectiveConfig(Project project) {
-        project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
     }
 }

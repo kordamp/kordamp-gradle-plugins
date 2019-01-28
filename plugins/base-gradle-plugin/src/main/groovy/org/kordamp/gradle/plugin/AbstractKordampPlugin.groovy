@@ -17,12 +17,15 @@
  */
 package org.kordamp.gradle.plugin
 
+import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtraPropertiesExtension
 
 /**
  * @author Andres Almiray
  * @since 0.11.0
  */
+@CompileStatic
 abstract class AbstractKordampPlugin implements KordampPlugin {
     boolean enabled = true
 
@@ -37,7 +40,8 @@ abstract class AbstractKordampPlugin implements KordampPlugin {
     }
 
     protected void setVisited(Project project, boolean visited) {
-        project.ext.set(visitedKey + '_' + project.name, visited)
+        ExtraPropertiesExtension ext = project.extensions.findByType(ExtraPropertiesExtension)
+        ext.set(visitedKey + '_' + project.name, visited)
     }
 
     protected void setEnabled(boolean enabled) {

@@ -17,6 +17,8 @@
  */
 package org.kordamp.gradle.plugin.clirr.tasks
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import net.sf.clirr.core.Checker
 import net.sf.clirr.core.CheckerException
 import net.sf.clirr.core.ClassFilter
@@ -24,7 +26,6 @@ import net.sf.clirr.core.internal.bcel.BcelTypeArrayBuilder
 import net.sf.clirr.core.spi.JavaType
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
-import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputFiles
@@ -32,7 +33,6 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.Clirr
 import org.kordamp.gradle.plugin.clirr.reporters.CountReporter
 import org.kordamp.gradle.plugin.clirr.reporters.HtmlReporter
@@ -42,6 +42,7 @@ import org.yaml.snakeyaml.Yaml
 import uber.org.apache.bcel.classfile.JavaClass
 
 import static net.sf.clirr.core.internal.ClassLoaderUtil.createClassLoader
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 
 /**
  *
@@ -49,6 +50,7 @@ import static net.sf.clirr.core.internal.ClassLoaderUtil.createClassLoader
  * @since 0.12.0
  */
 @CacheableTask
+@CompileStatic
 class ClirrTask extends DefaultTask {
     @InputFiles
     @PathSensitive(PathSensitivity.ABSOLUTE)
@@ -86,14 +88,7 @@ class ClirrTask extends DefaultTask {
         JavaType[] origClasses = createClassSet(baseFiles.files as File[])
         JavaType[] newClasses = createClassSet((newClasspath + newFiles).files as File[])
 
-        Map map = loadExcludeFilter(clirr.filterFile)
-
-        BufferedListener bufferedListener = new BufferedListener(
-            map.differenceTypes ?: [],
-            map.packages ?: [],
-            map.classes ?: [],
-            map.members ?: [:]
-        );
+        BufferedListener bufferedListener = newBufferedListener(loadExcludeFilter(clirr.filterFile))
         checker.addDiffListener(bufferedListener)
 
         try {
@@ -137,8 +132,14 @@ class ClirrTask extends DefaultTask {
         }
     }
 
-    private ProjectConfigurationExtension resolveEffectiveConfig(Project project) {
-        project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+    @CompileDynamic
+    private static BufferedListener newBufferedListener(Map map) {
+        new BufferedListener(
+            map.differenceTypes ?: [],
+            map.packages ?: [],
+            map.classes ?: [],
+            map.members ?: [:]
+        )
     }
 
     private Map loadExcludeFilter(File excludeFilter) {

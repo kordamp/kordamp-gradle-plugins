@@ -17,6 +17,8 @@
  */
 package org.kordamp.gradle.plugin.clirr
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import net.sf.clirr.core.MessageTranslator
 
 import java.util.jar.JarFile
@@ -27,6 +29,7 @@ import java.util.zip.ZipEntry
  * @author Andres Almiray
  * @since 0.12.0
  */
+@CompileStatic
 class EventMessages extends PropertyResourceBundle {
     static final String RESOURCE = "org/kordamp/gradle/plugin/clirr/EventMessages.properties"
 
@@ -42,6 +45,7 @@ class EventMessages extends PropertyResourceBundle {
         return EventMessages.class.getResourceAsStream(RESOURCE)
     }
 
+    @CompileDynamic
     static MessageTranslator getMessageTranslator() {
         // Ugly workaround to "force" loading of this particular RESOURCE
 

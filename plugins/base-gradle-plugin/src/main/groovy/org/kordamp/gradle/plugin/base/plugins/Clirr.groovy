@@ -22,6 +22,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskProvider
 
 import java.util.function.Predicate
 
@@ -44,7 +45,7 @@ class Clirr extends AbstractFeature {
     private boolean semverSet
 
     private final Set<Project> projects = new LinkedHashSet<>()
-    private final Set<Task> clirrTasks = new LinkedHashSet<>()
+    private final Set<TaskProvider<? extends Task>> clirrTasks = new LinkedHashSet<>()
 
     Clirr(Project project) {
         super(project)
@@ -101,7 +102,7 @@ class Clirr extends AbstractFeature {
         projects
     }
 
-    Set<Task> clirrTasks() {
+    Set<TaskProvider<? extends Task>> clirrTasks() {
         clirrTasks
     }
 

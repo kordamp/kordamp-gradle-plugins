@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.buildinfo
 
+import groovy.transform.CompileStatic
 import net.nemerosa.versioning.VersioningExtension
 import net.nemerosa.versioning.VersioningPlugin
 import org.gradle.api.Project
@@ -44,6 +45,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class BuildInfoPlugin extends AbstractKordampPlugin {
     Project project
 
@@ -78,9 +80,12 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
 
         Date date = new Date()
         if (effectiveConfig.buildInfo.clearTime) {
-            date = date.clearTime()
             Calendar calendar = Calendar.instance
             calendar.time = date
+            calendar.clear(Calendar.HOUR)
+            calendar.clear(Calendar.MINUTE)
+            calendar.clear(Calendar.SECOND)
+            calendar.clear(Calendar.MILLISECOND)
             calendar.clear(Calendar.ZONE_OFFSET)
             date = calendar.time
         }
@@ -99,7 +104,7 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
 
         if (!effectiveConfig.buildInfo.skipBuildRevision) {
             project.plugins.apply(VersioningPlugin)
-            VersioningExtension versioning = project.extensions.findByName('versioning')
+            VersioningExtension versioning = project.extensions.findByType(VersioningExtension)
             effectiveConfig.buildInfo.buildRevision = versioning.info.commit
         }
 

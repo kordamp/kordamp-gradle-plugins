@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin
 
+import groovy.transform.CompileStatic
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -24,6 +25,7 @@ import org.gradle.api.Project
  * @author Andres Almiray
  * @since 0.11.0
  */
+@CompileStatic
 interface KordampPlugin extends Plugin<Project> {
     boolean isEnabled()
 }
