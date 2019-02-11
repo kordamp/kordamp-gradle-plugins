@@ -139,6 +139,7 @@ class SourceStatsTask extends DefaultTask {
         if (!instances.js) instances.js = new JavaCounter()
         if (!instances.scala) instances.scala = new JavaCounter()
         if (!instances.kt) instances.kt = new JavaCounter()
+        if (!instances.kts) instances.kt = new JavaCounter()
         if (!instances.css) instances.css = new CssCounter()
         if (!instances.scss) instances.scss = new JavaCounter()
         if (!instances.xml) instances.xml = new XmlCounter()

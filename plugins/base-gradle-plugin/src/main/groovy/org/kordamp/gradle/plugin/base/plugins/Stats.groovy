@@ -76,6 +76,7 @@ class Stats extends AbstractFeature {
             groovy    : 'Groovy',
             scala     : 'Scala',
             kt        : 'Kotlin',
+            kts       : 'Kotlin Script',
             js        : 'Javascript',
             css       : 'CSS',
             scss      : 'SASS',
@@ -97,6 +98,7 @@ class Stats extends AbstractFeature {
         basePaths.groovy = [name: 'Groovy Sources', path: '.*', extension: 'groovy']
         basePaths.scala = [name: 'Scala Sources', path: '.*', extension: 'scala']
         basePaths.kt = [name: 'Kotlin Sources', path: '.*', extension: 'kt']
+        basePaths.kts = [name: 'Kotlin Scripts', path: '.*', extension: 'kts']
         basePaths.js = [name: 'Javascript Sources', path: '.*', extension: 'js']
         basePaths.css = [name: 'CSS Sources', path: '.*', extension: 'css']
         basePaths.scss = [name: 'SASS Sources', path: '.*', extension: 'scss']
