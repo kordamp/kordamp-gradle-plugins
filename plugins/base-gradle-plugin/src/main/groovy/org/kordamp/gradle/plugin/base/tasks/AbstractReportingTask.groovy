@@ -41,7 +41,7 @@ abstract class AbstractReportingTask extends DefaultTask {
                     doPrint((Collection) value, offset + 1)
                 }
             } else if (isNotNullNorBlank(value)) {
-                println(('    ' * offset) + key + ': ' + value)
+                println(('    ' * offset) + key + ': ' + formatValue(value))
             }
 
             if (offset == 0) {
@@ -56,17 +56,64 @@ abstract class AbstractReportingTask extends DefaultTask {
                 if (!value.isEmpty()) {
                     doPrint(value, offset)
                 }
-            } else if (value instanceof Collection && !value.empty) {
+            } else if (value instanceof Collection && !((Collection) value).empty) {
                 if (!value.isEmpty()) {
                     doPrint(value, offset + 1)
                 }
             } else if (isNotNullNorBlank(value)) {
-                println(('    ' * offset) + value)
+                println(('    ' * offset) + formatValue(value))
             }
         }
     }
 
     protected static boolean isNotNullNorBlank(value) {
         value != null || (value instanceof CharSequence && !isBlank(String.valueOf(value)))
+    }
+
+    protected static String formatValue(value) {
+        if (value instanceof Boolean) {
+            Boolean b = (Boolean) value
+            return (b ? '\u001b[32m' : '\u001b[31m') + String.valueOf(b) + '\u001b[0m'
+        } else if (value instanceof Number) {
+            return '\u001b[36m' + String.valueOf(value) + '\u001b[0m'
+        } else {
+            String s = String.valueOf(value)
+
+            String r = parseAsBoolean(s)
+            if (r != null) return r
+            r = parseAsInteger(s)
+            if (r != null) return r
+            r = parseAsDouble(s)
+            if (r != null) return r
+
+            return '\u001b[33m' + s + '\u001b[0m'
+        }
+    }
+
+    protected static String parseAsBoolean(String s) {
+        if ('true'.equalsIgnoreCase(s) || 'false'.equalsIgnoreCase(s)) {
+            boolean b = Boolean.valueOf(s)
+            return (b ? '\u001b[32m' : '\u001b[31m') + String.valueOf(b) + '\u001b[0m'
+        } else {
+            return null
+        }
+    }
+
+    protected static String parseAsInteger(String s) {
+        try {
+            Integer.parseInt(s)
+            return '\u001b[36m' + s + '\u001b[0m'
+        } catch (Exception e) {
+            return null
+        }
+    }
+
+    protected static String parseAsDouble(String s) {
+        try {
+            Double.parseDouble(s)
+            return '\u001b[36m' + s + '\u001b[0m'
+        } catch (Exception e) {
+            return null
+        }
     }
 }
