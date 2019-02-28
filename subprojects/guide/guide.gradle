@@ -15,8 +15,12 @@
  */
 
 plugins {
-    id 'org.kordamp.gradle.guide'   version '0.13.0'
+    id 'org.kordamp.gradle.guide'   version '0.14.0'
     id 'org.ajoberstar.git-publish' version '0.3.2'
+}
+
+dependencies {
+    asciidoctor 'com.bmuschko:asciidoctorj-tabbed-code-extension:0.1'
 }
 
 guide {
