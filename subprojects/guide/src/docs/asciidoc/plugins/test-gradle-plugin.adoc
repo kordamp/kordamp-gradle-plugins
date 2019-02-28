@@ -77,7 +77,7 @@ Type:: `org.gradle.api.tasks.testing.TestReport`
 
 .Properties
 [horizontal]
-destinationDir:: `${project.buildDir}/reports/aggregate-tests`
+destinationDir:: `${rootProject.buildDir}/reports/aggregate-tests`
 
 [[_task_aggregate_integration_test_reports]]
 === AggregateIntegrationTestReports
@@ -91,7 +91,7 @@ Type:: `org.gradle.api.tasks.testing.TestReport`
 
 .Properties
 [horizontal]
-destinationDir:: `${project.buildDir}/reports/aggregate-integration-tests`
+destinationDir:: `${rootProject.buildDir}/reports/aggregate-integration-tests`
 
 [[_task_aggregate_functional_test_reports]]
 === AggregateFunctionalTestReports
@@ -105,7 +105,7 @@ Type:: `org.gradle.api.tasks.testing.TestReport`
 
 .Properties
 [horizontal]
-destinationDir:: `${project.buildDir}/reports/aggregate-fiunctional-tests`
+destinationDir:: `${rootProject.buildDir}/reports/aggregate-fiunctional-tests`
 
 [[_task_aggregate_all_test_reports]]
 === AggregateAllTestReports
@@ -119,6 +119,6 @@ Type:: `org.gradle.api.tasks.testing.TestReport`
 
 .Properties
 [horizontal]
-destinationDir:: `${project.buildDir}/reports/aggregate-all-tests`
+destinationDir:: `${rootProject.buildDir}/reports/aggregate-all-tests`
 
 
