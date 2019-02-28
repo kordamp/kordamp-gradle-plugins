@@ -68,17 +68,57 @@ config {
 [[_task_aggregate_test_reports]]
 === AggregateTestReports
 
-Generates a JXR report of all Java source code found in all projects. +
+Aggregates all test reports that are not _integration_ nor _functional_.+
 This task is added to the root project.
 
 [horizontal]
-Name:: aggregateTest
-Type:: `org.kordamp.gradle.plugin.test.JxrTask`
+Name:: aggregateTestReports
+Type:: `org.gradle.api.tasks.testing.TestReport`
 
 .Properties
 [horizontal]
-outputDir:: `${project.buildDir}/docs/test`
+destinationDir:: `${project.buildDir}/reports/aggregate-tests`
 
-Consumes all settings found in the `config.sourceXref.conversion` block.
+[[_task_aggregate_integration_test_reports]]
+=== AggregateIntegrationTestReports
+
+Aggregates all integration test reports.+
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateIntegrationTestReports
+Type:: `org.gradle.api.tasks.testing.TestReport`
+
+.Properties
+[horizontal]
+destinationDir:: `${project.buildDir}/reports/aggregate-integration-tests`
+
+[[_task_aggregate_functional_test_reports]]
+=== AggregateFunctionalTestReports
+
+Aggregates all functional test reports.+
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateFunctionalTestReports
+Type:: `org.gradle.api.tasks.testing.TestReport`
+
+.Properties
+[horizontal]
+destinationDir:: `${project.buildDir}/reports/aggregate-fiunctional-tests`
+
+[[_task_aggregate_all_test_reports]]
+=== AggregateAllTestReports
+
+Aggregates all test reports. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateAllTestReports
+Type:: `org.gradle.api.tasks.testing.TestReport`
+
+.Properties
+[horizontal]
+destinationDir:: `${project.buildDir}/reports/aggregate-all-tests`
 
 
