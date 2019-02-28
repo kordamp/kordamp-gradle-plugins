@@ -20,5 +20,5 @@ dependencies {
     compile project(':base-gradle-plugin')
     compile project(':apidoc-gradle-plugin')
     compile project(':sourcehtml-gradle-plugin')
-    compile 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.10'
+    compile 'org.asciidoctor:asciidoctor-gradle-plugin:1.6.0'
 }
