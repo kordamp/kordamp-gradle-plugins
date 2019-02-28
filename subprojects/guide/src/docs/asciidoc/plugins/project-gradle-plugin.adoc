@@ -15,6 +15,7 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `<<_org_kordamp_gradle_sourcestats,org.kordamp.gradle.source-stats>>`, +
 `<<_org_kordamp_gradle_javadoc,org.kordamp.gradle.javadoc>>`, +
 `<<_org_kordamp_gradle_apidoc,org.kordamp.gradle.apidoc>>`, +
+`<<_org_kordamp_gradle_test,org.kordamp.gradle.test>>`, +
 `<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>`
 
 Serves as central point of configuration for a project as it applies all dependent plugins. You may skip this plugin
@@ -26,3 +27,5 @@ This plugin adds the following plugins to the classpath without applying them:
  * `<<_org_kordamp_gradle_bom,org.kordamp.gradle.bom>>`
  * `<<_org_kordamp_gradle_clirr,org.kordamp.gradle.clirr>>`
  * `<<_org_kordamp_gradle_sourcexref,org.kordamp.gradle.source-xref>>`
+ * `<<_org_kordamp_gradle_integrationtest,org.kordamp.gradle.integration-test>>`
+ * `<<_org_kordamp_gradle_functionaltest,org.kordamp.gradle.functional-test>>`

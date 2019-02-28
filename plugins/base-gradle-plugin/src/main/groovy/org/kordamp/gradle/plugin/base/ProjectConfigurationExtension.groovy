@@ -39,6 +39,7 @@ import org.kordamp.gradle.plugin.base.plugins.Source
 import org.kordamp.gradle.plugin.base.plugins.SourceHtml
 import org.kordamp.gradle.plugin.base.plugins.SourceXref
 import org.kordamp.gradle.plugin.base.plugins.Stats
+import org.kordamp.gradle.plugin.base.plugins.Test
 
 /**
  * @author Andres Almiray
@@ -69,6 +70,7 @@ class ProjectConfigurationExtension {
     final SourceHtml sourceHtml
     final SourceXref sourceXref
     final Stats stats
+    final Test test
 
     private boolean releaseSet
 
@@ -94,6 +96,7 @@ class ProjectConfigurationExtension {
         sourceHtml = new SourceHtml(project)
         sourceXref = new SourceXref(project)
         stats = new Stats(project)
+        test = new Test(project)
     }
 
     ProjectConfigurationExtension(ProjectConfigurationExtension other) {
@@ -115,6 +118,7 @@ class ProjectConfigurationExtension {
         this.sourceHtml = other.sourceHtml
         this.sourceXref = other.sourceXref
         this.stats = other.stats
+        this.test = other.test
         setRelease(other.release)
         projectActions.addAll(other.projectActions)
         rootProjectActions.addAll(other.rootProjectActions)
@@ -153,6 +157,7 @@ class ProjectConfigurationExtension {
         map.putAll(sourceHtml.toMap())
         map.putAll(sourceXref.toMap())
         map.putAll(stats.toMap())
+        map.putAll(test.toMap())
 
         map
     }
@@ -223,6 +228,10 @@ class ProjectConfigurationExtension {
 
     Stats getStats() {
         stats
+    }
+
+    Test getTest() {
+        test
     }
 
     ProjectConfigurationExtension whenProjectReady(Action<? super Project> action) {
@@ -371,6 +380,14 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, sourceXref)
     }
 
+    void test(Action<? super Test> action) {
+        action.execute(test)
+    }
+
+    void test(@DelegatesTo(Test) Closure action) {
+        ConfigureUtil.configure(action, test)
+    }
+
     void setRelease(boolean release) {
         this.release = release
         this.releaseSet = true
@@ -401,6 +418,7 @@ class ProjectConfigurationExtension {
         this.@sourceHtml.copyInto(copy.@sourceHtml)
         this.@sourceXref.copyInto(copy.@sourceXref)
         this.@stats.copyInto(copy.@stats)
+        this.@test.copyInto(copy.@test)
         copy.projectActions.addAll(this.projectActions)
         copy.rootProjectActions.addAll(this.rootProjectActions)
 
@@ -427,6 +445,7 @@ class ProjectConfigurationExtension {
         SourceHtml.merge(merged.@sourceHtml, other.@sourceHtml)
         SourceXref.merge(merged.@sourceXref, other.@sourceXref)
         Stats.merge(merged.@stats, other.@stats)
+        Test.merge(merged.@test, other.@test)
 
         merged
     }

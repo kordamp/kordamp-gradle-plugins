@@ -21,10 +21,10 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.TestReport
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
+import org.kordamp.gradle.plugin.test.tasks.FunctionalTest
 
 import static org.kordamp.gradle.PluginUtils.resolveSourceSets
 
@@ -101,9 +101,9 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
     private void createTasksIfNeeded(Project project) {
         Task jarTask = project.tasks.findByName('jar')
 
-        Test functionalTest = project.tasks.findByName('functionalTest')
+        FunctionalTest functionalTest = project.tasks.findByName('functionalTest')
         if (!functionalTest) {
-            functionalTest = project.tasks.create('functionalTest', Test) {
+            functionalTest = project.tasks.create('functionalTest', FunctionalTest) {
                 dependsOn jarTask
                 group 'Verification'
                 description 'Runs the functional tests.'

@@ -1,0 +1,84 @@
+
+[[_org_kordamp_gradle_test]]
+= Test
+
+[horizontal]
+id:: `org.kordamp.gradle.test`
+class:: `org.kordamp.gradle.plugin.test.TestPlugin`
+    (link:api/org/kordamp/gradle/plugin/test/TestPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/test/TestPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+
+Configures test reports.
+
+[[_org_kordamp_gradle_test_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    test {
+        enabled
+        logging
+        aggregate
+        integration {
+            logging
+            aggregate
+        }
+        functional {
+            logging
+            aggregate
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name      | Type    | Required | Default Value | Description
+| enabled   | boolean | no       | true          | Disables `org.kordamp.gradle.test` plugin if `false`
+| logging   | boolean | no       | true          | Enables verbose output
+| aggregate | boolean | no       | true          | Enables test report aggregation
+|===
+
+[[_test_integration]]
+*integration*
+
+[options="header", cols="5*"]
+|===
+| Name      | Type    | Required | Default Value | Description
+| logging   | boolean | no       | true          | Enables verbose output
+| aggregate | boolean | no       | true          | Enables test report aggregation
+|===
+
+[[_test_functional]]
+*functional*
+
+[options="header", cols="5*"]
+|===
+| Name      | Type    | Required | Default Value | Description
+| logging   | boolean | no       | true          | Enables verbose output
+| aggregate | boolean | no       | true          | Enables test report aggregation
+|===
+
+[[_org_kordamp_gradle_test_tasks]]
+== Tasks
+
+[[_task_aggregate_test_reports]]
+=== AggregateTestReports
+
+Generates a JXR report of all Java source code found in all projects. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateTest
+Type:: `org.kordamp.gradle.plugin.test.JxrTask`
+
+.Properties
+[horizontal]
+outputDir:: `${project.buildDir}/docs/test`
+
+Consumes all settings found in the `config.sourceXref.conversion` block.
+
+

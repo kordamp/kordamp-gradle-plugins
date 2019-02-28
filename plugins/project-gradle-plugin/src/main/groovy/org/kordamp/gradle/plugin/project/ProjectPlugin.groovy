@@ -33,6 +33,7 @@ import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 import org.kordamp.gradle.plugin.source.SourceJarPlugin
 import org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
 import org.kordamp.gradle.plugin.stats.SourceStatsPlugin
+import org.kordamp.gradle.plugin.test.TestPlugin
 
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -72,6 +73,7 @@ class ProjectPlugin implements Plugin<Project> {
         SourceStatsPlugin.applyIfMissing(project)
         SourceHtmlPlugin.applyIfMissing(project)
         BintrayPlugin.applyIfMissing(project)
+        TestPlugin.applyIfMissing(project)
 
         project.plugins.apply(VersionsPlugin)
     }
