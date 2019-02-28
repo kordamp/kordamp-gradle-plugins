@@ -218,7 +218,7 @@ class LicensePlugin extends AbstractKordampPlugin {
             projectName = effectiveConfig.info.name
             copyrightYear = effectiveConfig.info.copyrightYear
             author = effectiveConfig.info.getAuthors().join(', ')
-            license = lic.id?.spdx()
+            license = lic.licenseId?.spdx()
         }
         licenseExtension.exclude '**/*.png'
         licenseExtension.exclude '**/*.gif'
@@ -236,11 +236,11 @@ class LicensePlugin extends AbstractKordampPlugin {
 
         Map<Object, List<Object>> defaultAliases = new LinkedHashMap<>(DEFAULT_ALIASES)
         effectiveConfig.license.licenses.licenses.each { license ->
-            if (license.id && license.aliases) {
-                LicenseMetadata licenseMetadata = LICENSES_MAP.get(license.id)
+            if (license.licenseId && license.aliases) {
+                LicenseMetadata licenseMetadata = LICENSES_MAP.get(license.licenseId)
                 if (!licenseMetadata) {
                     licenseMetadata = new LicenseMetadata(license.name, license.url)
-                    LICENSES_MAP.put(license.id, licenseMetadata)
+                    LICENSES_MAP.put(license.licenseId, licenseMetadata)
                 }
 
                 List<Object> aliases = defaultAliases.get(licenseMetadata)

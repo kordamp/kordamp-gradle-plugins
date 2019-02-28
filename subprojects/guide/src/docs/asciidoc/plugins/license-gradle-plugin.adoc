@@ -50,7 +50,7 @@ config {
 [options="header", cols="5*"]
 |===
 | Name         | Type         | Required | Default Value | Description
-| id           | LicenseId    | no*      |               |
+| id           | String       | no*      |               |
 | primary      | boolean      | no*      | false         | Identifies this as the main license if there are more than one
 | name         | String       | yes      |               | Maps to the `<name>` block
 | url          | String       | no       |               | Maps to the `<url>` block
@@ -71,7 +71,7 @@ be treated as the primary license.
 [[_org_kordamp_gradle_licenseexample]]
 == Example
 
-[source,groovy]
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
 .build.gradle
 ----
 config {
@@ -79,6 +79,20 @@ config {
         licenses {
             license {
                 id = 'Apache-2.0'
+            }
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.build.gradle.kts
+----
+config {
+    license {
+        licenses {
+            license {
+                id = "Apache-2.0"
             }
         }
     }

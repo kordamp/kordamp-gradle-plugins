@@ -49,7 +49,7 @@ class License extends AbstractFeature {
         Map map = [enabled: enabled]
 
         map.licenses = licenses.licenses.collectEntries { org.kordamp.gradle.plugin.base.model.License license ->
-            [(license.id?.name() ?: license.name): license.toMap()]
+            [(license.licenseId?.name() ?: license.name): license.toMap()]
         }
 
         ['license': map]
@@ -89,7 +89,7 @@ class License extends AbstractFeature {
 
     @CompileDynamic
     List<String> resolveBintrayLicenseIds() {
-        List<String> ids = allLicenses().collect { it.id?.bintray() ?: '' }.unique()
+        List<String> ids = allLicenses().collect { it.licenseId?.bintray() ?: '' }.unique()
         ids.remove('')
         ids
     }

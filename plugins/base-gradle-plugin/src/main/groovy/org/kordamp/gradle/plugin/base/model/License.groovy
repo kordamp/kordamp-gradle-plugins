@@ -46,7 +46,7 @@ class License {
     @CompileDynamic
     Map<String, Object> toMap() {
         [
-            id          : id?.name(),
+            id          : this.@id?.name(),
             name        : name,
             url         : url,
             distribution: distribution,
@@ -56,25 +56,33 @@ class License {
         ]
     }
 
-    void setId(LicenseId id) {
-        this.id = id
+    void setLicenseId(LicenseId id) {
+        this.@id = id
+    }
+
+    LicenseId getLicenseId() {
+        this.@id
+    }
+
+    void setId(String id) {
+        this.@id = LicenseId.findByLiteral(id.trim())
+    }
+
+    String getId() {
+        this.@id?.spdx()
     }
 
     String getName() {
-        id?.spdx() ?: name
+        this.@id?.spdx() ?: name
     }
 
     String getUrl() {
-        id?.url() ?: url
-    }
-
-    void setId(CharSequence id) {
-        this.id = LicenseId.findByLiteral(id.toString().trim())
+        this.@id?.url() ?: url
     }
 
     License copyOf() {
         License copy = new License()
-        copy.id = id
+        copy.@id = this.@id
         copy.@name = this.@name
         copy.@url = this.@url
         copy.distribution = distribution
@@ -85,7 +93,7 @@ class License {
     }
 
     static void merge(License o1, License o2) {
-        o1.id = o1.id ?: o2?.id
+        o1.@id = o1.@id ?: o2?.@id
         o1.name = o1.@name ?: o2?.name
         o1.url = o1.@url ?: o2?.url
         o1.distribution = o1.distribution ?: o2?.distribution

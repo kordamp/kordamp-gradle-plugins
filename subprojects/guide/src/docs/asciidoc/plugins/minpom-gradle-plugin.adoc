@@ -71,7 +71,7 @@ Produces the following output
             <scope>compile</scope>
         </dependency>
     </dependencies>
-</project
+</project>
 ----
 
 [source,java]
