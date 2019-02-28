@@ -166,7 +166,7 @@ class TestPlugin extends AbstractKordampPlugin {
                 indicator = "\u001B[31m${WINDOWS ? 'X' : '✘'}\u001b[0m".toString()
             }
 
-            String str = "${indicator} Test ${descriptor.name}; "
+            String str = "\u001b[2K${indicator} Test ${descriptor.name}; "
             str += "Executed: ${result.testCount}/\u001B[32m${result.successfulTestCount}\u001B[0m/"
             str += "\u001B[31m${result.failedTestCount}\u001B[0m/"
             str += "\u001B[33m${result.skippedTestCount}\u001B[0m  "
