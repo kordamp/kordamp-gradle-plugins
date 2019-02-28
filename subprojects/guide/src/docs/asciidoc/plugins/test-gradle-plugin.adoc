@@ -68,7 +68,7 @@ config {
 [[_task_aggregate_test_reports]]
 === AggregateTestReports
 
-Aggregates all test reports that are not _integration_ nor _functional_.+
+Aggregates all test reports that are not _integration_ nor _functional_. +
 This task is added to the root project.
 
 [horizontal]
@@ -82,7 +82,7 @@ destinationDir:: `${project.buildDir}/reports/aggregate-tests`
 [[_task_aggregate_integration_test_reports]]
 === AggregateIntegrationTestReports
 
-Aggregates all integration test reports.+
+Aggregates all integration test reports. +
 This task is added to the root project.
 
 [horizontal]
@@ -96,7 +96,7 @@ destinationDir:: `${project.buildDir}/reports/aggregate-integration-tests`
 [[_task_aggregate_functional_test_reports]]
 === AggregateFunctionalTestReports
 
-Aggregates all functional test reports.+
+Aggregates all functional test reports. +
 This task is added to the root project.
 
 [horizontal]
