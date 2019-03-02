@@ -65,7 +65,7 @@ class Scaladoc extends AbstractFeature {
     Map<String, Map<String, Object>> toMap() {
         Map map = [enabled: enabled]
 
-        if(isRoot()) {
+        if (enabled && isRoot()) {
             map.excludedProjects = excludedProjects
         }
 

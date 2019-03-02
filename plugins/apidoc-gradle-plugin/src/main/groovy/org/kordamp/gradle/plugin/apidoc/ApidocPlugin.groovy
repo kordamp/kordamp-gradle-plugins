@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.apidoc
 
+import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
 import org.gradle.api.DefaultTask
 import org.gradle.api.JavaVersion
@@ -51,6 +52,7 @@ class ApidocPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    @CompileStatic
     void apply(Project project) {
         this.project = project
 
@@ -69,12 +71,14 @@ class ApidocPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileStatic
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(ApidocPlugin)) {
             project.plugins.apply(ApidocPlugin)
         }
     }
 
+    @CompileStatic
     private void configureProject(Project project) {
         if (hasBeenVisited(project)) {
             return
@@ -86,6 +90,7 @@ class ApidocPlugin extends AbstractKordampPlugin {
         GroovydocPlugin.applyIfMissing(project)
     }
 
+    @CompileStatic
     private void configureRootProject(Project project, boolean checkIfApplied) {
         if (checkIfApplied && hasBeenVisited(project)) {
             return

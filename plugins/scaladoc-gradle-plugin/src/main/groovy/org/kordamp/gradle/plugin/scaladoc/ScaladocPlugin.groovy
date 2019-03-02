@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.scaladoc
 
+import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -46,6 +47,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    @CompileStatic
     void apply(Project project) {
         this.project = project
 
@@ -64,12 +66,14 @@ class ScaladocPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileStatic
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(ScaladocPlugin)) {
             project.plugins.apply(ScaladocPlugin)
         }
     }
 
+    @CompileStatic
     private void configureRootProject(Project project, boolean checkIfApplied) {
         if (checkIfApplied && hasBeenVisited(project)) {
             return
@@ -92,7 +96,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
 
     private void doConfigureRootProject(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        setEnabled(effectiveConfig.apidoc.enabled)
+        setEnabled(effectiveConfig.scaladoc.enabled)
 
         if (!enabled) {
             return
