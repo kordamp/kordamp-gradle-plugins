@@ -23,6 +23,7 @@ config {
         title
         includes
         excludes
+        excludedProjects
         <<_scaladoc_options,options>> {
             bottom
             top
@@ -37,11 +38,12 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name     | Type         | Required | Default Value                        | Description
-| enabled  | boolean      | no       | true                                 | Disables `org.kordamp.gradle.scaladoc` plugin if `false`
-| title    | String       | no       | "${project.name} ${project.version}" |
-| includes | Set<String>  | no       | []                                   |
-| excludes | Set<String>  | no       | []                                   |
+| Name             | Type         | Required | Default Value                        | Description
+| enabled          | boolean      | no       | true                                 | Disables `org.kordamp.gradle.scaladoc` plugin if `false`
+| title            | String       | no       | "${project.name} ${project.version}" |
+| includes         | Set<String>  | no       | []                                   |
+| excludes         | Set<String>  | no       | []                                   |
+| excludedProjects | Set<Project> |          | []                                   | Projects in the set are excluded from aggregation
 |===
 
 [[_scaladoc_options]]
@@ -91,4 +93,34 @@ Type:: `org.gradle.api.tasks.bundling.Jar`
 classifier:: scaladoc
 destinationDir:: `${project.buildDir}/build/libs`
 from:: `scaladoc.destinationDir`
+
+[[_task_aggregate_scaladocs]]
+=== AggregateScaladocs
+
+Aggregates Scaladoc API docs for all projects. +
+Consumes settings from `config.<<_org_kordamp_gradle_scaladoc,scaladoc>>` defined in the root project. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateScaladocs
+Type:: `org.gradle.api.tasks.scala.ScalaDoc`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.buildDir}/docs/scaladoc`
+
+[[_task_aggregate_scaladocs_jar]]
+=== AggregateScaladocsJar
+
+An archive of the aggregate Scaladoc API docs. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateScaladocsJar
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+classifier:: scaladoc
+destinationDir:: `${rootProject.buildDir}/build/libs`
 

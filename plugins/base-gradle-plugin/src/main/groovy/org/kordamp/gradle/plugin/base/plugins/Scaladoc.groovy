@@ -39,6 +39,8 @@ class Scaladoc extends AbstractFeature {
     Set<String> includes = new LinkedHashSet<>()
     final ScaladocOptions options = new ScaladocOptions()
 
+    private final Set<Project> excludedProjects = new LinkedHashSet<>()
+
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<ScalaDoc> scaladocTasks = new LinkedHashSet<>()
     private final Set<Jar> scaladocJarTasks = new LinkedHashSet<>()
@@ -62,6 +64,10 @@ class Scaladoc extends AbstractFeature {
     @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
         Map map = [enabled: enabled]
+
+        if(isRoot()) {
+            map.excludedProjects = excludedProjects
+        }
 
         if (enabled) {
             map.title = title
@@ -123,6 +129,11 @@ class Scaladoc extends AbstractFeature {
         o1.projects().addAll(o2.projects())
         o1.scaladocTasks().addAll(o2.scaladocTasks())
         o1.scaladocJarTasks().addAll(o2.scaladocJarTasks())
+        o1.excludedProjects().addAll(o2.excludedProjects())
+    }
+
+    Set<Project> excludedProjects() {
+        excludedProjects
     }
 
     Set<Project> projects() {

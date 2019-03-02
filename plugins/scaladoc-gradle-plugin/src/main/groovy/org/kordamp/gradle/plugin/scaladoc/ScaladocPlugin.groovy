@@ -17,8 +17,10 @@
  */
 package org.kordamp.gradle.plugin.scaladoc
 
+import org.gradle.BuildAdapter
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.scala.ScalaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
@@ -39,6 +41,8 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 class ScaladocPlugin extends AbstractKordampPlugin {
     static final String SCALADOC_TASK_NAME = 'scaladoc'
     static final String SCALADOC_JAR_TASK_NAME = 'scaladocJar'
+    static final String AGGREGATE_SCALADOCS_TASK_NAME = 'aggregateScaladocs'
+    static final String AGGREGATE_SCALADOCS_JAR_TASK_NAME = 'aggregateScaladocsJar'
 
     Project project
 
@@ -50,8 +54,10 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                 project.childProjects.values().each {
                     configureProject(it)
                 }
+                configureRootProject(project, true)
             } else {
                 configureProject(project)
+                configureRootProject(project, false)
             }
         } else {
             configureProject(project)
@@ -61,6 +67,64 @@ class ScaladocPlugin extends AbstractKordampPlugin {
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(ScaladocPlugin)) {
             project.plugins.apply(ScaladocPlugin)
+        }
+    }
+
+    private void configureRootProject(Project project, boolean checkIfApplied) {
+        if (checkIfApplied && hasBeenVisited(project)) {
+            return
+        }
+        setVisited(project, true)
+
+        BasePlugin.applyIfMissing(project)
+
+        if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            createAggregateScaladocsTask(project)
+
+            project.gradle.addBuildListener(new BuildAdapter() {
+                @Override
+                void projectsEvaluated(Gradle gradle) {
+                    doConfigureRootProject(project)
+                }
+            })
+        }
+    }
+
+    private void doConfigureRootProject(Project project) {
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        setEnabled(effectiveConfig.apidoc.enabled)
+
+        if (!enabled) {
+            return
+        }
+
+        if (!project.childProjects.isEmpty()) {
+            List<ScalaDoc> scaladocs = []
+            project.tasks.withType(ScalaDoc) { ScalaDoc scaladoc -> if (scaladoc.name != AGGREGATE_SCALADOCS_TASK_NAME && scaladoc.enabled) scaladocs << scaladoc }
+            project.childProjects.values().each { Project p ->
+                if (p in effectiveConfig.scaladoc.excludedProjects()) return
+                p.tasks.withType(ScalaDoc) { ScalaDoc scaladoc -> if (scaladoc.enabled) scaladocs << scaladoc }
+            }
+            scaladocs = scaladocs.unique()
+
+            ScalaDoc aggregateScaladocs = project.tasks.findByName(AGGREGATE_SCALADOCS_TASK_NAME)
+            Jar aggregateScaladocsJar = project.tasks.findByName(AGGREGATE_SCALADOCS_JAR_TASK_NAME)
+
+            if (scaladocs) {
+                aggregateScaladocs.configure { task ->
+                    task.enabled true
+                    task.dependsOn scaladocs
+                    task.source scaladocs.source
+                    task.classpath = project.files(scaladocs.classpath)
+
+                    effectiveConfig.scaladoc.applyTo(task)
+                    // task.options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.authors.join(', ')}. All rights reserved."
+                }
+                aggregateScaladocsJar.configure {
+                    enabled true
+                    from aggregateScaladocs.destinationDir
+                }
+            }
         }
     }
 
@@ -139,5 +203,24 @@ class ScaladocPlugin extends AbstractKordampPlugin {
         }
 
         scaladocJarTask
+    }
+
+    private List<Task> createAggregateScaladocsTask(Project project) {
+        ScalaDoc aggregateScaladocs = project.tasks.create(AGGREGATE_SCALADOCS_TASK_NAME, ScalaDoc) {
+            enabled false
+            group JavaBasePlugin.DOCUMENTATION_GROUP
+            description 'Aggregates ScalaDoc API docs for all projects.'
+            destinationDir project.file("${project.buildDir}/docs/scaladoc")
+        }
+
+        Jar aggregateScaladocsJar = project.tasks.create(AGGREGATE_SCALADOCS_JAR_TASK_NAME, Jar) {
+            enabled false
+            dependsOn aggregateScaladocs
+            group JavaBasePlugin.DOCUMENTATION_GROUP
+            description 'An archive of the aggregate ScalaDoc API docs'
+            classifier 'scaladoc'
+        }
+
+        [aggregateScaladocs, aggregateScaladocsJar]
     }
 }

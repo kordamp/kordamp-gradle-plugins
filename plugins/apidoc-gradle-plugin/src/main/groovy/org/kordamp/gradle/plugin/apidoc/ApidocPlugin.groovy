@@ -59,10 +59,10 @@ class ApidocPlugin extends AbstractKordampPlugin {
                 project.childProjects.values().each {
                     configureProject(it)
                 }
-                configureRootProject(project)
+                configureRootProject(project, true)
             } else {
                 configureProject(project)
-                configureRootProject(project)
+                configureRootProject(project, false)
             }
         } else {
             configureProject(project)
@@ -86,8 +86,8 @@ class ApidocPlugin extends AbstractKordampPlugin {
         GroovydocPlugin.applyIfMissing(project)
     }
 
-    private void configureRootProject(Project project) {
-        if (hasBeenVisited(project)) {
+    private void configureRootProject(Project project, boolean checkIfApplied) {
+        if (checkIfApplied && hasBeenVisited(project)) {
             return
         }
         setVisited(project, true)
