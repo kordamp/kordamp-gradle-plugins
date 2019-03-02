@@ -20,7 +20,7 @@ plugins {
 }
 
 dependencies {
-    asciidoctor 'com.bmuschko:asciidoctorj-tabbed-code-extension:0.1'
+    asciidoctor 'com.bmuschko:asciidoctorj-tabbed-code-extension:0.2'
 }
 
 guide {
