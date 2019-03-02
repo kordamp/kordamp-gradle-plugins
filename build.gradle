@@ -67,6 +67,7 @@ config {
     }
 
     groovydoc {
+        enabled        = true
         replaceJavadoc = true
         options {
             link 'https://docs.gradle.org/4.0/javadoc/', 'org.gradle.'
