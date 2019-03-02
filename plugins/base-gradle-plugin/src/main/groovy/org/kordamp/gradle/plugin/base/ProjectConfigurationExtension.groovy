@@ -35,6 +35,7 @@ import org.kordamp.gradle.plugin.base.plugins.Kotlindoc
 import org.kordamp.gradle.plugin.base.plugins.License
 import org.kordamp.gradle.plugin.base.plugins.Minpom
 import org.kordamp.gradle.plugin.base.plugins.Publishing
+import org.kordamp.gradle.plugin.base.plugins.Scaladoc
 import org.kordamp.gradle.plugin.base.plugins.Source
 import org.kordamp.gradle.plugin.base.plugins.SourceHtml
 import org.kordamp.gradle.plugin.base.plugins.SourceXref
@@ -66,6 +67,7 @@ class ProjectConfigurationExtension {
     final License license
     final Minpom minpom
     final Publishing publishing
+    final Scaladoc scaladoc
     final Source source
     final SourceHtml sourceHtml
     final SourceXref sourceXref
@@ -92,6 +94,7 @@ class ProjectConfigurationExtension {
         license = new License(project)
         minpom = new Minpom(project)
         publishing = new Publishing(project)
+        scaladoc = new Scaladoc(project)
         source = new Source(project)
         sourceHtml = new SourceHtml(project)
         sourceXref = new SourceXref(project)
@@ -114,6 +117,7 @@ class ProjectConfigurationExtension {
         this.license = other.license
         this.minpom = other.minpom
         this.publishing = other.publishing
+        this.scaladoc = other.scaladoc
         this.source = other.source
         this.sourceHtml = other.sourceHtml
         this.sourceXref = other.sourceXref
@@ -153,6 +157,7 @@ class ProjectConfigurationExtension {
         map.putAll(license.toMap())
         map.putAll(minpom.toMap())
         map.putAll(publishing.toMap())
+        map.putAll(scaladoc.toMap())
         map.putAll(source.toMap())
         map.putAll(sourceHtml.toMap())
         map.putAll(sourceXref.toMap())
@@ -212,6 +217,10 @@ class ProjectConfigurationExtension {
 
     Publishing getPublishing() {
         publishing
+    }
+
+    Scaladoc getScaladoc() {
+        scaladoc
     }
 
     Source getSource() {
@@ -348,6 +357,14 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, publishing)
     }
 
+    void scaladoc(Action<? super Scaladoc> action) {
+        action.execute(scaladoc)
+    }
+
+    void scaladoc(@DelegatesTo(Scaladoc) Closure action) {
+        ConfigureUtil.configure(action, scaladoc)
+    }
+
     void source(Action<? super Source> action) {
         action.execute(source)
     }
@@ -414,6 +431,7 @@ class ProjectConfigurationExtension {
         this.@license.copyInto(copy.@license)
         this.@minpom.copyInto(copy.@minpom)
         this.@publishing.copyInto(copy.@publishing)
+        this.@scaladoc.copyInto(copy.@scaladoc)
         this.@source.copyInto(copy.@source)
         this.@sourceHtml.copyInto(copy.@sourceHtml)
         this.@sourceXref.copyInto(copy.@sourceXref)
@@ -441,6 +459,7 @@ class ProjectConfigurationExtension {
         License.merge(merged.@license, other.@license)
         Minpom.merge(merged.@minpom, other.@minpom)
         Publishing.merge(merged.@publishing, other.@publishing)
+        Scaladoc.merge(merged.@scaladoc, other.@scaladoc)
         Source.merge(merged.@source, other.@source)
         SourceHtml.merge(merged.@sourceHtml, other.@sourceHtml)
         SourceXref.merge(merged.@sourceXref, other.@sourceXref)
@@ -466,5 +485,6 @@ class ProjectConfigurationExtension {
         info.normalize()
         groovydoc.normalize()
         kotlindoc.normalize()
+        scaladoc.normalize()
     }
 }

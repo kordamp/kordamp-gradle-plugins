@@ -1,0 +1,94 @@
+
+[[_org_kordamp_gradle_scaladoc]]
+= Scaladoc
+
+[horizontal]
+id:: `org.kordamp.gradle.scaladoc`
+class:: `org.kordamp.gradle.plugin.scaladoc.ScaladocPlugin`
+    (link:api/org/kordamp/gradle/plugin/scaladoc/ScaladocPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/scaladoc/ScaladocPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+
+Generates and packages Scaladoc documentation.
+
+[[_org_kordamp_gradle_scaladoc_dsl]]
+== DSL
+
+[source,scala]
+[subs="+macros"]
+----
+config {
+    scaladoc {
+        enabled
+        title
+        includes
+        excludes
+        <<_scaladoc_options,options>> {
+            bottom
+            top
+            docTitle
+            deprecation
+            unchecked
+            additionalParameters
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name     | Type         | Required | Default Value                        | Description
+| enabled  | boolean      | no       | true                                 | Disables `org.kordamp.gradle.scaladoc` plugin if `false`
+| title    | String       | no       | "${project.name} ${project.version}" |
+| includes | Set<String>  | no       | []                                   |
+| excludes | Set<String>  | no       | []                                   |
+|===
+
+[[_scaladoc_options]]
+*options*
+
+[options="header", cols="5*"]
+|===
+| Name                 | Type         | Required | Default Value                        | Description
+| bottom               | String       | no       |                                      |
+| top                  | String       | no       |                                      |
+| docTitle             | String       | no       | "${project.name} ${project.version}" |
+| deprecation          | boolean      | no       |                                      |
+| unchecked            | boolean      | no       |                                      |
+| additionalParameters | List<String> | no       | []                                   |
+|===
+
+This block is optional.
+
+[[_org_kordamp_gradle_scaladoc_tasks]]
+== Tasks
+
+[[_task_scaladoc]]
+=== Scaladoc
+
+Generates Scaladoc API documentation. +
+Consumes settings from `config.<<_org_kordamp_gradle_scaladoc_dsl,scaladoc>>`.
+
+[horizontal]
+Name:: scaladoc
+Type:: `org.gradle.api.tasks.scala.ScalaDoc`
+
+.Properties
+[horizontal]
+destinationDir:: `${project.buildDir}/docs/scaladoc`
+
+[[_task_scaladoc_jar]]
+=== ScaladocJar
+
+An archive of the Scaladoc API docs.
+
+[horizontal]
+Name:: scaladocJar
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+classifier:: scaladoc
+destinationDir:: `${project.buildDir}/build/libs`
+from:: `scaladoc.destinationDir`
+
