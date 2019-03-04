@@ -170,12 +170,13 @@ class KotlindocPlugin extends AbstractKordampPlugin {
             project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
             project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
 
-            if (project.plugins.findPlugin(MavenPublishPlugin)) {
-                project.publishing {
-                    publications {
-                        main(MavenPublication) {
-                            artifact kotlindocJarTask
-                        }
+        }
+
+        if (project.plugins.findPlugin(MavenPublishPlugin)) {
+            project.publishing {
+                publications {
+                    main(MavenPublication) {
+                        artifact kotlindocJarTask
                     }
                 }
             }

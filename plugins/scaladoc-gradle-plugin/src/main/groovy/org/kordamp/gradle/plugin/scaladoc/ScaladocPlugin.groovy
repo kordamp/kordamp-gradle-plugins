@@ -24,6 +24,8 @@ import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.scala.ScalaBasePlugin
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.scala.ScalaDoc
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
@@ -203,6 +205,16 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                 description 'An archive of the Scaladoc API docs'
                 classifier 'scaladoc'
                 from scaladoc.destinationDir
+            }
+        }
+
+        if (project.plugins.findPlugin(MavenPublishPlugin)) {
+            project.publishing {
+                publications {
+                    main(MavenPublication) {
+                        artifact scaladocJarTask
+                    }
+                }
             }
         }
 

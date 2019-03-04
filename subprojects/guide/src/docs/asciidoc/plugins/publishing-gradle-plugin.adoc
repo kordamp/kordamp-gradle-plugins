@@ -20,7 +20,7 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 
 Configures a MavenPublication for the project's artifacts using the core `maven-publish` plugin.
 The name of the publication matches `"main"`. Published artifacts include the main JAR, sources,
-javadoc/groovydoc/kotlindoc JARs.
+javadoc/groovydoc/kotlindoc/scaladoc JARs.
 
 Data defined in the DSL's `config.info` and `config.license` blocks will be used to fill out information required by the
 generated POM file.
