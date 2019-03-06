@@ -1,6 +1,6 @@
 
 [[_org_kordamp_gradle_licensing]]
-= License
+= Licensing
 
 [horizontal]
 id:: `org.kordamp.gradle.licensing`

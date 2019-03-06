@@ -1,6 +1,6 @@
 
 [[_org_kordamp_gradle_testing]]
-= Test
+= Testing
 
 [horizontal]
 id:: `org.kordamp.gradle.testing`
