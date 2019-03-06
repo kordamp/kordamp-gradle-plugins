@@ -532,6 +532,7 @@ class ProjectConfigurationExtension {
     void normalize() {
         info.normalize()
         licensing.normalize()
+        publishing.normalize()
         groovydoc.normalize()
         kotlindoc.normalize()
         scaladoc.normalize()

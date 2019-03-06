@@ -42,6 +42,7 @@ class Publishing extends AbstractFeature {
 
     Publishing(Project project) {
         super(project)
+        doSetEnabled(project.plugins.findPlugin('groovy') != null)
     }
 
     @Override
@@ -62,6 +63,12 @@ class Publishing extends AbstractFeature {
         }
 
         ['publishing': map]
+    }
+
+    void normalize() {
+        if (!enabledSet) {
+            setEnabled(project.plugins.findPlugin('org.kordamp.gradle.publishing') != null)
+        }
     }
 
     void pom(Action<? super PomOptions> action) {
