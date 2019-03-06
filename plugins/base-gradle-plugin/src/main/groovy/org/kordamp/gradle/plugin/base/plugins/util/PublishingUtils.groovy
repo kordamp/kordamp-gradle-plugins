@@ -52,7 +52,7 @@ class PublishingUtils {
             pom.licenses(new Action<MavenPomLicenseSpec>() {
                 @Override
                 void execute(MavenPomLicenseSpec licenses) {
-                    effectiveConfig.license.licenses.forEach { License lic ->
+                    effectiveConfig.licensing.licenses.forEach { License lic ->
                         licenses.license(new Action<MavenPomLicense>() {
                             @Override
                             void execute(MavenPomLicense license) {

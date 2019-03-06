@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.license
+package org.kordamp.gradle.plugin.licensing
 
 import com.hierynomus.gradle.license.LicenseReportingPlugin
 import com.hierynomus.gradle.license.tasks.LicenseCheck
@@ -45,7 +45,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @since 0.2.0
  */
 @CompileStatic
-class LicensePlugin extends AbstractKordampPlugin {
+class LicensingPlugin extends AbstractKordampPlugin {
     private static final LicenseMetadata LICENSE_APACHE_TWO = new LicenseMetadata('The Apache Software License, Version 2.0', LicenseId.APACHE_2_0.url())
     private static final LicenseMetadata LICENSE_EPL1 = new LicenseMetadata('Eclipse Public License v1.0', LicenseId.EPL_1_0.url())
     private static final LicenseMetadata LICENSE_EPL2 = new LicenseMetadata('Eclipse Public License v2.0', LicenseId.EPL_2_0.url())
@@ -140,8 +140,8 @@ class LicensePlugin extends AbstractKordampPlugin {
     }
 
     static void applyIfMissing(Project project) {
-        if (!project.plugins.findPlugin(LicensePlugin)) {
-            project.plugins.apply(LicensePlugin)
+        if (!project.plugins.findPlugin(LicensingPlugin)) {
+            project.plugins.apply(LicensingPlugin)
         }
     }
 
@@ -190,7 +190,7 @@ class LicensePlugin extends AbstractKordampPlugin {
     @CompileDynamic
     private void configureLicenseExtension(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        setEnabled(effectiveConfig.license.enabled)
+        setEnabled(effectiveConfig.licensing.enabled)
 
         if (!enabled) {
             project.tasks.withType(LicenseCheck).each { it.enabled = false }
@@ -198,11 +198,11 @@ class LicensePlugin extends AbstractKordampPlugin {
             return
         }
 
-        License lic = effectiveConfig.license.allLicenses()[0]
-        if (effectiveConfig.license.allLicenses().size() > 1) {
-            lic = effectiveConfig.license.allLicenses().find {
+        License lic = effectiveConfig.licensing.allLicenses()[0]
+        if (effectiveConfig.licensing.allLicenses().size() > 1) {
+            lic = effectiveConfig.licensing.allLicenses().find {
                 it.primary
-            } ?: effectiveConfig.license.allLicenses()[0]
+            } ?: effectiveConfig.licensing.allLicenses()[0]
         }
 
         LicenseExtension licenseExtension = project.extensions.findByType(LicenseExtension)
@@ -235,7 +235,7 @@ class LicensePlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         Map<Object, List<Object>> defaultAliases = new LinkedHashMap<>(DEFAULT_ALIASES)
-        effectiveConfig.license.licenses.licenses.each { license ->
+        effectiveConfig.licensing.licenses.licenses.each { license ->
             if (license.licenseId && license.aliases) {
                 LicenseMetadata licenseMetadata = LICENSES_MAP.get(license.licenseId)
                 if (!licenseMetadata) {
@@ -264,7 +264,7 @@ class LicensePlugin extends AbstractKordampPlugin {
 
     private void configureAggregateLicenseReportTask(Project project, TaskProvider<AggregateLicenseReportTask> task) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.license.enabled) {
+        if (!effectiveConfig.licensing.enabled) {
             return
         }
 

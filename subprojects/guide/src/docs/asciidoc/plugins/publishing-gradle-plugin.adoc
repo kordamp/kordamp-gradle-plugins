@@ -22,7 +22,7 @@ Configures a MavenPublication for the project's artifacts using the core `maven-
 The name of the publication matches `"main"`. Published artifacts include the main JAR, sources,
 javadoc/groovydoc/kotlindoc/scaladoc JARs.
 
-Data defined in the DSL's `config.info` and `config.license` blocks will be used to fill out information required by the
+Data defined in the DSL's `config.info` and `config.licensing` blocks will be used to fill out information required by the
 generated POM file.
 
 [[_org_kordamp_gradle_publishing_dsl]]

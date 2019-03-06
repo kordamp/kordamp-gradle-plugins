@@ -157,7 +157,7 @@ config {
         }
     }
 
-    license {                                                             // <4>
+    licensing {                                                           // <4>
         licenses {
             license {
                 id = 'Apache-2.0'
@@ -223,7 +223,7 @@ config {
         }
     }
 
-    license {                                                             //<4>
+    licensing {                                                           //<4>
         licenses {
             license {
                 id = org.kordamp.gradle.plugin.base.model.LicenseId.APACHE_2_0

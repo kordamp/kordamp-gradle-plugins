@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-1019 the original author or authors.
+ * Copyright 2018-2019 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kordamp.gradle.plugin.license
 
-dependencies {
-    compile project(':base-gradle-plugin')
-    compile 'gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.14.0'
+import groovy.transform.CompileStatic
+import org.gradle.api.Project
+import org.kordamp.gradle.plugin.licensing.LicensingPlugin
+
+/**
+ * @author Andres Almiray
+ */
+@CompileStatic
+class LicensePlugin extends LicensingPlugin{
+    @Override
+    void apply(Project project) {
+        project.logger.warn("Plugin org.kordamp.gradle.license has been deprecated, use org.kordamp.gradle.licensing instead")
+        super.apply(project)
+    }
 }

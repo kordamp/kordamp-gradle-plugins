@@ -98,7 +98,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
                 userOrg = effectiveConfig.bintray.userOrg
                 name = effectiveConfig.bintray.name
                 desc = effectiveConfig.info.description
-                licenses = effectiveConfig.license.resolveBintrayLicenseIds()
+                licenses = effectiveConfig.licensing.resolveBintrayLicenseIds()
                 labels = effectiveConfig.info.tags
                 websiteUrl = effectiveConfig.info.url
                 issueTrackerUrl = effectiveConfig.info.links.issueTracker

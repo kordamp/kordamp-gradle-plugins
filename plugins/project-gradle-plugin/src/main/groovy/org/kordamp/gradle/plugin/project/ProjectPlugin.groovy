@@ -27,7 +27,7 @@ import org.kordamp.gradle.plugin.bintray.BintrayPlugin
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.jacoco.JacocoPlugin
 import org.kordamp.gradle.plugin.jar.JarPlugin
-import org.kordamp.gradle.plugin.license.LicensePlugin
+import org.kordamp.gradle.plugin.licensing.LicensingPlugin
 import org.kordamp.gradle.plugin.minpom.MinPomPlugin
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 import org.kordamp.gradle.plugin.source.SourceJarPlugin
@@ -63,7 +63,7 @@ class ProjectPlugin implements Plugin<Project> {
     static void applyPlugins(Project project) {
         BasePlugin.applyIfMissing(project)
         JacocoPlugin.applyIfMissing(project)
-        LicensePlugin.applyIfMissing(project)
+        LicensingPlugin.applyIfMissing(project)
         BuildInfoPlugin.applyIfMissing(project)
         SourceJarPlugin.applyIfMissing(project)
         ApidocPlugin.applyIfMissing(project)

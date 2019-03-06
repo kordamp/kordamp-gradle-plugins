@@ -1,25 +1,25 @@
 
-[[_org_kordamp_gradle_license]]
+[[_org_kordamp_gradle_licensing]]
 = License
 
 [horizontal]
-id:: `org.kordamp.gradle.license`
-class:: `org.kordamp.gradle.plugin.license.LicensePlugin`
-    (link:api/org/kordamp/gradle/plugin/license/LicensePlugin.html[groovydoc],
-     link:api-html/org/kordamp/gradle/plugin/license/LicensePlugin.html[source])
+id:: `org.kordamp.gradle.licensing`
+class:: `org.kordamp.gradle.plugin.licensing.LicensingPlugin`
+    (link:api/org/kordamp/gradle/plugin/licensing/LicensingPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/licensing/LicensingPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `link:https://github.com/hierynomus/license-gradle-plugin[com.github.hierynomus.license]`
 
 Configures license checks and reports on the target project. +
 Configures aggregate license reports on the root project.
 
-[[_org_kordamp_gradle_license_dsl]]
+[[_org_kordamp_gradle_licensing_dsl]]
 == DSL
 
 [source,groovy]
 ----
 config {
-    license {
+    licensing {
         enabled
         licenses {
             license {
@@ -44,7 +44,7 @@ config {
                                                      At least one nested `license` block must be defined.
 |===
 
-[[_license_licenses_license]]
+[[_licensing_licenses_license]]
 *license*
 
 [options="header", cols="5*"]
@@ -75,7 +75,7 @@ be treated as the primary license.
 .build.gradle
 ----
 config {
-    license {
+    licensing {
         licenses {
             license {
                 id = 'Apache-2.0'
@@ -89,7 +89,7 @@ config {
 .build.gradle.kts
 ----
 config {
-    license {
+    licensing {
         licenses {
             license {
                 id = "Apache-2.0"
@@ -99,7 +99,7 @@ config {
 }
 ----
 
-[[_org_kordamp_gradle_license_extensions]]
+[[_org_kordamp_gradle_licensing_extensions]]
 == Extensions
 
 [[_extension_license]]
@@ -146,7 +146,7 @@ BSD 3-Clause "New" or "Revised" License:: BSD 3-Clause "New" or "Revised" Licens
 Revised BSD License, Revised BSD license, BSD Revised License, BSD Revised license, New BSD License, New BSD license,
 BSD New License, BSD New license, BSD 3-Clause, BSD 3-clause
 
-[[_org_kordamp_gradle_license_tasks]]
+[[_org_kordamp_gradle_licensing_tasks]]
 == Tasks
 
 [[_task_aggregate_license_report]]
@@ -157,7 +157,7 @@ This task is added to the root project.
 
 [horizontal]
 Name:: aggregateLicenseReport
-Type:: `org.kordamp.gradle.plugin.license.AggregateLicenseReportTask`
+Type:: `org.kordamp.gradle.plugin.licensing.AggregateLicenseReportTask`
 
 .Properties
 [horizontal]

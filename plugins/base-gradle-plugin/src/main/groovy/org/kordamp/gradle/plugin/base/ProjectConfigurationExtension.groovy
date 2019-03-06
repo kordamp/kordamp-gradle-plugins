@@ -32,7 +32,7 @@ import org.kordamp.gradle.plugin.base.plugins.Groovydoc
 import org.kordamp.gradle.plugin.base.plugins.Jacoco
 import org.kordamp.gradle.plugin.base.plugins.Javadoc
 import org.kordamp.gradle.plugin.base.plugins.Kotlindoc
-import org.kordamp.gradle.plugin.base.plugins.License
+import org.kordamp.gradle.plugin.base.plugins.Licensing
 import org.kordamp.gradle.plugin.base.plugins.Minpom
 import org.kordamp.gradle.plugin.base.plugins.Publishing
 import org.kordamp.gradle.plugin.base.plugins.Scaladoc
@@ -64,7 +64,7 @@ class ProjectConfigurationExtension {
     final Kotlindoc kotlindoc
     final Jacoco jacoco
     final Javadoc javadoc
-    final License license
+    final Licensing licensing
     final Minpom minpom
     final Publishing publishing
     final Scaladoc scaladoc
@@ -91,7 +91,7 @@ class ProjectConfigurationExtension {
         kotlindoc = new Kotlindoc(project)
         jacoco = new Jacoco(project)
         javadoc = new Javadoc(project)
-        license = new License(project)
+        licensing = new Licensing(project)
         minpom = new Minpom(project)
         publishing = new Publishing(project)
         scaladoc = new Scaladoc(project)
@@ -114,7 +114,7 @@ class ProjectConfigurationExtension {
         this.kotlindoc = other.kotlindoc
         this.jacoco = other.jacoco
         this.javadoc = other.javadoc
-        this.license = other.license
+        this.licensing = other.licensing
         this.minpom = other.minpom
         this.publishing = other.publishing
         this.scaladoc = other.scaladoc
@@ -154,7 +154,7 @@ class ProjectConfigurationExtension {
         map.putAll(kotlindoc.toMap())
         map.putAll(jacoco.toMap())
         map.putAll(javadoc.toMap())
-        map.putAll(license.toMap())
+        map.putAll(licensing.toMap())
         map.putAll(minpom.toMap())
         map.putAll(publishing.toMap())
         map.putAll(scaladoc.toMap())
@@ -207,8 +207,16 @@ class ProjectConfigurationExtension {
         javadoc
     }
 
-    License getLicense() {
-        license
+    Licensing getLicensing() {
+        licensing
+    }
+
+    /**
+     * @Deprecated Use #getLicensing() instead
+     */
+    Licensing getLicense() {
+        project.logger.warn("ProjectConfigurationExtension.getLicense() has been deprecated, use getLicensing() instead")
+        licensing
     }
 
     Minpom getMinpom() {
@@ -333,12 +341,28 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, javadoc)
     }
 
-    void license(Action<? super License> action) {
-        action.execute(license)
+    void licensing(Action<? super Licensing> action) {
+        action.execute(licensing)
     }
 
-    void license(@DelegatesTo(License) Closure action) {
-        ConfigureUtil.configure(action, license)
+    void licensing(@DelegatesTo(Licensing) Closure action) {
+        ConfigureUtil.configure(action, licensing)
+    }
+
+    /**
+     * @Deprecated Use #licensing() instead
+     */
+    void license(Action<? super Licensing> action) {
+        project.logger.warn("ProjectConfigurationExtension.license() has been deprecated, use licensing() instead")
+        action.execute(licensing)
+    }
+
+    /**
+     * @Deprecated Use #licensing() instead
+     */
+    void license(@DelegatesTo(Licensing) Closure action) {
+        project.logger.warn("ProjectConfigurationExtension.license() has been deprecated, use licensing() instead")
+        ConfigureUtil.configure(action, licensing)
     }
 
     void minpom(Action<? super Minpom> action) {
@@ -428,7 +452,7 @@ class ProjectConfigurationExtension {
         this.@kotlindoc.copyInto(copy.@kotlindoc)
         this.@jacoco.copyInto(copy.@jacoco)
         this.@javadoc.copyInto(copy.@javadoc)
-        this.@license.copyInto(copy.@license)
+        this.@licensing.copyInto(copy.@licensing)
         this.@minpom.copyInto(copy.@minpom)
         this.@publishing.copyInto(copy.@publishing)
         this.@scaladoc.copyInto(copy.@scaladoc)
@@ -456,7 +480,7 @@ class ProjectConfigurationExtension {
         Kotlindoc.merge(merged.@kotlindoc, other.@kotlindoc)
         Jacoco.merge(merged.@jacoco, other.@jacoco)
         Javadoc.merge(merged.@javadoc, other.@javadoc)
-        License.merge(merged.@license, other.@license)
+        Licensing.merge(merged.@licensing, other.@licensing)
         Minpom.merge(merged.@minpom, other.@minpom)
         Publishing.merge(merged.@publishing, other.@publishing)
         Scaladoc.merge(merged.@scaladoc, other.@scaladoc)
@@ -475,7 +499,7 @@ class ProjectConfigurationExtension {
         errors.addAll(this.@info.validate(this))
         errors.addAll(this.@bom.validate(this))
         errors.addAll(this.@bintray.validate(this))
-        errors.addAll(this.@license.validate(this))
+        errors.addAll(this.@licensing.validate(this))
         errors.addAll(this.@kotlindoc.validate(this))
 
         errors

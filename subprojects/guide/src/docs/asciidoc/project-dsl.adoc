@@ -21,7 +21,7 @@ config {
     <<_org_kordamp_gradle_jacoco,jacoco>> { ... }
     <<_org_kordamp_gradle_javadoc,javadoc>> { ... }
     <<_org_kordamp_gradle_kotlindoc,kotlindoc>> { ... }
-    <<_org_kordamp_gradle_license,license>> { ... }
+    <<_org_kordamp_gradle_licensing,licensing>> { ... }
     <<_org_kordamp_gradle_minpom,minpom>> { ... }
     <<_org_kordamp_gradle_publishing,publishing>> { ... }
     <<_org_kordamp_gradle_scaladoc,scaladoc>> { ... }

@@ -296,7 +296,7 @@ plugins {
 }
 
 config {
-    license    { enabled = false }
+    licensing  { enabled = false }
 
     publishing { enabled = false }
 }
@@ -380,7 +380,7 @@ plugins {
 }
 
 config {
-    license    { enabled = false }
+    licensing  { enabled = false }
 
     publishing { enabled = false }
 }
@@ -449,8 +449,8 @@ plugin 11:
     implementationClass: nl.javadude.gradle.plugins.license.LicensePlugin
 
 plugin 12:
-    id: org.kordamp.gradle.license
-    implementationClass: org.kordamp.gradle.plugin.license.LicensePlugin
+    id: org.kordamp.gradle.licensing
+    implementationClass: org.kordamp.gradle.plugin.licensing.LicensingPlugin
     enabled: false
 
 plugin 13:
@@ -568,7 +568,7 @@ plugins {
 ext.build_property = 'build'
 
 config {
-    license    { enabled = false }
+    licensing  { enabled = false }
 
     publishing { enabled = false }
 }
@@ -624,7 +624,7 @@ plugins {
 }
 
 config {
-    license    { enabled = false }
+    licensing  { enabled = false }
 
     publishing { enabled = false }
 }

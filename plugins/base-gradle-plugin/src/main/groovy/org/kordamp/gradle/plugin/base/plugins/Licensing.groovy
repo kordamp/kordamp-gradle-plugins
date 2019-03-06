@@ -32,10 +32,10 @@ import org.kordamp.gradle.plugin.base.model.LicenseSet
  */
 @CompileStatic
 @Canonical
-class License extends AbstractFeature {
+class Licensing extends AbstractFeature {
     final LicenseSet licenses = new LicenseSet()
 
-    License(Project project) {
+    Licensing(Project project) {
         super(project)
     }
 
@@ -63,12 +63,12 @@ class License extends AbstractFeature {
         ConfigureUtil.configure(action, licenses)
     }
 
-    void copyInto(License copy) {
+    void copyInto(Licensing copy) {
         super.copyInto(copy)
         licenses.copyInto(copy.licenses)
     }
 
-    static void merge(License o1, License o2) {
+    static void merge(Licensing o1, Licensing o2) {
         AbstractFeature.merge(o1, o2)
         LicenseSet.merge(o1.licenses, o2.licenses)
     }

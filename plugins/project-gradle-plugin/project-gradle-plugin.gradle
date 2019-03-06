@@ -25,7 +25,7 @@ dependencies {
     compile project(':clirr-gradle-plugin')
     compile project(':jacoco-gradle-plugin')
     compile project(':jar-gradle-plugin')
-    compile project(':license-gradle-plugin')
+    compile project(':licensing-gradle-plugin')
     compile project(':minpom-gradle-plugin')
     compile project(':publishing-gradle-plugin')
     compile project(':source-gradle-plugin')
