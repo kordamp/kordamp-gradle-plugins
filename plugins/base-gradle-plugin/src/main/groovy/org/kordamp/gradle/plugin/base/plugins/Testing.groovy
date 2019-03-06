@@ -22,6 +22,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.tasks.testing.Test
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.test.tasks.FunctionalTest
 import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
@@ -32,7 +33,7 @@ import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
  */
 @CompileStatic
 @Canonical
-class Test extends AbstractFeature {
+class Testing extends AbstractFeature {
     boolean logging = true
     boolean aggregate = true
 
@@ -42,11 +43,11 @@ class Test extends AbstractFeature {
     final Integration integration
     final Functional functional
 
-    private final Set<org.gradle.api.tasks.testing.Test> testTasks = new LinkedHashSet<>()
+    private final Set<Test> testTasks = new LinkedHashSet<>()
     private final Set<IntegrationTest> integrationTasks = new LinkedHashSet<>()
     private final Set<FunctionalTest> functionalTestTasks = new LinkedHashSet<>()
 
-    Test(Project project) {
+    Testing(Project project) {
         super(project)
         integration = new Integration(this)
         functional = new Functional(this)
@@ -103,7 +104,7 @@ class Test extends AbstractFeature {
         ConfigureUtil.configure(action, functional)
     }
 
-    void copyInto(Test copy) {
+    void copyInto(Testing copy) {
         super.copyInto(copy)
 
         copy.@logging = logging
@@ -114,7 +115,7 @@ class Test extends AbstractFeature {
         functional.copyInto(copy.@functional)
     }
 
-    static void merge(Test o1, Test o2) {
+    static void merge(Testing o1, Testing o2) {
         AbstractFeature.merge(o1, o2)
         o1.setLogging((boolean) (o1.loggingSet ? o1.logging : o2.logging))
         o1.setAggregate((boolean) (o1.aggregateSet ? o1.aggregate : o2.aggregate))
@@ -122,7 +123,7 @@ class Test extends AbstractFeature {
         Functional.merge(o1.functional, o2.functional)
     }
 
-    Set<org.gradle.api.tasks.testing.Test> testTasks() {
+    Set<Test> testTasks() {
         testTasks
     }
 

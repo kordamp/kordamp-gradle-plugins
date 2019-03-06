@@ -29,7 +29,7 @@ config {
     <<_org_kordamp_gradle_sourcehtml,sourceHtml>> { ... }
     <<_org_kordamp_gradle_sourcestats,stats>> { ... }
     <<_org_kordamp_gradle_sourcexref,sourceXref>> { ... }
-    <<_org_kordamp_gradle_test,test>> { ... }
+    <<_org_kordamp_gradle_testing,testing>> { ... }
 }
 ----
 

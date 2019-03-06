@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.test
+package org.kordamp.gradle.plugin.testing
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
@@ -31,6 +31,7 @@ import org.gradle.api.tasks.testing.TestResult
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Testing
 import org.kordamp.gradle.plugin.test.tasks.FunctionalTest
 import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
 
@@ -43,7 +44,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @since 0.14.0
  */
 @CompileStatic
-class TestPlugin extends AbstractKordampPlugin {
+class TestingPlugin extends AbstractKordampPlugin {
     private static final boolean WINDOWS = System.getProperty('os.name').startsWith('Windows')
 
     Project project
@@ -60,8 +61,8 @@ class TestPlugin extends AbstractKordampPlugin {
     }
 
     static void applyIfMissing(Project project) {
-        if (!project.plugins.findPlugin(TestPlugin)) {
-            project.plugins.apply(TestPlugin)
+        if (!project.plugins.findPlugin(TestingPlugin)) {
+            project.plugins.apply(TestingPlugin)
         }
     }
 
@@ -75,7 +76,7 @@ class TestPlugin extends AbstractKordampPlugin {
 
         project.afterEvaluate {
             ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-            setEnabled(effectiveConfig.test.enabled)
+            setEnabled(effectiveConfig.testing.enabled)
 
             if (!enabled) {
                 return
@@ -87,14 +88,14 @@ class TestPlugin extends AbstractKordampPlugin {
                 }
 
                 if (testTask instanceof IntegrationTest) {
-                    configureLogging(testTask, effectiveConfig.test.integration.logging)
-                    effectiveConfig.test.integrationTasks() << (IntegrationTest) testTask
+                    configureLogging(testTask, effectiveConfig.testing.integration.logging)
+                    effectiveConfig.testing.integrationTasks() << (IntegrationTest) testTask
                 } else if (testTask instanceof FunctionalTest) {
-                    configureLogging(testTask, effectiveConfig.test.functional.logging)
-                    effectiveConfig.test.functionalTestTasks() << (FunctionalTest) testTask
+                    configureLogging(testTask, effectiveConfig.testing.functional.logging)
+                    effectiveConfig.testing.functionalTestTasks() << (FunctionalTest) testTask
                 } else {
-                    configureLogging(testTask, effectiveConfig.test.logging)
-                    effectiveConfig.test.testTasks() << testTask
+                    configureLogging(testTask, effectiveConfig.testing.logging)
+                    effectiveConfig.testing.testTasks() << testTask
                 }
             }
         }
@@ -180,16 +181,16 @@ class TestPlugin extends AbstractKordampPlugin {
                                                    TaskProvider<TestReport> aggregateFunctionalTestReportTask,
                                                    TaskProvider<TestReport> aggregateAllTestReportTask) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.test.enabled) {
+        if (!effectiveConfig.testing.enabled) {
             return
         }
 
-        Set<Test> tt = new LinkedHashSet<>(effectiveConfig.test.testTasks())
-        Set<IntegrationTest> itt = new LinkedHashSet<>(effectiveConfig.test.integrationTasks())
-        Set<FunctionalTest> ftt = new LinkedHashSet<>(effectiveConfig.test.functionalTestTasks())
+        Set<Test> tt = new LinkedHashSet<>(effectiveConfig.testing.testTasks())
+        Set<IntegrationTest> itt = new LinkedHashSet<>(effectiveConfig.testing.integrationTasks())
+        Set<FunctionalTest> ftt = new LinkedHashSet<>(effectiveConfig.testing.functionalTestTasks())
 
         project.childProjects.values().each {
-            org.kordamp.gradle.plugin.base.plugins.Test e = resolveEffectiveConfig(it).test
+            Testing e = resolveEffectiveConfig(it).testing
             if (e.enabled) {
                 tt.addAll(e.testTasks())
                 itt.addAll(e.integrationTasks())

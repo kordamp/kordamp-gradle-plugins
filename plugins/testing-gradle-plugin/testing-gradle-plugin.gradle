@@ -19,3 +19,21 @@
 dependencies {
     compile project(':base-gradle-plugin')
 }
+
+gradlePlugin {
+    plugins {
+        testPlugin {
+            id = 'org.kordamp.gradle.test'
+            implementationClass = 'org.kordamp.gradle.plugin.test.TestPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    plugins {
+        testPlugin {
+            id = 'org.kordamp.gradle.test'
+            displayName = 'Kordamp Test Gradle Plugin (deprecated)'
+        }
+    }
+}

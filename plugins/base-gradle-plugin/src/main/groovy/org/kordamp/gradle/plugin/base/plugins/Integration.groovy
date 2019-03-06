@@ -34,9 +34,9 @@ class Integration {
     private boolean loggingSet = false
     private boolean aggregateSet = false
 
-    protected final Test test
+    protected final Testing test
 
-    Integration(Test test) {
+    Integration(Testing test) {
         this.test = test
     }
 

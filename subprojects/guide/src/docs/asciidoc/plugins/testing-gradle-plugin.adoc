@@ -1,24 +1,24 @@
 
-[[_org_kordamp_gradle_test]]
+[[_org_kordamp_gradle_testing]]
 = Test
 
 [horizontal]
-id:: `org.kordamp.gradle.test`
-class:: `org.kordamp.gradle.plugin.test.TestPlugin`
-    (link:api/org/kordamp/gradle/plugin/test/TestPlugin.html[groovydoc],
-     link:api-html/org/kordamp/gradle/plugin/test/TestPlugin.html[source])
+id:: `org.kordamp.gradle.testing`
+class:: `org.kordamp.gradle.plugin.testing.TestingPlugin`
+    (link:api/org/kordamp/gradle/plugin/testing/TestingPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/testing/TestingPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 
 Configures test reports.
 
-[[_org_kordamp_gradle_test_dsl]]
+[[_org_kordamp_gradle_testing_dsl]]
 == DSL
 
 [source,groovy]
 [subs="+macros"]
 ----
 config {
-    test {
+    testing {
         enabled
         logging
         aggregate
@@ -42,7 +42,7 @@ config {
 | aggregate | boolean | no       | true          | Enables test report aggregation
 |===
 
-[[_test_integration]]
+[[_testing_integration]]
 *integration*
 
 [options="header", cols="5*"]
@@ -52,7 +52,7 @@ config {
 | aggregate | boolean | no       | true          | Enables test report aggregation
 |===
 
-[[_test_functional]]
+[[_testing_functional]]
 *functional*
 
 [options="header", cols="5*"]
@@ -62,10 +62,10 @@ config {
 | aggregate | boolean | no       | true          | Enables test report aggregation
 |===
 
-[[_org_kordamp_gradle_test_tasks]]
+[[_org_kordamp_gradle_testing_tasks]]
 == Tasks
 
-[[_task_aggregate_test_reports]]
+[[_task_aggregate_testing_reports]]
 === AggregateTestReports
 
 Aggregates all test reports that are not _integration_ nor _functional_. +
@@ -79,7 +79,7 @@ Type:: `org.gradle.api.tasks.testing.TestReport`
 [horizontal]
 destinationDir:: `${rootProject.buildDir}/reports/aggregate-tests`
 
-[[_task_aggregate_integration_test_reports]]
+[[_task_aggregate_integration_testing_reports]]
 === AggregateIntegrationTestReports
 
 Aggregates all integration test reports. +
@@ -93,7 +93,7 @@ Type:: `org.gradle.api.tasks.testing.TestReport`
 [horizontal]
 destinationDir:: `${rootProject.buildDir}/reports/aggregate-integration-tests`
 
-[[_task_aggregate_functional_test_reports]]
+[[_task_aggregate_functional_testing_reports]]
 === AggregateFunctionalTestReports
 
 Aggregates all functional test reports. +
@@ -107,7 +107,7 @@ Type:: `org.gradle.api.tasks.testing.TestReport`
 [horizontal]
 destinationDir:: `${rootProject.buildDir}/reports/aggregate-fiunctional-tests`
 
-[[_task_aggregate_all_test_reports]]
+[[_task_aggregate_all_testing_reports]]
 === AggregateAllTestReports
 
 Aggregates all test reports. +

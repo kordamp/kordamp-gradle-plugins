@@ -34,7 +34,7 @@ pluginBundle {
     plugins {
         licensePlugin {
             id = 'org.kordamp.gradle.license'
-            displayName = 'Kordamp Licensing Gradle Plugin (deprecated)'
+            displayName = 'Kordamp License Gradle Plugin (deprecated)'
         }
     }
 }

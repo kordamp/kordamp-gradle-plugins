@@ -33,7 +33,7 @@ dependencies {
     compile project(':sourcestats-gradle-plugin')
     compile project(':sourcexref-gradle-plugin')
     compile project(':bintray-gradle-plugin')
-    compile project(':test-gradle-plugin')
+    compile project(':testing-gradle-plugin')
     compile project(':integrationtest-gradle-plugin')
     compile project(':functionaltest-gradle-plugin')
 }

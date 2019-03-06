@@ -40,7 +40,7 @@ import org.kordamp.gradle.plugin.base.plugins.Source
 import org.kordamp.gradle.plugin.base.plugins.SourceHtml
 import org.kordamp.gradle.plugin.base.plugins.SourceXref
 import org.kordamp.gradle.plugin.base.plugins.Stats
-import org.kordamp.gradle.plugin.base.plugins.Test
+import org.kordamp.gradle.plugin.base.plugins.Testing
 
 /**
  * @author Andres Almiray
@@ -72,7 +72,7 @@ class ProjectConfigurationExtension {
     final SourceHtml sourceHtml
     final SourceXref sourceXref
     final Stats stats
-    final Test test
+    final Testing testing
 
     private boolean releaseSet
 
@@ -99,7 +99,7 @@ class ProjectConfigurationExtension {
         sourceHtml = new SourceHtml(project)
         sourceXref = new SourceXref(project)
         stats = new Stats(project)
-        test = new Test(project)
+        testing = new Testing(project)
     }
 
     ProjectConfigurationExtension(ProjectConfigurationExtension other) {
@@ -122,7 +122,7 @@ class ProjectConfigurationExtension {
         this.sourceHtml = other.sourceHtml
         this.sourceXref = other.sourceXref
         this.stats = other.stats
-        this.test = other.test
+        this.testing = other.testing
         setRelease(other.release)
         projectActions.addAll(other.projectActions)
         rootProjectActions.addAll(other.rootProjectActions)
@@ -162,7 +162,7 @@ class ProjectConfigurationExtension {
         map.putAll(sourceHtml.toMap())
         map.putAll(sourceXref.toMap())
         map.putAll(stats.toMap())
-        map.putAll(test.toMap())
+        map.putAll(testing.toMap())
 
         map
     }
@@ -247,8 +247,16 @@ class ProjectConfigurationExtension {
         stats
     }
 
-    Test getTest() {
-        test
+    /**
+     * @Deprecated Use #getTesting() instead
+     */
+    Testing getTest() {
+        project.logger.warn("ProjectConfigurationExtension.getTest() has been deprecated, use getTesting() instead")
+        testing
+    }
+
+    Testing getTesting() {
+        testing
     }
 
     ProjectConfigurationExtension whenProjectReady(Action<? super Project> action) {
@@ -421,12 +429,28 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, sourceXref)
     }
 
-    void test(Action<? super Test> action) {
-        action.execute(test)
+    /**
+     * @Deprecated Use #testing() instead
+     */
+    void test(Action<? super Testing> action) {
+        project.logger.warn("ProjectConfigurationExtension.test() has been deprecated, use testing() instead")
+        action.execute(testing)
     }
 
-    void test(@DelegatesTo(Test) Closure action) {
-        ConfigureUtil.configure(action, test)
+    /**
+     * @Deprecated Use #testing() instead
+     */
+    void test(@DelegatesTo(Testing) Closure action) {
+        project.logger.warn("ProjectConfigurationExtension.test() has been deprecated, use testing() instead")
+        ConfigureUtil.configure(action, testing)
+    }
+
+    void testing(Action<? super Testing> action) {
+        action.execute(testing)
+    }
+
+    void testing(@DelegatesTo(Testing) Closure action) {
+        ConfigureUtil.configure(action, testing)
     }
 
     void setRelease(boolean release) {
@@ -460,7 +484,7 @@ class ProjectConfigurationExtension {
         this.@sourceHtml.copyInto(copy.@sourceHtml)
         this.@sourceXref.copyInto(copy.@sourceXref)
         this.@stats.copyInto(copy.@stats)
-        this.@test.copyInto(copy.@test)
+        this.@testing.copyInto(copy.@testing)
         copy.projectActions.addAll(this.projectActions)
         copy.rootProjectActions.addAll(this.rootProjectActions)
 
@@ -488,7 +512,7 @@ class ProjectConfigurationExtension {
         SourceHtml.merge(merged.@sourceHtml, other.@sourceHtml)
         SourceXref.merge(merged.@sourceXref, other.@sourceXref)
         Stats.merge(merged.@stats, other.@stats)
-        Test.merge(merged.@test, other.@test)
+        Testing.merge(merged.@testing, other.@testing)
 
         merged
     }

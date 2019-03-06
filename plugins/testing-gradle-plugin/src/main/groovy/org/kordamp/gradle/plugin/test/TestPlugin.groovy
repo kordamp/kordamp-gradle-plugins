@@ -15,21 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.license
+package org.kordamp.gradle.plugin.test
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.kordamp.gradle.plugin.licensing.LicensingPlugin
+import org.kordamp.gradle.plugin.testing.TestingPlugin
 
 /**
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 0.14.0
  */
 @CompileStatic
-class LicensePlugin extends LicensingPlugin{
+class TestPlugin extends TestingPlugin{
     @Override
     void apply(Project project) {
-        project.logger.warn("Plugin org.kordamp.gradle.license has been deprecated, use org.kordamp.gradle.licensing instead")
+        project.logger.warn("Plugin org.kordamp.gradle.test has been deprecated, use org.kordamp.gradle.testing instead")
         super.apply(project)
     }
 }
