@@ -37,6 +37,7 @@ class Licensing extends AbstractFeature {
 
     Licensing(Project project) {
         super(project)
+        doSetEnabled(project.plugins.findPlugin('org.kordamp.gradle.licensing') != null)
     }
 
     @Override
@@ -53,6 +54,12 @@ class Licensing extends AbstractFeature {
         }
 
         ['license': map]
+    }
+
+    void normalize() {
+        if (!enabledSet) {
+            setEnabled(project.plugins.findPlugin('org.kordamp.gradle.licensing') != null)
+        }
     }
 
     void licenses(Action<? super LicenseSet> action) {
