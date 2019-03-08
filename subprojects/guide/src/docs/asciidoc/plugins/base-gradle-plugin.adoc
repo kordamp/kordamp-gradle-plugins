@@ -255,6 +255,11 @@ This block is optional if none of the following plugins are used: `<<_org_kordam
 At least `id` or `name` must be defined. If a `developer` role exists then the person instance is mapped to a `<developer>`
 block in the POM. If a `contributor` role exists then the person instance is maped to a `<contributor>` block in the POM.
 
+[[_org_kordamp_gradle_base_sysprops]]
+=== System Properties
+
+org.kordamp.gradle.base.validate:: Perform validation on DSL settings. Defaults to `true`.
+
 [[_org_kordamp_gradle_base_tasks]]
 == Tasks
 

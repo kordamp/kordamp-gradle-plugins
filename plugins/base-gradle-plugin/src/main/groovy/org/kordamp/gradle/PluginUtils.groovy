@@ -22,6 +22,8 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
+import static org.kordamp.gradle.StringUtils.isBlank
+
 /**
  * @author Andres Almiray
  * @since 0.9.0
@@ -91,5 +93,12 @@ class PluginUtils {
 
     static ProjectConfigurationExtension resolveEffectiveConfig(Project project) {
         (ProjectConfigurationExtension) project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
+    }
+
+    static boolean checkFlag(String flag, boolean defaultValue) {
+        if (isBlank(System.getProperty(flag))) {
+            return defaultValue
+        }
+        return Boolean.getBoolean(flag)
     }
 }

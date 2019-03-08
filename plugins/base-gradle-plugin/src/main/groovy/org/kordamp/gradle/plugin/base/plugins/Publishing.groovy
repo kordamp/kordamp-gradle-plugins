@@ -66,7 +66,7 @@ class Publishing extends AbstractFeature {
     }
 
     void normalize() {
-        if (!enabledSet) {
+        if (!enabledSet && isRoot()) {
             setEnabled(project.plugins.findPlugin('org.kordamp.gradle.publishing') != null)
         }
     }

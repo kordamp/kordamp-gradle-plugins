@@ -79,7 +79,7 @@ class Testing extends AbstractFeature {
     @Override
     @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        ['test': [
+        ['testing': [
             enabled    : enabled,
             logging    : logging,
             aggregate  : aggregate,

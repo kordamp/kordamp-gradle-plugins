@@ -38,6 +38,8 @@ import org.kordamp.gradle.plugin.base.tasks.RepositoriesTask
  */
 @CompileStatic
 class BasePlugin extends AbstractKordampPlugin {
+    static final String ORG_KORDAMP_GRADLE_BASE_VALIDATE = 'org.kordamp.gradle.base.validate'
+
     Project project
 
     void apply(Project project) {
@@ -118,23 +120,25 @@ class BasePlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
             extension.normalize()
 
+            boolean validate = PluginUtils.checkFlag(ORG_KORDAMP_GRADLE_BASE_VALIDATE, true)
+
             List<String> errors = []
             if (isRootProject(project)) {
                 ProjectConfigurationExtension merged = extension.merge(rootExtension)
-                errors = merged.validate()
+                if (validate) errors.addAll(merged.validate())
                 project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged).ready()
             } else {
                 if (rootExtension) {
                     ProjectConfigurationExtension merged = extension.merge(rootExtension)
-                    errors = merged.validate()
+                    if (validate) errors.addAll(merged.validate())
                     project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged).ready()
                 } else {
-                    errors = extension.validate()
+                    if (validate) errors.addAll(extension.validate())
                     project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, extension).ready()
                 }
             }
 
-            if (errors) {
+            if (validate && errors) {
                 errors.each { project.logger.error(it) }
                 throw new GradleException("Project ${project.name} has not been properly configured")
             }

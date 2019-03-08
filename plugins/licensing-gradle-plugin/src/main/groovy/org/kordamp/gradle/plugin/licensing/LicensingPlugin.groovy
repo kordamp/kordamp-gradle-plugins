@@ -192,7 +192,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         setEnabled(effectiveConfig.licensing.enabled)
 
-        if (!enabled) {
+        if (!enabled || effectiveConfig.licensing.empty) {
             project.tasks.withType(LicenseCheck).each { it.enabled = false }
             project.tasks.withType(LicenseFormat).each { it.enabled = false }
             return

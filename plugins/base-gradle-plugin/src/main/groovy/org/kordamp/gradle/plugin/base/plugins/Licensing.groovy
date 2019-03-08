@@ -24,6 +24,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.model.License
 import org.kordamp.gradle.plugin.base.model.LicenseSet
 
 /**
@@ -49,15 +50,15 @@ class Licensing extends AbstractFeature {
     Map<String, Map<String, Object>> toMap() {
         Map map = [enabled: enabled]
 
-        map.licenses = licenses.licenses.collectEntries { org.kordamp.gradle.plugin.base.model.License license ->
+        map.licenses = licenses.licenses.collectEntries { License license ->
             [(license.licenseId?.name() ?: license.name): license.toMap()]
         }
 
-        ['license': map]
+        ['licensing': map]
     }
 
     void normalize() {
-        if (!enabledSet) {
+        if (!enabledSet && isRoot()) {
             setEnabled(project.plugins.findPlugin('org.kordamp.gradle.licensing') != null)
         }
     }
@@ -90,8 +91,12 @@ class Licensing extends AbstractFeature {
         errors
     }
 
-    List<org.kordamp.gradle.plugin.base.model.License> allLicenses() {
+    List<License> allLicenses() {
         licenses.licenses
+    }
+
+    boolean isEmpty() {
+        licenses.isEmpty()
     }
 
     @CompileDynamic

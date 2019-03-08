@@ -90,7 +90,7 @@ class Scaladoc extends AbstractFeature {
     }
 
     void normalize() {
-        if (!enabledSet) {
+        if (!enabledSet && isRoot()) {
             setEnabled(project.plugins.findPlugin('scala') != null)
         }
     }

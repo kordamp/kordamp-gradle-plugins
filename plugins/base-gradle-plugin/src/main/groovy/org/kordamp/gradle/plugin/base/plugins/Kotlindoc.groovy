@@ -139,7 +139,7 @@ class Kotlindoc extends AbstractFeature {
     }
 
     void normalize() {
-        if (!enabledSet) {
+        if (!enabledSet && isRoot()) {
             setEnabled(project.plugins.findPlugin('kotlin') != null)
         }
 

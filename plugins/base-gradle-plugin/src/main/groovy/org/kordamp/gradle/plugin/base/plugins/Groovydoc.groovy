@@ -94,7 +94,7 @@ class Groovydoc extends AbstractFeature {
     }
 
     void normalize() {
-        if (!enabledSet) {
+        if (!enabledSet && isRoot()) {
             setEnabled(project.plugins.findPlugin('groovy') != null)
         }
     }
