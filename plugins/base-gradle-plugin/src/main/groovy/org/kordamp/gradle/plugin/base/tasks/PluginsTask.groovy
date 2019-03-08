@@ -73,7 +73,7 @@ class PluginsTask extends AbstractReportingTask {
     private static Map<String, Map<String, ?>> doReport(Plugin plugin, int index, Map<String, String> pluginMetadata) {
         Map<String, ?> map = [:]
 
-        map.id = pluginMetadata[plugin.class.name] - 'org.gradle.'
+        map.id = (pluginMetadata[plugin.class.name] ?: plugin.class.name) - 'org.gradle.'
         map.implementationClass = plugin.class.name
         if (plugin instanceof KordampPlugin) {
             map.enabled = plugin.enabled
