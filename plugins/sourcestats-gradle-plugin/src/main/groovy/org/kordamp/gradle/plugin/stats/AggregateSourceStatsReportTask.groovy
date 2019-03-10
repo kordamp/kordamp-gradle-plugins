@@ -49,15 +49,13 @@ class AggregateSourceStatsReportTask extends DefaultTask {
     @Internal
     File xmlReport
 
-    @CompileDynamic
-    AggregateSourceStatsReportTask() {
-        reportDir = project.file("${project.reporting.baseDir.path}/stats")
-        xmlReport = project.file("${reportDir}/${project.name}-all.xml")
-    }
-
     @TaskAction
     @CompileDynamic
     void computeAggregate() {
+        if (!reportDir) reportDir = project.file("${project.reporting.baseDir.path}/stats")
+        if (!xmlReport) xmlReport = project.file("${reportDir}/${project.name}-all.xml")
+        reportDir.mkdirs()
+
         Map<String, Map<String, Integer>> stats = [:]
 
         project.subprojects.each { subprj ->

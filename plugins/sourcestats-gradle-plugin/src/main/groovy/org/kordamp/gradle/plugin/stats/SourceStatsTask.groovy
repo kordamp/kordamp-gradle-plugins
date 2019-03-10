@@ -64,13 +64,12 @@ class SourceStatsTask extends DefaultTask {
     @Internal
     int totalLOC = 0
 
-    SourceStatsTask() {
-        reportDir = project.file("${project.reporting.baseDir.path}/stats")
-        xmlReport = project.file("${reportDir}/${project.name}.xml")
-    }
-
     @TaskAction
     void computeLoc() {
+        if (!reportDir) reportDir = project.file("${project.reporting.baseDir.path}/stats")
+        if (!xmlReport) xmlReport = project.file("${reportDir}/${project.name}.xml")
+        reportDir.mkdirs()
+
         Map<String, Counter> counterInstances = resolveCounterInstances()
 
         Map<String, Map<String, String>> merged = [:]
