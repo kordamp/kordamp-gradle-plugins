@@ -30,7 +30,7 @@ may be added at later stages during development. Thus the minimum structure coul
 
 There are many ways to structure a multi-project build. Some prefer adding all submodule directories at the root level,
 others prefer a two or more levels structure. None of the plugins enforce a particular directory structure, you're free
-pick the structure that suits your style better. Personally I prefer the following structure
+to pick the structure that suits your style better. Personally I prefer the following structure
 
 [source,groovy]
 ----
@@ -125,8 +125,45 @@ listOf("docs", "subprojects").forEach { dirName ->
 ----
 
 Alternatively, you may apply the `<<_org_kordamp_gradle_settings,org.kordamp.gradle.settings>>` plugin to your
-`settings.gradle(.kts)` file to obtain the same behavior. With this structure in place the next step would be to setup
-the minimum configuration on the root project's build file
+`settings.gradle(.kts)` file to obtain the same behavior:
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.settings.gradle
+----
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:{project-version}'
+    }
+}
+apply plugin: 'org.kordamp.gradle.settings'
+
+projects {
+    directories = ['docs', 'subprojects']
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.settings.gradle.kts
+----
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath("org.kordamp.gradle:settings-gradle-plugin:{project-version}")
+    }
+}
+apply(plugin = "org.kordamp.gradle.settings")
+
+projects {
+    directories = listOf("docs", "subprojects")
+}
+----
+
+With this structure in place the next step would be to setup the minimum configuration on the root project's build file
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
 .Groovy

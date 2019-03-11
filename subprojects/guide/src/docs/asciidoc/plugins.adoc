@@ -3,7 +3,6 @@
 = Plugins
 
 :leveloffset: 2
-include::plugins/settings-gradle-plugin.adoc[]
 include::plugins/apidoc-gradle-plugin.adoc[]
 include::plugins/base-gradle-plugin.adoc[]
 include::plugins/bintray-gradle-plugin.adoc[]
@@ -23,6 +22,7 @@ include::plugins/minpom-gradle-plugin.adoc[]
 include::plugins/project-gradle-plugin.adoc[]
 include::plugins/publishing-gradle-plugin.adoc[]
 include::plugins/scaladoc-gradle-plugin.adoc[]
+include::plugins/settings-gradle-plugin.adoc[]
 include::plugins/source-gradle-plugin.adoc[]
 include::plugins/sourcehtml-gradle-plugin.adoc[]
 include::plugins/sourcexref-gradle-plugin.adoc[]

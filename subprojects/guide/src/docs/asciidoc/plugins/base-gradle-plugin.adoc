@@ -358,10 +358,6 @@ extension 8:
 extension 9:
     name: versioning
     type: net.nemerosa.versioning.VersioningExtension
-
-extension 10:
-    name: bintray
-    type: com.jfrog.bintray.gradle.BintrayExtension
 ----
 
 [[_task_plugins]]
@@ -518,14 +514,19 @@ plugin 24:
     enabled: true
 
 plugin 25:
+    id: org.kordamp.gradle.testing
+    implementationClass: org.kordamp.gradle.plugin.testing.TestingPlugin
+    enabled: true
+
+plugin 26:
     id: com.github.ben-manes.versions
     implementationClass: com.github.benmanes.gradle.versions.VersionsPlugin
 
-plugin 26:
+plugin 27:
     id: org.kordamp.gradle.project
     implementationClass: org.kordamp.gradle.plugin.project.ProjectPlugin
 
-plugin 27:
+plugin 28:
     id: net.nemerosa.versioning
     implementationClass: net.nemerosa.versioning.VersioningPlugin
 ----

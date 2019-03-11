@@ -8,7 +8,7 @@ class:: `org.kordamp.gradle.plugin.settings.SettingsPlugin`
     (link:api/org/kordamp/gradle/plugin/settings/SettingsPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/settings/SettingsPlugin.html[source])
 
-Note: This plugin should be applied to `settings.gradle(.kts)` only!
+Note:: This plugin should be applied to `settings.gradle(.kts)` only!
 
 Configures the root project by automatically including subprojects. The root project must abide
 to one of the following layouts:
@@ -144,7 +144,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath "org.kordamp.gradle:settings-gradle-plugin:{project-version}"
+        classpath("org.kordamp.gradle:settings-gradle-plugin:{project-version}")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -205,7 +205,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath "org.kordamp.gradle:settings-gradle-plugin:{project-version}"
+        classpath("org.kordamp.gradle:settings-gradle-plugin:{project-version}")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -263,7 +263,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath "org.kordamp.gradle:settings-gradle-plugin:{project-version}"
+        classpath("org.kordamp.gradle:settings-gradle-plugin:{project-version}")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")

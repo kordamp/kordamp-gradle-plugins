@@ -27,8 +27,8 @@ config {
     <<_org_kordamp_gradle_scaladoc,scaladoc>> { ... }
     <<_org_kordamp_gradle_source,source>> { ... }
     <<_org_kordamp_gradle_sourcehtml,sourceHtml>> { ... }
-    <<_org_kordamp_gradle_sourcestats,stats>> { ... }
     <<_org_kordamp_gradle_sourcexref,sourceXref>> { ... }
+    <<_org_kordamp_gradle_sourcestats,stats>> { ... }
     <<_org_kordamp_gradle_testing,testing>> { ... }
 }
 ----
