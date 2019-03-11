@@ -68,7 +68,7 @@ Only a single license entry must have `primary = true`. If no license has this s
 list will be treated as the primary license. If more than one license has this setting the the first one on that set will
 be treated as the primary license.
 
-[[_org_kordamp_gradle_licenseexample]]
+[[_org_kordamp_gradle_license_example]]
 == Example
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]

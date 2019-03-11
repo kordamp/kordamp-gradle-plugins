@@ -1,0 +1,275 @@
+
+[[_org_kordamp_gradle_settings]]
+= Settings
+
+[horizontal]
+id:: `org.kordamp.gradle.settings`
+class:: `org.kordamp.gradle.plugin.settings.SettingsPlugin`
+    (link:api/org/kordamp/gradle/plugin/settings/SettingsPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/settings/SettingsPlugin.html[source])
+
+Note: This plugin should be applied to `settings.gradle(.kts)` only!
+
+Configures the root project by automatically including subprojects. The root project must abide
+to one of the following layouts:
+
+two-level::
+Subprojects are defined using a two-level directory structure, typically grouped by responsibility,
+for example
+
+[source,groovy]
+----
+.
+├── build.gradle
+├── settings.gradle
+├── docs
+│   └── guide
+│       └── guide.gradle
+└── subprojects
+    ├── project1
+    │   ├── project1.gradle
+    └── project2
+        └── project2.gradle
+----
+
+multi-level::
+Subprojects are defined using any directory structure, for example
+
+[source,groovy]
+----
+.
+├── build.gradle
+├── settings.gradle
+├── guide
+│   └── guide.gradle
+└── subprojects
+    ├── project1
+    │   ├── project1.gradle
+    └── project2
+        └── project2.gradle
+----
+
+standard::
+Suprojects are defined as direct children of the root project, for example
+
+[source,groovy]
+----
+.
+├── build.gradle
+├── settings.gradle
+├── guide
+│   └── guide.gradle
+├── project1
+│   └── project1.gradle
+└── project2
+    └── project2.gradle
+----
+
+Build files should be renamed to match their containing directory unless `enforceNamingConvention` is set
+to `false`, in which case the default build file name (`build.gradle`, `build.gradle.kts`) applies.
+
+
+[[_org_kordamp_gradle_settings_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+projects {
+    layout
+    enforceNamingConvention
+    directories
+    excludes
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name                    | Type         | Required | Default Value | Description
+| layout                  | boolean      | no       | two-level     | Defines the project layout. Valid values are `two-level`, `multi-level`, `standard`.
+| enforceNamingConvention | boolean      | no       | true          | If `true` then build file names must match their containing project directory name.
+| directories             | List<String> | no*      | []            | List of directories to include for `two-level` and `multi-level` layout.
+| excludes                | List<String> | no       | []            | List of directories to be excluded from automatic inclusion.
+|===
+
+The `directories` property is not required if the chosen layout is set to `standard`.
+
+[[_org_kordamp_gradle_settings_example]]
+== Example
+
+.Two-Level
+
+A project with the following structure
+
+[source,groovy]
+----
+.
+├── build.gradle
+├── settings.gradle
+├── docs
+│   └── guide
+│       └── guide.gradle
+└── subprojects
+    ├── project1
+    │   ├── project1.gradle
+    └── project2
+        └── project2.gradle
+----
+
+Can be configured as follows
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.settings.gradle
+----
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:{project-version}'
+    }
+}
+apply plugin: 'org.kordamp.gradle.settings'
+
+projects {
+    directories = ['docs', 'subprojects']
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.settings.gradle.kts
+----
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "org.kordamp.gradle:settings-gradle-plugin:{project-version}"
+    }
+}
+apply(plugin = "org.kordamp.gradle.settings")
+
+projects {
+    directories = listOf("docs", "subprojects")
+}
+----
+
+.Multi-Level
+
+A project with the following structure
+
+[source,groovy]
+----
+.
+├── build.gradle
+├── settings.gradle
+├── guide
+│   └── guide.gradle
+└── subprojects
+    ├── project1
+    │   ├── project1.gradle
+    └── project2
+        └── project2.gradle
+----
+
+Can be configured as follows
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.settings.gradle
+----
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:{project-version}'
+    }
+}
+apply plugin: 'org.kordamp.gradle.settings'
+
+projects {
+    layout = 'multi-level'
+    directories = [
+        'guide',
+        'subprojects/project1',
+        'subprojects/project2'
+    ]
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.settings.gradle.kts
+----
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "org.kordamp.gradle:settings-gradle-plugin:{project-version}"
+    }
+}
+apply(plugin = "org.kordamp.gradle.settings")
+
+projects {
+    layout = "multi-level"
+    directories = listOf(
+        "guide",
+        "subprojects/project1",
+        "subprojects/project2"
+    )
+}
+----
+
+.Standard
+
+A project with the following structure
+
+[source,groovy]
+----
+.
+├── build.gradle
+├── settings.gradle
+├── guide
+│   └── guide.gradle
+├── project1
+│   └── project1.gradle
+└── project2
+    └── project2.gradle
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.settings.gradle
+----
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:{project-version}'
+    }
+}
+apply plugin: 'org.kordamp.gradle.settings'
+
+projects {
+    layout = 'standard'
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.settings.gradle.kts
+----
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "org.kordamp.gradle:settings-gradle-plugin:{project-version}"
+    }
+}
+apply(plugin = "org.kordamp.gradle.settings")
+
+projects {
+    layout = "standard"
+}
+----
+

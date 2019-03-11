@@ -124,7 +124,9 @@ listOf("docs", "subprojects").forEach { dirName ->
 }
 ----
 
-With this structure in place the next step would be to setup the minimum configuration on the root project's build file
+Alternatively, you may apply the `<<_org_kordamp_gradle_settings,org.kordamp.gradle.settings>>` plugin to your
+`settings.gradle(.kts)` file to obtain the same behavior. With this structure in place the next step would be to setup
+the minimum configuration on the root project's build file
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
 .Groovy

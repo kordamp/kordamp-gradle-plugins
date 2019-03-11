@@ -86,7 +86,7 @@ The format for `parent` may be any of the following ones:
 
 This block is optional.
 
-[[_org_kordamp_gradle_publishingexample]]
+[[_org_kordamp_gradle_publishing_example]]
 == Example
 
 Publishing signed artifacts to Maven Central.
