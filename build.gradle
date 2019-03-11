@@ -15,8 +15,8 @@
  */
 
 plugins {
-    id 'org.kordamp.gradle.project' version '0.14.0'
-    id 'org.kordamp.gradle.bintray' version '0.14.0'
+    id 'org.kordamp.gradle.project' version '0.15.0'
+    id 'org.kordamp.gradle.bintray' version '0.15.0'
     id 'com.gradle.plugin-publish'  version '0.10.1' apply false
     id 'com.gradle.build-scan'      version '2.2.1'
 }
