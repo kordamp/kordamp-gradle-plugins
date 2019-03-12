@@ -140,6 +140,8 @@ buildscript {
 }
 apply plugin: 'org.kordamp.gradle.settings'
 
+rootProject.name = 'root'
+
 projects {
     directories = ['docs', 'subprojects']
 }
@@ -157,6 +159,8 @@ buildscript {
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
+
+rootProject.name = "root"
 
 projects {
     directories = listOf("docs", "subprojects")
