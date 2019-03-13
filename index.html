@@ -471,7 +471,7 @@ fun includeProject(projectDirName: String, projectName: String) {
     assert(File(projectDir, buildFileName).isFile())
 
     include(projectName)
-    project(":${projectName}").projectDir = projectDir
+    project(":${projectName}").projectDir    = projectDir
     project(":${projectName}").buildFileName = buildFileName
 }
 
@@ -503,6 +503,8 @@ listOf("docs", "subprojects").forEach { dirName -&gt;
 }
 apply plugin: 'org.kordamp.gradle.settings'
 
+rootProject.name = 'root'
+
 projects {
     directories = ['docs', 'subprojects']
 }</code></pre>
@@ -521,7 +523,9 @@ projects {
 }
 apply(plugin = "org.kordamp.gradle.settings")
 
-projects {
+rootProject.name = "root"
+
+configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
     directories = listOf("docs", "subprojects")
 }</code></pre>
 </div>
@@ -4671,7 +4675,7 @@ the particular value to be skipped.</p>
 <p>You may also skip checks on the Manifest file with the following</p>
 </div>
 <div class="listingblock primary">
-<div class="title">build.gradle (root)</div>
+<div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">normalization {
     runtimeClasspath {
@@ -4681,7 +4685,7 @@ the particular value to be skipped.</p>
 </div>
 </div>
 <div class="listingblock secondary">
-<div class="title">build.gradle.kts (root)</div>
+<div class="title">build.gradle.kts</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">normalization {
     runtimeClasspath {
@@ -6994,7 +6998,7 @@ projects {
 }
 apply(plugin = "org.kordamp.gradle.settings")
 
-projects {
+configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
     directories = listOf("docs", "subprojects")
 }</code></pre>
 </div>
@@ -7056,7 +7060,7 @@ projects {
 }
 apply(plugin = "org.kordamp.gradle.settings")
 
-projects {
+configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
     layout = "multi-level"
     directories = listOf(
         "guide",
@@ -7114,7 +7118,7 @@ projects {
 }
 apply(plugin = "org.kordamp.gradle.settings")
 
-projects {
+configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
     layout = "standard"
 }</code></pre>
 </div>
