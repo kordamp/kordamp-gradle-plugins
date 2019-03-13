@@ -109,7 +109,7 @@ fun includeProject(projectDirName: String, projectName: String) {
     assert(File(projectDir, buildFileName).isFile())
 
     include(projectName)
-    project(":${projectName}").projectDir = projectDir
+    project(":${projectName}").projectDir    = projectDir
     project(":${projectName}").buildFileName = buildFileName
 }
 
@@ -162,7 +162,7 @@ apply(plugin = "org.kordamp.gradle.settings")
 
 rootProject.name = "root"
 
-projects {
+configure<org.kordamp.gradle.plugin.settings.ProjectsExtension> {
     directories = listOf("docs", "subprojects")
 }
 ----

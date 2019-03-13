@@ -149,7 +149,7 @@ buildscript {
 }
 apply(plugin = "org.kordamp.gradle.settings")
 
-projects {
+configure<org.kordamp.gradle.plugin.settings.ProjectsExtension> {
     directories = listOf("docs", "subprojects")
 }
 ----
@@ -210,7 +210,7 @@ buildscript {
 }
 apply(plugin = "org.kordamp.gradle.settings")
 
-projects {
+configure<org.kordamp.gradle.plugin.settings.ProjectsExtension> {
     layout = "multi-level"
     directories = listOf(
         "guide",
@@ -268,7 +268,7 @@ buildscript {
 }
 apply(plugin = "org.kordamp.gradle.settings")
 
-projects {
+configure<org.kordamp.gradle.plugin.settings.ProjectsExtension> {
     layout = "standard"
 }
 ----

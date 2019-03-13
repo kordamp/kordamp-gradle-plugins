@@ -55,7 +55,7 @@ the particular value to be skipped.
 You may also skip checks on the Manifest file with the following
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.build.gradle (root)
+.build.gradle
 ----
 normalization {
     runtimeClasspath {
@@ -65,7 +65,7 @@ normalization {
 ----
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
-.build.gradle.kts (root)
+.build.gradle.kts
 ----
 normalization {
     runtimeClasspath {
