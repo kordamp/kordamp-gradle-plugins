@@ -36,7 +36,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.SourceXref
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
@@ -209,13 +209,13 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
         jxrTask.configure(new Action<JxrTask>() {
             @Override
             void execute(JxrTask t) {
-                if (!isBlank(sourceXref.templateDir)) t.templateDir = sourceXref.templateDir
-                if (!isBlank(sourceXref.inputEncoding)) t.inputEncoding = sourceXref.inputEncoding
-                if (!isBlank(sourceXref.outputEncoding)) t.outputEncoding = sourceXref.outputEncoding
-                if (!isBlank(sourceXref.windowTitle)) t.windowTitle = sourceXref.windowTitle
-                if (!isBlank(sourceXref.docTitle)) t.docTitle = sourceXref.docTitle
-                if (!isBlank(sourceXref.bottom)) t.bottom = sourceXref.bottom
-                if (!isBlank(sourceXref.stylesheet)) t.stylesheet = sourceXref.stylesheet
+                if (isNotBlank(sourceXref.templateDir)) t.templateDir = sourceXref.templateDir
+                if (isNotBlank(sourceXref.inputEncoding)) t.inputEncoding = sourceXref.inputEncoding
+                if (isNotBlank(sourceXref.outputEncoding)) t.outputEncoding = sourceXref.outputEncoding
+                if (isNotBlank(sourceXref.windowTitle)) t.windowTitle = sourceXref.windowTitle
+                if (isNotBlank(sourceXref.docTitle)) t.docTitle = sourceXref.docTitle
+                if (isNotBlank(sourceXref.bottom)) t.bottom = sourceXref.bottom
+                if (isNotBlank(sourceXref.stylesheet)) t.stylesheet = sourceXref.stylesheet
                 if (sourceXref.javaVersion) t.javaVersion = sourceXref.javaVersion
                 if (sourceXref.excludes) t.excludes.addAll(sourceXref.excludes)
                 if (sourceXref.includes) t.includes.addAll(sourceXref.includes)

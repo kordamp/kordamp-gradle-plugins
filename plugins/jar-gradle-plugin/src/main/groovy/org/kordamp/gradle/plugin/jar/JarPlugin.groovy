@@ -33,6 +33,7 @@ import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.minpom.MinPomPlugin
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.StringUtils.isNotBlank
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
@@ -156,13 +157,13 @@ class JarPlugin extends AbstractKordampPlugin {
             if (effectiveConfig.info.specification.enabled) {
                 attributesMap.'Specification-Title' = effectiveConfig.info.specification.title
                 attributesMap.'Specification-Version' = effectiveConfig.info.specification.version
-                if (effectiveConfig.info.specification.vendor) attributesMap.'Specification-Vendor' = effectiveConfig.info.specification.vendor
+                if (isNotBlank(effectiveConfig.info.specification.vendor)) attributesMap.'Specification-Vendor' = effectiveConfig.info.specification.vendor
             }
 
             if (effectiveConfig.info.implementation.enabled) {
                 attributesMap.'Implementation-Title' = effectiveConfig.info.implementation.title
                 attributesMap.'Implementation-Version' = effectiveConfig.info.implementation.version
-                if (effectiveConfig.info.implementation.vendor) attributesMap.'Implementation-Vendor' = effectiveConfig.info.implementation.vendor
+                if (isNotBlank(effectiveConfig.info.implementation.vendor)) attributesMap.'Implementation-Vendor' = effectiveConfig.info.implementation.vendor
             }
 
             jarTask.configure {

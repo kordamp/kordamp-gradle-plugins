@@ -20,7 +20,7 @@ package org.kordamp.gradle.plugin.base.model
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -76,7 +76,7 @@ class DefaultPomOptions implements PomOptions {
     @Override
     @CompileDynamic
     Map<String, Object> toMap() {
-        if (!isBlank(parent)) {
+        if (isNotBlank(parent)) {
             [
                 parent                : parent,
                 overwriteInceptionYear: overwriteInceptionYear,

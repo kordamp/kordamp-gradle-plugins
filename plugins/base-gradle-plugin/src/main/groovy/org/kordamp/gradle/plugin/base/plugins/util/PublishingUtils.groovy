@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.base.model.License
 import org.kordamp.gradle.plugin.base.model.Person
 import org.kordamp.gradle.plugin.base.model.PomOptions
 
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -68,7 +68,7 @@ class PublishingUtils {
         }
 
         if (isOverwriteAllowed(pomOptions, pomOptions.overwriteScm)) {
-            if (!isBlank(effectiveConfig.info.scm.url)) {
+            if (isNotBlank(effectiveConfig.info.scm.url)) {
                 pom.scm(new Action<MavenPomScm>() {
                     @Override
                     void execute(MavenPomScm scm) {
@@ -152,7 +152,7 @@ class PublishingUtils {
             })
         }
 
-        if (!isBlank(pomOptions.parent)) {
+        if (isNotBlank(pomOptions.parent)) {
             Dependency parentPom = Dependency.parseDependency(effectiveConfig.project, pomOptions.parent, true)
             pom.withXml {
                 Node parentNode = new XmlParser().parseText("""
@@ -168,6 +168,6 @@ class PublishingUtils {
     }
 
     private static boolean isOverwriteAllowed(PomOptions pom, boolean option) {
-        !isBlank(pom.parent) && option
+        isNotBlank(pom.parent) && option
     }
 }

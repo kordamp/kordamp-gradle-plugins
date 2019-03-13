@@ -20,7 +20,7 @@ package org.kordamp.gradle.plugin.base.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -67,7 +67,7 @@ abstract class AbstractReportingTask extends DefaultTask {
     }
 
     protected static boolean isNotNullNorBlank(value) {
-        value != null || (value instanceof CharSequence && !isBlank(String.valueOf(value)))
+        value != null || (value instanceof CharSequence && isNotBlank(String.valueOf(value)))
     }
 
     protected static String formatValue(value) {

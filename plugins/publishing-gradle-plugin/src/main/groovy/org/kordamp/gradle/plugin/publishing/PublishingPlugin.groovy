@@ -39,7 +39,7 @@ import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 import org.kordamp.gradle.plugin.source.SourceJarPlugin
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
@@ -129,7 +129,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
             }
 
             String repositoryName = effectiveConfig.release ? effectiveConfig.publishing.releasesRepository : effectiveConfig.publishing.snapshotsRepository
-            if (!isBlank(repositoryName)) {
+            if (isNotBlank(repositoryName)) {
                 Repository repo = effectiveConfig.info.repositories.getRepository(repositoryName)
                 if (repo == null) {
                     throw new IllegalStateException("Repository '${repositoryName}' was not found")

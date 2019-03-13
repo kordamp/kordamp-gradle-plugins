@@ -22,7 +22,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -40,7 +40,7 @@ class EffectiveSettingsTask extends AbstractReportingTask {
 
     @Option(option = 'sections', description = 'The sections to generate the report for.')
     void setSections(String sections) {
-        if (!isBlank(sections)) {
+        if (isNotBlank(sections)) {
             this.sections = (sections.split(',').collect { it.trim() }) as Set
         }
     }

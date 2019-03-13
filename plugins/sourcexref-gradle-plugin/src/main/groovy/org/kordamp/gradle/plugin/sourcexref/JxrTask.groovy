@@ -37,6 +37,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -138,7 +139,7 @@ class JxrTask extends DefaultTask {
     }
 
     private void copyResources(String dir) {
-        if (!isBlank(stylesheet)) {
+        if (isNotBlank(stylesheet)) {
             File stylesheetFile = new File(stylesheet)
             File destStylesheetFile = new File(dir, 'stylesheet.css')
 

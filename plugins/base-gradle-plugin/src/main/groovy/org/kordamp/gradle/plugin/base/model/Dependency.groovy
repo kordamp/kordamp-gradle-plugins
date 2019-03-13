@@ -23,6 +23,7 @@ import groovy.transform.TupleConstructor
 import org.gradle.api.Project
 
 import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -46,7 +47,7 @@ class Dependency {
             case 0:
                 throw new IllegalStateException("Project '${str}' does not exist")
             case 1:
-                if (!isBlank(parts[0]) &&
+                if (isNotBlank(parts[0]) &&
                     (project.rootProject.name == parts[0] || project.rootProject.subprojects.find { it.name == parts[0] })) {
                     return new Dependency(
                         expandCoords ? project.group.toString() : '${project.groupId}',
@@ -56,7 +57,7 @@ class Dependency {
                 throw new IllegalStateException("Project '${str}' does not exist")
             case 2:
                 if (isBlank(parts[0]) &&
-                    !isBlank(parts[1]) &&
+                    isNotBlank(parts[1]) &&
                     (project.rootProject.name == parts[1] || project.rootProject.subprojects.find { it.name == parts[1] })) {
                     return new Dependency(
                         expandCoords ? project.group.toString() : '${project.groupId}',

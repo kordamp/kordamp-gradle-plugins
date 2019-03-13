@@ -25,6 +25,7 @@ import org.gradle.api.Action
 import org.gradle.util.ConfigureUtil
 
 import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -61,7 +62,7 @@ class Repository {
     }
 
     String getName() {
-        !isBlank(this.@name) ? this.@name : url
+        isNotBlank(this.@name) ? this.@name : url
     }
 
     void credentials(Action<? super Credentials> action) {

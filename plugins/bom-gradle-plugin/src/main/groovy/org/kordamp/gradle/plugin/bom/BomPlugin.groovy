@@ -32,7 +32,7 @@ import org.kordamp.gradle.plugin.base.model.Repository
 import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * Generates a BOM file for the given inputs.
@@ -146,7 +146,7 @@ class BomPlugin extends AbstractKordampPlugin {
             }
 
             String repositoryName = effectiveConfig.release ? effectiveConfig.publishing.releasesRepository : effectiveConfig.publishing.snapshotsRepository
-            if (!isBlank(repositoryName)) {
+            if (isNotBlank(repositoryName)) {
                 Repository repo = effectiveConfig.info.repositories.getRepository(repositoryName)
                 if (repo == null) {
                     throw new IllegalStateException("Repository '${repositoryName}' was not found")

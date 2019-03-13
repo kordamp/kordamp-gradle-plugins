@@ -24,7 +24,7 @@ import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.PomOptions
 
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -80,7 +80,7 @@ class Bom extends AbstractFeature implements PomOptions {
             map.runtime = runtime
             map.test = test
             map.excludes = excludes
-            if (!isBlank(parent)) {
+            if (isNotBlank(parent)) {
                 map.parent = parent
                 map.overwriteInceptionYear = overwriteInceptionYear
                 map.overwriteUrl = overwriteUrl

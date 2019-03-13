@@ -25,7 +25,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
@@ -120,7 +120,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
     }
 
     private static resolveScmLink(ProjectConfigurationExtension effectiveConfig) {
-        if (!isBlank(effectiveConfig.info.scm.url)) {
+        if (isNotBlank(effectiveConfig.info.scm.url)) {
             return effectiveConfig.info.scm.url
         }
         return effectiveConfig.info.links.scm

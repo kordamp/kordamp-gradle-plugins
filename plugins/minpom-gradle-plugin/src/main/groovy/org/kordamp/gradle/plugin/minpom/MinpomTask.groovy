@@ -33,7 +33,7 @@ import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -82,7 +82,7 @@ class MinpomTask extends DefaultTask {
         }
 
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        boolean hasParent = !isBlank(effectiveConfig.publishing.pom.parent)
+        boolean hasParent = isNotBlank(effectiveConfig.publishing.pom.parent)
 
         StringWriter writer = new StringWriter()
         writer.write('<?xml version="1.0" encoding="UTF-8"?>\n')

@@ -25,7 +25,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -92,7 +92,7 @@ class SourceXref extends AbstractFeature {
     }
 
     String getInputEncoding() {
-        !isBlank(inputEncoding) ? inputEncoding : System.getProperty('file.encoding')
+        isNotBlank(inputEncoding) ? inputEncoding : System.getProperty('file.encoding')
     }
 
     void setJavaVersion(String javaVersion) {

@@ -24,7 +24,7 @@ import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.tasks.TaskAction
 
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -59,7 +59,7 @@ class RepositoriesTask extends AbstractReportingTask {
     private static Map<String, ?> maven(MavenArtifactRepository repository) {
         Map<String, ?> map = [type: 'maven']
 
-        if (!isBlank(repository.name)) {
+        if (isNotBlank(repository.name)) {
             map.name = repository.name
         }
         map.url = repository.url
@@ -71,7 +71,7 @@ class RepositoriesTask extends AbstractReportingTask {
     private static Map<String, ?> ivy(IvyArtifactRepository repository) {
         Map<String, ?> map = [type: 'ivy']
 
-        if (!isBlank(repository.name)) {
+        if (isNotBlank(repository.name)) {
             map.name = repository.name
         }
         map.url = repository.url
@@ -82,7 +82,7 @@ class RepositoriesTask extends AbstractReportingTask {
     private static Map<String, ?> flatDir(FlatDirectoryArtifactRepository repository) {
         Map<String, ?> map = [type: 'flatDir']
 
-        if (!isBlank(repository.name)) {
+        if (isNotBlank(repository.name)) {
             map.name = repository.name
         }
         map.dirs = repository.dirs
