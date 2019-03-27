@@ -34,6 +34,7 @@ import org.kordamp.gradle.plugin.base.model.License
 import org.kordamp.gradle.plugin.base.model.Person
 import org.kordamp.gradle.plugin.base.model.PomOptions
 
+import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -168,6 +169,6 @@ class PublishingUtils {
     }
 
     private static boolean isOverwriteAllowed(PomOptions pom, boolean option) {
-        isNotBlank(pom.parent) && option
+        isBlank(pom.parent) || (isNotBlank(pom.parent) && option)
     }
 }
