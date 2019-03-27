@@ -55,7 +55,7 @@ Bom.groovy
 <a name="24"><font color="#808080">024</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.base.ProjectConfigurationExtension</font><br />
 <a name="25"><font color="#808080">025</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.base.model.PomOptions</font><br />
 <a name="26"><font color="#808080">026</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="27"><font color="#808080">027</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.StringUtils.isBlank</font><br />
+<a name="27"><font color="#808080">027</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.StringUtils.isNotBlank</font><br />
 <a name="28"><font color="#808080">028</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="29"><font color="#808080">029</font>&nbsp;</a><font color="#008000">/**</font><br />
 <a name="30"><font color="#808080">030</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;</font><font color="#005500">@author&nbsp;</font><font color="#008000">Andres&nbsp;Almiray</font><br />
@@ -111,7 +111,7 @@ Bom.groovy
 <a name="80"><font color="#808080">080</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">map.runtime&nbsp;=&nbsp;runtime</font><br />
 <a name="81"><font color="#808080">081</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">map.test&nbsp;=&nbsp;test</font><br />
 <a name="82"><font color="#808080">082</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">map.excludes&nbsp;=&nbsp;excludes</font><br />
-<a name="83"><font color="#808080">083</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>if&nbsp;</b></font><font color="#000000">(</font><font color="#000000">!isBlank</font><font color="#000000">(</font><font color="#000000">parent</font><font color="#000000">))&nbsp;{</font><br />
+<a name="83"><font color="#808080">083</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>if&nbsp;</b></font><font color="#000000">(</font><font color="#000000">isNotBlank</font><font color="#000000">(</font><font color="#000000">parent</font><font color="#000000">))&nbsp;{</font><br />
 <a name="84"><font color="#808080">084</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">map.parent&nbsp;=&nbsp;parent</font><br />
 <a name="85"><font color="#808080">085</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">map.overwriteInceptionYear&nbsp;=&nbsp;overwriteInceptionYear</font><br />
 <a name="86"><font color="#808080">086</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">map.overwriteUrl&nbsp;=&nbsp;overwriteUrl</font><br />
