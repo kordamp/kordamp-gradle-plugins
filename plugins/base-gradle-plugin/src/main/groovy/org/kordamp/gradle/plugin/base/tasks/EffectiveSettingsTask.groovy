@@ -51,7 +51,7 @@ class EffectiveSettingsTask extends AbstractReportingTask {
 
         if (sections) {
             sections.each { s ->
-                EffectiveSettingsTask.printSection(map, s)
+                printSection(map, s)
             }
         } else if (section) {
             printSection(map, section)
@@ -60,7 +60,7 @@ class EffectiveSettingsTask extends AbstractReportingTask {
         }
     }
 
-    private static void printSection(Map<String, Object> map, String section) {
+    private void printSection(Map<String, Object> map, String section) {
         if (map.containsKey(section)) {
             println "${section}:"
             doPrint((Map<String, ?>) map[section], 1)

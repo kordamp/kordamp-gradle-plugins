@@ -36,13 +36,13 @@ class RepositoriesTask extends AbstractReportingTask {
     void report() {
         Map<String, Map<String, ?>> repositories = [:]
 
-        project.repositories.eachWithIndex { repository, index -> repositories.putAll(RepositoriesTask.doReport(repository, index)) }
+        project.repositories.eachWithIndex { repository, index -> repositories.putAll(doReport(repository, index)) }
 
         doPrint(repositories, 0)
     }
 
     @CompileStatic
-    private static Map<String, Map<String, ?>> doReport(ArtifactRepository repository, int index) {
+    private Map<String, Map<String, ?>> doReport(ArtifactRepository repository, int index) {
         Map<String, ?> map = [:]
 
         if (repository instanceof MavenArtifactRepository) {
@@ -56,7 +56,7 @@ class RepositoriesTask extends AbstractReportingTask {
         [('repository ' + index): map]
     }
 
-    private static Map<String, ?> maven(MavenArtifactRepository repository) {
+    private Map<String, ?> maven(MavenArtifactRepository repository) {
         Map<String, ?> map = [type: 'maven']
 
         if (isNotBlank(repository.name)) {
@@ -68,7 +68,7 @@ class RepositoriesTask extends AbstractReportingTask {
         map
     }
 
-    private static Map<String, ?> ivy(IvyArtifactRepository repository) {
+    private Map<String, ?> ivy(IvyArtifactRepository repository) {
         Map<String, ?> map = [type: 'ivy']
 
         if (isNotBlank(repository.name)) {
@@ -79,7 +79,7 @@ class RepositoriesTask extends AbstractReportingTask {
         map
     }
 
-    private static Map<String, ?> flatDir(FlatDirectoryArtifactRepository repository) {
+    private Map<String, ?> flatDir(FlatDirectoryArtifactRepository repository) {
         Map<String, ?> map = [type: 'flatDir']
 
         if (isNotBlank(repository.name)) {

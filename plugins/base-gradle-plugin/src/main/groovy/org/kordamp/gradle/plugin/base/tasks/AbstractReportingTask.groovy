@@ -19,6 +19,7 @@ package org.kordamp.gradle.plugin.base.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
+import org.kordamp.gradle.AnsiConsole
 
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
@@ -28,7 +29,7 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 abstract class AbstractReportingTask extends DefaultTask {
-    protected static void doPrint(Map<String, ?> map, int offset) {
+    protected void doPrint(Map<String, ?> map, int offset) {
         map.each { key, value ->
             if (value instanceof Map) {
                 if (!value.isEmpty()) {
@@ -50,7 +51,7 @@ abstract class AbstractReportingTask extends DefaultTask {
         }
     }
 
-    protected static void doPrint(Collection<?> collection, int offset) {
+    protected void doPrint(Collection<?> collection, int offset) {
         collection.each { value ->
             if (value instanceof Map) {
                 if (!value.isEmpty()) {
@@ -66,16 +67,18 @@ abstract class AbstractReportingTask extends DefaultTask {
         }
     }
 
-    protected static boolean isNotNullNorBlank(value) {
+    protected boolean isNotNullNorBlank(value) {
         value != null || (value instanceof CharSequence && isNotBlank(String.valueOf(value)))
     }
 
-    protected static String formatValue(value) {
+    protected String formatValue(value) {
+        AnsiConsole console = new AnsiConsole(project)
+
         if (value instanceof Boolean) {
             Boolean b = (Boolean) value
-            return (b ? '\u001b[32m' : '\u001b[31m') + String.valueOf(b) + '\u001b[0m'
+            return b ? console.green(String.valueOf(b)) : console.red(String.valueOf(b))
         } else if (value instanceof Number) {
-            return '\u001b[36m' + String.valueOf(value) + '\u001b[0m'
+            return console.cyan(String.valueOf(value))
         } else {
             String s = String.valueOf(value)
 
@@ -86,32 +89,38 @@ abstract class AbstractReportingTask extends DefaultTask {
             r = parseAsDouble(s)
             if (r != null) return r
 
-            return '\u001b[33m' + s + '\u001b[0m'
+            return console.yellow(s)
         }
     }
 
-    protected static String parseAsBoolean(String s) {
+    protected String parseAsBoolean(String s) {
+        AnsiConsole console = new AnsiConsole(project)
+
         if ('true'.equalsIgnoreCase(s) || 'false'.equalsIgnoreCase(s)) {
             boolean b = Boolean.valueOf(s)
-            return (b ? '\u001b[32m' : '\u001b[31m') + String.valueOf(b) + '\u001b[0m'
+            return b ? console.green(String.valueOf(b)) : console.red(String.valueOf(b))
         } else {
             return null
         }
     }
 
-    protected static String parseAsInteger(String s) {
+    protected String parseAsInteger(String s) {
+        AnsiConsole console = new AnsiConsole(project)
+
         try {
             Integer.parseInt(s)
-            return '\u001b[36m' + s + '\u001b[0m'
+            return console.cyan(s)
         } catch (Exception e) {
             return null
         }
     }
 
-    protected static String parseAsDouble(String s) {
+    protected String parseAsDouble(String s) {
+        AnsiConsole console = new AnsiConsole(project)
+
         try {
             Double.parseDouble(s)
-            return '\u001b[36m' + s + '\u001b[0m'
+            return console.cyan(s)
         } catch (Exception e) {
             return null
         }

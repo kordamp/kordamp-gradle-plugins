@@ -28,6 +28,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.api.tasks.testing.TestReport
 import org.gradle.api.tasks.testing.TestResult
+import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -162,15 +163,16 @@ class TestingPlugin extends AbstractKordampPlugin {
         if (!logging) return
 
         testTask.afterSuite { TestDescriptor descriptor, TestResult result ->
-            String indicator = "\u001B[32m${WINDOWS ? '√' : '✔'}\u001b[0m".toString()
+            AnsiConsole console = new AnsiConsole(project)
+            String indicator = console.green(WINDOWS ? '√' : '✔')
             if (result.failedTestCount > 0) {
-                indicator = "\u001B[31m${WINDOWS ? 'X' : '✘'}\u001b[0m".toString()
+                indicator = console.red(WINDOWS ? 'X' : '✘')
             }
 
-            String str = "\u001b[2K${indicator} Test ${descriptor.name}; "
-            str += "Executed: ${result.testCount}/\u001B[32m${result.successfulTestCount}\u001B[0m/"
-            str += "\u001B[31m${result.failedTestCount}\u001B[0m/"
-            str += "\u001B[33m${result.skippedTestCount}\u001B[0m  "
+            String str = console.erase("${indicator} Test ${descriptor.name}; ")
+            str += "Executed: ${result.testCount}/${console.green(String.valueOf(result.successfulTestCount))}/"
+            str += "${console.red(String.valueOf(result.failedTestCount))}/"
+            str += "${console.yellow(String.valueOf(result.skippedTestCount))} "
             project.logger.lifecycle(str.toString())
         }
     }
