@@ -28,6 +28,7 @@ import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -280,5 +281,12 @@ class Information {
         Calendar c = Calendar.getInstance()
         c.setTime(now)
         return c.get(Calendar.YEAR).toString()
+    }
+
+    String resolveScmLink() {
+        if (isNotBlank(scm.url)) {
+            return scm.url
+        }
+        return links.scm
     }
 }

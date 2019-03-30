@@ -1,0 +1,40 @@
+
+[[_org_kordamp_gradle_plugin]]
+= Plugin
+
+[horizontal]
+id:: `org.kordamp.gradle.plugin`
+class:: `org.kordamp.gradle.plugin.plugin.MinPomPlugin`
+    (link:api/org/kordamp/gradle/plugin/plugin/MinPomPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/plugin/MinPomPlugin.html[source])
+applies:: `link:https://docs.gradle.org/current/userguide/java_gradle_plugin.html#java_gradle_plugin[java-gradle-plugin]` +
+`link:https://plugins.gradle.org/docs/publish-plugin[com.gradle.publish-plugin]`
+
+Configures a Gradle plugin project with `java-gradle-plugin` and `publish-plugin` using data defined
+in the `<<_org_kordamp_gradle_base,info>>` block of the `config` DSL.
+
+NOTE:: This plugin must be explicitly applied to Gradle plugin projects only.
+
+[[_org_kordamp_gradle_plugin_dsl]]
+== DSL
+
+[source,groovy]
+----
+config {
+    plugin {
+        enabled
+        id
+        implementationClass
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name                | Type    | Required | Default Value | Description
+| enabled             | boolean | no       | true          | Disables `org.kordamp.gradle.plugin` plugin if `false`
+| id                  | String  | yes      |               | Defines the plugin's id
+| implementationClass | String  | yes      |               | Defines the plugin's implementation Class
+|===
+
+

@@ -23,6 +23,7 @@ config {
     <<_org_kordamp_gradle_kotlindoc,kotlindoc>> { ... }
     <<_org_kordamp_gradle_licensing,licensing>> { ... }
     <<_org_kordamp_gradle_minpom,minpom>> { ... }
+    <<_org_kordamp_gradle_plugin,plugin>> { ... }
     <<_org_kordamp_gradle_publishing,publishing>> { ... }
     <<_org_kordamp_gradle_scaladoc,scaladoc>> { ... }
     <<_org_kordamp_gradle_source,source>> { ... }

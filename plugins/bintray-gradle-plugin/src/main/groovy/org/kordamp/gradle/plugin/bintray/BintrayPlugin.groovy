@@ -25,7 +25,6 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.isNotBlank
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
@@ -102,7 +101,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
                 labels = effectiveConfig.info.tags
                 websiteUrl = effectiveConfig.info.url
                 issueTrackerUrl = effectiveConfig.info.links.issueTracker
-                vcsUrl = BintrayPlugin.resolveScmLink(effectiveConfig)
+                vcsUrl = effectiveConfig.info.resolveScmLink()
                 publicDownloadNumbers = true
                 githubRepo = effectiveConfig.bintray.githubRepo
                 version {
@@ -117,12 +116,5 @@ class BintrayPlugin extends AbstractKordampPlugin {
                 }
             }
         }
-    }
-
-    private static resolveScmLink(ProjectConfigurationExtension effectiveConfig) {
-        if (isNotBlank(effectiveConfig.info.scm.url)) {
-            return effectiveConfig.info.scm.url
-        }
-        return effectiveConfig.info.links.scm
     }
 }

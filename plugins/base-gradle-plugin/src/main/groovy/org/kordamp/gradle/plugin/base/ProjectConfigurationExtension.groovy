@@ -34,6 +34,7 @@ import org.kordamp.gradle.plugin.base.plugins.Javadoc
 import org.kordamp.gradle.plugin.base.plugins.Kotlindoc
 import org.kordamp.gradle.plugin.base.plugins.Licensing
 import org.kordamp.gradle.plugin.base.plugins.Minpom
+import org.kordamp.gradle.plugin.base.plugins.Plugin
 import org.kordamp.gradle.plugin.base.plugins.Publishing
 import org.kordamp.gradle.plugin.base.plugins.Scaladoc
 import org.kordamp.gradle.plugin.base.plugins.Source
@@ -66,6 +67,7 @@ class ProjectConfigurationExtension {
     final Javadoc javadoc
     final Licensing licensing
     final Minpom minpom
+    final Plugin plugin
     final Publishing publishing
     final Scaladoc scaladoc
     final Source source
@@ -93,6 +95,7 @@ class ProjectConfigurationExtension {
         javadoc = new Javadoc(project)
         licensing = new Licensing(project)
         minpom = new Minpom(project)
+        plugin = new Plugin(project)
         publishing = new Publishing(project)
         scaladoc = new Scaladoc(project)
         source = new Source(project)
@@ -116,6 +119,7 @@ class ProjectConfigurationExtension {
         this.javadoc = other.javadoc
         this.licensing = other.licensing
         this.minpom = other.minpom
+        this.plugin = other.plugin
         this.publishing = other.publishing
         this.scaladoc = other.scaladoc
         this.source = other.source
@@ -156,6 +160,7 @@ class ProjectConfigurationExtension {
         map.putAll(javadoc.toMap())
         map.putAll(licensing.toMap())
         map.putAll(minpom.toMap())
+        map.putAll(plugin.toMap())
         map.putAll(publishing.toMap())
         map.putAll(scaladoc.toMap())
         map.putAll(source.toMap())
@@ -221,6 +226,10 @@ class ProjectConfigurationExtension {
 
     Minpom getMinpom() {
         minpom
+    }
+
+    Plugin getPlugin() {
+        plugin
     }
 
     Publishing getPublishing() {
@@ -381,6 +390,14 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, minpom)
     }
 
+    void plugin(Action<? super Plugin> action) {
+        action.execute(plugin)
+    }
+
+    void plugin(@DelegatesTo(Plugin) Closure action) {
+        ConfigureUtil.configure(action, plugin)
+    }
+
     void publishing(Action<? super Publishing> action) {
         action.execute(publishing)
     }
@@ -478,6 +495,7 @@ class ProjectConfigurationExtension {
         this.@javadoc.copyInto(copy.@javadoc)
         this.@licensing.copyInto(copy.@licensing)
         this.@minpom.copyInto(copy.@minpom)
+        this.@plugin.copyInto(copy.@plugin)
         this.@publishing.copyInto(copy.@publishing)
         this.@scaladoc.copyInto(copy.@scaladoc)
         this.@source.copyInto(copy.@source)
@@ -506,6 +524,7 @@ class ProjectConfigurationExtension {
         Javadoc.merge(merged.@javadoc, other.@javadoc)
         Licensing.merge(merged.@licensing, other.@licensing)
         Minpom.merge(merged.@minpom, other.@minpom)
+        Plugin.merge(merged.@plugin, other.@plugin)
         Publishing.merge(merged.@publishing, other.@publishing)
         Scaladoc.merge(merged.@scaladoc, other.@scaladoc)
         Source.merge(merged.@source, other.@source)
@@ -525,16 +544,18 @@ class ProjectConfigurationExtension {
         errors.addAll(this.@bintray.validate(this))
         errors.addAll(this.@licensing.validate(this))
         errors.addAll(this.@kotlindoc.validate(this))
+        errors.addAll(this.@plugin.validate(this))
 
         errors
     }
 
     void normalize() {
         info.normalize()
-        licensing.normalize()
-        publishing.normalize()
         groovydoc.normalize()
         kotlindoc.normalize()
+        licensing.normalize()
+        plugin.normalize()
+        publishing.normalize()
         scaladoc.normalize()
     }
 }
