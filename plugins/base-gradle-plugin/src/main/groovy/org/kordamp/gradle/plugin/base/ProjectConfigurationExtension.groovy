@@ -27,6 +27,7 @@ import org.kordamp.gradle.plugin.base.plugins.Apidoc
 import org.kordamp.gradle.plugin.base.plugins.Bintray
 import org.kordamp.gradle.plugin.base.plugins.Bom
 import org.kordamp.gradle.plugin.base.plugins.BuildInfo
+import org.kordamp.gradle.plugin.base.plugins.BuildScan
 import org.kordamp.gradle.plugin.base.plugins.Clirr
 import org.kordamp.gradle.plugin.base.plugins.Groovydoc
 import org.kordamp.gradle.plugin.base.plugins.Jacoco
@@ -60,6 +61,7 @@ class ProjectConfigurationExtension {
     final Bom bom
     final Bintray bintray
     final BuildInfo buildInfo
+    final BuildScan buildScan
     final Clirr clirr
     final Groovydoc groovydoc
     final Kotlindoc kotlindoc
@@ -88,6 +90,7 @@ class ProjectConfigurationExtension {
         bom = new Bom(project)
         bintray = new Bintray(project)
         buildInfo = new BuildInfo(project)
+        buildScan = new BuildScan(project)
         clirr = new Clirr(project)
         groovydoc = new Groovydoc(project)
         kotlindoc = new Kotlindoc(project)
@@ -112,6 +115,7 @@ class ProjectConfigurationExtension {
         this.bom = other.bom
         this.bintray = other.bintray
         this.buildInfo = other.buildInfo
+        this.buildScan = other.buildScan
         this.clirr = other.clirr
         this.groovydoc = other.groovydoc
         this.kotlindoc = other.kotlindoc
@@ -153,6 +157,7 @@ class ProjectConfigurationExtension {
         map.putAll(bom.toMap())
         map.putAll(bintray.toMap())
         map.putAll(buildInfo.toMap())
+        map.putAll(buildScan.toMap())
         map.putAll(clirr.toMap())
         map.putAll(groovydoc.toMap())
         map.putAll(kotlindoc.toMap())
@@ -190,6 +195,10 @@ class ProjectConfigurationExtension {
 
     BuildInfo getBuildInfo() {
         buildInfo
+    }
+
+    BuildScan getBuildScan() {
+        buildScan
     }
 
     Clirr getClirr() {
@@ -316,6 +325,14 @@ class ProjectConfigurationExtension {
 
     void buildInfo(@DelegatesTo(BuildInfo) Closure action) {
         ConfigureUtil.configure(action, buildInfo)
+    }
+
+    void buildScan(Action<? super BuildScan> action) {
+        action.execute(buildScan)
+    }
+
+    void buildScan(@DelegatesTo(BuildScan) Closure action) {
+        ConfigureUtil.configure(action, buildScan)
     }
 
     void clirr(Action<? super Clirr> action) {
@@ -488,6 +505,7 @@ class ProjectConfigurationExtension {
         this.@bom.copyInto(copy.@bom)
         this.@bintray.copyInto(copy.@bintray)
         this.@buildInfo.copyInto(copy.@buildInfo)
+        this.@buildScan.copyInto(copy.@buildScan)
         this.@clirr.copyInto(copy.@clirr)
         this.@groovydoc.copyInto(copy.@groovydoc)
         this.@kotlindoc.copyInto(copy.@kotlindoc)
@@ -517,6 +535,7 @@ class ProjectConfigurationExtension {
         Bom.merge(merged.@bom, other.@bom)
         Bintray.merge(merged.@bintray, other.@bintray)
         BuildInfo.merge(merged.@buildInfo, other.@buildInfo)
+        BuildScan.merge(merged.@buildScan, other.@buildScan)
         Clirr.merge(merged.@clirr, other.@clirr)
         Groovydoc.merge(merged.@groovydoc, other.@groovydoc)
         Kotlindoc.merge(merged.@kotlindoc, other.@kotlindoc)

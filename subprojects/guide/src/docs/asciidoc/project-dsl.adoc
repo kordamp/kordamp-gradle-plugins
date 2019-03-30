@@ -16,6 +16,7 @@ config {
     <<_org_kordamp_gradle_bintray,bintray>> { ... }
     <<_org_kordamp_gradle_bom,bom>> { ... }
     <<_org_kordamp_gradle_buildinfo,buildInfo>> { ... }
+    <<_org_kordamp_gradle_buildscan,buildScan>> { ... }
     <<_org_kordamp_gradle_clirr,clirr>> { ... }
     <<_org_kordamp_gradle_groovydoc,groovydoc>> { ... }
     <<_org_kordamp_gradle_jacoco,jacoco>> { ... }

@@ -1,0 +1,108 @@
+
+[[_org_kordamp_gradle_buildscan]]
+= BuildScan
+
+[horizontal]
+id:: `org.kordamp.gradle.build-scan`
+class:: `org.kordamp.gradle.plugin.buildscan.BuildScanPlugin`
+    (link:api/org/kordamp/gradle/plugin/buildscan/BuildScanPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/buildscan/BuildScanPlugin.html[source])
+applies::  `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>` +
+`link:https://scans.gradle.com[com.gradle.build-scan]`
+
+Configures the `com.gradle.build-scan` plugin and enables conditional agreement on the terms of service.
+
+You may define a System property `build.scan.agree` when invoking a build to set the value of the build
+scan agreement on the spot. You may also set this value at the project or global level. The precendence
+for evaluating the agreement is thus
+
+ . explicitly set on the `buildScan.termsOfServiceUrl` property.
+ . the `build.scan.agree` System property.
+ . the local project build scan agreement file.
+ . the global build scan agreement file. 
+
+You may create, remove, query the local and global build scan files with the tasks exposed by this plugin.
+Scans must be enabled by either specifying the  `--scan` flag or `buildScan.publishAlways()`.
+
+[[_org_kordamp_gradle_buildscan_dsl]]
+== DSL
+
+[source,groovy]
+----
+config {
+    buildScan {
+        enabled
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name                | Type    | Required | Default Value | Description
+| enabled             | boolean | no       | true          | Disables `org.kordamp.gradle.build-scan` plugin if `false`
+|===
+
+[[_org_kordamp_gradle_buildscan_tasks]]
+== Tasks
+
+[[_task_list_buildscan_agreements]]
+=== ListBuildScanAgreementTask
+
+Lists the agreements at both project and global levels.
+
+[horizontal]
+Name:: listBuildScanAgreementTask
+Type:: `org.kordamp.gradle.plugin.buildscan.ListBuildScanAgreementTask`
+
+.Example
+
+[source]
+----
+$ gradle listBuildScanAgreements
+
+> Task :listBuildScanAgreements
+Project: no
+Global:  yes
+----
+
+[[_task_remove_buildscan_agreement]]
+=== RemoveBuildScanAgreement
+
+Removes the agreement value at either project or global level.
+
+[horizontal]
+Name:: removeBuildScanAgreement
+Type:: `org.kordamp.gradle.plugin.buildscan.BuildScanAgreementTask`
+
+.Options
+[horizontal]
+location:: The location of the agreement file. Valid values are `project`, `global`.
+
+.Example
+
+[source]
+----
+$ gradle removeBuildScanAgreement --location=project
+----
+
+[[_task_set_buildscan_agreement]]
+=== SetBuildScanAgreement
+
+Sets the agreement value at either project or global level.
+
+[horizontal]
+Name:: setBuildScanAgreement
+Type:: `org.kordamp.gradle.plugin.buildscan.BuildScanAgreementTask`
+
+.Options
+[horizontal]
+location:: The location of the agreement file. Valid values are `project`, `global`.
+agree:: The value of the agreement. Must be either `yes` or `no`.
+
+.Example
+
+[source]
+----
+$ gradle setBuildScanAgreement --location=global --agree=yes
+----
+
