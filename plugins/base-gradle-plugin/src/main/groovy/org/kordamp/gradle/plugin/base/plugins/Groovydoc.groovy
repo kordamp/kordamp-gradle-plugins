@@ -21,6 +21,7 @@ import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.ConfigureUtil
@@ -53,8 +54,23 @@ class Groovydoc extends AbstractFeature {
         options.docTitle       = "${project.name} ${project.version}"
         options.header         = "${project.name} ${project.version}"
         options.includePrivate = false
-        options.link 'http://docs.oracle.com/javase/8/docs/api/', 'java.', 'org.xml.', 'javax.', 'org.w3c.'
-        options.link 'http://docs.groovy-lang.org/2.5.2/html/api/', 'groovy.', 'org.codehaus.groovy.', 'org.apache.groovy.'
+        options.link resolveJavadocLinks(project.findProperty('targetCompatibility')), 'java.', 'javax.', 'org.xml.', 'org.w3c.'
+        options.link 'http://docs.groovy-lang.org/2.5.6/html/api/', 'groovy.', 'org.codehaus.groovy.', 'org.apache.groovy.'
+    }
+
+    private String resolveJavadocLinks(Object jv) {
+        JavaVersion javaVersion = JavaVersion.current()
+
+        if (jv instanceof JavaVersion) {
+            javaVersion = (JavaVersion) jv
+        } else if (jv != null) {
+            javaVersion = JavaVersion.toVersion(jv)
+        }
+
+        if (javaVersion.isJava11Compatible()) {
+            return "https://docs.oracle.com/en/java/javase/${javaVersion.majorVersion}/docs/api/".toString()
+        }
+        return "https://docs.oracle.com/javase/${javaVersion.majorVersion}/docs/api/"
     }
 
     @Override
