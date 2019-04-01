@@ -74,7 +74,7 @@ config {
         }
     }
 
-    license {
+    licensing {
         licenses {
             license {
                 id = 'Apache-2.0'
@@ -180,6 +180,12 @@ subprojects {
                 groupId = project.group
                 artifactId = project.name
                 version = project.version
+            }
+        }
+
+        normalization {
+            runtimeClasspath {
+                ignore('/META-INF/MANIFEST.MF')
             }
         }
     }
