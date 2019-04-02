@@ -80,7 +80,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
         project.tasks.register('checkAutoLinks', CheckAutoLinksTask.class,
             new Action<CheckAutoLinksTask>() {
                 void execute(CheckAutoLinksTask t) {
-                    t.group = 'Javadoc'
+                    t.group = 'Documentation'
                     t.description = 'Checks if generated Javadoc auto links are reachable.'
                 }
             })
