@@ -15,14 +15,13 @@
  */
 
 plugins {
-    id 'org.kordamp.gradle.project' version '0.15.1'
-    id 'org.kordamp.gradle.bintray' version '0.15.1'
-    id 'com.gradle.plugin-publish'  version '0.10.1' apply false
-    id 'com.gradle.build-scan'      version '2.2.1'
+    id 'org.kordamp.gradle.build-scan' version '0.16.0'
+    id 'org.kordamp.gradle.project'    version '0.16.0'
+    id 'org.kordamp.gradle.bintray'    version '0.16.0'
+    id 'org.kordamp.gradle.plugin'     version '0.16.0' apply false
 }
 
 buildScan {
-    termsOfServiceUrl   = 'https://gradle.com/terms-of-service'
     termsOfServiceAgree = 'yes'
 }
 
@@ -119,7 +118,7 @@ allprojects {
 subprojects {
     if (project.name.endsWith('-plugin')) {
         apply plugin: 'groovy'
-        apply plugin: 'java-gradle-plugin'
+        apply plugin: 'org.kordamp.gradle.plugin'
 
         config {
             info {
@@ -127,6 +126,12 @@ subprojects {
             }
 
             bintray { enabled = true }
+
+            plugin {
+                enabled             = true
+                id                  = project.pluginId
+                implementationClass = project.pluginImplementationClass
+            }
         }
 
         normalization {
@@ -148,45 +153,6 @@ subprojects {
             targetCompatibility = project.targetCompatibility
         }
 
-        bintray {
-            pkg {
-                version {
-                    attributes = ['gradle-plugin': "${project.pluginId}:${project.group}:${project.name}"]
-                }
-            }
-        }
-
-        apply plugin: 'com.gradle.plugin-publish'
-
-        gradlePlugin {
-            plugins {
-                "${project.pluginShortName}Plugin" {
-                    id = project.pluginId
-                    implementationClass = project.pluginImplementationClass
-                }
-            }
-        }
-
         task publishRelease(dependsOn: [bintrayUpload, publishPlugins]) {}
-
-        pluginBundle {
-            website = "https://github.com/aalmiray/${rootProject.name}"
-            vcsUrl = "https://github.com/aalmiray/${rootProject.name}.git"
-            description = project.project_description
-            tags = ['project', 'configuration']
-
-            plugins {
-                "${project.pluginShortName}Plugin" {
-                    id = project.pluginId
-                    displayName = project.displayName
-                }
-            }
-
-            mavenCoordinates {
-                groupId = project.group
-                artifactId = project.name
-                version = project.version
-            }
-        }
     }
 }
