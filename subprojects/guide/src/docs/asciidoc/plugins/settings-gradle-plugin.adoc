@@ -92,7 +92,8 @@ projects {
 | excludes                | List<String> | no       | []            | List of directories to be excluded from automatic inclusion.
 |===
 
-The `directories` property is not required if the chosen layout is set to `standard`.
+The `directories` property is not required if the chosen layout is set to `standard`. It may be omitted if the chosen layout
+is `two-level` however is recommended to define it if the search space is too big (too many first level directories).
 
 [[_org_kordamp_gradle_settings_example]]
 == Example

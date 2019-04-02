@@ -59,23 +59,33 @@ class SettingsPlugin implements Plugin<Settings> {
     private void processTwoLevelLayout() {
         ProjectsExtension projects = (ProjectsExtension) settings.extensions.findByName(ProjectsExtension.EXTENSION_NAME)
 
-        for (String parentDirName : projects.directories) {
-            File parentDir = new File(settings.rootDir, parentDirName)
-            if (!parentDir.exists()) {
-                println "Skipping ${parentDir} as it does not exist"
-                continue
+        if (projects.directories) {
+            for (String parentDirName : projects.directories) {
+                File parentDir = new File(settings.rootDir, parentDirName)
+                if (!parentDir.exists()) {
+                    println "Skipping ${parentDir} as it does not exist"
+                    continue
+                }
+
+                doProcessTwoLevelLayout(projects, parentDir)
             }
+        } else {
+            settings.settingsDir.eachDir { File parentDir ->
+                doProcessTwoLevelLayout(projects, parentDir)
+            }
+        }
+    }
 
-            parentDir.eachDir { File projectDir ->
-                if (projects.excludes.contains(projectDir.name)) return
+    private void doProcessTwoLevelLayout(ProjectsExtension projects, File parentDir) {
+        parentDir.eachDir { File projectDir ->
+            if (projects.excludes.contains(projectDir.name)) return
 
-                File buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectDir.name}.gradle".toString() : 'build.gradle')
-                if (!buildFile.exists()) {
-                    buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectDir.name}.gradle.kts".toString() : 'build.gradle.kts')
-                }
-                if (buildFile.exists()) {
-                    includeProject(parentDir, projectDir.name, buildFile)
-                }
+            File buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectDir.name}.gradle".toString() : 'build.gradle')
+            if (!buildFile.exists()) {
+                buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectDir.name}.gradle.kts".toString() : 'build.gradle.kts')
+            }
+            if (buildFile.exists()) {
+                includeProject(parentDir, projectDir.name, buildFile)
             }
         }
     }
