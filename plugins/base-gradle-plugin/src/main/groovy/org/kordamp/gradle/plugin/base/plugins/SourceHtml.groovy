@@ -25,6 +25,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
@@ -40,8 +41,8 @@ class SourceHtml extends AbstractFeature {
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<Project> excludedProjects = new LinkedHashSet<>()
 
-    SourceHtml(Project project) {
-        super(project)
+    SourceHtml(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
         this.conversion = new Conversion(project)
         this.overview = new Overview(project)
         srcDirs = project.files()

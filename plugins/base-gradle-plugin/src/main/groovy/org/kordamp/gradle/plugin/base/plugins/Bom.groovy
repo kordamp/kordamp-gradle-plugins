@@ -33,6 +33,8 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 @Canonical
 class Bom extends AbstractFeature implements PomOptions {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.bom'
+
     Set<String> compile = new LinkedHashSet<>()
     Set<String> runtime = new LinkedHashSet<>()
     Set<String> test = new LinkedHashSet<>()
@@ -58,8 +60,15 @@ class Bom extends AbstractFeature implements PomOptions {
     private boolean overwriteDevelopersSet
     private boolean overwriteContributorsSet
 
-    Bom(Project project) {
-        super(project)
+    Bom(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
+        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+    }
+
+    void normalize() {
+        if (!enabledSet) {
+            setEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        }
     }
 
     @Override
@@ -70,8 +79,6 @@ class Bom extends AbstractFeature implements PomOptions {
     @Override
     @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        if (!isRoot()) return [:]
-
         Map map = [enabled: enabled]
 
         if (enabled) {

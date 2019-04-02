@@ -21,6 +21,7 @@ import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
@@ -29,8 +30,8 @@ import org.gradle.api.Project
 @CompileStatic
 @Canonical
 class Minpom extends AbstractFeature {
-    Minpom(Project project) {
-        super(project)
+    Minpom(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
     }
 
     @Override

@@ -20,8 +20,11 @@ package org.kordamp.gradle.plugin.plugin
 import com.gradle.publish.PluginBundleExtension
 import com.gradle.publish.PluginConfig
 import com.gradle.publish.PublishPlugin
+import com.jfrog.bintray.gradle.BintrayExtension
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -32,7 +35,6 @@ import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
- *
  * @author Andres Almiray
  * @since 0.16.0
  */
@@ -61,6 +63,16 @@ class PluginPlugin extends AbstractKordampPlugin {
         project.plugins.apply(PublishPlugin)
 
         String pluginName = resolveConfig(project).plugin.pluginName
+
+        GradlePluginDevelopmentExtension gpde = project.extensions.findByType(GradlePluginDevelopmentExtension)
+        project.tasks.register('listPluginDescriptors', ListPluginDescriptors.class,
+            new Action<ListPluginDescriptors>() {
+                void execute(ListPluginDescriptors t) {
+                    t.group = 'Plugin development'
+                    t.description = 'Lists plugin descriptors from plugin declarations.'
+                    t.declarations.set(gpde.plugins)
+                }
+            })
 
         PluginBundleExtension pbe = project.extensions.findByType(PluginBundleExtension)
         PluginConfig pc = pbe.plugins.maybeCreate(pluginName)
@@ -97,6 +109,11 @@ class PluginPlugin extends AbstractKordampPlugin {
             }
             if (isBlank(pc.displayName)) {
                 pc.displayName = effectiveConfig.info.name
+            }
+
+            BintrayExtension bintray = project.extensions.findByType(BintrayExtension)
+            if (bintray) {
+                bintray.pkg.version.attributes = ['gradle-plugin': "${effectiveConfig.plugin.id}:${project.group}:${project.name}".toString()]
             }
         }
     }

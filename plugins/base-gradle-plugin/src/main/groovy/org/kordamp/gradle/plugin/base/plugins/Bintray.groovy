@@ -40,13 +40,14 @@ class Bintray extends AbstractFeature {
     String name
     String githubRepo
     final Credentials credentials = new Credentials()
+    List<String> publications = new ArrayList<>()
 
     boolean skipMavenSync = false
 
     private boolean skipMavenSyncSet
 
-    Bintray(Project project) {
-        super(project)
+    Bintray(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
         doSetEnabled(false)
     }
 
@@ -66,6 +67,7 @@ class Bintray extends AbstractFeature {
             map.repo = getRepo()
             map.githubRepo = getGithubRepo()
             map.skipMavenSync = skipMavenSync
+            map.publications = resolvePublications()
             if (!credentials.empty) {
                 map.credentials = [
                     username: credentials.username,
@@ -115,6 +117,7 @@ class Bintray extends AbstractFeature {
         copy.@name = this.@name
         copy.userOrg = userOrg
         copy.@githubRepo = this.@githubRepo
+        copy.publications.addAll(publications)
         credentials.copyInto(copy.credentials)
     }
 
@@ -125,6 +128,7 @@ class Bintray extends AbstractFeature {
         o1.repo = o1.@repo ?: o2.@repo
         o1.userOrg = o1.userOrg ?: o2.userOrg
         o1.githubRepo = o1.@githubRepo ?: o2.githubRepo
+        o1.publications.addAll((o1.publications + o2.publications).unique())
         o1.credentials.merge(o1.credentials, o2.credentials)
     }
 
@@ -147,5 +151,14 @@ class Bintray extends AbstractFeature {
         errors.addAll(extension.info.links.validate(extension))
 
         errors
+    }
+
+    List<String> resolvePublications() {
+        List<String> pubs = new ArrayList<>(publications)
+        if (!pubs) pubs << 'main'
+        if (config.plugin.enabled) {
+            pubs << config.plugin.pluginName + 'PluginMarkerMaven'
+        }
+        pubs.unique()
     }
 }

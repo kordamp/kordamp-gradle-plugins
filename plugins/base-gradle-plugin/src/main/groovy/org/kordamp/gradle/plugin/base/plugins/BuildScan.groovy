@@ -21,6 +21,7 @@ import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
@@ -29,8 +30,17 @@ import org.gradle.api.Project
 @CompileStatic
 @Canonical
 class BuildScan extends AbstractFeature {
-    BuildScan(Project project) {
-        super(project)
+    static final String PLUGIN_ID = 'org.kordamp.gradle.build-scan'
+
+    BuildScan(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
+        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+    }
+
+    void normalize() {
+        if (!enabledSet && isRoot()) {
+            setEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        }
     }
 
     @Override

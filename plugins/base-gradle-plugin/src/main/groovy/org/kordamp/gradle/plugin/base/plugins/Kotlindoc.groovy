@@ -72,8 +72,8 @@ class Kotlindoc extends AbstractFeature {
     private boolean skipEmptyPackagesSet
     private boolean noStdlibLinkSet
 
-    Kotlindoc(Project project) {
-        super(project)
+    Kotlindoc(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
         doSetEnabled(project.plugins.findPlugin('kotlin') != null)
     }
 

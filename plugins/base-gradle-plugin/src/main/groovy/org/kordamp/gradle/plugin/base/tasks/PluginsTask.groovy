@@ -48,7 +48,7 @@ class PluginsTask extends AbstractReportingTask {
             extractMetadata(e.nextElement(), pluginMetadata)
         }
 
-        project.plugins.eachWithIndex { plugin, index -> plugins.putAll(doReport(plugin, index, pluginMetadata)) }
+        project.plugins.eachWithIndex { plugin, index -> plugins.putAll(PluginsTask.doReport(plugin, index, pluginMetadata)) }
 
         doPrint(plugins, 0)
     }
@@ -70,7 +70,7 @@ class PluginsTask extends AbstractReportingTask {
     }
 
     @CompileDynamic
-    private Map<String, Map<String, ?>> doReport(Plugin plugin, int index, Map<String, String> pluginMetadata) {
+    private static Map<String, Map<String, ?>> doReport(Plugin plugin, int index, Map<String, String> pluginMetadata) {
         Map<String, ?> map = [:]
 
         map.id = (pluginMetadata[plugin.class.name] ?: plugin.class.name) - 'org.gradle.'

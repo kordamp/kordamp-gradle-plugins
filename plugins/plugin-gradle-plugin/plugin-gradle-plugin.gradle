@@ -22,4 +22,5 @@ dependencies {
 
 dependencies {
     compile 'com.gradle.publish:plugin-publish-plugin:0.10.1'
+    compile "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintrayVersion"
 }

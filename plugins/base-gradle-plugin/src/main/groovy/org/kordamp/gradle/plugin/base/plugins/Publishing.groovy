@@ -23,6 +23,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.DefaultPomOptions
 import org.kordamp.gradle.plugin.base.model.PomOptions
 
@@ -33,6 +34,8 @@ import org.kordamp.gradle.plugin.base.model.PomOptions
 @CompileStatic
 @Canonical
 class Publishing extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.publishing'
+
     String releasesRepository
     String snapshotsRepository
     boolean signing = false
@@ -40,9 +43,9 @@ class Publishing extends AbstractFeature {
 
     private boolean signingSet
 
-    Publishing(Project project) {
-        super(project)
-        doSetEnabled(project.plugins.findPlugin('groovy') != null)
+    Publishing(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
+        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
     }
 
     @Override
@@ -67,7 +70,7 @@ class Publishing extends AbstractFeature {
 
     void normalize() {
         if (!enabledSet && isRoot()) {
-            setEnabled(project.plugins.findPlugin('org.kordamp.gradle.publishing') != null)
+            setEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
         }
     }
 

@@ -17,14 +17,19 @@
  */
 package org.kordamp.gradle.plugin.bintray
 
+import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
+import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.tasks.SourceSetContainer
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.PluginUtils.resolveSourceSets
+import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
@@ -33,6 +38,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.2.0
  */
+@CompileStatic
 class BintrayPlugin extends AbstractKordampPlugin {
     Project project
 
@@ -82,38 +88,34 @@ class BintrayPlugin extends AbstractKordampPlugin {
     private void updatePublications(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
-        if (!effectiveConfig.bintray.enabled || !project.sourceSets.findByName('main')) {
+        if (!effectiveConfig.bintray.enabled || !((SourceSetContainer) resolveSourceSets(project)).findByName('main')) {
             project.getTasks().findByName(BintrayUploadTask.TASK_NAME)?.enabled = false
             setEnabled(false)
             return
         }
 
-        project.bintray {
-            user = effectiveConfig.bintray.credentials.username
-            key = effectiveConfig.bintray.credentials.password
-            publications = ['main']
-            pkg {
-                repo = effectiveConfig.bintray.repo
-                userOrg = effectiveConfig.bintray.userOrg
-                name = effectiveConfig.bintray.name
-                desc = effectiveConfig.info.description
-                licenses = effectiveConfig.licensing.resolveBintrayLicenseIds()
-                labels = effectiveConfig.info.tags
-                websiteUrl = effectiveConfig.info.url
-                issueTrackerUrl = effectiveConfig.info.links.issueTracker
-                vcsUrl = effectiveConfig.info.resolveScmLink()
-                publicDownloadNumbers = true
-                githubRepo = effectiveConfig.bintray.githubRepo
-                version {
-                    name = project.version
-                    vcsTag = "${effectiveConfig.bintray.name}-${project.version}"
-                    if (effectiveConfig.info.credentials.sonatype && !effectiveConfig.bintray.skipMavenSync)
-                        mavenCentralSync {
-                            sync = true
-                            user = effectiveConfig.info.credentials.sonatype.username
-                            password = effectiveConfig.info.credentials.sonatype.password
-                        }
-                }
+        BintrayExtension bintray = project.extensions.findByType(BintrayExtension)
+        if (isBlank(bintray.user)) bintray.user = effectiveConfig.bintray.credentials.username
+        if (isBlank(bintray.key)) bintray.key = effectiveConfig.bintray.credentials.password
+        if (!bintray.publications) bintray.publications = effectiveConfig.bintray.resolvePublications().toArray(new String[0])
+        if (isBlank(bintray.pkg.repo)) bintray.pkg.repo = effectiveConfig.bintray.repo
+        if (isBlank(bintray.pkg.userOrg)) bintray.pkg.userOrg = effectiveConfig.bintray.userOrg
+        if (isBlank(bintray.pkg.name)) bintray.pkg.name = effectiveConfig.bintray.name
+        if (isBlank(bintray.pkg.desc)) bintray.pkg.desc = effectiveConfig.info.description
+        if (isBlank(bintray.pkg.websiteUrl)) bintray.pkg.websiteUrl = effectiveConfig.info.url
+        if (isBlank(bintray.pkg.issueTrackerUrl)) bintray.pkg.issueTrackerUrl = effectiveConfig.info.links.issueTracker
+        if (isBlank(bintray.pkg.vcsUrl)) bintray.pkg.vcsUrl = effectiveConfig.info.resolveScmLink()
+        if (!bintray.pkg.licenses) bintray.pkg.licenses = effectiveConfig.licensing.resolveBintrayLicenseIds().toArray(new String[0])
+        if (!bintray.pkg.labels) bintray.pkg.labels = effectiveConfig.info.tags.toArray(new String[0])
+        bintray.pkg.publicDownloadNumbers = true // TODO: fin a way to conditionally set this value
+        if (isBlank(bintray.pkg.githubRepo)) bintray.pkg.githubRepo = effectiveConfig.bintray.githubRepo
+        if (isBlank(bintray.pkg.version.name)) bintray.pkg.version.name = project.version
+        if (isBlank(bintray.pkg.version.vcsTag)) bintray.pkg.version.vcsTag = "${effectiveConfig.bintray.name}-${project.version}".toString()
+        if (effectiveConfig.info.credentials.sonatype && !effectiveConfig.bintray.skipMavenSync) {
+            bintray.pkg.version.mavenCentralSync.with {
+                sync = true
+                user = effectiveConfig.info.credentials.sonatype.username
+                password = effectiveConfig.info.credentials.sonatype.password
             }
         }
     }

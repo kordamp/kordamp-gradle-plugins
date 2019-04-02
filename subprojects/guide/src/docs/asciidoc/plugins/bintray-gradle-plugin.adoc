@@ -38,20 +38,23 @@ config {
         repo
         userOrg
         githubRepo
+        skipMavenSync
+        publications
     }
 }
 ----
 
 [options="header", cols="5*"]
 |===
-| Name          | Type        | Required | Default Value   | Description
-| enabled       | boolean     | no       | true            | Disables `org.kordamp.gradle.bintray` plugin if `false`
-| credentials   | Credentials | yes      |                 | Values map to `bintray.user` and `bintray.key`
-| repo          | String      | no       | maven           | Mapped to `bintray.pkg.repo`
-| userOrg       | String      | yes      |                 | Mapped to `bintray.pkg.userOrg`
-| name          | String      | no       | project.name    | Mapped to `bintray.pkg.name`
-| githubRepo    | String      | no       | $userOrg/$name  | Mapped to `bintray.pkg.githubRepo`
-| skipMavenSync | boolean     | no       | false           | No not sync with Maven Central
+| Name          | Type         | Required | Default Value   | Description
+| enabled       | boolean      | no       | true            | Disables `org.kordamp.gradle.bintray` plugin if `false`
+| credentials   | Credentials  | yes      |                 | Values map to `bintray.user` and `bintray.key`
+| repo          | String       | no       | maven           | Mapped to `bintray.pkg.repo`
+| userOrg       | String       | yes      |                 | Mapped to `bintray.pkg.userOrg`
+| name          | String       | no       | project.name    | Mapped to `bintray.pkg.name`
+| githubRepo    | String       | no       | $userOrg/$name  | Mapped to `bintray.pkg.githubRepo`
+| skipMavenSync | boolean      | no       | false           | No not sync with Maven Central
+| publications  | List<String> | no       | ['main']        | Configures the publications that should be published to Bintray.
 |===
 
 The value of `info.tags` is mapped to `bintray.pkg.labels`.

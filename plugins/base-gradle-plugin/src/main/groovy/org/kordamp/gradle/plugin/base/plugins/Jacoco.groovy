@@ -25,6 +25,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.tasks.JacocoReport
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
@@ -45,8 +46,8 @@ class Jacoco extends AbstractFeature {
     final ConfigurableFileCollection additionalSourceDirs
     final ConfigurableFileCollection additionalClassDirs
 
-    Jacoco(Project project) {
-        super(project)
+    Jacoco(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
         File destinationDir = project.file("${project.buildDir}/reports/jacoco/root")
         mergeExecFile = project.file("${project.buildDir}/jacoco/root.exec")
         mergeReportHtmlFile = project.file("${destinationDir}/html")

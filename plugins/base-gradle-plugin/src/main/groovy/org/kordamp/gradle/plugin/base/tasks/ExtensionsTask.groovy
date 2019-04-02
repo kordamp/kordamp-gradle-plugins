@@ -29,12 +29,12 @@ class ExtensionsTask extends AbstractReportingTask {
     void report() {
         Map<String, Map<String, Object>> extensions = [:]
 
-        project.extensions.extensionsSchema.elements.eachWithIndex { extension, index -> extensions.putAll(doReport(extension, index)) }
+        project.extensions.extensionsSchema.elements.eachWithIndex { extension, index -> extensions.putAll(ExtensionsTask.doReport(extension, index)) }
 
         doPrint(extensions, 0)
     }
 
-    private Map<String, Map<String, ?>> doReport(ExtensionsSchema.ExtensionSchema extension, int index) {
+    private static Map<String, Map<String, ?>> doReport(ExtensionsSchema.ExtensionSchema extension, int index) {
         Map<String, ?> map = [:]
 
         map.name = extension.name

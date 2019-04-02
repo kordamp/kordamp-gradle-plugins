@@ -25,6 +25,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.impl.GroovydocOptions
 
 /**
@@ -45,8 +46,8 @@ class Groovydoc extends AbstractFeature {
 
     private boolean replaceJavadocSet
 
-    Groovydoc(Project project) {
-        super(project)
+    Groovydoc(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
         doSetEnabled(project.plugins.findPlugin('groovy') != null)
 
         options.use            = true

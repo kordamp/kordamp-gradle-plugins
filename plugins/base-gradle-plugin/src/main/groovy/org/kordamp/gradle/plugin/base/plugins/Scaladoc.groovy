@@ -25,6 +25,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.scala.ScalaDoc
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.impl.ScaladocOptions
 
 /**
@@ -45,8 +46,8 @@ class Scaladoc extends AbstractFeature {
     private final Set<ScalaDoc> scaladocTasks = new LinkedHashSet<>()
     private final Set<Jar> scaladocJarTasks = new LinkedHashSet<>()
 
-    Scaladoc(Project project) {
-        super(project)
+    Scaladoc(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
         doSetEnabled(project.plugins.findPlugin('scala') != null)
 
         title               = "${project.name} ${project.version}"

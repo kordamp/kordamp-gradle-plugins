@@ -24,6 +24,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
@@ -49,8 +50,8 @@ class SourceXref extends AbstractFeature {
     private final Set<TaskProvider<? extends Task>> xrefTasks = new LinkedHashSet<>()
     private final Set<Project> excludedProjects = new LinkedHashSet<>()
 
-    SourceXref(Project project) {
-        super(project)
+    SourceXref(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
         windowTitle = "${project.name} ${project.version}"
         docTitle = "${project.name} ${project.version}"
     }

@@ -23,6 +23,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.getNaturalName
 import static org.kordamp.gradle.StringUtils.getPropertyNameForLowerCaseHyphenSeparatedName
@@ -45,8 +46,8 @@ class Stats extends AbstractFeature {
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<TaskProvider<? extends Task>> statsTasks = new LinkedHashSet<>()
 
-    Stats(Project project) {
-        super(project)
+    Stats(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
         paths.putAll(defaultPaths())
     }
 

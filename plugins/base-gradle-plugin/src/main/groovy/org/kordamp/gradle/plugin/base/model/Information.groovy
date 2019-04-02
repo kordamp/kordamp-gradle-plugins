@@ -59,7 +59,10 @@ class Information {
     private Specification spec = new Specification()
     private Implementation impl = new Implementation()
 
-    Information(Project project) {
+    protected final ProjectConfigurationExtension config
+
+    Information(ProjectConfigurationExtension config, Project project) {
+        this.config = config
         this.project = project
     }
 
@@ -90,7 +93,7 @@ class Information {
     }
 
     Information copyOf() {
-        Information copy = new Information(project)
+        Information copy = new Information(config, project)
         copyInto(copy)
         copy
     }

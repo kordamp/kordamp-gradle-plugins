@@ -21,6 +21,7 @@ import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
@@ -35,8 +36,8 @@ class Apidoc extends AbstractFeature {
 
     private final Set<Project> excludedProjects = new LinkedHashSet<>()
 
-    Apidoc(Project project) {
-        super(project)
+    Apidoc(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
     }
 
     @Override

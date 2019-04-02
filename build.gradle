@@ -129,6 +129,12 @@ subprojects {
             bintray { enabled = true }
         }
 
+        normalization {
+            runtimeClasspath {
+                ignore('/META-INF/MANIFEST.MF')
+            }
+        }
+
         dependencies {
             compile gradleApi()
 
@@ -180,12 +186,6 @@ subprojects {
                 groupId = project.group
                 artifactId = project.name
                 version = project.version
-            }
-        }
-
-        normalization {
-            runtimeClasspath {
-                ignore('/META-INF/MANIFEST.MF')
             }
         }
     }

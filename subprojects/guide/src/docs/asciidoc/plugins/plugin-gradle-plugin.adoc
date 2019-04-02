@@ -38,4 +38,16 @@ config {
 | implementationClass | String  | yes      |               | Defines the plugin's implementation Class
 |===
 
+[[_org_kordamp_gradle_plugin_tasks]]
+== Tasks
+
+[[_task_list_plugin_descriptors]]
+=== ListPluginDescriptors
+
+Lists plugin descriptors from plugin declarations.
+
+[horizontal]
+Name:: listPluginDescriptors
+Type:: `org.kordamp.gradle.plugin.plugin.ListPluginDescriptors`
+
 

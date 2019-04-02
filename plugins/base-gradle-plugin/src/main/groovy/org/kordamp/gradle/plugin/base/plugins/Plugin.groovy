@@ -25,6 +25,7 @@ import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import org.gradle.plugin.devel.PluginDeclaration
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
+import static org.kordamp.gradle.StringUtils.getPropertyNameForLowerCaseHyphenSeparatedName
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -34,7 +35,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
 @CompileStatic
 @Canonical
 class Plugin extends AbstractFeature {
-    private static final String PLUGIN_ID = 'org.kordamp.gradle.plugin'
+    static final String PLUGIN_ID = 'org.kordamp.gradle.plugin'
 
     String id
     String implementationClass
@@ -42,11 +43,11 @@ class Plugin extends AbstractFeature {
 
     private final String pluginName
 
-    Plugin(Project project) {
-        super(project)
+    Plugin(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
         doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
 
-        pluginName = project.name - '-gradle' - 'gradle-' - '-plugin' + 'Plugin'
+        pluginName = getPropertyNameForLowerCaseHyphenSeparatedName(project.name - '-gradle' - 'gradle-' - '-plugin')
     }
 
     String getPluginName() {

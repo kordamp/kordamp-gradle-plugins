@@ -71,6 +71,8 @@ be treated as the primary license.
 [[_org_kordamp_gradle_license_example]]
 == Example
 
+Configuring the Apache Software License 2.0 can be done in the following way
+
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
 .build.gradle
 ----
@@ -93,6 +95,38 @@ config {
         licenses {
             license {
                 id = "Apache-2.0"
+            }
+        }
+    }
+}
+----
+
+Configuring a custom license can be done in the following way
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.build.gradle
+----
+config {
+    licensing {
+        licenses {
+            license {
+                name = 'Custom License'
+                url  = 'http://www.acme.com/license.txt'
+            }
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.build.gradle.kts
+----
+config {
+    licensing {
+        licenses {
+            license {
+                name = "Custom License"
+                url  = "http://www.acme.com/license.txt"
             }
         }
     }

@@ -24,6 +24,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.test.tasks.FunctionalTest
 import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
 
@@ -47,8 +48,8 @@ class Testing extends AbstractFeature {
     private final Set<IntegrationTest> integrationTasks = new LinkedHashSet<>()
     private final Set<FunctionalTest> functionalTestTasks = new LinkedHashSet<>()
 
-    Testing(Project project) {
-        super(project)
+    Testing(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
         integration = new Integration(this)
         functional = new Functional(this)
     }

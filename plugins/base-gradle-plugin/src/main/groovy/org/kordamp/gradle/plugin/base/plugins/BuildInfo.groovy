@@ -21,6 +21,7 @@ import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
@@ -52,8 +53,8 @@ class BuildInfo extends AbstractFeature {
     private boolean skipBuildJdkSet
     private boolean skipBuildCreatedBySet
 
-    BuildInfo(Project project) {
-        super(project)
+    BuildInfo(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
     }
 
     @Override

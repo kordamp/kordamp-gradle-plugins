@@ -34,11 +34,13 @@ import org.kordamp.gradle.plugin.base.model.LicenseSet
 @CompileStatic
 @Canonical
 class Licensing extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.licensing'
+
     final LicenseSet licenses = new LicenseSet()
 
-    Licensing(Project project) {
-        super(project)
-        doSetEnabled(project.plugins.findPlugin('org.kordamp.gradle.licensing') != null)
+    Licensing(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
+        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
     }
 
     @Override
@@ -59,7 +61,7 @@ class Licensing extends AbstractFeature {
 
     void normalize() {
         if (!enabledSet && isRoot()) {
-            setEnabled(project.plugins.findPlugin('org.kordamp.gradle.licensing') != null)
+            setEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
         }
     }
 

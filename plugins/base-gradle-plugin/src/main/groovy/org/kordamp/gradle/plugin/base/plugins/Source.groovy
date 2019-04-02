@@ -23,6 +23,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
@@ -35,8 +36,8 @@ class Source extends AbstractFeature {
     private final Set<TaskProvider<Jar>> sourceTasks = new LinkedHashSet<>()
     private final Set<Project> excludedProjects = new LinkedHashSet<>()
 
-    Source(Project project) {
-        super(project)
+    Source(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
     }
 
     @Override

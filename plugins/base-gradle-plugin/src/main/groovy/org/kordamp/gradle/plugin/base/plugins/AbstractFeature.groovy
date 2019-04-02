@@ -20,6 +20,7 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
@@ -32,9 +33,11 @@ abstract class AbstractFeature implements Feature {
 
     private boolean enabledSet
 
+    protected final ProjectConfigurationExtension config
     protected final Project project
 
-    AbstractFeature(Project project) {
+    AbstractFeature(ProjectConfigurationExtension config, Project project) {
+        this.config = config
         this.project = project
     }
 

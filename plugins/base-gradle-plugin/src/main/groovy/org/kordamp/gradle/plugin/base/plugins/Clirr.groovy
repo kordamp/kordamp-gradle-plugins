@@ -23,6 +23,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import java.util.function.Predicate
 
@@ -33,6 +34,8 @@ import java.util.function.Predicate
 @CompileStatic
 @Canonical
 class Clirr extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.clirr'
+
     String baseline
     File filterFile
     Predicate<? super Difference> filter
@@ -47,8 +50,15 @@ class Clirr extends AbstractFeature {
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<TaskProvider<? extends Task>> clirrTasks = new LinkedHashSet<>()
 
-    Clirr(Project project) {
-        super(project)
+    Clirr(ProjectConfigurationExtension config, Project project) {
+        super(config, project)
+        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+    }
+
+    void normalize() {
+        if (!enabledSet && isRoot()) {
+            setEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        }
     }
 
     @Override
