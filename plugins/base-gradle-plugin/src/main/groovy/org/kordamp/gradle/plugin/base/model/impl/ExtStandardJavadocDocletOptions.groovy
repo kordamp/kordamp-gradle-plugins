@@ -19,6 +19,8 @@ package org.kordamp.gradle.plugin.base.model.impl
 
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
+import org.gradle.external.javadoc.CoreJavadocOptions
+import org.gradle.external.javadoc.JavadocOptionFileOption
 import org.gradle.external.javadoc.MinimalJavadocOptions
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 
@@ -45,6 +47,98 @@ class ExtStandardJavadocDocletOptions extends StandardJavadocDocletOptions {
     private boolean splitIndexSet
     private boolean useSet
     private boolean versionSet
+
+    private final Map<String, JavadocOptionFileOption<?>> myOptions = new LinkedHashMap<>()
+
+    public <T> JavadocOptionFileOption<T> addOption(JavadocOptionFileOption<T> option) {
+        JavadocOptionFileOption<T> o = super.addOption(option)
+        myOptions?.put(o.option, o)
+        o
+    }
+
+    JavadocOptionFileOption<String> addStringOption(String option) {
+        JavadocOptionFileOption<String> o = super.addStringOption(option)
+        myOptions?.put(o.option, o)
+        o
+    }
+
+    JavadocOptionFileOption<String> addStringOption(String option, String value) {
+        JavadocOptionFileOption<String> o = super.addStringOption(option, value)
+        myOptions?.put(o.option, o)
+        o
+    }
+
+    public <T extends Enum<T>> JavadocOptionFileOption<T> addEnumOption(String option) {
+        JavadocOptionFileOption<T> o = super.addEnumOption(option)
+        myOptions?.put(o.option, o)
+        o
+    }
+
+    public <T extends Enum<T>> JavadocOptionFileOption<T> addEnumOption(String option, T value) {
+        JavadocOptionFileOption<T> o = super.addEnumOption(option, value)
+        myOptions?.put(o.option, o)
+        o
+    }
+
+    JavadocOptionFileOption<List<File>> addPathOption(String option) {
+        JavadocOptionFileOption<List<File>> o = super.addPathOption(option)
+        myOptions?.put(o.option, o)
+        o
+    }
+
+    JavadocOptionFileOption<List<File>> addPathOption(String option, String joinBy) {
+        JavadocOptionFileOption<List<File>> o = super.addPathOption(option, joinBy)
+        myOptions?.put(o.option, o)
+        o
+    }
+
+    JavadocOptionFileOption<List<String>> addStringsOption(String option) {
+        JavadocOptionFileOption<List<String>> o = super.addStringsOption(option)
+        myOptions?.put(o.option, o)
+        o
+    }
+
+    JavadocOptionFileOption<List<String>> addStringsOption(String option, String joinBy) {
+        JavadocOptionFileOption<List<String>> o = super.addStringsOption(option, joinBy)
+        myOptions?.put(o.option, o)
+        o
+    }
+
+    JavadocOptionFileOption<List<String>> addMultilineStringsOption(String option) {
+        JavadocOptionFileOption<List<String>> o = super.addMultilineStringsOption(option)
+        myOptions?.put(o.option, o)
+        o
+    }
+
+    JavadocOptionFileOption<List<List<String>>> addMultilineMultiValueOption(String option) {
+        JavadocOptionFileOption<List<List<String>>> o = super.addMultilineMultiValueOption(option)
+        myOptions?.put(o.option, o)
+        o
+    }
+
+    JavadocOptionFileOption<Boolean> addBooleanOption(String option) {
+        JavadocOptionFileOption<Boolean> o = super.addBooleanOption(option)
+        myOptions?.put(o.option, o)
+        o
+    }
+
+    JavadocOptionFileOption<Boolean> addBooleanOption(String option, boolean value) {
+        JavadocOptionFileOption<Boolean> o = super.addBooleanOption(option, value)
+        myOptions?.put(o.option, o)
+        o
+    }
+
+    JavadocOptionFileOption<File> addFileOption(String option) {
+        JavadocOptionFileOption<File> o = super.addFileOption(option)
+        myOptions?.put(o.option, o)
+        o
+    }
+
+    JavadocOptionFileOption<File> addFileOption(String option, File value) {
+        JavadocOptionFileOption<File> o = super.addFileOption(option, value)
+        myOptions?.put(o.option, o)
+        o
+    }
 
     boolean isAuthorSet() {
         return authorSet
@@ -454,6 +548,11 @@ class ExtStandardJavadocDocletOptions extends StandardJavadocDocletOptions {
         o1.setTaglets(list(o1.getTaglets() ?: o2.getTaglets()))
         o1.setTags(list(o1.getTags() ?: o2.getTags()))
         o1.setWindowTitle(o1.getWindowTitle() ?: o2.getWindowTitle())
+
+        Map<String, JavadocOptionFileOption<?>> map = new LinkedHashMap<>(o2.myOptions)
+        map.putAll(o1.myOptions)
+        o1.myOptions.clear()
+        o1.myOptions?.putAll(map)
     }
 
 
@@ -476,6 +575,11 @@ class ExtStandardJavadocDocletOptions extends StandardJavadocDocletOptions {
         options.setSource(getSource() ?: options.getSource())
         options.setSourceNames(getSourceNames() ?: options.getSourceNames())
         options.setWindowTitle(getWindowTitle() ?: options.getWindowTitle())
+
+        if (options instanceof CoreJavadocOptions) {
+            CoreJavadocOptions coptions = (CoreJavadocOptions) options
+            myOptions.values().each { JavadocOptionFileOption o -> coptions.addOption(o) }
+        }
 
         if (options instanceof StandardJavadocDocletOptions) {
             StandardJavadocDocletOptions soptions = (StandardJavadocDocletOptions) options
