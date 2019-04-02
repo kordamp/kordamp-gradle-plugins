@@ -516,37 +516,37 @@ class ExtStandardJavadocDocletOptions extends StandardJavadocDocletOptions {
         o1.setUse((boolean) (o1.useSet ? o1.isUse() : o2.isUse()))
         o1.setVersion((boolean) (o1.versionSet ? o1.isVersion() : o2.isVersion()))
 
-        o1.setBootClasspath(list(o1.getBootClasspath() ?: o2.getBootClasspath()))
+        o1.setBootClasspath(list(o1.getBootClasspath(), o2.getBootClasspath()))
         o1.setBottom(o1.getBottom() ?: o2.getBottom())
         o1.setCharSet(o1.getCharSet() ?: o2.getCharSet())
-        o1.setClasspath(list(o1.getClasspath() ?: o2.getClasspath()))
+        o1.setClasspath(list(o1.getClasspath(), o2.getClasspath()))
         o1.setDestinationDirectory(o1.getDestinationDirectory() ?: o2.getDestinationDirectory())
         o1.setDocEncoding(o1.getDocEncoding() ?: o2.getDocEncoding())
         o1.setDoclet(o1.getDoclet() ?: o2.getDoclet())
-        o1.setDocletpath(list(o1.getDocletpath() ?: o2.getDocletpath()))
+        o1.setDocletpath(list(o1.getDocletpath(), o2.getDocletpath()))
         o1.setDocTitle(o1.getDocTitle() ?: o2.getDocTitle())
         o1.setEncoding(o1.getEncoding() ?: o2.getEncoding())
-        o1.setExcludeDocFilesSubDir(list(o1.getExcludeDocFilesSubDir() ?: o2.getExcludeDocFilesSubDir()))
-        o1.setExtDirs(list(o1.getExtDirs() ?: o2.getExtDirs()))
+        o1.setExcludeDocFilesSubDir(list(o1.getExcludeDocFilesSubDir(), o2.getExcludeDocFilesSubDir()))
+        o1.setExtDirs(list(o1.getExtDirs(), o2.getExtDirs()))
         o1.setFooter(o1.getFooter() ?: o2.getFooter())
-        o1.setGroups(map(o1.getGroups() ?: o2.getGroups()))
+        o1.setGroups(map(o1.getGroups(), o2.getGroups()))
         o1.setHeader(o1.getHeader() ?: o2.getHeader())
         o1.setHelpFile(o1.getHelpFile() ?: o2.getHelpFile())
-        o1.setJFlags(list(o1.getJFlags() ?: o2.getJFlags()))
-        o1.setLinks(list(o1.getLinks() ?: o2.getLinks()))
-        o1.setLinksOffline(list(o1.getLinksOffline() ?: o2.getLinksOffline()))
+        o1.setJFlags(list(o1.getJFlags(), o2.getJFlags()))
+        o1.setLinks(list(o1.getLinks(), o2.getLinks()))
+        o1.setLinksOffline(list(o1.getLinksOffline(), o2.getLinksOffline()))
         o1.setLocale(o1.getLocale() ?: o2.getLocale())
         o1.setMemberLevel(o1.getMemberLevel() ?: o2.getMemberLevel())
-        o1.setNoQualifiers(list(o1.getNoQualifiers() ?: o2.getNoQualifiers()))
-        o1.setOptionFiles(list(o1.getOptionFiles() ?: o2.getOptionFiles()))
+        o1.setNoQualifiers(list(o1.getNoQualifiers(), o2.getNoQualifiers()))
+        o1.setOptionFiles(list(o1.getOptionFiles(), o2.getOptionFiles()))
         o1.setOutputLevel(o1.getOutputLevel() ?: o2.getOutputLevel())
         o1.setOverview(o1.getOverview() ?: o2.getOverview())
         o1.setSource(o1.getSource() ?: o2.getSource())
-        o1.setSourceNames(list(o1.getSourceNames() ?: o2.getSourceNames()))
+        o1.setSourceNames(list(o1.getSourceNames(), o2.getSourceNames()))
         o1.setStylesheetFile(o1.getStylesheetFile() ?: o2.getStylesheetFile())
-        o1.setTagletPath(list(o1.getTagletPath() ?: o2.getTagletPath()))
-        o1.setTaglets(list(o1.getTaglets() ?: o2.getTaglets()))
-        o1.setTags(list(o1.getTags() ?: o2.getTags()))
+        o1.setTagletPath(list(o1.getTagletPath(), o2.getTagletPath()))
+        o1.setTaglets(list(o1.getTaglets(), o2.getTaglets()))
+        o1.setTags(list(o1.getTags(), o2.getTags()))
         o1.setWindowTitle(o1.getWindowTitle() ?: o2.getWindowTitle())
 
         Map<String, JavadocOptionFileOption<?>> map = new LinkedHashMap<>(o2.myOptions)
@@ -604,17 +604,17 @@ class ExtStandardJavadocDocletOptions extends StandardJavadocDocletOptions {
             soptions.setCharSet(getCharSet() ?: soptions.getCharSet())
             soptions.setDocEncoding(getDocEncoding() ?: soptions.getDocEncoding())
             soptions.setDocTitle(getDocTitle() ?: soptions.getDocTitle())
-            soptions.setExcludeDocFilesSubDir(list(getExcludeDocFilesSubDir() ?: soptions.getExcludeDocFilesSubDir()))
+            soptions.setExcludeDocFilesSubDir(list(getExcludeDocFilesSubDir(), soptions.getExcludeDocFilesSubDir()))
             soptions.setFooter(getFooter() ?: soptions.getFooter())
-            soptions.setGroups(map(getGroups() ?: soptions.getGroups()))
+            soptions.setGroups(map(getGroups(), soptions.getGroups()))
             soptions.setHelpFile(getHelpFile() ?: soptions.getHelpFile())
-            soptions.setLinks(list(getLinks() ?: soptions.getLinks()))
-            soptions.setLinksOffline(list(getLinksOffline() ?: soptions.getLinksOffline()))
-            soptions.setNoQualifiers(list(getNoQualifiers() ?: soptions.getNoQualifiers()))
+            soptions.setLinks(list(getLinks(), soptions.getLinks()))
+            soptions.setLinksOffline(list(getLinksOffline(), soptions.getLinksOffline()))
+            soptions.setNoQualifiers(list(getNoQualifiers(), soptions.getNoQualifiers()))
             soptions.setStylesheetFile(getStylesheetFile() ?: soptions.getStylesheetFile())
-            soptions.setTagletPath(list(getTagletPath() ?: soptions.getTagletPath()))
-            soptions.setTaglets(list(getTaglets() ?: soptions.getTaglets()))
-            soptions.setTags(list(getTags() ?: soptions.getTags()))
+            soptions.setTagletPath(list(getTagletPath(), soptions.getTagletPath()))
+            soptions.setTaglets(list(getTaglets(), soptions.getTaglets()))
+            soptions.setTags(list(getTags(), soptions.getTags()))
         }
     }
 
@@ -622,7 +622,15 @@ class ExtStandardJavadocDocletOptions extends StandardJavadocDocletOptions {
         new ArrayList<>(src.unique())
     }
 
+    static <T> List<T> list(List<T> l1, List<T> l2) {
+        new ArrayList<>((l1 + l2).unique())
+    }
+
     static <K, V> Map<K, V> map(Map<K, V> src) {
         new LinkedHashMap<>(src)
+    }
+
+    static <K, V> Map<K, V> map(Map<K, V> m1, Map<K, V> m2) {
+        new LinkedHashMap<>(m2 + m1)
     }
 }
