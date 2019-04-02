@@ -574,6 +574,7 @@ class ProjectConfigurationExtension {
         buildScan.normalize()
         clirr.normalize()
         groovydoc.normalize()
+        javadoc.normalize()
         kotlindoc.normalize()
         licensing.normalize()
         plugin.normalize()

@@ -23,6 +23,11 @@ config {
         excludes
         title
         options { ... }
+        <<_javadoc_autolinks,autoLinks>> {
+            enabled
+            configurations
+            excludes
+        }
     }
 }
 ----
@@ -39,8 +44,28 @@ config {
 
 This block is optional.
 
+[[_javadoc_autolinks]]
+*autoLinks*
+
+[options="header", cols="5*"]
+|===
+| Name           | Type         | Required | Default Value                                                | Description
+| enabled        | boolean      | no       | true                                                         | Disables generation of auto links if `false`
+| configurations | List<String> | no       | ['compile', 'compileOnly', 'annotationProcessor', 'runtime'] | Configurations to be checked for dependencies
+| excludes       | Set<String>  | no       | []                                                           | Dependencies to be excluded. Format: '${artifactId}-${version}'
+|===
+
 [[_org_kordamp_gradle_javadoc_tasks]]
 == Tasks
+
+[[_task_check_auto_links]]
+=== CheckAutoLinks
+
+Checks if generated Javadoc auto links are reachable.
+
+[horizontal]
+Name:: checkAutoLinks
+Type:: `org.kordamp.gradle.plugin.javadoc.CheckAutoLinksTask`
 
 [[_task_javadoc]]
 === Javadoc

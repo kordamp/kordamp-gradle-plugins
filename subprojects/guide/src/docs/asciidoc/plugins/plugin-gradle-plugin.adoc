@@ -48,6 +48,6 @@ Lists plugin descriptors from plugin declarations.
 
 [horizontal]
 Name:: listPluginDescriptors
-Type:: `org.kordamp.gradle.plugin.plugin.ListPluginDescriptors`
+Type:: `org.kordamp.gradle.plugin.plugin.ListPluginDescriptorsTask`
 
 

@@ -23,10 +23,14 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.impl.ExtStandardJavadocDocletOptions
+
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -39,6 +43,7 @@ class Javadoc extends AbstractFeature {
     Set<String> includes = new LinkedHashSet<>()
     String title
     final ExtStandardJavadocDocletOptions options = new ExtStandardJavadocDocletOptions()
+    final AutoLinks autoLinks = new AutoLinks()
 
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<org.gradle.api.tasks.javadoc.Javadoc> javadocTasks = new LinkedHashSet<>()
@@ -91,6 +96,7 @@ class Javadoc extends AbstractFeature {
             map.title = title
             map.excludes = excludes
             map.includes = includes
+            map.autoLinks = autoLinks.toMap()
             map.options = [
                 windowTitle: options.windowTitle,
                 docTitle   : options.docTitle,
@@ -105,6 +111,10 @@ class Javadoc extends AbstractFeature {
         }
 
         ['javadoc': map]
+    }
+
+    void normalize() {
+        autoLinks.resolveLinks(project).each { options.links(it) }
     }
 
     void include(String str) {
@@ -129,6 +139,7 @@ class Javadoc extends AbstractFeature {
         copy.includes.addAll(includes)
         copy.title = title
         options.copyInto(copy.options)
+        autoLinks.copyInto(copy.autoLinks)
     }
 
     @CompileDynamic
@@ -141,6 +152,7 @@ class Javadoc extends AbstractFeature {
         o1.projects().addAll(o2.projects())
         o1.javadocTasks().addAll(o2.javadocTasks())
         o1.javadocJarTasks().addAll(o2.javadocJarTasks())
+        AutoLinks.merge(o1.autoLinks, o2.autoLinks)
     }
 
     Set<Project> projects() {
@@ -155,10 +167,102 @@ class Javadoc extends AbstractFeature {
         javadocJarTasks
     }
 
+    void autoLinks(Action<? super AutoLinks> action) {
+        action.execute(autoLinks)
+    }
+
+    void autoLinks(@DelegatesTo(AutoLinks) Closure action) {
+        ConfigureUtil.configure(action, autoLinks)
+    }
+
     void applyTo(org.gradle.api.tasks.javadoc.Javadoc javadoc) {
         javadoc.title = title
         javadoc.getIncludes().addAll(includes)
         javadoc.getExcludes().addAll(excludes)
         options.applyTo(javadoc.options)
+    }
+
+    @CompileStatic
+    @Canonical
+    static class AutoLinks {
+        boolean enabled = true
+        Set<String> excludes = new LinkedHashSet<>()
+        List<String> configurations = []
+
+        private boolean enabledSet
+
+        protected void doSetEnabled(boolean enabled) {
+            this.enabled = enabled
+        }
+
+        void setEnabled(boolean enabled) {
+            this.enabled = enabled
+            this.enabledSet = true
+        }
+
+        boolean isEnabledSet() {
+            this.enabledSet
+        }
+
+        void copyInto(AutoLinks copy) {
+            copy.@enabled = this.enabled
+            copy.@enabledSet = this.enabledSet
+            copy.configurations.addAll(this.configurations)
+            copy.excludes.addAll(excludes)
+        }
+
+        @CompileDynamic
+        static void merge(AutoLinks o1, AutoLinks o2) {
+            o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
+            o1.excludes.addAll(((o1.excludes ?: []) + (o2?.excludes ?: [])).unique())
+            List<String> ls = new ArrayList<>(o1.configurations)
+            o1.@configurations.clear()
+            o1.@configurations.addAll((ls + o2?.configurations).unique())
+        }
+
+        @CompileDynamic
+        Map<String, Object> toMap() {
+            Map map = [enabled: enabled]
+
+            if (enabled) {
+                List<String> cs = new ArrayList<>(configurations)
+                if (!cs) {
+                    cs = ['compile', 'compileOnly', 'annotationProcessor', 'runtime']
+                }
+                map.excludes = excludes
+                map.configurations = cs
+            }
+
+            map
+        }
+
+        List<String> resolveLinks(Project project) {
+            List<String> links = []
+
+            if (!enabled) return links
+
+            List<String> cs = new ArrayList<>(configurations)
+            if (!cs) {
+                cs = ['compile', 'compileOnly', 'annotationProcessor', 'runtime']
+            }
+
+            cs.each { cn ->
+                Configuration c = project.configurations.findByName(cn)
+                c?.dependencies?.each { Dependency dep ->
+                    String artifactName = "${dep.name}-${dep.version}".toString()
+                    if (!(artifactName in excludes) && dep.name != 'unspecified' &&
+                        isNotBlank(dep.group) && isNotBlank(dep.version)) {
+                        links << calculateJavadocLink(dep.group, dep.name, dep.version)
+                    }
+                }
+            }
+
+            links
+        }
+
+        private String calculateJavadocLink(String group, String name, String version) {
+            String normalizedGroup = group.replace('.', '/')
+            "https://oss.sonatype.org/service/local/repositories/releases/archive/$normalizedGroup/$name/$version/$name-$version-javadoc.jar/!/".toString()
+        }
     }
 }

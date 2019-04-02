@@ -19,6 +19,7 @@ package org.kordamp.gradle.plugin.javadoc
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -75,6 +76,14 @@ class JavadocPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
+
+        project.tasks.register('checkAutoLinks', CheckAutoLinksTask.class,
+            new Action<CheckAutoLinksTask>() {
+                void execute(CheckAutoLinksTask t) {
+                    t.group = 'Javadoc'
+                    t.description = 'Checks if generated Javadoc auto links are reachable.'
+                }
+            })
 
         project.afterEvaluate {
             ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
