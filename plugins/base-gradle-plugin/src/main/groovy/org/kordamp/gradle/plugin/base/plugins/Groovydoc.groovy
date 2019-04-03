@@ -18,13 +18,13 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.impl.GroovydocOptions
 
@@ -80,9 +80,8 @@ class Groovydoc extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (enabled) {
             List<Map<String, String>> links = []
@@ -93,7 +92,7 @@ class Groovydoc extends AbstractFeature {
             map.replaceJavadoc = replaceJavadoc
             map.excludes = excludes
             map.includes = includes
-            map.options = [
+            map.options = new LinkedHashMap<String, Object>([
                 windowTitle   : options.windowTitle,
                 docTitle      : options.docTitle,
                 header        : options.header,
@@ -104,10 +103,10 @@ class Groovydoc extends AbstractFeature {
                 includePrivate: options.includePrivate,
                 use           : options.use,
                 links         : links
-            ]
+            ])
         }
 
-        ['groovydoc': map]
+        new LinkedHashMap<>('groovydoc': map)
     }
 
     void normalize() {
@@ -150,12 +149,11 @@ class Groovydoc extends AbstractFeature {
         options.copyInto(copy.options)
     }
 
-    @CompileDynamic
     static void merge(Groovydoc o1, Groovydoc o2) {
         AbstractFeature.merge(o1, o2)
         o1.setReplaceJavadoc((boolean) (o1.replaceJavadocSet ? o1.replaceJavadoc : o2.replaceJavadoc))
-        o1.excludes.addAll(((o1.excludes ?: []) + (o2?.excludes ?: [])).unique())
-        o1.includes.addAll(((o1.includes ?: []) + (o2?.includes ?: [])).unique())
+        CollectionUtils.merge(o1.excludes, o2?.excludes)
+        CollectionUtils.merge(o1.includes, o2?.includes)
         GroovydocOptions.merge(o1.options, o2.options)
         o1.projects().addAll(o2.projects())
         o1.groovydocTasks().addAll(o2.groovydocTasks())

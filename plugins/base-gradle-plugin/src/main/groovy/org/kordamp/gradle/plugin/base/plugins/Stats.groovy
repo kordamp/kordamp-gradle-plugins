@@ -18,11 +18,11 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
+import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.getNaturalName
@@ -56,9 +56,9 @@ class Stats extends AbstractFeature {
         toMap().toString()
     }
 
-    @CompileDynamic
+    @Override
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (enabled) {
             map.formats = formats
@@ -66,7 +66,7 @@ class Stats extends AbstractFeature {
             map.paths = paths
         }
 
-        ['stats': map]
+        new LinkedHashMap<>('stats': map)
     }
 
     static Map<String, Map<String, String>> defaultPaths() {
@@ -128,9 +128,7 @@ class Stats extends AbstractFeature {
         AbstractFeature.merge(o1, o2)
         o1.counters.putAll(o2.counters)
         o1.paths.putAll(o2.paths)
-        List<String> fmts = new ArrayList<>(o1.formats)
-        o1.formats.clear()
-        o1.formats.addAll((fmts + o2?.formats).unique())
+        CollectionUtils.merge(o1.formats, o2?.formats)
         o1.projects().addAll(o2.projects())
         o1.statsTasks().addAll(o2.statsTasks())
     }

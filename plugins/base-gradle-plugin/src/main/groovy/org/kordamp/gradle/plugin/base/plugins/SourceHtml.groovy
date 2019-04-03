@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.gradle.api.Action
@@ -54,9 +53,8 @@ class SourceHtml extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (enabled) {
             map.conversion = conversion.toMap()
@@ -69,7 +67,7 @@ class SourceHtml extends AbstractFeature {
             }
         }
 
-        ['sourceHtml': map]
+        new LinkedHashMap<>('sourceHtml': map)
     }
 
     void copyInto(SourceHtml copy) {
@@ -150,9 +148,8 @@ class SourceHtml extends AbstractFeature {
             destDir = project.file("${project.buildDir}/tmp/source-html/conversion")
         }
 
-        @CompileDynamic
         Map<String, Object> toMap() {
-            [
+            new LinkedHashMap<>([
                 srcDirs              : srcDirs?.files,
                 destDir              : destDir,
                 includes             : includes,
@@ -170,7 +167,7 @@ class SourceHtml extends AbstractFeature {
                 addLineAnchors       : addLineAnchors,
                 useShortFileName     : useShortFileName,
                 overwrite            : overwrite
-            ]
+            ])
         }
 
         boolean isShowLineNumbersSet() {
@@ -285,7 +282,6 @@ class SourceHtml extends AbstractFeature {
             copy.overwriteSet = overwriteSet
         }
 
-        @CompileDynamic
         static void merge(Conversion o1, Conversion o2) {
             o1.srcDirs = o1.project.files((o1.srcDirs ?: []), (o2.srcDirs ?: []))
             o1.destDir = o1.destDir ?: o2.destDir
@@ -329,9 +325,8 @@ class SourceHtml extends AbstractFeature {
             docTitle = "$project.name $project.version"
         }
 
-        @CompileDynamic
         Map<String, Object> toMap() {
-            [
+            new LinkedHashMap<>([
                 destDir       : destDir,
                 pattern       : pattern,
                 windowTitle   : windowTitle,
@@ -339,7 +334,7 @@ class SourceHtml extends AbstractFeature {
                 docDescription: docDescription,
                 icon          : icon,
                 stylesheet    : stylesheet
-            ]
+            ])
         }
 
         void copyInto(Overview copy) {

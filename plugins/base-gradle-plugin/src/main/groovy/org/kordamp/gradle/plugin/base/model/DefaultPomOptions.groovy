@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 
 import static org.kordamp.gradle.StringUtils.isNotBlank
@@ -74,10 +73,9 @@ class DefaultPomOptions implements PomOptions {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Object> toMap() {
         if (isNotBlank(parent)) {
-            [
+            new LinkedHashMap<String, Object>([
                 parent                : parent,
                 overwriteInceptionYear: overwriteInceptionYear,
                 overwriteUrl          : overwriteUrl,
@@ -86,7 +84,7 @@ class DefaultPomOptions implements PomOptions {
                 overwriteOrganization : overwriteOrganization,
                 overwriteDevelopers   : overwriteDevelopers,
                 overwriteContributors : overwriteContributors
-            ]
+            ])
         } else {
             [:]
         }

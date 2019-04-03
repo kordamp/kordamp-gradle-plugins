@@ -18,13 +18,13 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.scala.ScalaDoc
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.impl.ScaladocOptions
 
@@ -62,9 +62,8 @@ class Scaladoc extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (enabled && isRoot()) {
             map.excludedProjects = excludedProjects
@@ -74,7 +73,7 @@ class Scaladoc extends AbstractFeature {
             map.title = title
             map.excludes = excludes
             map.includes = includes
-            map.options = [
+            map.options = new LinkedHashMap<String, Object>([
                 windowTitle         : options.windowTitle,
                 docTitle            : options.docTitle,
                 header              : options.header,
@@ -84,10 +83,10 @@ class Scaladoc extends AbstractFeature {
                 deprecation         : options.deprecation,
                 unchecked           : options.unchecked,
                 additionalParameters: options.additionalParameters
-            ]
+            ])
         }
 
-        ['scaladoc': map]
+        new LinkedHashMap<>('scaladoc': map)
     }
 
     void normalize() {
@@ -120,12 +119,11 @@ class Scaladoc extends AbstractFeature {
         options.copyInto(copy.options)
     }
 
-    @CompileDynamic
     static void merge(Scaladoc o1, Scaladoc o2) {
         AbstractFeature.merge(o1, o2)
         o1.setTitle(o1.title ?: o2?.title)
-        o1.excludes.addAll(((o1.excludes ?: []) + (o2?.excludes ?: [])).unique())
-        o1.includes.addAll(((o1.includes ?: []) + (o2?.includes ?: [])).unique())
+        CollectionUtils.merge(o1.excludes, o2?.excludes)
+        CollectionUtils.merge(o1.includes, o2?.includes)
         ScaladocOptions.merge(o1.options, o2.options)
         o1.projects().addAll(o2.projects())
         o1.scaladocTasks().addAll(o2.scaladocTasks())

@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.model
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.gradle.api.Action
@@ -42,11 +41,10 @@ class CredentialsSet {
         toMap().toString()
     }
 
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
         if (isEmpty()) return [:]
 
-        credentialsMap.collectEntries { k, v ->
+        (Map<String, Map<String, Object>> ) credentialsMap.collectEntries { k, v ->
             [(k): v.toMap()]
         }
     }

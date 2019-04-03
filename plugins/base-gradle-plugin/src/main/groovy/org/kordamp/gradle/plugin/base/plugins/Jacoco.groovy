@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import org.gradle.api.Project
@@ -62,9 +61,8 @@ class Jacoco extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (enabled) {
             if (isRoot()) {
@@ -72,12 +70,12 @@ class Jacoco extends AbstractFeature {
                 map.mergeReportHtmlFile = mergeReportHtmlFile
                 map.mergeReportXmlFile = mergeReportXmlFile
             } else {
-                map.additionalSourceDirs = additionalSourceDirs.files.absolutePath
-                map.additionalClassDirs = additionalClassDirs.files.absolutePath
+                map.additionalSourceDirs = additionalSourceDirs.files*.absolutePath
+                map.additionalClassDirs = additionalClassDirs.files*.absolutePath
             }
         }
 
-        ['jacoco': map]
+        new LinkedHashMap<>('jacoco': map)
     }
 
     void copyInto(Jacoco copy) {

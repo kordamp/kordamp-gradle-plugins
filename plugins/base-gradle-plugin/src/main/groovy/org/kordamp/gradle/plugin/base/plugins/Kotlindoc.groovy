@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.gradle.api.Action
@@ -26,6 +25,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.isBlank
@@ -83,35 +83,34 @@ class Kotlindoc extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (enabled) {
             List<Map<String, Map<String, String>>> lms = []
             linkMappings.linkMappings.each { lm ->
-                if (!lm.empty) lms << [(lm.dir): [
+                if (!lm.empty) lms << new LinkedHashMap<String, Map<String, String>>([(lm.dir): new LinkedHashMap<String, String>([
                     url   : lm.url,
                     path  : lm.path,
                     suffix: lm.suffix
-                ]]
+                ])])
             }
 
             List<Map<String, Map<String, String>>> edls = []
             externalDocumentationLinks.externalDocumentationLinks.each { el ->
-                if (!el.empty) edls << [(el.url): [
+                if (!el.empty) edls << new LinkedHashMap<String, Map<String, String>>([(el.url): new LinkedHashMap<String, String>([
                     packageListUrl: el.packageListUrl
-                ]]
+                ])])
             }
 
             List<Map<String, Map<String, String>>> pos = []
             packageOptions.packageOptions.each { po ->
-                if (!po.empty) pos << [(po.prefix): [
-                    includeNonPublic  : po.includeNonPublic,
-                    reportUndocumented: po.reportUndocumented,
-                    skipDeprecated    : po.skipDeprecated,
-                    suppress          : po.suppress
-                ]]
+                if (!po.empty) pos << new LinkedHashMap<String, Map<String, String>>([(po.prefix): new LinkedHashMap<String, String>([
+                    includeNonPublic  : po.includeNonPublic.toString(),
+                    reportUndocumented: po.reportUndocumented.toString(),
+                    skipDeprecated    : po.skipDeprecated.toString(),
+                    suppress          : po.suppress.toString()
+                ])])
             }
 
             map.replaceJavadoc = replaceJavadoc
@@ -135,7 +134,7 @@ class Kotlindoc extends AbstractFeature {
             map.packageOptions = pos
         }
 
-        ['kotlindoc': map]
+        new LinkedHashMap<>('kotlindoc': map)
     }
 
     void normalize() {
@@ -257,13 +256,12 @@ class Kotlindoc extends AbstractFeature {
         packageOptions.copyInto(copy.packageOptions)
     }
 
-    @CompileDynamic
     static void merge(Kotlindoc o1, Kotlindoc o2) {
         o2.normalize()
         AbstractFeature.merge(o1, o2)
         o1.setReplaceJavadoc((boolean) (o1.replaceJavadocSet ? o1.replaceJavadoc : o2.replaceJavadoc))
         o1.moduleName = o1.moduleName ?: o2.moduleName
-        o1.outputFormats = new ArrayList<>(((o1.outputFormats ?: []) + (o2?.outputFormats ?: [])).unique())
+        CollectionUtils.merge(o1.outputFormats, o2?.outputFormats)
         o1.outputDirectory = (o1.outputDirectory ?: o2.outputDirectory) ?: o1.project.file("${o1.project.buildDir}/docs/kotlindoc")
         o1.jdkVersion = (o1.jdkVersion ?: o2.jdkVersion) ?: 6
         o1.cacheRoot = o1.cacheRoot ?: o2.cacheRoot
@@ -274,9 +272,9 @@ class Kotlindoc extends AbstractFeature {
         o1.setReportUndocumented((boolean) (o1.reportUndocumentedSet ? o1.reportUndocumented : o2.reportUndocumented))
         o1.setSkipEmptyPackages((boolean) (o1.skipEmptyPackagesSet ? o1.skipEmptyPackages : o2.skipEmptyPackages))
         o1.setNoStdlibLink((boolean) (o1.noStdlibLinkSet ? o1.noStdlibLink : o2.noStdlibLink))
-        o1.impliedPlatforms = new ArrayList<>(((o1.impliedPlatforms ?: []) + (o2?.impliedPlatforms ?: [])).unique())
-        o1.includes = new ArrayList<>(((o1.includes ?: []) + (o2?.includes ?: [])).unique())
-        o1.samples = new ArrayList<>(((o1.samples ?: []) + (o2?.samples ?: [])).unique())
+        CollectionUtils.merge(o1.impliedPlatforms, o2?.impliedPlatforms)
+        CollectionUtils.merge(o1.includes, o2?.includes)
+        CollectionUtils.merge(o1.samples, o2?.samples)
         o1.projects().addAll(o2.projects())
         o1.kotlindocTasks().addAll(o2.kotlindocTasks())
         o1.kotlindocJarTasks().addAll(o2.kotlindocJarTasks())

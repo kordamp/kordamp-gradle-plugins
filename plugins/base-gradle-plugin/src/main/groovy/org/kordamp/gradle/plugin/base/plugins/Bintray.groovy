@@ -18,11 +18,11 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Credentials
 
@@ -57,9 +57,8 @@ class Bintray extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (enabled) {
             map.name = getName()
@@ -69,14 +68,14 @@ class Bintray extends AbstractFeature {
             map.skipMavenSync = skipMavenSync
             map.publications = resolvePublications()
             if (!credentials.empty) {
-                map.credentials = [
+                map.credentials = new LinkedHashMap<String, Object>([
                     username: credentials.username,
                     password: ('*' * 12)
-                ]
+                ])
             }
         }
 
-        ['bintray': map]
+        new LinkedHashMap<>('bintray': map)
     }
 
     String getRepo() {
@@ -128,7 +127,7 @@ class Bintray extends AbstractFeature {
         o1.repo = o1.@repo ?: o2.@repo
         o1.userOrg = o1.userOrg ?: o2.userOrg
         o1.githubRepo = o1.@githubRepo ?: o2.githubRepo
-        o1.publications.addAll((o1.publications + o2.publications).unique())
+        CollectionUtils.merge(o1.publications, o2.publications)
         o1.credentials.merge(o1.credentials, o2.credentials)
     }
 

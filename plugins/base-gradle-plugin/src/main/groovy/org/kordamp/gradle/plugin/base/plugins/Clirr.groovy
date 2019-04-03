@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -67,9 +66,8 @@ class Clirr extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (enabled) {
             map.baseline = baseline
@@ -80,7 +78,7 @@ class Clirr extends AbstractFeature {
             map.filter = (filter != null)
         }
 
-        ['clirr': map]
+        new LinkedHashMap<>('clirr': map)
     }
 
     void copyInto(Clirr copy) {
@@ -96,7 +94,6 @@ class Clirr extends AbstractFeature {
         copy.filter = filter
     }
 
-    @CompileDynamic
     static void merge(Clirr o1, Clirr o2) {
         AbstractFeature.merge(o1, o2)
         o1.setFailOnErrors((boolean) (o1.failOnErrorsSet ? o1.failOnErrors : o2.failOnErrors))

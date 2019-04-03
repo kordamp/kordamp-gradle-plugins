@@ -17,7 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base.tasks
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Plugin
 import org.gradle.api.tasks.TaskAction
@@ -34,11 +34,10 @@ import java.util.regex.Matcher
 @CompileStatic
 class PluginsTask extends AbstractReportingTask {
     @TaskAction
-    @CompileDynamic
     void report() {
-        Map<String, Map<String, Object>> plugins = [:]
+        Map<String, Map<String, Object>> plugins = new LinkedHashMap<String, Map<String, Object>>()
 
-        Map<String, String> pluginMetadata = [:]
+        Map<String, String> pluginMetadata = new LinkedHashMap<String, String>()
         Enumeration<URL> e = PluginsTask.classLoader.getResources('META-INF/gradle-plugins')
         while (e.hasMoreElements()) {
             extractMetadata(e.nextElement(), pluginMetadata)
@@ -69,9 +68,8 @@ class PluginsTask extends AbstractReportingTask {
         }
     }
 
-    @CompileDynamic
-    private static Map<String, Map<String, ?>> doReport(Plugin plugin, int index, Map<String, String> pluginMetadata) {
-        Map<String, ?> map = [:]
+    private static Map<String, Map<String, Object>> doReport(Plugin plugin, int index, Map<String, String> pluginMetadata) {
+        Map<String, Object> map = new LinkedHashMap<>()
 
         map.id = (pluginMetadata[plugin.class.name] ?: plugin.class.name) - 'org.gradle.'
         map.implementationClass = plugin.class.name
@@ -79,6 +77,6 @@ class PluginsTask extends AbstractReportingTask {
             map.enabled = plugin.enabled
         }
 
-        [('plugin ' + index): map]
+        new LinkedHashMap<>([('plugin ' + index): map])
     }
 }

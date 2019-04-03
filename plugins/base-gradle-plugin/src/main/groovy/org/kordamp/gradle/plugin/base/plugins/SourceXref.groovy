@@ -18,12 +18,12 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
+import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.isNotBlank
@@ -62,9 +62,8 @@ class SourceXref extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (enabled) {
             map.templateDir = templateDir
@@ -85,7 +84,7 @@ class SourceXref extends AbstractFeature {
             }
         }
 
-        ['sourceXref': map]
+        new LinkedHashMap<>('sourceXref': map)
     }
 
     String getOutputEncoding() {
@@ -122,7 +121,6 @@ class SourceXref extends AbstractFeature {
         copy.includes.addAll(includes)
     }
 
-    @CompileDynamic
     static void merge(SourceXref o1, SourceXref o2) {
         AbstractFeature.merge(o1, o2)
         o1.templateDir = o1.templateDir ?: o2?.templateDir
@@ -133,8 +131,8 @@ class SourceXref extends AbstractFeature {
         o1.bottom = o1.bottom ?: o2?.bottom
         o1.stylesheet = o1.stylesheet ?: o2?.stylesheet
         o1.javaVersion = o1.javaVersion ?: o2?.javaVersion
-        o1.excludes.addAll(((o1.excludes ?: []) + (o2?.excludes ?: [])).unique())
-        o1.includes.addAll(((o1.includes ?: []) + (o2?.includes ?: [])).unique())
+        CollectionUtils.merge(o1.excludes, o2?.excludes)
+        CollectionUtils.merge(o1.includes, o2?.includes)
         o1.projects().addAll(o2.projects())
         o1.xrefTasks().addAll(o2.xrefTasks())
         o1.excludedProjects().addAll(o2.excludedProjects())

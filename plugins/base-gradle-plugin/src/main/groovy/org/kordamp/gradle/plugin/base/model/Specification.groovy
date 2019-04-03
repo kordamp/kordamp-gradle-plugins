@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.model
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 
@@ -42,14 +41,13 @@ class Specification {
         toMap().toString()
     }
 
-    @CompileDynamic
     Map<String, Object> toMap() {
-        [
+        new LinkedHashMap<String, Object>([
             enabled: enabled,
             title  : title,
             version: version,
             vendor : vendor
-        ]
+        ])
     }
 
     void setEnabled(boolean enabled) {

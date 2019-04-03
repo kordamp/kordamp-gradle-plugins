@@ -18,10 +18,10 @@
 package org.kordamp.gradle.plugin.base.model.impl
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.javadoc.Groovydoc
+import org.kordamp.gradle.CollectionUtils
 
 /**
  * @author Andres Almiray
@@ -109,7 +109,6 @@ class GroovydocOptions {
         copy
     }
 
-    @CompileDynamic
     static void merge(GroovydocOptions o1, GroovydocOptions o2) {
         o1.setNoTimestamp((boolean) (o1.noTimestampSet ? o1.noTimestamp : o2.noTimestamp))
         o1.setNoVersionStamp((boolean) (o1.noVersionStampSet ? o1.noVersionStamp : o2.noVersionStamp))
@@ -120,7 +119,7 @@ class GroovydocOptions {
         o1.setHeader(o1.header ?: o2.header)
         o1.setFooter(o1.footer ?: o2.footer)
         o1.setOverviewText(o1.overviewText ?: o2.overviewText)
-        o1.setLinks(((o1.links ?: []) + (o2.links ?: [])).unique())
+        CollectionUtils.merge(o1.links, o2?.links)
     }
 
     void applyTo(Groovydoc groovydoc) {

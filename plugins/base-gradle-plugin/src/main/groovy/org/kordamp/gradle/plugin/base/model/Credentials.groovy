@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.model
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 
@@ -41,13 +40,12 @@ class Credentials {
         toMap().toString()
     }
 
-    @CompileDynamic
     Map<String, Object> toMap() {
-        [
+        new LinkedHashMap<String, Object>([
             name    : name,
             username: username,
             password: ('*' * 12)
-        ]
+        ])
     }
 
     Credentials copyOf() {

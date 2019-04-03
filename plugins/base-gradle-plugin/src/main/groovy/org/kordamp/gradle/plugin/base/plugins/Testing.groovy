@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -78,15 +77,14 @@ class Testing extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        ['testing': [
+        new LinkedHashMap<>('testing': new LinkedHashMap<>([
             enabled    : enabled,
             logging    : logging,
             aggregate  : aggregate,
             integration: integration.toMap(),
             functional : functional.toMap()
-        ]]
+        ]))
     }
 
     void integration(Action<? super Integration> action) {

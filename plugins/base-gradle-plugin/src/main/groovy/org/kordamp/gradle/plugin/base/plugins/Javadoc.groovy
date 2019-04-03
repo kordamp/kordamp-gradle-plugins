@@ -26,10 +26,10 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.impl.ExtStandardJavadocDocletOptions
 
-import static org.kordamp.gradle.CollectionUtils.merge
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -84,7 +84,7 @@ class Javadoc extends AbstractFeature {
 
     @Override
     Map<String, Map<String, Object>> toMap() {
-        Map<String, Object> map = new LinkedHashMap<String, Object>([enabled: enabled])
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (enabled) {
             List<String> links = []
@@ -143,8 +143,8 @@ class Javadoc extends AbstractFeature {
 
     static void merge(Javadoc o1, Javadoc o2) {
         AbstractFeature.merge(o1, o2)
-        merge(o1.excludes, o2.excludes)
-        merge(o1.includes, o2.includes)
+        CollectionUtils.merge(o1.excludes, o2.excludes)
+        CollectionUtils.merge(o1.includes, o2.includes)
         o1.title = o1.title ?: o2.title
         ExtStandardJavadocDocletOptions.merge(o1.options, o2.options)
         o1.projects().addAll(o2.projects())
@@ -215,12 +215,12 @@ class Javadoc extends AbstractFeature {
 
         static void merge(AutoLinks o1, AutoLinks o2) {
             o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
-            merge(o1.excludes, o2?.excludes)
-            merge(o1.@configurations, o2?.configurations)
+            CollectionUtils.merge(o1.excludes, o2?.excludes)
+            CollectionUtils.merge(o1.@configurations, o2?.configurations)
         }
 
         Map<String, Object> toMap() {
-            Map<String, Object> map = new LinkedHashMap<String, Object>([enabled: enabled])
+            Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
             if (enabled) {
                 List<String> cs = new ArrayList<>(configurations)

@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -48,15 +47,14 @@ class Licensing extends AbstractFeature {
         toMap().toString()
     }
 
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         map.licenses = licenses.licenses.collectEntries { License license ->
             [(license.licenseId?.name() ?: license.name): license.toMap()]
         }
 
-        ['licensing': map]
+        new LinkedHashMap<>('licensing': map)
     }
 
     void normalize() {
@@ -101,7 +99,6 @@ class Licensing extends AbstractFeature {
         licenses.isEmpty()
     }
 
-    @CompileDynamic
     List<String> resolveBintrayLicenseIds() {
         List<String> ids = allLicenses().collect { it.licenseId?.bintray() ?: '' }.unique()
         ids.remove('')

@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.model
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.gradle.api.Action
@@ -44,18 +43,17 @@ class Repository {
         toMap().toString()
     }
 
-    @CompileDynamic
     Map<String, Object> toMap() {
-        Map map = [
+        Map<String, Object> map = new LinkedHashMap<String, Object>([
             name: name,
             url : url
-        ]
+        ])
 
         if (!credentials.empty) {
-            map.credentials = [
+            map.credentials = new LinkedHashMap<String, Object>([
                 username: credentials.username,
                 password: ('*' * 12)
-            ]
+            ])
         }
 
         map

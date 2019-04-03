@@ -18,9 +18,9 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.PomOptions
 
@@ -77,9 +77,8 @@ class Bom extends AbstractFeature implements PomOptions {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (enabled) {
             map.autoIncludes = autoIncludes
@@ -99,7 +98,7 @@ class Bom extends AbstractFeature implements PomOptions {
             }
         }
 
-        ['bom': map]
+        new LinkedHashMap<>('bom': map)
     }
 
     void compile(String str) {
@@ -181,13 +180,12 @@ class Bom extends AbstractFeature implements PomOptions {
         copy.@overwriteContributorsSet = this.overwriteContributorsSet
     }
 
-    @CompileDynamic
     static void merge(Bom o1, Bom o2) {
         AbstractFeature.merge(o1, o2)
-        o1.compile.addAll(((o1.compile ?: []) + (o2.compile ?: [])).unique())
-        o1.runtime.addAll(((o1.runtime ?: []) + (o2.runtime ?: [])).unique())
-        o1.test.addAll(((o1.test ?: []) + (o2.test ?: [])).unique())
-        o1.excludes.addAll(((o1.excludes ?: []) + (o2.excludes ?: [])).unique())
+        CollectionUtils.merge(o1.compile, o2.compile)
+        CollectionUtils.merge(o1.runtime, o2.runtime)
+        CollectionUtils.merge(o1.test, o2.test)
+        CollectionUtils.merge(o1.excludes, o2.excludes)
         o1.setAutoIncludes((boolean) (o1.autoIncludesSet ? o1.autoIncludes : o2.autoIncludes))
 
         o1.parent = o1.parent ?: o2?.parent

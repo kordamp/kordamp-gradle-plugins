@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 
 /**
@@ -63,12 +62,11 @@ class Integration {
         toMap().toString()
     }
 
-    @CompileDynamic
     Map<String, Object> toMap() {
-        [
+        new LinkedHashMap<String, Object>([
             logging  : logging,
             aggregate: aggregate
-        ]
+        ])
     }
 
     void copyInto(Integration copy) {

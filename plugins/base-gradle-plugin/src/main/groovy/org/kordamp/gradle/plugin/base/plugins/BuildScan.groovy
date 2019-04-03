@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -49,13 +48,10 @@ class BuildScan extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
         if (!isRoot()) return [:]
 
-        Map map = [enabled: enabled]
-
-        ['buildScan': map]
+        new LinkedHashMap<>('buildScan': new LinkedHashMap<>(enabled: enabled))
     }
 
     static void merge(BuildScan o1, BuildScan o2) {

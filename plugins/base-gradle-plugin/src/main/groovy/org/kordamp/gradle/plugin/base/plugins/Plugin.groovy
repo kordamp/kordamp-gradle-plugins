@@ -18,11 +18,11 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import org.gradle.plugin.devel.PluginDeclaration
+import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.getPropertyNameForLowerCaseHyphenSeparatedName
@@ -80,9 +80,8 @@ class Plugin extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (enabled) {
             map.pluginName = pluginName
@@ -91,7 +90,7 @@ class Plugin extends AbstractFeature {
             map.tags = tags
         }
 
-        ['plugin': map]
+        new LinkedHashMap<>('plugin': map)
     }
 
     void copyInto(Plugin copy) {
@@ -105,9 +104,7 @@ class Plugin extends AbstractFeature {
         AbstractFeature.merge(o1, o2)
         o1.id = o1.id ?: o2?.id
         o1.implementationClass = o1.implementationClass ?: o2?.implementationClass
-        List<String> ts = new ArrayList<>(o1.tags)
-        o1.tags.clear()
-        o1.tags.addAll((ts + o2?.tags).unique())
+        CollectionUtils.merge(o1.tags, o2?.tags)
     }
 
     void normalize() {

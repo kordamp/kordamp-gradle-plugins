@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
@@ -46,9 +45,8 @@ class Source extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (isRoot()) {
             if (enabled) {
@@ -56,7 +54,7 @@ class Source extends AbstractFeature {
             }
         }
 
-        ['source': map]
+        new LinkedHashMap<>('source': map)
     }
 
     static void merge(Source o1, Source o2) {

@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -46,18 +45,17 @@ class Apidoc extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
         if (!isRoot()) return [:]
 
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (enabled) {
             map.replaceJavadoc = replaceJavadoc
             map.excludedProjects = excludedProjects
         }
 
-        ['apidoc': map]
+        new LinkedHashMap<>('apidoc': map)
     }
 
     void setReplaceJavadoc(boolean replaceJavadoc) {

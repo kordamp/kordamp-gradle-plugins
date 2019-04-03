@@ -202,7 +202,6 @@ class TestingPlugin extends AbstractKordampPlugin {
 
         aggregateTestReportTask.configure(new Action<TestReport>() {
             @Override
-            @CompileDynamic
             void execute(TestReport t) {
                 t.enabled = tt.size() > 0
                 t.reportOn(tt)
@@ -211,7 +210,6 @@ class TestingPlugin extends AbstractKordampPlugin {
 
         aggregateIntegrationTestReportTask.configure(new Action<TestReport>() {
             @Override
-            @CompileDynamic
             void execute(TestReport t) {
                 t.enabled = itt.size() > 0
                 t.reportOn(itt)
@@ -220,7 +218,6 @@ class TestingPlugin extends AbstractKordampPlugin {
 
         aggregateFunctionalTestReportTask.configure(new Action<TestReport>() {
             @Override
-            @CompileDynamic
             void execute(TestReport t) {
                 t.enabled = ftt.size() > 0
                 t.reportOn(ftt)

@@ -18,13 +18,13 @@
 package org.kordamp.gradle.plugin.base.model
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.isBlank
@@ -71,9 +71,8 @@ class Information {
         toMap().toString()
     }
 
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        ['info': [
+        new LinkedHashMap<String, Map<String, Object>>(['info': new LinkedHashMap<String, Object>([
             name          : getName(),
             description   : description,
             url           : url,
@@ -89,7 +88,7 @@ class Information {
             specification : specification.toMap(),
             implementation: implementation.toMap(),
             credentials   : credentials.toMap()
-        ]]
+        ])])
     }
 
     Information copyOf() {
@@ -122,7 +121,7 @@ class Information {
         o1.description = o1.description ?: o2.description
         o1.inceptionYear = o1.@inceptionYear ?: o2.inceptionYear
         o1.vendor = o1.@vendor ?: o2.vendor
-        o1.tags.addAll((o1.tags + o2.tags).unique())
+        CollectionUtils.merge(o1.tags, o2.tags)
         Specification.merge(o1.spec, o2.spec)
         Implementation.merge(o1.impl, o2.impl)
         Organization.merge(o1.organization, o2.organization)

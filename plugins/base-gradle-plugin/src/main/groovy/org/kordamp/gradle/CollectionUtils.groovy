@@ -50,4 +50,19 @@ class CollectionUtils {
         if (l2) r.addAll(l2)
         r.unique()
     }
+
+    static <K, V> Map<K, V> merge(Map<K, V> m1, Map<K, V> m2, boolean mutate = true) {
+        if (!mutate) doMerge(m1, m2)
+        Map<K, V> r = doMerge(m1, m2)
+        m1.clear()
+        m1.putAll(r)
+        m1
+    }
+
+    private static <K, V> Map<K, V> doMerge(Map<K, V> m1, Map<K, V> m2) {
+        Map<K, V> r = new LinkedHashMap<>()
+        if (m2) r.putAll(m2)
+        r.putAll(m1)
+        r
+    }
 }

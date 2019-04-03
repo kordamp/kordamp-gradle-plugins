@@ -17,7 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -148,9 +148,8 @@ class ProjectConfigurationExtension {
         toMap().toString()
     }
 
-    @CompileDynamic
     Map<String, Object> toMap() {
-        Map<String, Object> map = [release: release]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(release: release)
 
         map.putAll(info.toMap())
         map.putAll(apidoc.toMap())

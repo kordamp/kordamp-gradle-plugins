@@ -18,9 +18,9 @@
 package org.kordamp.gradle.plugin.base.model.impl
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.scala.ScalaDoc
+import org.kordamp.gradle.CollectionUtils
 
 /**
  * @author Andres Almiray
@@ -81,7 +81,6 @@ class ScaladocOptions {
         copy
     }
 
-    @CompileDynamic
     static void merge(ScaladocOptions o1, ScaladocOptions o2) {
         o1.setDeprecation((boolean) (o1.deprecationSet ? o1.deprecation : o2.deprecation))
         o1.setUnchecked((boolean) (o1.uncheckedSet ? o1.unchecked : o2.unchecked))
@@ -91,7 +90,7 @@ class ScaladocOptions {
         o1.setDocTitle(o1.docTitle ?: o2.docTitle)
         o1.setHeader(o1.header ?: o2.header)
         o1.setFooter(o1.footer ?: o2.footer)
-        o1.setAdditionalParameters(((o1.additionalParameters ?: []) + (o2.additionalParameters ?: [])).unique())
+        CollectionUtils.merge(o1.additionalParameters, o2?.additionalParameters)
     }
 
     void applyTo(ScalaDoc scaladoc) {

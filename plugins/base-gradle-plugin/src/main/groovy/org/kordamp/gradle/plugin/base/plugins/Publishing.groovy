@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -54,9 +53,8 @@ class Publishing extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (enabled) {
             map.signing = signing
@@ -65,7 +63,7 @@ class Publishing extends AbstractFeature {
             map.pom = pom.toMap()
         }
 
-        ['publishing': map]
+        new LinkedHashMap<>('publishing': map)
     }
 
     void normalize() {

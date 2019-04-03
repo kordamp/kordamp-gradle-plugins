@@ -81,13 +81,6 @@ class LicenseSet {
         licenses.each(action)
     }
 
-    @CompileDynamic
-    List<String> resolveBintrayLicenseIds() {
-        List<String> ids = licenses.collect { it.id?.bintray() ?: '' }.unique()
-        ids.remove('')
-        ids
-    }
-
     List<String> validate(ProjectConfigurationExtension extension) {
         List<String> errors = []
 

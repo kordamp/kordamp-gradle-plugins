@@ -18,9 +18,9 @@
 package org.kordamp.gradle.plugin.base.model
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
+import org.kordamp.gradle.CollectionUtils
 
 /**
  * @author Andres Almiray
@@ -43,9 +43,8 @@ class License {
         toMap().toString()
     }
 
-    @CompileDynamic
     Map<String, Object> toMap() {
-        [
+        new LinkedHashMap<String, Object>([
             id          : this.@id?.name(),
             name        : name,
             url         : url,
@@ -53,7 +52,7 @@ class License {
             comments    : comments,
             primary     : primary,
             aliases     : aliases
-        ]
+        ])
     }
 
     void setLicenseId(LicenseId id) {
@@ -99,6 +98,6 @@ class License {
         o1.distribution = o1.distribution ?: o2?.distribution
         o1.comments = o1.comments ?: o2?.comments
         o1.primary = o1.primary ?: o2?.primary
-        o1.aliases = (o1.aliases + o2?.aliases).unique()
+        CollectionUtils.merge(o1.aliases, o2?.aliases)
     }
 }

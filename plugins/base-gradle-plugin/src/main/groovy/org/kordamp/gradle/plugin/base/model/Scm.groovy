@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.model
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.gradle.api.Project
@@ -42,13 +41,12 @@ class Scm {
         toMap().toString()
     }
 
-    @CompileDynamic
     Map<String, Object> toMap() {
-        [
+        new LinkedHashMap<String, Object>([
             url                : url,
             connection         : connection,
             developerConnection: developerConnection
-        ]
+        ])
     }
 
     void copyInto(Scm copy) {
