@@ -552,7 +552,7 @@ class ProjectConfigurationExtension {
         Stats.merge(merged.@stats, other.@stats)
         Testing.merge(merged.@testing, other.@testing)
 
-        merged
+        merged.postMerge()
     }
 
     List<String> validate() {
@@ -568,17 +568,22 @@ class ProjectConfigurationExtension {
         errors
     }
 
-    void normalize() {
+    ProjectConfigurationExtension normalize() {
         info.normalize()
         bom.normalize()
         buildScan.normalize()
         clirr.normalize()
         groovydoc.normalize()
-        javadoc.normalize()
         kotlindoc.normalize()
         licensing.normalize()
         plugin.normalize()
         publishing.normalize()
         scaladoc.normalize()
+        this
+    }
+
+    ProjectConfigurationExtension postMerge() {
+        javadoc.postMerge()
+        this
     }
 }

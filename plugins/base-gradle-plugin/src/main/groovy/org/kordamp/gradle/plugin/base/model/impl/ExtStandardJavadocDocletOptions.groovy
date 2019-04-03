@@ -555,7 +555,6 @@ class ExtStandardJavadocDocletOptions extends StandardJavadocDocletOptions {
         o1.myOptions?.putAll(map)
     }
 
-
     void applyTo(MinimalJavadocOptions options) {
         options.setBreakIterator((boolean) (breakIteratorSet ? isBreakIterator() : options.isBreakIterator()))
         options.setBootClasspath(getBootClasspath() ?: options.getBootClasspath())

@@ -105,12 +105,12 @@ class JavadocPlugin extends AbstractKordampPlugin {
                 effectiveConfig.javadoc.projects() << project
             }
 
-            project.tasks.withType(Javadoc) { task ->
+            project.tasks.withType(Javadoc) { Javadoc task ->
                 effectiveConfig.javadoc.applyTo(task)
-                options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
+                task.options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
 
                 if (JavaVersion.current().isJava8Compatible()) {
-                    options.addStringOption('Xdoclint:none', '-quiet')
+                    task.options.addStringOption('Xdoclint:none', '-quiet')
                 }
             }
         }

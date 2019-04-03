@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
@@ -30,6 +29,7 @@ import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.impl.ExtStandardJavadocDocletOptions
 
+import static org.kordamp.gradle.CollectionUtils.merge
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -83,9 +83,8 @@ class Javadoc extends AbstractFeature {
     }
 
     @Override
-    @CompileDynamic
     Map<String, Map<String, Object>> toMap() {
-        Map map = [enabled: enabled]
+        Map<String, Object> map = new LinkedHashMap<String, Object>([enabled: enabled])
 
         if (enabled) {
             List<String> links = []
@@ -97,7 +96,7 @@ class Javadoc extends AbstractFeature {
             map.excludes = excludes
             map.includes = includes
             map.autoLinks = autoLinks.toMap()
-            map.options = [
+            map.options = new LinkedHashMap<String, Object>([
                 windowTitle: options.windowTitle,
                 docTitle   : options.docTitle,
                 header     : options.header,
@@ -107,13 +106,13 @@ class Javadoc extends AbstractFeature {
                 splitIndex : options.splitIndex,
                 use        : options.use,
                 links      : links
-            ]
+            ])
         }
 
-        ['javadoc': map]
+        new LinkedHashMap<>(['javadoc': map])
     }
 
-    void normalize() {
+    void postMerge() {
         autoLinks.resolveLinks(project).each { options.links(it) }
     }
 
@@ -142,11 +141,10 @@ class Javadoc extends AbstractFeature {
         autoLinks.copyInto(copy.autoLinks)
     }
 
-    @CompileDynamic
     static void merge(Javadoc o1, Javadoc o2) {
         AbstractFeature.merge(o1, o2)
-        o1.excludes.addAll(((o1.excludes ?: []) + (o2.excludes ?: [])).unique())
-        o1.includes.addAll(((o1.includes ?: []) + (o2.includes ?: [])).unique())
+        merge(o1.excludes, o2.excludes)
+        merge(o1.includes, o2.includes)
         o1.title = o1.title ?: o2.title
         ExtStandardJavadocDocletOptions.merge(o1.options, o2.options)
         o1.projects().addAll(o2.projects())
@@ -204,25 +202,25 @@ class Javadoc extends AbstractFeature {
             this.enabledSet
         }
 
+        void exclude(String str) {
+            excludes << str
+        }
+
         void copyInto(AutoLinks copy) {
             copy.@enabled = this.enabled
             copy.@enabledSet = this.enabledSet
             copy.configurations.addAll(this.configurations)
-            copy.excludes.addAll(excludes)
+            copy.excludes.addAll(this.excludes)
         }
 
-        @CompileDynamic
         static void merge(AutoLinks o1, AutoLinks o2) {
             o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
-            o1.excludes.addAll(((o1.excludes ?: []) + (o2?.excludes ?: [])).unique())
-            List<String> ls = new ArrayList<>(o1.configurations)
-            o1.@configurations.clear()
-            o1.@configurations.addAll((ls + o2?.configurations).unique())
+            merge(o1.excludes, o2?.excludes)
+            merge(o1.@configurations, o2?.configurations)
         }
 
-        @CompileDynamic
         Map<String, Object> toMap() {
-            Map map = [enabled: enabled]
+            Map<String, Object> map = new LinkedHashMap<String, Object>([enabled: enabled])
 
             if (enabled) {
                 List<String> cs = new ArrayList<>(configurations)
@@ -246,11 +244,11 @@ class Javadoc extends AbstractFeature {
                 cs = ['compile', 'compileOnly', 'annotationProcessor', 'runtime']
             }
 
-            cs.each { cn ->
+            for (String cn : cs) {
                 Configuration c = project.configurations.findByName(cn)
                 c?.dependencies?.each { Dependency dep ->
                     String artifactName = "${dep.name}-${dep.version}".toString()
-                    if (!(artifactName in excludes) && dep.name != 'unspecified' &&
+                    if (!isExcluded(artifactName) && dep.name != 'unspecified' &&
                         isNotBlank(dep.group) && isNotBlank(dep.version)) {
                         links << calculateJavadocLink(dep.group, dep.name, dep.version)
                     }
@@ -258,6 +256,15 @@ class Javadoc extends AbstractFeature {
             }
 
             links
+        }
+
+        private boolean isExcluded(String artifactName) {
+            for (String s : excludes) {
+                if (artifactName.matches(s)) {
+                    return true
+                }
+            }
+            false
         }
 
         private String calculateJavadocLink(String group, String name, String version) {

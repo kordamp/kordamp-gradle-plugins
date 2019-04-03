@@ -134,6 +134,7 @@ class BasePlugin extends AbstractKordampPlugin {
                     project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged).ready()
                 } else {
                     if (validate) errors.addAll(extension.validate())
+                    extension.postMerge()
                     project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, extension).ready()
                 }
             }
