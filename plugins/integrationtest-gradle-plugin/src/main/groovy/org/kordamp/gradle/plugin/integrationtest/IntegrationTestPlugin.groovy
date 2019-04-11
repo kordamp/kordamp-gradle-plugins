@@ -86,6 +86,12 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
                     if (project.file('src/integration-test/groovy').exists()) {
                         groovy.srcDirs project.file('src/integration-test/groovy')
                     }
+                    if (project.file('src/integration-test/kotlin').exists()) {
+                        kotlin.srcDirs project.file('src/integration-test/kotlin')
+                    }
+                    if (project.file('src/integration-test/scala').exists()) {
+                        scala.srcDirs project.file('src/integration-test/scala')
+                    }
                     if (project.file('src/integration-test/resources').exists()) {
                         resources.srcDir project.file('src/integration-test/resources')
                     }

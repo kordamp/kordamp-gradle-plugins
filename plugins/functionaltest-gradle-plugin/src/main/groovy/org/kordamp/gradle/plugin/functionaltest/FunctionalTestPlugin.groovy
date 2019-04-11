@@ -86,6 +86,12 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
                     if (project.file('src/functional-test/groovy').exists()) {
                         groovy.srcDirs project.file('src/functional-test/groovy')
                     }
+                    if (project.file('src/functional-test/kotlin').exists()) {
+                        kotlin.srcDirs project.file('src/functional-test/kotlin')
+                    }
+                    if (project.file('src/functional-test/scala').exists()) {
+                        scala.srcDirs project.file('src/functional-test/scala')
+                    }
                     if (project.file('src/functional-test/resources').exists()) {
                         resources.srcDir project.file('src/functional-test/resources')
                     }
