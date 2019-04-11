@@ -11,8 +11,8 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 
 Responsibilities:
 
- * Create two additional configurations: `integrationTestCompile` and `integrationTestRuntime`. These configurations
-   extend from `testCompile` and `testRuntime` respectively.
+ * Create two additional configurations: `integrationTestImplementation` and `integrationTestRuntimeOnly`. These configurations
+   extend from `testImplementation` and `testRuntimeOnly` respectively.
  * Create a `SourceSet` named `integrationTest`.
  * Create a `Test` task named `integrationTest`.
  * Create a `TestReport` task named `integrationTestReport`. This task is added as a dependency to `check`.

@@ -53,23 +53,23 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
     }
 
     private void createConfigurationsIfNeeded(Project project) {
-        Configuration integrationTestCompile = project.configurations.findByName('integrationTestCompile')
-        if (!integrationTestCompile) {
-            integrationTestCompile = project.configurations.create('integrationTestCompile')
+        Configuration integrationTestImplementation = project.configurations.findByName('integrationTestImplementation')
+        if (!integrationTestImplementation) {
+            integrationTestImplementation = project.configurations.create('integrationTestImplementation')
         }
-        integrationTestCompile.extendsFrom project.configurations.testCompile
+        integrationTestImplementation.extendsFrom project.configurations.testImplementation
 
-        Configuration integrationTestRuntime = project.configurations.findByName('integrationTestRuntime')
-        if (!integrationTestRuntime) {
-            integrationTestRuntime = project.configurations.create('integrationTestRuntime')
+        Configuration integrationTestRuntimeOnly = project.configurations.findByName('integrationTestRuntimeOnly')
+        if (!integrationTestRuntimeOnly) {
+            integrationTestRuntimeOnly = project.configurations.create('integrationTestRuntimeOnly')
         }
-        integrationTestRuntime.extendsFrom integrationTestCompile, project.configurations.testRuntime
+        integrationTestRuntimeOnly.extendsFrom integrationTestImplementation, project.configurations.testRuntimeOnly
 
         if (project.plugins.findPlugin('idea')) {
             project.idea {
                 module {
-                    scopes.TEST.plus += [project.configurations.integrationTestCompile]
-                    scopes.TEST.plus += [project.configurations.integrationTestRuntime]
+                    scopes.TEST.plus += [integrationTestImplementation]
+                    scopes.TEST.plus += [integrationTestRuntimeOnly]
                     testSourceDirs += resolveSourceSets(project).integrationTest.allSource.srcDirs
                 }
             }
