@@ -29,20 +29,34 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 abstract class AbstractReportingTask extends DefaultTask {
-    protected void doPrint(Map<String, ?> map, int offset) {
+    protected void doPrint(value, int offset) {
+        doPrint(new AnsiConsole(project), value, offset)
+    }
+
+    protected void doPrint(AnsiConsole console, value, int offset) {
+        if (value instanceof Map) {
+            doPrintMap(console, (Map) value, offset)
+        } else if (value instanceof Collection) {
+            doPrintCollection(console, value, offset)
+        } else {
+            doPrintElement(console, value, offset)
+        }
+    }
+
+    protected void doPrintMap(AnsiConsole console, Map<String, ?> map, int offset) {
         map.each { key, value ->
             if (value instanceof Map) {
                 if (!value.isEmpty()) {
                     println(('    ' * offset) + key + ':')
-                    doPrint(value, offset + 1)
+                    doPrintMap(console, value, offset + 1)
                 }
             } else if (value instanceof Collection) {
                 if (!value.isEmpty()) {
                     println(('    ' * offset) + key + ':')
-                    doPrint((Collection) value, offset + 1)
+                    doPrintCollection(console, (Collection) value, offset + 1)
                 }
             } else if (isNotNullNorBlank(value)) {
-                println(('    ' * offset) + key + ': ' + formatValue(value))
+                doPrintMapEntry(console, key, value, offset)
             }
 
             if (offset == 0) {
@@ -51,29 +65,35 @@ abstract class AbstractReportingTask extends DefaultTask {
         }
     }
 
-    protected void doPrint(Collection<?> collection, int offset) {
+    protected void doPrintMapEntry(AnsiConsole console, String key, value, int offset) {
+        println(('    ' * offset) + key + ': ' + formatValue(console, value, offset))
+    }
+
+    protected void doPrintCollection(AnsiConsole console, Collection<?> collection, int offset) {
         collection.each { value ->
             if (value instanceof Map) {
                 if (!value.isEmpty()) {
-                    doPrint(value, offset)
+                    doPrintMap(console, value, offset)
                 }
             } else if (value instanceof Collection && !((Collection) value).empty) {
                 if (!value.isEmpty()) {
-                    doPrint(value, offset + 1)
+                    doPrintCollection(console, (Collection) value, offset + 1)
                 }
             } else if (isNotNullNorBlank(value)) {
-                println(('    ' * offset) + formatValue(value))
+                doPrintElement(console, value, offset)
             }
         }
+    }
+
+    protected void doPrintElement(AnsiConsole console, value, int offset) {
+        println(('    ' * offset) + formatValue(console, value, offset))
     }
 
     protected boolean isNotNullNorBlank(value) {
         value != null || (value instanceof CharSequence && isNotBlank(String.valueOf(value)))
     }
 
-    protected String formatValue(value) {
-        AnsiConsole console = new AnsiConsole(project)
-
+    protected String formatValue(AnsiConsole console, value, int offset) {
         if (value instanceof Boolean) {
             Boolean b = (Boolean) value
             return b ? console.green(String.valueOf(b)) : console.red(String.valueOf(b))
@@ -82,20 +102,18 @@ abstract class AbstractReportingTask extends DefaultTask {
         } else {
             String s = String.valueOf(value)
 
-            String r = parseAsBoolean(s)
+            String r = parseAsBoolean(console, s)
             if (r != null) return r
-            r = parseAsInteger(s)
+            r = parseAsInteger(console, s)
             if (r != null) return r
-            r = parseAsDouble(s)
+            r = parseAsDouble(console, s)
             if (r != null) return r
 
             return console.yellow(s)
         }
     }
 
-    protected String parseAsBoolean(String s) {
-        AnsiConsole console = new AnsiConsole(project)
-
+    protected String parseAsBoolean(AnsiConsole console, String s) {
         if ('true'.equalsIgnoreCase(s) || 'false'.equalsIgnoreCase(s)) {
             boolean b = Boolean.valueOf(s)
             return b ? console.green(String.valueOf(b)) : console.red(String.valueOf(b))
@@ -104,9 +122,7 @@ abstract class AbstractReportingTask extends DefaultTask {
         }
     }
 
-    protected String parseAsInteger(String s) {
-        AnsiConsole console = new AnsiConsole(project)
-
+    protected String parseAsInteger(AnsiConsole console, String s) {
         try {
             Integer.parseInt(s)
             return console.cyan(s)
@@ -115,9 +131,7 @@ abstract class AbstractReportingTask extends DefaultTask {
         }
     }
 
-    protected String parseAsDouble(String s) {
-        AnsiConsole console = new AnsiConsole(project)
-
+    protected String parseAsDouble(AnsiConsole console, String s) {
         try {
             Double.parseDouble(s)
             return console.cyan(s)

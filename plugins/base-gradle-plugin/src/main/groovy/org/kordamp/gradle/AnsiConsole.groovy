@@ -18,6 +18,7 @@
 package org.kordamp.gradle
 
 import org.gradle.api.Project
+import org.gradle.api.logging.configuration.ConsoleOutput
 
 /**
  * @author Andres Almiray
@@ -27,9 +28,9 @@ class AnsiConsole {
     private boolean plain
 
     AnsiConsole(Project project) {
-        plain = 'plain'.equalsIgnoreCase(System.getProperty('org.gradle.console'))
+        plain = project.gradle.startParameter.consoleOutput == ConsoleOutput.Plain ||
+            'plain'.equalsIgnoreCase(System.getProperty('org.gradle.console'))
     }
-
 
     String green(CharSequence s) {
         (plain ? s : "\u001B[32m${s}\u001b[0m").toString()
