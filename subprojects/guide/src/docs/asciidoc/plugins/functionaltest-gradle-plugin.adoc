@@ -11,8 +11,8 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 
 Responsibilities:
 
- * Create two additional configurations: `functionalTestCompile` and `functionalTestRuntime`. These configurations
-   extend from `compile` and `runtime` respectively.
+ * Create two additional configurations: `functionalTestImplementation` and `functionalTestRuntimeOnly`. These configurations
+   extend from `imlementation` and `runtimeOnly` respectively.
  * Create a `SourceSet` named `functionalTest`.
  * Create a `Test` task named `functionalTest`.
  * Create a `TestReport` task named `functionalTestReport`. This task is added as a dependency to `check`.

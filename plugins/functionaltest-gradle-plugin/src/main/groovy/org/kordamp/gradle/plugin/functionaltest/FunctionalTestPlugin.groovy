@@ -53,23 +53,23 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
     }
 
     private void createConfigurationsIfNeeded(Project project) {
-        Configuration functionalTestCompile = project.configurations.findByName('functionalTestCompile')
-        if (!functionalTestCompile) {
-            functionalTestCompile = project.configurations.create('functionalTestCompile')
+        Configuration functionalTestImplementation = project.configurations.findByName('functionalTestImplementation')
+        if (!functionalTestImplementation) {
+            functionalTestImplementation = project.configurations.create('functionalTestImplementation')
         }
-        functionalTestCompile.extendsFrom project.configurations.compile
+        functionalTestImplementation.extendsFrom project.configurations.implementation
 
-        Configuration functionalTestRuntime = project.configurations.findByName('functionalTestRuntime')
-        if (!functionalTestRuntime) {
-            functionalTestRuntime = project.configurations.create('functionalTestRuntime')
+        Configuration functionalTestRuntimeOnly = project.configurations.findByName('functionalTestRuntimeOnly')
+        if (!functionalTestRuntimeOnly) {
+            functionalTestRuntimeOnly = project.configurations.create('functionalTestRuntimeOnly')
         }
-        functionalTestRuntime.extendsFrom project.configurations.runtime
+        functionalTestRuntimeOnly.extendsFrom project.configurations.runtimeOnly
 
         if (project.plugins.findPlugin('idea')) {
             project.idea {
                 module {
-                    scopes.TEST.plus += [project.configurations.functionalTestCompile]
-                    scopes.TEST.plus += [project.configurations.functionalTestRuntime]
+                    scopes.TEST.plus += [functionalTestImplementation]
+                    scopes.TEST.plus += [functionalTestRuntimeOnly]
                     testSourceDirs += resolveSourceSets(project).functionalTest.allSource.srcDirs
                 }
             }
