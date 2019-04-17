@@ -85,7 +85,7 @@ class SettingsPlugin implements Plugin<Settings> {
                 buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectDir.name}.gradle.kts".toString() : 'build.gradle.kts')
             }
             if (buildFile.exists()) {
-                includeProject(parentDir, projectDir.name, buildFile)
+                SettingsPlugin.doIncludeProject(settings, parentDir, projectDir.name, buildFile)
             }
         }
     }
@@ -99,7 +99,7 @@ class SettingsPlugin implements Plugin<Settings> {
                 println "Skipping ${projectDir} as it does not exist"
                 continue
             }
-            includeProject(projects, path)
+            SettingsPlugin.includeProject(settings, path)
         }
     }
 
@@ -114,20 +114,30 @@ class SettingsPlugin implements Plugin<Settings> {
                 buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectDir.name}.gradle.kts".toString() : 'build.gradle.kts')
             }
             if (buildFile.exists()) {
-                includeProject(settings.rootDir, projectDir.name, buildFile)
+                SettingsPlugin.doIncludeProject(settings, settings.rootDir, projectDir.name, buildFile)
             }
         }
     }
 
-    private void includeProject(File parentDir, String projectDirName, File buildFile) {
-        File projectDir = new File(parentDir, projectDirName)
+    static void includeProject(Settings settings, File parentDir, String projectDirName) {
+        ProjectsExtension projects = (ProjectsExtension) settings.extensions.findByName(ProjectsExtension.EXTENSION_NAME)
 
-        settings.include(projectDirName)
-        settings.project(":${projectDirName}").projectDir = projectDir
-        settings.project(":${projectDirName}").buildFileName = buildFile.name
+        File buildFile = new File(parentDir, projects.enforceNamingConvention ? "${projectDirName}.gradle".toString() : 'build.gradle')
+        if (!buildFile.exists()) {
+            buildFile = new File(parentDir, projects.enforceNamingConvention ? "${projectDirName}.gradle.kts".toString() : 'build.gradle.kts')
+        }
+        if (buildFile.exists()) {
+            doIncludeProject(settings, settings.rootDir, parentDir.name, buildFile)
+        }
     }
 
-    private void includeProject(ProjectsExtension projects, String projectPath) {
+    static void includeProject(Settings settings, File projectDir) {
+        includeProject(settings, projectDir.parentFile, projectDir.name)
+    }
+
+    static void includeProject(Settings settings, String projectPath) {
+        ProjectsExtension projects = (ProjectsExtension) settings.extensions.findByName(ProjectsExtension.EXTENSION_NAME)
+
         String[] parts = projectPath.split('/')
         String projectDirName = projectPath
         String projectName = parts[-1]
@@ -147,5 +157,13 @@ class SettingsPlugin implements Plugin<Settings> {
             settings.project(":${projectName}").projectDir = projectDir
             settings.project(":${projectName}").buildFileName = buildFile.name
         }
+    }
+
+    private static void doIncludeProject(Settings settings, File parentDir, String projectDirName, File buildFile) {
+        File projectDir = new File(parentDir, projectDirName)
+
+        settings.include(projectDirName)
+        settings.project(":${projectDirName}").projectDir = projectDir
+        settings.project(":${projectDirName}").buildFileName = buildFile.name
     }
 }
