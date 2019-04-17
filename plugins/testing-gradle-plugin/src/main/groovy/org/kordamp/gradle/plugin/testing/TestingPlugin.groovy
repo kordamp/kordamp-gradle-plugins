@@ -21,6 +21,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
 import org.gradle.api.Action
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.TaskProvider
@@ -75,6 +76,19 @@ class TestingPlugin extends AbstractKordampPlugin {
 
         BasePlugin.applyIfMissing(project)
 
+        TaskProvider<DefaultTask> allTestsTask = null
+        if (project.childProjects.isEmpty()) {
+            allTestsTask = project.tasks.register('allTests', DefaultTask,
+                new Action<DefaultTask>() {
+                    @Override
+                    void execute(DefaultTask t) {
+                        t.enabled = false
+                        t.group = 'Verification'
+                        t.description = 'Executes all tests.'
+                    }
+                })
+        }
+
         project.afterEvaluate {
             ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
             setEnabled(effectiveConfig.testing.enabled)
@@ -98,6 +112,10 @@ class TestingPlugin extends AbstractKordampPlugin {
                     configureLogging(testTask, effectiveConfig.testing.logging)
                     effectiveConfig.testing.testTasks() << testTask
                 }
+            }
+
+            if (allTestsTask) {
+                configureAllTestsTasks(project, allTestsTask)
             }
         }
 
@@ -175,6 +193,26 @@ class TestingPlugin extends AbstractKordampPlugin {
             str += "${console.yellow(String.valueOf(result.skippedTestCount))} "
             project.logger.lifecycle(str.toString())
         }
+    }
+
+    private void configureAllTestsTasks(Project project,
+                                        TaskProvider<DefaultTask> allTestsTask) {
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        if (!effectiveConfig.testing.enabled) {
+            return
+        }
+
+        Set<Test> tt = new LinkedHashSet<>(effectiveConfig.testing.testTasks())
+        tt.addAll(effectiveConfig.testing.integrationTasks())
+        tt.addAll(effectiveConfig.testing.functionalTestTasks())
+
+        allTestsTask.configure(new Action<DefaultTask>() {
+            @Override
+            void execute(DefaultTask t) {
+                t.enabled = tt.size() > 0
+                t.dependsOn(tt)
+            }
+        })
     }
 
     private void configureAggregateTestReportTasks(Project project,

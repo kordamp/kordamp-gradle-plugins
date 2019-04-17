@@ -121,4 +121,13 @@ Type:: `org.gradle.api.tasks.testing.TestReport`
 [horizontal]
 destinationDir:: `${rootProject.buildDir}/reports/aggregate-all-tests`
 
+[[_task_all_tests]]
+=== AllTests
+
+Executes all tests found in a project (unit, integration, functional, etc).
+
+[horizontal]
+Name:: allTests
+Type:: `org.gradle.api.DefaultTask`
+
 
