@@ -116,9 +116,13 @@ class ClirrPlugin extends AbstractKordampPlugin {
 
         FileCollection newfiles = null
         if (PluginUtils.isAndroidProject(project)) {
-            newfiles = project.tasks.findByName('assemble').outputs.files
+            newfiles = project.tasks.findByName('assemble')?.outputs?.files
         } else {
-            newfiles = project.tasks.findByName('jar').outputs.files
+            newfiles = project.tasks.findByName('jar')?.outputs?.files
+        }
+
+        if (!newfiles || !effectiveConfig.clirr.enabled) {
+            return null
         }
 
         TaskProvider<ClirrTask> clirrTask = project.tasks.register('clirr', ClirrTask,
@@ -135,10 +139,6 @@ class ClirrPlugin extends AbstractKordampPlugin {
                     t.enabled = effectiveConfig.clirr.enabled
                 }
             })
-
-        if (!effectiveConfig.clirr.enabled) {
-            return null
-        }
 
         String baseline = effectiveConfig.clirr.baseline
         if (!baseline) {
