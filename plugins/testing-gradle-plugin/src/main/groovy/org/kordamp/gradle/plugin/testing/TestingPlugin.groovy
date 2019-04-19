@@ -181,13 +181,15 @@ class TestingPlugin extends AbstractKordampPlugin {
         if (!logging) return
 
         testTask.afterSuite { TestDescriptor descriptor, TestResult result ->
+            if (descriptor.name.contains('Gradle Test Executor')) return
+
             AnsiConsole console = new AnsiConsole(project)
             String indicator = console.green(WINDOWS ? '√' : '✔')
             if (result.failedTestCount > 0) {
                 indicator = console.red(WINDOWS ? 'X' : '✘')
             }
 
-            String str = console.erase("${indicator} Test ${descriptor.name}; ")
+            String str = console.erase("${indicator} Test ${descriptor.name} ")
             str += "Executed: ${result.testCount}/${console.green(String.valueOf(result.successfulTestCount))}/"
             str += "${console.red(String.valueOf(result.failedTestCount))}/"
             str += "${console.yellow(String.valueOf(result.skippedTestCount))} "
