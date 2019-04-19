@@ -360,6 +360,109 @@ extension 9:
     type: net.nemerosa.versioning.VersioningExtension
 ----
 
+[[_task_list_projects]]
+=== ListProjects
+
+Lists all projects
+
+[horizontal]
+Name:: listProjects
+Type:: `org.kordamp.gradle.plugin.base.tasks.ListProjectsTask`
+
+.Options
+[horizontal]
+absolute:: Should paths be printed as absolutes or not. Defaults to `false`.
+
+==== Example Output
+
+For a project defined as follows
+
+[source,groovy]
+----
+.
+├── build.gradle
+├── settings.gradle
+└── subprojects
+    ├── project1
+    │   ├── project1.gradle
+    └── project2
+        └── project2.gradle
+----
+
+[source,groovy,subs="verbatim,attributes"]
+.settings.gradle
+----
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:{project-version}'
+    }
+}
+apply plugin: 'org.kordamp.gradle.settings'
+----
+
+[source,groovy,subs="verbatim,attributes"]
+.build.gradle
+----
+plugins {
+    id 'org.kordamp.gradle.project' version '{project-version}'
+}
+
+config {
+    licensing  { enabled = false }
+
+    publishing { enabled = false }
+}
+----
+
+[source,groovy,subs="verbatim,attributes"]
+.subprojects/project1.gradle
+----
+apply plugin: 'java'
+----
+
+[source,groovy,subs="verbatim,attributes"]
+.subprojects/project2.gradle
+----
+apply plugin: 'java'
+----
+
+Invoking these command
+
+[source]
+----
+$ ./gradlew :listProjects
+----
+
+Results in the following output
+
+[source]
+----
+> Task :listProjects
+Total projects: 3
+
+sample:
+    root: true
+    path: :
+    projectDir: /tmp/sample
+    buildFile: /tmp/sample/build.gradle
+    buildDir: /tmp/sample/build
+ 
+project1:
+    path: :project1
+    projectDir: subprojects/project1
+    buildFile: subprojects/project1/project1.gradle
+    buildDir: subprojects/project1/build
+ 
+project2:
+    path: :project2
+    projectDir: subprojects/project2
+    buildFile: subprojects/project2/project2.gradle
+    buildDir: subprojects/project2/build
+----
+
 [[_task_plugins]]
 === Plugins
 

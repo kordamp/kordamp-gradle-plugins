@@ -27,6 +27,7 @@ import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ExtensionsTask
+import org.kordamp.gradle.plugin.base.tasks.ListProjectsTask
 import org.kordamp.gradle.plugin.base.tasks.PluginsTask
 import org.kordamp.gradle.plugin.base.tasks.ProjectPropertiesTask
 import org.kordamp.gradle.plugin.base.tasks.RepositoriesTask
@@ -100,6 +101,15 @@ class BasePlugin extends AbstractKordampPlugin {
                 void execute(ProjectPropertiesTask t) {
                     t.group = 'Insight'
                     t.description = "Displays all properties found in project '$project.name'"
+                }
+            })
+
+        project.tasks.register('listProjects', ListProjectsTask,
+            new Action<ListProjectsTask>() {
+                @Override
+                void execute(ListProjectsTask t) {
+                    t.group = 'Insight'
+                    t.description = 'List all projects'
                 }
             })
 
