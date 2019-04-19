@@ -27,6 +27,7 @@ import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ExtensionsTask
+import org.kordamp.gradle.plugin.base.tasks.ListIncludedBuildsTask
 import org.kordamp.gradle.plugin.base.tasks.ListProjectsTask
 import org.kordamp.gradle.plugin.base.tasks.PluginsTask
 import org.kordamp.gradle.plugin.base.tasks.ProjectPropertiesTask
@@ -111,6 +112,15 @@ class BasePlugin extends AbstractKordampPlugin {
                     void execute(ListProjectsTask t) {
                         t.group = 'Insight'
                         t.description = 'List all projects'
+                    }
+                })
+
+            project.tasks.register('listIncludedBuilds', ListIncludedBuildsTask,
+                new Action<ListIncludedBuildsTask>() {
+                    @Override
+                    void execute(ListIncludedBuildsTask t) {
+                        t.group = 'Insight'
+                        t.description = 'List all included builds'
                     }
                 })
 

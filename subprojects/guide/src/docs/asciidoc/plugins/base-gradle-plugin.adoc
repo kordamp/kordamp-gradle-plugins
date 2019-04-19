@@ -360,6 +360,68 @@ extension 9:
     type: net.nemerosa.versioning.VersioningExtension
 ----
 
+[[_task_list_included_builds]]
+=== ListIncludedBuilds
+
+Lists all included builds in this project
+
+[horizontal]
+Name:: listIncludedBuilds
+Type:: `org.kordamp.gradle.plugin.base.tasks.ListIncludedBuildsTask`
+
+==== Example Output
+
+For a project defined as follows
+
+[source,groovy]
+----
+.
+├── build.gradle
+└── settings.gradle
+----
+
+[source,groovy,subs="verbatim,attributes"]
+.settings.gradle
+----
+includeBuild '../build1'
+includeBuild '../build2'
+----
+
+[source,groovy,subs="verbatim,attributes"]
+.build.gradle
+----
+plugins {
+    id 'org.kordamp.gradle.project' version '{project-version}'
+}
+
+config {
+    licensing  { enabled = false }
+
+    publishing { enabled = false }
+}
+----
+
+Invoking these command
+
+[source]
+----
+$ ./gradlew :listIncludedBuilds
+----
+
+Results in the following output
+
+[source]
+----
+> Task :listIncludedBuilds
+Total included builds: 2
+
+build1:
+    projectDir: /tmp/build1
+
+build12:
+    projectDir: /tmp/build2
+----
+
 [[_task_list_projects]]
 === ListProjects
 
