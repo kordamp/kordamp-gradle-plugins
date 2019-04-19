@@ -41,6 +41,8 @@ config {
 | additionalClassDirs  | FileCollection | no       | []                                                           | Additional class directories
 |===
 
+The value for `enabled` will automatically be set to `false` if no tests (`unit`, `integration`, or `functional`) are found.
+
 This block is optional.
 
 [[_org_kordamp_gradle_jacoco_tasks]]

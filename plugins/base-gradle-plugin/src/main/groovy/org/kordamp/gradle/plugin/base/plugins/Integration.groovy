@@ -27,6 +27,8 @@ import groovy.transform.CompileStatic
 @CompileStatic
 @Canonical
 class Integration {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.integration-test'
+
     boolean logging = true
     boolean aggregate = true
 

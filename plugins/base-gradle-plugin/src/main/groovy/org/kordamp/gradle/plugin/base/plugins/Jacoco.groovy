@@ -78,6 +78,26 @@ class Jacoco extends AbstractFeature {
         new LinkedHashMap<>('jacoco': map)
     }
 
+    void normalize() {
+        if (!enabledSet) {
+            if (isRoot()) {
+                if (project.childProjects.empty) {
+                    enabled = hasTestsAt(project.file('src/test')) ||
+                        hasTestsAt(project.file('src/integration-test')) ||
+                        hasTestsAt(project.file('src/functional-test'))
+                }
+            } else {
+                enabled = hasTestsAt(project.file('src/test')) ||
+                    hasTestsAt(project.file('src/integration-test')) ||
+                    hasTestsAt(project.file('src/functional-test'))
+            }
+        }
+    }
+
+    private static boolean hasTestsAt(File testDir) {
+        testDir.exists() && testDir.listFiles().length
+    }
+
     void copyInto(Jacoco copy) {
         super.copyInto(copy)
         copy.mergeExecFile = mergeExecFile

@@ -145,8 +145,6 @@ class Kotlindoc extends AbstractFeature {
         if (!impliedPlatforms) {
             impliedPlatforms << 'JVM'
         }
-
-        this
     }
 
     void setReplaceJavadoc(boolean replaceJavadoc) {

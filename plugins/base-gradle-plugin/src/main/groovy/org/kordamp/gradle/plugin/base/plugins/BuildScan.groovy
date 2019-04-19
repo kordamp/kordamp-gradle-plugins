@@ -51,7 +51,7 @@ class BuildScan extends AbstractFeature {
     Map<String, Map<String, Object>> toMap() {
         if (!isRoot()) return [:]
 
-        new LinkedHashMap<>('buildScan': new LinkedHashMap<>(enabled: enabled))
+        new LinkedHashMap<>('buildScan': new LinkedHashMap<String, Object>(enabled: enabled))
     }
 
     static void merge(BuildScan o1, BuildScan o2) {

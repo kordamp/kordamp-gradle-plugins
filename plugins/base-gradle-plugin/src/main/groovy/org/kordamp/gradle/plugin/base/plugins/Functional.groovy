@@ -27,6 +27,8 @@ import groovy.transform.CompileStatic
 @CompileStatic
 @Canonical
 class Functional {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.functional-test'
+
     boolean logging = true
     boolean aggregate = true
 

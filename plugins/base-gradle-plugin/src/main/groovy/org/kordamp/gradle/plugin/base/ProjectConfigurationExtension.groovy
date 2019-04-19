@@ -574,6 +574,7 @@ class ProjectConfigurationExtension {
         clirr.normalize()
         groovydoc.normalize()
         kotlindoc.normalize()
+        jacoco.normalize()
         licensing.normalize()
         plugin.normalize()
         publishing.normalize()
