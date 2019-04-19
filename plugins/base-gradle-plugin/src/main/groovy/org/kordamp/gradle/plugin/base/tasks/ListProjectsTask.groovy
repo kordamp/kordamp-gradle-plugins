@@ -38,9 +38,11 @@ class ListProjectsTask extends AbstractReportingTask {
 
     @TaskAction
     void report() {
+        if (project != project.rootProject) return
+
         Project rootProject = project.rootProject
 
-        AnsiConsole console = new AnsiConsole(project)
+        AnsiConsole console = new AnsiConsole(rootProject)
         println('Total projects: ' + console.cyan((rootProject.childProjects.size() + 1).toString()) + '\n')
         printProject(console, rootProject, true)
         rootProject.childProjects.values().each { printProject(console, it, false) }

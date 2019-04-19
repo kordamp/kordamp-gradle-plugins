@@ -104,16 +104,16 @@ class BasePlugin extends AbstractKordampPlugin {
                 }
             })
 
-        project.tasks.register('listProjects', ListProjectsTask,
-            new Action<ListProjectsTask>() {
-                @Override
-                void execute(ListProjectsTask t) {
-                    t.group = 'Insight'
-                    t.description = 'List all projects'
-                }
-            })
-
         if (isRootProject(project)) {
+            project.tasks.register('listProjects', ListProjectsTask,
+                new Action<ListProjectsTask>() {
+                    @Override
+                    void execute(ListProjectsTask t) {
+                        t.group = 'Insight'
+                        t.description = 'List all projects'
+                    }
+                })
+
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
                 void projectsEvaluated(Gradle gradle) {
