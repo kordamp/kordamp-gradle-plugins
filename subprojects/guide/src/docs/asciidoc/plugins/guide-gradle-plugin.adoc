@@ -11,9 +11,9 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `<<_org_kordamp_gradle_javadoc,org.kordamp.gradle.javadoc>>`, (on root project) +
 `<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>`, (on root project) +
 `<<_org_kordamp_gradle_apidoc,org.kordamp.gradle.apidoc>>`, (on root project) +
-`link:https://github.com/asciidoctor/asciidoctor-gradle-plugin[org.asciidoctor.convert]`
+`link:https://github.com/asciidoctor/asciidoctor-gradle-plugin[org.asciidoctor.jvm.convert]`
 
-Generates a User Manual or Guide with Asciidoctor as the source format. Applies the `org.asciidoctor.convert` plugin.
+Generates a User Manual or Guide with Asciidoctor as the source format. Applies the `org.asciidoctor.jvm.convert` plugin.
 
 The following attributes will be added to the default `asciidoctor` task if they have no explicit value defined:
 

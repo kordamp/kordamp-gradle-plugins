@@ -17,9 +17,10 @@
  */
 package org.kordamp.gradle.plugin.guide
 
-import org.asciidoctor.gradle.AsciidoctorPlugin
-import org.asciidoctor.gradle.AsciidoctorTask
+import org.asciidoctor.gradle.jvm.AsciidoctorJPlugin
+import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.gradle.BuildAdapter
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -42,6 +43,7 @@ class GuidePlugin extends AbstractKordampPlugin {
     static final String CREATE_GUIDE_TASK_NAME = 'createGuide'
     static final String INIT_GUIDE_TASK_NAME = 'initGuide'
     static final String ZIP_GUIDE_TASK_NAME = 'zipGuide'
+    static final String ASCIIDOCTOR = 'asciidoctor'
     static final String ASCIIDOCTOR_SRC_DIR = 'src/docs/asciidoc'
     static final String ASCIIDOCTOR_RESOURCE_DIR = 'src/docs/resources'
 
@@ -58,7 +60,7 @@ class GuidePlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
         ApidocPlugin.applyIfMissing(project.rootProject)
         SourceHtmlPlugin.applyIfMissing(project.rootProject)
-        project.plugins.apply(AsciidoctorPlugin)
+        project.plugins.apply(AsciidoctorJPlugin)
 
         project.extensions.create('guide', GuideExtension, project)
 
@@ -76,57 +78,60 @@ class GuidePlugin extends AbstractKordampPlugin {
     }
 
     private void configureAsciidoctorTask(Project project) {
-        AsciidoctorTask asciidoctorTask = project.tasks.findByName(AsciidoctorPlugin.ASCIIDOCTOR)
+        project.tasks.named(ASCIIDOCTOR).configure(new Action<AsciidoctorTask>() {
+            @Override
+            void execute(AsciidoctorTask t) {
+                ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project.rootProject)
 
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+                Map attrs = [:]
+                attrs.putAll(t.attributes)
+                checkAttribute(attrs, t.attributes, 'toc', 'left')
+                checkAttribute(attrs, t.attributes, 'doctype', 'book')
+                checkAttribute(attrs, t.attributes, 'icons', 'font')
+                checkAttribute(attrs, t.attributes, 'encoding', 'utf-8')
+                checkAttribute(attrs, t.attributes, 'sectlink', true)
+                checkAttribute(attrs, t.attributes, 'sectanchors', true)
+                checkAttribute(attrs, t.attributes, 'numbered', true)
+                checkAttribute(attrs, t.attributes, 'linkattrs', true)
+                checkAttribute(attrs, t.attributes, 'imagesdir', 'images')
+                checkAttribute(attrs, t.attributes, 'linkcss', true)
+                checkAttribute(attrs, t.attributes, 'source-highlighter', 'coderay')
+                checkAttribute(attrs, t.attributes, 'coderay-linenums-mode', 'table')
+                checkAttribute(attrs, t.attributes, 'project-title', effectiveConfig.info.description)
+                checkAttribute(attrs, t.attributes, 'project-inception-year', effectiveConfig.info.inceptionYear)
+                checkAttribute(attrs, t.attributes, 'project-copyright-year', effectiveConfig.info.copyrightYear)
+                checkAttribute(attrs, t.attributes, 'project-author', effectiveConfig.info.getAuthors().join(', '))
+                checkAttribute(attrs, t.attributes, 'project-url', effectiveConfig.info.url)
+                checkAttribute(attrs, t.attributes, 'project-scm', effectiveConfig.info.links.scm)
+                checkAttribute(attrs, t.attributes, 'project-issue-tracker', effectiveConfig.info.links.issueTracker)
+                checkAttribute(attrs, t.attributes, 'project-group', project.group)
+                checkAttribute(attrs, t.attributes, 'project-version', project.version)
+                checkAttribute(attrs, t.attributes, 'project-name', project.rootProject.name)
 
-        Map attrs = [:]
-        checkAttribute(attrs, asciidoctorTask.attributes, 'toc', 'left')
-        checkAttribute(attrs, asciidoctorTask.attributes, 'doctype', 'book')
-        checkAttribute(attrs, asciidoctorTask.attributes, 'icons', 'font')
-        checkAttribute(attrs, asciidoctorTask.attributes, 'encoding', 'utf-8')
-        checkAttribute(attrs, asciidoctorTask.attributes, 'sectlink', true)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'sectanchors', true)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'numbered', true)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'linkattrs', true)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'imagesdir', 'images')
-        checkAttribute(attrs, asciidoctorTask.attributes, 'linkcss', true)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'source-highlighter', 'coderay')
-        checkAttribute(attrs, asciidoctorTask.attributes, 'coderay-linenums-mode', 'table')
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-title', effectiveConfig.info.description)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-inception-year', effectiveConfig.info.inceptionYear)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-copyright-year', effectiveConfig.info.copyrightYear)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-author', effectiveConfig.info.getAuthors().join(', '))
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-url', effectiveConfig.info.url)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-scm', effectiveConfig.info.links.scm)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-issue-tracker', effectiveConfig.info.links.issueTracker)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-group', project.group)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-version', project.version)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'project-name', project.rootProject.name)
+                checkAttribute(attrs, t.attributes, 'build-by', effectiveConfig.buildInfo.buildBy)
+                checkAttribute(attrs, t.attributes, 'build-date', effectiveConfig.buildInfo.buildDate)
+                checkAttribute(attrs, t.attributes, 'build-time', effectiveConfig.buildInfo.buildTime)
+                checkAttribute(attrs, t.attributes, 'build-revision', effectiveConfig.buildInfo.buildRevision)
+                checkAttribute(attrs, t.attributes, 'build-jdk', effectiveConfig.buildInfo.buildJdk)
+                checkAttribute(attrs, t.attributes, 'build-created-by', effectiveConfig.buildInfo.buildCreatedBy)
 
-        Map buildinfo = project.rootProject.findProperty('buildinfo') ?: [:]
-        checkAttribute(attrs, asciidoctorTask.attributes, 'build-by', buildinfo.buildBy)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'build-date', buildinfo.buildDate)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'build-time', buildinfo.buildTime)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'build-revision', buildinfo.buildRevision)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'build-jdk', buildinfo.buildJdk)
-        checkAttribute(attrs, asciidoctorTask.attributes, 'build-created-by', buildinfo.buildCreatedBy)
+                t.attributes(attrs)
 
-        asciidoctorTask.configure {
-            attributes.putAll(attrs)
+                t.sourceDir = project.file(ASCIIDOCTOR_SRC_DIR)
 
-            sources {
-                include 'index.adoc'
+                t.sources {
+                    include 'index.adoc'
+                }
+
+                t.resources {
+                    from project.file(ASCIIDOCTOR_RESOURCE_DIR)
+                }
             }
-
-            resources {
-                from project.file(ASCIIDOCTOR_RESOURCE_DIR)
-            }
-        }
+        })
     }
 
     private static void checkAttribute(Map dest, Map src, String key, value) {
-        if(!src.containsKey(key)) dest[key + '@'] = value
+        if (!src.containsKey(key)) dest[key + '@'] = value
     }
 
     private void createGuideTaskIfNeeded(Project project) {
@@ -140,9 +145,9 @@ class GuidePlugin extends AbstractKordampPlugin {
         }
 
         guideTask.configure {
-            dependsOn project.tasks.findByName(AsciidoctorPlugin.ASCIIDOCTOR)
+            dependsOn project.tasks.named(ASCIIDOCTOR)
             destinationDir project.file("${project.buildDir}/guide")
-            from("${project.tasks.asciidoctor.outputDir}/html5")
+            from(project.tasks.asciidoctor.outputDir)
         }
 
         Task zipGuideTask = project.tasks.findByName(ZIP_GUIDE_TASK_NAME)
@@ -217,11 +222,11 @@ class GuidePlugin extends AbstractKordampPlugin {
                             |:toclevels: 4
                             |:docinfo1:
                             |
-                            |include::_links.adoc[]
+                            |include::{includedir}/_links.adoc[]
                             |
                             |:leveloffset: 1
-                            |include::introduction.adoc[]
-                            |include::usage.adoc[]
+                            |include::{includedir}/introduction.adoc[]
+                            |include::{includedir}/usage.adoc[]
                             |
                             |= Links
                             |

@@ -97,7 +97,7 @@ allprojects {
 
     repositories {
         jcenter()
-        maven {  url 'https://plugins.gradle.org/m2/' }
+        gradlePluginPortal()
         flatDir { dir rootProject.file('libraries') }
     }
 
