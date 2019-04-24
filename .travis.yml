@@ -12,4 +12,4 @@ before_script:
   - ./gradlew --version
 
 script:
-  - TERM=dumb ./gradlew --build-cache --console=plain --no-daemon -S --scan build -PbintrayUsername=undefined -PbintrayApiKey=undefined
+  - TERM=dumb ./gradlew --console=plain -S --scan build
