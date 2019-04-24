@@ -21,13 +21,16 @@ import com.gradle.publish.PluginBundleExtension
 import com.gradle.publish.PluginConfig
 import com.gradle.publish.PublishPlugin
 import com.jfrog.bintray.gradle.BintrayExtension
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 
 import static org.kordamp.gradle.PluginUtils.resolveConfig
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
@@ -114,6 +117,27 @@ class PluginPlugin extends AbstractKordampPlugin {
             BintrayExtension bintray = project.extensions.findByType(BintrayExtension)
             if (bintray) {
                 bintray.pkg.version.attributes = ['gradle-plugin': "${effectiveConfig.plugin.id}:${project.group}:${project.name}".toString()]
+            }
+
+            updatePublication(project)
+        }
+    }
+
+    @CompileDynamic
+    private void updatePublication(Project project) {
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+
+        project.publishing {
+            publications {
+                pluginMaven(MavenPublication) {
+                    PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.publishing.pom)
+                }
+            }
+        }
+
+        if (effectiveConfig.publishing.signing) {
+            project.signing {
+                sign project.publishing.publications.pluginMaven
             }
         }
     }
