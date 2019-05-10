@@ -275,7 +275,7 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask`
 .Options
 [horizontal]
 section:: The section to generate the report for.
-sections:: The section to generate the report for.
+sections:: The sections to generate the report for.
 
 You may specify either of the two, be advised that `sections` has precedence over `section`. All sections will be displayed
 if neither of these options is specified. Section names match entries found in the <<_project_dsl,DSL>>.
@@ -359,6 +359,23 @@ extension 9:
     name: versioning
     type: net.nemerosa.versioning.VersioningExtension
 ----
+
+[[_task_java_compiler_settings]]
+=== JavaCompilerSettings
+
+Display compiler configuration
+
+[horizontal]
+Name:: javaCompilerSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.JavaCompilerSettingsTask`
+
+.Options
+[horizontal]
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.
 
 [[_task_list_included_builds]]
 === ListIncludedBuilds

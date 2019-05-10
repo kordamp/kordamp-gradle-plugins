@@ -41,7 +41,6 @@ class RepositoriesTask extends AbstractReportingTask {
         doPrint(repositories, 0)
     }
 
-    @CompileStatic
     private Map<String, Map<String, ?>> doReport(ArtifactRepository repository, int index) {
         Map<String, ?> map = [:]
 

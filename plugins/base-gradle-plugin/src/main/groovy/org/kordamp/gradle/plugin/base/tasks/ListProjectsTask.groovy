@@ -21,7 +21,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
-import org.kordamp.gradle.AnsiConsole
 
 /**
  * @author Andres Almiray
@@ -42,13 +41,12 @@ class ListProjectsTask extends AbstractReportingTask {
 
         Project rootProject = project.rootProject
 
-        AnsiConsole console = new AnsiConsole(rootProject)
         println('Total projects: ' + console.cyan((rootProject.childProjects.size() + 1).toString()) + '\n')
-        printProject(console, rootProject, true)
-        rootProject.childProjects.values().each { printProject(console, it, false) }
+        printProject(rootProject, true)
+        rootProject.childProjects.values().each { printProject(it, false) }
     }
 
-    private void printProject(AnsiConsole console, Project project, boolean isRoot) {
+    private void printProject(Project project, boolean isRoot) {
         println(project.name + ':')
 
         Map<String, String> props = [:]
@@ -59,7 +57,7 @@ class ListProjectsTask extends AbstractReportingTask {
             buildFile : adjustPath(isRoot, project.rootProject.projectDir.toString(), project.buildFile.absolutePath),
             buildDir  : adjustPath(isRoot, project.rootProject.projectDir.toString(), project.buildDir.toString())
         ])
-        doPrintMap(console, props, 1)
+        doPrintMap(props, 1)
         println(' ')
     }
 
