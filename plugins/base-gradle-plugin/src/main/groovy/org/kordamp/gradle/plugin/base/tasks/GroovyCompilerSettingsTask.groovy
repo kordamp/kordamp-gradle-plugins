@@ -26,7 +26,7 @@ import org.gradle.api.tasks.compile.GroovyCompile
  * @since 0.20.0
  */
 @CompileStatic
-class GroovyCompilerSettingsTask extends AbstractCompilerSettingsTask {
+class GroovyCompilerSettingsTask extends AbstractSettingsTask {
     @TaskAction
     void report() {
         if (tasks) {

@@ -872,3 +872,20 @@ repository 2:
         /tmp/sample/lib
 ----
 
+[[_task_test_settings]]
+=== TestSettings
+
+Display test task configuration
+
+[horizontal]
+Name:: testSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.TestSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.

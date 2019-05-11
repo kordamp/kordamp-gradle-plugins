@@ -26,7 +26,7 @@ import org.gradle.api.tasks.compile.JavaCompile
  * @since 0.20.0
  */
 @CompileStatic
-class JavaCompilerSettingsTask extends AbstractCompilerSettingsTask {
+class JavaCompilerSettingsTask extends AbstractSettingsTask {
     @TaskAction
     void report() {
         if (tasks) {

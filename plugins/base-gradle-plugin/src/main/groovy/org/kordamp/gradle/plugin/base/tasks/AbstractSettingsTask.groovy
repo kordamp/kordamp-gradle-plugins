@@ -28,7 +28,7 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  * @since 0.20.0
  */
 @CompileStatic
-abstract class AbstractCompilerSettingsTask extends AbstractReportingTask {
+abstract class AbstractSettingsTask extends AbstractReportingTask {
     protected String task
     protected Set<String> tasks
 
