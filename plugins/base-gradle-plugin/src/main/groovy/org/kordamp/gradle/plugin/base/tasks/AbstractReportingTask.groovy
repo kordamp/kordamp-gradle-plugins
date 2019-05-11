@@ -84,7 +84,7 @@ abstract class AbstractReportingTask extends DefaultTask {
         }
     }
 
-    protected void doPrintrintMap(String key, Map<String, ?> map, int offset) {
+    protected void doPrintMap(String key, Map<String, ?> map, int offset) {
         if (!map.isEmpty()) {
             println(('    ' * offset) + key + ':')
             doPrintMap(map, offset + 1)

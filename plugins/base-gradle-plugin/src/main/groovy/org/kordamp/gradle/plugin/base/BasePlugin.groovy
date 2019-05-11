@@ -27,6 +27,7 @@ import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ExtensionsTask
+import org.kordamp.gradle.plugin.base.tasks.GroovyCompilerSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.JavaCompilerSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ListIncludedBuildsTask
 import org.kordamp.gradle.plugin.base.tasks.ListProjectsTask
@@ -140,9 +141,20 @@ class BasePlugin extends AbstractKordampPlugin {
                     @Override
                     void execute(JavaCompilerSettingsTask t) {
                         t.group = 'Insight'
-                        t.description = "Display compiler configuration"
+                        t.description = "Display Java compiler configuration"
                     }
                 })
+
+            if (project.plugins.findPlugin('groovy')) {
+                project.tasks.register('groovyCompilerSettings', GroovyCompilerSettingsTask,
+                    new Action<GroovyCompilerSettingsTask>() {
+                        @Override
+                        void execute(GroovyCompilerSettingsTask t) {
+                            t.group = 'Insight'
+                            t.description = "Display Groovy compiler configuration"
+                        }
+                    })
+            }
         }
 
         project.afterEvaluate {

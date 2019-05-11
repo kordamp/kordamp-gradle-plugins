@@ -360,6 +360,23 @@ extension 9:
     type: net.nemerosa.versioning.VersioningExtension
 ----
 
+[[_task_groovy_compiler_settings]]
+=== GroovyCompilerSettings
+
+Display compiler configuration
+
+[horizontal]
+Name:: groovyCompilerSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.GroovyCompilerSettingsTask`
+
+.Options
+[horizontal]
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.
+
 [[_task_java_compiler_settings]]
 === JavaCompilerSettings
 

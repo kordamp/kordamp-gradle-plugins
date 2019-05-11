@@ -19,7 +19,7 @@ package org.kordamp.gradle.plugin.base.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.compile.GroovyCompile
 import org.gradle.api.tasks.options.Option
 
 import static org.kordamp.gradle.StringUtils.isNotBlank
@@ -29,7 +29,7 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  * @since 0.20.0
  */
 @CompileStatic
-class JavaCompilerSettingsTask extends AbstractReportingTask {
+class GroovyCompilerSettingsTask extends AbstractReportingTask {
     private String task
     private Set<String> tasks
 
@@ -49,18 +49,18 @@ class JavaCompilerSettingsTask extends AbstractReportingTask {
     void report() {
         if (tasks) {
             tasks.each { t ->
-                printTask((JavaCompile) project.tasks.findByName(t))
+                printTask((GroovyCompile) project.tasks.findByName(t))
             }
         } else if (task) {
-            printTask((JavaCompile) project.tasks.findByName(task))
+            printTask((GroovyCompile) project.tasks.findByName(task))
         } else {
-            project.tasks.withType(JavaCompile).each { t ->
+            project.tasks.withType(GroovyCompile).each { t ->
                 printTask(t)
             }
         }
     }
 
-    private void printTask(JavaCompile task) {
+    private void printTask(GroovyCompile task) {
         doPrint(task.name + ':', 0)
         doPrintCollection('includes', task.includes, 1)
         doPrintCollection('excludes', task.excludes, 1)
@@ -86,6 +86,22 @@ class JavaCompilerSettingsTask extends AbstractReportingTask {
         doPrintMapEntry('listFiles', task.options.listFiles, 2)
         doPrintMapEntry('verbose', task.options.verbose, 2)
         doPrintMapEntry('warnings', task.options.warnings, 2)
+        doPrint('groovyOptions:', 1)
+        doPrintMapEntry('configurationScript', task.groovyOptions.configurationScript, 2)
+        doPrintMapEntry('encoding', task.groovyOptions.encoding, 2)
+        doPrintMapEntry('failOnError', task.groovyOptions.failOnError, 2)
+        doPrintCollection('fileExtensions', task.groovyOptions.fileExtensions, 2)
+        doPrintMapEntry('fork', task.groovyOptions.fork, 2)
+        doPrint('forkOptions:', 2)
+        doPrintCollection('jvmArgs', task.options.forkOptions.jvmArgs, 3)
+        doPrintMapEntry('memoryInitialSize', task.options.forkOptions.memoryInitialSize, 3)
+        doPrintMapEntry('memoryMaximumSize', task.options.forkOptions.memoryMaximumSize, 3)
+        doPrintMapEntry('javaAnnotationProcessing', task.groovyOptions.javaAnnotationProcessing, 2)
+        doPrintMapEntry('keepStubs', task.groovyOptions.keepStubs, 2)
+        doPrintMapEntry('listFiles', task.groovyOptions.listFiles, 2)
+        doPrintMap('optimizationOptions', task.groovyOptions.optimizationOptions, 2)
+        doPrintMapEntry('stubDir', task.groovyOptions.stubDir, 2)
+        doPrintMapEntry('verbose', task.groovyOptions.verbose, 2)
         println ' '
     }
 }

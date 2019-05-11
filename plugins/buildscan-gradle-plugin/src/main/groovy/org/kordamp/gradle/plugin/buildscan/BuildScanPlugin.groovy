@@ -64,7 +64,7 @@ class BuildScanPlugin extends AbstractKordampPlugin {
                 }
             })
 
-        project.tasks.register('removetBuildScanAgreement', BuildScanAgreementTask,
+        project.tasks.register('removeBuildScanAgreement', BuildScanAgreementTask,
             new Action<BuildScanAgreementTask>() {
                 @Override
                 void execute(BuildScanAgreementTask t) {
