@@ -98,7 +98,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
                     @Override
                     void execute(JxrTask t) {
                         t.group = 'Documentation'
-                        t.description = 'Generates an aggregate JXR report of the source code'
+                        t.description = 'Generates an aggregate JXR report of the source code.'
                         t.outputDirectory = project.file("${project.buildDir}/docs/source-xref")
                         t.enabled = false
                     }
@@ -110,7 +110,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
                     void execute(Jar t) {
                         t.dependsOn jxrTask
                         t.group = 'Documentation'
-                        t.description = 'An archive of the JXR report the source code'
+                        t.description = 'An archive of the JXR report the source code.'
                         t.classifier = 'sources-jxr'
                         t.from jxrTask.get().outputDirectory
                         t.enabled = false
@@ -139,7 +139,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
                 void execute(DefaultTask t) {
                     t.enabled = false
                     t.group = 'Documentation'
-                    t.description = 'Generates a JXR report of the source code'
+                    t.description = 'Generates a JXR report of the source code.'
                 }
             })
         }
@@ -149,7 +149,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(JxrTask t) {
                     t.group = 'Documentation'
-                    t.description = 'Generates a JXR report of the source code'
+                    t.description = 'Generates a JXR report of the source code.'
                     t.outputDirectory = project.file("${project.buildDir}/docs/source-xref")
                     t.sourceDirs = resolveSrcDirs(project)
                 }
@@ -163,7 +163,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
                 void execute(Jar t) {
                     t.dependsOn jxrTask
                     t.group = 'Documentation'
-                    t.description = 'An archive of the JXR report the source code'
+                    t.description = 'An archive of the JXR report the source code.'
                     t.classifier = 'sources-jxr'
                     t.from jxrTask.get().outputDirectory
                 }

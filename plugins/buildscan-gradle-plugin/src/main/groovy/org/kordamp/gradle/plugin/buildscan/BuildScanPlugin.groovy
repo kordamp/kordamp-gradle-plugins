@@ -59,7 +59,7 @@ class BuildScanPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(BuildScanAgreementTask t) {
                     t.group = 'BuildScan'
-                    t.description = 'Sets the value of the build scan agreement'
+                    t.description = 'Sets the value of the build scan agreement.'
                     t.remove = false
                 }
             })
@@ -69,7 +69,7 @@ class BuildScanPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(BuildScanAgreementTask t) {
                     t.group = 'BuildScan'
-                    t.description = 'Removes the value of the build scan agreement'
+                    t.description = 'Removes the value of the build scan agreement.'
                     t.remove = true
                 }
             })
@@ -80,7 +80,7 @@ class BuildScanPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(ListBuildScanAgreementTask t) {
                     t.group = 'BuildScan'
-                    t.description = 'List the value of each build scan agreement'
+                    t.description = 'List the value of each build scan agreement.'
                 }
             })
 

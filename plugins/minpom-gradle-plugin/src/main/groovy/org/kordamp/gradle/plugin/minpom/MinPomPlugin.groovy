@@ -97,7 +97,7 @@ class MinPomPlugin extends AbstractKordampPlugin {
                     void execute(MinpomTask t) {
                         t.dependsOn classesTask
                         t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-                        t.description = 'Generates a minimum POM file'
+                        t.description = 'Generates a minimum POM file.'
                     }
                 })
         }

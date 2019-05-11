@@ -68,7 +68,7 @@ class BasePlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(EffectiveSettingsTask t) {
                     t.group = 'Insight'
-                    t.description = "Displays resolved settings for project '$project.name'"
+                    t.description = "Displays resolved settings for project '$project.name'."
                 }
             })
 
@@ -77,7 +77,7 @@ class BasePlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(RepositoriesTask t) {
                     t.group = 'Insight'
-                    t.description = "Displays all repositories for project '$project.name'"
+                    t.description = "Displays all repositories for project '$project.name'."
                 }
             })
 
@@ -86,7 +86,7 @@ class BasePlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(PluginsTask t) {
                     t.group = 'Insight'
-                    t.description = "Displays all plugins applied to project '$project.name'"
+                    t.description = "Displays all plugins applied to project '$project.name'."
                 }
             })
 
@@ -95,7 +95,7 @@ class BasePlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(ExtensionsTask t) {
                     t.group = 'Insight'
-                    t.description = "Displays all extensions applied to project '$project.name'"
+                    t.description = "Displays all extensions applied to project '$project.name'."
                 }
             })
 
@@ -104,7 +104,7 @@ class BasePlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(ProjectPropertiesTask t) {
                     t.group = 'Insight'
-                    t.description = "Displays all properties found in project '$project.name'"
+                    t.description = "Displays all properties found in project '$project.name'."
                 }
             })
 
@@ -114,7 +114,7 @@ class BasePlugin extends AbstractKordampPlugin {
                     @Override
                     void execute(ListProjectsTask t) {
                         t.group = 'Insight'
-                        t.description = 'List all projects'
+                        t.description = 'List all projects.'
                     }
                 })
 
@@ -123,7 +123,7 @@ class BasePlugin extends AbstractKordampPlugin {
                     @Override
                     void execute(ListIncludedBuildsTask t) {
                         t.group = 'Insight'
-                        t.description = 'List all included builds'
+                        t.description = 'List all included builds.'
                     }
                 })
 

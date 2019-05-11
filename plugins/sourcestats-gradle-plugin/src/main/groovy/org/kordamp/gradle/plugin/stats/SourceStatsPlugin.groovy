@@ -121,7 +121,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
                 void execute(SourceStatsTask t) {
                     t.enabled = effectiveConfig.stats.enabled
                     t.group = 'Reporting'
-                    t.description = 'Generates a report on lines of code'
+                    t.description = 'Generates a report on lines of code.'
                     t.paths = effectiveConfig.stats.paths
                     t.formats = effectiveConfig.stats.formats
                     t.counters = effectiveConfig.stats.counters

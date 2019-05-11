@@ -97,7 +97,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
                     void execute(AggregateClirrReportTask t) {
                         t.enabled = false
                         t.group = 'Verification'
-                        t.description = 'Aggregates binary compatibility reports'
+                        t.description = 'Aggregates binary compatibility reports.'
                         t.reportFile = project.file("${project.reporting.baseDir.path}/clirr/aggregate-compatibility-report.html")
                     }
                 })
@@ -131,7 +131,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
                 @CompileDynamic
                 void execute(ClirrTask t) {
                     t.group = 'Verification'
-                    t.description = 'Determines the binary compatibility of the current codebase against a previous release'
+                    t.description = 'Determines the binary compatibility of the current codebase against a previous release.'
                     t.newFiles = newfiles
                     t.newClasspath = project.configurations['compile'] // TODO: implementation
                     t.xmlReport = project.file("${project.reporting.baseDir.path}/clirr/compatibility-report.xml")

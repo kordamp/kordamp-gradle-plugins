@@ -97,7 +97,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                     @Override
                     void execute(Jar t) {
                         t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-                        t.description = 'An archive of all the source code'
+                        t.description = 'An archive of all the source code.'
                         t.classifier = 'sources'
                         t.enabled = false
                     }
@@ -121,7 +121,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                     @CompileDynamic
                     void execute(Jar t) {
                         t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-                        t.description = 'An archive of the source code'
+                        t.description = 'An archive of the source code.'
                         t.classifier = 'sources'
                         t.dependsOn classesTask
                         t.from PluginUtils.resolveSourceSets(project).main.allSource

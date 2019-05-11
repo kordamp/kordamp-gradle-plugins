@@ -117,7 +117,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                     @Override
                     void execute(Copy t) {
                         t.group = 'Documentation'
-                        t.description = 'Generates a HTML report of the source code'
+                        t.description = 'Generates a HTML report of the source code.'
                         t.destinationDir = project.file("${project.buildDir}/docs/source-html")
                         t.enabled = false
                     }
@@ -129,7 +129,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                     void execute(Jar t) {
                         t.dependsOn sourceHtmlTask
                         t.group = 'Documentation'
-                        t.description = 'An archive of the HTML report the source code'
+                        t.description = 'An archive of the HTML report the source code.'
                         t.classifier = 'sources-html'
                         t.from sourceHtmlTask.get().destinationDir
                         t.enabled = false
@@ -165,7 +165,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                     t.enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
                     t.dependsOn classesTask
                     t.group = 'Documentation'
-                    t.description = 'Converts source code into HTML'
+                    t.description = 'Converts source code into HTML.'
                     t.classpath = configuration.asFileTree
                     t.srcDirs = effectiveConfig.sourceHtml.srcDirs
                     t.destDir = effectiveConfig.sourceHtml.conversion.destDir
@@ -194,7 +194,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                     t.enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
                     t.dependsOn convertCodeTask
                     t.group = 'Documentation'
-                    t.description = 'Generate an overview of converted source code'
+                    t.description = 'Generate an overview of converted source code.'
                     t.srcDirs = project.files(effectiveConfig.sourceHtml.conversion.destDir)
                     t.destDir = effectiveConfig.sourceHtml.overview.destDir
                     t.pattern = effectiveConfig.sourceHtml.overview.pattern
@@ -213,7 +213,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                     t.enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
                     t.dependsOn generateOverviewTask
                     t.group = 'Documentation'
-                    t.description = 'Generates a HTML report of the source code'
+                    t.description = 'Generates a HTML report of the source code.'
                     t.destinationDir = project.file("${project.buildDir}/docs/source-html")
                     t.from convertCodeTask.get().destDir
                     t.from generateOverviewTask.get().destDir
@@ -227,7 +227,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                     t.enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
                     t.dependsOn sourceHtmlTask
                     t.group = 'Documentation'
-                    t.description = 'An archive of the HTML report the source code'
+                    t.description = 'An archive of the HTML report the source code.'
                     t.classifier = 'sources-html'
                     t.from sourceHtmlTask.get().destinationDir
                 }
@@ -260,7 +260,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                 void execute(ConvertCodeTask t) {
                     t.dependsOn sourceHtmlTasks
                     t.group = 'Documentation'
-                    t.description = 'Converts source code into HTML'
+                    t.description = 'Converts source code into HTML.'
                     t.classpath = configuration.asFileTree
                     t.srcDirs = srcdirs
                     t.destDir = effectiveConfig.sourceHtml.conversion.destDir
@@ -288,7 +288,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                 void execute(GenerateOverviewTask t) {
                     t.dependsOn convertCodeTask
                     t.group = 'Documentation'
-                    t.description = 'Generate an overview of converted source code'
+                    t.description = 'Generate an overview of converted source code.'
                     t.srcDirs = project.files(effectiveConfig.sourceHtml.conversion.destDir)
                     t.destDir = effectiveConfig.sourceHtml.overview.destDir
                     t.pattern = effectiveConfig.sourceHtml.overview.pattern

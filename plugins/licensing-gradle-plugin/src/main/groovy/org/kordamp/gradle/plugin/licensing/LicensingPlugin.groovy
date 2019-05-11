@@ -174,7 +174,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
                     void execute(AggregateLicenseReportTask t) {
                         t.enabled = false
                         t.group = 'Reporting'
-                        t.description = 'Generates an aggregate license report'
+                        t.description = 'Generates an aggregate license report.'
                     }
                 })
 
