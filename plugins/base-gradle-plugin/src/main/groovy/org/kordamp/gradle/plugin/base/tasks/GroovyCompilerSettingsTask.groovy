@@ -20,31 +20,13 @@ package org.kordamp.gradle.plugin.base.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.GroovyCompile
-import org.gradle.api.tasks.options.Option
-
-import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
  * @since 0.20.0
  */
 @CompileStatic
-class GroovyCompilerSettingsTask extends AbstractReportingTask {
-    private String task
-    private Set<String> tasks
-
-    @Option(option = 'task', description = 'The task to generate the report for.')
-    void setTask(String task) {
-        this.task = task
-    }
-
-    @Option(option = 'tasks', description = 'The tasks to generate the report for.')
-    void setTasks(String tasks) {
-        if (isNotBlank(tasks)) {
-            this.tasks = (tasks.split(',').collect { it.trim() }) as Set
-        }
-    }
-
+class GroovyCompilerSettingsTask extends AbstractCompilerSettingsTask {
     @TaskAction
     void report() {
         if (tasks) {
@@ -102,6 +84,12 @@ class GroovyCompilerSettingsTask extends AbstractReportingTask {
         doPrintMapEntry('listFiles', task.options.listFiles, 2)
         doPrintMapEntry('verbose', task.options.verbose, 2)
         doPrintMapEntry('warnings', task.options.warnings, 2)
+        if (isShowPaths()) {
+            doPrintCollection('annotationProcessorPath', task.options.annotationProcessorPath, 1)
+            doPrintCollection('bootstrapClasspath', task.options.bootstrapClasspath, 1)
+            doPrintCollection('classpath', task.classpath, 1)
+            doPrintCollection('sourcepath', task.options.sourcepath, 1)
+        }
         println ' '
     }
 }

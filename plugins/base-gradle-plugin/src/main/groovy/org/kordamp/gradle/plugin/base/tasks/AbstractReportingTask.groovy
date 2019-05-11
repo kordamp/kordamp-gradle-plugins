@@ -19,6 +19,7 @@ package org.kordamp.gradle.plugin.base.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.FileCollection
 import org.kordamp.gradle.AnsiConsole
 
 import static org.kordamp.gradle.StringUtils.isNotBlank
@@ -95,6 +96,13 @@ abstract class AbstractReportingTask extends DefaultTask {
         if (!collection.isEmpty()) {
             println(('    ' * offset) + key + ':')
             doPrintCollection(collection, offset + 1)
+        }
+    }
+
+    protected void doPrintCollection(String key, FileCollection collection, int offset) {
+        if (collection != null && !collection.isEmpty()) {
+            println(('    ' * offset) + key + ':')
+            doPrintCollection(collection.getFiles(), offset + 1)
         }
     }
 

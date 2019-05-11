@@ -371,6 +371,7 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.GroovyCompilerSettingsTask`
 
 .Options
 [horizontal]
+show-paths:: Display path information (OPTIONAL).
 task:: The task to generate the report for.
 tasks:: The tasks to generate the report for.
 
@@ -388,6 +389,7 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.JavaCompilerSettingsTask`
 
 .Options
 [horizontal]
+show-paths:: Display path information (OPTIONAL).
 task:: The task to generate the report for.
 tasks:: The tasks to generate the report for.
 
