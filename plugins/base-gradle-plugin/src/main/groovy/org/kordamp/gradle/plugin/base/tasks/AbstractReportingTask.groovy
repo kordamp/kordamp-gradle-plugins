@@ -32,6 +32,10 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 abstract class AbstractReportingTask extends DefaultTask {
     protected final AnsiConsole console = new AnsiConsole(project)
 
+    protected void print(String value, int offset) {
+        println(('    ' * offset) + value)
+    }
+
     protected void doPrint(value, int offset) {
         if (value instanceof Map) {
             doPrintMap((Map) value, offset)

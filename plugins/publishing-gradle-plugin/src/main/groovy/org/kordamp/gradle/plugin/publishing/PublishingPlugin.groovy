@@ -19,6 +19,7 @@ package org.kordamp.gradle.plugin.publishing
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
@@ -100,6 +101,33 @@ class PublishingPlugin extends AbstractKordampPlugin {
                 updatePublications(project)
             }
         }
+
+        project.tasks.register('publicationSettings', PublicationSettingsTask,
+            new Action<PublicationSettingsTask>() {
+                @Override
+                void execute(PublicationSettingsTask t) {
+                    t.group = 'Insight'
+                    t.description = 'Display publication configuration.'
+                }
+            })
+
+        project.tasks.addRule('Pattern: <ID>PublicationSettings: Displays configuration of a publication.', new Action<String>() {
+            @Override
+            void execute(String publicationName) {
+                if (publicationName.endsWith('PublicationSettings')) {
+                    String resolvedPublicationName = publicationName - 'Settings'
+                    project.tasks.register(publicationName, PublicationSettingsTask,
+                        new Action<PublicationSettingsTask>() {
+                            @Override
+                            void execute(PublicationSettingsTask t) {
+                                t.group = 'Insight'
+                                t.publication = resolvedPublicationName
+                                t.description = "Display configuration for the ${resolvedPublicationName} publication."
+                            }
+                        })
+                }
+            }
+        })
     }
 
     @CompileDynamic

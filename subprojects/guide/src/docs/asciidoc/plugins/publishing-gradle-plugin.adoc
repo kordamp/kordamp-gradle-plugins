@@ -124,3 +124,24 @@ config {
 }
 ----
 
+[[_org_kordamp_gradle_publishing_tasks]]
+== Tasks
+
+[[_task_publication_settings]]
+=== PublicationSettings
+
+Display publication configuration
+
+[horizontal]
+Name:: publicationSettings
+Type:: `org.kordamp.gradle.plugin.publishing.PublicationSettingsTask`
+
+.Options
+[horizontal]
+absolute:: Should paths be printed as absolutes or not. Defaults to 'false' (OPTIONAL).
+publication:: The publication to generate the report for.
+publications:: The publications to generate the report for.
+
+You may specify either of the two, be advised that `publications` has precedence over `publication`. All publications will be displayed
+if neither of these options is specified.
+

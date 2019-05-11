@@ -136,35 +136,6 @@ class BasePlugin extends AbstractKordampPlugin {
             }
         })
 
-        if (project.plugins.findPlugin('groovy')) {
-            project.tasks.register('groovyCompilerSettings', GroovyCompilerSettingsTask,
-                new Action<GroovyCompilerSettingsTask>() {
-                    @Override
-                    void execute(GroovyCompilerSettingsTask t) {
-                        t.group = 'Insight'
-                        t.description = 'Display Groovy compiler configuration.'
-                    }
-                })
-
-            project.tasks.addRule('Pattern: compile<ID>GroovySettings: Displays compiler configuration of a GroovyCompile task.', new Action<String>() {
-                @Override
-                void execute(String taskName) {
-                    if (taskName.startsWith('compile') && taskName.endsWith('GroovySettings')) {
-                        String resolvedTaskName = taskName - 'Settings'
-                        project.tasks.register(taskName, GroovyCompilerSettingsTask,
-                            new Action<GroovyCompilerSettingsTask>() {
-                                @Override
-                                void execute(GroovyCompilerSettingsTask t) {
-                                    t.group = 'Insight'
-                                    t.task = resolvedTaskName
-                                    t.description = "Display Groovy compiler configuration for the ${resolvedTaskName} task."
-                                }
-                            })
-                    }
-                }
-            })
-        }
-
         project.tasks.register('testSettings', TestSettingsTask,
             new Action<TestSettingsTask>() {
                 @Override
@@ -223,6 +194,35 @@ class BasePlugin extends AbstractKordampPlugin {
         }
 
         project.afterEvaluate {
+            if (project.plugins.findPlugin('groovy')) {
+                project.tasks.register('groovyCompilerSettings', GroovyCompilerSettingsTask,
+                    new Action<GroovyCompilerSettingsTask>() {
+                        @Override
+                        void execute(GroovyCompilerSettingsTask t) {
+                            t.group = 'Insight'
+                            t.description = 'Display Groovy compiler configuration.'
+                        }
+                    })
+
+                project.tasks.addRule('Pattern: compile<ID>GroovySettings: Displays compiler configuration of a GroovyCompile task.', new Action<String>() {
+                    @Override
+                    void execute(String taskName) {
+                        if (taskName.startsWith('compile') && taskName.endsWith('GroovySettings')) {
+                            String resolvedTaskName = taskName - 'Settings'
+                            project.tasks.register(taskName, GroovyCompilerSettingsTask,
+                                new Action<GroovyCompilerSettingsTask>() {
+                                    @Override
+                                    void execute(GroovyCompilerSettingsTask t) {
+                                        t.group = 'Insight'
+                                        t.task = resolvedTaskName
+                                        t.description = "Display Groovy compiler configuration for the ${resolvedTaskName} task."
+                                    }
+                                })
+                        }
+                    }
+                })
+            }
+
             ProjectConfigurationExtension rootExtension = project.rootProject.extensions.findByType(ProjectConfigurationExtension)
             ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
             extension.normalize()

@@ -47,7 +47,7 @@ class TestSettingsTask extends AbstractSettingsTask {
     }
 
     private void printTask(Test task) {
-        doPrint(task.name + ':', 0)
+        print(task.name + ':', 0)
         doPrintCollection('includes', task.includes, 1)
         doPrintCollection('excludes', task.excludes, 1)
         doPrintMapEntry('debug', task.debug, 1)
@@ -62,7 +62,7 @@ class TestSettingsTask extends AbstractSettingsTask {
         doPrintMapEntry('maxParallelForks', task.maxParallelForks, 1)
         doPrintMapEntry('scanForTestClasses', task.scanForTestClasses, 1)
         doPrintMap('systemProperties', task.systemProperties, 1)
-        doPrint('options:', 1)
+        print('options:', 1)
         if (task.options instanceof JUnitOptions) {
             JUnitOptions o = (JUnitOptions) task.options
             doPrintMapEntry('useJUnit', true, 2)
