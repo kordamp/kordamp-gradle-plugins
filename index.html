@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>A collection of opinionated Gradle plugins</h1>
 <div class="details">
 <span id="author" class="author">Andres Almiray</span><br>
-<span id="revnumber">version 0.19.0</span>
+<span id="revnumber">version 0.20.0-SNAPSHOT</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -215,6 +215,7 @@ $(addBlockSwitches);
 <ul class="sectlevel3">
 <li><a href="#_org_kordamp_gradle_publishing_dsl">5.20.1. DSL</a></li>
 <li><a href="#_org_kordamp_gradle_publishing_example">5.20.2. Example</a></li>
+<li><a href="#_org_kordamp_gradle_publishing_tasks">5.20.3. Tasks</a></li>
 </ul>
 </li>
 <li><a href="#_org_kordamp_gradle_scaladoc">5.21. Scaladoc</a>
@@ -315,7 +316,7 @@ still be bent to a certain degree. The plugins found in this project provide suc
         jcenter()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:{plugin-id}:0.19.0'
+        classpath 'org.kordamp.gradle:{plugin-id}:0.20.0-SNAPSHOT'
     }
 }
 apply plugin: '{plugin-id}'</code></pre>
@@ -332,7 +333,7 @@ apply plugin: '{plugin-id}'</code></pre>
         jcenter()
     }
     dependencies {
-        classpath("org.kordamp.gradle:{plugin-id}:0.19.0")
+        classpath("org.kordamp.gradle:{plugin-id}:0.20.0-SNAPSHOT")
     }
 }
 apply(plugin = "{plugin-id}")</code></pre>
@@ -345,7 +346,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id '{plugin-id}' version '0.19.0'
+    id '{plugin-id}' version '0.20.0-SNAPSHOT'
 }</code></pre>
 </div>
 </div>
@@ -353,7 +354,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("{plugin-id}") version "0.19.0"
+    id("{plugin-id}") version "0.20.0-SNAPSHOT"
 }</code></pre>
 </div>
 </div>
@@ -510,7 +511,7 @@ listOf("docs", "subprojects").forEach { dirName -&gt;
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.19.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.20.0-SNAPSHOT'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -530,7 +531,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.19.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.20.0-SNAPSHOT")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -549,8 +550,8 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.19.0'            <i class="conum" data-value="1"></i><b>(1)</b>
-    id 'org.kordamp.gradle.bintray' version '0.19.0'            <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.project' version '0.20.0-SNAPSHOT'            <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.bintray' version '0.20.0-SNAPSHOT'            <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 config {
@@ -630,8 +631,8 @@ allprojects {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.19.0"          <i class="conum" data-value="1"></i><b>(1)</b>
-    id("org.kordamp.gradle.bintray") version "0.19.0"          <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.project") version "0.20.0-SNAPSHOT"          <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.bintray") version "0.20.0-SNAPSHOT"          <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 val bintrayUsername: String by project
@@ -857,7 +858,7 @@ publications completely:</p>
 <div class="title">build.gradle (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.19.0'
+    id 'org.kordamp.gradle.project' version '0.20.0-SNAPSHOT'
 }
 
 config {
@@ -876,7 +877,7 @@ allprojects {
 <div class="title">build.gradle.kts (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.19.0"
+    id("org.kordamp.gradle.project") version "0.20.0-SNAPSHOT"
 }
 
 config {
@@ -1911,7 +1912,7 @@ section
 sections
 </td>
 <td class="hdlist2">
-<p>The section to generate the report for.</p>
+<p>The sections to generate the report for.</p>
 </td>
 </tr>
 </table>
@@ -1955,7 +1956,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.19.0'
+    id 'org.kordamp.gradle.project' version '0.20.0-SNAPSHOT'
 }
 
 config {
@@ -2023,6 +2024,124 @@ extension 9:
 </div>
 </div>
 <div class="sect4">
+<h5 id="_task_groovy_compiler_settings"><a class="anchor" href="#_task_groovy_compiler_settings"></a>GroovyCompilerSettings</h5>
+<div class="paragraph">
+<p>Display compiler configuration</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>groovyCompilerSettings</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.base.tasks.GroovyCompilerSettingsTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="hdlist">
+<div class="title">Options</div>
+<table>
+<tr>
+<td class="hdlist1">
+show-paths
+</td>
+<td class="hdlist2">
+<p>Display path information (OPTIONAL).</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+task
+</td>
+<td class="hdlist2">
+<p>The task to generate the report for.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+tasks
+</td>
+<td class="hdlist2">
+<p>The tasks to generate the report for.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You may specify either of the two, be advised that <code>tasks</code> has precedence over <code>task</code>. All tasks will be displayed
+if neither of these options is specified.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_task_java_compiler_settings"><a class="anchor" href="#_task_java_compiler_settings"></a>JavaCompilerSettings</h5>
+<div class="paragraph">
+<p>Display compiler configuration</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>javaCompilerSettings</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.base.tasks.JavaCompilerSettingsTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="hdlist">
+<div class="title">Options</div>
+<table>
+<tr>
+<td class="hdlist1">
+show-paths
+</td>
+<td class="hdlist2">
+<p>Display path information (OPTIONAL).</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+task
+</td>
+<td class="hdlist2">
+<p>The task to generate the report for.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+tasks
+</td>
+<td class="hdlist2">
+<p>The tasks to generate the report for.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You may specify either of the two, be advised that <code>tasks</code> has precedence over <code>task</code>. All tasks will be displayed
+if neither of these options is specified.</p>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_task_list_included_builds"><a class="anchor" href="#_task_list_included_builds"></a>ListIncludedBuilds</h5>
 <div class="paragraph">
 <p>Lists all included builds in this project</p>
@@ -2070,7 +2189,7 @@ includeBuild '../build2'</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.19.0'
+    id 'org.kordamp.gradle.project' version '0.20.0-SNAPSHOT'
 }
 
 config {
@@ -2168,7 +2287,7 @@ absolute
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.19.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.20.0-SNAPSHOT'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'</code></pre>
@@ -2178,7 +2297,7 @@ apply plugin: 'org.kordamp.gradle.settings'</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.19.0'
+    id 'org.kordamp.gradle.project' version '0.20.0-SNAPSHOT'
 }
 
 config {
@@ -2272,7 +2391,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.19.0'
+    id 'org.kordamp.gradle.project' version '0.20.0-SNAPSHOT'
 }
 
 config {
@@ -2494,7 +2613,7 @@ local_property = local</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.19.0'
+    id 'org.kordamp.gradle.project' version '0.20.0-SNAPSHOT'
 }
 
 ext.build_property = 'build'
@@ -2573,7 +2692,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.19.0'
+    id 'org.kordamp.gradle.project' version '0.20.0-SNAPSHOT'
 }
 
 config {
@@ -2620,6 +2739,65 @@ repository 2:
         /tmp/sample/lib</code></pre>
 </div>
 </div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_task_test_settings"><a class="anchor" href="#_task_test_settings"></a>TestSettings</h5>
+<div class="paragraph">
+<p>Display test task configuration</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>testSettings</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.base.tasks.TestSettingsTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="hdlist">
+<div class="title">Options</div>
+<table>
+<tr>
+<td class="hdlist1">
+show-paths
+</td>
+<td class="hdlist2">
+<p>Display path information (OPTIONAL).</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+task
+</td>
+<td class="hdlist2">
+<p>The task to generate the report for.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+tasks
+</td>
+<td class="hdlist2">
+<p>The tasks to generate the report for.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You may specify either of the two, be advised that <code>tasks</code> has precedence over <code>task</code>. All tasks will be displayed
+if neither of these options is specified.</p>
 </div>
 </div>
 </div>
@@ -6485,7 +6663,7 @@ the project.</p>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
     id 'groovy'
-    id 'org.kordamp.gradle.minpom' version '0.19.0'
+    id 'org.kordamp.gradle.minpom' version '0.20.0-SNAPSHOT'
 }
 
 group   = 'com.acme'
@@ -6501,7 +6679,7 @@ dependencies {
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
     `groovy`
-    id("org.kordamp.gradle.minpom") version "0.19.0"
+    id("org.kordamp.gradle.minpom") version "0.20.0-SNAPSHOT"
 }
 
 group   = "com.acme"
@@ -7123,6 +7301,68 @@ generated POM file.</p>
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_org_kordamp_gradle_publishing_tasks"><a class="anchor" href="#_org_kordamp_gradle_publishing_tasks"></a>5.20.3. Tasks</h4>
+<div class="sect4">
+<h5 id="_task_publication_settings"><a class="anchor" href="#_task_publication_settings"></a>PublicationSettings</h5>
+<div class="paragraph">
+<p>Display publication configuration</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>publicationSettings</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.publishing.PublicationSettingsTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="hdlist">
+<div class="title">Options</div>
+<table>
+<tr>
+<td class="hdlist1">
+absolute
+</td>
+<td class="hdlist2">
+<p>Should paths be printed as absolutes or not. Defaults to 'false' (OPTIONAL).</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+publication
+</td>
+<td class="hdlist2">
+<p>The publication to generate the report for.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+publications
+</td>
+<td class="hdlist2">
+<p>The publications to generate the report for.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You may specify either of the two, be advised that <code>publications</code> has precedence over <code>publication</code>. All publications will be displayed
+if neither of these options is specified.</p>
+</div>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_org_kordamp_gradle_scaladoc"><a class="anchor" href="#_org_kordamp_gradle_scaladoc"></a>5.21. Scaladoc</h3>
@@ -7698,7 +7938,7 @@ is <code>two-level</code> however is recommended to define it if the search spac
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.19.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.20.0-SNAPSHOT'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -7716,7 +7956,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.19.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.20.0-SNAPSHOT")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -7755,7 +7995,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.19.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.20.0-SNAPSHOT'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -7778,7 +8018,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.19.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.20.0-SNAPSHOT")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -7818,7 +8058,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.19.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.20.0-SNAPSHOT'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -7836,7 +8076,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.19.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.20.0-SNAPSHOT")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -9537,7 +9777,7 @@ Type
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.19.0<br>
+Version 0.20.0-SNAPSHOT<br>
 Last updated 2019-04-24 14:00:42 +0200
 </div>
 </div>
