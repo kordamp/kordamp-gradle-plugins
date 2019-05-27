@@ -57,15 +57,17 @@ class PublicationSettingsTask extends AbstractReportingTask {
     @TaskAction
     void report() {
         PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
-        if (publications) {
-            publications.each { p ->
-                printPublication(publishing.publications.findByName(p))
-            }
-        } else if (publications) {
-            printPublication(publishing.publications.findByName(publication))
-        } else {
-            publishing.publications.each { Publication p ->
-                printPublication(p)
+        if (publishing) {
+            if (publications) {
+                publications.each { p ->
+                    printPublication(publishing.publications.findByName(p))
+                }
+            } else if (publications) {
+                printPublication(publishing.publications.findByName(publication))
+            } else {
+                publishing.publications.each { Publication p ->
+                    printPublication(p)
+                }
             }
         }
     }

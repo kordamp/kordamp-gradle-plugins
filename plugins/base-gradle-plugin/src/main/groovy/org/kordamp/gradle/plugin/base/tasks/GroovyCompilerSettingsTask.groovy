@@ -36,7 +36,8 @@ class GroovyCompilerSettingsTask extends AbstractSettingsTask {
         } else if (task) {
             printTask((GroovyCompile) project.tasks.findByName(task))
         } else {
-            project.tasks.withType(GroovyCompile).each { t ->
+            Set<GroovyCompile> compileTasks = new LinkedHashSet<>(project.tasks.withType(GroovyCompile))
+            compileTasks.each { t ->
                 printTask(t)
             }
         }
