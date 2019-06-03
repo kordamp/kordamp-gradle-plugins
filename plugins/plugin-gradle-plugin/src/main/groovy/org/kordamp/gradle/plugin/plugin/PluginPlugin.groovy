@@ -135,10 +135,6 @@ class PluginPlugin extends AbstractKordampPlugin {
             }
         }
 
-        if (effectiveConfig.publishing.signing) {
-            project.signing {
-                sign project.publishing.publications.pluginMaven
-            }
-        }
+        PublishingUtils.configureSigning(effectiveConfig, project)
     }
 }

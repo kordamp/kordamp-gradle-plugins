@@ -17,8 +17,10 @@
  */
 package org.kordamp.gradle.plugin.base.plugins.util
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPomContributor
 import org.gradle.api.publish.maven.MavenPomContributorSpec
@@ -28,6 +30,7 @@ import org.gradle.api.publish.maven.MavenPomLicense
 import org.gradle.api.publish.maven.MavenPomLicenseSpec
 import org.gradle.api.publish.maven.MavenPomOrganization
 import org.gradle.api.publish.maven.MavenPomScm
+import org.gradle.plugins.signing.Sign
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Dependency
 import org.kordamp.gradle.plugin.base.model.License
@@ -43,6 +46,25 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 class PublishingUtils {
+    @CompileDynamic
+    static void configureSigning(ProjectConfigurationExtension effectiveConfig, Project project) {
+        project.signing {
+            sign project.publishing.publications.main
+        }
+        project.tasks.withType(Sign, new Action<Sign>() {
+            @Override
+            void execute(Sign t) {
+                t.onlyIf {
+                    if (effectiveConfig.publishing.signingSet) {
+                        return effectiveConfig.publishing.signing
+                    } else {
+                        return project.gradle.taskGraph.hasTask(":${project.name}:uploadArchives".toString())
+                    }
+                }
+            }
+        })
+    }
+
     static void configurePom(MavenPom pom, ProjectConfigurationExtension effectiveConfig, PomOptions pomOptions) {
         pom.name.set(effectiveConfig.info.name)
         pom.description.set(effectiveConfig.info.description)

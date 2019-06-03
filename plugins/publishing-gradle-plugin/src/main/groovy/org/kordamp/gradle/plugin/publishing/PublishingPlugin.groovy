@@ -184,10 +184,6 @@ class PublishingPlugin extends AbstractKordampPlugin {
             }
         }
 
-        if (effectiveConfig.publishing.signing) {
-            project.signing {
-                sign project.publishing.publications.main
-            }
-        }
+        PublishingUtils.configureSigning(effectiveConfig, project)
     }
 }

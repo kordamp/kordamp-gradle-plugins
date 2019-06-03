@@ -15,7 +15,7 @@ Configures a MavenPublication for the project using the core `maven-publish` plu
 The name of the publication matches `"main"`.
 
 Data defined in the DSL's `config.info` and `config.license` blocks will be used to fill out information required by the
-generated BOM file.
+generated BOM file. Artifacts will be automatically signed if the `uploadArchives` task is present.
 
 [[_org_kordamp_gradle_bom_example]]
 == Example

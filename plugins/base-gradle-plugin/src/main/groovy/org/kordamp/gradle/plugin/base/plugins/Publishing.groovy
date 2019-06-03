@@ -103,7 +103,8 @@ class Publishing extends AbstractFeature {
         AbstractFeature.merge(o1, o2)
         o1.releasesRepository = o1.@releasesRepository ?: o2.@releasesRepository
         o1.snapshotsRepository = o1.@snapshotsRepository ?: o2.@snapshotsRepository
-        o1.setSigning((boolean) (o1.signingSet ? o1.signing : o2.signing))
+        o1.@signing = o1.signingSet ? o1.signing : o2.signing
+        o1.@signingSet = o1.signingSet ?: o2.signingSet
         DefaultPomOptions.merge(o1.pom, o2.pom)
     }
 }
