@@ -80,16 +80,22 @@ projects {
     enforceNamingConvention
     directories
     excludes
+    fileNameTransformation
+    prefix
+    suffix
 }
 ----
 
 [options="header", cols="5*"]
 |===
 | Name                    | Type         | Required | Default Value | Description
-| layout                  | boolean      | no       | two-level     | Defines the project layout. Valid values are `two-level`, `multi-level`, `standard`.
+| layout                  | boolean      | no       | two-level     | Defines the project layout. Valid values are [`two-level`, `multi-level`, `standard`].
 | enforceNamingConvention | boolean      | no       | true          | If `true` then build file names must match their containing project directory name.
 | directories             | List<String> | no*      | []            | List of directories to include for `two-level` and `multi-level` layout.
 | excludes                | List<String> | no       | []            | List of directories to be excluded from automatic inclusion.
+| fileNameTransformation  | String       | no       |               | Transformation applied to build file name. Valid values are [`add`, `remove`].
+| prefix                  | String       | no       |               | Prefix added/removed from build file name.
+| suffix                  | String       | no       |               | Suffix added/removed from build file name.
 |===
 
 The `directories` property is not required if the chosen layout is set to `standard`. It may be omitted if the chosen layout

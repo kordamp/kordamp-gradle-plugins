@@ -80,13 +80,8 @@ class SettingsPlugin implements Plugin<Settings> {
         parentDir.eachDir { File projectDir ->
             if (projects.excludes.contains(projectDir.name)) return
 
-            File buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectDir.name}.gradle".toString() : 'build.gradle')
-            if (!buildFile.exists()) {
-                buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectDir.name}.gradle.kts".toString() : 'build.gradle.kts')
-            }
-            if (buildFile.exists()) {
-                SettingsPlugin.doIncludeProject(settings, parentDir, projectDir.name, buildFile)
-            }
+            File buildFile = resolveBuildFile(projects, projectDir, projectDir.name)
+            SettingsPlugin.doIncludeProject(settings, parentDir, projectDir.name, buildFile)
         }
     }
 
@@ -109,26 +104,16 @@ class SettingsPlugin implements Plugin<Settings> {
         settings.rootDir.eachDir { File projectDir ->
             if (projects.excludes.contains(projectDir.name)) return
 
-            File buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectDir.name}.gradle".toString() : 'build.gradle')
-            if (!buildFile.exists()) {
-                buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectDir.name}.gradle.kts".toString() : 'build.gradle.kts')
-            }
-            if (buildFile.exists()) {
-                SettingsPlugin.doIncludeProject(settings, settings.rootDir, projectDir.name, buildFile)
-            }
+            File buildFile = resolveBuildFile(projects, projectDir, projectDir.name)
+            SettingsPlugin.doIncludeProject(settings, settings.rootDir, projectDir.name, buildFile)
         }
     }
 
     static void includeProject(Settings settings, File parentDir, String projectDirName) {
         ProjectsExtension projects = (ProjectsExtension) settings.extensions.findByName(ProjectsExtension.EXTENSION_NAME)
 
-        File buildFile = new File(parentDir, projects.enforceNamingConvention ? "${projectDirName}.gradle".toString() : 'build.gradle')
-        if (!buildFile.exists()) {
-            buildFile = new File(parentDir, projects.enforceNamingConvention ? "${projectDirName}.gradle.kts".toString() : 'build.gradle.kts')
-        }
-        if (buildFile.exists()) {
-            doIncludeProject(settings, settings.rootDir, parentDir.name, buildFile)
-        }
+        File buildFile = resolveBuildFile(projects, parentDir, projectDirName)
+        doIncludeProject(settings, settings.rootDir, parentDir.name, buildFile)
     }
 
     static void includeProject(Settings settings, File projectDir) {
@@ -148,10 +133,7 @@ class SettingsPlugin implements Plugin<Settings> {
 
         assert projectDir.isDirectory()
 
-        File buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectName}.gradle".toString() : 'build.gradle')
-        if (!buildFile.exists()) {
-            buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectName}.gradle.kts".toString() : 'build.gradle.kts')
-        }
+        File buildFile = resolveBuildFile(projects, projectDir, projectName)
         if (buildFile.exists()) {
             settings.include(projectName)
             settings.project(":${projectName}").projectDir = projectDir
@@ -159,11 +141,52 @@ class SettingsPlugin implements Plugin<Settings> {
         }
     }
 
-    private static void doIncludeProject(Settings settings, File parentDir, String projectDirName, File buildFile) {
-        File projectDir = new File(parentDir, projectDirName)
+    private static File resolveBuildFile(ProjectsExtension projects, File projectDir, String projectName) {
+        if (projects.enforceNamingConvention) {
+            if ('add'.equalsIgnoreCase(projects.fileNameTransformation)) {
+                if (!isBlank(projects.prefix)) {
+                    projectName = projects.prefix + projectName
+                }
+                if (!isBlank(projects.suffix)) {
+                    projectName += projects.suffix
+                }
+            } else if ('remove'.equalsIgnoreCase(projects.fileNameTransformation)) {
+                if (!isBlank(projects.prefix)) {
+                    projectName -= projects.prefix
+                }
+                if (!isBlank(projects.suffix)) {
+                    projectName -= projects.suffix
+                }
+            }
+        }
 
-        settings.include(projectDirName)
-        settings.project(":${projectDirName}").projectDir = projectDir
-        settings.project(":${projectDirName}").buildFileName = buildFile.name
+        File buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectName}.gradle".toString() : 'build.gradle')
+        if (!buildFile.exists()) {
+            buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectName}.gradle.kts".toString() : 'build.gradle.kts')
+        }
+        buildFile
+    }
+
+    private static void doIncludeProject(Settings settings, File parentDir, String projectDirName, File buildFile) {
+        if (buildFile.exists()) {
+            File projectDir = new File(parentDir, projectDirName)
+
+            settings.include(projectDirName)
+            settings.project(":${projectDirName}").projectDir = projectDir
+            settings.project(":${projectDirName}").buildFileName = buildFile.name
+        }
+    }
+
+    private static boolean isBlank(String str) {
+        if (str == null || str.length() == 0) {
+            return true
+        }
+        for (char c : str.toCharArray()) {
+            if (!Character.isWhitespace(c)) {
+                return false
+            }
+        }
+
+        return true
     }
 }

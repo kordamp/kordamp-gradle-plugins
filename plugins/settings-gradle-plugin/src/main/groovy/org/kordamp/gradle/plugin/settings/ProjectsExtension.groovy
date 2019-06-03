@@ -34,4 +34,10 @@ class ProjectsExtension {
     List<String> directories = []
 
     List<String> excludes = []
+
+    String prefix
+
+    String suffix
+
+    String fileNameTransformation
 }
