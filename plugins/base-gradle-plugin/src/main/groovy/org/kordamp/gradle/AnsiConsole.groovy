@@ -32,20 +32,36 @@ class AnsiConsole {
             'plain'.equalsIgnoreCase(System.getProperty('org.gradle.console'))
     }
 
-    String green(CharSequence s) {
-        (plain ? s : "\u001B[32m${s}\u001b[0m").toString()
+    String black(CharSequence s) {
+        (plain ? s : "\u001B[30m${s}\u001b[0m").toString()
     }
 
     String red(CharSequence s) {
         (plain ? s : "\u001B[31m${s}\u001b[0m").toString()
     }
 
+    String green(CharSequence s) {
+        (plain ? s : "\u001B[32m${s}\u001b[0m").toString()
+    }
+
     String yellow(CharSequence s) {
         (plain ? s : "\u001B[33m${s}\u001b[0m").toString()
     }
 
+    String blue(CharSequence s) {
+        (plain ? s : "\u001B[34m${s}\u001b[0m").toString()
+    }
+
+    String magenta(CharSequence s) {
+        (plain ? s : "\u001B[35m${s}\u001b[0m").toString()
+    }
+
     String cyan(CharSequence s) {
         (plain ? s : "\u001B[36m${s}\u001b[0m").toString()
+    }
+
+    String white(CharSequence s) {
+        (plain ? s : "\u001B[37m${s}\u001b[0m").toString()
     }
 
     String erase(CharSequence s) {

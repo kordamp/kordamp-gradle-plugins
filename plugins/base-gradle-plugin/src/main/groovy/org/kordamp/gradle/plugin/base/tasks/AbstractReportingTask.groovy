@@ -79,20 +79,15 @@ abstract class AbstractReportingTask extends DefaultTask {
 
     protected boolean isSecret(String key) {
         String lower = key.toLowerCase()
-        return !showSecrets && (lower.contains('password') ||
+        return lower.contains('password') ||
             lower.contains('secret') ||
             lower.contains('credential') ||
             lower.contains('token') ||
-            lower.contains('apikey'))
+            lower.contains('apikey')
     }
 
     protected void doPrintMapEntry(String key, value, int offset) {
-        String result = ''
-        if (isSecret(key)) {
-            result = '************'
-        } else {
-            result = formatValue(value, offset)
-        }
+        String result = formatValue(value, isSecret(key), offset)
         if (isNotBlank(result)) println(('    ' * offset) + key + ': ' + result)
     }
 
@@ -142,6 +137,10 @@ abstract class AbstractReportingTask extends DefaultTask {
     }
 
     protected String formatValue(value, int offset) {
+        formatValue(value, false, offset)
+    }
+
+    protected String formatValue(value, boolean secret, int offset) {
         if (value instanceof Boolean) {
             Boolean b = (Boolean) value
             return b ? console.green(String.valueOf(b)) : console.red(String.valueOf(b))
@@ -149,6 +148,7 @@ abstract class AbstractReportingTask extends DefaultTask {
             return console.cyan(String.valueOf(value))
         } else if (value != null) {
             String s = String.valueOf(value)
+            s = secret && !showSecrets? '*' * 12 : s
 
             String r = parseAsBoolean(s)
             if (r != null) return r
@@ -157,7 +157,7 @@ abstract class AbstractReportingTask extends DefaultTask {
             r = parseAsDouble(s)
             if (r != null) return r
 
-            return console.yellow(s)
+            return secret ? console.magenta(s) : console.yellow(s)
         }
         return value
     }
