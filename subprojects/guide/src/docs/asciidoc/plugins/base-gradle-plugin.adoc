@@ -276,6 +276,8 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask`
 [horizontal]
 section:: The section to generate the report for.
 sections:: The sections to generate the report for.
+show-secrets:: Show secret values instead of masked values. Value masking is applied to properties that contain any
+of the following words: `secret`, `password`, `credential`, `token`, `apikey`.
 
 You may specify either of the two, be advised that `sections` has precedence over `section`. All sections will be displayed
 if neither of these options is specified. Section names match entries found in the <<_project_dsl,DSL>>.
@@ -744,6 +746,8 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.PropertiesTask`
 .Options
 [horizontal]
 section:: The section to generate the report for.
+show-secrets:: Show secret values instead of masked values. Value masking is applied to properties that contain any
+of the following words: `secret`, `password`, `credential`, `token`, `apikey`.
 
 Valid values for `section` are: project, ext.
 

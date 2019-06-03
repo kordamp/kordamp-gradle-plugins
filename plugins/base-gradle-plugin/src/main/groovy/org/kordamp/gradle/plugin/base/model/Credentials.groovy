@@ -44,7 +44,7 @@ class Credentials {
         new LinkedHashMap<String, Object>([
             name    : name,
             username: username,
-            password: ('*' * 12)
+            password: password
         ])
     }
 

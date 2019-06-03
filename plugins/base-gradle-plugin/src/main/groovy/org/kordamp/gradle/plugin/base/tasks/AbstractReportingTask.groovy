@@ -20,6 +20,7 @@ package org.kordamp.gradle.plugin.base.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.AnsiConsole
 
 import static org.kordamp.gradle.StringUtils.isNotBlank
@@ -30,6 +31,14 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 abstract class AbstractReportingTask extends DefaultTask {
+    private boolean showSecrets
+    private Set<String> sections
+
+    @Option(option = 'show-secrets', description = 'Show secret values instead of masked values [OPTIONAL].')
+    void setShowSecrets(boolean showSecrets) {
+        this.showSecrets = showSecrets
+    }
+
     protected final AnsiConsole console = new AnsiConsole(project)
 
     protected void print(String value, int offset) {
@@ -68,8 +77,22 @@ abstract class AbstractReportingTask extends DefaultTask {
         }
     }
 
+    protected boolean isSecret(String key) {
+        String lower = key.toLowerCase()
+        return !showSecrets && (lower.contains('password') ||
+            lower.contains('secret') ||
+            lower.contains('credential') ||
+            lower.contains('token') ||
+            lower.contains('apikey'))
+    }
+
     protected void doPrintMapEntry(String key, value, int offset) {
-        String result = formatValue(value, offset)
+        String result = ''
+        if (isSecret(key)) {
+            result = '************'
+        } else {
+            result = formatValue(value, offset)
+        }
         if (isNotBlank(result)) println(('    ' * offset) + key + ': ' + result)
     }
 

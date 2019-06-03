@@ -52,7 +52,7 @@ class Repository {
         if (!credentials.empty) {
             map.credentials = new LinkedHashMap<String, Object>([
                 username: credentials.username,
-                password: ('*' * 12)
+                password: credentials.password
             ])
         }
 
