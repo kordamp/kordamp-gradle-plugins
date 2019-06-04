@@ -31,8 +31,10 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 abstract class AbstractReportingTask extends DefaultTask {
+    private static final String SECRET_KEYWORDS = 'password,secret,credential,token,apikey'
+    private static final String KEY_SECRET_KEYWORDS = 'kordamp.secret.keywords'
+
     private boolean showSecrets
-    private Set<String> sections
 
     @Option(option = 'show-secrets', description = 'Show secret values instead of masked values [OPTIONAL].')
     void setShowSecrets(boolean showSecrets) {
@@ -79,11 +81,12 @@ abstract class AbstractReportingTask extends DefaultTask {
 
     protected boolean isSecret(String key) {
         String lower = key.toLowerCase()
-        return lower.contains('password') ||
-            lower.contains('secret') ||
-            lower.contains('credential') ||
-            lower.contains('token') ||
-            lower.contains('apikey')
+
+        for (String keyword : System.getProperty(KEY_SECRET_KEYWORDS, SECRET_KEYWORDS).split(',')) {
+            if (lower.contains(keyword.trim())) return true
+        }
+
+        return false
     }
 
     protected void doPrintMapEntry(String key, value, int offset) {
@@ -148,7 +151,7 @@ abstract class AbstractReportingTask extends DefaultTask {
             return console.cyan(String.valueOf(value))
         } else if (value != null) {
             String s = String.valueOf(value)
-            s = secret && !showSecrets? '*' * 12 : s
+            s = secret && !showSecrets ? '*' * 12 : s
 
             String r = parseAsBoolean(s)
             if (r != null) return r
