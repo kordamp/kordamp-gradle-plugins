@@ -35,6 +35,9 @@ class DefaultPomOptions implements PomOptions {
     boolean overwriteOrganization
     boolean overwriteDevelopers
     boolean overwriteContributors
+    boolean overwriteIssueManagement
+    boolean overwriteCiManagement
+    boolean overwriteMailingLists
 
     private boolean overwriteInceptionYearSet
     private boolean overwriteUrlSet
@@ -43,6 +46,9 @@ class DefaultPomOptions implements PomOptions {
     private boolean overwriteOrganizationSet
     private boolean overwriteDevelopersSet
     private boolean overwriteContributorsSet
+    private boolean overwriteIssueManagementSet
+    private boolean overwriteCiManagementSet
+    private boolean overwriteMailingListsSet
 
     boolean isOverwriteInceptionYearSet() {
         return overwriteInceptionYearSet
@@ -72,18 +78,33 @@ class DefaultPomOptions implements PomOptions {
         return overwriteContributorsSet
     }
 
+    boolean isOverwriteIssueManagementSet() {
+        return overwriteIssueManagementSet
+    }
+
+    boolean isOverwriteCiManagementSet() {
+        return overwriteCiManagementSet
+    }
+
+    boolean isOverwriteMailingListsSet() {
+        return overwriteMailingListsSet
+    }
+
     @Override
     Map<String, Object> toMap() {
         if (isNotBlank(parent)) {
             new LinkedHashMap<String, Object>([
-                parent                : parent,
-                overwriteInceptionYear: overwriteInceptionYear,
-                overwriteUrl          : overwriteUrl,
-                overwriteLicenses     : overwriteLicenses,
-                overwriteScm          : overwriteScm,
-                overwriteOrganization : overwriteOrganization,
-                overwriteDevelopers   : overwriteDevelopers,
-                overwriteContributors : overwriteContributors
+                parent                  : parent,
+                overwriteInceptionYear  : overwriteInceptionYear,
+                overwriteUrl            : overwriteUrl,
+                overwriteLicenses       : overwriteLicenses,
+                overwriteScm            : overwriteScm,
+                overwriteOrganization   : overwriteOrganization,
+                overwriteDevelopers     : overwriteDevelopers,
+                overwriteContributors   : overwriteContributors,
+                overwriteIssueManagement: overwriteIssueManagementSet,
+                overwriteCiManagement   : overwriteCiManagementSet,
+                overwriteMailingLists   : overwriteMailingListsSet
             ])
         } else {
             [:]
@@ -106,6 +127,12 @@ class DefaultPomOptions implements PomOptions {
         copy.@overwriteDevelopersSet = this.overwriteDevelopersSet
         copy.@overwriteContributors = this.overwriteContributors
         copy.@overwriteContributorsSet = this.overwriteContributorsSet
+        copy.@overwriteIssueManagement = this.overwriteIssueManagement
+        copy.@overwriteIssueManagementSet = this.overwriteIssueManagementSet
+        copy.@overwriteCiManagement = this.overwriteCiManagement
+        copy.@overwriteCiManagementSet = this.overwriteCiManagementSet
+        copy.@overwriteMailingLists = this.overwriteMailingLists
+        copy.@overwriteMailingListsSet = this.overwriteMailingListsSet
     }
 
     static void merge(DefaultPomOptions o1, DefaultPomOptions o2) {
@@ -117,5 +144,8 @@ class DefaultPomOptions implements PomOptions {
         o1.setOverwriteOrganization((boolean) (o1.overwriteOrganizationSet ? o1.overwriteOrganization : o2.overwriteOrganization))
         o1.setOverwriteDevelopers((boolean) (o1.overwriteDevelopersSet ? o1.overwriteDevelopers : o2.overwriteDevelopers))
         o1.setOverwriteContributors((boolean) (o1.overwriteContributorsSet ? o1.overwriteContributors : o2.overwriteContributors))
+        o1.setOverwriteIssueManagement((boolean) (o1.overwriteIssueManagementSet ? o1.overwriteIssueManagement : o2.overwriteIssueManagement))
+        o1.setOverwriteCiManagement((boolean) (o1.overwriteCiManagementSet ? o1.overwriteCiManagement : o2.overwriteCiManagement))
+        o1.setOverwriteMailingLists((boolean) (o1.overwriteMailingListsSet ? o1.overwriteMailingLists : o2.overwriteMailingLists))
     }
 }

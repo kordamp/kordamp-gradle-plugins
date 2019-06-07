@@ -33,6 +33,7 @@ config {
 
         <<_base_info_scm,scm>> {
             url
+            tag
             connection
             developerConnection
         }
@@ -96,6 +97,27 @@ config {
                     url
                 }
                 properties
+            }
+        }
+
+        <<_base_info_issueManagement,issueManagement>> {
+            system
+            url
+        }
+
+        <<_base_info_ciManagement,ciManagement>> {
+            system
+            url
+        }
+
+        <<_base_info_mailingLists,mailingLists>> {
+            <<_base_info_mailingList,mailingList>> {
+                name
+                subscribe
+                unsubscribe
+                post
+                archive
+                otherArchives
             }
         }
     }
@@ -254,6 +276,47 @@ This block is optional if none of the following plugins are used: `<<_org_kordam
 
 At least `id` or `name` must be defined. If a `developer` role exists then the person instance is mapped to a `<developer>`
 block in the POM. If a `contributor` role exists then the person instance is maped to a `<contributor>` block in the POM.
+
+[[_base_info_issueManagement]]
+*issueManagement*
+
+[options="header", cols="5*"]
+|===
+| Name        | Type        | Required | Default Value | Description
+| system      | String      | no       |               | The system value of the `<issueManagement>` block in POM
+| url         | String      | no       |               | The url value of the `<issueManagement>` block in POM
+|===
+
+[[_base_info_ciManagement]]
+*ciManagement*
+
+[options="header", cols="5*"]
+|===
+| Name        | Type        | Required | Default Value | Description
+| system      | String      | no       |               | The system value of the `<ciManagement>` block in POM
+| url         | String      | no       |               | The url value of the `<ciManagement>` block in POM
+|===
+
+[[_base_info_mailingLists]]
+*mailingLists*
+
+This block defines a list of MailingList entries.
+
+[[_base_info_mailingList]]
+*mailingList*
+
+[options="header", cols="5*"]
+|===
+| Name          | Type         | Required | Default Value | Description
+| name          | String       | no*      |               | Mapped to the `<name>` block in POM
+| subscribe     | String       | no       |               | Mapped to the `<subscribe>` block in POM
+| unsubscribe   | String       | no       |               | Mapped to the `<unsubscribe>` block in POM
+| post          | String       | no       |               | Mapped to the `<post>` block in POM
+| archive       | String       | no       |               | Mapped to the `<archive>` block in POM
+| otherArchives | List<String> | no       |               | Mapped to the `<otherArchives>` block in POM
+|===
+
+At least `name` must be defined.
 
 [[_org_kordamp_gradle_base_sysprops]]
 === System Properties

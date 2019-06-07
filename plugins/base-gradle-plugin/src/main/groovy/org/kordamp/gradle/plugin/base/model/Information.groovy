@@ -51,6 +51,9 @@ class Information {
     final Organization organization = new Organization()
     final Links links = new Links()
     final Scm scm = new Scm()
+    final IssueManagement issueManagement = new IssueManagement()
+    final CiManagement ciManagement = new CiManagement()
+    final MailingListSet mailingLists = new MailingListSet()
     final CredentialsSet credentials = new CredentialsSet()
 
     final Specification specification = new Specification()
@@ -73,21 +76,24 @@ class Information {
 
     Map<String, Map<String, Object>> toMap() {
         new LinkedHashMap<String, Map<String, Object>>(['info': new LinkedHashMap<String, Object>([
-            name          : getName(),
-            description   : description,
-            url           : url,
-            inceptionYear : getInceptionYear(),
-            copyrightYear : copyrightYear,
-            vendor        : getVendor(),
-            authors       : authors,
-            organization  : organization.toMap(),
-            people        : people.toMap(),
-            repositories  : repositories.toMap(),
-            links         : links.toMap(),
-            scm           : scm.toMap(),
-            specification : specification.toMap(),
-            implementation: implementation.toMap(),
-            credentials   : credentials.toMap()
+            name           : getName(),
+            description    : description,
+            url            : url,
+            inceptionYear  : getInceptionYear(),
+            copyrightYear  : copyrightYear,
+            vendor         : getVendor(),
+            authors        : authors,
+            organization   : organization.toMap(),
+            people         : people.toMap(),
+            repositories   : repositories.toMap(),
+            links          : links.toMap(),
+            scm            : scm.toMap(),
+            issueManagement: issueManagement.toMap(),
+            ciManagement   : ciManagement.toMap(),
+            mailingLists   : mailingLists.toMap(),
+            specification  : specification.toMap(),
+            implementation : implementation.toMap(),
+            credentials    : credentials.toMap()
         ])])
     }
 
@@ -110,6 +116,9 @@ class Information {
         repositories.copyInto(copy.repositories)
         links.copyInto(copy.links)
         scm.copyInto(copy.scm)
+        issueManagement.copyInto(copy.issueManagement)
+        ciManagement.copyInto(copy.ciManagement)
+        mailingLists.copyInto(copy.mailingLists)
         credentials.copyInto(copy.credentials)
 
         copy.normalize()
@@ -129,6 +138,9 @@ class Information {
         RepositorySet.merge(o1.repositories, o2.repositories)
         Links.merge(o1.links, o2.links)
         Scm.merge(o1.scm, o2.scm)
+        IssueManagement.merge(o1.issueManagement, o2.issueManagement)
+        CiManagement.merge(o1.ciManagement, o2.ciManagement)
+        MailingListSet.merge(o1.mailingLists, o2.mailingLists)
         CredentialsSet.merge(o1.credentials, o2.credentials)
         o1.normalize()
     }
@@ -176,6 +188,18 @@ class Information {
         action.execute(scm)
     }
 
+    void issueManagement(Action<? super IssueManagement> action) {
+        action.execute(issueManagement)
+    }
+
+    void ciManagement(Action<? super CiManagement> action) {
+        action.execute(ciManagement)
+    }
+
+    void mailingLists(Action<? super MailingListSet> action) {
+        action.execute(mailingLists)
+    }
+
     void credentials(Action<? super CredentialsSet> action) {
         action.execute(credentials)
     }
@@ -206,6 +230,18 @@ class Information {
 
     void scm(@DelegatesTo(Scm) Closure action) {
         ConfigureUtil.configure(action, scm)
+    }
+
+    void issueManagement(@DelegatesTo(IssueManagement) Closure action) {
+        ConfigureUtil.configure(action, issueManagement)
+    }
+
+    void ciManagement(@DelegatesTo(CiManagement) Closure action) {
+        ConfigureUtil.configure(action, ciManagement)
+    }
+
+    void mailingLists(@DelegatesTo(MailingListSet) Closure action) {
+        ConfigureUtil.configure(action, mailingLists)
     }
 
     void credentials(@DelegatesTo(CredentialsSet) Closure action) {

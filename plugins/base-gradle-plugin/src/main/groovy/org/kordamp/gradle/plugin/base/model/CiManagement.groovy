@@ -20,22 +20,23 @@ package org.kordamp.gradle.plugin.base.model
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
-import org.gradle.api.Project
+import org.gradle.api.Action
+import org.gradle.util.ConfigureUtil
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
  * @author Andres Almiray
- * @since 0.9.0
+ * @since 0.22.0
  */
 @CompileStatic
 @Canonical
 @ToString(includeNames = true)
-class Scm {
+class CiManagement {
+    String system
     String url
-    String tag
-    String connection
-    String developerConnection
+
+    final NotifierSet notifiers = new NotifierSet()
 
     @Override
     String toString() {
@@ -44,38 +45,39 @@ class Scm {
 
     Map<String, Object> toMap() {
         new LinkedHashMap<String, Object>([
-            url                : url,
-            tag                : tag,
-            connection         : connection,
-            developerConnection: developerConnection
+            system   : system,
+            url      : url,
+            notifiers: notifiers.toMap()
         ])
     }
 
-    void copyInto(Scm copy) {
+    CiManagement copyOf() {
+        CiManagement copy = new CiManagement()
+        copyInto(copy)
+        copy
+    }
+
+    void copyInto(CiManagement copy) {
+        copy.system = system
         copy.url = url
-        copy.tag = tag
-        copy.connection = connection
-        copy.developerConnection = developerConnection
+        notifiers.copyInto(copy.notifiers)
     }
 
-    static void merge(Scm o1, Scm o2) {
-        o1.url = o1.url ?: o2.url
-        o1.tag = o1.tag ?: o2.tag
-        o1.connection = o1.connection ?: o2.connection
-        o1.developerConnection = o1.developerConnection ?: o2.developerConnection
-    }
-
-    List<String> validate(Project project) {
-        List<String> errors = []
-
-        if (isBlank(url)) {
-            errors << "[${project.name}] Project links:url is blank".toString()
-        }
-
-        errors
+    static void merge(CiManagement o1, CiManagement o2) {
+        o1.system = o1.system ?: o2?.system
+        o1.url = o1.url ?: o2?.url
+        NotifierSet.merge(o1.notifiers, o2.notifiers)
     }
 
     boolean isEmpty() {
-        isBlank(url)
+        isBlank(system) && isBlank(url)
+    }
+
+    void notifiers(Action<? super NotifierSet> action) {
+        action.execute(notifiers)
+    }
+
+    void notifiers(@DelegatesTo(NotifierSet) Closure action) {
+        ConfigureUtil.configure(action, notifiers)
     }
 }

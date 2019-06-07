@@ -22,18 +22,23 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPom
+import org.gradle.api.publish.maven.MavenPomCiManagement
 import org.gradle.api.publish.maven.MavenPomContributor
 import org.gradle.api.publish.maven.MavenPomContributorSpec
 import org.gradle.api.publish.maven.MavenPomDeveloper
 import org.gradle.api.publish.maven.MavenPomDeveloperSpec
+import org.gradle.api.publish.maven.MavenPomIssueManagement
 import org.gradle.api.publish.maven.MavenPomLicense
 import org.gradle.api.publish.maven.MavenPomLicenseSpec
+import org.gradle.api.publish.maven.MavenPomMailingList
+import org.gradle.api.publish.maven.MavenPomMailingListSpec
 import org.gradle.api.publish.maven.MavenPomOrganization
 import org.gradle.api.publish.maven.MavenPomScm
 import org.gradle.plugins.signing.Sign
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Dependency
 import org.kordamp.gradle.plugin.base.model.License
+import org.kordamp.gradle.plugin.base.model.MailingList
 import org.kordamp.gradle.plugin.base.model.Person
 import org.kordamp.gradle.plugin.base.model.PomOptions
 
@@ -102,6 +107,9 @@ class PublishingUtils {
                     @Override
                     void execute(MavenPomScm scm) {
                         scm.url.set(effectiveConfig.info.scm.url)
+                        if (effectiveConfig.info.scm.tag) {
+                            scm.tag.set(effectiveConfig.info.scm.tag)
+                        }
                         if (effectiveConfig.info.scm.connection) {
                             scm.connection.set(effectiveConfig.info.scm.connection)
                         }
@@ -176,6 +184,47 @@ class PublishingUtils {
                                 }
                             })
                         }
+                    }
+                }
+            })
+        }
+
+        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteIssueManagement)) {
+            pom.issueManagement(new Action<MavenPomIssueManagement>() {
+                @Override
+                void execute(MavenPomIssueManagement issueManagement) {
+                    if(isNotBlank(effectiveConfig.info.issueManagement.system)) issueManagement.system.set(effectiveConfig.info.issueManagement.system)
+                    if(isNotBlank(effectiveConfig.info.issueManagement.url)) issueManagement.url.set(effectiveConfig.info.issueManagement.url)
+                }
+            })
+        }
+
+        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteCiManagement)) {
+            pom.ciManagement(new Action<MavenPomCiManagement>() {
+                @Override
+                void execute(MavenPomCiManagement ciManagement) {
+                    if(isNotBlank(effectiveConfig.info.ciManagement.system)) ciManagement.system.set(effectiveConfig.info.ciManagement.system)
+                    if(isNotBlank(effectiveConfig.info.ciManagement.url)) ciManagement.url.set(effectiveConfig.info.ciManagement.url)
+                }
+            })
+        }
+
+        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteMailingLists)) {
+            pom.mailingLists(new Action<MavenPomMailingListSpec>() {
+                @Override
+                void execute(MavenPomMailingListSpec mailingLists) {
+                    effectiveConfig.info.mailingLists.forEach { MailingList ml ->
+                        mailingLists.mailingList(new Action<MavenPomMailingList>() {
+                            @Override
+                            void execute(MavenPomMailingList mailingList) {
+                                if (isNotBlank(ml.name)) mailingList.name.set(ml.name)
+                                if (isNotBlank(ml.subscribe)) mailingList.subscribe.set(ml.subscribe)
+                                if (isNotBlank(ml.unsubscribe)) mailingList.unsubscribe.set(ml.unsubscribe)
+                                if (isNotBlank(ml.post)) mailingList.post.set(ml.post)
+                                if (isNotBlank(ml.archive)) mailingList.archive.set(ml.archive)
+                                if (ml.otherArchives) mailingList.otherArchives.set(ml.otherArchives as Set)
+                            }
+                        })
                     }
                 }
             })

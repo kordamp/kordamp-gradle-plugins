@@ -40,6 +40,12 @@ public interface PomOptions {
 
     boolean isOverwriteContributors();
 
+    boolean isOverwriteIssueManagement();
+
+    boolean isOverwriteCiManagement();
+
+    boolean isOverwriteMailingLists();
+
     void setParent(String parent);
 
     void setOverwriteInceptionYear(boolean value);
@@ -55,6 +61,12 @@ public interface PomOptions {
     void setOverwriteDevelopers(boolean value);
 
     void setOverwriteContributors(boolean value);
+
+    void setOverwriteIssueManagement(boolean value);
+
+    void setOverwriteCiManagement(boolean value);
+
+    void setOverwriteMailingLists(boolean value);
 
     Map<String, Object> toMap();
 }

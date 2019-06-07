@@ -51,6 +51,9 @@ class Bom extends AbstractFeature implements PomOptions {
     boolean overwriteOrganization
     boolean overwriteDevelopers
     boolean overwriteContributors
+    boolean overwriteIssueManagement
+    boolean overwriteCiManagement
+    boolean overwriteMailingLists
 
     private boolean overwriteInceptionYearSet
     private boolean overwriteUrlSet
@@ -59,6 +62,9 @@ class Bom extends AbstractFeature implements PomOptions {
     private boolean overwriteOrganizationSet
     private boolean overwriteDevelopersSet
     private boolean overwriteContributorsSet
+    private boolean overwriteIssueManagementSet
+    private boolean overwriteCiManagementSet
+    private boolean overwriteMailingListsSet
 
     Bom(ProjectConfigurationExtension config, Project project) {
         super(config, project)
@@ -95,6 +101,9 @@ class Bom extends AbstractFeature implements PomOptions {
                 map.overwriteOrganization = overwriteOrganization
                 map.overwriteDevelopers = overwriteDevelopers
                 map.overwriteContributors = overwriteContributors
+                map.overwriteIssueManagement = overwriteIssueManagementSet
+                map.overwriteCiManagement = overwriteCiManagementSet
+                map.overwriteMailingLists = overwriteMailingListsSet
             }
         }
 
@@ -138,7 +147,7 @@ class Bom extends AbstractFeature implements PomOptions {
         return overwriteLicensesSet
     }
 
-    boolean isOverwriteScmSet() {
+    boolean overwriteCiManagementisOverwriteScmSet() {
         return overwriteScmSet
     }
 
@@ -152,6 +161,18 @@ class Bom extends AbstractFeature implements PomOptions {
 
     boolean isOverwriteContributorsSet() {
         return overwriteContributorsSet
+    }
+
+    boolean isOverwriteIssueManagementSet() {
+        return overwriteIssueManagementSet
+    }
+
+    boolean isOverwriteCiManagementSet() {
+        return overwriteCiManagementSet
+    }
+
+    boolean isOverwriteMailingListsSet() {
+        return overwriteMailingListsSet
     }
 
     void copyInto(Bom copy) {
@@ -178,6 +199,12 @@ class Bom extends AbstractFeature implements PomOptions {
         copy.@overwriteDevelopersSet = this.overwriteDevelopersSet
         copy.@overwriteContributors = this.overwriteContributors
         copy.@overwriteContributorsSet = this.overwriteContributorsSet
+        copy.@overwriteIssueManagement = this.overwriteIssueManagement
+        copy.@overwriteIssueManagementSet = this.overwriteIssueManagementSet
+        copy.@overwriteCiManagement = this.overwriteCiManagement
+        copy.@overwriteCiManagementSet = this.overwriteCiManagementSet
+        copy.@overwriteMailingLists = this.overwriteMailingLists
+        copy.@overwriteMailingListsSet = this.overwriteMailingListsSet
     }
 
     static void merge(Bom o1, Bom o2) {
@@ -196,6 +223,9 @@ class Bom extends AbstractFeature implements PomOptions {
         o1.setOverwriteOrganization((boolean) (o1.overwriteOrganizationSet ? o1.overwriteOrganization : o2.overwriteOrganization))
         o1.setOverwriteDevelopers((boolean) (o1.overwriteDevelopersSet ? o1.overwriteDevelopers : o2.overwriteDevelopers))
         o1.setOverwriteContributors((boolean) (o1.overwriteContributorsSet ? o1.overwriteContributors : o2.overwriteContributors))
+        o1.setOverwriteIssueManagement((boolean) (o1.overwriteIssueManagementSet ? o1.overwriteIssueManagement : o2.overwriteIssueManagement))
+        o1.setOverwriteCiManagement((boolean) (o1.overwriteCiManagementSet ? o1.overwriteCiManagement : o2.overwriteCiManagement))
+        o1.setOverwriteMailingLists((boolean) (o1.overwriteMailingListsSet ? o1.overwriteMailingLists : o2.overwriteMailingLists))
     }
 
     List<String> validate(ProjectConfigurationExtension extension) {
