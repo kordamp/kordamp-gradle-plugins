@@ -20,21 +20,3 @@ dependencies {
     compile project(':base-gradle-plugin')
     compile 'gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.14.0'
 }
-
-gradlePlugin {
-    plugins {
-        licensePlugin {
-            id = 'org.kordamp.gradle.license'
-            implementationClass = 'org.kordamp.gradle.plugin.license.LicensePlugin'
-        }
-    }
-}
-
-pluginBundle {
-    plugins {
-        licensePlugin {
-            id = 'org.kordamp.gradle.license'
-            displayName = 'Kordamp License Gradle Plugin (deprecated)'
-        }
-    }
-}

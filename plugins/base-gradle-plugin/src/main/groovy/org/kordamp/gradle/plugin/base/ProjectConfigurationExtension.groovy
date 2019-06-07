@@ -224,14 +224,6 @@ class ProjectConfigurationExtension {
         licensing
     }
 
-    /**
-     * @Deprecated Use #getLicensing() instead
-     */
-    Licensing getLicense() {
-        project.logger.warn("ProjectConfigurationExtension.getLicense() has been deprecated, use getLicensing() instead")
-        licensing
-    }
-
     Minpom getMinpom() {
         minpom
     }
@@ -262,14 +254,6 @@ class ProjectConfigurationExtension {
 
     Stats getStats() {
         stats
-    }
-
-    /**
-     * @Deprecated Use #getTesting() instead
-     */
-    Testing getTest() {
-        project.logger.warn("ProjectConfigurationExtension.getTest() has been deprecated, use getTesting() instead")
-        testing
     }
 
     Testing getTesting() {
@@ -382,22 +366,6 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, licensing)
     }
 
-    /**
-     * @Deprecated Use #licensing() instead
-     */
-    void license(Action<? super Licensing> action) {
-        project.logger.warn("ProjectConfigurationExtension.license() has been deprecated, use licensing() instead")
-        action.execute(licensing)
-    }
-
-    /**
-     * @Deprecated Use #licensing() instead
-     */
-    void license(@DelegatesTo(Licensing) Closure action) {
-        project.logger.warn("ProjectConfigurationExtension.license() has been deprecated, use licensing() instead")
-        ConfigureUtil.configure(action, licensing)
-    }
-
     void minpom(Action<? super Minpom> action) {
         action.execute(minpom)
     }
@@ -460,22 +428,6 @@ class ProjectConfigurationExtension {
 
     void sourceXref(@DelegatesTo(SourceXref) Closure action) {
         ConfigureUtil.configure(action, sourceXref)
-    }
-
-    /**
-     * @Deprecated Use #testing() instead
-     */
-    void test(Action<? super Testing> action) {
-        project.logger.warn("ProjectConfigurationExtension.test() has been deprecated, use testing() instead")
-        action.execute(testing)
-    }
-
-    /**
-     * @Deprecated Use #testing() instead
-     */
-    void test(@DelegatesTo(Testing) Closure action) {
-        project.logger.warn("ProjectConfigurationExtension.test() has been deprecated, use testing() instead")
-        ConfigureUtil.configure(action, testing)
     }
 
     void testing(Action<? super Testing> action) {
