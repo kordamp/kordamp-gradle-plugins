@@ -135,6 +135,7 @@ class PluginPlugin extends AbstractKordampPlugin {
             }
         }
 
-        PublishingUtils.configureSigning(effectiveConfig, project)
+        String pluginName = effectiveConfig.plugin.pluginName
+        PublishingUtils.configureSigning(effectiveConfig, project, 'pluginMaven', pluginName + 'PluginMarkerMaven')
     }
 }

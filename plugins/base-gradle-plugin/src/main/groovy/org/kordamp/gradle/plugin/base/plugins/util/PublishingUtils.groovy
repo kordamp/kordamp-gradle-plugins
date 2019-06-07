@@ -47,9 +47,15 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 class PublishingUtils {
     @CompileDynamic
-    static void configureSigning(ProjectConfigurationExtension effectiveConfig, Project project) {
+    static void configureSigning(ProjectConfigurationExtension effectiveConfig, Project project, String... publications) {
         project.signing {
-            sign project.publishing.publications.main
+            if (!publications) {
+                sign project.publishing.publications.main
+            } else {
+                publications.each { publicationName ->
+                    sign project.publishing.publications[publicationName]
+                }
+            }
         }
         project.tasks.withType(Sign, new Action<Sign>() {
             @Override
