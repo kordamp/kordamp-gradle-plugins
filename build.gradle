@@ -15,10 +15,10 @@
  */
 
 plugins {
-    id 'org.kordamp.gradle.build-scan' version '0.20.0'
-    id 'org.kordamp.gradle.project'    version '0.20.0'
-    id 'org.kordamp.gradle.bintray'    version '0.20.0'
-    id 'org.kordamp.gradle.plugin'     version '0.20.0' apply false
+    id 'org.kordamp.gradle.build-scan' version '0.21.0'
+    id 'org.kordamp.gradle.project'    version '0.21.0'
+    id 'org.kordamp.gradle.bintray'    version '0.21.0'
+    id 'org.kordamp.gradle.plugin'     version '0.21.0' apply false
 }
 
 buildScan {
