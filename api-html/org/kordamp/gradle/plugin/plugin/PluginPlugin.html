@@ -166,9 +166,10 @@ PluginPlugin.groovy
 <a name="135"><font color="#808080">135</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="136"><font color="#808080">136</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="137"><font color="#808080">137</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="138"><font color="#808080">138</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">PublishingUtils.configureSigning</font><font color="#000000">(</font><font color="#000000">effectiveConfig,&nbsp;project</font><font color="#000000">)</font><br />
-<a name="139"><font color="#808080">139</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
-<a name="140"><font color="#808080">140</font>&nbsp;</a><font color="#000000">}</font></code>
+<a name="138"><font color="#808080">138</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">String&nbsp;pluginName&nbsp;=&nbsp;effectiveConfig.plugin.pluginName</font><br />
+<a name="139"><font color="#808080">139</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">PublishingUtils.configureSigning</font><font color="#000000">(</font><font color="#000000">effectiveConfig,&nbsp;project,&nbsp;</font><font color="#ff6100">'pl</font><font color="#000000">uginMaven</font><font color="#ff6100">',&nbsp;</font><font color="#000000">pluginName&nbsp;+&nbsp;</font><font color="#ff6100">'Pl</font><font color="#000000">uginMarkerMaven</font><font color="#ff6100">')</font><br />
+<a name="140"><font color="#808080">140</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
+<a name="141"><font color="#808080">141</font>&nbsp;</a><font color="#000000">}</font></code>
     
    </td>
   <!-- end source code -->

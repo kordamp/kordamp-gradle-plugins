@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>A collection of opinionated Gradle plugins</h1>
 <div class="details">
 <span id="author" class="author">Andres Almiray</span><br>
-<span id="revnumber">version 0.21.0</span>
+<span id="revnumber">version 0.22.0-SNAPSHOT</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -316,7 +316,7 @@ still be bent to a certain degree. The plugins found in this project provide suc
         jcenter()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:{plugin-id}:0.21.0'
+        classpath 'org.kordamp.gradle:{plugin-id}:0.22.0-SNAPSHOT'
     }
 }
 apply plugin: '{plugin-id}'</code></pre>
@@ -333,7 +333,7 @@ apply plugin: '{plugin-id}'</code></pre>
         jcenter()
     }
     dependencies {
-        classpath("org.kordamp.gradle:{plugin-id}:0.21.0")
+        classpath("org.kordamp.gradle:{plugin-id}:0.22.0-SNAPSHOT")
     }
 }
 apply(plugin = "{plugin-id}")</code></pre>
@@ -346,7 +346,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id '{plugin-id}' version '0.21.0'
+    id '{plugin-id}' version '0.22.0-SNAPSHOT'
 }</code></pre>
 </div>
 </div>
@@ -354,7 +354,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("{plugin-id}") version "0.21.0"
+    id("{plugin-id}") version "0.22.0-SNAPSHOT"
 }</code></pre>
 </div>
 </div>
@@ -511,7 +511,7 @@ listOf("docs", "subprojects").forEach { dirName -&gt;
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.21.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.22.0-SNAPSHOT'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -531,7 +531,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.21.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.22.0-SNAPSHOT")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -550,8 +550,8 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.21.0'            <i class="conum" data-value="1"></i><b>(1)</b>
-    id 'org.kordamp.gradle.bintray' version '0.21.0'            <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.project' version '0.22.0-SNAPSHOT'            <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.bintray' version '0.22.0-SNAPSHOT'            <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 config {
@@ -631,8 +631,8 @@ allprojects {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.21.0"          <i class="conum" data-value="1"></i><b>(1)</b>
-    id("org.kordamp.gradle.bintray") version "0.21.0"          <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.project") version "0.22.0-SNAPSHOT"          <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.bintray") version "0.22.0-SNAPSHOT"          <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 val bintrayUsername: String by project
@@ -858,7 +858,7 @@ publications completely:</p>
 <div class="title">build.gradle (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.21.0'
+    id 'org.kordamp.gradle.project' version '0.22.0-SNAPSHOT'
 }
 
 config {
@@ -877,7 +877,7 @@ allprojects {
 <div class="title">build.gradle.kts (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.21.0"
+    id("org.kordamp.gradle.project") version "0.22.0-SNAPSHOT"
 }
 
 config {
@@ -1276,6 +1276,7 @@ class
 
         <a href="#_base_info_scm">scm</a> {
             url
+            tag
             connection
             developerConnection
         }
@@ -1339,6 +1340,27 @@ class
                     url
                 }
                 properties
+            }
+        }
+
+        <a href="#_base_info_issueManagement">issueManagement</a> {
+            system
+            url
+        }
+
+        <a href="#_base_info_ciManagement">ciManagement</a> {
+            system
+            url
+        }
+
+        <a href="#_base_info_mailingLists">mailingLists</a> {
+            <a href="#_base_info_mailingList">mailingList</a> {
+                name
+                subscribe
+                unsubscribe
+                post
+                archive
+                otherArchives
             }
         }
     }
@@ -1857,6 +1879,154 @@ the repository name.</p>
 <p>At least <code>id</code> or <code>name</code> must be defined. If a <code>developer</code> role exists then the person instance is mapped to a <code>&lt;developer&gt;</code>
 block in the POM. If a <code>contributor</code> role exists then the person instance is maped to a <code>&lt;contributor&gt;</code> block in the POM.</p>
 </div>
+<div id="_base_info_issueManagement" class="paragraph">
+<p><strong>issueManagement</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Default Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">system</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The system value of the <code>&lt;issueManagement&gt;</code> block in POM</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">url</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The url value of the <code>&lt;issueManagement&gt;</code> block in POM</p></td>
+</tr>
+</tbody>
+</table>
+<div id="_base_info_ciManagement" class="paragraph">
+<p><strong>ciManagement</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Default Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">system</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The system value of the <code>&lt;ciManagement&gt;</code> block in POM</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">url</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The url value of the <code>&lt;ciManagement&gt;</code> block in POM</p></td>
+</tr>
+</tbody>
+</table>
+<div id="_base_info_mailingLists" class="paragraph">
+<p><strong>mailingLists</strong></p>
+</div>
+<div class="paragraph">
+<p>This block defines a list of MailingList entries.</p>
+</div>
+<div id="_base_info_mailingList" class="paragraph">
+<p><strong>MailingList</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Default Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no*</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mapped to the <code>&lt;name&gt;</code> block in POM</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">subscribe</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mapped to the <code>&lt;subscribe&gt;</code> block in POM</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">unsubscribe</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mapped to the <code>&lt;unsubscribe&gt;</code> block in POM</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">post</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mapped to the <code>&lt;post&gt;</code> block in POM</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">archive</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mapped to the <code>&lt;archive&gt;</code> block in POM</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">otherArchives</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List&lt;String&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mapped to the <code>&lt;otherArchives&gt;</code> block in POM</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>At least <code>name</code> must be defined.</p>
+</div>
 <div class="sect4">
 <h5 id="_org_kordamp_gradle_base_sysprops"><a class="anchor" href="#_org_kordamp_gradle_base_sysprops"></a>System Properties</h5>
 <div class="dlist">
@@ -1966,7 +2136,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.21.0'
+    id 'org.kordamp.gradle.project' version '0.22.0-SNAPSHOT'
 }
 
 config {
@@ -2199,7 +2369,7 @@ includeBuild '../build2'</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.21.0'
+    id 'org.kordamp.gradle.project' version '0.22.0-SNAPSHOT'
 }
 
 config {
@@ -2297,7 +2467,7 @@ absolute
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.21.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.22.0-SNAPSHOT'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'</code></pre>
@@ -2307,7 +2477,7 @@ apply plugin: 'org.kordamp.gradle.settings'</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.21.0'
+    id 'org.kordamp.gradle.project' version '0.22.0-SNAPSHOT'
 }
 
 config {
@@ -2401,7 +2571,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.21.0'
+    id 'org.kordamp.gradle.project' version '0.22.0-SNAPSHOT'
 }
 
 config {
@@ -2633,7 +2803,7 @@ local_property = local</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.21.0'
+    id 'org.kordamp.gradle.project' version '0.22.0-SNAPSHOT'
 }
 
 ext.build_property = 'build'
@@ -2712,7 +2882,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.21.0'
+    id 'org.kordamp.gradle.project' version '0.22.0-SNAPSHOT'
 }
 
 config {
@@ -6683,7 +6853,7 @@ the project.</p>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
     id 'groovy'
-    id 'org.kordamp.gradle.minpom' version '0.21.0'
+    id 'org.kordamp.gradle.minpom' version '0.22.0-SNAPSHOT'
 }
 
 group   = 'com.acme'
@@ -6699,7 +6869,7 @@ dependencies {
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
     `groovy`
-    id("org.kordamp.gradle.minpom") version "0.21.0"
+    id("org.kordamp.gradle.minpom") version "0.22.0-SNAPSHOT"
 }
 
 group   = "com.acme"
@@ -7983,7 +8153,7 @@ is <code>two-level</code> however is recommended to define it if the search spac
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.21.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.22.0-SNAPSHOT'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -8001,7 +8171,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.21.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.22.0-SNAPSHOT")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -8040,7 +8210,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.21.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.22.0-SNAPSHOT'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -8063,7 +8233,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.21.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.22.0-SNAPSHOT")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -8103,7 +8273,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.21.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.22.0-SNAPSHOT'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -8121,7 +8291,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.21.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.22.0-SNAPSHOT")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -9822,8 +9992,8 @@ Type
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.21.0<br>
-Last updated 2019-06-04 23:22:19 +0200
+Version 0.22.0-SNAPSHOT<br>
+Last updated 2019-06-04 23:28:05 +0200
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
