@@ -24,6 +24,7 @@ config {
         includes
         excludes
         excludedProjects
+        replaceJavadoc
         <<_scaladoc_options,options>> {
             bottom
             top
@@ -44,6 +45,7 @@ config {
 | includes         | Set<String>  | no       | []                                   |
 | excludes         | Set<String>  | no       | []                                   |
 | excludedProjects | Set<Project> |          | []                                   | Projects in the set are excluded from aggregation
+| replaceJavadoc   | boolean      | no       | false                                | Disables `javadocJar` and applies the `javadoc` classifier
 |===
 
 [[_scaladoc_options]]
