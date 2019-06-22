@@ -102,8 +102,12 @@ class Plugin extends AbstractFeature {
 
     static void merge(Plugin o1, Plugin o2) {
         AbstractFeature.merge(o1, o2)
-        o1.id = o1.id ?: o2?.id
-        o1.implementationClass = o1.implementationClass ?: o2?.implementationClass
+        if (!o1.id && o2?.id) {
+            o1.id = o2.id
+        }
+        if (!o1.implementationClass && o2?.implementationClass) {
+            o1.implementationClass = o2.implementationClass
+        }
         CollectionUtils.merge(o1.tags, o2?.tags)
     }
 
