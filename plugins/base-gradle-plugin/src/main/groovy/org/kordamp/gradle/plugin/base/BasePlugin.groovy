@@ -22,7 +22,6 @@ import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.gradle.api.Rule
 import org.gradle.api.invocation.Gradle
 import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
@@ -224,26 +223,20 @@ class BasePlugin extends AbstractKordampPlugin {
             }
 
             ProjectConfigurationExtension rootExtension = project.rootProject.extensions.findByType(ProjectConfigurationExtension)
-            ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
+            ProjectConfigurationExtension extension = project.extensions.getByType(ProjectConfigurationExtension)
             extension.normalize()
 
             boolean validate = PluginUtils.checkFlag(ORG_KORDAMP_GRADLE_BASE_VALIDATE, true)
 
             List<String> errors = []
-            if (isRootProject(project)) {
+            if (rootExtension && !isRootProject(project)) {
                 ProjectConfigurationExtension merged = extension.merge(rootExtension)
                 if (validate) errors.addAll(merged.validate())
                 project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged).ready()
             } else {
-                if (rootExtension) {
-                    ProjectConfigurationExtension merged = extension.merge(rootExtension)
-                    if (validate) errors.addAll(merged.validate())
-                    project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged).ready()
-                } else {
-                    if (validate) errors.addAll(extension.validate())
-                    extension.postMerge()
-                    project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, extension).ready()
-                }
+                if (validate) errors.addAll(extension.validate())
+                extension.postMerge()
+                project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, extension).ready()
             }
 
             if (validate && errors) {
