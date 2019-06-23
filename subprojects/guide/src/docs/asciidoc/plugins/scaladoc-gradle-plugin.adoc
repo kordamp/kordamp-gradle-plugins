@@ -23,6 +23,7 @@ config {
         title
         includes
         excludes
+        replaceJavadoc
         excludedProjects
         <<_scaladoc_options,options>> {
             bottom
@@ -43,6 +44,7 @@ config {
 | title            | String       | no       | "${project.name} ${project.version}" |
 | includes         | Set<String>  | no       | []                                   |
 | excludes         | Set<String>  | no       | []                                   |
+| replaceJavadoc   | boolean      | no       | false                                | Disables `javadocJar` and applies the `javadoc` classifier
 | excludedProjects | Set<Project> |          | []                                   | Projects in the set are excluded from aggregation
 |===
 

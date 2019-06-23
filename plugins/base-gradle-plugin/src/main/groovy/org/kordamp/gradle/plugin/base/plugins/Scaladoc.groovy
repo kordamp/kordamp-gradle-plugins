@@ -36,6 +36,7 @@ import org.kordamp.gradle.plugin.base.model.impl.ScaladocOptions
 @Canonical
 class Scaladoc extends AbstractFeature {
     String title
+    boolean replaceJavadoc = false
     Set<String> excludes = new LinkedHashSet<>()
     Set<String> includes = new LinkedHashSet<>()
     final ScaladocOptions options = new ScaladocOptions()
@@ -45,6 +46,8 @@ class Scaladoc extends AbstractFeature {
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<ScalaDoc> scaladocTasks = new LinkedHashSet<>()
     private final Set<Jar> scaladocJarTasks = new LinkedHashSet<>()
+
+    private boolean replaceJavadocSet
 
     Scaladoc(ProjectConfigurationExtension config, Project project) {
         super(config, project)
@@ -71,6 +74,7 @@ class Scaladoc extends AbstractFeature {
 
         if (enabled) {
             map.title = title
+            map.replaceJavadoc = replaceJavadoc
             map.excludes = excludes
             map.includes = includes
             map.options = new LinkedHashMap<String, Object>([
@@ -95,6 +99,15 @@ class Scaladoc extends AbstractFeature {
         }
     }
 
+    void setReplaceJavadoc(boolean replaceJavadoc) {
+        this.replaceJavadoc = replaceJavadoc
+        this.replaceJavadocSet = true
+    }
+
+    boolean isReplaceJavadocSet() {
+        this.replaceJavadocSet
+    }
+
     void include(String str) {
         includes << str
     }
@@ -114,6 +127,8 @@ class Scaladoc extends AbstractFeature {
     void copyInto(Scaladoc copy) {
         super.copyInto(copy)
         copy.title = title
+        copy.@replaceJavadoc = replaceJavadoc
+        copy.@replaceJavadocSet = replaceJavadocSet
         copy.excludes.addAll(excludes)
         copy.includes.addAll(includes)
         options.copyInto(copy.options)
@@ -122,6 +137,7 @@ class Scaladoc extends AbstractFeature {
     static void merge(Scaladoc o1, Scaladoc o2) {
         AbstractFeature.merge(o1, o2)
         o1.setTitle(o1.title ?: o2?.title)
+        o1.setReplaceJavadoc((boolean) (o1.replaceJavadocSet ? o1.replaceJavadoc : o2.replaceJavadoc))
         CollectionUtils.merge(o1.excludes, o2?.excludes)
         CollectionUtils.merge(o1.includes, o2?.includes)
         ScaladocOptions.merge(o1.options, o2.options)

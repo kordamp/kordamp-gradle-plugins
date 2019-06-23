@@ -164,10 +164,6 @@ class ApidocPlugin extends AbstractKordampPlugin {
             }
 
             if (groovydocs && effectiveConfig.groovydoc.enabled) {
-                if (effectiveConfig.groovydoc.replaceJavadoc) {
-                    aggregateGroovydocsJar.classifier = 'javadoc'
-                }
-
                 aggregateGroovydocs.configure { task ->
                     task.enabled true
                     task.dependsOn groovydocs + javadocs
@@ -181,6 +177,7 @@ class ApidocPlugin extends AbstractKordampPlugin {
                 aggregateGroovydocsJar.configure {
                     enabled true
                     from aggregateGroovydocs.destinationDir
+                    classifier = effectiveConfig.groovydoc.replaceJavadoc ? 'javadoc' : 'groovydoc'
                 }
 
                 aggregateApidocTask.enabled = true

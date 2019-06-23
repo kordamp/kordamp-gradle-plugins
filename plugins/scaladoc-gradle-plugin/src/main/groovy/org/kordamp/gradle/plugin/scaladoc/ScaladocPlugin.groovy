@@ -31,6 +31,7 @@ import org.gradle.api.tasks.scala.ScalaDoc
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
@@ -129,6 +130,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                 aggregateScaladocsJar.configure {
                     enabled true
                     from aggregateScaladocs.destinationDir
+                    classifier = effectiveConfig.scaladoc.replaceJavadoc ? 'javadoc' : 'scaladoc'
                 }
             }
         }
@@ -218,6 +220,13 @@ class ScaladocPlugin extends AbstractKordampPlugin {
             }
         }
 
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        if (effectiveConfig.scaladoc.replaceJavadoc) {
+            scaladocJarTask.classifier = 'javadoc'
+            project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
+            project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
+        }
+
         scaladocJarTask
     }
 
@@ -225,7 +234,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
         ScalaDoc aggregateScaladocs = project.tasks.create(AGGREGATE_SCALADOCS_TASK_NAME, ScalaDoc) {
             enabled false
             group JavaBasePlugin.DOCUMENTATION_GROUP
-            description 'Aggregates ScalaDoc API docs for all projects.'
+            description 'Aggregates Scaladoc API docs for all projects.'
             destinationDir project.file("${project.buildDir}/docs/scaladoc")
         }
 
@@ -233,7 +242,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
             enabled false
             dependsOn aggregateScaladocs
             group JavaBasePlugin.DOCUMENTATION_GROUP
-            description 'An archive of the aggregate ScalaDoc API docs'
+            description 'An archive of the aggregate Scaladoc API docs'
             classifier 'scaladoc'
         }
 
