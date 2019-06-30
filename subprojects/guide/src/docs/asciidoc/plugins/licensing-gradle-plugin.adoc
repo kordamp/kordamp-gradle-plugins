@@ -146,6 +146,8 @@ header:: project.rootProject.file('gradle/LICENSE_HEADER')
 strictCheck::true
 mapping.java:: 'SLASHSTAR_STYLE'
 mapping.groovy:: 'SLASHSTAR_STYLE'
+mapping.kt:: 'SLASHSTAR_STYLE'
+mapping.scala:: 'SLASHSTAR_STYLE'
 
 The following extra properties become available to license templates
 
