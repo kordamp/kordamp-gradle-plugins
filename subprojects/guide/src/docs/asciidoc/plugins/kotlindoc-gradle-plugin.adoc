@@ -81,7 +81,7 @@ config {
 | skipDeprecated     | boolean      | no       | false                                | Do not output deprecated members. Applies globally, can be overridden by packageOptions.
 | reportUndocumented | boolean      | no       | true                                 | Emit warnings about not documented members. Applies globally, also can be overridden by packageOptions.
 | skipEmptyPackages  | boolean      | no       | true                                 | Do not create index pages for empty packages.
-| noStdlibLink       | boolean      | no       | false                                | o default documentation link to kotlin-stdlib
+| noStdlibLink       | boolean      | no       | false                                | No default documentation link to kotlin-stdlib
 | impliedPlatforms   | List<String> | no       | ['JVM']                              | Valid values are 'Common', 'JVM', 'JS', 'Native'.
 | replaceJavadoc     | boolean      | no       | false                                | Disables `javadocJar` and applies the `javadoc` classifier.
 |===
