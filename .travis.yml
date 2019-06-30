@@ -12,4 +12,4 @@ before_script:
   - ./gradlew --version
 
 script:
-  - TERM=dumb ./gradlew --console=plain -S --scan build
+  - TERM=dumb ./gradlew --console=plain -S build
