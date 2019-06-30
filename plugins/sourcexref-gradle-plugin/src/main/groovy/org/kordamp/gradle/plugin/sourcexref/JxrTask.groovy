@@ -46,7 +46,6 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CacheableTask
 @CompileStatic
 class JxrTask extends DefaultTask {
-    @PathSensitive(PathSensitivity.RELATIVE)
     @OutputDirectory File outputDirectory
 
     @PathSensitive(PathSensitivity.RELATIVE)

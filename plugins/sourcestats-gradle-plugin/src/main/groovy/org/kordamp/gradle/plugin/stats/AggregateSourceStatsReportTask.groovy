@@ -26,8 +26,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 
 import static org.kordamp.gradle.plugin.base.plugins.Stats.HTML
@@ -43,7 +41,6 @@ import static org.kordamp.gradle.plugin.base.plugins.Stats.XML
 class AggregateSourceStatsReportTask extends DefaultTask {
     @Optional @Input List<String> formats = []
 
-    @PathSensitive(PathSensitivity.RELATIVE)
     @Optional @OutputDirectory File reportDir
 
     @Internal
