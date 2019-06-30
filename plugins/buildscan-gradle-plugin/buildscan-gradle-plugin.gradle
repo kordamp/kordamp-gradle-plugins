@@ -18,5 +18,5 @@
 
 dependencies {
     compile project(':base-gradle-plugin')
-    compile 'com.gradle:build-scan-plugin:2.2.1'
+    compile 'com.gradle:build-scan-plugin:2.3'
 }
