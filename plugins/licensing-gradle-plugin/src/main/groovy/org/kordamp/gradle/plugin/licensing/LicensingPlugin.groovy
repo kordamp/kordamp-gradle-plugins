@@ -162,6 +162,30 @@ class LicensingPlugin extends AbstractKordampPlugin {
 
         preConfigureDownloadLicensesExtension(project)
 
+        TaskProvider<LicenseCheck> licenseGradle = project.tasks.register('licenseGradle', LicenseCheck, new Action<LicenseCheck>() {
+            @Override
+            @CompileDynamic
+            void execute(LicenseCheck t) {
+                t.source = project.fileTree(project.projectDir) {
+                    include('**/*.gradle')
+                    include('**/*.gradle.kts')
+                }
+            }
+        })
+        project.tasks.findByName('license').dependsOn(licenseGradle)
+
+        TaskProvider<LicenseFormat> licenseFormatGradle = project.tasks.register('licenseFormatGralde', LicenseFormat, new Action<LicenseFormat>() {
+            @Override
+            @CompileDynamic
+            void execute(LicenseFormat t) {
+                t.source = project.fileTree(project.projectDir) {
+                    include('**/*.gradle')
+                    include('**/*.gradle.kts')
+                }
+            }
+        })
+        project.tasks.findByName('licenseFormat').dependsOn(licenseFormatGradle)
+
         project.afterEvaluate {
             configureLicenseExtension(project)
             postConfigureDownloadLicensesExtension(project)
@@ -214,6 +238,8 @@ class LicensingPlugin extends AbstractKordampPlugin {
             groovy = 'SLASHSTAR_STYLE'
             kt = 'SLASHSTAR_STYLE'
             scala = 'SLASHSTAR_STYLE'
+            gradle = 'SLASHSTAR_STYLE'
+            kts = 'SLASHSTAR_STYLE'
         }
         licenseExtension.ext.project = project.name
         licenseExtension.ext {
@@ -227,28 +253,6 @@ class LicensingPlugin extends AbstractKordampPlugin {
         licenseExtension.exclude '**/*.jpg'
         licenseExtension.exclude '**/*.jpeg'
         licenseExtension.exclude 'META-INF/services/*'
-
-        TaskProvider<LicenseCheck> licenseGradle = project.tasks.register('licenseGradle', LicenseCheck, new Action<LicenseCheck>() {
-            @Override
-            void execute(LicenseCheck t) {
-                t.source = project.fileTree(project.projectDir) {
-                    include('**/*.gradle')
-                    include('**/*.gradle.kts')
-                }
-            }
-        })
-        project.tasks.findByName('license').dependsOn(licenseGradle)
-
-        TaskProvider<LicenseFormat> licenseFormatGradle = project.tasks.register('licenseFormatGralde', LicenseFormat, new Action<LicenseFormat>() {
-            @Override
-            void execute(LicenseFormat t) {
-                t.source = project.fileTree(project.projectDir) {
-                    include('**/*.gradle')
-                    include('**/*.gradle.kts')
-                }
-            }
-        })
-        project.tasks.findByName('licenseFormat').dependsOn(licenseFormatGradle)
     }
 
     private void preConfigureDownloadLicensesExtension(Project project) {
