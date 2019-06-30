@@ -197,3 +197,21 @@ Type:: `org.kordamp.gradle.plugin.licensing.AggregateLicenseReportTask`
 [horizontal]
 outputDir:: `${rootProject.reporting.baseDir.path}/license`
 
+[[task_license_format_gradle]]
+=== LicenseFormatGradle
+
+Formats all Gradle build files (Groovy/Kotlin).
+
+[horizontal]
+Name:: licenseFormatGradle
+Type:: `com.hierynomus.gradle.license.tasks.LicenseCheck`
+
+[[task_license_format_gradle]]
+=== LicenseGradle
+
+Checks the license header of all Gradle build files (Groovy/Kotlin).
+
+[horizontal]
+Name:: licenseFormatGradle
+Type:: `com.hierynomus.gradle.license.tasks.LicenseFormat`
+

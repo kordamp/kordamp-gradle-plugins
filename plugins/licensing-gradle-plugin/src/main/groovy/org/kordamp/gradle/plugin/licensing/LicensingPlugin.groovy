@@ -224,7 +224,31 @@ class LicensingPlugin extends AbstractKordampPlugin {
         }
         licenseExtension.exclude '**/*.png'
         licenseExtension.exclude '**/*.gif'
+        licenseExtension.exclude '**/*.jpg'
+        licenseExtension.exclude '**/*.jpeg'
         licenseExtension.exclude 'META-INF/services/*'
+
+        TaskProvider<LicenseCheck> licenseGradle = project.tasks.register('licenseGradle', LicenseCheck, new Action<LicenseCheck>() {
+            @Override
+            void execute(LicenseCheck t) {
+                t.source = project.fileTree(project.projectDir) {
+                    include('**/*.gradle')
+                    include('**/*.gradle.kts')
+                }
+            }
+        })
+        project.tasks.findByName('license').dependsOn(licenseGradle)
+
+        TaskProvider<LicenseFormat> licenseFormatGradle = project.tasks.register('licenseFormatGralde', LicenseFormat, new Action<LicenseFormat>() {
+            @Override
+            void execute(LicenseFormat t) {
+                t.source = project.fileTree(project.projectDir) {
+                    include('**/*.gradle')
+                    include('**/*.gradle.kts')
+                }
+            }
+        })
+        project.tasks.findByName('licenseFormat').dependsOn(licenseFormatGradle)
     }
 
     private void preConfigureDownloadLicensesExtension(Project project) {
