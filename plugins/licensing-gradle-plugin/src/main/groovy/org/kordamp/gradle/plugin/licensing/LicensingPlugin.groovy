@@ -212,6 +212,8 @@ class LicensingPlugin extends AbstractKordampPlugin {
         licenseExtension.mapping {
             java = 'SLASHSTAR_STYLE'
             groovy = 'SLASHSTAR_STYLE'
+            kt = 'SLASHSTAR_STYLE'
+            scala = 'SLASHSTAR_STYLE'
         }
         licenseExtension.ext.project = project.name
         licenseExtension.ext {
