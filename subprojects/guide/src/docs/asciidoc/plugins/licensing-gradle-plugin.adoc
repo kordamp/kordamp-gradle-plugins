@@ -208,7 +208,7 @@ Formats all Gradle build files (Groovy/Kotlin).
 Name:: licenseFormatGradle
 Type:: `com.hierynomus.gradle.license.tasks.LicenseCheck`
 
-[[task_license_format_gradle]]
+[[task_license_gradle]]
 === LicenseGradle
 
 Checks the license header of all Gradle build files (Groovy/Kotlin).
