@@ -166,6 +166,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
             @Override
             @CompileDynamic
             void execute(LicenseCheck t) {
+                t.description = 'Scanning license on Gradle files'
                 t.source = project.fileTree(project.projectDir) {
                     include('**/*.gradle')
                     include('**/*.gradle.kts')
@@ -178,6 +179,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
             @Override
             @CompileDynamic
             void execute(LicenseFormat t) {
+                t.description = 'Scanning license on Gradle files'
                 t.source = project.fileTree(project.projectDir) {
                     include('**/*.gradle')
                     include('**/*.gradle.kts')
