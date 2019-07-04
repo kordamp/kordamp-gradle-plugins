@@ -22,7 +22,6 @@ import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.gradle.api.Rule
 import org.gradle.api.invocation.Gradle
 import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin

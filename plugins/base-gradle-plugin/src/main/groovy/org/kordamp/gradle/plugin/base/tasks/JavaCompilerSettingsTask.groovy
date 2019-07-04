@@ -34,7 +34,12 @@ class JavaCompilerSettingsTask extends AbstractSettingsTask {
                 printTask((JavaCompile) project.tasks.findByName(t))
             }
         } else if (task) {
-            printTask((JavaCompile) project.tasks.findByName(task))
+            try {
+                printTask((JavaCompile) project.tasks.findByName(task))
+            } catch (NullPointerException e) {
+                throw new IllegalStateException("No matching ${this.task} task was found")
+
+            }
         } else {
             Set<JavaCompile> compileTasks = new LinkedHashSet<>(project.tasks.withType(JavaCompile))
             compileTasks.each { t ->
