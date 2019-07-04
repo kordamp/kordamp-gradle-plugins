@@ -31,6 +31,7 @@ class ExtensionsTask extends AbstractReportingTask {
 
         project.extensions.extensionsSchema.elements.eachWithIndex { extension, index -> extensions.putAll(ExtensionsTask.doReport(extension, index)) }
 
+        println('Total extensions: ' + console.cyan((extensions.size()).toString()) + '\n')
         doPrint(extensions, 0)
     }
 

@@ -385,6 +385,8 @@ Results in the following output
 [source]
 ----
 > Task :extensions
+Total extensions: 10
+
 extension 0:
     name: ext
     type: org.gradle.api.plugins.ExtraPropertiesExtension
@@ -666,6 +668,8 @@ Results in the following output
 [source]
 ----
 > Task :plugins
+Total plugins: 29
+
 plugin 0:
     id: build-init
     implementationClass: org.gradle.buildinit.plugins.BuildInitPlugin
@@ -924,6 +928,8 @@ Results in the following output
 [source]
 ----
 > Task :repositories
+Total repositories: 3
+
 repository 0:
     type: maven
     name: BintrayJCenter
@@ -940,6 +946,73 @@ repository 2:
     dirs:
         /tmp/sample/lib
 ----
+
+[[_task_sourceSets]]
+=== SourceSets
+
+Displays all sourceSets configured in a project.
+
+[horizontal]
+Name:: sourceSets
+Type:: `org.kordamp.gradle.plugin.base.tasks.SourceSetsTask`
+
+==== Example Output
+
+For a project defined as follows
+
+[source,groovy,subs="verbatim,attributes"]
+.build.gradle
+----
+plugins {
+    id 'java'
+    id 'org.kordamp.gradle.project' version '{project-version}'
+}
+
+config {
+    licensing  { enabled = false }
+
+    publishing { enabled = false }
+}
+----
+
+Invoking these command
+
+[source]
+----
+$ ./gradlew :sourceSets
+----
+
+Results in the following output
+
+[source]
+----
+> Task :sourceSets
+Total sourceSets: 2
+
+sourceSet 0:
+    name: main
+
+sourceSet 1:
+    name: test
+----
+
+[[_task_source_set_settings]]
+=== SourceSetSettings
+
+Display configuration of a SourceSet
+
+[horizontal]
+Name:: sourceSetSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.SourceSetSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+sourceSet:: The sourceSet to generate the report for.
+sourceSets:: The sourceSets to generate the report for.
+
+You may specify either of the two, be advised that `sourceSets` has precedence over `sourceSet`. All sourceSets will be displayed
+if neither of these options is specified.
 
 [[_task_test_settings]]
 === TestSettings

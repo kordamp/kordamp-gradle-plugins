@@ -49,6 +49,7 @@ class PluginsTask extends AbstractReportingTask {
 
         project.plugins.eachWithIndex { plugin, index -> plugins.putAll(PluginsTask.doReport(plugin, index, pluginMetadata)) }
 
+        println('Total plugins: ' + console.cyan((plugins.size()).toString()) + '\n')
         doPrint(plugins, 0)
     }
 

@@ -34,6 +34,8 @@ import org.kordamp.gradle.plugin.base.tasks.ListProjectsTask
 import org.kordamp.gradle.plugin.base.tasks.PluginsTask
 import org.kordamp.gradle.plugin.base.tasks.ProjectPropertiesTask
 import org.kordamp.gradle.plugin.base.tasks.RepositoriesTask
+import org.kordamp.gradle.plugin.base.tasks.SourceSetSettingsTask
+import org.kordamp.gradle.plugin.base.tasks.SourceSetsTask
 import org.kordamp.gradle.plugin.base.tasks.TestSettingsTask
 
 /**
@@ -43,7 +45,7 @@ import org.kordamp.gradle.plugin.base.tasks.TestSettingsTask
  */
 @CompileStatic
 class BasePlugin extends AbstractKordampPlugin {
-    static final String ORG_KORDAMP_GRADLE_BASE_VALIDATE = 'org.kordamp.gradle.base.validate'
+    static final String ORG_KORDAMP_GRADLE_BASE_VALSourceSetNameATE = 'org.kordamp.gradle.base.validate'
 
     Project project
 
@@ -99,6 +101,15 @@ class BasePlugin extends AbstractKordampPlugin {
                 }
             })
 
+        project.tasks.register('sourceSets', SourceSetsTask,
+            new Action<SourceSetsTask>() {
+                @Override
+                void execute(SourceSetsTask t) {
+                    t.group = 'Insight'
+                    t.description = "Displays all sourceSets configured in project '$project.name'."
+                }
+            })
+
         project.tasks.register('projectProperties', ProjectPropertiesTask,
             new Action<ProjectPropertiesTask>() {
                 @Override
@@ -107,6 +118,33 @@ class BasePlugin extends AbstractKordampPlugin {
                     t.description = "Displays all properties found in project '$project.name'."
                 }
             })
+
+        project.tasks.register('sourceSetSettings', SourceSetSettingsTask,
+            new Action<SourceSetSettingsTask>() {
+                @Override
+                void execute(SourceSetSettingsTask t) {
+                    t.group = 'Insight'
+                    t.description = 'Display Java compiler configuration.'
+                }
+            })
+
+        project.tasks.addRule('Pattern: <SourceSetName>SourceSetSettings: Displays configuration of a SourceSet.', new Action<String>() {
+            @Override
+            void execute(String sourceSetName) {
+                if (sourceSetName.endsWith('SourceSetSettings')) {
+                    String resolvedSourceSetName = sourceSetName - 'SourceSetSettings'
+                    project.tasks.register(sourceSetName, SourceSetSettingsTask,
+                        new Action<SourceSetSettingsTask>() {
+                            @Override
+                            void execute(SourceSetSettingsTask t) {
+                                t.group = 'Insight'
+                                t.sourceSet = resolvedSourceSetName
+                                t.description = "Display configuration for the ${resolvedSourceSetName} sourceSet."
+                            }
+                        })
+                }
+            }
+        })
 
         project.tasks.register('javaCompilerSettings', JavaCompilerSettingsTask,
             new Action<JavaCompilerSettingsTask>() {
@@ -117,7 +155,7 @@ class BasePlugin extends AbstractKordampPlugin {
                 }
             })
 
-        project.tasks.addRule('Pattern: compile<ID>JavaSettings: Displays compiler configuration of a JavaCompile task.', new Action<String>() {
+        project.tasks.addRule('Pattern: compile<SourceSetName>JavaSettings: Displays compiler configuration of a JavaCompile task.', new Action<String>() {
             @Override
             void execute(String taskName) {
                 if (taskName.startsWith('compile') && taskName.endsWith('JavaSettings')) {
@@ -144,7 +182,7 @@ class BasePlugin extends AbstractKordampPlugin {
                 }
             })
 
-        project.tasks.addRule('Pattern: <ID>TestSettings: Displays configuration of a Test task.', new Action<String>() {
+        project.tasks.addRule('Pattern: <SourceSetName>TestSettings: Displays configuration of a Test task.', new Action<String>() {
             @Override
             void execute(String taskName) {
                 if (taskName.endsWith('TestSettings')) {
@@ -203,7 +241,7 @@ class BasePlugin extends AbstractKordampPlugin {
                         }
                     })
 
-                project.tasks.addRule('Pattern: compile<ID>GroovySettings: Displays compiler configuration of a GroovyCompile task.', new Action<String>() {
+                project.tasks.addRule('Pattern: compile<SourceSetName>GroovySettings: Displays compiler configuration of a GroovyCompile task.', new Action<String>() {
                     @Override
                     void execute(String taskName) {
                         if (taskName.startsWith('compile') && taskName.endsWith('GroovySettings')) {
@@ -226,7 +264,7 @@ class BasePlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
             extension.normalize()
 
-            boolean validate = PluginUtils.checkFlag(ORG_KORDAMP_GRADLE_BASE_VALIDATE, true)
+            boolean validate = PluginUtils.checkFlag(ORG_KORDAMP_GRADLE_BASE_VALSourceSetNameATE, true)
 
             List<String> errors = []
             if (isRootProject(project)) {

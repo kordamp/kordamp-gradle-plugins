@@ -38,6 +38,7 @@ class RepositoriesTask extends AbstractReportingTask {
 
         project.repositories.eachWithIndex { repository, index -> repositories.putAll(doReport(repository, index)) }
 
+        println('Total repositories: ' + console.cyan((repositories.size()).toString()) + '\n')
         doPrint(repositories, 0)
     }
 

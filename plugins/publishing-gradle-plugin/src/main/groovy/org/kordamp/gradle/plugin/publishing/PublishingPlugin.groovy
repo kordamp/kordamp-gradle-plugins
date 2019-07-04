@@ -111,7 +111,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
                 }
             })
 
-        project.tasks.addRule('Pattern: <ID>PublicationSettings: Displays configuration of a publication.', new Action<String>() {
+        project.tasks.addRule('Pattern: <PublicationName>PublicationSettings: Displays configuration of a publication.', new Action<String>() {
             @Override
             void execute(String publicationName) {
                 if (publicationName.endsWith('PublicationSettings')) {
