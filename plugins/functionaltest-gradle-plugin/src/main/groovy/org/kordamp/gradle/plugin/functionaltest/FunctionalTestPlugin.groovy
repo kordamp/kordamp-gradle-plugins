@@ -17,10 +17,13 @@
  */
 package org.kordamp.gradle.plugin.functionaltest
 
+import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.testing.TestReport
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
@@ -35,6 +38,7 @@ import static org.kordamp.gradle.PluginUtils.resolveSourceSets
 class FunctionalTestPlugin extends AbstractKordampPlugin {
     Project project
 
+    @CompileStatic
     void apply(Project project) {
         this.project = project
 
@@ -46,7 +50,13 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         project.plugins.withType(JavaBasePlugin) {
-            createSourceSetsIfNeeded(project)
+            createSourceSetsIfNeeded(project, 'java')
+            createConfigurationsIfNeeded(project)
+            createTasksIfNeeded(project)
+        }
+
+        project.plugins.withType(GroovyPlugin) {
+            createSourceSetsIfNeeded(project, 'groovy')
             createConfigurationsIfNeeded(project)
             createTasksIfNeeded(project)
         }
@@ -76,32 +86,27 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private void createSourceSetsIfNeeded(Project project) {
-        if (!project.sourceSets.findByName('functionalTest')) {
-            project.sourceSets {
-                functionalTest {
-                    if (project.file('src/functional-test/java').exists()) {
-                        java.srcDirs project.file('src/functional-test/java')
-                    }
-                    if (project.file('src/functional-test/groovy').exists()) {
-                        groovy.srcDirs project.file('src/functional-test/groovy')
-                    }
-                    if (project.file('src/functional-test/kotlin').exists()) {
-                        kotlin.srcDirs project.file('src/functional-test/kotlin')
-                    }
-                    if (project.file('src/functional-test/scala').exists()) {
-                        scala.srcDirs project.file('src/functional-test/scala')
-                    }
-                    if (project.file('src/functional-test/resources').exists()) {
-                        resources.srcDir project.file('src/functional-test/resources')
-                    }
-                    compileClasspath += resolveSourceSets(project).main.output
-                    compileClasspath += project.configurations.compileOnly
-                    compileClasspath += project.configurations.testCompileOnly
-                    runtimeClasspath += compileClasspath
-                }
-            }
+    private void createSourceSetsIfNeeded(Project project, String sourceSetName) {
+        SourceSet sourceSet = project.sourceSets.maybeCreate('functionalTest')
+        if (project.file('src/functional-test/'+ sourceSetName).exists()) {
+            sourceSet[sourceSetName].srcDirs project.file('src/functional-test/' + sourceSetName)
         }
+        //if (project.file('src/functional-test/groovy').exists()) {
+        //    sourceSet.groovy.srcDirs project.file('src/functional-test/groovy')
+        //}
+        //if (project.file('src/functional-test/kotlin').exists()) {
+        //    sourceSet.kotlin.srcDirs project.file('src/functional-test/kotlin')
+        //}
+        //if (project.file('src/functional-test/scala').exists()) {
+        //    sourceSet.scala.srcDirs project.file('src/functional-test/scala')
+        //}
+        if (project.file('src/functional-test/resources').exists()) {
+            sourceSet.resources.srcDir project.file('src/functional-test/resources')
+        }
+        sourceSet.compileClasspath += resolveSourceSets(project).main.output
+        sourceSet.compileClasspath += project.configurations.compileOnly
+        sourceSet.compileClasspath += project.configurations.testCompileOnly
+        sourceSet.runtimeClasspath += sourceSet.compileClasspath
     }
 
     private void createTasksIfNeeded(Project project) {
