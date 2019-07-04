@@ -45,7 +45,7 @@ import org.kordamp.gradle.plugin.base.tasks.TestSettingsTask
  */
 @CompileStatic
 class BasePlugin extends AbstractKordampPlugin {
-    static final String ORG_KORDAMP_GRADLE_BASE_VALSourceSetNameATE = 'org.kordamp.gradle.base.validate'
+    static final String ORG_KORDAMP_GRADLE_BASE_VALIDATE = 'org.kordamp.gradle.base.validate'
 
     Project project
 
@@ -264,7 +264,7 @@ class BasePlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
             extension.normalize()
 
-            boolean validate = PluginUtils.checkFlag(ORG_KORDAMP_GRADLE_BASE_VALSourceSetNameATE, true)
+            boolean validate = PluginUtils.checkFlag(ORG_KORDAMP_GRADLE_BASE_VALIDATE, true)
 
             List<String> errors = []
             if (isRootProject(project)) {
