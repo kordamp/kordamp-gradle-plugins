@@ -37,7 +37,11 @@ class TestSettingsTask extends AbstractSettingsTask {
                 printTask((Test) project.tasks.findByName(t))
             }
         } else if (task) {
-            printTask((Test) project.tasks.findByName(task))
+            try {
+                printTask((Test) project.tasks.findByName(task))
+            } catch (NullPointerException e) {
+                throw new IllegalStateException("No matching ${this.task} task was found")
+            }
         } else {
             Set<Test> testTasks = new LinkedHashSet<>(project.tasks.withType(Test))
             testTasks.each { t ->
