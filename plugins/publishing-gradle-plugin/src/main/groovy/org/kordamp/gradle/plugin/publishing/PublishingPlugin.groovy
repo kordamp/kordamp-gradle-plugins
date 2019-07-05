@@ -107,11 +107,11 @@ class PublishingPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(PublicationSettingsTask t) {
                     t.group = 'Insight'
-                    t.description = 'Display publication configuration.'
+                    t.description = 'Display publication settings.'
                 }
             })
 
-        project.tasks.addRule('Pattern: <PublicationName>PublicationSettings: Displays configuration of a publication.', new Action<String>() {
+        project.tasks.addRule('Pattern: <PublicationName>PublicationSettings: Displays settings of a Publication.', new Action<String>() {
             @Override
             void execute(String publicationName) {
                 if (publicationName.endsWith('PublicationSettings')) {
@@ -122,7 +122,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
                             void execute(PublicationSettingsTask t) {
                                 t.group = 'Insight'
                                 t.publication = resolvedPublicationName
-                                t.description = "Display configuration for the ${resolvedPublicationName} publication."
+                                t.description = "Display settings of the '${resolvedPublicationName}' Publication."
                             }
                         })
                 }
