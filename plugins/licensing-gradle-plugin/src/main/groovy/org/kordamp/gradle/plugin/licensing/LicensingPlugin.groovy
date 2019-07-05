@@ -175,7 +175,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
         })
         project.tasks.findByName('license').dependsOn(licenseGradle)
 
-        TaskProvider<LicenseFormat> licenseFormatGradle = project.tasks.register('licenseFormatGralde', LicenseFormat, new Action<LicenseFormat>() {
+        TaskProvider<LicenseFormat> licenseFormatGradle = project.tasks.register('licenseFormatGradle', LicenseFormat, new Action<LicenseFormat>() {
             @Override
             @CompileDynamic
             void execute(LicenseFormat t) {
