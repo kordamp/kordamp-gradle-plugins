@@ -72,7 +72,7 @@ class SourceSetSettingsTask extends AbstractReportingTask {
                 try {
                     printSourceSet((SourceSet) ((SourceSetContainer) ss).findByName(sourceSet))
                 } catch (NullPointerException e) {
-                    throw new IllegalStateException("No matching ${this.sourceSet} sourceSet was found")
+                    throw new IllegalStateException("No matching '${this.sourceSet}' sourceSet was found")
                 }
             } else {
                 ((SourceSetContainer) ss).each { s ->

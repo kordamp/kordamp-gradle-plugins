@@ -25,6 +25,8 @@ import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
+import org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask
+import org.kordamp.gradle.plugin.base.tasks.ConfigurationsTask
 import org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ExtensionsTask
 import org.kordamp.gradle.plugin.base.tasks.GroovyCompilerSettingsTask
@@ -106,7 +108,16 @@ class BasePlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(SourceSetsTask t) {
                     t.group = 'Insight'
-                    t.description = "Displays all sourceSets configured in project '$project.name'."
+                    t.description = "Displays all sourceSets available in project '$project.name'."
+                }
+            })
+
+        project.tasks.register('configurations', ConfigurationsTask,
+            new Action<ConfigurationsTask>() {
+                @Override
+                void execute(ConfigurationsTask t) {
+                    t.group = 'Insight'
+                    t.description = "Displays all configurations available in project '$project.name'."
                 }
             })
 
@@ -119,16 +130,43 @@ class BasePlugin extends AbstractKordampPlugin {
                 }
             })
 
+        project.tasks.register('configurationSettings', ConfigurationSettingsTask,
+            new Action<ConfigurationSettingsTask>() {
+                @Override
+                void execute(ConfigurationSettingsTask t) {
+                    t.group = 'Insight'
+                    t.description = 'Display the settings of a Configuration.'
+                }
+            })
+
+        project.tasks.addRule('Pattern: <ConfigurationName>ConfigurationSettings: Displays the settings of a Configuration.', new Action<String>() {
+            @Override
+            void execute(String configurationName) {
+                if (configurationName.endsWith('ConfigurationSettings')) {
+                    String resolvedConfigurationName = configurationName - 'ConfigurationSettings'
+                    project.tasks.register(configurationName, ConfigurationSettingsTask,
+                        new Action<ConfigurationSettingsTask>() {
+                            @Override
+                            void execute(ConfigurationSettingsTask t) {
+                                t.group = 'Insight'
+                                t.configuration = resolvedConfigurationName
+                                t.description = "Display the settings of the '${resolvedConfigurationName}' Configuration."
+                            }
+                        })
+                }
+            }
+        })
+
         project.tasks.register('sourceSetSettings', SourceSetSettingsTask,
             new Action<SourceSetSettingsTask>() {
                 @Override
                 void execute(SourceSetSettingsTask t) {
                     t.group = 'Insight'
-                    t.description = 'Display Java compiler configuration.'
+                    t.description = 'Display the settings of a SourceSet.'
                 }
             })
 
-        project.tasks.addRule('Pattern: <SourceSetName>SourceSetSettings: Displays configuration of a SourceSet.', new Action<String>() {
+        project.tasks.addRule('Pattern: <SourceSetName>SourceSetSettings: Displays the settings of a SourceSet.', new Action<String>() {
             @Override
             void execute(String sourceSetName) {
                 if (sourceSetName.endsWith('SourceSetSettings')) {
@@ -139,7 +177,7 @@ class BasePlugin extends AbstractKordampPlugin {
                             void execute(SourceSetSettingsTask t) {
                                 t.group = 'Insight'
                                 t.sourceSet = resolvedSourceSetName
-                                t.description = "Display configuration for the ${resolvedSourceSetName} sourceSet."
+                                t.description = "Display the settings of the '${resolvedSourceSetName}' sourceSet."
                             }
                         })
                 }
@@ -151,11 +189,11 @@ class BasePlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(JavaCompilerSettingsTask t) {
                     t.group = 'Insight'
-                    t.description = 'Display Java compiler configuration.'
+                    t.description = 'Display Java compiler settings.'
                 }
             })
 
-        project.tasks.addRule('Pattern: compile<SourceSetName>JavaSettings: Displays compiler configuration of a JavaCompile task.', new Action<String>() {
+        project.tasks.addRule('Pattern: compile<SourceSetName>JavaSettings: Displays compiler settings of a JavaCompile task.', new Action<String>() {
             @Override
             void execute(String taskName) {
                 if (taskName.startsWith('compile') && taskName.endsWith('JavaSettings')) {
@@ -166,7 +204,7 @@ class BasePlugin extends AbstractKordampPlugin {
                             void execute(JavaCompilerSettingsTask t) {
                                 t.group = 'Insight'
                                 t.task = resolvedTaskName
-                                t.description = "Display Java compiler configuration for the ${resolvedTaskName} task."
+                                t.description = "Display Java compiler settings of the '${resolvedTaskName}' task."
                             }
                         })
                 }
@@ -178,11 +216,11 @@ class BasePlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(TestSettingsTask t) {
                     t.group = 'Insight'
-                    t.description = 'Display test task configuration.'
+                    t.description = 'Display test task settings.'
                 }
             })
 
-        project.tasks.addRule('Pattern: <SourceSetName>TestSettings: Displays configuration of a Test task.', new Action<String>() {
+        project.tasks.addRule('Pattern: <SourceSetName>TestSettings: Displays settings of a Test task.', new Action<String>() {
             @Override
             void execute(String taskName) {
                 if (taskName.endsWith('TestSettings')) {
@@ -193,7 +231,7 @@ class BasePlugin extends AbstractKordampPlugin {
                             void execute(TestSettingsTask t) {
                                 t.group = 'Insight'
                                 t.task = resolvedTaskName
-                                t.description = "Display configuration for the ${resolvedTaskName} task."
+                                t.description = "Display settings of the '${resolvedTaskName}' task."
                             }
                         })
                 }
@@ -237,11 +275,11 @@ class BasePlugin extends AbstractKordampPlugin {
                         @Override
                         void execute(GroovyCompilerSettingsTask t) {
                             t.group = 'Insight'
-                            t.description = 'Display Groovy compiler configuration.'
+                            t.description = 'Display Groovy compiler settings.'
                         }
                     })
 
-                project.tasks.addRule('Pattern: compile<SourceSetName>GroovySettings: Displays compiler configuration of a GroovyCompile task.', new Action<String>() {
+                project.tasks.addRule('Pattern: compile<SourceSetName>GroovySettings: Displays compiler settings of a GroovyCompile task.', new Action<String>() {
                     @Override
                     void execute(String taskName) {
                         if (taskName.startsWith('compile') && taskName.endsWith('GroovySettings')) {
@@ -252,7 +290,7 @@ class BasePlugin extends AbstractKordampPlugin {
                                     void execute(GroovyCompilerSettingsTask t) {
                                         t.group = 'Insight'
                                         t.task = resolvedTaskName
-                                        t.description = "Display Groovy compiler configuration for the ${resolvedTaskName} task."
+                                        t.description = "Display Groovy compiler settings of the '${resolvedTaskName}' task."
                                     }
                                 })
                         }

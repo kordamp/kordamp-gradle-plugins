@@ -326,6 +326,140 @@ org.kordamp.gradle.base.validate:: Perform validation on DSL settings. Defaults 
 [[_org_kordamp_gradle_base_tasks]]
 == Tasks
 
+[[_task_configurations]]
+=== Configurations
+
+Displays all configurations available in a project.
+
+[horizontal]
+Name:: configurations
+Type:: `org.kordamp.gradle.plugin.base.tasks.ConfigurationsTask`
+
+==== Example Output
+
+For a project defined as follows
+
+[source,groovy,subs="verbatim,attributes"]
+.build.gradle
+----
+plugins {
+    id 'java'
+    id 'org.kordamp.gradle.project' version '{project-version}'
+}
+
+config {
+    licensing  { enabled = false }
+
+    publishing { enabled = false }
+}
+----
+
+Invoking these command
+
+[source]
+----
+$ ./gradlew :configurations
+----
+
+Results in the following output
+
+[source]
+----
+
+> Task :configurations
+Total configurations: 24
+
+configuration 0:
+    name: annotationProcessor
+
+configuration 1:
+    name: apiElements
+
+configuration 2:
+    name: archives
+
+configuration 3:
+    name: compile
+
+configuration 4:
+    name: compileClasspath
+
+configuration 5:
+    name: compileOnly
+
+configuration 6:
+    name: default
+
+configuration 7:
+    name: implementation
+
+configuration 8:
+    name: jacocoAgent
+
+configuration 9:
+    name: jacocoAnt
+
+configuration 10:
+    name: java2html
+
+configuration 11:
+    name: runtime
+
+configuration 12:
+    name: runtimeClasspath
+
+configuration 13:
+    name: runtimeElements
+
+configuration 14:
+    name: runtimeOnly
+
+configuration 15:
+    name: signatures
+
+configuration 16:
+    name: testAnnotationProcessor
+
+configuration 17:
+    name: testCompile
+
+configuration 18:
+    name: testCompileClasspath
+
+configuration 19:
+    name: testCompileOnly
+
+configuration 20:
+    name: testImplementation
+
+configuration 21:
+    name: testRuntime
+
+configuration 22:
+    name: testRuntimeClasspath
+
+configuration 23:
+    name: testRuntimeOnly
+----
+
+[[_task_source_set_settings]]
+=== ConfigurationSettings
+
+Display settings of a Configuration
+
+[horizontal]
+Name:: configurationSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+configuration:: The configuration to generate the report for.
+configurations:: The configurations to generate the report for.
+
+You may specify either of the two, be advised that `configurations` has precedence over `configuration`. All configurations will be displayed
+if neither of these options is specified.
+
 [[_task_effective_settings]]
 === EffectiveSettings
 
@@ -431,7 +565,7 @@ extension 9:
 [[_task_groovy_compiler_settings]]
 === GroovyCompilerSettings
 
-Display compiler configuration
+Display compiler settings.
 
 [horizontal]
 Name:: groovyCompilerSettings
@@ -449,7 +583,7 @@ if neither of these options is specified.
 [[_task_java_compiler_settings]]
 === JavaCompilerSettings
 
-Display compiler configuration
+Display compiler settings.
 
 [horizontal]
 Name:: javaCompilerSettings
@@ -950,7 +1084,7 @@ repository 2:
 [[_task_sourceSets]]
 === SourceSets
 
-Displays all sourceSets configured in a project.
+Displays all sourceSets available in a project.
 
 [horizontal]
 Name:: sourceSets
@@ -999,7 +1133,7 @@ sourceSet 1:
 [[_task_source_set_settings]]
 === SourceSetSettings
 
-Display configuration of a SourceSet
+Display settings of a SourceSet
 
 [horizontal]
 Name:: sourceSetSettings
@@ -1017,7 +1151,7 @@ if neither of these options is specified.
 [[_task_test_settings]]
 === TestSettings
 
-Display test task configuration
+Display test task settings.
 
 [horizontal]
 Name:: testSettings
