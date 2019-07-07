@@ -260,8 +260,8 @@ class Kotlindoc extends AbstractFeature {
         o1.setReplaceJavadoc((boolean) (o1.replaceJavadocSet ? o1.replaceJavadoc : o2.replaceJavadoc))
         o1.moduleName = o1.moduleName ?: o2.moduleName
         CollectionUtils.merge(o1.outputFormats, o2?.outputFormats)
-        o1.outputDirectory = (o1.outputDirectory ?: o2.outputDirectory) ?: o1.project.file("${o1.project.buildDir}/docs/kotlindoc")
-        o1.jdkVersion = (o1.jdkVersion ?: o2.jdkVersion) ?: 6
+        o1.outputDirectory = o1.outputDirectory ?: o2.outputDirectory
+        o1.jdkVersion = o1.jdkVersion ?: o2.jdkVersion
         o1.cacheRoot = o1.cacheRoot ?: o2.cacheRoot
         o1.languageVersion = o1.languageVersion ?: o2.languageVersion
         o1.apiVersion = o1.apiVersion ?: o2.apiVersion
@@ -280,6 +280,11 @@ class Kotlindoc extends AbstractFeature {
         ExternalDocumentationLinkSet.merge(o1.externalDocumentationLinks, o2.externalDocumentationLinks)
         PackageOptionSet.merge(o1.packageOptions, o2.packageOptions)
         o1.normalize()
+    }
+
+    void postMerge() {
+        outputDirectory = outputDirectory ?: project.file("${project.buildDir}/docs/kotlindoc")
+        jdkVersion = jdkVersion ?: 6
     }
 
     List<String> validate(ProjectConfigurationExtension extension) {

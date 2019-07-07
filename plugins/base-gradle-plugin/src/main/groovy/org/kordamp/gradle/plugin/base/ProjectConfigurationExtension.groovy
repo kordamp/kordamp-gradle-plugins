@@ -536,6 +536,7 @@ class ProjectConfigurationExtension {
 
     ProjectConfigurationExtension postMerge() {
         javadoc.postMerge()
+        kotlindoc.postMerge()
         this
     }
 }
