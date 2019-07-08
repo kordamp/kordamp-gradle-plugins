@@ -1,4 +1,4 @@
-/**
+/*
  * SPDX-License-Identifier: Apache-2.0
  *
  * Copyright 2018-2019 Andres Almiray.
@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 plugins {
-    id 'org.kordamp.gradle.project'    version '0.22.0'
-    id 'org.kordamp.gradle.bintray'    version '0.22.0'
-    id 'org.kordamp.gradle.plugin'     version '0.22.0' apply false
+    id 'org.kordamp.gradle.project'    version '0.23.0'
+    id 'org.kordamp.gradle.bintray'    version '0.23.0'
+    id 'org.kordamp.gradle.plugin'     version '0.23.0' apply false
 }
 
 if (!project.hasProperty('bintrayUsername')) ext.bintrayUsername = '**UNDEFINED**'
