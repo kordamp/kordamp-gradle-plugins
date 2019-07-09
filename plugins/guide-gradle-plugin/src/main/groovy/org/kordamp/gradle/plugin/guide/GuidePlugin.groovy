@@ -81,7 +81,7 @@ class GuidePlugin extends AbstractKordampPlugin {
         project.tasks.named(ASCIIDOCTOR).configure(new Action<AsciidoctorTask>() {
             @Override
             void execute(AsciidoctorTask t) {
-                ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project.rootProject)
+                ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project.rootProject) ?: resolveEffectiveConfig(project)
 
                 Map attrs = [:]
                 attrs.putAll(t.attributes)
