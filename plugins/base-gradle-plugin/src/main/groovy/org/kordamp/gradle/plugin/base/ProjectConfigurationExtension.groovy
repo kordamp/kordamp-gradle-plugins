@@ -80,8 +80,8 @@ class ProjectConfigurationExtension {
 
     private boolean releaseSet
 
-    private final List<Action<? super Project>> projectActions = []
-    private final List<Action<? super Project>> rootProjectActions = []
+    // private final List<Action<? super Project>> projectActions = []
+    // private final List<Action<? super Project>> rootProjectActions = []
 
     ProjectConfigurationExtension(Project project) {
         this.project = project
@@ -132,10 +132,11 @@ class ProjectConfigurationExtension {
         this.stats = other.stats
         this.testing = other.testing
         setRelease(other.release)
-        projectActions.addAll(other.projectActions)
-        rootProjectActions.addAll(other.rootProjectActions)
+        // projectActions.addAll(other.projectActions)
+        // rootProjectActions.addAll(other.rootProjectActions)
     }
 
+    /*
     protected void ready() {
         projectActions.each { Action action -> action.execute(project) }
     }
@@ -143,6 +144,7 @@ class ProjectConfigurationExtension {
     protected void rootReady() {
         rootProjectActions.each { Action action -> action.execute(project.rootProject) }
     }
+    */
 
     String toString() {
         toMap().toString()
@@ -260,6 +262,7 @@ class ProjectConfigurationExtension {
         testing
     }
 
+    /*
     ProjectConfigurationExtension whenProjectReady(Action<? super Project> action) {
         projectActions.add(action)
         this
@@ -269,6 +272,7 @@ class ProjectConfigurationExtension {
         rootProjectActions.add(action)
         this
     }
+    */
 
     void info(Action<? super Information> action) {
         action.execute(info)
@@ -472,8 +476,8 @@ class ProjectConfigurationExtension {
         this.@sourceXref.copyInto(copy.@sourceXref)
         this.@stats.copyInto(copy.@stats)
         this.@testing.copyInto(copy.@testing)
-        copy.projectActions.addAll(this.projectActions)
-        copy.rootProjectActions.addAll(this.rootProjectActions)
+        // copy.projectActions.addAll(this.projectActions)
+        // copy.rootProjectActions.addAll(this.rootProjectActions)
 
         copy
     }
