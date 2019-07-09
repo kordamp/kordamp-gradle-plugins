@@ -20,6 +20,8 @@ package org.kordamp.gradle.plugin.base.model
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
+import org.gradle.api.Action
+import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
 
 /**
@@ -87,5 +89,15 @@ class Person {
         CollectionUtils.merge(o1.properties, o2?.properties)
 
         o1
+    }
+
+    void organization(Action<? super Organization> action) {
+        if (!organization) organization = new Organization()
+        action.execute(organization)
+    }
+
+    void organization(@DelegatesTo(Organization) Closure action) {
+        if (!organization) organization = new Organization()
+        ConfigureUtil.configure(action, organization)
     }
 }
