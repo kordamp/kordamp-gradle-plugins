@@ -311,17 +311,17 @@ class BasePlugin extends AbstractKordampPlugin {
                 // extension == rootExtension
                 ProjectConfigurationExtension merged = extension.postMerge()
                 if (validate) errors.addAll(merged.validate())
-                // project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged).ready()
+                project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged)
             } else {
                 // parent project may not have applied kordamp.base
                 if (rootExtension) {
                     ProjectConfigurationExtension merged = extension.merge(rootExtension)
                     if (validate) errors.addAll(merged.validate())
-                    // project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged).ready()
+                    project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged)
                 } else {
                     extension = extension.postMerge()
                     if (validate) errors.addAll(extension.validate())
-                    // project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, extension).ready()
+                    project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, extension)
                 }
             }
 
