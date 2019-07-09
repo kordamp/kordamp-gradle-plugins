@@ -86,7 +86,7 @@ class Repository {
     static void merge(Repository o1, Repository o2) {
         o1.name = o1.name ?: o2?.name
         o1.url = o1.url ?: o2?.url
-        o1.credentials.merge(o1.credentials, o2.credentials)
+        o1.credentials.merge(o1.credentials, o2?.credentials)
     }
 
     boolean isEmpty() {
