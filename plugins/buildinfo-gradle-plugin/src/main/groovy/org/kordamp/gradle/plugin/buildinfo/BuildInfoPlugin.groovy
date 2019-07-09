@@ -54,6 +54,8 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
 
         if (isRootProject(project)) {
             configureProject(project)
+        } else {
+            configureProject(project.rootProject)
         }
     }
 
