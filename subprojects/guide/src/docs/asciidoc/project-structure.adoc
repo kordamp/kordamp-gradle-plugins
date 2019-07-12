@@ -115,7 +115,7 @@ fun includeProject(projectDirName: String, projectName: String) {
 
 listOf("docs", "subprojects").forEach { dirName ->
     val subdir = File(rootDir, dirName)
-    subdir.walkTopDown().forEach { dir ->
+    subdir.walkTopDown().maxDepth(1).forEach { dir ->
         val buildFile = File(dir, "${dir.name}.gradle.kts")
         if (buildFile.exists()) {
             includeProject(dirName, dir.name)
