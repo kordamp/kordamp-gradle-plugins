@@ -23,7 +23,7 @@ config {
         excludes
         title
         options { ... }
-        <<_javadoc_autolinks,autoLinks>> {
+        autoLinks {
             enabled
             configurations
             excludes
