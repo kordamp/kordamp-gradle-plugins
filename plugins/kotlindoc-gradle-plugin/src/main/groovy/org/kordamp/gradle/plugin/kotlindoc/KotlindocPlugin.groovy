@@ -215,8 +215,8 @@ class KotlindocPlugin extends AbstractKordampPlugin {
 
         kotlindoc.externalDocumentationLinks.resolveExternalDocumentationLinks().each { link ->
             task.externalDocumentationLink {
-                delegate.url = link.url
-                delegate.packageListUrl = link.packageListUrl
+                delegate.url = (link.url as URL)
+                delegate.packageListUrl = (link.packageListUrl as URL)
             }
         }
 
