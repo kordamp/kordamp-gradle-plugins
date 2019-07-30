@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>A collection of opinionated Gradle plugins</h1>
 <div class="details">
 <span id="author" class="author">Andres Almiray</span><br>
-<span id="revnumber">version 0.24.0</span>
+<span id="revnumber">version 0.25.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -316,7 +316,7 @@ still be bent to a certain degree. The plugins found in this project provide suc
         jcenter()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:{plugin-id}:0.24.0'
+        classpath 'org.kordamp.gradle:{plugin-id}:0.25.0'
     }
 }
 apply plugin: '{plugin-id}'</code></pre>
@@ -333,7 +333,7 @@ apply plugin: '{plugin-id}'</code></pre>
         jcenter()
     }
     dependencies {
-        classpath("org.kordamp.gradle:{plugin-id}:0.24.0")
+        classpath("org.kordamp.gradle:{plugin-id}:0.25.0")
     }
 }
 apply(plugin = "{plugin-id}")</code></pre>
@@ -346,7 +346,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id '{plugin-id}' version '0.24.0'
+    id '{plugin-id}' version '0.25.0'
 }</code></pre>
 </div>
 </div>
@@ -354,7 +354,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("{plugin-id}") version "0.24.0"
+    id("{plugin-id}") version "0.25.0"
 }</code></pre>
 </div>
 </div>
@@ -490,7 +490,7 @@ fun includeProject(projectDirName: String, projectName: String) {
 
 listOf("docs", "subprojects").forEach { dirName -&gt;
     val subdir = File(rootDir, dirName)
-    subdir.walkTopDown().forEach { dir -&gt;
+    subdir.walkTopDown().maxDepth(1).forEach { dir -&gt;
         val buildFile = File(dir, "${dir.name}.gradle.kts")
         if (buildFile.exists()) {
             includeProject(dirName, dir.name)
@@ -511,7 +511,7 @@ listOf("docs", "subprojects").forEach { dirName -&gt;
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.24.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.25.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -531,7 +531,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.24.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.25.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -550,8 +550,8 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.24.0'            <i class="conum" data-value="1"></i><b>(1)</b>
-    id 'org.kordamp.gradle.bintray' version '0.24.0'            <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.project' version '0.25.0'            <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.bintray' version '0.25.0'            <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 config {
@@ -631,8 +631,8 @@ allprojects {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.24.0"          <i class="conum" data-value="1"></i><b>(1)</b>
-    id("org.kordamp.gradle.bintray") version "0.24.0"          <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.project") version "0.25.0"          <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.bintray") version "0.25.0"          <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 val bintrayUsername: String by project
@@ -858,7 +858,7 @@ publications completely:</p>
 <div class="title">build.gradle (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.24.0'
+    id 'org.kordamp.gradle.project' version '0.25.0'
 }
 
 config {
@@ -877,7 +877,7 @@ allprojects {
 <div class="title">build.gradle.kts (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.24.0"
+    id("org.kordamp.gradle.project") version "0.25.0"
 }
 
 config {
@@ -2076,7 +2076,7 @@ Type
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
     id 'java'
-    id 'org.kordamp.gradle.project' version '0.24.0'
+    id 'org.kordamp.gradle.project' version '0.25.0'
 }
 
 config {
@@ -2178,7 +2178,7 @@ configuration 23:
 </div>
 </div>
 <div class="sect4">
-<h5 id="_task_source_set_settings"><a class="anchor" href="#_task_source_set_settings"></a>ConfigurationSettings</h5>
+<h5 id="_task_configuration_settings"><a class="anchor" href="#_task_configuration_settings"></a>ConfigurationSettings</h5>
 <div class="paragraph">
 <p>Display settings of a Configuration</p>
 </div>
@@ -2331,7 +2331,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.24.0'
+    id 'org.kordamp.gradle.project' version '0.25.0'
 }
 
 config {
@@ -2566,7 +2566,7 @@ includeBuild '../build2'</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.24.0'
+    id 'org.kordamp.gradle.project' version '0.25.0'
 }
 
 config {
@@ -2664,7 +2664,7 @@ absolute
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.24.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.25.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'</code></pre>
@@ -2674,7 +2674,7 @@ apply plugin: 'org.kordamp.gradle.settings'</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.24.0'
+    id 'org.kordamp.gradle.project' version '0.25.0'
 }
 
 config {
@@ -2768,7 +2768,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.24.0'
+    id 'org.kordamp.gradle.project' version '0.25.0'
 }
 
 config {
@@ -3002,7 +3002,7 @@ local_property = local</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.24.0'
+    id 'org.kordamp.gradle.project' version '0.25.0'
 }
 
 ext.build_property = 'build'
@@ -3081,7 +3081,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.24.0'
+    id 'org.kordamp.gradle.project' version '0.25.0'
 }
 
 config {
@@ -3167,7 +3167,7 @@ Type
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
     id 'java'
-    id 'org.kordamp.gradle.project' version '0.24.0'
+    id 'org.kordamp.gradle.project' version '0.25.0'
 }
 
 config {
@@ -5920,7 +5920,7 @@ applies
         excludes
         title
         options { ... }
-        &lt;&lt;_javadoc_autolinks,autoLinks&gt;&gt; {
+        <a href="#_javadoc_autolinks">autoLinks</a> {
             enabled
             configurations
             excludes
@@ -7251,7 +7251,7 @@ the project.</p>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
     id 'groovy'
-    id 'org.kordamp.gradle.minpom' version '0.24.0'
+    id 'org.kordamp.gradle.minpom' version '0.25.0'
 }
 
 group   = 'com.acme'
@@ -7267,7 +7267,7 @@ dependencies {
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
     `groovy`
-    id("org.kordamp.gradle.minpom") version "0.24.0"
+    id("org.kordamp.gradle.minpom") version "0.25.0"
 }
 
 group   = "com.acme"
@@ -7452,7 +7452,7 @@ applies
 <p><code><a href="#_org_kordamp_gradle_base">org.kordamp.gradle.base</a></code>,<br>
 <code><a href="#_org_kordamp_gradle_apidoc">org.kordamp.gradle.apidoc</a></code>,<br>
 <code><a href="#_org_kordamp_gradle_buildinfo">org.kordamp.gradle.build-info</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_jaar">org.kordamp.gradle.jar</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_jar">org.kordamp.gradle.jar</a></code>,<br>
 <code><a href="#_org_kordamp_gradle_javadoc">org.kordamp.gradle.javadoc</a></code>,<br>
 <code><a href="#_org_kordamp_gradle_licensing">org.kordamp.gradle.licensing</a></code>,<br>
 <code><a href="#_org_kordamp_gradle_minpom">org.kordamp.gradle.minpom</a></code>,<br>
@@ -7460,7 +7460,8 @@ applies
 <code><a href="#_org_kordamp_gradle_source">org.kordamp.gradle.source-jar</a></code>,<br>
 <code><a href="#_org_kordamp_gradle_sourcehtml">org.kordamp.gradle.source-html</a></code>,<br>
 <code><a href="#_org_kordamp_gradle_sourcestats">org.kordamp.gradle.source-stats</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_testing">org.kordamp.gradle.testing</a></code></p>
+<code><a href="#_org_kordamp_gradle_testing">org.kordamp.gradle.testing</a></code>,<br>
+<code><a href="https://github.com/ben-manes/gradle-versions-plugin">com.github.ben-manes.versions</a></code></p>
 </td>
 </tr>
 </table>
@@ -7687,6 +7688,7 @@ generated POM file.</p>
         signing
         releasesRepository
         snapshotsRepository
+        publications
         <a href="#_publishing_pom">pom</a>  {
             parent
             overwriteInceptionYear
@@ -7746,6 +7748,13 @@ generated POM file.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Name of a Maven compatible repository for publishing snapshots</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">publications</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List&lt;String&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Publication names to be included</p></td>
 </tr>
 </tbody>
 </table>
@@ -8559,7 +8568,7 @@ is <code>two-level</code> however is recommended to define it if the search spac
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.24.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.25.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -8577,7 +8586,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.24.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.25.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -8616,7 +8625,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.24.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.25.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -8639,7 +8648,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.24.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.25.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -8679,7 +8688,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.24.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.25.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -8697,7 +8706,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.24.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.25.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -10398,8 +10407,8 @@ Type
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.24.0<br>
-Last updated 2019-07-08 11:52:45 +0200
+Version 0.25.0<br>
+Last updated 2019-07-30 16:26:43 +0200
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
