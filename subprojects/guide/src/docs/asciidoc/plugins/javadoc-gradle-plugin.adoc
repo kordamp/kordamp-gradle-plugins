@@ -15,6 +15,7 @@ Generates and packages Javadoc documentation.
 == DSL
 
 [source,groovy]
+[subs="+macros"]
 ----
 config {
     javadoc {
@@ -23,7 +24,7 @@ config {
         excludes
         title
         options { ... }
-        autoLinks {
+        <<_javadoc_autolinks,autoLinks>> {
             enabled
             configurations
             excludes
