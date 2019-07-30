@@ -21,8 +21,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.plugins.GroovyPlugin
-import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.testing.TestReport
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
@@ -49,13 +47,13 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
 
         BasePlugin.applyIfMissing(project)
 
-        project.plugins.withType(JavaBasePlugin) {
+        project.pluginManager.withPlugin('java-base') {
             createSourceSetsIfNeeded(project, 'java')
             createConfigurationsIfNeeded(project)
             createTasksIfNeeded(project)
         }
 
-        project.plugins.withType(GroovyPlugin) {
+        project.pluginManager.withPlugin('groovy-base') {
             createSourceSetsIfNeeded(project, 'groovy')
             createConfigurationsIfNeeded(project)
             createTasksIfNeeded(project)
@@ -146,7 +144,7 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(FunctionalTestPlugin)) {
-            project.plugins.apply(FunctionalTestPlugin)
+            project.pluginManager.apply(FunctionalTestPlugin)
         }
     }
 }

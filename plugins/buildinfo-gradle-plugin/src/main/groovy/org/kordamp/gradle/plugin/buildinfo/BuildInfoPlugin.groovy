@@ -105,7 +105,7 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
         }
 
         if (!effectiveConfig.buildInfo.skipBuildRevision) {
-            project.plugins.apply(VersioningPlugin)
+            project.pluginManager.apply(VersioningPlugin)
             VersioningExtension versioning = project.extensions.findByType(VersioningExtension)
             effectiveConfig.buildInfo.buildRevision = versioning.info.commit
         }
@@ -121,7 +121,7 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(BuildInfoPlugin)) {
-            project.plugins.apply(BuildInfoPlugin)
+            project.pluginManager.apply(BuildInfoPlugin)
         }
     }
 }

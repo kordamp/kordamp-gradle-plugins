@@ -22,6 +22,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.DefaultPomOptions
 import org.kordamp.gradle.plugin.base.model.PomOptions
@@ -39,6 +40,7 @@ class Publishing extends AbstractFeature {
     String snapshotsRepository
     boolean signing = false
     DefaultPomOptions pom = new DefaultPomOptions()
+    List<String> publications = []
 
     private boolean signingSet
 
@@ -60,6 +62,7 @@ class Publishing extends AbstractFeature {
             map.signing = signing
             map.releasesRepository = releasesRepository
             map.snapshotsRepository = snapshotsRepository
+            map.publications = publications
             map.pom = pom.toMap()
         }
 
@@ -96,6 +99,7 @@ class Publishing extends AbstractFeature {
         copy.@snapshotsRepository = snapshotsRepository
         copy.@signing = this.signing
         copy.@signingSet = this.signingSet
+        copy.publications.addAll(publications)
         this.@pom.copyInto(copy.@pom)
     }
 
@@ -105,6 +109,7 @@ class Publishing extends AbstractFeature {
         o1.snapshotsRepository = o1.@snapshotsRepository ?: o2.@snapshotsRepository
         o1.@signing = o1.signingSet ? o1.signing : o2.signing
         o1.@signingSet = o1.signingSet ?: o2.signingSet
+        CollectionUtils.merge(o1.publications, o2?.publications)
         DefaultPomOptions.merge(o1.pom, o2.pom)
     }
 }

@@ -61,7 +61,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(ClirrPlugin)) {
-            project.plugins.apply(ClirrPlugin)
+            project.pluginManager.apply(ClirrPlugin)
         }
     }
 
@@ -72,7 +72,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
-        project.plugins.apply(ReportingBasePlugin)
+        project.pluginManager.apply(ReportingBasePlugin)
 
         project.afterEvaluate {
             ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)

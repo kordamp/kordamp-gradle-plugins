@@ -52,7 +52,7 @@ class BuildScanPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
-        project.plugins.apply(com.gradle.scan.plugin.BuildScanPlugin)
+        project.pluginManager.apply(com.gradle.scan.plugin.BuildScanPlugin)
 
         project.tasks.register('setBuildScanAgreement', BuildScanAgreementTask,
             new Action<BuildScanAgreementTask>() {
@@ -158,7 +158,7 @@ class BuildScanPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(BuildScanPlugin)) {
-            project.plugins.apply(BuildScanPlugin)
+            project.pluginManager.apply(BuildScanPlugin)
         }
     }
 

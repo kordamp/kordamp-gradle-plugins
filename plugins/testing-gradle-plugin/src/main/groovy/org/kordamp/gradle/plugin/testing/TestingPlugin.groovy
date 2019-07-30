@@ -64,7 +64,7 @@ class TestingPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(TestingPlugin)) {
-            project.plugins.apply(TestingPlugin)
+            project.pluginManager.apply(TestingPlugin)
         }
     }
 

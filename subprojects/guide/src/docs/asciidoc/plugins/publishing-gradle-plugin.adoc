@@ -37,6 +37,7 @@ config {
         signing
         releasesRepository
         snapshotsRepository
+        publications
         <<_publishing_pom,pom>>  {
             parent
             overwriteInceptionYear
@@ -53,11 +54,12 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name                | Type    | Required | Default Value | Description
-| enabled             | boolean | no       | true          | Disables `org.kordamp.gradle.publishing` plugin if `false`
-| signing             | boolean | no       | false         | Enables signing of all artifacts associated with `main`
-| releasesRepository  | String  | no       |               | Name of a Maven compatible repository for publishing releases
-| snapshotsRepository | String  | no       |               | Name of a Maven compatible repository for publishing snapshots
+| Name                | Type         | Required | Default Value | Description
+| enabled             | boolean      | no       | true          | Disables `org.kordamp.gradle.publishing` plugin if `false`
+| signing             | boolean      | no       | false         | Enables signing of all artifacts associated with `main`
+| releasesRepository  | String       | no       |               | Name of a Maven compatible repository for publishing releases
+| snapshotsRepository | String       | no       |               | Name of a Maven compatible repository for publishing snapshots
+| publications        | List<String> | no       | []            | Publication names to be included
 |===
 
 This block is optional.

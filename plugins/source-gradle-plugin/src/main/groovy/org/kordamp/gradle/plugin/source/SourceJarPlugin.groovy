@@ -24,7 +24,6 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
-import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.kordamp.gradle.PluginUtils
@@ -62,7 +61,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(SourceJarPlugin)) {
-            project.plugins.apply(SourceJarPlugin)
+            project.pluginManager.apply(SourceJarPlugin)
         }
     }
 
@@ -82,7 +81,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                 return
             }
 
-            project.plugins.withType(JavaBasePlugin) {
+            project.pluginManager.withPlugin('java-base') {
                 TaskProvider<Jar> sourceTask = createSourceJarTask(project)
                 if (sourceTask) {
                     effectiveConfig.source.sourceTasks() << sourceTask

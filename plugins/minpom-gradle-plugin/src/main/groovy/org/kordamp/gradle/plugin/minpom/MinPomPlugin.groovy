@@ -21,7 +21,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.plugins.JavaBasePlugin
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -61,7 +60,7 @@ class MinPomPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(MinPomPlugin)) {
-            project.plugins.apply(MinPomPlugin)
+            project.pluginManager.apply(MinPomPlugin)
         }
     }
 
@@ -81,7 +80,7 @@ class MinPomPlugin extends AbstractKordampPlugin {
                 return
             }
 
-            project.plugins.withType(JavaBasePlugin) {
+            project.pluginManager.withPlugin('java-base') {
                 createMinPomTask(project)
             }
         }

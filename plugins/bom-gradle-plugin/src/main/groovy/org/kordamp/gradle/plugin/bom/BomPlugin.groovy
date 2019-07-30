@@ -52,10 +52,10 @@ class BomPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(BomPlugin)) {
-            project.plugins.apply(BomPlugin)
+            project.pluginManager.apply(BomPlugin)
         }
         if (!project.plugins.findPlugin(SigningPlugin)) {
-            project.plugins.apply(SigningPlugin)
+            project.pluginManager.apply(SigningPlugin)
         }
     }
 
@@ -68,7 +68,7 @@ class BomPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         if (!project.plugins.findPlugin(MavenPublishPlugin)) {
-            project.plugins.apply(MavenPublishPlugin)
+            project.pluginManager.apply(MavenPublishPlugin)
         }
 
         project.extensions.findByType(ProjectConfigurationExtension).publishing.enabled = false

@@ -23,7 +23,6 @@ import org.gradle.BuildAdapter
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
-import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
@@ -65,7 +64,7 @@ class JarPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(JarPlugin)) {
-            project.plugins.apply(JarPlugin)
+            project.pluginManager.apply(JarPlugin)
         }
     }
 
@@ -80,7 +79,7 @@ class JarPlugin extends AbstractKordampPlugin {
         MinPomPlugin.applyIfMissing(project)
 
         project.afterEvaluate {
-            project.plugins.withType(JavaBasePlugin) {
+            project.pluginManager.withPlugin('java-base') {
                 createJarTaskIfNeeded(project)
             }
         }

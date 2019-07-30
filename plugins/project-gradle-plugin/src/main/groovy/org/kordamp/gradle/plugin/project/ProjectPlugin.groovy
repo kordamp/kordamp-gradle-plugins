@@ -75,6 +75,6 @@ class ProjectPlugin implements Plugin<Project> {
         BintrayPlugin.applyIfMissing(project)
         TestingPlugin.applyIfMissing(project)
 
-        project.plugins.apply(VersionsPlugin)
+        project.pluginManager.apply(VersionsPlugin)
     }
 }

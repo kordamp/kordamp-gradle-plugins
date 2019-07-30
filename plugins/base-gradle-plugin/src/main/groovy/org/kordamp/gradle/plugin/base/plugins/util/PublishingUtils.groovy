@@ -55,10 +55,14 @@ class PublishingUtils {
     static void configureSigning(ProjectConfigurationExtension effectiveConfig, Project project, String... publications) {
         project.signing {
             if (!publications) {
-                sign project.publishing.publications.main
+                if (project.publishing.publications.findByName('main')) {
+                    sign project.publishing.publications.main
+                }
             } else {
                 publications.each { publicationName ->
-                    sign project.publishing.publications[publicationName]
+                    if (project.publishing.publications.findByName(publicationName)) {
+                        sign project.publishing.publications[publicationName]
+                    }
                 }
             }
         }
@@ -193,8 +197,8 @@ class PublishingUtils {
             pom.issueManagement(new Action<MavenPomIssueManagement>() {
                 @Override
                 void execute(MavenPomIssueManagement issueManagement) {
-                    if(isNotBlank(effectiveConfig.info.issueManagement.system)) issueManagement.system.set(effectiveConfig.info.issueManagement.system)
-                    if(isNotBlank(effectiveConfig.info.issueManagement.url)) issueManagement.url.set(effectiveConfig.info.issueManagement.url)
+                    if (isNotBlank(effectiveConfig.info.issueManagement.system)) issueManagement.system.set(effectiveConfig.info.issueManagement.system)
+                    if (isNotBlank(effectiveConfig.info.issueManagement.url)) issueManagement.url.set(effectiveConfig.info.issueManagement.url)
                 }
             })
         }
@@ -203,8 +207,8 @@ class PublishingUtils {
             pom.ciManagement(new Action<MavenPomCiManagement>() {
                 @Override
                 void execute(MavenPomCiManagement ciManagement) {
-                    if(isNotBlank(effectiveConfig.info.ciManagement.system)) ciManagement.system.set(effectiveConfig.info.ciManagement.system)
-                    if(isNotBlank(effectiveConfig.info.ciManagement.url)) ciManagement.url.set(effectiveConfig.info.ciManagement.url)
+                    if (isNotBlank(effectiveConfig.info.ciManagement.system)) ciManagement.system.set(effectiveConfig.info.ciManagement.system)
+                    if (isNotBlank(effectiveConfig.info.ciManagement.url)) ciManagement.url.set(effectiveConfig.info.ciManagement.url)
                 }
             })
         }

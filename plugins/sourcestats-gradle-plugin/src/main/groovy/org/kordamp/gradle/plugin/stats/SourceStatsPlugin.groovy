@@ -55,7 +55,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(SourceStatsPlugin)) {
-            project.plugins.apply(SourceStatsPlugin)
+            project.pluginManager.apply(SourceStatsPlugin)
         }
     }
 

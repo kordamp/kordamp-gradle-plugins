@@ -62,8 +62,8 @@ class PluginPlugin extends AbstractKordampPlugin {
         }
         setVisited(project, true)
 
-        project.plugins.apply(JavaGradlePluginPlugin)
-        project.plugins.apply(PublishPlugin)
+        project.pluginManager.apply(JavaGradlePluginPlugin)
+        project.pluginManager.apply(PublishPlugin)
 
         String pluginName = resolveConfig(project).plugin.pluginName
 

@@ -23,7 +23,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.plugins.scala.ScalaBasePlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.bundling.Jar
@@ -72,7 +71,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
     @CompileStatic
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(ScaladocPlugin)) {
-            project.plugins.apply(ScaladocPlugin)
+            project.pluginManager.apply(ScaladocPlugin)
         }
     }
 
@@ -152,7 +151,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                 return
             }
 
-            project.plugins.withType(ScalaBasePlugin) {
+            project.pluginManager.withPlugin('scala-base') {
                 Task scaladoc = configureScaladocTask(project)
                 effectiveConfig.scaladoc.scaladocTasks() << scaladoc
 

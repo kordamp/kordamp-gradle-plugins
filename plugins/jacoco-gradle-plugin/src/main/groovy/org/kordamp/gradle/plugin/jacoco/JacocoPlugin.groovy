@@ -25,7 +25,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.invocation.Gradle
-import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.tasks.JacocoMerge
@@ -63,7 +62,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(JacocoPlugin)) {
-            project.plugins.apply(JacocoPlugin)
+            project.pluginManager.apply(JacocoPlugin)
         }
     }
 
@@ -74,7 +73,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
-        project.plugins.apply(org.gradle.testing.jacoco.plugins.JacocoPlugin)
+        project.pluginManager.apply(org.gradle.testing.jacoco.plugins.JacocoPlugin)
 
         project.afterEvaluate {
             ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
@@ -84,7 +83,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
                 return
             }
 
-            project.plugins.withType(JavaBasePlugin) {
+            project.pluginManager.withPlugin('java-base') {
                 project.tasks.withType(Test) { Test testTask ->
                     if (!testTask.enabled) {
                         return

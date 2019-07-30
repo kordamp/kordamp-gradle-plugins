@@ -26,8 +26,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.invocation.Gradle
-import org.gradle.api.plugins.GroovyBasePlugin
-import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
@@ -63,7 +61,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(SourceXrefPlugin)) {
-            project.plugins.apply(SourceXrefPlugin)
+            project.pluginManager.apply(SourceXrefPlugin)
         }
     }
 
@@ -79,7 +77,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
             if (effectiveConfig.sourceXref.enabled) {
-                project.plugins.withType(JavaBasePlugin) {
+                project.pluginManager.withPlugin('java-base') {
                     TaskProvider<? extends Task> xrefTask = configureSourceXrefTask(project)
                     if (xrefTask?.get()?.enabled) {
                         effectiveConfig.sourceXref.projects() << project
@@ -227,11 +225,11 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
     }
 
     private boolean hasJavaPlugin(Project project) {
-        project.plugins.hasPlugin(JavaBasePlugin)
+        project.pluginManager.hasPlugin('java-base')
     }
 
     private boolean hasGroovyPlugin(Project project) {
-        project.plugins.hasPlugin(GroovyBasePlugin)
+        project.pluginManager.hasPlugin('groovy-base')
     }
 
     @CompileDynamic

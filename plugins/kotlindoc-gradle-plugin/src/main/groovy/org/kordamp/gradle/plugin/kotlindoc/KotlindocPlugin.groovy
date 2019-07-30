@@ -77,7 +77,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
     @CompileStatic
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(KotlindocPlugin)) {
-            project.plugins.apply(KotlindocPlugin)
+            project.pluginManager.apply(KotlindocPlugin)
         }
     }
 

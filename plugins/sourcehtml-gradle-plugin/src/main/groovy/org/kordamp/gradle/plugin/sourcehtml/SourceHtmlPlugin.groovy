@@ -31,8 +31,6 @@ import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.FileCollection
 import org.gradle.api.invocation.Gradle
-import org.gradle.api.plugins.GroovyBasePlugin
-import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
@@ -71,7 +69,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(SourceHtmlPlugin)) {
-            project.plugins.apply(SourceHtmlPlugin)
+            project.pluginManager.apply(SourceHtmlPlugin)
         }
     }
 
@@ -100,7 +98,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
             if (effectiveConfig.sourceHtml.enabled) {
-                project.plugins.withType(JavaBasePlugin) {
+                project.pluginManager.withPlugin('java-base') {
                     if (configureSourceHtmlTask(project, configuration)) {
                         effectiveConfig.sourceHtml.projects() << project
                     } else {
@@ -319,11 +317,11 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
     }
 
     private boolean hasJavaPlugin(Project project) {
-        project.plugins.hasPlugin(JavaBasePlugin)
+        project.pluginManager.hasPlugin('java-base')
     }
 
     private boolean hasGroovyPlugin(Project project) {
-        project.plugins.hasPlugin(GroovyBasePlugin)
+        project.pluginManager.hasPlugin('groovy-base')
     }
 
     @CompileDynamic

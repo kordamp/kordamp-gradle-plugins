@@ -60,7 +60,7 @@ class GuidePlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
         ApidocPlugin.applyIfMissing(project.rootProject)
         SourceHtmlPlugin.applyIfMissing(project.rootProject)
-        project.plugins.apply(AsciidoctorJPlugin)
+        project.pluginManager.apply(AsciidoctorJPlugin)
 
         project.extensions.create('guide', GuideExtension, project)
 
@@ -73,7 +73,7 @@ class GuidePlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(GuidePlugin)) {
-            project.plugins.apply(GuidePlugin)
+            project.pluginManager.apply(GuidePlugin)
         }
     }
 

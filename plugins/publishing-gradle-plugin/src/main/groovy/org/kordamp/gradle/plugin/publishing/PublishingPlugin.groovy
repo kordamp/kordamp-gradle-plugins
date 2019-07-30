@@ -22,7 +22,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.plugins.signing.SigningPlugin
@@ -71,10 +70,10 @@ class PublishingPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(PublishingPlugin)) {
-            project.plugins.apply(PublishingPlugin)
+            project.pluginManager.apply(PublishingPlugin)
         }
         if (!project.plugins.findPlugin(SigningPlugin)) {
-            project.plugins.apply(SigningPlugin)
+            project.pluginManager.apply(SigningPlugin)
         }
     }
 
@@ -90,14 +89,14 @@ class PublishingPlugin extends AbstractKordampPlugin {
         ApidocPlugin.applyIfMissing(project)
         JarPlugin.applyIfMissing(project)
 
-        project.plugins.withType(JavaBasePlugin) {
-            if (!project.plugins.findPlugin(MavenPublishPlugin)) {
-                project.plugins.apply(MavenPublishPlugin)
+        project.pluginManager.withPlugin('java-base') {
+            if (!project.pluginManager.hasPlugin('maven-publish')) {
+                project.pluginManager.apply(MavenPublishPlugin)
             }
         }
 
         project.afterEvaluate {
-            project.plugins.withType(JavaBasePlugin) {
+            project.pluginManager.withPlugin('java-base') {
                 updatePublications(project)
             }
         }
@@ -145,14 +144,22 @@ class PublishingPlugin extends AbstractKordampPlugin {
 
         project.publishing {
             publications {
-                main(MavenPublication) {
-                    from project.components.java
+                effectiveConfig.publishing.publications.each { String pub ->
+                    "${pub}"(MavenPublication) {
+                        PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.publishing.pom)
+                    }
+                }
 
-                    if (javadocJar?.enabled) artifact javadocJar
-                    if (groovydocJar?.enabled) artifact groovydocJar
-                    if (sourceJar?.enabled) artifact sourceJar
+                if (!effectiveConfig.publishing.publications.contains('main') && !effectiveConfig.publishing.publications) {
+                    main(MavenPublication) {
+                        from project.components.java
 
-                    PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.publishing.pom)
+                        if (javadocJar?.enabled) artifact javadocJar
+                        if (groovydocJar?.enabled) artifact groovydocJar
+                        if (sourceJar?.enabled) artifact sourceJar
+
+                        PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.publishing.pom)
+                    }
                 }
             }
 
@@ -184,6 +191,8 @@ class PublishingPlugin extends AbstractKordampPlugin {
             }
         }
 
-        PublishingUtils.configureSigning(effectiveConfig, project)
+        List<String> publications = new ArrayList<>(effectiveConfig.publishing.publications)
+        if (!publications) publications << 'main'
+        PublishingUtils.configureSigning(effectiveConfig, project, *publications)
     }
 }

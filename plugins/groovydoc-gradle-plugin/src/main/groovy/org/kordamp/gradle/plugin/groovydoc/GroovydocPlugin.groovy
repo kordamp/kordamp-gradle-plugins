@@ -17,9 +17,10 @@
  */
 package org.kordamp.gradle.plugin.groovydoc
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.plugins.GroovyBasePlugin
+import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Groovydoc
@@ -62,7 +63,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(GroovydocPlugin)) {
-            project.plugins.apply(GroovydocPlugin)
+            project.pluginManager.apply(GroovydocPlugin)
         }
     }
 
@@ -73,37 +74,43 @@ class GroovydocPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
-        // apply first then we can be certain javadoc tasks can be located on time
-        JavadocPlugin.applyIfMissing(project)
 
-        project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-            setEnabled(effectiveConfig.groovydoc.enabled)
+        project.pluginManager.withPlugin('groovy-base', new Action<AppliedPlugin>() {
+            @Override
+            void execute(AppliedPlugin appliedPlugin) {
+                // apply first then we can be certain javadoc tasks can be located on time
+                JavadocPlugin.applyIfMissing(project)
 
-            if (!enabled) {
-                return
-            }
+                project.afterEvaluate {
+                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+                    setEnabled(effectiveConfig.groovydoc.enabled)
 
-            project.plugins.withType(GroovyBasePlugin) {
-                Javadoc javadoc = project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)
-                if (!javadoc) return
+                    if (!enabled) {
+                        return
+                    }
 
-                Task groovydoc = createGroovydocTaskIfNeeded(project, javadoc)
-                if (!groovydoc) return
-                effectiveConfig.groovydoc.groovydocTasks() << groovydoc
+                    project.pluginManager.withPlugin('groovy-base') {
+                        Javadoc javadoc = project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)
+                        if (!javadoc) return
 
-                Task groovydocJar = createGroovydocJarTask(project, groovydoc)
-                project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(groovydocJar)
-                effectiveConfig.groovydoc.groovydocJarTasks() << groovydocJar
+                        Task groovydoc = createGroovydocTaskIfNeeded(project, javadoc)
+                        if (!groovydoc) return
+                        effectiveConfig.groovydoc.groovydocTasks() << groovydoc
 
-                effectiveConfig.groovydoc.projects() << project
+                        Task groovydocJar = createGroovydocJarTask(project, groovydoc)
+                        project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(groovydocJar)
+                        effectiveConfig.groovydoc.groovydocJarTasks() << groovydocJar
 
-                project.tasks.withType(Groovydoc) { task ->
-                    effectiveConfig.groovydoc.applyTo(task)
-                    task.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
+                        effectiveConfig.groovydoc.projects() << project
+
+                        project.tasks.withType(Groovydoc) { task ->
+                            effectiveConfig.groovydoc.applyTo(task)
+                            task.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
+                        }
+                    }
                 }
             }
-        }
+        })
     }
 
     private Task createGroovydocTaskIfNeeded(Project project, Javadoc javadoc) {

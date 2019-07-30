@@ -141,7 +141,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(LicensingPlugin)) {
-            project.plugins.apply(LicensingPlugin)
+            project.pluginManager.apply(LicensingPlugin)
         }
     }
 
@@ -154,10 +154,10 @@ class LicensingPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         if (!project.plugins.findPlugin(LicenseReportingPlugin)) {
-            project.plugins.apply(LicenseReportingPlugin)
+            project.pluginManager.apply(LicenseReportingPlugin)
         }
         if (!project.plugins.findPlugin(nl.javadude.gradle.plugins.license.LicensePlugin)) {
-            project.plugins.apply(nl.javadude.gradle.plugins.license.LicensePlugin)
+            project.pluginManager.apply(nl.javadude.gradle.plugins.license.LicensePlugin)
         }
 
         preConfigureDownloadLicensesExtension(project)

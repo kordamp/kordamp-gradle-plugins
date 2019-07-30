@@ -74,7 +74,7 @@ class ApidocPlugin extends AbstractKordampPlugin {
     @CompileStatic
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(ApidocPlugin)) {
-            project.plugins.apply(ApidocPlugin)
+            project.pluginManager.apply(ApidocPlugin)
         }
     }
 

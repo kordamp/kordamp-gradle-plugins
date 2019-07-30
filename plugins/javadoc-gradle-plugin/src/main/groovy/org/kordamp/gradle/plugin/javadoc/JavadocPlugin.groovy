@@ -23,6 +23,7 @@ import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -64,7 +65,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(JavadocPlugin)) {
-            project.plugins.apply(JavadocPlugin)
+            project.pluginManager.apply(JavadocPlugin)
         }
     }
 
@@ -77,43 +78,48 @@ class JavadocPlugin extends AbstractKordampPlugin {
 
         BasePlugin.applyIfMissing(project)
 
-        project.tasks.register('checkAutoLinks', CheckAutoLinksTask.class,
-            new Action<CheckAutoLinksTask>() {
-                void execute(CheckAutoLinksTask t) {
-                    t.group = 'Documentation'
-                    t.description = 'Checks if generated Javadoc auto links are reachable.'
+        project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {
+            @Override
+            void execute(AppliedPlugin appliedPlugin) {
+                project.tasks.register('checkAutoLinks', CheckAutoLinksTask.class,
+                    new Action<CheckAutoLinksTask>() {
+                        void execute(CheckAutoLinksTask t) {
+                            t.group = 'Documentation'
+                            t.description = 'Checks if generated Javadoc auto links are reachable.'
+                        }
+                    })
+
+                project.afterEvaluate {
+                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+                    setEnabled(effectiveConfig.javadoc.enabled)
+
+                    if (!enabled) {
+                        return
+                    }
+
+                    project.pluginManager.withPlugin('java-base') {
+                        Task javadoc = createJavadocTaskIfNeeded(project)
+                        if (!javadoc) return
+                        effectiveConfig.javadoc.javadocTasks() << javadoc
+
+                        Task javadocJar = createJavadocJarTask(project, javadoc)
+                        project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(javadocJar)
+                        effectiveConfig.javadoc.javadocJarTasks() << javadocJar
+
+                        effectiveConfig.javadoc.projects() << project
+                    }
+
+                    project.tasks.withType(Javadoc) { Javadoc task ->
+                        effectiveConfig.javadoc.applyTo(task)
+                        task.options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
+
+                        if (JavaVersion.current().isJava8Compatible()) {
+                            task.options.addStringOption('Xdoclint:none', '-quiet')
+                        }
+                    }
                 }
-            })
-
-        project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-            setEnabled(effectiveConfig.javadoc.enabled)
-
-            if (!enabled) {
-                return
             }
-
-            project.plugins.withType(JavaBasePlugin) {
-                Task javadoc = createJavadocTaskIfNeeded(project)
-                if (!javadoc) return
-                effectiveConfig.javadoc.javadocTasks() << javadoc
-
-                Task javadocJar = createJavadocJarTask(project, javadoc)
-                project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(javadocJar)
-                effectiveConfig.javadoc.javadocJarTasks() << javadocJar
-
-                effectiveConfig.javadoc.projects() << project
-            }
-
-            project.tasks.withType(Javadoc) { Javadoc task ->
-                effectiveConfig.javadoc.applyTo(task)
-                task.options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
-
-                if (JavaVersion.current().isJava8Compatible()) {
-                    task.options.addStringOption('Xdoclint:none', '-quiet')
-                }
-            }
-        }
+        })
     }
 
     @CompileDynamic
@@ -133,10 +139,12 @@ class JavadocPlugin extends AbstractKordampPlugin {
             }
         }
 
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        javadocTask.configure {
-            include(effectiveConfig.javadoc.includes)
-            exclude(effectiveConfig.javadoc.excludes)
+        if (javadocTask) {
+            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+            javadocTask.configure {
+                include(effectiveConfig.javadoc.includes)
+                exclude(effectiveConfig.javadoc.excludes)
+            }
         }
 
         javadocTask

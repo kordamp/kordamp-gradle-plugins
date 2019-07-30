@@ -19,10 +19,10 @@ package org.kordamp.gradle.plugin.bintray
 
 import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.publish.PublishingExtension
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
@@ -60,7 +60,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(BintrayPlugin)) {
-            project.plugins.apply(BintrayPlugin)
+            project.pluginManager.apply(BintrayPlugin)
         }
     }
 
@@ -72,32 +72,39 @@ class BintrayPlugin extends AbstractKordampPlugin {
 
         PublishingPlugin.applyIfMissing(project)
 
-        project.plugins.withType(JavaBasePlugin) {
+        project.pluginManager.withPlugin('java-base') {
             if (!project.plugins.findPlugin(com.jfrog.bintray.gradle.BintrayPlugin)) {
-                project.plugins.apply(com.jfrog.bintray.gradle.BintrayPlugin)
+                project.pluginManager.apply(com.jfrog.bintray.gradle.BintrayPlugin)
             }
         }
 
         project.afterEvaluate {
-            project.plugins.withType(JavaBasePlugin) {
+            project.pluginManager.withPlugin('java-base') {
                 updatePublications(project)
             }
         }
     }
 
+    @CompileDynamic
     private void updatePublications(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
-        if (!effectiveConfig.bintray.enabled || !((SourceSetContainer) resolveSourceSets(project)).findByName('main')) {
+        if (!effectiveConfig.bintray.enabled || !resolveSourceSets(project).findByName('main')) {
             project.getTasks().findByName(BintrayUploadTask.TASK_NAME)?.enabled = false
             setEnabled(false)
             return
         }
 
+        Set<String> publications = []
+        PublishingExtension pubExt = project.extensions.findByType(PublishingExtension)
+        publications.addAll(effectiveConfig.bintray.resolvePublications())
+        publications.addAll(effectiveConfig.publishing.publications)
+        publications = publications.grep { pub -> pubExt.publications.findByName(pub) }
+
         BintrayExtension bintray = project.extensions.findByType(BintrayExtension)
         if (isBlank(bintray.user)) bintray.user = effectiveConfig.bintray.credentials.username
         if (isBlank(bintray.key)) bintray.key = effectiveConfig.bintray.credentials.password
-        if (!bintray.publications) bintray.publications = effectiveConfig.bintray.resolvePublications().toArray(new String[0])
+        if (!bintray.publications) bintray.publications = publications.toArray(new String[0])
         if (isBlank(bintray.pkg.repo)) bintray.pkg.repo = effectiveConfig.bintray.repo
         if (isBlank(bintray.pkg.userOrg)) bintray.pkg.userOrg = effectiveConfig.bintray.userOrg
         if (isBlank(bintray.pkg.name)) bintray.pkg.name = effectiveConfig.bintray.name

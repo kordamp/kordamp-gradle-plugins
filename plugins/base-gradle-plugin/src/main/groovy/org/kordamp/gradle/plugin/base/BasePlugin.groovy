@@ -18,11 +18,10 @@
 package org.kordamp.gradle.plugin.base
 
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
+import org.gradle.api.plugins.AppliedPlugin
 import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask
@@ -39,6 +38,8 @@ import org.kordamp.gradle.plugin.base.tasks.RepositoriesTask
 import org.kordamp.gradle.plugin.base.tasks.SourceSetSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.SourceSetsTask
 import org.kordamp.gradle.plugin.base.tasks.TestSettingsTask
+
+import static org.kordamp.gradle.PluginUtils.isAndroidProject
 
 /**
  *
@@ -60,7 +61,7 @@ class BasePlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         if (!project.plugins.findPlugin(org.gradle.api.plugins.BasePlugin)) {
-            project.plugins.apply(org.gradle.api.plugins.BasePlugin)
+            project.pluginManager.apply(org.gradle.api.plugins.BasePlugin)
         }
 
         if (!project.extensions.findByType(ProjectConfigurationExtension)) {
@@ -100,15 +101,6 @@ class BasePlugin extends AbstractKordampPlugin {
                 void execute(ExtensionsTask t) {
                     t.group = 'Insight'
                     t.description = "Displays all extensions applied to project '$project.name'."
-                }
-            })
-
-        project.tasks.register('sourceSets', SourceSetsTask,
-            new Action<SourceSetsTask>() {
-                @Override
-                void execute(SourceSetsTask t) {
-                    t.group = 'Insight'
-                    t.description = "Displays all sourceSets available in project '$project.name'."
                 }
             })
 
@@ -157,84 +149,100 @@ class BasePlugin extends AbstractKordampPlugin {
             }
         })
 
-        project.tasks.register('sourceSetSettings', SourceSetSettingsTask,
-            new Action<SourceSetSettingsTask>() {
-                @Override
-                void execute(SourceSetSettingsTask t) {
-                    t.group = 'Insight'
-                    t.description = 'Display the settings of a SourceSet.'
-                }
-            })
-
-        project.tasks.addRule('Pattern: <SourceSetName>SourceSetSettings: Displays the settings of a SourceSet.', new Action<String>() {
+        project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {
             @Override
-            void execute(String sourceSetName) {
-                if (sourceSetName.endsWith('SourceSetSettings')) {
-                    String resolvedSourceSetName = sourceSetName - 'SourceSetSettings'
-                    project.tasks.register(sourceSetName, SourceSetSettingsTask,
+            void execute(AppliedPlugin appliedPlugin) {
+                if (!isAndroidProject(project)) {
+                    project.tasks.register('sourceSets', SourceSetsTask,
+                        new Action<SourceSetsTask>() {
+                            @Override
+                            void execute(SourceSetsTask t) {
+                                t.group = 'Insight'
+                                t.description = "Displays all sourceSets available in project '$project.name'."
+                            }
+                        })
+
+                    project.tasks.register('sourceSetSettings', SourceSetSettingsTask,
                         new Action<SourceSetSettingsTask>() {
                             @Override
                             void execute(SourceSetSettingsTask t) {
                                 t.group = 'Insight'
-                                t.sourceSet = resolvedSourceSetName
-                                t.description = "Display the settings of the '${resolvedSourceSetName}' sourceSet."
+                                t.description = 'Display the settings of a SourceSet.'
                             }
                         })
-                }
-            }
-        })
 
-        project.tasks.register('javaCompilerSettings', JavaCompilerSettingsTask,
-            new Action<JavaCompilerSettingsTask>() {
-                @Override
-                void execute(JavaCompilerSettingsTask t) {
-                    t.group = 'Insight'
-                    t.description = 'Display Java compiler settings.'
-                }
-            })
-
-        project.tasks.addRule('Pattern: compile<SourceSetName>JavaSettings: Displays compiler settings of a JavaCompile task.', new Action<String>() {
-            @Override
-            void execute(String taskName) {
-                if (taskName.startsWith('compile') && taskName.endsWith('JavaSettings')) {
-                    String resolvedTaskName = taskName - 'Settings'
-                    project.tasks.register(taskName, JavaCompilerSettingsTask,
-                        new Action<JavaCompilerSettingsTask>() {
-                            @Override
-                            void execute(JavaCompilerSettingsTask t) {
-                                t.group = 'Insight'
-                                t.task = resolvedTaskName
-                                t.description = "Display Java compiler settings of the '${resolvedTaskName}' task."
+                    project.tasks.addRule('Pattern: <SourceSetName>SourceSetSettings: Displays the settings of a SourceSet.', new Action<String>() {
+                        @Override
+                        void execute(String sourceSetName) {
+                            if (sourceSetName.endsWith('SourceSetSettings')) {
+                                String resolvedSourceSetName = sourceSetName - 'SourceSetSettings'
+                                project.tasks.register(sourceSetName, SourceSetSettingsTask,
+                                    new Action<SourceSetSettingsTask>() {
+                                        @Override
+                                        void execute(SourceSetSettingsTask t) {
+                                            t.group = 'Insight'
+                                            t.sourceSet = resolvedSourceSetName
+                                            t.description = "Display the settings of the '${resolvedSourceSetName}' sourceSet."
+                                        }
+                                    })
                             }
-                        })
+                        }
+                    })
                 }
-            }
-        })
 
-        project.tasks.register('testSettings', TestSettingsTask,
-            new Action<TestSettingsTask>() {
-                @Override
-                void execute(TestSettingsTask t) {
-                    t.group = 'Insight'
-                    t.description = 'Display test task settings.'
-                }
-            })
+                project.tasks.register('javaCompilerSettings', JavaCompilerSettingsTask,
+                    new Action<JavaCompilerSettingsTask>() {
+                        @Override
+                        void execute(JavaCompilerSettingsTask t) {
+                            t.group = 'Insight'
+                            t.description = 'Display Java compiler settings.'
+                        }
+                    })
 
-        project.tasks.addRule('Pattern: <SourceSetName>TestSettings: Displays settings of a Test task.', new Action<String>() {
-            @Override
-            void execute(String taskName) {
-                if (taskName.endsWith('TestSettings')) {
-                    String resolvedTaskName = taskName - 'Settings'
-                    project.tasks.register(taskName, TestSettingsTask,
-                        new Action<TestSettingsTask>() {
-                            @Override
-                            void execute(TestSettingsTask t) {
-                                t.group = 'Insight'
-                                t.task = resolvedTaskName
-                                t.description = "Display settings of the '${resolvedTaskName}' task."
-                            }
-                        })
-                }
+                project.tasks.addRule('Pattern: compile<SourceSetName>JavaSettings: Displays compiler settings of a JavaCompile task.', new Action<String>() {
+                    @Override
+                    void execute(String taskName) {
+                        if (taskName.startsWith('compile') && taskName.endsWith('JavaSettings')) {
+                            String resolvedTaskName = taskName - 'Settings'
+                            project.tasks.register(taskName, JavaCompilerSettingsTask,
+                                new Action<JavaCompilerSettingsTask>() {
+                                    @Override
+                                    void execute(JavaCompilerSettingsTask t) {
+                                        t.group = 'Insight'
+                                        t.task = resolvedTaskName
+                                        t.description = "Display Java compiler settings of the '${resolvedTaskName}' task."
+                                    }
+                                })
+                        }
+                    }
+                })
+
+                project.tasks.register('testSettings', TestSettingsTask,
+                    new Action<TestSettingsTask>() {
+                        @Override
+                        void execute(TestSettingsTask t) {
+                            t.group = 'Insight'
+                            t.description = 'Display test task settings.'
+                        }
+                    })
+
+                project.tasks.addRule('Pattern: <SourceSetName>TestSettings: Displays settings of a Test task.', new Action<String>() {
+                    @Override
+                    void execute(String taskName) {
+                        if (taskName.endsWith('TestSettings')) {
+                            String resolvedTaskName = taskName - 'Settings'
+                            project.tasks.register(taskName, TestSettingsTask,
+                                new Action<TestSettingsTask>() {
+                                    @Override
+                                    void execute(TestSettingsTask t) {
+                                        t.group = 'Insight'
+                                        t.task = resolvedTaskName
+                                        t.description = "Display settings of the '${resolvedTaskName}' task."
+                                    }
+                                })
+                        }
+                    }
+                })
             }
         })
 
@@ -270,36 +278,41 @@ class BasePlugin extends AbstractKordampPlugin {
             */
         }
 
-        project.afterEvaluate {
-            if (project.plugins.findPlugin('groovy')) {
-                project.tasks.register('groovyCompilerSettings', GroovyCompilerSettingsTask,
-                    new Action<GroovyCompilerSettingsTask>() {
+        project.pluginManager.withPlugin('groovy-base', new Action<AppliedPlugin>() {
+            @Override
+            void execute(AppliedPlugin appliedPlugin) {
+                if (project.plugins.findPlugin('groovy')) {
+                    project.tasks.register('groovyCompilerSettings', GroovyCompilerSettingsTask,
+                        new Action<GroovyCompilerSettingsTask>() {
+                            @Override
+                            void execute(GroovyCompilerSettingsTask t) {
+                                t.group = 'Insight'
+                                t.description = 'Display Groovy compiler settings.'
+                            }
+                        })
+
+                    project.tasks.addRule('Pattern: compile<SourceSetName>GroovySettings: Displays compiler settings of a GroovyCompile task.', new Action<String>() {
                         @Override
-                        void execute(GroovyCompilerSettingsTask t) {
-                            t.group = 'Insight'
-                            t.description = 'Display Groovy compiler settings.'
+                        void execute(String taskName) {
+                            if (taskName.startsWith('compile') && taskName.endsWith('GroovySettings')) {
+                                String resolvedTaskName = taskName - 'Settings'
+                                project.tasks.register(taskName, GroovyCompilerSettingsTask,
+                                    new Action<GroovyCompilerSettingsTask>() {
+                                        @Override
+                                        void execute(GroovyCompilerSettingsTask t) {
+                                            t.group = 'Insight'
+                                            t.task = resolvedTaskName
+                                            t.description = "Display Groovy compiler settings of the '${resolvedTaskName}' task."
+                                        }
+                                    })
+                            }
                         }
                     })
-
-                project.tasks.addRule('Pattern: compile<SourceSetName>GroovySettings: Displays compiler settings of a GroovyCompile task.', new Action<String>() {
-                    @Override
-                    void execute(String taskName) {
-                        if (taskName.startsWith('compile') && taskName.endsWith('GroovySettings')) {
-                            String resolvedTaskName = taskName - 'Settings'
-                            project.tasks.register(taskName, GroovyCompilerSettingsTask,
-                                new Action<GroovyCompilerSettingsTask>() {
-                                    @Override
-                                    void execute(GroovyCompilerSettingsTask t) {
-                                        t.group = 'Insight'
-                                        t.task = resolvedTaskName
-                                        t.description = "Display Groovy compiler settings of the '${resolvedTaskName}' task."
-                                    }
-                                })
-                        }
-                    }
-                })
+                }
             }
+        })
 
+        project.afterEvaluate {
             ProjectConfigurationExtension rootExtension = project.rootProject.extensions.findByType(ProjectConfigurationExtension)
             ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
             extension.normalize()
@@ -334,7 +347,7 @@ class BasePlugin extends AbstractKordampPlugin {
 
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(BasePlugin)) {
-            project.plugins.apply(BasePlugin)
+            project.pluginManager.apply(BasePlugin)
         }
     }
 

@@ -31,7 +31,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
 @CompileStatic
 class PluginUtils {
     static boolean isAndroidProject(Project project) {
-        androidPlugins().any { project.plugins.hasPlugin(it) }
+        androidPlugins().any { project.pluginManager.hasPlugin(it) }
     }
 
     /**
