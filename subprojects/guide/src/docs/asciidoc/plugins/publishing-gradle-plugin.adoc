@@ -147,3 +147,11 @@ publications:: The publications to generate the report for.
 You may specify either of the two, be advised that `publications` has precedence over `publication`. All publications will be displayed
 if neither of these options is specified.
 
+[[_org_kordamp_gradle_publishing_rules]]
+== Rules
+
+=== Publications
+
+[horizontal]
+Pattern:: <PublicationName>PublicationSettings
+Type:: `org.kordamp.gradle.plugin.publishing.PublicationSettingsTask`

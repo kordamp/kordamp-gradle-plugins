@@ -1165,3 +1165,42 @@ tasks:: The tasks to generate the report for.
 
 You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
 if neither of these options is specified.
+
+[[_org_kordamp_gradle_base_rules]]
+== Rules
+
+=== CompileGroovy
+
+[horizontal]
+Pattern:: compile<SourceSetName>GroovySettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.GroovyCompilerSettingsTask`
+
+=== CompileJava
+
+[horizontal]
+Pattern:: compile<SourceSetName>JavaSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.JavaCompilerSettingsTask`
+
+=== Configurations
+
+[horizontal]
+Pattern:: <ConfigurationName>ConfigurationSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask`
+
+=== JavaExec
+
+[horizontal]
+Pattern:: <TaskName>Settings
+Type:: `org.kordamp.gradle.plugin.base.tasks.JavaExecSettingsTask`
+
+=== SourceSetNames
+
+[horizontal]
+Pattern:: <SourceSetName>SourceSetSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.SourceSetSettingsTask`
+
+=== Test
+
+[horizontal]
+Pattern:: <SourceSetName>TestSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.TestSettingsTask`
