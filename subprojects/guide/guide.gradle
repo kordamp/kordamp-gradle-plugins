@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 plugins {
-    id 'org.kordamp.gradle.guide'   version '0.24.0'
+    id 'org.kordamp.gradle.guide'   version '0.25.0'
     id 'org.ajoberstar.git-publish' version '0.3.2'
 }
 
