@@ -10,6 +10,7 @@ class:: `org.kordamp.gradle.plugin.project.ProjectPlugin`
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `<<_org_kordamp_gradle_apidoc,org.kordamp.gradle.apidoc>>`, +
 `<<_org_kordamp_gradle_buildinfo,org.kordamp.gradle.build-info>>`, +
+`<<_org_kordamp_gradle_jacoco,org.kordamp.gradle.jacoco>>`, +
 `<<_org_kordamp_gradle_jar,org.kordamp.gradle.jar>>`, +
 `<<_org_kordamp_gradle_javadoc,org.kordamp.gradle.javadoc>>`, +
 `<<_org_kordamp_gradle_licensing,org.kordamp.gradle.licensing>>`, +
