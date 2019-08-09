@@ -146,12 +146,14 @@ class JarPlugin extends AbstractKordampPlugin {
         if (effectiveConfig.release) {
             Map<String, String> attributesMap = [:]
 
-            checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildCreatedBy', attributesMap, 'Created-By')
-            checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildBy', attributesMap, 'Build-By')
-            checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildJdk', attributesMap, 'Build-Jdk')
-            checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildDate', attributesMap, 'Build-Date')
-            checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildTime', attributesMap, 'Build-Time')
-            checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildRevision', attributesMap, 'Build-Revision')
+            if (effectiveConfig.buildInfo.enabled) {
+                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildCreatedBy', attributesMap, 'Created-By')
+                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildBy', attributesMap, 'Build-By')
+                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildJdk', attributesMap, 'Build-Jdk')
+                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildDate', attributesMap, 'Build-Date')
+                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildTime', attributesMap, 'Build-Time')
+                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildRevision', attributesMap, 'Build-Revision')
+            }
 
             if (effectiveConfig.info.specification.enabled) {
                 attributesMap.'Specification-Title' = effectiveConfig.info.specification.title
