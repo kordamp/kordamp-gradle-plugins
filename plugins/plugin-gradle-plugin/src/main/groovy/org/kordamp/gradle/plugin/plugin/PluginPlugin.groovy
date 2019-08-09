@@ -29,6 +29,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
+import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 
@@ -62,6 +63,7 @@ class PluginPlugin extends AbstractKordampPlugin {
         }
         setVisited(project, true)
 
+        BasePlugin.applyIfMissing(project)
         project.pluginManager.apply(JavaGradlePluginPlugin)
         project.pluginManager.apply(PublishPlugin)
 
