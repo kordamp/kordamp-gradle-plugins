@@ -128,16 +128,19 @@ class PluginPlugin extends AbstractKordampPlugin {
     @CompileDynamic
     private void updatePublication(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        String pluginName = effectiveConfig.plugin.pluginName
 
         project.publishing {
             publications {
                 pluginMaven(MavenPublication) {
                     PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.publishing.pom)
                 }
+                "${pluginName}PluginMarkerMaven"(MavenPublication) {
+                    PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.publishing.pom)
+                }
             }
         }
 
-        String pluginName = effectiveConfig.plugin.pluginName
         PublishingUtils.configureSigning(effectiveConfig, project, 'pluginMaven', pluginName + 'PluginMarkerMaven')
     }
 }
