@@ -19,8 +19,10 @@ package org.kordamp.gradle.plugin.kotlindoc
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.gradle.BuildAdapter
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
@@ -48,6 +50,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  */
 class KotlindocPlugin extends AbstractKordampPlugin {
     static final String KOTLINDOC_BASENAME = 'kotlindoc'
+    static final String AGGREGATE_KOTLINDOC_BASENAME = 'aggregateKotlindoc'
 
     private static final DokkaVersion DOKKA_VERSION = new DokkaVersion()
 
@@ -66,8 +69,10 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                 project.childProjects.values().each {
                     configureProject(it)
                 }
+                configureRootProject(project, true)
             } else {
                 configureProject(project)
+                configureRootProject(project, false)
             }
         } else {
             configureProject(project)
@@ -78,6 +83,72 @@ class KotlindocPlugin extends AbstractKordampPlugin {
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(KotlindocPlugin)) {
             project.pluginManager.apply(KotlindocPlugin)
+        }
+    }
+
+    @CompileStatic
+    private void configureRootProject(Project project, boolean checkIfApplied) {
+        if (checkIfApplied && hasBeenVisited(project)) {
+            return
+        }
+        setVisited(project, true)
+
+        BasePlugin.applyIfMissing(project)
+
+        if (isRootProject(project) && !project.childProjects.isEmpty()) {
+            createAggregateKotlindocTasks(project)
+
+            project.gradle.addBuildListener(new BuildAdapter() {
+                @Override
+                void projectsEvaluated(Gradle gradle) {
+                    doConfigureRootProject(project)
+                }
+            })
+        }
+    }
+
+    private void doConfigureRootProject(Project project) {
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        setEnabled(effectiveConfig.kotlindoc.enabled)
+
+        if (!enabled) {
+            return
+        }
+
+        if (!project.childProjects.isEmpty()) {
+            effectiveConfig.kotlindoc.outputFormats.each { String format ->
+                String formatName = format == 'html-as-java' ? 'htmljava' : format
+                String suffix = StringUtils.capitalize(formatName)
+                String taskName = AGGREGATE_KOTLINDOC_BASENAME + suffix
+
+                List<DokkaTask> kotlindocs = []
+                project.tasks.withType(DokkaTask) { DokkaTask kotlindoc -> if (kotlindoc.name != taskName && kotlindoc.enabled && kotlindoc.name.endsWith(suffix)) kotlindocs << kotlindoc }
+
+                project.childProjects.values().each { Project p ->
+                    if (p in effectiveConfig.kotlindoc.excludedProjects()) return
+                    p.tasks.withType(DokkaTask) { DokkaTask kotlindoc -> if (kotlindoc.enabled && kotlindoc.name.endsWith(suffix)) kotlindocs << kotlindoc }
+                }
+                kotlindocs = kotlindocs.unique()
+
+                DokkaTask aggregateKotlindocs = project.tasks.findByName(taskName)
+                Jar aggregateKotlindocsJar = project.tasks.findByName(taskName + 'Jar')
+                applyConfiguration(effectiveConfig.kotlindoc, aggregateKotlindocs, format, formatName)
+
+                if (kotlindocs) {
+                    aggregateKotlindocs.configure { task ->
+                        task.enabled true
+                        task.dependsOn kotlindocs
+                        task.source kotlindocs.source
+                        task.classpath = project.files(kotlindocs.classpath)
+
+                        effectiveConfig.kotlindoc.applyTo(task)
+                    }
+                    aggregateKotlindocsJar.configure {
+                        enabled true
+                        // classifier = effectiveConfig.kotlindoc.replaceJavadoc ? 'javadoc' : 'kotlindoc'
+                    }
+                }
+            }
         }
     }
 
@@ -227,6 +298,32 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                 delegate.reportUndocumented = packageOption.reportUndocumented
                 delegate.skipDeprecated = packageOption.skipDeprecated
                 delegate.suppress = packageOption.suppress
+            }
+        }
+    }
+
+    private void createAggregateKotlindocTasks(Project project) {
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+
+        effectiveConfig.kotlindoc.outputFormats.each { String format ->
+            String formatName = format == 'html-as-java' ? 'htmljava' : format
+            String suffix = StringUtils.capitalize(formatName)
+            String taskName = AGGREGATE_KOTLINDOC_BASENAME + suffix
+
+            DokkaTask aggregateKotlindocs = project.tasks.create(taskName, DokkaTask) {
+                enabled false
+                group JavaBasePlugin.DOCUMENTATION_GROUP
+                description "Generates aggregate Kotlindoc API documentation in $format format"
+                dokkaFatJar = "org.jetbrains.dokka:dokka-fatjar:${DOKKA_VERSION.version}"
+            }
+
+            project.tasks.create(taskName + 'Jar', Jar) {
+                enabled false
+                dependsOn aggregateKotlindocs
+                group JavaBasePlugin.DOCUMENTATION_GROUP
+                description "An archive of the aggregated $format formatted Kotlindoc API docs"
+                classifier 'kotlindoc' + '-' + formatName
+                from aggregateKotlindocs.outputDirectory
             }
         }
     }

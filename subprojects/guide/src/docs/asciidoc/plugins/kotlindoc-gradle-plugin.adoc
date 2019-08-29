@@ -192,3 +192,47 @@ classifier:: kotlindoc | javadoc
 destinationDir:: `${project.buildDir}/build/libs`
 from:: `kotlindoc.outputDirectory`
 
+[[_task_aggregate_kotlindoc]]
+=== AggregateKotlindoc
+
+Generates aggregate Kotlindoc API documentation. +
+Consumes settings from `config.<<_org_kordamp_gradle_kotlindoc_dsl,kotlindoc>>`. +
+This task is added to the root project.
+
+[horizontal]
+Name:: The actual name of this task depends on the configured formats. Possible names are:
+* aggregateKotlindocHtml
+* aggregateKotlindocJavadoc
+* aggregateKotlindocHtmljava
+* aggregateKotlindocMarkdown
+* aggregateKotlindocGfm
+* aggregateKotlindocJekyll
+
+Type:: `org.jetbrains.dokka.gradle.DokkaTask`
+
+.Properties
+[horizontal]
+outputDirectory:: `${project.buildDir}/docs/kotlindoc/${format}`
+
+[[_task_aggregate_kotlindoc_jar]]
+=== AggregateKotlindocJar
+
+An archive of the aggregateKotlindoc API docs. +
+This task is added to the root project.
+
+[horizontal]
+Name:: The actual name of this task depends on the configured formats. Possible names are:
+* aggregateKotlindocHtmlJar
+* aggregateKotlindocJavadocJar
+* aggregateKotlindocHtmljavaJar
+* aggregateKotlindocMarkdownJar
+* aggregateKotlindocGfmJar
+* aggregateKotlindocJekyllJar
+
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+destinationDir:: `${project.buildDir}/build/libs`
+from:: `aggregateKotlindoc.outputDirectory`
+
