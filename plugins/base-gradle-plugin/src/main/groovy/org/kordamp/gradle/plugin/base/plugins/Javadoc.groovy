@@ -183,6 +183,11 @@ class Javadoc extends AbstractFeature {
     @CompileStatic
     @Canonical
     static class AutoLinks {
+
+        private static final List<String> DEFAULT_CONFIGURATIONS = [
+                'api', 'compile', 'compileOnly', 'annotationProcessor', 'runtime'
+        ]
+
         boolean enabled = true
         Set<String> excludes = new LinkedHashSet<>()
         List<String> configurations = []
@@ -225,7 +230,7 @@ class Javadoc extends AbstractFeature {
             if (enabled) {
                 List<String> cs = new ArrayList<>(configurations)
                 if (!cs) {
-                    cs = ['compile', 'compileOnly', 'annotationProcessor', 'runtime']
+                    cs = DEFAULT_CONFIGURATIONS
                 }
                 map.excludes = excludes
                 map.configurations = cs
@@ -241,7 +246,7 @@ class Javadoc extends AbstractFeature {
 
             List<String> cs = new ArrayList<>(configurations)
             if (!cs) {
-                cs = ['compile', 'compileOnly', 'annotationProcessor', 'runtime']
+                cs = DEFAULT_CONFIGURATIONS
             }
 
             for (String cn : cs) {
