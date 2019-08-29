@@ -88,6 +88,7 @@ class Plugin extends AbstractFeature {
             map.id = id
             map.implementationClass = implementationClass
             map.tags = tags
+            map.'gradle-plugin'= "${id}:${project.group}:${project.name}".toString()
         }
 
         new LinkedHashMap<>('plugin': map)

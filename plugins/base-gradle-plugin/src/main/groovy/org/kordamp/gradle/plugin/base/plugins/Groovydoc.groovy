@@ -111,7 +111,7 @@ class Groovydoc extends AbstractFeature {
 
     void normalize() {
         if (!enabledSet && isRoot()) {
-            setEnabled(project.plugins.findPlugin('groovy') != null)
+            setEnabled(project.pluginManager.hasPlugin('groovy-base'))
         }
     }
 
