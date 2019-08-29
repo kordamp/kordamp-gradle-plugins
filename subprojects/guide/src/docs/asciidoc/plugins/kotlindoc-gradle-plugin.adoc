@@ -38,6 +38,7 @@ config {
         noStdlibLink
         impliedPlatforms
         replaceJavadoc
+        excludedProjects
         <<_kotlindoc_link_mappings,linkMappings>> {
             <<_kotlindoc_link_mapping,linkMapping>> {
                 dir
@@ -84,6 +85,7 @@ config {
 | noStdlibLink       | boolean      | no       | false                                | No default documentation link to kotlin-stdlib
 | impliedPlatforms   | List<String> | no       | ['JVM']                              | Valid values are 'Common', 'JVM', 'JS', 'Native'.
 | replaceJavadoc     | boolean      | no       | false                                | Disables `javadocJar` and applies the `javadoc` classifier.
+| excludedProjects   | Set<Project> |          | []                                   | Projects in the set are excluded from aggregation
 |===
 
 [[_kotlindoc_link_mappings]]

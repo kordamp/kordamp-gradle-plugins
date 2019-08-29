@@ -69,11 +69,10 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                 project.childProjects.values().each {
                     configureProject(it)
                 }
-                configureRootProject(project, true)
             } else {
                 configureProject(project)
-                configureRootProject(project, false)
             }
+            configureRootProject(project, project.childProjects.size() > 0)
         } else {
             configureProject(project)
         }
@@ -96,11 +95,10 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
-            createAggregateKotlindocTasks(project)
-
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
                 void projectsEvaluated(Gradle gradle) {
+                    createAggregateKotlindocTasks(project)
                     doConfigureRootProject(project)
                 }
             })
@@ -138,10 +136,9 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                     aggregateKotlindocs.configure { task ->
                         task.enabled true
                         task.dependsOn kotlindocs
-                        task.source kotlindocs.source
                         task.classpath = project.files(kotlindocs.classpath)
 
-                        effectiveConfig.kotlindoc.applyTo(task)
+                        applyConfiguration(effectiveConfig.kotlindoc, task, format, formatName)
                     }
                     aggregateKotlindocsJar.configure {
                         enabled true

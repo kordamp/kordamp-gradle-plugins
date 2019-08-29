@@ -131,6 +131,7 @@ class Scaladoc extends AbstractFeature {
         copy.@replaceJavadocSet = replaceJavadocSet
         copy.excludes.addAll(excludes)
         copy.includes.addAll(includes)
+        copy.excludedProjects.addAll(excludedProjects)
         options.copyInto(copy.options)
     }
 

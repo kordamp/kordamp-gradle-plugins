@@ -61,6 +61,8 @@ class Kotlindoc extends AbstractFeature {
 
     boolean replaceJavadoc = false
 
+    private final Set<Project> excludedProjects = new LinkedHashSet<>()
+
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<Task> kotlindocTasks = new LinkedHashSet<>()
     private final Set<Jar> kotlindocJarTasks = new LinkedHashSet<>()
@@ -85,6 +87,10 @@ class Kotlindoc extends AbstractFeature {
     @Override
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
+
+        if (enabled && isRoot()) {
+            map.excludedProjects = excludedProjects
+        }
 
         if (enabled) {
             List<Map<String, Map<String, String>>> lms = []
@@ -249,6 +255,7 @@ class Kotlindoc extends AbstractFeature {
         copy.impliedPlatforms.addAll(impliedPlatforms)
         copy.includes = new ArrayList<>(includes)
         copy.samples = new ArrayList<>(samples)
+        copy.excludedProjects.addAll(excludedProjects)
         linkMappings.copyInto(copy.linkMappings)
         externalDocumentationLinks.copyInto(copy.externalDocumentationLinks)
         packageOptions.copyInto(copy.packageOptions)
@@ -279,10 +286,16 @@ class Kotlindoc extends AbstractFeature {
         LinkMappingSet.merge(o1.linkMappings, o2.linkMappings)
         ExternalDocumentationLinkSet.merge(o1.externalDocumentationLinks, o2.externalDocumentationLinks)
         PackageOptionSet.merge(o1.packageOptions, o2.packageOptions)
+        o1.excludedProjects().addAll(o2.excludedProjects())
         o1.normalize()
     }
 
+    Set<Project> excludedProjects() {
+        excludedProjects
+    }
+
     void postMerge() {
+        outputDirectory = outputDirectory ?: project.file("${project.buildDir}/docs/kotlindoc")
         jdkVersion = jdkVersion ?: 6
     }
 
