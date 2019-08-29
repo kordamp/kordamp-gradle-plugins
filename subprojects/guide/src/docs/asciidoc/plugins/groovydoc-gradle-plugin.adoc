@@ -49,6 +49,11 @@ config {
 | replaceJavadoc | boolean      | no       | false         | Disables `javadocJar` and applies the `javadoc` classifier
 |===
 
+.Methods
+
+void exclude(String):: Adds a source exclusion rule (Ant pattern).
+void include(String):: Adds a source inclusion rule (Ant pattern).
+
 [[_groovydoc_options]]
 *options*
 

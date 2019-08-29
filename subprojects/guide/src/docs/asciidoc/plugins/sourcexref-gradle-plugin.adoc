@@ -53,6 +53,11 @@ config {
 | includes         | Set<String>  | no       | []                                             |
 |===
 
+.Methods
+
+void exclude(String):: Adds a source exclusion rule (Ant pattern).
+void include(String):: Adds a source inclusion rule (Ant pattern).
+
 [[_org_kordamp_gradle_sourcexref_tasks]]
 == Tasks
 

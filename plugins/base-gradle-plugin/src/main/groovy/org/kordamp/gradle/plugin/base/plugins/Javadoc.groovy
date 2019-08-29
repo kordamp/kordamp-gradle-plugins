@@ -18,18 +18,25 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.external.javadoc.MinimalJavadocOptions
+import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.impl.ExtStandardJavadocDocletOptions
 
+import static org.kordamp.gradle.PluginUtils.resolveConfig
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -43,7 +50,7 @@ class Javadoc extends AbstractFeature {
     Set<String> includes = new LinkedHashSet<>()
     String title
     final ExtStandardJavadocDocletOptions options = new ExtStandardJavadocDocletOptions()
-    final AutoLinks autoLinks = new AutoLinks()
+    final AutoLinks autoLinks
 
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<org.gradle.api.tasks.javadoc.Javadoc> javadocTasks = new LinkedHashSet<>()
@@ -51,11 +58,12 @@ class Javadoc extends AbstractFeature {
 
     Javadoc(ProjectConfigurationExtension config, Project project) {
         super(config, project)
+        options.setVersion(true)
+        autoLinks           = new AutoLinks(config)
         options.use         = true
         options.splitIndex  = true
         options.encoding    = 'UTF-8'
         options.author      = true
-        options.version     = true
         options.windowTitle = "${project.name} ${project.version}"
         options.docTitle    = "${project.name} ${project.version}"
         options.header      = "${project.name} ${project.version}"
@@ -178,21 +186,27 @@ class Javadoc extends AbstractFeature {
         javadoc.getIncludes().addAll(includes)
         javadoc.getExcludes().addAll(excludes)
         options.applyTo(javadoc.options)
+        autoLinks.applyTo(javadoc.options)
     }
 
     @CompileStatic
     @Canonical
     static class AutoLinks {
-
         private static final List<String> DEFAULT_CONFIGURATIONS = [
-                'api', 'compile', 'compileOnly', 'annotationProcessor', 'runtime'
+            'api', 'compile', 'compileOnly', 'annotationProcessor', 'runtime'
         ]
 
         boolean enabled = true
         Set<String> excludes = new LinkedHashSet<>()
         List<String> configurations = []
+        Map<String, String> offlineLinks = [:]
 
         private boolean enabledSet
+        private final ProjectConfigurationExtension config
+
+        AutoLinks(ProjectConfigurationExtension config) {
+            this.config = config
+        }
 
         protected void doSetEnabled(boolean enabled) {
             this.enabled = enabled
@@ -211,17 +225,23 @@ class Javadoc extends AbstractFeature {
             excludes << str
         }
 
+        void offlineLink(String url1, String url2) {
+            offlineLinks[url1] = url2
+        }
+
         void copyInto(AutoLinks copy) {
             copy.@enabled = this.enabled
             copy.@enabledSet = this.enabledSet
             copy.configurations.addAll(this.configurations)
             copy.excludes.addAll(this.excludes)
+            copy.offlineLinks.putAll(offlineLinks)
         }
 
         static void merge(AutoLinks o1, AutoLinks o2) {
             o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
-            CollectionUtils.merge(o1.excludes, o2?.excludes)
+            CollectionUtils.merge(o1.@excludes, o2?.excludes)
             CollectionUtils.merge(o1.@configurations, o2?.configurations)
+            CollectionUtils.merge(o1.@offlineLinks, o2?.offlineLinks)
         }
 
         Map<String, Object> toMap() {
@@ -234,6 +254,7 @@ class Javadoc extends AbstractFeature {
                 }
                 map.excludes = excludes
                 map.configurations = cs
+                map.offlineLinks = offlineLinks
             }
 
             map
@@ -252,10 +273,16 @@ class Javadoc extends AbstractFeature {
             for (String cn : cs) {
                 Configuration c = project.configurations.findByName(cn)
                 c?.dependencies?.each { Dependency dep ->
-                    String artifactName = "${dep.name}-${dep.version}".toString()
-                    if (!isExcluded(artifactName) && dep.name != 'unspecified' &&
-                        isNotBlank(dep.group) && isNotBlank(dep.version)) {
-                        links << calculateJavadocLink(dep.group, dep.name, dep.version)
+                    if (!config.release && dep instanceof ProjectDependency) {
+                        ProjectDependency pdep = (ProjectDependency)dep
+                        List<String> urls = extractJavadocUrls(config.project, pdep.dependencyProject)
+                        offlineLink(urls[0], urls[1])
+                    } else {
+                        String artifactName = "${dep.name}-${dep.version}".toString()
+                        if (!isExcluded(artifactName) && dep.name != 'unspecified' &&
+                            isNotBlank(dep.group) && isNotBlank(dep.version)) {
+                            links << calculateJavadocLink(dep.group, dep.name, dep.version)
+                        }
                     }
                 }
             }
@@ -275,6 +302,39 @@ class Javadoc extends AbstractFeature {
         private String calculateJavadocLink(String group, String name, String version) {
             String normalizedGroup = group.replace('.', '/')
             "https://oss.sonatype.org/service/local/repositories/releases/archive/$normalizedGroup/$name/$version/$name-$version-javadoc.jar/!/".toString()
+        }
+
+        void applyTo(MinimalJavadocOptions options) {
+            if (options instanceof StandardJavadocDocletOptions) {
+                StandardJavadocDocletOptions soptions = (StandardJavadocDocletOptions) options
+                offlineLinks.each { String url1, String url2 -> soptions.linksOffline(url1, url2) }
+            }
+        }
+
+        @CompileDynamic
+        private List<String> extractJavadocUrls(Project dependentProject, Project project) {
+            List<String> urls = []
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project) ?: resolveConfig(project)
+
+            Task dependency = null
+            if (config.javadoc.enabled) {
+                dependency = project.tasks.findByName('javadoc')
+                File destinationDir = dependency.destinationDir
+                urls << destinationDir.absolutePath
+                urls << destinationDir.absolutePath
+            }
+
+            if (config.groovydoc.enabled && config.groovydoc.replaceJavadoc) {
+                urls.clear()
+                dependency = project.tasks.findByName('groovydoc')
+                File destinationDir = dependency.destinationDir
+                urls << destinationDir.absolutePath
+                urls << destinationDir.absolutePath
+            }
+
+            dependentProject.tasks.findByName('javadoc').dependsOn(dependency)
+
+            urls
         }
     }
 }

@@ -48,6 +48,11 @@ config {
 | excludedProjects | Set<Project> |          | []                                   | Projects in the set are excluded from aggregation
 |===
 
+.Methods
+
+void exclude(String):: Adds a source exclusion rule (Ant pattern).
+void include(String):: Adds a source inclusion rule (Ant pattern).
+
 [[_scaladoc_options]]
 *options*
 
