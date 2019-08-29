@@ -273,15 +273,16 @@ class Javadoc extends AbstractFeature {
             for (String cn : cs) {
                 Configuration c = project.configurations.findByName(cn)
                 c?.dependencies?.each { Dependency dep ->
-                    if (!config.release && dep instanceof ProjectDependency) {
-                        ProjectDependency pdep = (ProjectDependency)dep
-                        List<String> urls = extractJavadocUrls(config.project, pdep.dependencyProject)
-                        offlineLink(urls[0], urls[1])
+                    if (dep instanceof ProjectDependency) {
+                        ProjectDependency pdep = (ProjectDependency) dep
+                        String packageListLoc = calculateLocalJavadocLink(config.project, pdep.dependencyProject)
+                        String extDocUrl = config.release ? calculateRemoteJavadocLink(pdep.group, pdep.name, pdep.version) : packageListLoc
+                        offlineLink(extDocUrl, packageListLoc)
                     } else {
                         String artifactName = "${dep.name}-${dep.version}".toString()
                         if (!isExcluded(artifactName) && dep.name != 'unspecified' &&
                             isNotBlank(dep.group) && isNotBlank(dep.version)) {
-                            links << calculateJavadocLink(dep.group, dep.name, dep.version)
+                            links << calculateRemoteJavadocLink(dep.group, dep.name, dep.version)
                         }
                     }
                 }
@@ -299,7 +300,7 @@ class Javadoc extends AbstractFeature {
             false
         }
 
-        private String calculateJavadocLink(String group, String name, String version) {
+        private String calculateRemoteJavadocLink(String group, String name, String version) {
             String normalizedGroup = group.replace('.', '/')
             "https://oss.sonatype.org/service/local/repositories/releases/archive/$normalizedGroup/$name/$version/$name-$version-javadoc.jar/!/".toString()
         }
@@ -312,29 +313,27 @@ class Javadoc extends AbstractFeature {
         }
 
         @CompileDynamic
-        private List<String> extractJavadocUrls(Project dependentProject, Project project) {
-            List<String> urls = []
+        private String calculateLocalJavadocLink(Project dependentProject, Project project) {
+            String url = ''
             ProjectConfigurationExtension config = resolveEffectiveConfig(project) ?: resolveConfig(project)
 
-            Task dependency = null
+            Task taskDependency = null
             if (config.javadoc.enabled) {
-                dependency = project.tasks.findByName('javadoc')
-                File destinationDir = dependency.destinationDir
-                urls << destinationDir.absolutePath
-                urls << destinationDir.absolutePath
+                taskDependency = project.tasks.findByName('javadoc')
+                File destinationDir = taskDependency.destinationDir
+                url = destinationDir.absolutePath
             }
 
             if (config.groovydoc.enabled && config.groovydoc.replaceJavadoc) {
                 urls.clear()
-                dependency = project.tasks.findByName('groovydoc')
-                File destinationDir = dependency.destinationDir
-                urls << destinationDir.absolutePath
-                urls << destinationDir.absolutePath
+                taskDependency = project.tasks.findByName('groovydoc')
+                File destinationDir = taskDependency.destinationDir
+                url = destinationDir.absolutePath
             }
 
-            dependentProject.tasks.findByName('javadoc').dependsOn(dependency)
+            dependentProject.tasks.findByName('javadoc').dependsOn(taskDependency)
 
-            urls
+            url
         }
     }
 }
