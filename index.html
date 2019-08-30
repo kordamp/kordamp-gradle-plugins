@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>A collection of opinionated Gradle plugins</h1>
 <div class="details">
 <span id="author" class="author">Andres Almiray</span><br>
-<span id="revnumber">version 0.25.0</span>
+<span id="revnumber">version 0.26.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -121,6 +121,7 @@ $(addBlockSwitches);
 <ul class="sectlevel3">
 <li><a href="#_org_kordamp_gradle_base_dsl">5.2.1. DSL</a></li>
 <li><a href="#_org_kordamp_gradle_base_tasks">5.2.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_base_rules">5.2.3. Rules</a></li>
 </ul>
 </li>
 <li><a href="#_org_kordamp_gradle_bintray">5.3. Bintray</a>
@@ -216,6 +217,7 @@ $(addBlockSwitches);
 <li><a href="#_org_kordamp_gradle_publishing_dsl">5.20.1. DSL</a></li>
 <li><a href="#_org_kordamp_gradle_publishing_example">5.20.2. Example</a></li>
 <li><a href="#_org_kordamp_gradle_publishing_tasks">5.20.3. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_publishing_rules">5.20.4. Rules</a></li>
 </ul>
 </li>
 <li><a href="#_org_kordamp_gradle_scaladoc">5.21. Scaladoc</a>
@@ -316,7 +318,7 @@ still be bent to a certain degree. The plugins found in this project provide suc
         jcenter()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:{plugin-id}:0.25.0'
+        classpath 'org.kordamp.gradle:{plugin-id}:0.26.0'
     }
 }
 apply plugin: '{plugin-id}'</code></pre>
@@ -333,7 +335,7 @@ apply plugin: '{plugin-id}'</code></pre>
         jcenter()
     }
     dependencies {
-        classpath("org.kordamp.gradle:{plugin-id}:0.25.0")
+        classpath("org.kordamp.gradle:{plugin-id}:0.26.0")
     }
 }
 apply(plugin = "{plugin-id}")</code></pre>
@@ -346,7 +348,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id '{plugin-id}' version '0.25.0'
+    id '{plugin-id}' version '0.26.0'
 }</code></pre>
 </div>
 </div>
@@ -354,7 +356,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("{plugin-id}") version "0.25.0"
+    id("{plugin-id}") version "0.26.0"
 }</code></pre>
 </div>
 </div>
@@ -511,7 +513,7 @@ listOf("docs", "subprojects").forEach { dirName -&gt;
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.25.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.26.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -531,7 +533,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.25.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.26.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -550,8 +552,8 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.25.0'            <i class="conum" data-value="1"></i><b>(1)</b>
-    id 'org.kordamp.gradle.bintray' version '0.25.0'            <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.project' version '0.26.0'            <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.bintray' version '0.26.0'            <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 config {
@@ -631,8 +633,8 @@ allprojects {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.25.0"          <i class="conum" data-value="1"></i><b>(1)</b>
-    id("org.kordamp.gradle.bintray") version "0.25.0"          <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.project") version "0.26.0"          <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.bintray") version "0.26.0"          <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 val bintrayUsername: String by project
@@ -858,7 +860,7 @@ publications completely:</p>
 <div class="title">build.gradle (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.25.0'
+    id 'org.kordamp.gradle.project' version '0.26.0'
 }
 
 config {
@@ -877,7 +879,7 @@ allprojects {
 <div class="title">build.gradle.kts (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.25.0"
+    id("org.kordamp.gradle.project") version "0.26.0"
 }
 
 config {
@@ -2076,7 +2078,7 @@ Type
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
     id 'java'
-    id 'org.kordamp.gradle.project' version '0.25.0'
+    id 'org.kordamp.gradle.project' version '0.26.0'
 }
 
 config {
@@ -2331,7 +2333,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.25.0'
+    id 'org.kordamp.gradle.project' version '0.26.0'
 }
 
 config {
@@ -2566,7 +2568,7 @@ includeBuild '../build2'</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.25.0'
+    id 'org.kordamp.gradle.project' version '0.26.0'
 }
 
 config {
@@ -2664,7 +2666,7 @@ absolute
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.25.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.26.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'</code></pre>
@@ -2674,7 +2676,7 @@ apply plugin: 'org.kordamp.gradle.settings'</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.25.0'
+    id 'org.kordamp.gradle.project' version '0.26.0'
 }
 
 config {
@@ -2768,7 +2770,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.25.0'
+    id 'org.kordamp.gradle.project' version '0.26.0'
 }
 
 config {
@@ -3002,7 +3004,7 @@ local_property = local</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.25.0'
+    id 'org.kordamp.gradle.project' version '0.26.0'
 }
 
 ext.build_property = 'build'
@@ -3081,7 +3083,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.25.0'
+    id 'org.kordamp.gradle.project' version '0.26.0'
 }
 
 config {
@@ -3167,7 +3169,7 @@ Type
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
     id 'java'
-    id 'org.kordamp.gradle.project' version '0.25.0'
+    id 'org.kordamp.gradle.project' version '0.26.0'
 }
 
 config {
@@ -3318,6 +3320,147 @@ tasks
 <div class="paragraph">
 <p>You may specify either of the two, be advised that <code>tasks</code> has precedence over <code>task</code>. All tasks will be displayed
 if neither of these options is specified.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_org_kordamp_gradle_base_rules"><a class="anchor" href="#_org_kordamp_gradle_base_rules"></a>5.2.3. Rules</h4>
+<div class="sect4">
+<h5 id="_compilegroovy"><a class="anchor" href="#_compilegroovy"></a>CompileGroovy</h5>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Pattern
+</td>
+<td class="hdlist2">
+<p>compile&lt;SourceSetName&gt;GroovySettings</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.base.tasks.GroovyCompilerSettingsTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_compilejava"><a class="anchor" href="#_compilejava"></a>CompileJava</h5>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Pattern
+</td>
+<td class="hdlist2">
+<p>compile&lt;SourceSetName&gt;JavaSettings</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.base.tasks.JavaCompilerSettingsTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_configurations"><a class="anchor" href="#_configurations"></a>Configurations</h5>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Pattern
+</td>
+<td class="hdlist2">
+<p>&lt;ConfigurationName&gt;ConfigurationSettings</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_javaexec"><a class="anchor" href="#_javaexec"></a>JavaExec</h5>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Pattern
+</td>
+<td class="hdlist2">
+<p>&lt;TaskName&gt;Settings</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.base.tasks.JavaExecSettingsTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_sourcesetnames"><a class="anchor" href="#_sourcesetnames"></a>SourceSetNames</h5>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Pattern
+</td>
+<td class="hdlist2">
+<p>&lt;SourceSetName&gt;SourceSetSettings</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.base.tasks.SourceSetSettingsTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_test"><a class="anchor" href="#_test"></a>Test</h5>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Pattern
+</td>
+<td class="hdlist2">
+<p>&lt;SourceSetName&gt;TestSettings</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.base.tasks.TestSettingsTask</code></p>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -4772,6 +4915,19 @@ applies
 </tr>
 </tbody>
 </table>
+<div class="dlist">
+<div class="title">Methods</div>
+<dl>
+<dt class="hdlist1">void exclude(String)</dt>
+<dd>
+<p>Adds a source exclusion rule (Ant pattern).</p>
+</dd>
+<dt class="hdlist1">void include(String)</dt>
+<dd>
+<p>Adds a source inclusion rule (Ant pattern).</p>
+</dd>
+</dl>
+</div>
 <div id="_groovydoc_options" class="paragraph">
 <p><strong>options</strong></p>
 </div>
@@ -5924,6 +6080,7 @@ applies
             enabled
             configurations
             excludes
+            linksOffline
         }
     }
 }</code></pre>
@@ -5984,6 +6141,19 @@ applies
 </tr>
 </tbody>
 </table>
+<div class="dlist">
+<div class="title">Methods</div>
+<dl>
+<dt class="hdlist1">void exclude(String)</dt>
+<dd>
+<p>Adds a source exclusion rule (Ant pattern).</p>
+</dd>
+<dt class="hdlist1">void include(String)</dt>
+<dd>
+<p>Adds a source inclusion rule (Ant pattern).</p>
+</dd>
+</dl>
+</div>
 <div class="paragraph">
 <p>This block is optional.</p>
 </div>
@@ -6031,6 +6201,24 @@ applies
 </tr>
 </tbody>
 </table>
+<div class="dlist">
+<div class="title">Methods</div>
+<dl>
+<dt class="hdlist1">void exclude(String)</dt>
+<dd>
+<p>Adds a link exclusion rule (Regex pattern).</p>
+</dd>
+<dt class="hdlist1">void offlineLink(String, String)</dt>
+<dd>
+<p>Adds an offline link definition. The first argument is for the string to be embedded in the
+<code>&lt;a href&gt;</code> links, and the second tells the javadoc tool where to find either the <code>package-list</code> or <code>element-list</code> file.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Offline links are automatically calculated for project dependencies using absolute paths. These paths are skipped when the
+<code><a href="#_org_kordamp_gradle_base_dsl">release</a></code> flag is set to <code>true</code>.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_org_kordamp_gradle_javadoc_tasks"><a class="anchor" href="#_org_kordamp_gradle_javadoc_tasks"></a>5.14.2. Tasks</h4>
@@ -6227,6 +6415,7 @@ This plugin relies on the <code>org.jetbrains.dokka</code> plugin but does not a
         noStdlibLink
         impliedPlatforms
         replaceJavadoc
+        excludedProjects
         <a href="#_kotlindoc_link_mappings">linkMappings</a> {
             <a href="#_kotlindoc_link_mapping">linkMapping</a> {
                 dir
@@ -6389,6 +6578,13 @@ This plugin relies on the <code>org.jetbrains.dokka</code> plugin but does not a
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Disables <code>javadocJar</code> and applies the <code>javadoc</code> classifier.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">excludedProjects</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set&lt;Project&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Projects in the set are excluded from aggregation</p></td>
 </tr>
 </tbody>
 </table>
@@ -6706,6 +6902,139 @@ from
 </td>
 <td class="hdlist2">
 <p><code>kotlindoc.outputDirectory</code></p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_task_aggregate_kotlindoc"><a class="anchor" href="#_task_aggregate_kotlindoc"></a>AggregateKotlindoc</h5>
+<div class="paragraph">
+<p>Generates aggregate Kotlindoc API documentation.<br>
+Consumes settings from <code>config.<a href="#_org_kordamp_gradle_kotlindoc_dsl">kotlindoc</a></code>.<br>
+This task is added to the root project.</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>The actual name of this task depends on the configured formats. Possible names are:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>aggregateKotlindocHtml</p>
+</li>
+<li>
+<p>aggregateKotlindocJavadoc</p>
+</li>
+<li>
+<p>aggregateKotlindocHtmljava</p>
+</li>
+<li>
+<p>aggregateKotlindocMarkdown</p>
+</li>
+<li>
+<p>aggregateKotlindocGfm</p>
+</li>
+<li>
+<p>aggregateKotlindocJekyll</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.jetbrains.dokka.gradle.DokkaTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="hdlist">
+<div class="title">Properties</div>
+<table>
+<tr>
+<td class="hdlist1">
+outputDirectory
+</td>
+<td class="hdlist2">
+<p><code>${project.buildDir}/docs/kotlindoc/${format}</code></p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_task_aggregate_kotlindoc_jar"><a class="anchor" href="#_task_aggregate_kotlindoc_jar"></a>AggregateKotlindocJar</h5>
+<div class="paragraph">
+<p>An archive of the aggregateKotlindoc API docs.<br>
+This task is added to the root project.</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>The actual name of this task depends on the configured formats. Possible names are:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>aggregateKotlindocHtmlJar</p>
+</li>
+<li>
+<p>aggregateKotlindocJavadocJar</p>
+</li>
+<li>
+<p>aggregateKotlindocHtmljavaJar</p>
+</li>
+<li>
+<p>aggregateKotlindocMarkdownJar</p>
+</li>
+<li>
+<p>aggregateKotlindocGfmJar</p>
+</li>
+<li>
+<p>aggregateKotlindocJekyllJar</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.gradle.api.tasks.bundling.Jar</code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="hdlist">
+<div class="title">Properties</div>
+<table>
+<tr>
+<td class="hdlist1">
+destinationDir
+</td>
+<td class="hdlist2">
+<p><code>${project.buildDir}/build/libs</code></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+from
+</td>
+<td class="hdlist2">
+<p><code>aggregateKotlindoc.outputDirectory</code></p>
 </td>
 </tr>
 </table>
@@ -7251,7 +7580,7 @@ the project.</p>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
     id 'groovy'
-    id 'org.kordamp.gradle.minpom' version '0.25.0'
+    id 'org.kordamp.gradle.minpom' version '0.26.0'
 }
 
 group   = 'com.acme'
@@ -7267,7 +7596,7 @@ dependencies {
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">plugins {
     `groovy`
-    id("org.kordamp.gradle.minpom") version "0.25.0"
+    id("org.kordamp.gradle.minpom") version "0.26.0"
 }
 
 group   = "com.acme"
@@ -7306,7 +7635,7 @@ dependencies {
 <div class="listingblock">
 <div class="title">sample/build/pom/maven/pom.properties</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java"># Generated by Gradle 5.5
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java"># Generated by Gradle 5.6.1
 version=1.0.0
 groupId=com.acme
 artifactId=sample</code></pre>
@@ -7452,6 +7781,7 @@ applies
 <p><code><a href="#_org_kordamp_gradle_base">org.kordamp.gradle.base</a></code>,<br>
 <code><a href="#_org_kordamp_gradle_apidoc">org.kordamp.gradle.apidoc</a></code>,<br>
 <code><a href="#_org_kordamp_gradle_buildinfo">org.kordamp.gradle.build-info</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_jacoco">org.kordamp.gradle.jacoco</a></code>,<br>
 <code><a href="#_org_kordamp_gradle_jar">org.kordamp.gradle.jar</a></code>,<br>
 <code><a href="#_org_kordamp_gradle_javadoc">org.kordamp.gradle.javadoc</a></code>,<br>
 <code><a href="#_org_kordamp_gradle_licensing">org.kordamp.gradle.licensing</a></code>,<br>
@@ -7961,6 +8291,32 @@ if neither of these options is specified.</p>
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_org_kordamp_gradle_publishing_rules"><a class="anchor" href="#_org_kordamp_gradle_publishing_rules"></a>5.20.4. Rules</h4>
+<div class="sect4">
+<h5 id="_publications"><a class="anchor" href="#_publications"></a>Publications</h5>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Pattern
+</td>
+<td class="hdlist2">
+<p>&lt;PublicationName&gt;PublicationSettings</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.publishing.PublicationSettingsTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_org_kordamp_gradle_scaladoc"><a class="anchor" href="#_org_kordamp_gradle_scaladoc"></a>5.21. Scaladoc</h3>
@@ -8083,6 +8439,19 @@ applies
 </tr>
 </tbody>
 </table>
+<div class="dlist">
+<div class="title">Methods</div>
+<dl>
+<dt class="hdlist1">void exclude(String)</dt>
+<dd>
+<p>Adds a source exclusion rule (Ant pattern).</p>
+</dd>
+<dt class="hdlist1">void include(String)</dt>
+<dd>
+<p>Adds a source inclusion rule (Ant pattern).</p>
+</dd>
+</dl>
+</div>
 <div id="_scaladoc_options" class="paragraph">
 <p><strong>options</strong></p>
 </div>
@@ -8568,7 +8937,7 @@ is <code>two-level</code> however is recommended to define it if the search spac
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.25.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.26.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -8586,7 +8955,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.25.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.26.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -8625,7 +8994,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.25.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.26.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -8648,7 +9017,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.25.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.26.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -8688,7 +9057,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.25.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.26.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -8706,7 +9075,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.25.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.26.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -9648,6 +10017,19 @@ applies
 </tr>
 </tbody>
 </table>
+<div class="dlist">
+<div class="title">Methods</div>
+<dl>
+<dt class="hdlist1">void exclude(String)</dt>
+<dd>
+<p>Adds a source exclusion rule (Ant pattern).</p>
+</dd>
+<dt class="hdlist1">void include(String)</dt>
+<dd>
+<p>Adds a source inclusion rule (Ant pattern).</p>
+</dd>
+</dl>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_org_kordamp_gradle_sourcexref_tasks"><a class="anchor" href="#_org_kordamp_gradle_sourcexref_tasks"></a>5.25.2. Tasks</h4>
@@ -10407,8 +10789,8 @@ Type
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.25.0<br>
-Last updated 2019-07-30 16:26:43 +0200
+Version 0.26.0<br>
+Last updated 2019-07-30 17:02:41 +0200
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
