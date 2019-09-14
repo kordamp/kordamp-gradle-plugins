@@ -193,7 +193,8 @@ class ApidocPlugin extends AbstractKordampPlugin {
             description 'Aggregates Javadoc API docs for all projects.'
             destinationDir project.file("${project.buildDir}/docs/javadoc")
             if (JavaVersion.current().isJava8Compatible()) {
-                options.addStringOption('Xdoclint:none', '-quiet')
+                options.addBooleanOption('Xdoclint:none', true)
+                options.quiet()
             }
         }
 
