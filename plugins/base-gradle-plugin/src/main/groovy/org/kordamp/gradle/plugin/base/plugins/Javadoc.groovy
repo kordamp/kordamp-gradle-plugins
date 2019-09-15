@@ -320,16 +320,14 @@ class Javadoc extends AbstractFeature {
             Task taskDependency = null
             if (config.javadoc.enabled) {
                 taskDependency = project.tasks.findByName('javadoc')
-                File destinationDir = taskDependency.destinationDir
-                url = destinationDir.absolutePath
             }
 
             if (config.groovydoc.enabled && config.groovydoc.replaceJavadoc) {
-                urls.clear()
                 taskDependency = project.tasks.findByName('groovydoc')
-                File destinationDir = taskDependency.destinationDir
-                url = destinationDir.absolutePath
             }
+
+            File destinationDir = taskDependency.destinationDir
+            url = destinationDir.absolutePath
 
             dependentProject.tasks.findByName('javadoc').dependsOn(taskDependency)
 
