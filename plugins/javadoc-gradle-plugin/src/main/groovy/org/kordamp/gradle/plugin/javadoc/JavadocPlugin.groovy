@@ -114,7 +114,8 @@ class JavadocPlugin extends AbstractKordampPlugin {
                         task.options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
 
                         if (JavaVersion.current().isJava8Compatible()) {
-                            task.options.addStringOption('Xdoclint:none', '-quiet')
+                            task.options.addBooleanOption('Xdoclint:none', true)
+                            task.options.quiet()
                         }
                     }
                 }
