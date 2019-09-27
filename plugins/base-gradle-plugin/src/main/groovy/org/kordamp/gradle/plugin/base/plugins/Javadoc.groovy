@@ -314,7 +314,6 @@ class Javadoc extends AbstractFeature {
 
         @CompileDynamic
         private String calculateLocalJavadocLink(Project dependentProject, Project project) {
-            String url = ''
             ProjectConfigurationExtension config = resolveEffectiveConfig(project) ?: resolveConfig(project)
 
             Task taskDependency = null
@@ -326,12 +325,8 @@ class Javadoc extends AbstractFeature {
                 taskDependency = project.tasks.findByName('groovydoc')
             }
 
-            File destinationDir = taskDependency.destinationDir
-            url = destinationDir.absolutePath
-
             dependentProject.tasks.findByName('javadoc').dependsOn(taskDependency)
-
-            url
+            taskDependency.destinationDir.absolutePath.replace('\\', '/')
         }
     }
 }
