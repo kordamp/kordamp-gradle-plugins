@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 dependencies {
-    compile 'com.github.ben-manes:gradle-versions-plugin:0.22.0'
+    compile 'com.github.ben-manes:gradle-versions-plugin:0.25.0'
     compile project(':apidoc-gradle-plugin')
     compile project(':base-gradle-plugin')
     compile project(':bom-gradle-plugin')
