@@ -152,7 +152,7 @@ class Information {
             (extension.publishing.enabled || extension.bintray.enabled)) {
             errors << "[${project.name}] Project description is blank".toString()
         }
-        if (isBlank(vendor) &&
+        if (isBlank(getVendor()) &&
             (extension.publishing.enabled || extension.bintray.enabled)) {
             errors << "[${project.name}] Project vendor is blank".toString()
         }
