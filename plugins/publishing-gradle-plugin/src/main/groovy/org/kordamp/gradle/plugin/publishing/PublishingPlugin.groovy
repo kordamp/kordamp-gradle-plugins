@@ -93,10 +93,8 @@ class PublishingPlugin extends AbstractKordampPlugin {
             if (!project.pluginManager.hasPlugin('maven-publish')) {
                 project.pluginManager.apply(MavenPublishPlugin)
             }
-        }
 
-        project.afterEvaluate {
-            project.pluginManager.withPlugin('java-base') {
+            project.afterEvaluate {
                 updatePublications(project)
             }
         }

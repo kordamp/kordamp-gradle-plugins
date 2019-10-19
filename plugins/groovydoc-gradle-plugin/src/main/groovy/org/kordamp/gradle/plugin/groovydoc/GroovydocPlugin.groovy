@@ -17,11 +17,13 @@
  */
 package org.kordamp.gradle.plugin.groovydoc
 
+import groovy.transform.CompileDynamic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -89,24 +91,22 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                         return
                     }
 
-                    project.pluginManager.withPlugin('groovy-base') {
-                        Javadoc javadoc = project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)
-                        if (!javadoc) return
+                    Javadoc javadoc = project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)
+                    if (!javadoc) return
 
-                        Task groovydoc = createGroovydocTaskIfNeeded(project, javadoc)
-                        if (!groovydoc) return
-                        effectiveConfig.groovydoc.groovydocTasks() << groovydoc
+                    Task groovydoc = createGroovydocTaskIfNeeded(project, javadoc)
+                    if (!groovydoc) return
+                    effectiveConfig.groovydoc.groovydocTasks() << groovydoc
 
-                        Task groovydocJar = createGroovydocJarTask(project, groovydoc)
-                        project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(groovydocJar)
-                        effectiveConfig.groovydoc.groovydocJarTasks() << groovydocJar
+                    TaskProvider<Jar> groovydocJar = createGroovydocJarTask(project, groovydoc)
+                    project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(groovydocJar)
+                    effectiveConfig.groovydoc.groovydocJarTasks() << groovydocJar
 
-                        effectiveConfig.groovydoc.projects() << project
+                    effectiveConfig.groovydoc.projects() << project
 
-                        project.tasks.withType(Groovydoc) { task ->
-                            effectiveConfig.groovydoc.applyTo(task)
-                            task.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
-                        }
+                    project.tasks.withType(Groovydoc) { task ->
+                        effectiveConfig.groovydoc.applyTo(task)
+                        task.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
                     }
                 }
             }
@@ -148,28 +148,32 @@ class GroovydocPlugin extends AbstractKordampPlugin {
         groovydocTask
     }
 
-    private Task createGroovydocJarTask(Project project, Task groovydoc) {
-        String taskName = GROOVYDOC_JAR_TASK_NAME
-
-        Task groovydocJarTask = project.tasks.findByName(taskName)
-
-        if (!groovydocJarTask) {
-            groovydocJarTask = project.tasks.create(taskName, Jar) {
-                dependsOn groovydoc
-                group JavaBasePlugin.DOCUMENTATION_GROUP
-                description 'An archive of the Groovydoc API docs'
-                classifier 'groovydoc'
-                from groovydoc.destinationDir
-            }
-        }
+    private TaskProvider<Task> createGroovydocJarTask(Project project, Task groovydoc) {
+        TaskProvider<Jar> groovydocJar = project.tasks.register(GROOVYDOC_JAR_TASK_NAME, Jar,
+            new Action<Jar>() {
+                @Override
+                @CompileDynamic
+                void execute(Jar t) {
+                    t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                    t.description = 'An archive of the Groovydoc API docs'
+                    t.archiveClassifier.set('groovydoc')
+                    t.dependsOn groovydoc
+                    t.from groovydoc.destinationDir
+                }
+            })
 
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (effectiveConfig.groovydoc.replaceJavadoc) {
-            groovydocJarTask.classifier = 'javadoc'
+            groovydocJar.configure(new Action<Jar>() {
+                @Override
+                void execute(Jar t) {
+                    t.archiveClassifier.set('javadoc')
+                }
+            })
             project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
             project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
         }
 
-        groovydocJarTask
+        groovydocJar
     }
 }

@@ -21,6 +21,7 @@ import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.scala.ScalaDoc
 import org.gradle.util.ConfigureUtil
@@ -45,7 +46,7 @@ class Scaladoc extends AbstractFeature {
 
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<ScalaDoc> scaladocTasks = new LinkedHashSet<>()
-    private final Set<Jar> scaladocJarTasks = new LinkedHashSet<>()
+    private final Set<TaskProvider<Jar>> scaladocJarTasks = new LinkedHashSet<>()
 
     private boolean replaceJavadocSet
 
@@ -160,7 +161,7 @@ class Scaladoc extends AbstractFeature {
         scaladocTasks
     }
 
-    Set<Jar> scaladocJarTasks() {
+    Set<TaskProvider<Jar>> scaladocJarTasks() {
         scaladocJarTasks
     }
 

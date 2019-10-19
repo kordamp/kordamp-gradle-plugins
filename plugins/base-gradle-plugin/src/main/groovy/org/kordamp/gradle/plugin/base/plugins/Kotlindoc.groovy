@@ -23,6 +23,7 @@ import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
@@ -65,7 +66,7 @@ class Kotlindoc extends AbstractFeature {
 
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<Task> kotlindocTasks = new LinkedHashSet<>()
-    private final Set<Jar> kotlindocJarTasks = new LinkedHashSet<>()
+    private final Set<TaskProvider<Jar>> kotlindocJarTasks = new LinkedHashSet<>()
 
     private boolean replaceJavadocSet
     private boolean includeNonPublicSet
@@ -327,7 +328,7 @@ class Kotlindoc extends AbstractFeature {
         kotlindocTasks
     }
 
-    Set<Jar> kotlindocJarTasks() {
+    Set<TaskProvider<Jar>> kotlindocJarTasks() {
         kotlindocJarTasks
     }
 

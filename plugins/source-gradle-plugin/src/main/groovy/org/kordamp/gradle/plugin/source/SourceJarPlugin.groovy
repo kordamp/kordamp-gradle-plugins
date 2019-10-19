@@ -73,15 +73,15 @@ class SourceJarPlugin extends AbstractKordampPlugin {
 
         BasePlugin.applyIfMissing(project)
 
-        project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-            setEnabled(effectiveConfig.source.enabled)
+        project.pluginManager.withPlugin('java-base') {
+            project.afterEvaluate {
+                ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+                setEnabled(effectiveConfig.source.enabled)
 
-            if (!enabled) {
-                return
-            }
+                if (!enabled) {
+                    return
+                }
 
-            project.pluginManager.withPlugin('java-base') {
                 TaskProvider<Jar> sourceTask = createSourceJarTask(project)
                 if (sourceTask) {
                     effectiveConfig.source.sourceTasks() << sourceTask
@@ -97,7 +97,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                     void execute(Jar t) {
                         t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
                         t.description = 'An archive of all the source code.'
-                        t.classifier = 'sources'
+                        t.archiveClassifier.set('sources')
                         t.enabled = false
                     }
                 })
@@ -121,7 +121,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                     void execute(Jar t) {
                         t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
                         t.description = 'An archive of the source code.'
-                        t.classifier = 'sources'
+                        t.archiveClassifier.set('sources')
                         t.dependsOn classesTask
                         t.from PluginUtils.resolveSourceSets(project).main.allSource
                     }

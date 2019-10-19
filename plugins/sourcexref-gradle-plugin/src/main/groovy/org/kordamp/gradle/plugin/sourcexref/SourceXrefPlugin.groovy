@@ -73,11 +73,11 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
 
         BasePlugin.applyIfMissing(project)
 
-        project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        project.pluginManager.withPlugin('java-base') {
+            project.afterEvaluate {
+                ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
-            if (effectiveConfig.sourceXref.enabled) {
-                project.pluginManager.withPlugin('java-base') {
+                if (effectiveConfig.sourceXref.enabled) {
                     TaskProvider<? extends Task> xrefTask = configureSourceXrefTask(project)
                     if (xrefTask?.get()?.enabled) {
                         effectiveConfig.sourceXref.projects() << project
@@ -86,8 +86,8 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
                         effectiveConfig.sourceXref.enabled = false
                     }
                 }
+                setEnabled(effectiveConfig.sourceXref.enabled)
             }
-            setEnabled(effectiveConfig.sourceXref.enabled)
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {

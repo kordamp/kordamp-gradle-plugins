@@ -78,8 +78,8 @@ class JarPlugin extends AbstractKordampPlugin {
         BuildInfoPlugin.applyIfMissing(project)
         MinPomPlugin.applyIfMissing(project)
 
-        project.afterEvaluate {
-            project.pluginManager.withPlugin('java-base') {
+        project.pluginManager.withPlugin('java-base') {
+            project.afterEvaluate {
                 createJarTaskIfNeeded(project)
             }
         }

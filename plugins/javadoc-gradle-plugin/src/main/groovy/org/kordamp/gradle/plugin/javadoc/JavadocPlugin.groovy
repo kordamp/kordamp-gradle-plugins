@@ -25,6 +25,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
@@ -97,17 +98,15 @@ class JavadocPlugin extends AbstractKordampPlugin {
                         return
                     }
 
-                    project.pluginManager.withPlugin('java-base') {
-                        Task javadoc = createJavadocTaskIfNeeded(project)
-                        if (!javadoc) return
-                        effectiveConfig.javadoc.javadocTasks() << javadoc
+                    Task javadoc = createJavadocTaskIfNeeded(project)
+                    if (!javadoc) return
+                    effectiveConfig.javadoc.javadocTasks() << javadoc
 
-                        Task javadocJar = createJavadocJarTask(project, javadoc)
-                        project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(javadocJar)
-                        effectiveConfig.javadoc.javadocJarTasks() << javadocJar
+                    TaskProvider<Jar> javadocJar = createJavadocJarTask(project, javadoc)
+                    project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(javadocJar)
+                    effectiveConfig.javadoc.javadocJarTasks() << javadocJar
 
-                        effectiveConfig.javadoc.projects() << project
-                    }
+                    effectiveConfig.javadoc.projects() << project
 
                     project.tasks.withType(Javadoc) { Javadoc task ->
                         effectiveConfig.javadoc.applyTo(task)
@@ -152,21 +151,18 @@ class JavadocPlugin extends AbstractKordampPlugin {
     }
 
     @CompileDynamic
-    private Task createJavadocJarTask(Project project, Task javadoc) {
-        String taskName = JAVADOC_JAR_TASK_NAME
-
-        Task javadocJarTask = project.tasks.findByName(taskName)
-
-        if (!javadocJarTask) {
-            javadocJarTask = project.tasks.create(taskName, Jar) {
-                dependsOn javadoc
-                group JavaBasePlugin.DOCUMENTATION_GROUP
-                description 'An archive of the Javadoc API docs'
-                classifier 'javadoc'
-                from javadoc.destinationDir
-            }
-        }
-
-        javadocJarTask
+    private TaskProvider<Jar> createJavadocJarTask(Project project, Task javadoc) {
+        project.tasks.register(JAVADOC_JAR_TASK_NAME, Jar,
+            new Action<Jar>() {
+                @Override
+                @CompileDynamic
+                void execute(Jar t) {
+                    t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                    t.description = 'An archive of the Javadoc API docs'
+                    t.archiveClassifier.set('javadoc')
+                    t.dependsOn javadoc
+                    t.from javadoc.destinationDir
+                }
+            })
     }
 }

@@ -27,6 +27,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.external.javadoc.MinimalJavadocOptions
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
@@ -54,7 +55,7 @@ class Javadoc extends AbstractFeature {
 
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<org.gradle.api.tasks.javadoc.Javadoc> javadocTasks = new LinkedHashSet<>()
-    private final Set<Jar> javadocJarTasks = new LinkedHashSet<>()
+    private final Set<TaskProvider<Jar>> javadocJarTasks = new LinkedHashSet<>()
 
     Javadoc(ProjectConfigurationExtension config, Project project) {
         super(config, project)
@@ -169,7 +170,7 @@ class Javadoc extends AbstractFeature {
         javadocTasks
     }
 
-    Set<Jar> javadocJarTasks() {
+    Set<TaskProvider<Jar>> javadocJarTasks() {
         javadocJarTasks
     }
 

@@ -22,6 +22,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
@@ -42,7 +43,7 @@ class Groovydoc extends AbstractFeature {
 
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<org.gradle.api.tasks.javadoc.Groovydoc> groovydocTasks = new LinkedHashSet<>()
-    private final Set<Jar> groovydocJarTasks = new LinkedHashSet<>()
+    private final Set<TaskProvider<Jar>> groovydocJarTasks = new LinkedHashSet<>()
 
     private boolean replaceJavadocSet
 
@@ -168,7 +169,7 @@ class Groovydoc extends AbstractFeature {
         groovydocTasks
     }
 
-    Set<Jar> groovydocJarTasks() {
+    Set<TaskProvider<Jar>> groovydocJarTasks() {
         groovydocJarTasks
     }
 

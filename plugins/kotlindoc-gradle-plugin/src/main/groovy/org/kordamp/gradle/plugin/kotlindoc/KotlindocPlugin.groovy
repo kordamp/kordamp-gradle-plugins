@@ -20,12 +20,14 @@ package org.kordamp.gradle.plugin.kotlindoc
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.jetbrains.dokka.gradle.DokkaPlugin
@@ -177,7 +179,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                     if (!kotlindoc) return
                     effectiveConfig.kotlindoc.kotlindocTasks() << kotlindoc
 
-                    Jar kotlindocJar = createKotlindocJarTask(project, kotlindoc, format)
+                    TaskProvider<Jar> kotlindocJar = createKotlindocJarTask(project, kotlindoc, format)
                     project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(kotlindocJar)
                     effectiveConfig.kotlindoc.kotlindocJarTasks() << kotlindocJar
 
@@ -211,7 +213,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
     }
 
     @CompileDynamic
-    private Jar createKotlindocJarTask(Project project, Task kotlindoc, String format) {
+    private TaskProvider<Jar> createKotlindocJarTask(Project project, Task kotlindoc, String format) {
         String formatName = format == 'html-as-java' ? 'htmljava' : format
         String resolvedClassifier = 'kotlindoc'
         String taskName = KOTLINDOC_BASENAME + StringUtils.capitalize(formatName) + 'Jar'
@@ -221,20 +223,26 @@ class KotlindocPlugin extends AbstractKordampPlugin {
             resolvedClassifier += '-' + formatName
         }
 
-        Task kotlindocJarTask = project.tasks.findByName(taskName)
 
-        if (!kotlindocJarTask) {
-            kotlindocJarTask = project.tasks.create(taskName, Jar) {
-                dependsOn kotlindoc
-                group JavaBasePlugin.DOCUMENTATION_GROUP
-                description "An archive of the $format formatted Kotlindoc API docs"
-                classifier resolvedClassifier
-                from kotlindoc.outputDirectory
-            }
-        }
+        TaskProvider<Jar> kotlindocJarTask = project.tasks.register(taskName, Jar,
+            new Action<Jar>() {
+                @Override
+                void execute(Jar t) {
+                    t.dependsOn kotlindoc
+                    t.group JavaBasePlugin.DOCUMENTATION_GROUP
+                    t.description "An archive of the $format formatted Kotlindoc API docs"
+                    t.archiveClassifier.set(resolvedClassifier)
+                    t.from kotlindoc.outputDirectory
+                }
+            })
 
         if (effectiveConfig.kotlindoc.replaceJavadoc && effectiveConfig.kotlindoc.outputFormats.indexOf(format) == 0) {
-            kotlindocJarTask.classifier = 'javadoc'
+            kotlindocJarTask.configure(new Action<Jar>() {
+                @Override
+                void execute(Jar t) {
+                    t.archiveClassifier.set('javadoc')
+                }
+            })
             project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
             project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
 

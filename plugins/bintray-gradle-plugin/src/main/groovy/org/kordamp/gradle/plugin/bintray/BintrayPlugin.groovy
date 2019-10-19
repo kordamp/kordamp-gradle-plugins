@@ -76,10 +76,8 @@ class BintrayPlugin extends AbstractKordampPlugin {
             if (!project.plugins.findPlugin(com.jfrog.bintray.gradle.BintrayPlugin)) {
                 project.pluginManager.apply(com.jfrog.bintray.gradle.BintrayPlugin)
             }
-        }
 
-        project.afterEvaluate {
-            project.pluginManager.withPlugin('java-base') {
+            project.afterEvaluate {
                 updatePublications(project)
             }
         }

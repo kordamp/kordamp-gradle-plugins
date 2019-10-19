@@ -94,19 +94,19 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                 dependencies.add(dependencyHandler.create('de.java2html:java2html:5.0'))
             }
         })
-        project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        project.pluginManager.withPlugin('java-base') {
+            project.afterEvaluate {
+                ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
-            if (effectiveConfig.sourceHtml.enabled) {
-                project.pluginManager.withPlugin('java-base') {
+                if (effectiveConfig.sourceHtml.enabled) {
                     if (configureSourceHtmlTask(project, configuration)) {
                         effectiveConfig.sourceHtml.projects() << project
                     } else {
                         effectiveConfig.sourceHtml.enabled = false
                     }
                 }
+                setEnabled(effectiveConfig.sourceHtml.enabled)
             }
-            setEnabled(effectiveConfig.sourceHtml.enabled)
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {

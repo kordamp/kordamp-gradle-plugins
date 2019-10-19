@@ -19,12 +19,14 @@ package org.kordamp.gradle.plugin.scaladoc
 
 import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.scala.ScalaDoc
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
@@ -143,19 +145,19 @@ class ScaladocPlugin extends AbstractKordampPlugin {
 
         BasePlugin.applyIfMissing(project)
 
-        project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-            setEnabled(effectiveConfig.scaladoc.enabled)
+        project.pluginManager.withPlugin('scala-base') {
+            project.afterEvaluate {
+                ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+                setEnabled(effectiveConfig.scaladoc.enabled)
 
-            if (!enabled) {
-                return
-            }
+                if (!enabled) {
+                    return
+                }
 
-            project.pluginManager.withPlugin('scala-base') {
                 Task scaladoc = configureScaladocTask(project)
                 effectiveConfig.scaladoc.scaladocTasks() << scaladoc
 
-                Task scaladocJar = createScaladocJarTask(project, scaladoc)
+                TaskProvider<Jar> scaladocJar = createScaladocJarTask(project, scaladoc)
                 project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(scaladocJar)
                 effectiveConfig.scaladoc.scaladocJarTasks() << scaladocJar
 
@@ -194,20 +196,20 @@ class ScaladocPlugin extends AbstractKordampPlugin {
         scaladocTask
     }
 
-    private Task createScaladocJarTask(Project project, Task scaladoc) {
+    private TaskProvider<Jar> createScaladocJarTask(Project project, Task scaladoc) {
         String taskName = SCALADOC_JAR_TASK_NAME
 
-        Task scaladocJarTask = project.tasks.findByName(taskName)
-
-        if (!scaladocJarTask) {
-            scaladocJarTask = project.tasks.create(taskName, Jar) {
-                dependsOn scaladoc
-                group JavaBasePlugin.DOCUMENTATION_GROUP
-                description 'An archive of the Scaladoc API docs'
-                classifier 'scaladoc'
-                from scaladoc.destinationDir
-            }
-        }
+        TaskProvider<Jar> scaladocJarTask = project.tasks.register(taskName, Jar,
+            new Action<Jar>() {
+                @Override
+                void execute(Jar t) {
+                    t.dependsOn scaladoc
+                    t.group JavaBasePlugin.DOCUMENTATION_GROUP
+                    t.description 'An archive of the Scaladoc API docs'
+                    t.archiveClassifier.set('scaladoc')
+                    t.from scaladoc.destinationDir
+                }
+            })
 
         if (project.plugins.findPlugin(MavenPublishPlugin)) {
             project.publishing {
@@ -221,7 +223,12 @@ class ScaladocPlugin extends AbstractKordampPlugin {
 
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (effectiveConfig.scaladoc.replaceJavadoc) {
-            scaladocJarTask.classifier = 'javadoc'
+            scaladocJarTask.configure(new Action<Jar>() {
+                @Override
+                void execute(Jar t) {
+                    t.archiveClassifier.set('javadoc')
+                }
+            })
             project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
             project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
         }
