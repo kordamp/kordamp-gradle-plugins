@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 plugins {
-    id 'org.kordamp.gradle.project' version '0.27.0'
-    id 'org.kordamp.gradle.bintray' version '0.27.0'
-    id 'org.kordamp.gradle.plugin'  version '0.27.0' apply false
+    id 'org.kordamp.gradle.project' version '0.28.0'
+    id 'org.kordamp.gradle.bintray' version '0.28.0'
+    id 'org.kordamp.gradle.plugin'  version '0.28.0' apply false
 }
 
 if (!project.hasProperty('bintrayUsername')) ext.bintrayUsername = '**UNDEFINED**'
