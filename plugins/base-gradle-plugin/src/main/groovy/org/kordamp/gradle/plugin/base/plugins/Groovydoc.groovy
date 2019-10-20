@@ -49,7 +49,7 @@ class Groovydoc extends AbstractFeature {
 
     Groovydoc(ProjectConfigurationExtension config, Project project) {
         super(config, project)
-        doSetEnabled(project.plugins.findPlugin('groovy') != null)
+        doSetEnabled(project.pluginManager.hasPlugin('groovy-base'))
 
         options.use            = true
         options.windowTitle    = "${project.name} ${project.version}"
