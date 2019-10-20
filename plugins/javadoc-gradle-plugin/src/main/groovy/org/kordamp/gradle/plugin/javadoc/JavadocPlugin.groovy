@@ -98,7 +98,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                         return
                     }
 
-                    Task javadoc = createJavadocTaskIfNeeded(project)
+                    Javadoc javadoc = createJavadocTaskIfNeeded(project)
                     if (!javadoc) return
                     effectiveConfig.javadoc.javadocTasks() << javadoc
 
@@ -150,12 +150,10 @@ class JavadocPlugin extends AbstractKordampPlugin {
         javadocTask
     }
 
-    @CompileDynamic
-    private TaskProvider<Jar> createJavadocJarTask(Project project, Task javadoc) {
+    private TaskProvider<Jar> createJavadocJarTask(Project project, Javadoc javadoc) {
         project.tasks.register(JAVADOC_JAR_TASK_NAME, Jar,
             new Action<Jar>() {
                 @Override
-                @CompileDynamic
                 void execute(Jar t) {
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'An archive of the Javadoc API docs'

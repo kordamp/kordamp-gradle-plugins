@@ -85,15 +85,18 @@ class PublishingPlugin extends AbstractKordampPlugin {
 
         BasePlugin.applyIfMissing(project)
         BuildInfoPlugin.applyIfMissing(project)
-        SourceJarPlugin.applyIfMissing(project)
         ApidocPlugin.applyIfMissing(project)
-        JarPlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('java-base') {
+            SourceJarPlugin.applyIfMissing(project)
+            JarPlugin.applyIfMissing(project)
+
             if (!project.pluginManager.hasPlugin('maven-publish')) {
                 project.pluginManager.apply(MavenPublishPlugin)
             }
+        }
 
+        project.pluginManager.withPlugin('maven-publish') {
             project.afterEvaluate {
                 updatePublications(project)
             }
