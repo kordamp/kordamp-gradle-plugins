@@ -241,10 +241,9 @@ plugins {
 
 val bintrayUsername: String by project
 val bintrayApiKey: String by project
-val releaseActive: Boolean? = rootProject.findProperty("release") as Boolean?
 
 config {
-    release = if (releaseActive != null) releaseActive!! else false       //<2>
+    release = rootProject.findProperty("release").toString().toBoolean()  //<2>
 
     info {                                                                //<3>
         name        = "Sample"
