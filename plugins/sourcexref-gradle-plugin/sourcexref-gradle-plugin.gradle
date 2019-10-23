@@ -16,6 +16,6 @@
  * limitations under the License.
  */
 dependencies {
-    compile project(':base-gradle-plugin')
-    compile 'org.apache.maven:maven-jxr:3.0.0'
+    api project(':base-gradle-plugin')
+    api 'org.apache.maven:maven-jxr:3.0.0'
 }

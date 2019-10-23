@@ -156,7 +156,7 @@ class GuidePlugin extends AbstractKordampPlugin {
                 dependsOn guideTask
                 group 'Documentation'
                 description 'An archive of the generated guide.'
-                baseName = project.rootProject.name + '-guide'
+                archiveBaseName = project.rootProject.name + '-guide'
                 from guideTask.destinationDir
             }
         }

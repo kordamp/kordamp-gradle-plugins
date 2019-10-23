@@ -16,6 +16,6 @@
  * limitations under the License.
  */
 dependencies {
-    compile project(':publishing-gradle-plugin')
-    compile "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintrayVersion"
+    api project(':publishing-gradle-plugin')
+    api "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintrayVersion"
 }

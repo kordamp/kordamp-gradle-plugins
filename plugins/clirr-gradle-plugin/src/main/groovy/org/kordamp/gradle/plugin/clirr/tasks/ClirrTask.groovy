@@ -65,11 +65,9 @@ class ClirrTask extends DefaultTask {
     FileCollection baseFiles
 
     @OutputFile
-    @PathSensitive(PathSensitivity.ABSOLUTE)
     File xmlReport
 
     @OutputFile
-    @PathSensitive(PathSensitivity.ABSOLUTE)
     File htmlReport
 
     @TaskAction

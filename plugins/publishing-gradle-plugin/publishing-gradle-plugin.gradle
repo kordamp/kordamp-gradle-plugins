@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 dependencies {
-    compile project(':base-gradle-plugin')
-    compile project(':buildinfo-gradle-plugin')
-    compile project(':jar-gradle-plugin')
-    compile project(':source-gradle-plugin')
-    compile project(':apidoc-gradle-plugin')
+    api project(':base-gradle-plugin')
+    api project(':buildinfo-gradle-plugin')
+    api project(':jar-gradle-plugin')
+    api project(':source-gradle-plugin')
+    api project(':apidoc-gradle-plugin')
 }

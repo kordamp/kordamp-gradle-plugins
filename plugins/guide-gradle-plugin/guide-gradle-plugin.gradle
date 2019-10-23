@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 dependencies {
-    compile project(':base-gradle-plugin')
-    compile project(':apidoc-gradle-plugin')
-    compile project(':sourcehtml-gradle-plugin')
-    compile 'org.asciidoctor:asciidoctor-gradle-jvm:2.3.0'
+    api project(':base-gradle-plugin')
+    api project(':apidoc-gradle-plugin')
+    api project(':sourcehtml-gradle-plugin')
+    api 'org.asciidoctor:asciidoctor-gradle-jvm:2.3.0'
 }

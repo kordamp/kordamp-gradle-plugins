@@ -20,6 +20,8 @@ package org.kordamp.gradle.plugin.base.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
@@ -34,8 +36,8 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 class SourceSetSettingsTask extends AbstractReportingTask {
-    protected String sourceSet
-    protected Set<String> sourceSets
+    @Input @Optional String sourceSet
+    @Input @Optional Set<String> sourceSets
 
     private final Property<Boolean> showPaths = project.objects.property(Boolean)
 
@@ -44,6 +46,7 @@ class SourceSetSettingsTask extends AbstractReportingTask {
         this.showPaths.set(showPaths)
     }
 
+    @Input
     boolean isShowPaths() {
         showPaths.getOrElse(false)
     }

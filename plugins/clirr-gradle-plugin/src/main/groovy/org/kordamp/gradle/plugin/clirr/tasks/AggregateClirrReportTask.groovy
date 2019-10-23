@@ -45,7 +45,6 @@ class AggregateClirrReportTask extends DefaultTask {
     FileCollection reports
 
     @OutputFile
-    @PathSensitive(PathSensitivity.ABSOLUTE)
     File reportFile
 
     @TaskAction

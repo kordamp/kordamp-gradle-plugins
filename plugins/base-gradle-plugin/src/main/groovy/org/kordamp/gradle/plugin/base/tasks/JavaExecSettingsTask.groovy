@@ -19,6 +19,8 @@ package org.kordamp.gradle.plugin.base.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
@@ -29,7 +31,7 @@ import org.gradle.api.tasks.options.Option
  */
 @CompileStatic
 class JavaExecSettingsTask extends AbstractReportingTask {
-    protected String task
+    @Input @Optional String task
 
     private final Property<Boolean> showPaths = project.objects.property(Boolean)
     private final Property<Boolean> showEnvironment = project.objects.property(Boolean)
@@ -40,6 +42,7 @@ class JavaExecSettingsTask extends AbstractReportingTask {
         this.showPaths.set(showPaths)
     }
 
+    @Input
     boolean isShowPaths() {
         showPaths.getOrElse(false)
     }
@@ -49,6 +52,7 @@ class JavaExecSettingsTask extends AbstractReportingTask {
         this.showEnvironment.set(showEnvironment)
     }
 
+    @Input
     boolean isShowEnvironment() {
         showEnvironment.getOrElse(false)
     }
@@ -58,10 +62,10 @@ class JavaExecSettingsTask extends AbstractReportingTask {
         this.showSystemProperties.set(showSystemProperties)
     }
 
+    @Input
     boolean isShowSystemProperties() {
         showSystemProperties.getOrElse(false)
     }
-
 
     @Option(option = 'task', description = 'The task to generate the report for.')
     void setTask(String task) {

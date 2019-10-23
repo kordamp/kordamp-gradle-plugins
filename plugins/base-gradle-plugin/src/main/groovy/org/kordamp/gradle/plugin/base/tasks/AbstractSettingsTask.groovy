@@ -19,6 +19,8 @@ package org.kordamp.gradle.plugin.base.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 
 import static org.kordamp.gradle.StringUtils.isNotBlank
@@ -29,8 +31,8 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 abstract class AbstractSettingsTask extends AbstractReportingTask {
-    protected String task
-    protected Set<String> tasks
+    @Input @Optional String task
+    @Input @Optional Set<String> tasks
 
     private final Property<Boolean> showPaths = project.objects.property(Boolean)
 
@@ -39,6 +41,7 @@ abstract class AbstractSettingsTask extends AbstractReportingTask {
         this.showPaths.set(showPaths)
     }
 
+    @Input
     boolean isShowPaths() {
         showPaths.getOrElse(false)
     }

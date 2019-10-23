@@ -16,6 +16,6 @@
  * limitations under the License.
  */
 dependencies {
-    compile project(':base-gradle-plugin')
-    compile 'com.bmuschko:gradle-java2html-plugin:2.0.2'
+    api project(':base-gradle-plugin')
+    api 'com.bmuschko:gradle-java2html-plugin:2.0.2'
 }

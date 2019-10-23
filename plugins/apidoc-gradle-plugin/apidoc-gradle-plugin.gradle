@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 dependencies {
-    compile project(':base-gradle-plugin')
-    compile project(':javadoc-gradle-plugin')
-    compile project(':groovydoc-gradle-plugin')
+    api project(':base-gradle-plugin')
+    api project(':javadoc-gradle-plugin')
+    api project(':groovydoc-gradle-plugin')
 }

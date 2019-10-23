@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 dependencies {
-    compile project(':base-gradle-plugin')
+    api project(':base-gradle-plugin')
 }
 
 dependencies {
-    compile 'com.gradle.publish:plugin-publish-plugin:0.10.1'
-    compile "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintrayVersion"
+    api 'com.gradle.publish:plugin-publish-plugin:0.10.1'
+    api "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintrayVersion"
 }

@@ -21,6 +21,8 @@ import groovy.transform.CompileStatic
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 
@@ -32,8 +34,8 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 class ConfigurationSettingsTask extends AbstractReportingTask {
-    protected String configuration
-    protected Set<String> configurations
+    @Input @Optional String configuration
+    @Input @Optional Set<String> configurations
 
     private final Property<Boolean> showPaths = project.objects.property(Boolean)
 
@@ -42,6 +44,7 @@ class ConfigurationSettingsTask extends AbstractReportingTask {
         this.showPaths.set(showPaths)
     }
 
+    @Input
     boolean isShowPaths() {
         showPaths.getOrElse(false)
     }
