@@ -133,7 +133,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
                     t.group = 'Verification'
                     t.description = 'Determines the binary compatibility of the current codebase against a previous release.'
                     t.newFiles = newfiles
-                    t.newClasspath = project.configurations['compile'] // TODO: implementation
+                    t.newClasspath = project.configurations['api']
                     t.xmlReport = project.file("${project.reporting.baseDir.path}/clirr/compatibility-report.xml")
                     t.htmlReport = project.file("${project.reporting.baseDir.path}/clirr/compatibility-report.html")
                     t.enabled = effectiveConfig.clirr.enabled

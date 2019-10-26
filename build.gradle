@@ -114,6 +114,7 @@ allprojects {
 subprojects {
     if (project.name.endsWith('-plugin')) {
         apply plugin: 'groovy'
+        apply plugin: 'java-library'
         apply plugin: 'org.kordamp.gradle.plugin'
 
         config {

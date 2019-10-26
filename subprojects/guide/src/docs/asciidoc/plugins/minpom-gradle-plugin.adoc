@@ -29,7 +29,7 @@ group   = 'com.acme'
 version = '1.0.0'
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.5.3'
+    api 'org.codehaus.groovy:groovy-all:2.5.3'
 }
 ----
 
@@ -45,7 +45,7 @@ group   = "com.acme"
 version = "1.0.0"
 
 dependencies {
-    compile("org.codehaus.groovy:groovy-all:2.5.3")
+    api("org.codehaus.groovy:groovy-all:2.5.3")
 }
 ----
 

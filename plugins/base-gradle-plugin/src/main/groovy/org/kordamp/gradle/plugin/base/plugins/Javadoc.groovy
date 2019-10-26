@@ -194,7 +194,7 @@ class Javadoc extends AbstractFeature {
     @Canonical
     static class AutoLinks {
         private static final List<String> DEFAULT_CONFIGURATIONS = [
-            'api', 'compile', 'compileOnly', 'annotationProcessor', 'runtime'
+            'api', 'implementation', 'compileOnly', 'annotationProcessor', 'runtimeOnly'
         ]
 
         boolean enabled = true
