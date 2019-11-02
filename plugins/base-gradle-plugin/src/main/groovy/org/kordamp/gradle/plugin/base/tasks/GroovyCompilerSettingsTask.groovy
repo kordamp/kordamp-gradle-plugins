@@ -53,6 +53,7 @@ class GroovyCompilerSettingsTask extends AbstractSettingsTask {
         doPrintCollection('excludes', task.excludes, 1)
         doPrintMapEntry('sourceCompatibility', task.sourceCompatibility, 1)
         doPrintMapEntry('targetCompatibility', task.targetCompatibility, 1)
+        doPrintMapEntry('destinationDir', task.destinationDir, 1)
         print('groovyOptions:', 1)
         doPrintMapEntry('configurationScript', task.groovyOptions.configurationScript, 2)
         doPrintMapEntry('encoding', task.groovyOptions.encoding, 2)
