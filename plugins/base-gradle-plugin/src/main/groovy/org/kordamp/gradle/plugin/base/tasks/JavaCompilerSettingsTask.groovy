@@ -53,6 +53,7 @@ class JavaCompilerSettingsTask extends AbstractSettingsTask {
         doPrintCollection('excludes', task.excludes, 1)
         doPrintMapEntry('sourceCompatibility', task.sourceCompatibility, 1)
         doPrintMapEntry('targetCompatibility', task.targetCompatibility, 1)
+        doPrintMapEntry('destinationDir', task.destinationDir, 1)
         print('options:', 1)
         doPrintCollection('compilerArgs', task.options.compilerArgs, 2)
         doPrintMapEntry('debug', task.options.debug, 2)
