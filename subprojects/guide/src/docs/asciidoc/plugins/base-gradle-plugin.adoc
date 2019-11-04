@@ -580,6 +580,24 @@ tasks:: The tasks to generate the report for.
 You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
 if neither of these options is specified.
 
+[[_task_jar_settings]]
+=== JarSettings
+
+Display JAR settings.
+
+[horizontal]
+Name:: jarSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.JarSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.
+
 [[_task_java_compiler_settings]]
 === JavaCompilerSettings
 
@@ -1186,6 +1204,12 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.JavaCompilerSettingsTask`
 [horizontal]
 Pattern:: <ConfigurationName>ConfigurationSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask`
+
+=== JarSettings
+
+[horizontal]
+Pattern:: <SourceSet>JarSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.JarSettingsTask`
 
 === JavaExec
 

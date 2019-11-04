@@ -30,6 +30,7 @@ import org.kordamp.gradle.plugin.base.tasks.ConfigurationsTask
 import org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ExtensionsTask
 import org.kordamp.gradle.plugin.base.tasks.GroovyCompilerSettingsTask
+import org.kordamp.gradle.plugin.base.tasks.JarSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.JavaCompilerSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.JavaExecSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ListIncludedBuildsTask
@@ -242,6 +243,34 @@ class BasePlugin extends AbstractKordampPlugin {
                                         t.description = "Display settings of the '${resolvedTaskName}' task."
                                     }
                                 })
+                        }
+                    }
+                })
+
+                project.tasks.register('jarSettings', JarSettingsTask,
+                        new Action<JarSettingsTask>() {
+                            @Override
+                            void execute(JarSettingsTask t) {
+                                t.group = 'Insight'
+                                t.description = 'Display JAR settings.'
+                            }
+                        })
+
+                project.tasks.addRule('Pattern: <SourceSetName>JarSettings: Displays settings of a JAR task.', new Action<String>() {
+                    @Override
+                    void execute(String taskName) {
+                        if (taskName.endsWith('JarSettings')) {
+                            String resolvedTaskName = taskName - 'JarSettings'
+                            resolvedTaskName = resolvedTaskName ?: 'jar'
+                            project.tasks.register(taskName, JarSettingsTask,
+                                    new Action<JarSettingsTask>() {
+                                        @Override
+                                        void execute(JarSettingsTask t) {
+                                            t.group = 'Insight'
+                                            t.task = resolvedTaskName
+                                            t.description = "Display settings of the '${resolvedTaskName}' JAR task."
+                                        }
+                                    })
                         }
                     }
                 })
