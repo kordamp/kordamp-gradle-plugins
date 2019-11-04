@@ -41,6 +41,7 @@ import org.kordamp.gradle.plugin.base.tasks.RepositoriesTask
 import org.kordamp.gradle.plugin.base.tasks.SourceSetSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.SourceSetsTask
 import org.kordamp.gradle.plugin.base.tasks.TestSettingsTask
+import org.kordamp.gradle.plugin.base.tasks.ZipSettingsTask
 
 import static org.kordamp.gradle.PluginUtils.isAndroidProject
 
@@ -148,6 +149,34 @@ class BasePlugin extends AbstractKordampPlugin {
                                 t.description = "Display the settings of the '${resolvedConfigurationName}' Configuration."
                             }
                         })
+                }
+            }
+        })
+
+        project.tasks.register('zipSettings', ZipSettingsTask,
+                new Action<ZipSettingsTask>() {
+                    @Override
+                    void execute(ZipSettingsTask t) {
+                        t.group = 'Insight'
+                        t.description = 'Display ZIP settings.'
+                    }
+                })
+
+        project.tasks.addRule('Pattern: <SourceSetName>ZipSettings: Displays settings of a ZIP task.', new Action<String>() {
+            @Override
+            void execute(String taskName) {
+                if (taskName.endsWith('ZipSettings')) {
+                    String resolvedTaskName = taskName - 'ZipSettings'
+                    resolvedTaskName = resolvedTaskName ?: 'zip'
+                    project.tasks.register(taskName, ZipSettingsTask,
+                            new Action<ZipSettingsTask>() {
+                                @Override
+                                void execute(ZipSettingsTask t) {
+                                    t.group = 'Insight'
+                                    t.task = resolvedTaskName
+                                    t.description = "Display settings of the '${resolvedTaskName}' ZIP task."
+                                }
+                            })
                 }
             }
         })

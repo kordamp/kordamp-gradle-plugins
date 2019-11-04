@@ -1184,6 +1184,24 @@ tasks:: The tasks to generate the report for.
 You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
 if neither of these options is specified.
 
+[[_task_zip_settings]]
+=== ZipSettings
+
+Display ZIP settings.
+
+[horizontal]
+Name:: zipSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.ZipSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.
+
 [[_org_kordamp_gradle_base_rules]]
 == Rules
 
@@ -1228,3 +1246,9 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.SourceSetSettingsTask`
 [horizontal]
 Pattern:: <SourceSetName>TestSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.TestSettingsTask`
+
+=== ZipSettings
+
+[horizontal]
+Pattern:: <SourceSet>ZipSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.ZipSettingsTask`
