@@ -38,6 +38,7 @@ import org.kordamp.gradle.plugin.base.tasks.ListProjectsTask
 import org.kordamp.gradle.plugin.base.tasks.PluginsTask
 import org.kordamp.gradle.plugin.base.tasks.ProjectPropertiesTask
 import org.kordamp.gradle.plugin.base.tasks.RepositoriesTask
+import org.kordamp.gradle.plugin.base.tasks.ScalaCompilerSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.SourceSetSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.SourceSetsTask
 import org.kordamp.gradle.plugin.base.tasks.TestSettingsTask
@@ -341,8 +342,7 @@ class BasePlugin extends AbstractKordampPlugin {
         project.pluginManager.withPlugin('groovy-base', new Action<AppliedPlugin>() {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
-                if (project.plugins.findPlugin('groovy')) {
-                    project.tasks.register('groovyCompilerSettings', GroovyCompilerSettingsTask,
+                project.tasks.register('groovyCompilerSettings', GroovyCompilerSettingsTask,
                         new Action<GroovyCompilerSettingsTask>() {
                             @Override
                             void execute(GroovyCompilerSettingsTask t) {
@@ -351,12 +351,12 @@ class BasePlugin extends AbstractKordampPlugin {
                             }
                         })
 
-                    project.tasks.addRule('Pattern: compile<SourceSetName>GroovySettings: Displays compiler settings of a GroovyCompile task.', new Action<String>() {
-                        @Override
-                        void execute(String taskName) {
-                            if (taskName.startsWith('compile') && taskName.endsWith('GroovySettings')) {
-                                String resolvedTaskName = taskName - 'Settings'
-                                project.tasks.register(taskName, GroovyCompilerSettingsTask,
+                project.tasks.addRule('Pattern: compile<SourceSetName>GroovySettings: Displays compiler settings of a GroovyCompile task.', new Action<String>() {
+                    @Override
+                    void execute(String taskName) {
+                        if (taskName.startsWith('compile') && taskName.endsWith('GroovySettings')) {
+                            String resolvedTaskName = taskName - 'Settings'
+                            project.tasks.register(taskName, GroovyCompilerSettingsTask,
                                     new Action<GroovyCompilerSettingsTask>() {
                                         @Override
                                         void execute(GroovyCompilerSettingsTask t) {
@@ -365,10 +365,41 @@ class BasePlugin extends AbstractKordampPlugin {
                                             t.description = "Display Groovy compiler settings of the '${resolvedTaskName}' task."
                                         }
                                     })
-                            }
                         }
-                    })
-                }
+                    }
+                })
+            }
+        })
+
+        project.pluginManager.withPlugin('scala-base', new Action<AppliedPlugin>() {
+            @Override
+            void execute(AppliedPlugin appliedPlugin) {
+                project.tasks.register('scalaCompilerSettings', ScalaCompilerSettingsTask,
+                        new Action<ScalaCompilerSettingsTask>() {
+                            @Override
+                            void execute(ScalaCompilerSettingsTask t) {
+                                t.group = 'Insight'
+                                t.description = 'Display Scala compiler settings.'
+                            }
+                        })
+
+                project.tasks.addRule('Pattern: compile<SourceSetName>ScalaSettings: Displays compiler settings of a ScalaCompile task.', new Action<String>() {
+                    @Override
+                    void execute(String taskName) {
+                        if (taskName.startsWith('compile') && taskName.endsWith('ScalaSettings')) {
+                            String resolvedTaskName = taskName - 'Settings'
+                            project.tasks.register(taskName, ScalaCompilerSettingsTask,
+                                    new Action<ScalaCompilerSettingsTask>() {
+                                        @Override
+                                        void execute(ScalaCompilerSettingsTask t) {
+                                            t.group = 'Insight'
+                                            t.task = resolvedTaskName
+                                            t.description = "Display Scala compiler settings of the '${resolvedTaskName}' task."
+                                        }
+                                    })
+                        }
+                    }
+                })
             }
         })
 

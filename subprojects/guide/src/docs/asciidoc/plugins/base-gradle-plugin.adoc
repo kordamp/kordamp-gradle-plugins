@@ -565,7 +565,7 @@ extension 9:
 [[_task_groovy_compiler_settings]]
 === GroovyCompilerSettings
 
-Display compiler settings.
+Display Groovy compiler settings.
 
 [horizontal]
 Name:: groovyCompilerSettings
@@ -601,7 +601,7 @@ if neither of these options is specified.
 [[_task_java_compiler_settings]]
 === JavaCompilerSettings
 
-Display compiler settings.
+Display Java compiler settings.
 
 [horizontal]
 Name:: javaCompilerSettings
@@ -1099,6 +1099,24 @@ repository 2:
         /tmp/sample/lib
 ----
 
+[[_task_scala_compiler_settings]]
+=== ScalaCompilerSettings
+
+Display Scala compiler settings.
+
+[horizontal]
+Name:: scalaCompilerSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.ScalaCompilerSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.
+
 [[_task_sourceSets]]
 === SourceSets
 
@@ -1216,6 +1234,12 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.GroovyCompilerSettingsTask`
 [horizontal]
 Pattern:: compile<SourceSetName>JavaSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.JavaCompilerSettingsTask`
+
+=== CompileScala
+
+[horizontal]
+Pattern:: compile<SourceSetName>ScalaSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.ScalaCompilerSettingsTask`
 
 === Configurations
 

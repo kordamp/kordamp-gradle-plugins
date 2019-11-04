@@ -58,23 +58,25 @@ abstract class AbstractReportingTask extends DefaultTask {
     }
 
     protected void doPrintMap(Map<String, ?> map, int offset) {
-        map.each { key, value ->
-            if (value instanceof Map) {
-                if (!value.isEmpty()) {
-                    println(('    ' * offset) + key + ':')
-                    doPrintMap(value, offset + 1)
+        if (map != null) {
+            map.each { key, value ->
+                if (value instanceof Map) {
+                    if (!value.isEmpty()) {
+                        println(('    ' * offset) + key + ':')
+                        doPrintMap(value, offset + 1)
+                    }
+                } else if (value instanceof Collection) {
+                    if (!value.isEmpty()) {
+                        println(('    ' * offset) + key + ':')
+                        doPrintCollection((Collection) value, offset + 1)
+                    }
+                } else if (isNotNullNorBlank(value)) {
+                    doPrintMapEntry(key, value, offset)
                 }
-            } else if (value instanceof Collection) {
-                if (!value.isEmpty()) {
-                    println(('    ' * offset) + key + ':')
-                    doPrintCollection((Collection) value, offset + 1)
-                }
-            } else if (isNotNullNorBlank(value)) {
-                doPrintMapEntry(key, value, offset)
-            }
 
-            if (offset == 0) {
-                println(' ')
+                if (offset == 0) {
+                    println(' ')
+                }
             }
         }
     }
@@ -95,30 +97,32 @@ abstract class AbstractReportingTask extends DefaultTask {
     }
 
     protected void doPrintCollection(Collection<?> collection, int offset) {
-        collection.each { value ->
-            if (value instanceof Map) {
-                if (!value.isEmpty()) {
-                    doPrintMap(value, offset)
+        if (collection != null) {
+            collection.each { value ->
+                if (value instanceof Map) {
+                    if (!value.isEmpty()) {
+                        doPrintMap(value, offset)
+                    }
+                } else if (value instanceof Collection && !((Collection) value).empty) {
+                    if (!value.isEmpty()) {
+                        doPrintCollection((Collection) value, offset + 1)
+                    }
+                } else if (isNotNullNorBlank(value)) {
+                    doPrintElement(value, offset)
                 }
-            } else if (value instanceof Collection && !((Collection) value).empty) {
-                if (!value.isEmpty()) {
-                    doPrintCollection((Collection) value, offset + 1)
-                }
-            } else if (isNotNullNorBlank(value)) {
-                doPrintElement(value, offset)
             }
         }
     }
 
     protected void doPrintMap(String key, Map<String, ?> map, int offset) {
-        if (!map.isEmpty()) {
+        if (map != null && !map.isEmpty()) {
             println(('    ' * offset) + key + ':')
             doPrintMap(map, offset + 1)
         }
     }
 
     protected void doPrintCollection(String key, Collection<?> collection, int offset) {
-        if (!collection.isEmpty()) {
+        if (collection != null && !collection.isEmpty()) {
             println(('    ' * offset) + key + ':')
             doPrintCollection(collection, offset + 1)
         }
