@@ -56,7 +56,7 @@ class Kotlindoc extends AbstractFeature {
     boolean skipEmptyPackages = true
     boolean noStdlibLink = false
     Set<String> impliedPlatforms = [] as Set
-    final LinkMappingSet linkMappings = new LinkMappingSet()
+    final SourceLinkSet sourceLinks = new SourceLinkSet()
     final ExternalDocumentationLinkSet externalDocumentationLinks = new ExternalDocumentationLinkSet()
     final PackageOptionSet packageOptions = new PackageOptionSet()
 
@@ -95,8 +95,8 @@ class Kotlindoc extends AbstractFeature {
 
         if (enabled) {
             List<Map<String, Map<String, String>>> lms = []
-            linkMappings.linkMappings.each { lm ->
-                if (!lm.empty) lms << new LinkedHashMap<String, Map<String, String>>([(lm.dir): new LinkedHashMap<String, String>([
+            sourceLinks.sourceLinks.each { lm ->
+                if (!lm.empty) lms << new LinkedHashMap<String, Map<String, String>>([(lm.url): new LinkedHashMap<String, String>([
                     url   : lm.url,
                     path  : lm.path,
                     suffix: lm.suffix
@@ -136,7 +136,7 @@ class Kotlindoc extends AbstractFeature {
             map.skipEmptyPackages = skipEmptyPackages
             map.noStdlibLink = noStdlibLink
             map.impliedPlatforms = impliedPlatforms
-            map.linkMappings = lms
+            map.sourceLinks = lms
             map.externalDocumentationLinks = edls
             map.packageOptions = pos
         }
@@ -208,12 +208,12 @@ class Kotlindoc extends AbstractFeature {
         this.noStdlibLinkSet
     }
 
-    void linkMappings(Action<? super LinkMappingSet> action) {
-        action.execute(linkMappings)
+    void sourceLinks(Action<? super SourceLinkSet> action) {
+        action.execute(sourceLinks)
     }
 
-    void linkMappings(@DelegatesTo(LinkMappingSet) Closure action) {
-        ConfigureUtil.configure(action, linkMappings)
+    void sourceLinks(@DelegatesTo(SourceLinkSet) Closure action) {
+        ConfigureUtil.configure(action, sourceLinks)
     }
 
     void externalDocumentationLinks(Action<? super ExternalDocumentationLinkSet> action) {
@@ -257,7 +257,7 @@ class Kotlindoc extends AbstractFeature {
         copy.includes = new ArrayList<>(includes)
         copy.samples = new ArrayList<>(samples)
         copy.excludedProjects.addAll(excludedProjects)
-        linkMappings.copyInto(copy.linkMappings)
+        sourceLinks.copyInto(copy.sourceLinks)
         externalDocumentationLinks.copyInto(copy.externalDocumentationLinks)
         packageOptions.copyInto(copy.packageOptions)
     }
@@ -284,7 +284,7 @@ class Kotlindoc extends AbstractFeature {
         o1.projects().addAll(o2.projects())
         o1.kotlindocTasks().addAll(o2.kotlindocTasks())
         o1.kotlindocJarTasks().addAll(o2.kotlindocJarTasks())
-        LinkMappingSet.merge(o1.linkMappings, o2.linkMappings)
+        SourceLinkSet.merge(o1.sourceLinks, o2.sourceLinks)
         ExternalDocumentationLinkSet.merge(o1.externalDocumentationLinks, o2.externalDocumentationLinks)
         PackageOptionSet.merge(o1.packageOptions, o2.packageOptions)
         o1.excludedProjects().addAll(o2.excludedProjects())
@@ -335,73 +335,70 @@ class Kotlindoc extends AbstractFeature {
     @CompileStatic
     @Canonical
     @ToString(includeNames = true)
-    static class LinkMappingSet {
-        final List<LinkMapping> linkMappings = []
+    static class SourceLinkSet {
+        final List<SourceLink> sourceLinks = []
 
-        void linkMapping(Action<? super LinkMapping> action) {
-            LinkMapping linkMapping = new LinkMapping()
-            action.execute(linkMapping)
-            linkMappings << linkMapping
+        void sourceLink(Action<? super SourceLink> action) {
+            SourceLink sourceLink = new SourceLink()
+            action.execute(sourceLink)
+            sourceLinks << sourceLink
         }
 
-        void linkMapping(@DelegatesTo(LinkMapping) Closure action) {
-            LinkMapping linkMapping = new LinkMapping()
-            ConfigureUtil.configure(action, linkMapping)
-            linkMappings << linkMapping
+        void sourceLink(@DelegatesTo(SourceLink) Closure action) {
+            SourceLink sourceLink = new SourceLink()
+            ConfigureUtil.configure(action, sourceLink)
+            sourceLinks << sourceLink
         }
 
-        void copyInto(LinkMappingSet linkMappingSet) {
-            linkMappingSet.linkMappings.addAll(linkMappings.collect { it.copyOf() })
+        void copyInto(SourceLinkSet sourceLinkSet) {
+            sourceLinkSet.sourceLinks.addAll(sourceLinks.collect { it.copyOf() })
         }
 
-        static void merge(LinkMappingSet o1, LinkMappingSet o2) {
-            Map<String, LinkMapping> a = o1.linkMappings.collectEntries { [(it.dir): it] }
-            Map<String, LinkMapping> b = o2.linkMappings.collectEntries { [(it.dir): it] }
+        static void merge(SourceLinkSet o1, SourceLinkSet o2) {
+            Map<String, SourceLink> a = o1.sourceLinks.collectEntries { [(it.url): it] }
+            Map<String, SourceLink> b = o2.sourceLinks.collectEntries { [(it.url): it] }
 
-            a.each { k, linkMapping ->
-                LinkMapping.merge(linkMapping, b.remove(k))
+            a.each { k, sourceLink ->
+                SourceLink.merge(sourceLink, b.remove(k))
             }
             a.putAll(b)
-            o1.linkMappings.clear()
-            o1.linkMappings.addAll(a.values())
+            o1.sourceLinks.clear()
+            o1.sourceLinks.addAll(a.values())
         }
 
-        List<LinkMapping> resolveLinkMappings() {
-            linkMappings.findAll { !it.isEmpty() }
+        List<SourceLink> resolveSourceLinks() {
+            sourceLinks.findAll { !it.isEmpty() }
         }
     }
 
     @CompileStatic
     @Canonical
     @ToString(includeNames = true)
-    static class LinkMapping {
-        String dir
+    static class SourceLink {
         String path
         String url
         String suffix
 
-        LinkMapping copyOf() {
-            LinkMapping copy = new LinkMapping()
+        SourceLink copyOf() {
+            SourceLink copy = new SourceLink()
             copyInto(copy)
             copy
         }
 
-        void copyInto(LinkMapping copy) {
-            copy.dir = dir
+        void copyInto(SourceLink copy) {
             copy.path = path
             copy.url = url
             copy.suffix = suffix
         }
 
-        static void merge(LinkMapping o1, LinkMapping o2) {
-            o1.dir = o1.dir ?: o2?.dir
+        static void merge(SourceLink o1, SourceLink o2) {
             o1.path = o1.path ?: o2?.path
             o1.url = o1.url ?: o2?.url
             o1.suffix = o1.suffix ?: o2?.suffix
         }
 
         boolean isEmpty() {
-            isBlank(dir) || isBlank(path) || isBlank(url)
+            isBlank(path) || isBlank(url)
         }
     }
 

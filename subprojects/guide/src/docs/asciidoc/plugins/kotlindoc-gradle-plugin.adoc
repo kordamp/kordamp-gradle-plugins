@@ -39,8 +39,8 @@ config {
         impliedPlatforms
         replaceJavadoc
         excludedProjects
-        <<_kotlindoc_link_mappings,linkMappings>> {
-            <<_kotlindoc_link_mapping,linkMapping>> {
+        <<_kotlindoc_source_links,sourceLinks>> {
+            <<_kotlindoc_source_link,sourceLink>> {
                 dir
                 url
                 path
@@ -88,15 +88,15 @@ config {
 | excludedProjects   | Set<Project> |          | []                                   | Projects in the set are excluded from aggregation
 |===
 
-[[_kotlindoc_link_mappings]]
-*linkMappings*
+[[_kotlindoc_source_links]]
+*sourceLinks*
 
-This block defines data associated with `org.jetbrains.dokka.gradle.LinkMapping` instances. +
-Each linkMapping instance specifies the location of the project source code on the Web. +
+This block defines data associated with `org.jetbrains.dokka.gradle.SourceLink` instances. +
+Each sourceLink instance specifies the location of the project source code on the Web. +
 If provided, Dokka generates "source" links for each declaration.
 
-[[_kotlindoc_link_mapping]]
-*linkMapping*
+[[_kotlindoc_source_link]]
+*sourceLink*
 
 [options="header", cols="5*"]
 |===
