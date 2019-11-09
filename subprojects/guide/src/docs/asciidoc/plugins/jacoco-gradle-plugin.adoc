@@ -102,3 +102,12 @@ reports.xml.destination:: config..jacoco.mergeReportXmlFile
 reports.html.enabled:: true
 reports.xml.enabled:: true
 
+[[_task_all_jacoco_reports]]
+=== AllJacocoReports
+
+Executes all JaCoCo reports found in a project (unit, integration, functional, etc).
+
+[horizontal]
+Name:: allTests
+Type:: `org.gradle.api.DefaultTask`
+
