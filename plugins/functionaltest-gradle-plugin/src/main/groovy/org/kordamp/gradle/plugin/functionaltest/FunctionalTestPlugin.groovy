@@ -123,16 +123,6 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
 
         Configuration compile = project.configurations.maybeCreate('functionalTest' + compileSuffix)
         Configuration runtime = project.configurations.maybeCreate('functionalTest' + runtimeSuffix)
-
-        if (project.plugins.findPlugin('idea')) {
-            project.idea {
-                module {
-                    scopes.TEST.plus += [compile]
-                    scopes.TEST.plus += [runtime]
-                    testSourceDirs += resolveSourceSets(project).functionalTest.allSource.srcDirs
-                }
-            }
-        }
     }
 
     private void createSourceSetsIfNeeded(Project project, String sourceSetName) {
