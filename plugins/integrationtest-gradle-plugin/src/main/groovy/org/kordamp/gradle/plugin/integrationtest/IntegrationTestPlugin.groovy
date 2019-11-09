@@ -58,6 +58,12 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
             createConfigurationsIfNeeded(project)
             createTasksIfNeeded(project)
         }
+
+        project.pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
+            createSourceSetsIfNeeded(project, 'kotlin')
+            createConfigurationsIfNeeded(project)
+            createTasksIfNeeded(project)
+        }
     }
 
     private void createConfigurationsIfNeeded(Project project) {

@@ -13,7 +13,7 @@ Responsibilities:
 
  * Create two additional configurations: `integrationTestImplementation` and `integrationTestRuntimeOnly`. These configurations
    extend from `testImplementation` and `testRuntimeOnly` respectively.
- * Create a `SourceSet` named `integrationTest` pointing to `src/main/[java|groovy]`.
- * Create a `Test` task named `integrationTest` pointing to `src/integration-test/[java|groovy]`.
+ * Create a `SourceSet` named `integrationTest` pointing to `src/main/[java|groovy|kotlin]`.
+ * Create a `Test` task named `integrationTest` pointing to `src/integration-test/[java|groovy|kotlin]`.
  * Create a `TestReport` task named `integrationTestReport`. This task is added as a dependency to `check`.
 
