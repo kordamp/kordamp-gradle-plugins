@@ -41,6 +41,7 @@ import org.kordamp.gradle.plugin.base.tasks.RepositoriesTask
 import org.kordamp.gradle.plugin.base.tasks.ScalaCompilerSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.SourceSetSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.SourceSetsTask
+import org.kordamp.gradle.plugin.base.tasks.TaskSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.TestSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ZipSettingsTask
 
@@ -176,6 +177,33 @@ class BasePlugin extends AbstractKordampPlugin {
                                     t.group = 'Insight'
                                     t.task = resolvedTaskName
                                     t.description = "Display settings of the '${resolvedTaskName}' ZIP task."
+                                }
+                            })
+                }
+            }
+        })
+
+        project.tasks.register('taskSettings', TaskSettingsTask,
+                new Action<TaskSettingsTask>() {
+                    @Override
+                    void execute(TaskSettingsTask t) {
+                        t.group = 'Insight'
+                        t.description = 'Display the settings of a Task.'
+                    }
+                })
+
+        project.tasks.addRule('Pattern: <TaskName>TaskSettings: Displays the settings of a Task.', new Action<String>() {
+            @Override
+            void execute(String taskName) {
+                if (taskName.endsWith('TaskSettings')) {
+                    String resolvedTaskName = taskName - 'TaskSettings'
+                    project.tasks.register(taskName, TaskSettingsTask,
+                            new Action<TaskSettingsTask>() {
+                                @Override
+                                void execute(TaskSettingsTask t) {
+                                    t.group = 'Insight'
+                                    t.task = resolvedTaskName
+                                    t.description = "Display the settings of the '${resolvedTaskName}' Task."
                                 }
                             })
                 }

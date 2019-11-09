@@ -1184,6 +1184,19 @@ sourceSets:: The sourceSets to generate the report for.
 You may specify either of the two, be advised that `sourceSets` has precedence over `sourceSet`. All sourceSets will be displayed
 if neither of these options is specified.
 
+[[_task_task_settings]]
+=== TaskSettings
+
+Display settings of a Task
+
+[horizontal]
+Name:: taskSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.TaskSettingsTask`
+
+.Options
+[horizontal]
+task:: The task to generate the report for.
+
 [[_task_test_settings]]
 === TestSettings
 
@@ -1247,10 +1260,10 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.ScalaCompilerSettingsTask`
 Pattern:: <ConfigurationName>ConfigurationSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask`
 
-=== JarSettings
+=== Jars
 
 [horizontal]
-Pattern:: <SourceSet>JarSettings
+Pattern:: <JarName>JarSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.JarSettingsTask`
 
 === JavaExec
@@ -1259,20 +1272,26 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.JarSettingsTask`
 Pattern:: <TaskName>Settings
 Type:: `org.kordamp.gradle.plugin.base.tasks.JavaExecSettingsTask`
 
-=== SourceSetNames
+=== SourceSets
 
 [horizontal]
 Pattern:: <SourceSetName>SourceSetSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.SourceSetSettingsTask`
 
-=== Test
+=== Tasks
+
+[horizontal]
+Pattern:: <Task>TaskSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.TaskSettingsTask`
+
+=== Tests
 
 [horizontal]
 Pattern:: <SourceSetName>TestSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.TestSettingsTask`
 
-=== ZipSettings
+=== Zips
 
 [horizontal]
-Pattern:: <SourceSet>ZipSettings
+Pattern:: <ZipName>ZipSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.ZipSettingsTask`
