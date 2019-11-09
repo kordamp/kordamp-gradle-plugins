@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.integrationtest
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.testing.TestReport
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
@@ -122,8 +121,8 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
             runtimeSuffix = 'RuntimeOnly'
         }
 
-        Configuration compile = project.configurations.maybeCreate('integrationTest' + compileSuffix)
-        Configuration runtime = project.configurations.maybeCreate('integrationTest' + runtimeSuffix)
+        project.configurations.maybeCreate('integrationTest' + compileSuffix)
+        project.configurations.maybeCreate('integrationTest' + runtimeSuffix)
     }
 
     private void createSourceSetsIfNeeded(Project project, String sourceSetName) {

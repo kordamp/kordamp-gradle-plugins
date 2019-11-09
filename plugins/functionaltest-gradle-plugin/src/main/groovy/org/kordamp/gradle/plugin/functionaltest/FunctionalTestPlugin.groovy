@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.functionaltest
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.testing.TestReport
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
@@ -121,8 +120,8 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
             runtimeSuffix = 'RuntimeOnly'
         }
 
-        Configuration compile = project.configurations.maybeCreate('functionalTest' + compileSuffix)
-        Configuration runtime = project.configurations.maybeCreate('functionalTest' + runtimeSuffix)
+        project.configurations.maybeCreate('functionalTest' + compileSuffix)
+        project.configurations.maybeCreate('functionalTest' + runtimeSuffix)
     }
 
     private void createSourceSetsIfNeeded(Project project, String sourceSetName) {
