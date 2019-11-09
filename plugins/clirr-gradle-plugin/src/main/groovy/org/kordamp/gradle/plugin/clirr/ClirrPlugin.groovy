@@ -29,6 +29,7 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.ReportingBasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.PluginUtils
+import org.kordamp.gradle.Version
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension

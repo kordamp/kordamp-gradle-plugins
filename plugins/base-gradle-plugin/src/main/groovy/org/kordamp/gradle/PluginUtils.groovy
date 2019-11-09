@@ -20,6 +20,8 @@ package org.kordamp.gradle
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.util.GradleVersion
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.isBlank
@@ -45,7 +47,7 @@ class PluginUtils {
         if (isAndroidProject(project)) {
             return project.android.sourceSets
         }
-        project.sourceSets
+        project.extensions.getByType(SourceSetContainer)
     }
 
     @CompileDynamic
@@ -100,5 +102,14 @@ class PluginUtils {
             return defaultValue
         }
         return Boolean.getBoolean(flag)
+    }
+
+    static boolean isGradleCompatible(Project project, int majorVersion) {
+        Version version = Version.of(GradleVersion.current().baseVersion.version)
+        version.major >= majorVersion
+    }
+
+    static boolean supportsApiConfiguration(Project project) {
+        project.pluginManager.hasPlugin('java-library')
     }
 }

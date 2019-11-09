@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.clirr
+package org.kordamp.gradle
 
 import spock.lang.Specification
 import spock.lang.Unroll
