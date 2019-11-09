@@ -18,8 +18,8 @@
 package org.kordamp.gradle.plugin.functionaltest
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.testing.TestReport
@@ -28,6 +28,7 @@ import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.test.tasks.FunctionalTest
 
 import static org.kordamp.gradle.PluginUtils.resolveSourceSets
+import static org.kordamp.gradle.PluginUtils.supportsApiConfiguration
 
 /**
  * @author Andres Almiray
@@ -64,26 +65,70 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
             createConfigurationsIfNeeded(project)
             createTasksIfNeeded(project)
         }
+
+        project.pluginManager.withPlugin('scala-base') {
+            createSourceSetsIfNeeded(project, 'scala')
+            createConfigurationsIfNeeded(project)
+            createTasksIfNeeded(project)
+        }
+
+        project.afterEvaluate {
+            adjustSourceSets(project)
+            adjustConfigurations(project)
+            adjustTaskDependencies(project)
+        }
+    }
+
+    private void adjustSourceSets(Project project) {
+        SourceSet sourceSet = resolveSourceSets(project).functionalTest
+        sourceSet.compileClasspath += resolveSourceSets(project).main.output
+        sourceSet.compileClasspath += project.configurations.compileOnly
+        sourceSet.runtimeClasspath += sourceSet.compileClasspath
+    }
+
+    @CompileStatic
+    private void adjustConfigurations(Project project) {
+        String compileSuffix = 'Compile'
+        String runtimeSuffix = 'Runtime'
+        if (supportsApiConfiguration(project)) {
+            compileSuffix = 'Implementation'
+            runtimeSuffix = 'RuntimeOnly'
+        }
+
+        project.configurations.findByName('functionalTest' + compileSuffix)
+                .extendsFrom project.configurations.findByName(compileSuffix.uncapitalize())
+        project.configurations.findByName('functionalTest' + runtimeSuffix)
+                .extendsFrom project.configurations.findByName(runtimeSuffix.uncapitalize())
+    }
+
+    @CompileStatic
+    private void adjustTaskDependencies(Project project) {
+        FunctionalTest functionalTest = (FunctionalTest) project.tasks.findByName('functionalTest')
+        TestReport functionalTestReport = (TestReport) project.tasks.findByName('functionalTestReport')
+        functionalTest.dependsOn project.tasks.findByName('jar')
+        functionalTest.mustRunAfter project.tasks.findByName('test')
+        functionalTest.finalizedBy functionalTestReport
+        functionalTestReport.reportOn functionalTest.binResultsDir
+        functionalTestReport.dependsOn functionalTest
+        project.tasks.findByName('check').dependsOn functionalTestReport
     }
 
     private void createConfigurationsIfNeeded(Project project) {
-        Configuration functionalTestImplementation = project.configurations.findByName('functionalTestImplementation')
-        if (!functionalTestImplementation) {
-            functionalTestImplementation = project.configurations.create('functionalTestImplementation')
+        String compileSuffix = 'Compile'
+        String runtimeSuffix = 'Runtime'
+        if (supportsApiConfiguration(project)) {
+            compileSuffix = 'Implementation'
+            runtimeSuffix = 'RuntimeOnly'
         }
-        functionalTestImplementation.extendsFrom project.configurations.implementation
 
-        Configuration functionalTestRuntimeOnly = project.configurations.findByName('functionalTestRuntimeOnly')
-        if (!functionalTestRuntimeOnly) {
-            functionalTestRuntimeOnly = project.configurations.create('functionalTestRuntimeOnly')
-        }
-        functionalTestRuntimeOnly.extendsFrom project.configurations.runtimeOnly
+        Configuration compile = project.configurations.maybeCreate('functionalTest' + compileSuffix)
+        Configuration runtime = project.configurations.maybeCreate('functionalTest' + runtimeSuffix)
 
         if (project.plugins.findPlugin('idea')) {
             project.idea {
                 module {
-                    scopes.TEST.plus += [functionalTestImplementation]
-                    scopes.TEST.plus += [functionalTestRuntimeOnly]
+                    scopes.TEST.plus += [compile]
+                    scopes.TEST.plus += [runtime]
                     testSourceDirs += resolveSourceSets(project).functionalTest.allSource.srcDirs
                 }
             }
@@ -92,62 +137,48 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
 
     private void createSourceSetsIfNeeded(Project project, String sourceSetName) {
         SourceSet sourceSet = project.sourceSets.maybeCreate('functionalTest')
-        if (project.file('src/functional-test/'+ sourceSetName).exists()) {
+        if (project.file('src/functional-test/' + sourceSetName).exists()) {
             sourceSet[sourceSetName].srcDirs project.file('src/functional-test/' + sourceSetName)
         }
-        //if (project.file('src/functional-test/groovy').exists()) {
-        //    sourceSet.groovy.srcDirs project.file('src/functional-test/groovy')
-        //}
-        //if (project.file('src/functional-test/kotlin').exists()) {
-        //    sourceSet.kotlin.srcDirs project.file('src/functional-test/kotlin')
-        //}
-        //if (project.file('src/functional-test/scala').exists()) {
-        //    sourceSet.scala.srcDirs project.file('src/functional-test/scala')
-        //}
         if (project.file('src/functional-test/resources').exists()) {
             sourceSet.resources.srcDir project.file('src/functional-test/resources')
         }
-        sourceSet.compileClasspath += resolveSourceSets(project).main.output
-        sourceSet.compileClasspath += project.configurations.compileOnly
-        sourceSet.compileClasspath += project.configurations.testCompileOnly
-        sourceSet.runtimeClasspath += sourceSet.compileClasspath
     }
 
     private void createTasksIfNeeded(Project project) {
-        Task jarTask = project.tasks.findByName('jar')
+        if (!project.tasks.findByName('functionalTest')) {
+            project.tasks.register('functionalTest', FunctionalTest,
+                    new Action<FunctionalTest>() {
+                        @Override
+                        void execute(FunctionalTest t) {
+                            t.group = 'Verification'
+                            t.description = 'Runs the functional tests.'
+                            t.testClassesDirs = resolveSourceSets(project).functionalTest.output.classesDirs
+                            t.classpath = resolveSourceSets(project).functionalTest.runtimeClasspath
+                            t.reports.html.enabled = false
+                            t.forkEvery = Runtime.runtime.availableProcessors()
 
-        FunctionalTest functionalTest = project.tasks.findByName('functionalTest')
-        if (!functionalTest) {
-            functionalTest = project.tasks.create('functionalTest', FunctionalTest) {
-                dependsOn jarTask
-                group 'Verification'
-                description 'Runs the functional tests.'
-                testClassesDirs = resolveSourceSets(project).functionalTest.output.classesDirs
-                classpath = resolveSourceSets(project).functionalTest.runtimeClasspath
-                reports.html.enabled = false
-                forkEvery = Runtime.runtime.availableProcessors()
-
-                testLogging {
-                    events 'passed', 'skipped', 'failed'
-                }
-            }
+                            t.testLogging {
+                                events 'passed', 'skipped', 'failed'
+                            }
+                        }
+                    })
         }
 
-        TestReport functionalTestReport = project.tasks.findByName('functionalTestReport')
-        if (!functionalTestReport) {
-            functionalTestReport = project.tasks.create('functionalTestReport', TestReport) {
-                group 'Reporting'
-                description 'Generates a report on functional tests.'
-                destinationDir = project.file("${project.reporting.baseDir.path}/functional-tests")
-                reportOn functionalTest.binResultsDir
-            }
+        if (!project.tasks.findByName('functionalTestReport')) {
+            project.tasks.register('functionalTestReport', TestReport,
+                    new Action<TestReport>() {
+                        @Override
+                        void execute(TestReport t) {
+                            t.group = 'Reporting'
+                            t.description = 'Generates a report on functional tests.'
+                            t.destinationDir = project.file("${project.reporting.baseDir.path}/functional-tests")
+                        }
+                    })
         }
-
-        functionalTest.mustRunAfter project.tasks.test
-        functionalTest.finalizedBy functionalTestReport
-        project.tasks.check.dependsOn functionalTestReport
     }
 
+    @CompileStatic
     static void applyIfMissing(Project project) {
         if (!project.plugins.findPlugin(FunctionalTestPlugin)) {
             project.pluginManager.apply(FunctionalTestPlugin)
