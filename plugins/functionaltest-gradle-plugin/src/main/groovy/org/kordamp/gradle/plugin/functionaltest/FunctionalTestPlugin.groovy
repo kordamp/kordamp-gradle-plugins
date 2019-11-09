@@ -78,16 +78,6 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
             functionalTestRuntimeOnly = project.configurations.create('functionalTestRuntimeOnly')
         }
         functionalTestRuntimeOnly.extendsFrom project.configurations.runtimeOnly
-
-        if (project.plugins.findPlugin('idea')) {
-            project.idea {
-                module {
-                    scopes.TEST.plus += [functionalTestImplementation]
-                    scopes.TEST.plus += [functionalTestRuntimeOnly]
-                    testSourceDirs += resolveSourceSets(project).functionalTest.allSource.srcDirs
-                }
-            }
-        }
     }
 
     private void createSourceSetsIfNeeded(Project project, String sourceSetName) {

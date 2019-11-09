@@ -78,16 +78,6 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
             integrationTestRuntimeOnly = project.configurations.create('integrationTestRuntimeOnly')
         }
         integrationTestRuntimeOnly.extendsFrom integrationTestImplementation, project.configurations.testRuntimeOnly
-
-        if (project.plugins.findPlugin('idea')) {
-            project.idea {
-                module {
-                    scopes.TEST.plus += [integrationTestImplementation]
-                    scopes.TEST.plus += [integrationTestRuntimeOnly]
-                    testSourceDirs += resolveSourceSets(project).integrationTest.allSource.srcDirs
-                }
-            }
-        }
     }
 
     private void createSourceSetsIfNeeded(Project project, String sourceSetName) {
