@@ -95,7 +95,7 @@ class ConfigurationSettingsTask extends AbstractReportingTask {
                 doPrintMapEntry(name.toString(), value, 1)
             }
         }
-        if (isShowPaths()) {
+        if (isShowPaths() && configuration.canBeResolved) {
             configuration.properties.sort().each { name, value ->
                 if (value instanceof FileCollection) {
                     doPrintCollection(name.toString(), value, 1)

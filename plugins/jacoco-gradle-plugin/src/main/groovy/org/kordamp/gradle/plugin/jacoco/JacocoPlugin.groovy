@@ -21,6 +21,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
 import org.gradle.api.Action
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
@@ -75,6 +76,19 @@ class JacocoPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
         project.pluginManager.apply(org.gradle.testing.jacoco.plugins.JacocoPlugin)
 
+        TaskProvider<DefaultTask> allJacocoReports = null
+        if (project.childProjects.isEmpty()) {
+            allJacocoReports = project.tasks.register('allJacocoReports', DefaultTask,
+                    new Action<DefaultTask>() {
+                        @Override
+                        void execute(DefaultTask t) {
+                            t.enabled = false
+                            t.group = 'Verification'
+                            t.description = 'Executes all JaCoCo reports.'
+                        }
+                    })
+        }
+
         project.afterEvaluate {
             ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
             setEnabled(effectiveConfig.jacoco.enabled)
@@ -84,6 +98,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
             }
 
             project.pluginManager.withPlugin('java-base') {
+                Set<JacocoReport> reportTasks = []
                 project.tasks.withType(Test) { Test testTask ->
                     if (!testTask.enabled) {
                         return
@@ -93,7 +108,11 @@ class JacocoPlugin extends AbstractKordampPlugin {
                         effectiveConfig.jacoco.testTasks() << testTask
                         effectiveConfig.jacoco.reportTasks() << reportTask
                         effectiveConfig.jacoco.projects() << project
+                        reportTasks << reportTask
                     }
+                }
+                if (allJacocoReports) {
+                    configureAllJacocoReportsTask(project, allJacocoReports, reportTasks)
                 }
             }
         }
@@ -247,6 +266,23 @@ class JacocoPlugin extends AbstractKordampPlugin {
                         reports.xml.setDestination(effectiveConfig.jacoco.mergeReportXmlFile)
                     }
                 })
+            }
+        })
+    }
+
+    private void configureAllJacocoReportsTask(Project project,
+                                        TaskProvider<DefaultTask> allJacocoReports,
+                                               Set<JacocoReport> reportTasks) {
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        if (!effectiveConfig.jacoco.enabled) {
+            return
+        }
+
+        allJacocoReports.configure(new Action<DefaultTask>() {
+            @Override
+            void execute(DefaultTask t) {
+                t.enabled = reportTasks.size() > 0
+                t.dependsOn(reportTasks)
             }
         })
     }
