@@ -44,6 +44,7 @@ import org.kordamp.gradle.plugin.base.tasks.SourceSetsTask
 import org.kordamp.gradle.plugin.base.tasks.TarSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.TaskSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.TestSettingsTask
+import org.kordamp.gradle.plugin.base.tasks.WarSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ZipSettingsTask
 
 import static org.kordamp.gradle.PluginUtils.isAndroidProject
@@ -165,7 +166,7 @@ class BasePlugin extends AbstractKordampPlugin {
                     }
                 })
 
-        project.tasks.addRule('Pattern: <SourceSetName>ZipSettings: Displays settings of a ZIP task.', new Action<String>() {
+        project.tasks.addRule('Pattern: <ZipName>ZipSettings: Displays settings of a ZIP task.', new Action<String>() {
             @Override
             void execute(String taskName) {
                 if (taskName.endsWith('ZipSettings')) {
@@ -193,7 +194,7 @@ class BasePlugin extends AbstractKordampPlugin {
                     }
                 })
 
-        project.tasks.addRule('Pattern: <SourceSetName>TarSettings: Displays settings of a TAR task.', new Action<String>() {
+        project.tasks.addRule('Pattern: <TarName>TarSettings: Displays settings of a TAR task.', new Action<String>() {
             @Override
             void execute(String taskName) {
                 if (taskName.endsWith('TarSettings')) {
@@ -343,7 +344,7 @@ class BasePlugin extends AbstractKordampPlugin {
                             }
                         })
 
-                project.tasks.addRule('Pattern: <SourceSetName>JarSettings: Displays settings of a JAR task.', new Action<String>() {
+                project.tasks.addRule('Pattern: <JarName>JarSettings: Displays settings of a JAR task.', new Action<String>() {
                     @Override
                     void execute(String taskName) {
                         if (taskName.endsWith('JarSettings')) {
@@ -356,6 +357,39 @@ class BasePlugin extends AbstractKordampPlugin {
                                             t.group = 'Insight'
                                             t.task = resolvedTaskName
                                             t.description = "Display settings of the '${resolvedTaskName}' JAR task."
+                                        }
+                                    })
+                        }
+                    }
+                })
+            }
+        })
+
+        project.pluginManager.withPlugin('war', new Action<AppliedPlugin>() {
+            @Override
+            void execute(AppliedPlugin appliedPlugin) {
+                project.tasks.register('warSettings', WarSettingsTask,
+                        new Action<WarSettingsTask>() {
+                            @Override
+                            void execute(WarSettingsTask t) {
+                                t.group = 'Insight'
+                                t.description = 'Display WAR settings.'
+                            }
+                        })
+
+                project.tasks.addRule('Pattern: <WarName>WarSettings: Displays settings of a WAR task.', new Action<String>() {
+                    @Override
+                    void execute(String taskName) {
+                        if (taskName.endsWith('WarSettings')) {
+                            String resolvedTaskName = taskName - 'WarSettings'
+                            resolvedTaskName = resolvedTaskName ?: 'war'
+                            project.tasks.register(taskName, WarSettingsTask,
+                                    new Action<WarSettingsTask>() {
+                                        @Override
+                                        void execute(WarSettingsTask t) {
+                                            t.group = 'Insight'
+                                            t.task = resolvedTaskName
+                                            t.description = "Display settings of the '${resolvedTaskName}' WAR task."
                                         }
                                     })
                         }

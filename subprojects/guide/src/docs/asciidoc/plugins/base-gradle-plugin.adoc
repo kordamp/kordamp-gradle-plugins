@@ -1233,6 +1233,24 @@ tasks:: The tasks to generate the report for.
 You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
 if neither of these options is specified.
 
+[[_task_war_settings]]
+=== WarSettings
+
+Display WAR settings.
+
+[horizontal]
+Name:: warSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.WarSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.
+
 [[_task_zip_settings]]
 === ZipSettings
 
@@ -1306,7 +1324,7 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.TarSettingsTask`
 === Tasks
 
 [horizontal]
-Pattern:: <Task>TaskSettings
+Pattern:: <TaskName>TaskSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.TaskSettingsTask`
 
 === Tests
@@ -1314,6 +1332,13 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.TaskSettingsTask`
 [horizontal]
 Pattern:: <SourceSetName>TestSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.TestSettingsTask`
+
+=== Wars
+
+[horizontal]
+Pattern:: <WarName>JarSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.WarSettingsTask`
+
 
 === Zips
 
