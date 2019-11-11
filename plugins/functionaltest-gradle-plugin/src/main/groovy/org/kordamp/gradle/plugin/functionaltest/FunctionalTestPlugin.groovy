@@ -81,8 +81,13 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
     private void adjustSourceSets(Project project) {
         SourceSet sourceSet = resolveSourceSets(project).functionalTest
         sourceSet.compileClasspath += resolveSourceSets(project).main.output
-        sourceSet.compileClasspath += project.configurations.compileOnly
+        sourceSet.compileClasspath += project.configurations.compileClasspath
         sourceSet.runtimeClasspath += sourceSet.compileClasspath
+
+        project.configurations.findByName('functionalTestCompileClasspath')
+                .extendsFrom(project.configurations.compileClasspath)
+        project.configurations.findByName('functionalTestRuntimeClasspath')
+                .extendsFrom(project.configurations.compileClasspath)
     }
 
     @CompileStatic

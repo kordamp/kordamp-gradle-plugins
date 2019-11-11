@@ -81,9 +81,15 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
     private void adjustSourceSets(Project project) {
         SourceSet sourceSet = resolveSourceSets(project).integrationTest
         sourceSet.compileClasspath += resolveSourceSets(project).main.output
-        sourceSet.compileClasspath += project.configurations.compileOnly
-        sourceSet.compileClasspath += project.configurations.testCompileOnly
+        sourceSet.compileClasspath += project.configurations.compileClasspath
+        sourceSet.compileClasspath += project.configurations.testCompileClasspath
         sourceSet.runtimeClasspath += sourceSet.compileClasspath
+        sourceSet.runtimeClasspath += project.configurations.testRuntimeClasspath
+
+        project.configurations.findByName('integrationTestCompileClasspath')
+                .extendsFrom(project.configurations.compileClasspath, project.configurations.testCompileClasspath)
+        project.configurations.findByName('integrationTestRuntimeClasspath')
+                .extendsFrom(project.configurations.compileClasspath, project.configurations.testRuntimeClasspath)
     }
 
     @CompileStatic
