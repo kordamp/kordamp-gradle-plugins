@@ -1184,6 +1184,24 @@ sourceSets:: The sourceSets to generate the report for.
 You may specify either of the two, be advised that `sourceSets` has precedence over `sourceSet`. All sourceSets will be displayed
 if neither of these options is specified.
 
+[[_task_tar_settings]]
+=== TarSettings
+
+Display TAR settings.
+
+[horizontal]
+Name:: tarSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.TarSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.
+
 [[_task_task_settings]]
 === TaskSettings
 
@@ -1277,6 +1295,13 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.JavaExecSettingsTask`
 [horizontal]
 Pattern:: <SourceSetName>SourceSetSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.SourceSetSettingsTask`
+
+
+=== Tars
+
+[horizontal]
+Pattern:: <TarName>TarSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.TarSettingsTask`
 
 === Tasks
 

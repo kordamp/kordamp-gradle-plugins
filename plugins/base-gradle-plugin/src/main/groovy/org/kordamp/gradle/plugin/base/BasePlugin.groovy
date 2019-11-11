@@ -41,6 +41,7 @@ import org.kordamp.gradle.plugin.base.tasks.RepositoriesTask
 import org.kordamp.gradle.plugin.base.tasks.ScalaCompilerSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.SourceSetSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.SourceSetsTask
+import org.kordamp.gradle.plugin.base.tasks.TarSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.TaskSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.TestSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ZipSettingsTask
@@ -177,6 +178,34 @@ class BasePlugin extends AbstractKordampPlugin {
                                     t.group = 'Insight'
                                     t.task = resolvedTaskName
                                     t.description = "Display settings of the '${resolvedTaskName}' ZIP task."
+                                }
+                            })
+                }
+            }
+        })
+
+        project.tasks.register('tarSettings', TarSettingsTask,
+                new Action<TarSettingsTask>() {
+                    @Override
+                    void execute(TarSettingsTask t) {
+                        t.group = 'Insight'
+                        t.description = 'Display TAR settings.'
+                    }
+                })
+
+        project.tasks.addRule('Pattern: <SourceSetName>TarSettings: Displays settings of a TAR task.', new Action<String>() {
+            @Override
+            void execute(String taskName) {
+                if (taskName.endsWith('TarSettings')) {
+                    String resolvedTaskName = taskName - 'TarSettings'
+                    resolvedTaskName = resolvedTaskName ?: 'tar'
+                    project.tasks.register(taskName, TarSettingsTask,
+                            new Action<TarSettingsTask>() {
+                                @Override
+                                void execute(TarSettingsTask t) {
+                                    t.group = 'Insight'
+                                    t.task = resolvedTaskName
+                                    t.description = "Display settings of the '${resolvedTaskName}' TAR task."
                                 }
                             })
                 }
