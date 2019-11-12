@@ -17,10 +17,11 @@
  */
 package org.kordamp.gradle.plugin.base.plugins.util
 
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.publish.Publication
+import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPomCiManagement
 import org.gradle.api.publish.maven.MavenPomContributor
@@ -34,7 +35,9 @@ import org.gradle.api.publish.maven.MavenPomMailingList
 import org.gradle.api.publish.maven.MavenPomMailingListSpec
 import org.gradle.api.publish.maven.MavenPomOrganization
 import org.gradle.api.publish.maven.MavenPomScm
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.Sign
+import org.gradle.plugins.signing.SigningExtension
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Dependency
 import org.kordamp.gradle.plugin.base.model.License
@@ -42,6 +45,7 @@ import org.kordamp.gradle.plugin.base.model.MailingList
 import org.kordamp.gradle.plugin.base.model.Person
 import org.kordamp.gradle.plugin.base.model.PomOptions
 
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
@@ -51,21 +55,79 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 class PublishingUtils {
-    @CompileDynamic
-    static void configureSigning(ProjectConfigurationExtension effectiveConfig, Project project, String... publications) {
-        project.signing {
-            if (!publications) {
-                if (project.publishing.publications.findByName('main')) {
-                    sign project.publishing.publications.main
-                }
-            } else {
-                publications.each { publicationName ->
-                    if (project.publishing.publications.findByName(publicationName)) {
-                        sign project.publishing.publications[publicationName]
+    static void configurePublication(Project project, String publicationName) {
+        if (!publicationName) return
+
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        PublishingExtension publishingExtension = project.extensions.findByType(PublishingExtension)
+        Publication publication = publishingExtension.publications.findByName(publicationName)
+        if (publication instanceof MavenPublication) {
+            MavenPublication mavenPublication = (MavenPublication) publication
+            configurePom(mavenPublication.pom, effectiveConfig, effectiveConfig.publishing.pom)
+        }
+        configureSigning(effectiveConfig, project, publicationName)
+    }
+
+    static void configurePublications(Project project, String... publications) {
+        if (!publications) return
+
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        PublishingExtension publishingExtension = project.extensions.findByType(PublishingExtension)
+        publications.each { String publicationName ->
+            Publication publication = publishingExtension.publications.findByName(publicationName)
+            if (publication instanceof MavenPublication) {
+                MavenPublication mavenPublication = (MavenPublication) publication
+                configurePom(mavenPublication.pom, effectiveConfig, effectiveConfig.publishing.pom)
+            }
+        }
+        configureSigning(effectiveConfig, project, publications)
+    }
+
+    static void configureAllPublications(Project project) {
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        PublishingExtension publishingExtension = project.extensions.findByType(PublishingExtension)
+        SigningExtension signingExtension = project.extensions.findByType(SigningExtension)
+        List<String> publications = publishingExtension.publications*.name
+
+        publications.each { String publicationName ->
+            Publication publication = publishingExtension.publications.findByName(publicationName)
+            if (publication instanceof MavenPublication) {
+                MavenPublication mavenPublication = (MavenPublication) publication
+                configurePom(mavenPublication.pom, effectiveConfig, effectiveConfig.publishing.pom)
+            }
+            signingExtension.sign(publication)
+        }
+
+        project.tasks.withType(Sign, new Action<Sign>() {
+            @Override
+            void execute(Sign t) {
+                t.onlyIf {
+                    if (effectiveConfig.publishing.signingSet) {
+                        return effectiveConfig.publishing.signing
+                    } else {
+                        return project.gradle.taskGraph.hasTask(":${project.name}:uploadArchives".toString())
                     }
                 }
             }
+        })
+    }
+
+    static void configureSigning(ProjectConfigurationExtension effectiveConfig, Project project, String... publications) {
+        SigningExtension signingExtension = project.extensions.findByType(SigningExtension)
+        PublishingExtension publishingExtension = project.extensions.findByType(PublishingExtension)
+
+        if (!publications) {
+            if (publishingExtension.publications.findByName('main')) {
+                signingExtension.sign(publishingExtension.publications.main)
+            }
+        } else {
+            publications.each { publicationName ->
+                if (publishingExtension.publications.findByName(publicationName)) {
+                    signingExtension.sign(publishingExtension.publications.findByName(publicationName))
+                }
+            }
         }
+
         project.tasks.withType(Sign, new Action<Sign>() {
             @Override
             void execute(Sign t) {
