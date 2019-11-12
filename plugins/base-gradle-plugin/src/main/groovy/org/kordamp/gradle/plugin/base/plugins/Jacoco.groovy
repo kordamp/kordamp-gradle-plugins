@@ -82,16 +82,18 @@ class Jacoco extends AbstractFeature {
         if (!enabledSet) {
             if (isRoot()) {
                 if (project.childProjects.empty) {
-                    enabled = hasTestsAt(project.file('src/test')) ||
-                        hasTestsAt(project.file('src/integration-test')) ||
-                        hasTestsAt(project.file('src/functional-test'))
+                    enabled = hasTestSourceSets()
                 }
             } else {
-                enabled = hasTestsAt(project.file('src/test')) ||
-                    hasTestsAt(project.file('src/integration-test')) ||
-                    hasTestsAt(project.file('src/functional-test'))
+                enabled = hasTestSourceSets()
             }
         }
+    }
+
+    boolean hasTestSourceSets() {
+        hasTestsAt(project.file('src/test')) ||
+                hasTestsAt(project.file('src/integration-test')) ||
+                hasTestsAt(project.file('src/functional-test'))
     }
 
     private static boolean hasTestsAt(File testDir) {

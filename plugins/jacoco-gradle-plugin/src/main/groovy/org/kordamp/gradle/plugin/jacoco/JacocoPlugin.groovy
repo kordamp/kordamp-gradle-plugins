@@ -98,6 +98,11 @@ class JacocoPlugin extends AbstractKordampPlugin {
             }
 
             project.pluginManager.withPlugin('java-base') {
+                // Do not aggregate root report if it does not have tests #198
+                if (isRootProject(project) && !effectiveConfig.jacoco.hasTestSourceSets()) {
+                    return
+                }
+
                 Set<JacocoReport> reportTasks = []
                 project.tasks.withType(Test) { Test testTask ->
                     if (!testTask.enabled) {
