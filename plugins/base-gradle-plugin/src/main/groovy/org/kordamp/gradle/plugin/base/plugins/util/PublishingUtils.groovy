@@ -117,13 +117,15 @@ class PublishingUtils {
         PublishingExtension publishingExtension = project.extensions.findByType(PublishingExtension)
 
         if (!publications) {
-            if (publishingExtension.publications.findByName('main')) {
-                signingExtension.sign(publishingExtension.publications.main)
+            Publication publication = publishingExtension.publications.findByName('main')
+            if (publication) {
+                signingExtension.sign(publication)
             }
         } else {
             publications.each { publicationName ->
-                if (publishingExtension.publications.findByName(publicationName)) {
-                    signingExtension.sign(publishingExtension.publications.findByName(publicationName))
+                Publication publication = publishingExtension.publications.findByName(publicationName)
+                if (publication) {
+                    signingExtension.sign(publication)
                 }
             }
         }
