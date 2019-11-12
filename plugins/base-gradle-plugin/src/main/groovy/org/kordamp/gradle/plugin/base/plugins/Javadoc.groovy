@@ -326,8 +326,10 @@ class Javadoc extends AbstractFeature {
                 taskDependency = project.tasks.findByName('groovydoc')
             }
 
-            dependentProject.tasks.findByName('javadoc').dependsOn(taskDependency)
-            taskDependency.destinationDir.absolutePath.replace('\\', '/')
+            if (taskDependency) {
+                dependentProject.tasks.findByName('javadoc').dependsOn(taskDependency)
+                taskDependency.destinationDir.absolutePath.replace('\\', '/')
+            }
         }
     }
 }
