@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.testing.TestReport
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
@@ -107,7 +108,9 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
 
     @CompileStatic
     private void adjustTaskDependencies(Project project) {
+        SourceSet sourceSet = ((SourceSetContainer) resolveSourceSets(project)).findByName('functionalTest')
         FunctionalTest functionalTest = (FunctionalTest) project.tasks.findByName('functionalTest')
+        functionalTest.classpath = sourceSet.runtimeClasspath
         TestReport functionalTestReport = (TestReport) project.tasks.findByName('functionalTestReport')
         functionalTest.dependsOn project.tasks.findByName('jar')
         functionalTest.mustRunAfter project.tasks.findByName('test')

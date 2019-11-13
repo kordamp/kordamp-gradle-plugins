@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.testing.TestReport
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
@@ -102,14 +103,16 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
         }
 
         project.configurations.findByName('integrationTest' + compileSuffix)
-                .extendsFrom project.configurations.findByName('test' + compileSuffix)
+                .extendsFrom(project.configurations.findByName('test' + compileSuffix))
         project.configurations.findByName('integrationTest' + runtimeSuffix)
-                .extendsFrom project.configurations.findByName('test' + runtimeSuffix)
+                .extendsFrom(project.configurations.findByName('test' + runtimeSuffix))
     }
 
     @CompileStatic
     private void adjustTaskDependencies(Project project) {
+        SourceSet sourceSet = ((SourceSetContainer) resolveSourceSets(project)).findByName('integrationTest')
         IntegrationTest integrationTest = (IntegrationTest) project.tasks.findByName('integrationTest')
+        integrationTest.classpath = sourceSet.runtimeClasspath
         TestReport integrationTestReport = (TestReport) project.tasks.findByName('integrationTestReport')
         integrationTest.dependsOn project.tasks.findByName('jar')
         integrationTest.mustRunAfter project.tasks.findByName('test')
