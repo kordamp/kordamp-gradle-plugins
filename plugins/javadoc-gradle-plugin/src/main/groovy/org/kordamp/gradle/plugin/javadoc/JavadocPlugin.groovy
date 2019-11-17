@@ -132,10 +132,10 @@ class JavadocPlugin extends AbstractKordampPlugin {
         if (classesTask && !javadocTask) {
             javadocTask = project.tasks.create(taskName, Javadoc) {
                 dependsOn classesTask
-                group JavaBasePlugin.DOCUMENTATION_GROUP
-                description 'Generates Javadoc API documentation'
+                group = JavaBasePlugin.DOCUMENTATION_GROUP
+                description = 'Generates Javadoc API documentation'
+                destinationDir = project.file("${project.buildDir}/docs/javadoc")
                 source project.sourceSets.main.allSource
-                destinationDir project.file("${project.buildDir}/docs/javadoc")
             }
         }
 

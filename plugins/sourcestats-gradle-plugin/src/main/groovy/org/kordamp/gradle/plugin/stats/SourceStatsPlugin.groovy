@@ -82,16 +82,16 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
             TaskProvider<AggregateSourceStatsReportTask> task = project.tasks.register(
-                AGGREGATE_STATS_TASK_NAME,
-                AggregateSourceStatsReportTask,
-                new Action<AggregateSourceStatsReportTask>() {
-                    @Override
-                    void execute(AggregateSourceStatsReportTask t) {
-                        t.enabled = false
-                        t.group = 'Reporting'
-                        t.description = 'Aggregate source stats reports.'
-                    }
-                })
+                    AGGREGATE_STATS_TASK_NAME,
+                    AggregateSourceStatsReportTask,
+                    new Action<AggregateSourceStatsReportTask>() {
+                        @Override
+                        void execute(AggregateSourceStatsReportTask t) {
+                            t.enabled = false
+                            t.group = 'Reporting'
+                            t.description = 'Aggregate source stats reports.'
+                        }
+                    })
 
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
@@ -107,7 +107,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
             // see if the project supports sourceSets
             PluginUtils.resolveSourceSets(project)
             createStatsTask(project)
-        } catch (MissingPropertyException ignored) {
+        } catch (Exception ignored) {
             // incompatible project, skip it
         }
     }
@@ -116,17 +116,17 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         TaskProvider<SourceStatsTask> statsTask = project.tasks.register('sourceStats', SourceStatsTask,
-            new Action<SourceStatsTask>() {
-                @Override
-                void execute(SourceStatsTask t) {
-                    t.enabled = effectiveConfig.stats.enabled
-                    t.group = 'Reporting'
-                    t.description = 'Generates a report on lines of code.'
-                    t.paths = effectiveConfig.stats.paths
-                    t.formats = effectiveConfig.stats.formats
-                    t.counters = effectiveConfig.stats.counters
-                }
-            })
+                new Action<SourceStatsTask>() {
+                    @Override
+                    void execute(SourceStatsTask t) {
+                        t.enabled = effectiveConfig.stats.enabled
+                        t.group = 'Reporting'
+                        t.description = 'Generates a report on lines of code.'
+                        t.paths = effectiveConfig.stats.paths
+                        t.formats = effectiveConfig.stats.formats
+                        t.counters = effectiveConfig.stats.counters
+                    }
+                })
 
         if (effectiveConfig.stats.enabled) {
             effectiveConfig.stats.projects() << project

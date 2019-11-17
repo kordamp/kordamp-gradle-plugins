@@ -15,11 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.project.java.tasks
+package org.kordamp.gradle.plugin.project.groovy.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.compile.GroovyCompile
 import org.kordamp.gradle.plugin.base.tasks.AbstractSettingsTask
 
 /**
@@ -27,34 +27,46 @@ import org.kordamp.gradle.plugin.base.tasks.AbstractSettingsTask
  * @since 0.30.0
  */
 @CompileStatic
-class JavaCompilerSettingsTask extends AbstractSettingsTask {
+class GroovyCompilerSettingsTask extends AbstractSettingsTask {
     @TaskAction
     void report() {
         if (tasks) {
             tasks.each { t ->
-                printTask((JavaCompile) project.tasks.findByName(t))
+                printTask((GroovyCompile) project.tasks.findByName(t))
             }
         } else if (task) {
             try {
-                printTask((JavaCompile) project.tasks.findByName(task))
+                printTask((GroovyCompile) project.tasks.findByName(task))
             } catch (NullPointerException e) {
                 throw new IllegalStateException("No matching '${this.task}' task was found")
             }
         } else {
-            Set<JavaCompile> compileTasks = new LinkedHashSet<>(project.tasks.withType(JavaCompile))
+            Set<GroovyCompile> compileTasks = new LinkedHashSet<>(project.tasks.withType(GroovyCompile))
             compileTasks.each { t ->
                 printTask(t)
             }
         }
     }
 
-    private void printTask(JavaCompile task) {
+    private void printTask(GroovyCompile task) {
         print(task.name + ':', 0)
         doPrintCollection('includes', task.includes, 1)
         doPrintCollection('excludes', task.excludes, 1)
         doPrintMapEntry('sourceCompatibility', task.sourceCompatibility, 1)
         doPrintMapEntry('targetCompatibility', task.targetCompatibility, 1)
         doPrintMapEntry('destinationDir', task.destinationDir, 1)
+        print('groovyOptions:', 1)
+        doPrintMapEntry('configurationScript', task.groovyOptions.configurationScript, 2)
+        doPrintMapEntry('encoding', task.groovyOptions.encoding, 2)
+        doPrintMapEntry('failOnError', task.groovyOptions.failOnError, 2)
+        doPrintCollection('fileExtensions', task.groovyOptions.fileExtensions, 2)
+        doPrintMapEntry('fork', task.groovyOptions.fork, 2)
+        doPrintMapEntry('javaAnnotationProcessing', task.groovyOptions.javaAnnotationProcessing, 2)
+        doPrintMapEntry('keepStubs', task.groovyOptions.keepStubs, 2)
+        doPrintMapEntry('listFiles', task.groovyOptions.listFiles, 2)
+        doPrintMap('optimizationOptions', task.groovyOptions.optimizationOptions, 2)
+        doPrintMapEntry('stubDir', task.groovyOptions.stubDir, 2)
+        doPrintMapEntry('verbose', task.groovyOptions.verbose, 2)
         print('options:', 1)
         doPrintCollection('compilerArgs', task.options.compilerArgs, 2)
         doPrintMapEntry('debug', task.options.debug, 2)

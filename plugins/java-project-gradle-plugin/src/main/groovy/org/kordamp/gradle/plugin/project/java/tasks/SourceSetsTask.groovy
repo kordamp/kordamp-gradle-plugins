@@ -15,18 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.base.tasks
+package org.kordamp.gradle.plugin.project.java.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
-
-import static org.kordamp.gradle.PluginUtils.resolveSourceSets
+import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
 
 /**
  * @author Andres Almiray
- * @since 0.24.0
+ * @since 0.30.0
  */
 @CompileStatic
 class SourceSetsTask extends AbstractReportingTask {
@@ -34,7 +33,7 @@ class SourceSetsTask extends AbstractReportingTask {
     void report() {
         Map<String, Map<String, ?>> map = [:]
 
-        def sourceSets = resolveSourceSets(project)
+        def sourceSets = org.kordamp.gradle.PluginUtils.resolveSourceSets(project)
         if (sourceSets instanceof SourceSetContainer) {
             sourceSets.eachWithIndex { SourceSet sourceSet, int index ->
                 map.putAll(SourceSetsTask.doReport(sourceSet, index))

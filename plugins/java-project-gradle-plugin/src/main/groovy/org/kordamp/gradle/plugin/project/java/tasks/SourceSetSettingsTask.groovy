@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.base.tasks
+package org.kordamp.gradle.plugin.project.java.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.file.FileCollection
@@ -26,18 +26,20 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
-
-import static org.kordamp.gradle.PluginUtils.resolveSourceSets
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
 
 /**
  * @author Andres Almiray
- * @since 0.24.0
+ * @since 0.30.0
  */
 @CompileStatic
 class SourceSetSettingsTask extends AbstractReportingTask {
-    @Input @Optional String sourceSet
-    @Input @Optional Set<String> sourceSets
+    @Input
+    @Optional
+    String sourceSet
+    @Input
+    @Optional
+    Set<String> sourceSets
 
     private final Property<Boolean> showPaths = project.objects.property(Boolean)
 
@@ -58,14 +60,14 @@ class SourceSetSettingsTask extends AbstractReportingTask {
 
     @Option(option = 'sourceSets', description = 'The sourceSets to generate the report for.')
     void setSourceSets(String sourceSets) {
-        if (isNotBlank(sourceSets)) {
+        if (org.kordamp.gradle.StringUtils.isNotBlank(sourceSets)) {
             this.sourceSets = (sourceSets.split(',').collect { it.trim() }) as Set
         }
     }
 
     @TaskAction
     void report() {
-        def ss = resolveSourceSets(project)
+        def ss = org.kordamp.gradle.PluginUtils.resolveSourceSets(project)
         if (ss instanceof SourceSetContainer) {
             if (sourceSets) {
                 sourceSets.each { s ->
@@ -89,7 +91,7 @@ class SourceSetSettingsTask extends AbstractReportingTask {
         print(sourceSet.name + ':', 0)
         sourceSet.properties.sort().each { name, value ->
             if (value instanceof FileCollection ||
-                (name in ['asDynamicObject', 'class', 'convention', 'conventionMapping', 'extensions', 'name'])) {
+                    (name in ['asDynamicObject', 'class', 'convention', 'conventionMapping', 'extensions', 'name'])) {
                 return
             }
             doPrintMapEntry(name.toString(), value, 1)

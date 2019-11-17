@@ -55,7 +55,7 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 class PublishingUtils {
-    static void configurePublication(Project project, String publicationName) {
+    static Publication configurePublication(Project project, String publicationName) {
         if (!publicationName) return
 
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
@@ -66,6 +66,7 @@ class PublishingUtils {
             configurePom(mavenPublication.pom, effectiveConfig, effectiveConfig.publishing.pom)
         }
         configureSigning(effectiveConfig, project, publicationName)
+        publication
     }
 
     static void configurePublications(Project project, String... publications) {

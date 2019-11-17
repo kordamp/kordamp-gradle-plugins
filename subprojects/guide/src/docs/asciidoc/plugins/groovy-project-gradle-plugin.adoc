@@ -1,0 +1,42 @@
+
+[[_org_kordamp_gradle_groovy_project]]
+= GroovyProject
+
+[horizontal]
+id:: `org.kordamp.gradle.groovy-project`
+class:: `org.kordamp.gradle.plugin.project.groovy.GroovyProjectPlugin`
+    (link:api/org/kordamp/gradle/plugin/project/groovy/GroovyProjectPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/project/groovy/GroovyProjectPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>`
+
+Configures a project with Groovy conventions.
+
+[[_org_kordamp_gradle_groovy_project_tasks]]
+== Tasks
+
+[[_task_groovy_compiler_settings]]
+=== GroovyCompilerSettings
+
+Display Groovy compiler settings.
+
+[horizontal]
+Name:: groovyCompilerSettings
+Type:: `org.kordamp.gradle.plugin.project.groovy.tasks.GroovyCompilerSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.
+
+[[_org_kordamp_gradle_groovy_project_rules]]
+== Rules
+
+=== CompileGroovy
+
+[horizontal]
+Pattern:: compile<SourceSetName>GroovySettings
+Type:: `org.kordamp.gradle.plugin.project.groovy.tasks.GroovyCompilerSettingsTask`

@@ -15,23 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.base.tasks
+package org.kordamp.gradle.plugin.project.java.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
+import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
 
 /**
  * @author Andres Almiray
- * @since 0.26.0
+ * @since 0.30.0
  */
 @CompileStatic
 class JavaExecSettingsTask extends AbstractReportingTask {
-    @Input @Optional String task
+    @Input
+    @Optional
+    String task
 
     private final Property<Boolean> showPaths = project.objects.property(Boolean)
     private final Property<Boolean> showEnvironment = project.objects.property(Boolean)

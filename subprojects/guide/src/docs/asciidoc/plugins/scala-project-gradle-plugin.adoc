@@ -1,0 +1,42 @@
+
+[[_org_kordamp_gradle_scala_project]]
+= ScalaProject
+
+[horizontal]
+id:: `org.kordamp.gradle.scala-project`
+class:: `org.kordamp.gradle.plugin.project.scala.ScalaProjectPlugin`
+    (link:api/org/kordamp/gradle/plugin/project/scala/ScalaProjectPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/project/scala/ScalaProjectPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>`
+
+Configures a project with Scala conventions.
+
+[[_org_kordamp_gradle_scala_project_tasks]]
+== Tasks
+
+[[_task_scala_compiler_settings]]
+=== ScalaCompilerSettings
+
+Display Scala compiler settings.
+
+[horizontal]
+Name:: scalaCompilerSettings
+Type:: `org.kordamp.gradle.plugin.project.scala.tasks.ScalaCompilerSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.
+
+[[_org_kordamp_gradle_scala_project_rules]]
+== Rules
+
+=== CompileScala
+
+[horizontal]
+Pattern:: compile<SourceSetName>ScalaSettings
+Type:: `org.kordamp.gradle.plugin.project.scala.tasks.ScalaCompilerSettingsTask`

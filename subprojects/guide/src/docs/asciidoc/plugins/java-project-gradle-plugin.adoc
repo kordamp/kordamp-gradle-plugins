@@ -1,0 +1,193 @@
+
+[[_org_kordamp_gradle_java_project]]
+= JavaProject
+
+[horizontal]
+id:: `org.kordamp.gradle.java-project`
+class:: `org.kordamp.gradle.plugin.project.java.JavaProjectPlugin`
+    (link:api/org/kordamp/gradle/plugin/project/java/JavaProjectPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/project/java/JavaProjectPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
+
+Configures a project with Java conventions.
+
+[[_org_kordamp_gradle_java_project_tasks]]
+== Tasks
+
+[[_task_jar_settings]]
+=== JarSettings
+
+Display JAR settings.
+
+[horizontal]
+Name:: jarSettings
+Type:: `org.kordamp.gradle.plugin.project.java.tasks.JarSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.
+
+[[_task_java_compiler_settings]]
+=== JavaCompilerSettings
+
+Display Java compiler settings.
+
+[horizontal]
+Name:: javaCompilerSettings
+Type:: `org.kordamp.gradle.plugin.project.java.tasks.JavaCompilerSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.
+
+[[_task_sourceSets]]
+=== SourceSets
+
+Displays all sourceSets available in a project.
+
+[horizontal]
+Name:: sourceSets
+Type:: `org.kordamp.gradle.plugin.project.java.tasks.SourceSetsTask`
+
+==== Example Output
+
+For a project defined as follows
+
+[source,groovy,subs="verbatim,attributes"]
+.build.gradle
+----
+plugins {
+    id 'java'
+    id 'org.kordamp.gradle.project' version '{project-version}'
+}
+
+config {
+    licensing  { enabled = false }
+
+    publishing { enabled = false }
+}
+----
+
+Invoking these command
+
+[source]
+----
+$ ./gradlew :sourceSets
+----
+
+Results in the following output
+
+[source]
+----
+> Task :sourceSets
+Total sourceSets: 2
+
+sourceSet 0:
+    name: main
+
+sourceSet 1:
+    name: test
+----
+
+[[_task_source_set_settings]]
+=== SourceSetSettings
+
+Display settings of a SourceSet
+
+[horizontal]
+Name:: sourceSetSettings
+Type:: `org.kordamp.gradle.plugin.project.java.tasks.SourceSetSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+sourceSet:: The sourceSet to generate the report for.
+sourceSets:: The sourceSets to generate the report for.
+
+You may specify either of the two, be advised that `sourceSets` has precedence over `sourceSet`. All sourceSets will be displayed
+if neither of these options is specified.
+
+[[_task_test_settings]]
+=== TestSettings
+
+Display test task settings.
+
+[horizontal]
+Name:: testSettings
+Type:: `org.kordamp.gradle.plugin.project.java.tasks.TestSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.
+
+[[_task_war_settings]]
+=== WarSettings
+
+Display WAR settings.
+
+[horizontal]
+Name:: warSettings
+Type:: `org.kordamp.gradle.plugin.project.java.tasks.WarSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.
+
+[[_org_kordamp_gradle_java_project_rules]]
+== Rules
+
+=== CompileJava
+
+[horizontal]
+Pattern:: compile<SourceSetName>JavaSettings
+Type:: `org.kordamp.gradle.plugin.project.java.tasks.JavaCompilerSettingsTask`
+
+=== Jars
+
+[horizontal]
+Pattern:: <JarName>JarSettings
+Type:: `org.kordamp.gradle.plugin.project.java.tasks.JarSettingsTask`
+
+=== JavaExec
+
+[horizontal]
+Pattern:: <TaskName>Settings
+Type:: `org.kordamp.gradle.plugin.project.java.tasks.JavaExecSettingsTask`
+
+=== SourceSets
+
+[horizontal]
+Pattern:: <SourceSetName>SourceSetSettings
+Type:: `org.kordamp.gradle.plugin.project.java.tasks.SourceSetSettingsTask`
+
+=== Tests
+
+[horizontal]
+Pattern:: <SourceSetName>TestSettings
+Type:: `org.kordamp.gradle.plugin.project.java.tasks.TestSettingsTask`
+
+=== Wars
+
+[horizontal]
+Pattern:: <WarName>JarSettings
+Type:: `org.kordamp.gradle.plugin.project.java.tasks.WarSettingsTask`
