@@ -20,5 +20,4 @@ dependencies {
     api project(':buildinfo-gradle-plugin')
     api project(':jar-gradle-plugin')
     api project(':source-gradle-plugin')
-    api project(':apidoc-gradle-plugin')
 }

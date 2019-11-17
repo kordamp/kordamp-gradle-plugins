@@ -26,19 +26,17 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.plugins.signing.SigningPlugin
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
-import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Credentials
 import org.kordamp.gradle.plugin.base.model.Repository
 import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
-import org.kordamp.gradle.plugin.groovydoc.GroovydocPlugin
 import org.kordamp.gradle.plugin.jar.JarPlugin
-import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 import org.kordamp.gradle.plugin.source.SourceJarPlugin
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.PluginUtils.resolveSourceSets
 import static org.kordamp.gradle.StringUtils.isNotBlank
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -85,7 +83,6 @@ class PublishingPlugin extends AbstractKordampPlugin {
 
         BasePlugin.applyIfMissing(project)
         BuildInfoPlugin.applyIfMissing(project)
-        ApidocPlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('java-base') {
             SourceJarPlugin.applyIfMissing(project)
@@ -134,13 +131,14 @@ class PublishingPlugin extends AbstractKordampPlugin {
     private void updatePublications(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
-        if (!effectiveConfig.publishing.enabled || !project.sourceSets.findByName('main')) {
+        if (!effectiveConfig.publishing.enabled || !resolveSourceSets(project)?.findByName('main')) {
             setEnabled(false)
             return
         }
 
-        Task javadocJar = project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)
-        Task groovydocJar = project.tasks.findByName(GroovydocPlugin.GROOVYDOC_JAR_TASK_NAME)
+        Task jar = project.tasks.findByName('jar')
+        Task javadocJar = project.tasks.findByName('javadocJar')
+        Task groovydocJar = project.tasks.findByName('groovydocJar')
         Task sourceJar = project.tasks.findByName(SourceJarPlugin.SOURCE_JAR_TASK_NAME)
 
         project.publishing {
@@ -153,8 +151,11 @@ class PublishingPlugin extends AbstractKordampPlugin {
 
                 if (!effectiveConfig.publishing.publications.contains('main') && !effectiveConfig.publishing.publications) {
                     main(MavenPublication) {
-                        from project.components.java
+                        groupId = project.group
+                        artifactId = project.name
+                        version = project.version
 
+                        if (jar?.enabled) artifact jar
                         if (javadocJar?.enabled) artifact javadocJar
                         if (groovydocJar?.enabled) artifact groovydocJar
                         if (sourceJar?.enabled) artifact sourceJar
