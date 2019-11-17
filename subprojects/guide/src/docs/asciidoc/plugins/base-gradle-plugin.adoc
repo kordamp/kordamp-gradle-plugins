@@ -616,6 +616,24 @@ tasks:: The tasks to generate the report for.
 You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
 if neither of these options is specified.
 
+[[_task_kotlin_compiler_settings]]
+=== KotlinCompilerSettings
+
+Display Kotlin compiler settings.
+
+[horizontal]
+Name:: kotlinCompilerSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.KotlinCompilerSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+task:: The task to generate the report for.
+tasks:: The tasks to generate the report for.
+
+You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
+if neither of these options is specified.
+
 [[_task_list_included_builds]]
 === ListIncludedBuilds
 
@@ -1284,6 +1302,12 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.GroovyCompilerSettingsTask`
 Pattern:: compile<SourceSetName>JavaSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.JavaCompilerSettingsTask`
 
+=== CompileKotlin
+
+[horizontal]
+Pattern:: compile<SourceSetName>KotlinSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.KotlinCompilerSettingsTask`
+
 === CompileScala
 
 [horizontal]
@@ -1314,7 +1338,6 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.JavaExecSettingsTask`
 Pattern:: <SourceSetName>SourceSetSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.SourceSetSettingsTask`
 
-
 === Tars
 
 [horizontal]
@@ -1338,7 +1361,6 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.TestSettingsTask`
 [horizontal]
 Pattern:: <WarName>JarSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.WarSettingsTask`
-
 
 === Zips
 

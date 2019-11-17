@@ -33,6 +33,7 @@ import org.kordamp.gradle.plugin.base.tasks.GroovyCompilerSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.JarSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.JavaCompilerSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.JavaExecSettingsTask
+import org.kordamp.gradle.plugin.base.tasks.KotlinCompilerSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ListIncludedBuildsTask
 import org.kordamp.gradle.plugin.base.tasks.ListProjectsTask
 import org.kordamp.gradle.plugin.base.tasks.PluginsTask
@@ -486,6 +487,38 @@ class BasePlugin extends AbstractKordampPlugin {
                                             t.group = 'Insight'
                                             t.task = resolvedTaskName
                                             t.description = "Display Scala compiler settings of the '${resolvedTaskName}' task."
+                                        }
+                                    })
+                        }
+                    }
+                })
+            }
+        })
+
+        project.pluginManager.withPlugin('org.jetbrains.kotlin.jvm', new Action<AppliedPlugin>() {
+            @Override
+            void execute(AppliedPlugin appliedPlugin) {
+                project.tasks.register('kotlinCompilerSettings', KotlinCompilerSettingsTask,
+                        new Action<KotlinCompilerSettingsTask>() {
+                            @Override
+                            void execute(KotlinCompilerSettingsTask t) {
+                                t.group = 'Insight'
+                                t.description = 'Display Kotlin compiler settings.'
+                            }
+                        })
+
+                project.tasks.addRule('Pattern: compile<SourceSetName>KotlinSettings: Displays compiler settings of a KotlinCompile task.', new Action<String>() {
+                    @Override
+                    void execute(String taskName) {
+                        if (taskName.startsWith('compile') && taskName.endsWith('KotlinSettings')) {
+                            String resolvedTaskName = taskName - 'Settings'
+                            project.tasks.register(taskName, KotlinCompilerSettingsTask,
+                                    new Action<KotlinCompilerSettingsTask>() {
+                                        @Override
+                                        void execute(KotlinCompilerSettingsTask t) {
+                                            t.group = 'Insight'
+                                            t.task = resolvedTaskName
+                                            t.description = "Display Kotlin compiler settings of the '${resolvedTaskName}' task."
                                         }
                                     })
                         }
