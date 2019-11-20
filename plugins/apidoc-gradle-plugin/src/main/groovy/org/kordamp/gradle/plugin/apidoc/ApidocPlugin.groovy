@@ -19,12 +19,14 @@ package org.kordamp.gradle.plugin.apidoc
 
 import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -100,8 +102,7 @@ class ApidocPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
-            List<Task> aggregateJavadocTasks = createAggregateJavadocsTask(project)
-            createAggregateGroovydocsTask(project, aggregateJavadocTasks[0])
+            createAggregateGroovydocsTask(project, createAggregateJavadocsTask(project))
             createAggregateApidocTask(project)
 
             project.gradle.addBuildListener(new BuildAdapter() {
@@ -138,15 +139,15 @@ class ApidocPlugin extends AbstractKordampPlugin {
             }
             groovydocs = groovydocs.unique()
 
-            Javadoc aggregateJavadocs = project.tasks.findByName(AGGREGATE_JAVADOCS_TASK_NAME)
-            Jar aggregateJavadocsJar = project.tasks.findByName(AGGREGATE_JAVADOCS_JAR_TASK_NAME)
-            Groovydoc aggregateGroovydocs = project.tasks.findByName(AGGREGATE_GROOVYDOCS_TASK_NAME)
-            Jar aggregateGroovydocsJar = project.tasks.findByName(AGGREGATE_GROOVYDOCS_JAR_TASK_NAME)
+            Javadoc aggregateJavadocs = (Javadoc) project.tasks.findByName(AGGREGATE_JAVADOCS_TASK_NAME)
+            Jar aggregateJavadocsJar = (Jar) project.tasks.findByName(AGGREGATE_JAVADOCS_JAR_TASK_NAME)
+            Groovydoc aggregateGroovydocs = (Groovydoc) project.tasks.findByName(AGGREGATE_GROOVYDOCS_TASK_NAME)
+            Jar aggregateGroovydocsJar = (Jar) project.tasks.findByName(AGGREGATE_GROOVYDOCS_JAR_TASK_NAME)
             Task aggregateApidocTask = project.tasks.findByName(AGGREGATE_APIDOCS_TASK_NAME)
 
             if (javadocs && !effectiveConfig.groovydoc.replaceJavadoc) {
                 aggregateJavadocs.configure { task ->
-                    task.enabled true
+                    task.enabled = true
                     task.dependsOn javadocs
                     task.source javadocs.source
                     task.classpath = project.files(javadocs.classpath)
@@ -155,7 +156,7 @@ class ApidocPlugin extends AbstractKordampPlugin {
                     task.options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.authors.join(', ')}. All rights reserved."
                 }
                 aggregateJavadocsJar.configure {
-                    enabled true
+                    enabled = true
                     from aggregateJavadocs.destinationDir
                 }
 
@@ -165,7 +166,7 @@ class ApidocPlugin extends AbstractKordampPlugin {
 
             if (groovydocs && effectiveConfig.groovydoc.enabled) {
                 aggregateGroovydocs.configure { task ->
-                    task.enabled true
+                    task.enabled = true
                     task.dependsOn groovydocs + javadocs
                     task.source groovydocs.source + javadocs.source
                     task.classpath = project.files(groovydocs.classpath + javadocs.classpath)
@@ -175,9 +176,9 @@ class ApidocPlugin extends AbstractKordampPlugin {
                     task.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.authors.join(', ')}. All rights reserved."
                 }
                 aggregateGroovydocsJar.configure {
-                    enabled true
+                    enabled = true
                     from aggregateGroovydocs.destinationDir
-                    classifier = effectiveConfig.groovydoc.replaceJavadoc ? 'javadoc' : 'groovydoc'
+                    archiveClassifier.set(effectiveConfig.groovydoc.replaceJavadoc ? 'javadoc' : 'groovydoc')
                 }
 
                 aggregateApidocTask.enabled = true
@@ -186,54 +187,73 @@ class ApidocPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private List<Task> createAggregateJavadocsTask(Project project) {
-        Javadoc aggregateJavadocs = project.tasks.create(AGGREGATE_JAVADOCS_TASK_NAME, Javadoc) {
-            enabled false
-            group JavaBasePlugin.DOCUMENTATION_GROUP
-            description 'Aggregates Javadoc API docs for all projects.'
-            destinationDir project.file("${project.buildDir}/docs/javadoc")
-            if (JavaVersion.current().isJava8Compatible()) {
-                options.addBooleanOption('Xdoclint:none', true)
-                options.quiet()
+    private TaskProvider<Javadoc> createAggregateJavadocsTask(Project project) {
+        TaskProvider<Javadoc> aggregateJavadocs = project.tasks.register(AGGREGATE_JAVADOCS_TASK_NAME, Javadoc,
+                new Action<Javadoc>() {
+                    @Override
+                    void execute(Javadoc t) {
+                        t.enabled = false
+                        t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                        t.description = 'Aggregates Javadoc API docs for all projects.'
+                        t.destinationDir = project.file("${project.buildDir}/docs/javadoc")
+                        if (JavaVersion.current().isJava8Compatible()) {
+                            t.options.addBooleanOption('Xdoclint:none', true)
+                            t.options.quiet()
+                        }
+                    }
+                })
+
+        project.tasks.register(AGGREGATE_JAVADOCS_JAR_TASK_NAME, Jar,
+                new Action<Jar>() {
+                    @Override
+                    void execute(Jar t) {
+                        t.dependsOn aggregateJavadocs
+                        t.enabled = false
+                        t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                        t.description = 'An archive of the aggregate Javadoc API docs'
+                        t.archiveClassifier.set('javadoc')
+                    }
+                })
+
+        aggregateJavadocs
+    }
+
+    @CompileStatic
+    private void createAggregateGroovydocsTask(Project project, TaskProvider<Javadoc> aggregateJavadoc) {
+        TaskProvider<Groovydoc> aggregateGroovydocs = project.tasks.register(AGGREGATE_GROOVYDOCS_TASK_NAME, Groovydoc,
+                new Action<Groovydoc>() {
+                    @Override
+                    void execute(Groovydoc t) {
+                        t.enabled = false
+                        t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                        t.description = 'Aggregates Groovy API docs for all projects.'
+                        t.destinationDir = project.file("${project.buildDir}/docs/groovydoc")
+                        t.classpath = aggregateJavadoc.get().classpath
+                    }
+                })
+
+        project.tasks.register(AGGREGATE_GROOVYDOCS_JAR_TASK_NAME, Jar,
+                new Action<Jar>() {
+                    @Override
+                    void execute(Jar t) {
+                        t.dependsOn aggregateGroovydocs
+                        t.enabled = false
+                        t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                        t.description = 'An archive of the aggregate Groovy API docs'
+                        t.archiveClassifier.set('groovydoc')
+                    }
+                })
+    }
+
+    @CompileStatic
+    private void createAggregateApidocTask(Project project) {
+        project.tasks.register(AGGREGATE_APIDOCS_TASK_NAME, DefaultTask, new Action<DefaultTask>() {
+            @Override
+            void execute(DefaultTask t) {
+                t.enabled = false
+                t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                t.description = 'Aggregates all API docs for all projects.'
             }
-        }
-
-        Jar aggregateJavadocsJar = project.tasks.create(AGGREGATE_JAVADOCS_JAR_TASK_NAME, Jar) {
-            enabled false
-            dependsOn aggregateJavadocs
-            group JavaBasePlugin.DOCUMENTATION_GROUP
-            description 'An archive of the aggregate Javadoc API docs'
-            classifier 'javadoc'
-        }
-
-        [aggregateJavadocs, aggregateJavadocsJar]
-    }
-
-    private List<Task> createAggregateGroovydocsTask(Project project, Task aggregateJavadoc) {
-        Groovydoc aggregateGroovydocs = project.tasks.create(AGGREGATE_GROOVYDOCS_TASK_NAME, Groovydoc) {
-            enabled false
-            group JavaBasePlugin.DOCUMENTATION_GROUP
-            description 'Aggregates Groovy API docs for all projects.'
-            destinationDir project.file("${project.buildDir}/docs/groovydoc")
-            classpath = aggregateJavadoc.classpath
-        }
-
-        Jar aggregateGroovydocsJar = project.tasks.create(AGGREGATE_GROOVYDOCS_JAR_TASK_NAME, Jar) {
-            enabled false
-            dependsOn aggregateGroovydocs
-            group JavaBasePlugin.DOCUMENTATION_GROUP
-            description 'An archive of the aggregate Groovy API docs'
-            classifier 'groovydoc'
-        }
-
-        [aggregateGroovydocs, aggregateGroovydocsJar]
-    }
-
-    private Task createAggregateApidocTask(Project project) {
-        project.tasks.create(AGGREGATE_APIDOCS_TASK_NAME, DefaultTask) {
-            enabled false
-            group JavaBasePlugin.DOCUMENTATION_GROUP
-            description 'Aggregates all API docs for all projects.'
-        }
+        })
     }
 }

@@ -106,10 +106,10 @@ class JarPlugin extends AbstractKordampPlugin {
         if (!jarTask) {
             jarTask = project.tasks.create(taskName, Jar) {
                 dependsOn project.sourceSets.main.output
-                group org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-                description 'Assembles a jar archive'
+                group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
+                description = 'Assembles a jar archive'
                 from project.sourceSets.main.output
-                destinationDir project.file("${project.buildDir}/libs")
+                destinationDirectory.set(project.file("${project.buildDir}/libs"))
             }
         }
 

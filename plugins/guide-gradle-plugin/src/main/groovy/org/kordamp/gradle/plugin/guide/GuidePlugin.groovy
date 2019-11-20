@@ -26,6 +26,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
@@ -135,31 +136,29 @@ class GuidePlugin extends AbstractKordampPlugin {
     }
 
     private void createGuideTaskIfNeeded(Project project) {
-        Task guideTask = project.tasks.findByName(CREATE_GUIDE_TASK_NAME)
+        TaskProvider<Copy> guideTask = project.tasks.register(CREATE_GUIDE_TASK_NAME, Copy,
+                new Action<Copy>() {
+                    @Override
+                    void execute(Copy t) {
+                        t.group = 'Documentation'
+                        t.description = 'Creates an Asciidoctor based guide.'
+                        t.dependsOn project.tasks.named(ASCIIDOCTOR)
+                        t.setDestinationDir(project.file("${project.buildDir}/guide"))
+                        t.from(project.tasks.asciidoctor.outputDir)
+                    }
+                })
 
-        if (!guideTask) {
-            guideTask = project.tasks.create(CREATE_GUIDE_TASK_NAME, Copy) {
-                group 'Documentation'
-                description 'Creates an Asciidoctor based guide.'
-            }
-        }
-
-        guideTask.configure {
-            dependsOn project.tasks.named(ASCIIDOCTOR)
-            destinationDir project.file("${project.buildDir}/guide")
-            from(project.tasks.asciidoctor.outputDir)
-        }
-
-        Task zipGuideTask = project.tasks.findByName(ZIP_GUIDE_TASK_NAME)
-        if (!zipGuideTask) {
-            zipGuideTask = project.tasks.create(ZIP_GUIDE_TASK_NAME, Zip) {
-                dependsOn guideTask
-                group 'Documentation'
-                description 'An archive of the generated guide.'
-                archiveBaseName = project.rootProject.name + '-guide'
-                from guideTask.destinationDir
-            }
-        }
+        project.tasks.register(ZIP_GUIDE_TASK_NAME, Zip,
+                new Action<Zip>() {
+                    @Override
+                    void execute(Zip t) {
+                        t.dependsOn guideTask
+                        t.group = 'Documentation'
+                        t.description = 'An archive of the generated guide.'
+                        t.setArchiveBaseName(project.rootProject.name + '-guide')
+                        t.from guideTask.get().destinationDir
+                    }
+                })
 
         project.rootProject.gradle.addBuildListener(new BuildAdapter() {
             @Override
@@ -168,41 +167,53 @@ class GuidePlugin extends AbstractKordampPlugin {
 
                 Task task = project.rootProject.tasks.findByName(ApidocPlugin.AGGREGATE_JAVADOCS_TASK_NAME)
                 if (task?.enabled) {
-                    guideTask.configure {
-                        dependsOn task
-                        from(task.destinationDir) { into extension.javadocApiDir }
-                    }
+                    guideTask.configure(new Action<Copy>() {
+                        @Override
+                        void execute(Copy t) {
+                            t.dependsOn task
+                            t.from(task.destinationDir) { into extension.javadocApiDir }
+                        }
+                    })
                 }
 
                 task = project.rootProject.tasks.findByName(ApidocPlugin.AGGREGATE_GROOVYDOCS_TASK_NAME)
                 if (task?.enabled) {
-                    guideTask.configure {
-                        dependsOn task
-                        from(task.destinationDir) { into extension.groovydocApiDir }
-                    }
+                    guideTask.configure(new Action<Copy>() {
+                        @Override
+                        void execute(Copy t) {
+                            t.dependsOn task
+                            t.from(task.destinationDir) { into extension.groovydocApiDir }
+                        }
+                    })
                 }
 
                 task = project.rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)
                 if (task?.enabled) {
-                    guideTask.configure {
-                        dependsOn project.rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)
-                        from(task.destinationDir) { into extension.sourceHtmlDir }
-                    }
+                    guideTask.configure(new Action<Copy>() {
+                        @Override
+                        void execute(Copy t) {
+                            t.dependsOn project.rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)
+                            t.from(task.destinationDir) { into extension.sourceHtmlDir }
+                        }
+                    })
                 }
             }
         })
     }
 
     private void createInitGuideTask(Project project) {
-        project.tasks.create(INIT_GUIDE_TASK_NAME, DefaultTask) {
-            group 'Project Setup'
-            description 'Initializes directories and files required by the guide.'
-            outputs.dir(ASCIIDOCTOR_SRC_DIR)
-            outputs.dir(ASCIIDOCTOR_RESOURCE_DIR)
-            doFirst {
-                GuidePlugin.initGuide(project)
+        project.tasks.register(INIT_GUIDE_TASK_NAME, DefaultTask, new Action<DefaultTask>() {
+            @Override
+            void execute(DefaultTask t) {
+                t.group = 'Project Setup'
+                t.description = 'Initializes directories and files required by the guide.'
+                t.outputs.dir(ASCIIDOCTOR_SRC_DIR)
+                t.outputs.dir(ASCIIDOCTOR_RESOURCE_DIR)
+                t.doFirst {
+                    GuidePlugin.initGuide(project)
+                }
             }
-        }
+        })
     }
 
     static void initGuide(Project project) {

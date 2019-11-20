@@ -182,10 +182,10 @@ class ScaladocPlugin extends AbstractKordampPlugin {
         if (classesTask && !scaladocTask) {
             scaladocTask = project.tasks.create(taskName, ScalaDoc) {
                 dependsOn classesTask
-                group JavaBasePlugin.DOCUMENTATION_GROUP
-                description 'Generates Scaladoc API documentation'
+                group = JavaBasePlugin.DOCUMENTATION_GROUP
+                description = 'Generates Scaladoc API documentation'
                 source project.sourceSets.main.allSource
-                destinationDir project.file("${project.buildDir}/docs/scaladoc")
+                destinationDir = project.file("${project.buildDir}/docs/scaladoc")
             }
         }
 
@@ -202,16 +202,16 @@ class ScaladocPlugin extends AbstractKordampPlugin {
         String taskName = SCALADOC_JAR_TASK_NAME
 
         TaskProvider<Jar> scaladocJarTask = project.tasks.register(taskName, Jar,
-            new Action<Jar>() {
-                @Override
-                void execute(Jar t) {
-                    t.dependsOn scaladoc
-                    t.group = JavaBasePlugin.DOCUMENTATION_GROUP
-                    t.description = 'An archive of the Scaladoc API docs'
-                    t.archiveClassifier.set('scaladoc')
-                    t.from scaladoc.destinationDir
-                }
-            })
+                new Action<Jar>() {
+                    @Override
+                    void execute(Jar t) {
+                        t.dependsOn scaladoc
+                        t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                        t.description = 'An archive of the Scaladoc API docs'
+                        t.archiveClassifier.set('scaladoc')
+                        t.from scaladoc.destinationDir
+                    }
+                })
 
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (effectiveConfig.scaladoc.replaceJavadoc) {
@@ -238,23 +238,28 @@ class ScaladocPlugin extends AbstractKordampPlugin {
         scaladocJarTask
     }
 
-    @CompileDynamic
-    private List<Task> createAggregateScaladocsTask(Project project) {
-        ScalaDoc aggregateScaladocs = project.tasks.create(AGGREGATE_SCALADOCS_TASK_NAME, ScalaDoc) {
-            enabled false
-            group JavaBasePlugin.DOCUMENTATION_GROUP
-            description 'Aggregates Scaladoc API docs for all projects.'
-            destinationDir project.file("${project.buildDir}/docs/scaladoc")
-        }
+    private void createAggregateScaladocsTask(Project project) {
+        TaskProvider<ScalaDoc> aggregateScaladocs = project.tasks.register(AGGREGATE_SCALADOCS_TASK_NAME, ScalaDoc,
+                new Action<ScalaDoc>() {
+                    @Override
+                    void execute(ScalaDoc t) {
+                        t.enabled = false
+                        t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                        t.description = 'Aggregates Scaladoc API docs for all projects.'
+                        t.destinationDir = project.file("${project.buildDir}/docs/scaladoc")
+                    }
+                })
 
-        Jar aggregateScaladocsJar = project.tasks.create(AGGREGATE_SCALADOCS_JAR_TASK_NAME, Jar) {
-            enabled false
-            dependsOn aggregateScaladocs
-            group JavaBasePlugin.DOCUMENTATION_GROUP
-            description 'An archive of the aggregate Scaladoc API docs'
-            classifier 'scaladoc'
-        }
-
-        [aggregateScaladocs, aggregateScaladocsJar]
+        project.tasks.register(AGGREGATE_SCALADOCS_JAR_TASK_NAME, Jar,
+                new Action<Jar>() {
+                    @Override
+                    void execute(Jar t) {
+                        t.dependsOn aggregateScaladocs
+                        t.enabled = false
+                        t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                        t.description = 'An archive of the aggregate Scaladoc API docs'
+                        t.archiveClassifier.set('scaladoc')
+                    }
+                })
     }
 }

@@ -157,7 +157,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                 void execute(Jar t) {
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'An archive of the Javadoc API docs'
-                    t.archiveClassifier.set('javadoc')
+                    t.setClassifier('javadoc')
                     t.dependsOn javadoc
                     t.from javadoc.destinationDir
                 }
