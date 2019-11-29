@@ -77,7 +77,7 @@ class Kotlindoc extends AbstractFeature {
 
     Kotlindoc(ProjectConfigurationExtension config, Project project) {
         super(config, project)
-        doSetEnabled(project.plugins.findPlugin('kotlin') != null)
+        doSetEnabled(project.plugins.findPlugin('org.jetbrains.kotlin.jvm') != null)
     }
 
     @Override
@@ -146,7 +146,7 @@ class Kotlindoc extends AbstractFeature {
 
     void normalize() {
         if (!enabledSet && isRoot()) {
-            setEnabled(project.plugins.findPlugin('kotlin') != null)
+            setEnabled(project.plugins.findPlugin('org.jetbrains.kotlin.jvm') != null)
         }
 
         if (!impliedPlatforms) {
