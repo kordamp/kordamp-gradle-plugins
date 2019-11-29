@@ -31,6 +31,7 @@ import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.PluginUtils.supportsApiConfiguration
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -58,32 +59,37 @@ class MinpomTask extends DefaultTask {
             d.name != 'unspecified'
         }
 
-        Map<String, Dependency> compileDependencies = project.configurations.findByName('compile')
+        Map<String, org.gradle.api.artifacts.Dependency> compileDependencies = project.configurations.findByName('compile')
             .allDependencies.findAll(filter)
             .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
-        compileDependencies.putAll(project.configurations.findByName('api')
-            ?.allDependencies.findAll(filter)
-            ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
-        compileDependencies.putAll(project.configurations.findByName('implementation')
-            ?.allDependencies.findAll(filter)
-            ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
 
-        Map<String, Dependency> runtimeDependencies = project.configurations.findByName('runtime')
+        Map<String, org.gradle.api.artifacts.Dependency> runtimeDependencies = project.configurations.findByName('runtime')
             .allDependencies.findAll(filter)
             .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
-        runtimeDependencies.putAll(project.configurations.findByName('runtimeOnly')
-            ?.allDependencies.findAll(filter)
-            ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
 
-        Map<String, Dependency> testDependencies = project.configurations.findByName('testRuntime')
+        Map<String, org.gradle.api.artifacts.Dependency> testDependencies = project.configurations.findByName('testRuntime')
             .allDependencies.findAll(filter)
             .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
-        testDependencies.putAll(project.configurations.findByName('testImplementation')
-            ?.allDependencies.findAll(filter)
-            ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
-        testDependencies.putAll(project.configurations.findByName('testRuntimeOnly')
-            ?.allDependencies.findAll(filter)
-            ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+
+        if (supportsApiConfiguration(project)) {
+            compileDependencies.putAll(project.configurations.findByName('api')
+                ?.allDependencies.findAll(filter)
+                ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+            compileDependencies.putAll(project.configurations.findByName('implementation')
+                ?.allDependencies.findAll(filter)
+                ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+
+            runtimeDependencies.putAll(project.configurations.findByName('runtimeOnly')
+                ?.allDependencies.findAll(filter)
+                ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+
+            testDependencies.putAll(project.configurations.findByName('testImplementation')
+                ?.allDependencies.findAll(filter)
+                ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+            testDependencies.putAll(project.configurations.findByName('testRuntimeOnly')
+                ?.allDependencies.findAll(filter)
+                ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+        }
 
         compileDependencies.keySet().each { key ->
             runtimeDependencies.remove(key)

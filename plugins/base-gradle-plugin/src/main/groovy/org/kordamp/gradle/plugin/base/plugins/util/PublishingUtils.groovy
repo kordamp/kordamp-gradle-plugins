@@ -17,9 +17,12 @@
  */
 package org.kordamp.gradle.plugin.base.plugins.util
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ExcludeRule
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.publish.Publication
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPom
@@ -46,6 +49,7 @@ import org.kordamp.gradle.plugin.base.model.Person
 import org.kordamp.gradle.plugin.base.model.PomOptions
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.PluginUtils.supportsApiConfiguration
 import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
@@ -143,6 +147,109 @@ class PublishingUtils {
                 }
             }
         })
+    }
+
+    static void configureDependencies(MavenPom pom, ProjectConfigurationExtension effectiveConfig, Project project) {
+        Closure<Boolean> filter = { org.gradle.api.artifacts.Dependency d ->
+            d.name != 'unspecified'
+        }
+
+        Map<String, org.gradle.api.artifacts.Dependency> compileDependencies = project.configurations.findByName('compile')
+            .allDependencies.findAll(filter)
+            .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+
+        Map<String, org.gradle.api.artifacts.Dependency> runtimeDependencies = project.configurations.findByName('runtime')
+            .allDependencies.findAll(filter)
+            .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+
+        Map<String, org.gradle.api.artifacts.Dependency> testDependencies = project.configurations.findByName('testRuntime')
+            .allDependencies.findAll(filter)
+            .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+
+        if (supportsApiConfiguration(project)) {
+            compileDependencies.putAll(project.configurations.findByName('api')
+                ?.allDependencies.findAll(filter)
+                ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+            compileDependencies.putAll(project.configurations.findByName('implementation')
+                ?.allDependencies.findAll(filter)
+                ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+
+            runtimeDependencies.putAll(project.configurations.findByName('runtimeOnly')
+                ?.allDependencies.findAll(filter)
+                ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+
+            testDependencies.putAll(project.configurations.findByName('testImplementation')
+                ?.allDependencies.findAll(filter)
+                ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+            testDependencies.putAll(project.configurations.findByName('testRuntimeOnly')
+                ?.allDependencies.findAll(filter)
+                ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+        }
+
+        compileDependencies.keySet().each { key ->
+            runtimeDependencies.remove(key)
+            testDependencies.remove(key)
+        }
+        runtimeDependencies.keySet().each { key ->
+            testDependencies.remove(key)
+        }
+
+        if (compileDependencies || runtimeDependencies || testDependencies) {
+            injectDependencies(pom, project, compileDependencies, runtimeDependencies, testDependencies)
+        }
+    }
+
+    @CompileDynamic
+    private static void injectDependencies(MavenPom pom,
+                                           Project project,
+                                           Map<String, org.gradle.api.artifacts.Dependency> compileDependencies,
+                                           Map<String, org.gradle.api.artifacts.Dependency> runtimeDependencies,
+                                           Map<String, org.gradle.api.artifacts.Dependency> testDependencies) {
+        pom.withXml {
+            Node dependenciesNode = asNode().appendNode('dependencies')
+            compileDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
+                configureDependency(dependenciesNode.appendNode('dependency'), dep, project, 'compile')
+            }
+            runtimeDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
+                configureDependency(dependenciesNode.appendNode('dependency'), dep, project, 'runtime')
+            }
+            testDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
+                configureDependency(dependenciesNode.appendNode('dependency'), dep, project, 'test')
+            }
+        }
+    }
+
+    @CompileDynamic
+    private static void configureDependency(Node node, org.gradle.api.artifacts.Dependency dep, Project project, String scope) {
+        node.with {
+            appendNode('groupId', dep.group)
+            appendNode('artifactId', dep.name)
+            appendNode('version', dep.version)
+            appendNode('scope', scope)
+            if (isOptional(project, dep)) {
+                appendNode('optional', true)
+            }
+        }
+
+        if (dep instanceof ModuleDependency) {
+            ModuleDependency mdep = (ModuleDependency) dep
+            if (mdep.excludeRules.size() > 0) {
+                Node exclusions = node.appendNode('exclusions')
+                exclusions.with {
+                    mdep.excludeRules.each { ExcludeRule rule ->
+                        exclusions.appendNo('exclusion').with {
+                            appendNode('groupId', rule.group)
+                            appendNode('artifactId', rule.module)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @CompileDynamic
+    private static boolean isOptional(Project project, org.gradle.api.artifacts.Dependency dependency) {
+        project.findProperty('optionalDeps') && project.optionalDeps.contains(dependency)
     }
 
     static void configurePom(MavenPom pom, ProjectConfigurationExtension effectiveConfig, PomOptions pomOptions) {

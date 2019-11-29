@@ -1,7 +1,7 @@
 = kordamp-gradle-plugins
 :linkattrs:
 :project-name: kordamp-gradle-plugins
-:plugin-version: 0.30.0
+:plugin-version: 0.30.1
 
 image:https://img.shields.io/travis/aalmiray/{project-name}/master.svg?logo=travis["Build Status", link="https://travis-ci.org/aalmiray/{project-name}"]
 image:https://img.shields.io/badge/license-ASF2-blue.svg?logo=apache["Apache License 2", link="http://www.apache.org/licenses/LICENSE-2.0.txt"]
