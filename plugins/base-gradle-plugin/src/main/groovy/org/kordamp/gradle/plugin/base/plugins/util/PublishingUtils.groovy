@@ -237,7 +237,7 @@ class PublishingUtils {
                 Node exclusions = node.appendNode('exclusions')
                 exclusions.with {
                     mdep.excludeRules.each { ExcludeRule rule ->
-                        exclusions.appendNo('exclusion').with {
+                        exclusions.appendNode('exclusion').with {
                             appendNode('groupId', rule.group)
                             appendNode('artifactId', rule.module)
                         }
