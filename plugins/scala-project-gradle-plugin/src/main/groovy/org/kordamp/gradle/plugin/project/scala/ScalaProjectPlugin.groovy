@@ -32,7 +32,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @since 0.30.0
  */
 @CompileStatic
-class KotlinProjectPlugin implements Plugin<Project> {
+class ScalaProjectPlugin implements Plugin<Project> {
     Project project
 
     void apply(Project project) {
