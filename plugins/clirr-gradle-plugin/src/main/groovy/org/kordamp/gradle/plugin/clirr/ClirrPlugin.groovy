@@ -38,6 +38,7 @@ import org.kordamp.gradle.plugin.clirr.tasks.AggregateClirrReportTask
 import org.kordamp.gradle.plugin.clirr.tasks.ClirrTask
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.PluginUtils.supportsApiConfiguration
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
@@ -134,7 +135,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
                     t.group = 'Verification'
                     t.description = 'Determines the binary compatibility of the current codebase against a previous release.'
                     t.newFiles = newfiles
-                    t.newClasspath = project.configurations['api']
+                    t.newClasspath = project.configurations[supportsApiConfiguration(project) ? 'api' : 'compile']
                     t.xmlReport = project.file("${project.reporting.baseDir.path}/clirr/compatibility-report.xml")
                     t.htmlReport = project.file("${project.reporting.baseDir.path}/clirr/compatibility-report.html")
                     t.enabled = effectiveConfig.clirr.enabled
