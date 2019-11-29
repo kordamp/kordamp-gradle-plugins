@@ -19,10 +19,10 @@ package org.kordamp.gradle.plugin.project.java
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.tasks.JavaExec
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.project.ProjectPlugin
 import org.kordamp.gradle.plugin.project.java.tasks.JarSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.JavaCompilerSettingsTask
@@ -40,11 +40,16 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @since 0.30.0
  */
 @CompileStatic
-class JavaProjectPlugin implements Plugin<Project> {
+class JavaProjectPlugin extends AbstractKordampPlugin {
     Project project
 
     void apply(Project project) {
         this.project = project
+
+        if (hasBeenVisited(project)) {
+            return
+        }
+        setVisited(project, true)
 
         if (isRootProject(project)) {
             applyPlugins(project)
@@ -56,29 +61,35 @@ class JavaProjectPlugin implements Plugin<Project> {
         }
     }
 
-    static void applyPlugins(Project project) {
-        ProjectPlugin.applyPlugins(project)
+    static void applyIfMissing(Project project) {
+        if (!project.plugins.findPlugin(JavaProjectPlugin)) {
+            project.pluginManager.apply(JavaProjectPlugin)
+        }
+    }
+
+    private void applyPlugins(Project project) {
+        ProjectPlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
                 project.tasks.register('sourceSets', SourceSetsTask,
-                        new Action<SourceSetsTask>() {
-                            @Override
-                            void execute(SourceSetsTask t) {
-                                t.group = 'Insight'
-                                t.description = "Displays all sourceSets available in project '$project.name'."
-                            }
-                        })
+                    new Action<SourceSetsTask>() {
+                        @Override
+                        void execute(SourceSetsTask t) {
+                            t.group = 'Insight'
+                            t.description = "Displays all sourceSets available in project '$project.name'."
+                        }
+                    })
 
                 project.tasks.register('sourceSetSettings', SourceSetSettingsTask,
-                        new Action<SourceSetSettingsTask>() {
-                            @Override
-                            void execute(SourceSetSettingsTask t) {
-                                t.group = 'Insight'
-                                t.description = 'Display the settings of a SourceSet.'
-                            }
-                        })
+                    new Action<SourceSetSettingsTask>() {
+                        @Override
+                        void execute(SourceSetSettingsTask t) {
+                            t.group = 'Insight'
+                            t.description = 'Display the settings of a SourceSet.'
+                        }
+                    })
 
                 project.tasks.addRule('Pattern: <SourceSetName>SourceSetSettings: Displays the settings of a SourceSet.', new Action<String>() {
                     @Override
@@ -86,26 +97,26 @@ class JavaProjectPlugin implements Plugin<Project> {
                         if (sourceSetName.endsWith('SourceSetSettings')) {
                             String resolvedSourceSetName = sourceSetName - 'SourceSetSettings'
                             project.tasks.register(sourceSetName, SourceSetSettingsTask,
-                                    new Action<SourceSetSettingsTask>() {
-                                        @Override
-                                        void execute(SourceSetSettingsTask t) {
-                                            t.group = 'Insight'
-                                            t.sourceSet = resolvedSourceSetName
-                                            t.description = "Display the settings of the '${resolvedSourceSetName}' sourceSet."
-                                        }
-                                    })
+                                new Action<SourceSetSettingsTask>() {
+                                    @Override
+                                    void execute(SourceSetSettingsTask t) {
+                                        t.group = 'Insight'
+                                        t.sourceSet = resolvedSourceSetName
+                                        t.description = "Display the settings of the '${resolvedSourceSetName}' sourceSet."
+                                    }
+                                })
                         }
                     }
                 })
 
                 project.tasks.register('javaCompilerSettings', JavaCompilerSettingsTask,
-                        new Action<JavaCompilerSettingsTask>() {
-                            @Override
-                            void execute(JavaCompilerSettingsTask t) {
-                                t.group = 'Insight'
-                                t.description = 'Display Java compiler settings.'
-                            }
-                        })
+                    new Action<JavaCompilerSettingsTask>() {
+                        @Override
+                        void execute(JavaCompilerSettingsTask t) {
+                            t.group = 'Insight'
+                            t.description = 'Display Java compiler settings.'
+                        }
+                    })
 
                 project.tasks.addRule('Pattern: compile<SourceSetName>JavaSettings: Displays compiler settings of a JavaCompile task.', new Action<String>() {
                     @Override
@@ -113,26 +124,26 @@ class JavaProjectPlugin implements Plugin<Project> {
                         if (taskName.startsWith('compile') && taskName.endsWith('JavaSettings')) {
                             String resolvedTaskName = taskName - 'Settings'
                             project.tasks.register(taskName, JavaCompilerSettingsTask,
-                                    new Action<JavaCompilerSettingsTask>() {
-                                        @Override
-                                        void execute(JavaCompilerSettingsTask t) {
-                                            t.group = 'Insight'
-                                            t.task = resolvedTaskName
-                                            t.description = "Display Java compiler settings of the '${resolvedTaskName}' task."
-                                        }
-                                    })
+                                new Action<JavaCompilerSettingsTask>() {
+                                    @Override
+                                    void execute(JavaCompilerSettingsTask t) {
+                                        t.group = 'Insight'
+                                        t.task = resolvedTaskName
+                                        t.description = "Display Java compiler settings of the '${resolvedTaskName}' task."
+                                    }
+                                })
                         }
                     }
                 })
 
                 project.tasks.register('testSettings', TestSettingsTask,
-                        new Action<TestSettingsTask>() {
-                            @Override
-                            void execute(TestSettingsTask t) {
-                                t.group = 'Insight'
-                                t.description = 'Display test task settings.'
-                            }
-                        })
+                    new Action<TestSettingsTask>() {
+                        @Override
+                        void execute(TestSettingsTask t) {
+                            t.group = 'Insight'
+                            t.description = 'Display test task settings.'
+                        }
+                    })
 
                 project.tasks.addRule('Pattern: <SourceSetName>TestSettings: Displays settings of a Test task.', new Action<String>() {
                     @Override
@@ -140,26 +151,26 @@ class JavaProjectPlugin implements Plugin<Project> {
                         if (taskName.endsWith('TestSettings')) {
                             String resolvedTaskName = taskName - 'Settings'
                             project.tasks.register(taskName, TestSettingsTask,
-                                    new Action<TestSettingsTask>() {
-                                        @Override
-                                        void execute(TestSettingsTask t) {
-                                            t.group = 'Insight'
-                                            t.task = resolvedTaskName
-                                            t.description = "Display settings of the '${resolvedTaskName}' task."
-                                        }
-                                    })
+                                new Action<TestSettingsTask>() {
+                                    @Override
+                                    void execute(TestSettingsTask t) {
+                                        t.group = 'Insight'
+                                        t.task = resolvedTaskName
+                                        t.description = "Display settings of the '${resolvedTaskName}' task."
+                                    }
+                                })
                         }
                     }
                 })
 
                 project.tasks.register('jarSettings', JarSettingsTask,
-                        new Action<JarSettingsTask>() {
-                            @Override
-                            void execute(JarSettingsTask t) {
-                                t.group = 'Insight'
-                                t.description = 'Display JAR settings.'
-                            }
-                        })
+                    new Action<JarSettingsTask>() {
+                        @Override
+                        void execute(JarSettingsTask t) {
+                            t.group = 'Insight'
+                            t.description = 'Display JAR settings.'
+                        }
+                    })
 
                 project.tasks.addRule('Pattern: <JarName>JarSettings: Displays settings of a JAR task.', new Action<String>() {
                     @Override
@@ -168,14 +179,14 @@ class JavaProjectPlugin implements Plugin<Project> {
                             String resolvedTaskName = taskName - 'JarSettings'
                             resolvedTaskName = resolvedTaskName ?: 'jar'
                             project.tasks.register(taskName, JarSettingsTask,
-                                    new Action<JarSettingsTask>() {
-                                        @Override
-                                        void execute(JarSettingsTask t) {
-                                            t.group = 'Insight'
-                                            t.task = resolvedTaskName
-                                            t.description = "Display settings of the '${resolvedTaskName}' JAR task."
-                                        }
-                                    })
+                                new Action<JarSettingsTask>() {
+                                    @Override
+                                    void execute(JarSettingsTask t) {
+                                        t.group = 'Insight'
+                                        t.task = resolvedTaskName
+                                        t.description = "Display settings of the '${resolvedTaskName}' JAR task."
+                                    }
+                                })
                         }
                     }
                 })
@@ -186,13 +197,13 @@ class JavaProjectPlugin implements Plugin<Project> {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
                 project.tasks.register('warSettings', WarSettingsTask,
-                        new Action<WarSettingsTask>() {
-                            @Override
-                            void execute(WarSettingsTask t) {
-                                t.group = 'Insight'
-                                t.description = 'Display WAR settings.'
-                            }
-                        })
+                    new Action<WarSettingsTask>() {
+                        @Override
+                        void execute(WarSettingsTask t) {
+                            t.group = 'Insight'
+                            t.description = 'Display WAR settings.'
+                        }
+                    })
 
                 project.tasks.addRule('Pattern: <WarName>WarSettings: Displays settings of a WAR task.', new Action<String>() {
                     @Override
@@ -201,14 +212,14 @@ class JavaProjectPlugin implements Plugin<Project> {
                             String resolvedTaskName = taskName - 'WarSettings'
                             resolvedTaskName = resolvedTaskName ?: 'war'
                             project.tasks.register(taskName, WarSettingsTask,
-                                    new Action<WarSettingsTask>() {
-                                        @Override
-                                        void execute(WarSettingsTask t) {
-                                            t.group = 'Insight'
-                                            t.task = resolvedTaskName
-                                            t.description = "Display settings of the '${resolvedTaskName}' WAR task."
-                                        }
-                                    })
+                                new Action<WarSettingsTask>() {
+                                    @Override
+                                    void execute(WarSettingsTask t) {
+                                        t.group = 'Insight'
+                                        t.task = resolvedTaskName
+                                        t.description = "Display settings of the '${resolvedTaskName}' WAR task."
+                                    }
+                                })
                         }
                     }
                 })
@@ -221,14 +232,14 @@ class JavaProjectPlugin implements Plugin<Project> {
                 void execute(JavaExec t) {
                     String resolvedTaskName = t.name
                     project.tasks.register(t.name + 'Settings', JavaExecSettingsTask,
-                            new Action<JavaExecSettingsTask>() {
-                                @Override
-                                void execute(JavaExecSettingsTask s) {
-                                    s.group = 'Insight'
-                                    s.task = resolvedTaskName
-                                    s.description = "Display settings of the '${resolvedTaskName}' task."
-                                }
-                            })
+                        new Action<JavaExecSettingsTask>() {
+                            @Override
+                            void execute(JavaExecSettingsTask s) {
+                                s.group = 'Insight'
+                                s.task = resolvedTaskName
+                                s.description = "Display settings of the '${resolvedTaskName}' task."
+                            }
+                        })
                 }
             })
         }

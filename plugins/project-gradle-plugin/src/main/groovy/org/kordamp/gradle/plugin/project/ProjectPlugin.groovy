@@ -19,8 +19,8 @@ package org.kordamp.gradle.plugin.project
 
 import com.github.benmanes.gradle.versions.VersionsPlugin
 import groovy.transform.CompileStatic
-import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.bintray.BintrayPlugin
@@ -46,11 +46,16 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @since 0.1.0
  */
 @CompileStatic
-class ProjectPlugin implements Plugin<Project> {
+class ProjectPlugin extends AbstractKordampPlugin {
     Project project
 
     void apply(Project project) {
         this.project = project
+
+        if (hasBeenVisited(project)) {
+            return
+        }
+        setVisited(project, true)
 
         if (isRootProject(project)) {
             applyPlugins(project)
@@ -62,7 +67,13 @@ class ProjectPlugin implements Plugin<Project> {
         }
     }
 
-    static void applyPlugins(Project project) {
+    static void applyIfMissing(Project project) {
+        if (!project.plugins.findPlugin(ProjectPlugin)) {
+            project.pluginManager.apply(ProjectPlugin)
+        }
+    }
+
+    private void applyPlugins(Project project) {
         BasePlugin.applyIfMissing(project)
         JacocoPlugin.applyIfMissing(project)
         LicensingPlugin.applyIfMissing(project)

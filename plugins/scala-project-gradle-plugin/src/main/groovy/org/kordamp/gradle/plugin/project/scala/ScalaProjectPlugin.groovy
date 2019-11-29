@@ -19,9 +19,9 @@ package org.kordamp.gradle.plugin.project.scala
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.AppliedPlugin
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.project.java.JavaProjectPlugin
 import org.kordamp.gradle.plugin.project.scala.tasks.ScalaCompilerSettingsTask
 
@@ -32,11 +32,16 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @since 0.30.0
  */
 @CompileStatic
-class ScalaProjectPlugin implements Plugin<Project> {
+class ScalaProjectPlugin extends AbstractKordampPlugin {
     Project project
 
     void apply(Project project) {
         this.project = project
+
+        if (hasBeenVisited(project)) {
+            return
+        }
+        setVisited(project, true)
 
         if (isRootProject(project)) {
             applyPlugins(project)
@@ -48,20 +53,26 @@ class ScalaProjectPlugin implements Plugin<Project> {
         }
     }
 
-    static void applyPlugins(Project project) {
-        JavaProjectPlugin.applyPlugins(project)
+    static void applyIfMissing(Project project) {
+        if (!project.plugins.findPlugin(ScalaProjectPlugin)) {
+            project.pluginManager.apply(ScalaProjectPlugin)
+        }
+    }
+
+    private void applyPlugins(Project project) {
+        JavaProjectPlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('scala-base', new Action<AppliedPlugin>() {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
                 project.tasks.register('scalaCompilerSettings', ScalaCompilerSettingsTask,
-                        new Action<ScalaCompilerSettingsTask>() {
-                            @Override
-                            void execute(ScalaCompilerSettingsTask t) {
-                                t.group = 'Insight'
-                                t.description = 'Display Scala compiler settings.'
-                            }
-                        })
+                    new Action<ScalaCompilerSettingsTask>() {
+                        @Override
+                        void execute(ScalaCompilerSettingsTask t) {
+                            t.group = 'Insight'
+                            t.description = 'Display Scala compiler settings.'
+                        }
+                    })
 
                 project.tasks.addRule('Pattern: compile<SourceSetName>ScalaSettings: Displays compiler settings of a ScalaCompile task.', new Action<String>() {
                     @Override
@@ -69,14 +80,14 @@ class ScalaProjectPlugin implements Plugin<Project> {
                         if (taskName.startsWith('compile') && taskName.endsWith('ScalaSettings')) {
                             String resolvedTaskName = taskName - 'Settings'
                             project.tasks.register(taskName, ScalaCompilerSettingsTask,
-                                    new Action<ScalaCompilerSettingsTask>() {
-                                        @Override
-                                        void execute(ScalaCompilerSettingsTask t) {
-                                            t.group = 'Insight'
-                                            t.task = resolvedTaskName
-                                            t.description = "Display Scala compiler settings of the '${resolvedTaskName}' task."
-                                        }
-                                    })
+                                new Action<ScalaCompilerSettingsTask>() {
+                                    @Override
+                                    void execute(ScalaCompilerSettingsTask t) {
+                                        t.group = 'Insight'
+                                        t.task = resolvedTaskName
+                                        t.description = "Display Scala compiler settings of the '${resolvedTaskName}' task."
+                                    }
+                                })
                         }
                     }
                 })

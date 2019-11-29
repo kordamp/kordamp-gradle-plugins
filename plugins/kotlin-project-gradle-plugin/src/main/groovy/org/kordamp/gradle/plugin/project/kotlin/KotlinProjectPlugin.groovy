@@ -19,9 +19,9 @@ package org.kordamp.gradle.plugin.project.kotlin
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.AppliedPlugin
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.project.java.JavaProjectPlugin
 import org.kordamp.gradle.plugin.project.kotlin.tasks.KotlinCompilerSettingsTask
 
@@ -32,11 +32,16 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @since 0.30.0
  */
 @CompileStatic
-class KotlinProjectPlugin implements Plugin<Project> {
+class KotlinProjectPlugin extends AbstractKordampPlugin {
     Project project
 
     void apply(Project project) {
         this.project = project
+
+        if (hasBeenVisited(project)) {
+            return
+        }
+        setVisited(project, true)
 
         if (isRootProject(project)) {
             applyPlugins(project)
@@ -48,20 +53,26 @@ class KotlinProjectPlugin implements Plugin<Project> {
         }
     }
 
-    static void applyPlugins(Project project) {
-        JavaProjectPlugin.applyPlugins(project)
+    static void applyIfMissing(Project project) {
+        if (!project.plugins.findPlugin(KotlinProjectPlugin)) {
+            project.pluginManager.apply(KotlinProjectPlugin)
+        }
+    }
+
+    private void applyPlugins(Project project) {
+        JavaProjectPlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('org.jetbrains.kotlin.jvm', new Action<AppliedPlugin>() {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
                 project.tasks.register('kotlinCompilerSettings', KotlinCompilerSettingsTask,
-                        new Action<KotlinCompilerSettingsTask>() {
-                            @Override
-                            void execute(KotlinCompilerSettingsTask t) {
-                                t.group = 'Insight'
-                                t.description = 'Display Kotlin compiler settings.'
-                            }
-                        })
+                    new Action<KotlinCompilerSettingsTask>() {
+                        @Override
+                        void execute(KotlinCompilerSettingsTask t) {
+                            t.group = 'Insight'
+                            t.description = 'Display Kotlin compiler settings.'
+                        }
+                    })
 
                 project.tasks.addRule('Pattern: compile<SourceSetName>KotlinSettings: Displays compiler settings of a KotlinCompile task.', new Action<String>() {
                     @Override
@@ -69,14 +80,14 @@ class KotlinProjectPlugin implements Plugin<Project> {
                         if (taskName.startsWith('compile') && taskName.endsWith('KotlinSettings')) {
                             String resolvedTaskName = taskName - 'Settings'
                             project.tasks.register(taskName, KotlinCompilerSettingsTask,
-                                    new Action<KotlinCompilerSettingsTask>() {
-                                        @Override
-                                        void execute(KotlinCompilerSettingsTask t) {
-                                            t.group = 'Insight'
-                                            t.task = resolvedTaskName
-                                            t.description = "Display Kotlin compiler settings of the '${resolvedTaskName}' task."
-                                        }
-                                    })
+                                new Action<KotlinCompilerSettingsTask>() {
+                                    @Override
+                                    void execute(KotlinCompilerSettingsTask t) {
+                                        t.group = 'Insight'
+                                        t.task = resolvedTaskName
+                                        t.description = "Display Kotlin compiler settings of the '${resolvedTaskName}' task."
+                                    }
+                                })
                         }
                     }
                 })

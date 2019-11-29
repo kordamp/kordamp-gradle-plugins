@@ -19,9 +19,9 @@ package org.kordamp.gradle.plugin.project.groovy
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.AppliedPlugin
+import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.project.groovy.tasks.GroovyCompilerSettingsTask
 import org.kordamp.gradle.plugin.project.java.JavaProjectPlugin
 
@@ -32,11 +32,16 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @since 0.30.0
  */
 @CompileStatic
-class GroovyProjectPlugin implements Plugin<Project> {
+class GroovyProjectPlugin extends AbstractKordampPlugin {
     Project project
 
     void apply(Project project) {
         this.project = project
+
+        if (hasBeenVisited(project)) {
+            return
+        }
+        setVisited(project, true)
 
         if (isRootProject(project)) {
             applyPlugins(project)
@@ -48,20 +53,26 @@ class GroovyProjectPlugin implements Plugin<Project> {
         }
     }
 
-    static void applyPlugins(Project project) {
-        JavaProjectPlugin.applyPlugins(project)
+    static void applyIfMissing(Project project) {
+        if (!project.plugins.findPlugin(GroovyProjectPlugin)) {
+            project.pluginManager.apply(GroovyProjectPlugin)
+        }
+    }
+
+    private void applyPlugins(Project project) {
+        JavaProjectPlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('groovy-base', new Action<AppliedPlugin>() {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
                 project.tasks.register('groovyCompilerSettings', GroovyCompilerSettingsTask,
-                        new Action<GroovyCompilerSettingsTask>() {
-                            @Override
-                            void execute(GroovyCompilerSettingsTask t) {
-                                t.group = 'Insight'
-                                t.description = 'Display Groovy compiler settings.'
-                            }
-                        })
+                    new Action<GroovyCompilerSettingsTask>() {
+                        @Override
+                        void execute(GroovyCompilerSettingsTask t) {
+                            t.group = 'Insight'
+                            t.description = 'Display Groovy compiler settings.'
+                        }
+                    })
 
                 project.tasks.addRule('Pattern: compile<SourceSetName>GroovySettings: Displays compiler settings of a GroovyCompile task.', new Action<String>() {
                     @Override
@@ -69,14 +80,14 @@ class GroovyProjectPlugin implements Plugin<Project> {
                         if (taskName.startsWith('compile') && taskName.endsWith('GroovySettings')) {
                             String resolvedTaskName = taskName - 'Settings'
                             project.tasks.register(taskName, GroovyCompilerSettingsTask,
-                                    new Action<GroovyCompilerSettingsTask>() {
-                                        @Override
-                                        void execute(GroovyCompilerSettingsTask t) {
-                                            t.group = 'Insight'
-                                            t.task = resolvedTaskName
-                                            t.description = "Display Groovy compiler settings of the '${resolvedTaskName}' task."
-                                        }
-                                    })
+                                new Action<GroovyCompilerSettingsTask>() {
+                                    @Override
+                                    void execute(GroovyCompilerSettingsTask t) {
+                                        t.group = 'Insight'
+                                        t.task = resolvedTaskName
+                                        t.description = "Display Groovy compiler settings of the '${resolvedTaskName}' task."
+                                    }
+                                })
                         }
                     }
                 })
