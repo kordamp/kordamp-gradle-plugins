@@ -26,6 +26,14 @@ org.kordamp.gradle.plugin.licensing
 org.kordamp.gradle.plugin.minpom
 org.kordamp.gradle.plugin.plugin
 org.kordamp.gradle.plugin.project
+org.kordamp.gradle.plugin.project.groovy
+org.kordamp.gradle.plugin.project.groovy.tasks
+org.kordamp.gradle.plugin.project.java
+org.kordamp.gradle.plugin.project.java.tasks
+org.kordamp.gradle.plugin.project.kotlin
+org.kordamp.gradle.plugin.project.kotlin.tasks
+org.kordamp.gradle.plugin.project.scala
+org.kordamp.gradle.plugin.project.scala.tasks
 org.kordamp.gradle.plugin.publishing
 org.kordamp.gradle.plugin.scaladoc
 org.kordamp.gradle.plugin.settings
