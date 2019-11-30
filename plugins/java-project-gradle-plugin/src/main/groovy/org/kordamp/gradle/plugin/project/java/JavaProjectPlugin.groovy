@@ -46,11 +46,6 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
-        if (hasBeenVisited(project)) {
-            return
-        }
-        setVisited(project, true)
-
         if (isRootProject(project)) {
             applyPlugins(project)
             project.childProjects.values().each {
@@ -68,6 +63,11 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
     }
 
     private void applyPlugins(Project project) {
+        if (hasBeenVisited(project)) {
+            return
+        }
+        setVisited(project, true)
+
         ProjectPlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {

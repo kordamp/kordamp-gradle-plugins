@@ -52,11 +52,6 @@ class ProjectPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
-        if (hasBeenVisited(project)) {
-            return
-        }
-        setVisited(project, true)
-
         if (isRootProject(project)) {
             applyPlugins(project)
             project.childProjects.values().each {
@@ -74,6 +69,11 @@ class ProjectPlugin extends AbstractKordampPlugin {
     }
 
     private void applyPlugins(Project project) {
+        if (hasBeenVisited(project)) {
+            return
+        }
+        setVisited(project, true)
+
         BasePlugin.applyIfMissing(project)
         JacocoPlugin.applyIfMissing(project)
         LicensingPlugin.applyIfMissing(project)
