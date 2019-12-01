@@ -45,10 +45,10 @@ final class Banner {
     }
 
     static void display(Project project) {
-        if (project != project.rootProject || b.visited.contains(project.name)) {
+        if (b.visited.contains(project.rootProject.name)) {
             return
         }
-        b.visited.add(project.name)
+        b.visited.add(project.rootProject.name)
         project.gradle.addBuildListener(new BuildAdapter() {
             @Override
             void buildFinished(BuildResult result) {
