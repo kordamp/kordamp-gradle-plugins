@@ -149,7 +149,7 @@ class PublishingUtils {
         })
     }
 
-    static void configureDependencies(MavenPom pom, ProjectConfigurationExtension effectiveConfig, Project project) {
+    static void configureDependencies(MavenPom pom, ProjectConfigurationExtension config, Project project) {
         Closure<Boolean> filter = { org.gradle.api.artifacts.Dependency d ->
             d.name != 'unspecified'
         }
@@ -163,6 +163,10 @@ class PublishingUtils {
             .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
 
         Map<String, org.gradle.api.artifacts.Dependency> testDependencies = project.configurations.findByName('testRuntime')
+            .allDependencies.findAll(filter)
+            .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+
+        Map<String, org.gradle.api.artifacts.Dependency> providedDependencies = project.configurations.findByName('compileOnly')
             .allDependencies.findAll(filter)
             .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
 
@@ -194,27 +198,39 @@ class PublishingUtils {
             testDependencies.remove(key)
         }
 
-        if (compileDependencies || runtimeDependencies || testDependencies) {
-            injectDependencies(pom, project, compileDependencies, runtimeDependencies, testDependencies)
+        if (compileDependencies || runtimeDependencies || testDependencies || providedDependencies) {
+            injectDependencies(pom, config, compileDependencies, runtimeDependencies, testDependencies, providedDependencies)
         }
     }
 
     @CompileDynamic
     private static void injectDependencies(MavenPom pom,
-                                           Project project,
+                                           ProjectConfigurationExtension config,
                                            Map<String, org.gradle.api.artifacts.Dependency> compileDependencies,
                                            Map<String, org.gradle.api.artifacts.Dependency> runtimeDependencies,
-                                           Map<String, org.gradle.api.artifacts.Dependency> testDependencies) {
+                                           Map<String, org.gradle.api.artifacts.Dependency> testDependencies,
+                                           Map<String, org.gradle.api.artifacts.Dependency> providedDependencies) {
         pom.withXml {
             Node dependenciesNode = asNode().appendNode('dependencies')
-            compileDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
-                configureDependency(dependenciesNode.appendNode('dependency'), dep, project, 'compile')
+            if ('compile' in config.publishing.scopes || !config.publishing.scopes) {
+                compileDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
+                    configureDependency(dependenciesNode.appendNode('dependency'), dep, config.project, 'compile')
+                }
             }
-            runtimeDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
-                configureDependency(dependenciesNode.appendNode('dependency'), dep, project, 'runtime')
+            if ('provided' in config.publishing.scopes || !config.publishing.scopes) {
+                providedDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
+                    configureDependency(dependenciesNode.appendNode('dependency'), dep, config.project, 'provided')
+                }
             }
-            testDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
-                configureDependency(dependenciesNode.appendNode('dependency'), dep, project, 'test')
+            if ('runtime' in config.publishing.scopes || !config.publishing.scopes) {
+                runtimeDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
+                    configureDependency(dependenciesNode.appendNode('dependency'), dep, config.project, 'runtime')
+                }
+            }
+            if ('test' in config.publishing.scopes || !config.publishing.scopes) {
+                testDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
+                    configureDependency(dependenciesNode.appendNode('dependency'), dep, config.project, 'test')
+                }
             }
         }
     }

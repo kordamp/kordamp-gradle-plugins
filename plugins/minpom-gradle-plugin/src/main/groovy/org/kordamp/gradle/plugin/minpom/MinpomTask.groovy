@@ -71,6 +71,10 @@ class MinpomTask extends DefaultTask {
             .allDependencies.findAll(filter)
             .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
 
+        Map<String, org.gradle.api.artifacts.Dependency> providedDependencies = project.configurations.findByName('compileOnly')
+            .allDependencies.findAll(filter)
+            .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+
         if (supportsApiConfiguration(project)) {
             compileDependencies.putAll(project.configurations.findByName('api')
                 ?.allDependencies.findAll(filter)
@@ -123,10 +127,13 @@ class MinpomTask extends DefaultTask {
             artifactId(projectArtifactId)
             version(projectVersion)
 
-            if (compileDependencies || runtimeDependencies || testDependencies) {
+            if (compileDependencies || runtimeDependencies || testDependencies || providedDependencies) {
                 dependencies {
                     compileDependencies.values().each { Dependency dep ->
                         MinpomTask.configureDependency(builder, project, dep, 'compile')
+                    }
+                    providedDependencies.values().each { Dependency dep ->
+                        MinpomTask.configureDependency(builder, project, dep, 'provided')
                     }
                     runtimeDependencies.values().each { Dependency dep ->
                         MinpomTask.configureDependency(builder, project, dep, 'runtime')

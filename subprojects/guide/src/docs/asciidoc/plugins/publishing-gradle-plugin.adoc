@@ -35,6 +35,8 @@ config {
         releasesRepository
         snapshotsRepository
         publications
+        scopes
+        filterDependencies
         <<_publishing_pom,pom>>  {
             parent
             overwriteInceptionYear
@@ -57,6 +59,8 @@ config {
 | releasesRepository  | String       | no       |               | Name of a Maven compatible repository for publishing releases
 | snapshotsRepository | String       | no       |               | Name of a Maven compatible repository for publishing snapshots
 | publications        | List<String> | no       | []            | Publication names to be included
+| scopes              | List<String> | no       | []            | Maven scopes to be added to generated POM. If no value then defaults to `['compile', 'runtime', 'test', 'provided']`
+| filterDependencies  | boolean      | no       | false         | Force dependency filtering by scope when generating POM files.
 |===
 
 This block is optional.

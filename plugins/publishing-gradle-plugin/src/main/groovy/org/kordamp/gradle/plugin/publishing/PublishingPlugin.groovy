@@ -151,18 +151,27 @@ class PublishingPlugin extends AbstractKordampPlugin {
 
                 if (!effectiveConfig.publishing.publications.contains('main') && !effectiveConfig.publishing.publications) {
                     main(MavenPublication) {
-                        try {
-                            if (components.java) {
-                                from components.java
-                            }
-                        } catch (Exception e) {
+                        if (effectiveConfig.publishing.filterDependencies) {
                             groupId = project.group
                             artifactId = project.name
                             version = project.version
+                            if (jar?.enabled) artifact jar
                             PublishingUtils.configureDependencies(pom, effectiveConfig, project)
+                        } else {
+                            try {
+                                if (project.components.java) {
+                                    from project.components.java
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace()
+                                groupId = project.group
+                                artifactId = project.name
+                                version = project.version
+                                if (jar?.enabled) artifact jar
+                                PublishingUtils.configureDependencies(pom, effectiveConfig, project)
+                            }
                         }
 
-                        if (jar?.enabled) artifact jar
                         if (javadocJar?.enabled) artifact javadocJar
                         if (groovydocJar?.enabled) artifact groovydocJar
                         if (sourceJar?.enabled) artifact sourceJar

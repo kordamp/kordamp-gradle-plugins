@@ -41,8 +41,11 @@ class Publishing extends AbstractFeature {
     boolean signing = false
     DefaultPomOptions pom = new DefaultPomOptions()
     List<String> publications = []
+    List<String> scopes = []
+    boolean filterDependencies = false
 
     private boolean signingSet
+    private boolean filterDependenciesSet
 
     Publishing(ProjectConfigurationExtension config, Project project) {
         super(config, project)
@@ -63,6 +66,8 @@ class Publishing extends AbstractFeature {
             map.releasesRepository = releasesRepository
             map.snapshotsRepository = snapshotsRepository
             map.publications = publications
+            map.scopes = scopes
+            map.filterDependencies = filterDependencies
             map.pom = pom.toMap()
         }
 
@@ -92,6 +97,15 @@ class Publishing extends AbstractFeature {
         this.signingSet
     }
 
+    void setFilterDependencies(boolean signing) {
+        this.filterDependencies = signing
+        this.filterDependenciesSet = true
+    }
+
+    boolean isFilterDependenciesSet() {
+        this.filterDependenciesSet
+    }
+
     void copyInto(Publishing copy) {
         super.copyInto(copy)
 
@@ -100,6 +114,9 @@ class Publishing extends AbstractFeature {
         copy.@signing = this.signing
         copy.@signingSet = this.signingSet
         copy.publications.addAll(publications)
+        copy.scopes.addAll(scopes)
+        copy.@filterDependencies = this.filterDependencies
+        copy.@filterDependenciesSet = this.filterDependenciesSet
         this.@pom.copyInto(copy.@pom)
     }
 
@@ -109,7 +126,10 @@ class Publishing extends AbstractFeature {
         o1.snapshotsRepository = o1.@snapshotsRepository ?: o2.@snapshotsRepository
         o1.@signing = o1.signingSet ? o1.signing : o2.signing
         o1.@signingSet = o1.signingSet ?: o2.signingSet
+        o1.@filterDependencies = o1.filterDependenciesSet ? o1.filterDependencies : o2.filterDependencies
+        o1.@filterDependenciesSet = o1.filterDependenciesSet ?: o2.filterDependenciesSet
         CollectionUtils.merge(o1.publications, o2?.publications)
+        CollectionUtils.merge(o1.scopes, o2?.scopes)
         DefaultPomOptions.merge(o1.pom, o2.pom)
     }
 }
