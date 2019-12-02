@@ -305,7 +305,7 @@ class PublishingUtils {
         }
 
         if (isOverwriteAllowed(pomOptions, pomOptions.overwriteOrganization)) {
-            if (!effectiveConfig.info.organization.isEmpty()) {
+            if (!effectiveConfig.info.organization.empty) {
                 pom.organization(new Action<MavenPomOrganization>() {
                     @Override
                     void execute(MavenPomOrganization organization) {
@@ -365,7 +365,7 @@ class PublishingUtils {
             })
         }
 
-        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteIssueManagement)) {
+        if (!effectiveConfig.info.issueManagement.empty && isOverwriteAllowed(pomOptions, pomOptions.overwriteIssueManagement)) {
             pom.issueManagement(new Action<MavenPomIssueManagement>() {
                 @Override
                 void execute(MavenPomIssueManagement issueManagement) {
@@ -375,7 +375,7 @@ class PublishingUtils {
             })
         }
 
-        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteCiManagement)) {
+        if (!effectiveConfig.info.ciManagement.empty && isOverwriteAllowed(pomOptions, pomOptions.overwriteCiManagement)) {
             pom.ciManagement(new Action<MavenPomCiManagement>() {
                 @Override
                 void execute(MavenPomCiManagement ciManagement) {
@@ -385,7 +385,7 @@ class PublishingUtils {
             })
         }
 
-        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteMailingLists)) {
+        if (!effectiveConfig.info.mailingLists.empty && isOverwriteAllowed(pomOptions, pomOptions.overwriteMailingLists)) {
             pom.mailingLists(new Action<MavenPomMailingListSpec>() {
                 @Override
                 void execute(MavenPomMailingListSpec mailingLists) {
