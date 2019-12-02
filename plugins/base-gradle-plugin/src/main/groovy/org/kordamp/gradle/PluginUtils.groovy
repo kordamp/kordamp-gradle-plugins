@@ -47,7 +47,7 @@ class PluginUtils {
         if (isAndroidProject(project)) {
             return project.android.sourceSets
         }
-        project.extensions.getByType(SourceSetContainer)
+        project.extensions.findByType(SourceSetContainer)
     }
 
     @CompileDynamic
