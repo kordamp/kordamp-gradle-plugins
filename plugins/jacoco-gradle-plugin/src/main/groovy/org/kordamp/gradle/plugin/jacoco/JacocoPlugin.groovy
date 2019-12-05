@@ -105,10 +105,8 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
                 Set<JacocoReport> reportTasks = []
                 project.tasks.withType(Test) { Test testTask ->
-                    if (!testTask.enabled) {
-                        return
-                    }
                     JacocoReport reportTask = configureJacocoReportTask(project, testTask)
+                    reportTask.enabled &= testTask.enabled
                     if (reportTask.enabled) {
                         effectiveConfig.jacoco.testTasks() << testTask
                         effectiveConfig.jacoco.reportTasks() << reportTask
