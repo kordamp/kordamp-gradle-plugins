@@ -19,5 +19,5 @@ dependencies {
     api project(':base-gradle-plugin')
     api project(':apidoc-gradle-plugin')
     api project(':sourcehtml-gradle-plugin')
-    api 'org.asciidoctor:asciidoctor-gradle-jvm:2.3.0'
+    api 'org.asciidoctor:asciidoctor-gradle-jvm:2.4.0'
 }
