@@ -33,6 +33,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @since 0.16.0
  */
 @CompileStatic
+@Deprecated
 class BuildScanPlugin extends AbstractKordampPlugin {
     public static final String BUILD_SCAN_AGREE = 'build.scan.agree'
     Project project

@@ -198,6 +198,7 @@ class ProjectConfigurationExtension {
         buildInfo
     }
 
+    @Deprecated
     BuildScan getBuildScan() {
         buildScan
     }
@@ -314,10 +315,12 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, buildInfo)
     }
 
+    @Deprecated
     void buildScan(Action<? super BuildScan> action) {
         action.execute(buildScan)
     }
 
+    @Deprecated
     void buildScan(@DelegatesTo(BuildScan) Closure action) {
         ConfigureUtil.configure(action, buildScan)
     }

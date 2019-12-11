@@ -31,6 +31,7 @@ import static org.kordamp.gradle.plugin.buildscan.BuildScanPlugin.resolveProject
  * @since 0.16.0
  */
 @CompileStatic
+@Deprecated
 class BuildScanAgreementTask extends DefaultTask {
     @Input
     boolean remove = false

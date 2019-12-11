@@ -12,6 +12,8 @@ applies::  `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>` +
 
 Configures the `com.gradle.build-scan` plugin and enables conditional agreement on the terms of service.
 
+WARNING: This plugin has been deprecated since version `0.31.0` and will be removed.
+
 You may define a System property `build.scan.agree` when invoking a build to set the value of the build
 scan agreement on the spot. You may also set this value at the project or global level. The precendence
 for evaluating the agreement is thus

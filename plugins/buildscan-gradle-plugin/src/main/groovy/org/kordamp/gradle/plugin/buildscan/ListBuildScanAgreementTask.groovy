@@ -30,6 +30,7 @@ import static org.kordamp.gradle.plugin.buildscan.BuildScanPlugin.resolveProject
  * @since 0.16.0
  */
 @CompileStatic
+@Deprecated
 class ListBuildScanAgreementTask extends DefaultTask {
     @TaskAction
     void processAgreement() {
