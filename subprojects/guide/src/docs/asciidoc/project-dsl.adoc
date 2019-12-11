@@ -19,6 +19,7 @@ config {
     <<_org_kordamp_gradle_buildscan,buildScan>> { ... }
     <<_org_kordamp_gradle_clirr,clirr>> { ... }
     <<_org_kordamp_gradle_groovydoc,groovydoc>> { ... }
+    <<_org_kordamp_gradle_guide,guide>> { ... }
     <<_org_kordamp_gradle_jacoco,jacoco>> { ... }
     <<_org_kordamp_gradle_javadoc,javadoc>> { ... }
     <<_org_kordamp_gradle_kotlindoc,kotlindoc>> { ... }

@@ -50,6 +50,41 @@ The following attributes will be added to the default `asciidoctor` task if they
 | build-created-by       | rootProject.ext.buildinfo.buildCreatedBy
 |===
 
+[[_org_kordamp_gradle_guide_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    guide {
+        enabled
+        <<_guide_publish,publish>> {
+            enabled
+            branch
+            message
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name     | Type    | Required | Default Value | Description
+| enabled  | boolean | no       | true          | Disables `org.kordamp.gradle.guide` plugin if `false`
+|===
+
+[[_guide_publish]]
+*publish*
+
+[options="header", cols="5*"]
+|===
+| Name    | Type    | Required | Default Value                          | Description
+| enabled | boolean | no       | false                                  | Disables publication of guide if `false`
+| branch  | String  | no       | 'gh-pages'                             | Git branch
+| message | String  | no       | "Publish guide for ${project.version}" | Commit message
+|===
+
 [[_org_kordamp_gradle_guide_tasks]]
 == Tasks
 

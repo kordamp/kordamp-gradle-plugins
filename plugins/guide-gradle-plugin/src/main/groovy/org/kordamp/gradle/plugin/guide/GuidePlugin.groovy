@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.guide
 
+import groovy.transform.CompileDynamic
 import org.asciidoctor.gradle.jvm.AsciidoctorJPlugin
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.gradle.BuildAdapter
@@ -69,6 +70,7 @@ class GuidePlugin extends AbstractKordampPlugin {
             configureAsciidoctorTask(project)
             createGuideTaskIfNeeded(project)
             createInitGuideTask(project)
+            configurePublishing(project)
         }
     }
 
@@ -214,6 +216,28 @@ class GuidePlugin extends AbstractKordampPlugin {
                 }
             }
         })
+    }
+
+    @CompileDynamic
+    private void configurePublishing(Project project) {
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        println "guide publish ${effectiveConfig.guide.publish.enabled}"
+        if (!effectiveConfig.guide.publish.enabled) {
+            return
+        }
+
+        Task createGuideTask = project.tasks.findByName(CREATE_GUIDE_TASK_NAME)
+
+        project.gitPublish {
+            repoUri = effectiveConfig.info.resolveScmLink()
+            branch = effectiveConfig.guide.publish.branch
+            contents {
+                from createGuideTask.outputs.files
+            }
+            commitMessage = effectiveConfig.guide.publish.message
+        }
+
+        project.gitPublishCommit.dependsOn(createGuideTask)
     }
 
     static void initGuide(Project project) {

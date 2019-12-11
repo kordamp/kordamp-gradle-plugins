@@ -30,6 +30,7 @@ import org.kordamp.gradle.plugin.base.plugins.BuildInfo
 import org.kordamp.gradle.plugin.base.plugins.BuildScan
 import org.kordamp.gradle.plugin.base.plugins.Clirr
 import org.kordamp.gradle.plugin.base.plugins.Groovydoc
+import org.kordamp.gradle.plugin.base.plugins.Guide
 import org.kordamp.gradle.plugin.base.plugins.Jacoco
 import org.kordamp.gradle.plugin.base.plugins.Javadoc
 import org.kordamp.gradle.plugin.base.plugins.Kotlindoc
@@ -64,6 +65,7 @@ class ProjectConfigurationExtension {
     final BuildScan buildScan
     final Clirr clirr
     final Groovydoc groovydoc
+    final Guide guide
     final Kotlindoc kotlindoc
     final Jacoco jacoco
     final Javadoc javadoc
@@ -93,6 +95,7 @@ class ProjectConfigurationExtension {
         buildScan = new BuildScan(this, project)
         clirr = new Clirr(this, project)
         groovydoc = new Groovydoc(this, project)
+        guide = new Guide(this, project)
         kotlindoc = new Kotlindoc(this, project)
         jacoco = new Jacoco(this, project)
         javadoc = new Javadoc(this, project)
@@ -118,6 +121,7 @@ class ProjectConfigurationExtension {
         this.buildScan = other.buildScan
         this.clirr = other.clirr
         this.groovydoc = other.groovydoc
+        this.guide = other.guide
         this.kotlindoc = other.kotlindoc
         this.jacoco = other.jacoco
         this.javadoc = other.javadoc
@@ -161,6 +165,7 @@ class ProjectConfigurationExtension {
         map.putAll(buildScan.toMap())
         map.putAll(clirr.toMap())
         map.putAll(groovydoc.toMap())
+        map.putAll(guide.toMap())
         map.putAll(kotlindoc.toMap())
         map.putAll(jacoco.toMap())
         map.putAll(javadoc.toMap())
@@ -209,6 +214,10 @@ class ProjectConfigurationExtension {
 
     Groovydoc getGroovydoc() {
         groovydoc
+    }
+
+    Guide getGuide() {
+        guide
     }
 
     Kotlindoc getKotlindoc() {
@@ -341,6 +350,14 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, groovydoc)
     }
 
+    void guide(Action<? super Guide> action) {
+        action.execute(guide)
+    }
+
+    void guide(@DelegatesTo(Guide) Closure action) {
+        ConfigureUtil.configure(action, guide)
+    }
+
     void kotlindoc(Action<? super Kotlindoc> action) {
         action.execute(kotlindoc)
     }
@@ -466,6 +483,7 @@ class ProjectConfigurationExtension {
         this.@buildScan.copyInto(copy.@buildScan)
         this.@clirr.copyInto(copy.@clirr)
         this.@groovydoc.copyInto(copy.@groovydoc)
+        this.@guide.copyInto(copy.@guide)
         this.@kotlindoc.copyInto(copy.@kotlindoc)
         this.@jacoco.copyInto(copy.@jacoco)
         this.@javadoc.copyInto(copy.@javadoc)
@@ -496,6 +514,7 @@ class ProjectConfigurationExtension {
         BuildScan.merge(merged.@buildScan, other.@buildScan)
         Clirr.merge(merged.@clirr, other.@clirr)
         Groovydoc.merge(merged.@groovydoc, other.@groovydoc)
+        Guide.merge(merged.@guide, other.@guide)
         Kotlindoc.merge(merged.@kotlindoc, other.@kotlindoc)
         Jacoco.merge(merged.@jacoco, other.@jacoco)
         Javadoc.merge(merged.@javadoc, other.@javadoc)
@@ -532,6 +551,7 @@ class ProjectConfigurationExtension {
         buildScan.normalize()
         clirr.normalize()
         groovydoc.normalize()
+        guide.normalize()
         kotlindoc.normalize()
         jacoco.normalize()
         licensing.normalize()
