@@ -23,6 +23,8 @@ import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
@@ -47,6 +49,12 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  */
 @CompileStatic
 class TestingPlugin extends AbstractKordampPlugin {
+    static final String AGGREGATE_TEST_REPORTS_TASK_NAME = 'aggregateTestReports'
+    static final String AGGREGATE_INTEGRATION_TEST_REPORTS_TASK_NAME = 'aggregateIntegrationTestReports'
+    static final String AGGREGATE_FUNCTIONAL_TEST_REPORTS_TASK_NAME = 'aggregateFunctionalTestReports'
+    static final String AGGREGATE_ALL_TEST_REPORTS_TASK_NAME = 'aggregateAllTestReports'
+    static final String ALL_TESTS_TASK_NAME = 'allTests'
+
     private static final boolean WINDOWS = System.getProperty('os.name').startsWith('Windows')
 
     Project project
@@ -78,7 +86,7 @@ class TestingPlugin extends AbstractKordampPlugin {
 
         TaskProvider<DefaultTask> allTestsTask = null
         if (project.childProjects.isEmpty()) {
-            allTestsTask = project.tasks.register('allTests', DefaultTask,
+            allTestsTask = project.tasks.register(ALL_TESTS_TASK_NAME, DefaultTask,
                 new Action<DefaultTask>() {
                     @Override
                     void execute(DefaultTask t) {
@@ -120,7 +128,7 @@ class TestingPlugin extends AbstractKordampPlugin {
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
-            TaskProvider<TestReport> aggregateTestReportTask = project.tasks.register('aggregateTestReports', TestReport,
+            TaskProvider<TestReport> aggregateTestReportTask = project.tasks.register(AGGREGATE_TEST_REPORTS_TASK_NAME, TestReport,
                 new Action<TestReport>() {
                     @Override
                     void execute(TestReport t) {
@@ -131,7 +139,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                     }
                 })
 
-            TaskProvider<TestReport> aggregateIntegrationTestReportTask = project.tasks.register('aggregateIntegrationTestReports', TestReport,
+            TaskProvider<TestReport> aggregateIntegrationTestReportTask = project.tasks.register(AGGREGATE_INTEGRATION_TEST_REPORTS_TASK_NAME, TestReport,
                 new Action<TestReport>() {
                     @Override
                     void execute(TestReport t) {
@@ -142,7 +150,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                     }
                 })
 
-            TaskProvider<TestReport> aggregateFunctionalTestReportTask = project.tasks.register('aggregateFunctionalTestReports', TestReport,
+            TaskProvider<TestReport> aggregateFunctionalTestReportTask = project.tasks.register(AGGREGATE_FUNCTIONAL_TEST_REPORTS_TASK_NAME, TestReport,
                 new Action<TestReport>() {
                     @Override
                     void execute(TestReport t) {
@@ -153,7 +161,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                     }
                 })
 
-            TaskProvider<TestReport> aggregateAllTestReportTask = project.tasks.register('aggregateAllTestReports', TestReport,
+            TaskProvider<TestReport> aggregateAllTestReportTask = project.tasks.register(AGGREGATE_ALL_TEST_REPORTS_TASK_NAME, TestReport,
                 new Action<TestReport>() {
                     @Override
                     void execute(TestReport t) {
@@ -174,6 +182,46 @@ class TestingPlugin extends AbstractKordampPlugin {
                         aggregateAllTestReportTask)
                 }
             })
+
+            project.gradle.taskGraph.whenReady(new Action<TaskExecutionGraph>() {
+                @Override
+                void execute(TaskExecutionGraph graph) {
+                    configureAggregates(project, graph)
+                }
+            })
+        }
+    }
+
+    @CompileDynamic
+    private void configureAggregates(Project project, TaskExecutionGraph graph) {
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+
+        Set<Test> tt = new LinkedHashSet<>(effectiveConfig.testing.testTasks())
+        Set<Test> itt = new LinkedHashSet<>(effectiveConfig.testing.integrationTasks())
+        Set<Test> ftt = new LinkedHashSet<>(effectiveConfig.testing.functionalTestTasks())
+
+        project.childProjects.values().each {
+            Testing e = resolveEffectiveConfig(it).testing
+            if (e.enabled) {
+                tt.addAll(e.testTasks())
+                itt.addAll(e.integrationTasks())
+                ftt.addAll(e.functionalTestTasks())
+            }
+        }
+
+        if (graph.hasTask( ':'+AGGREGATE_TEST_REPORTS_TASK_NAME)) {
+            tt*.setIgnoreFailures(true)
+        }
+        if (graph.hasTask(':' + AGGREGATE_INTEGRATION_TEST_REPORTS_TASK_NAME)) {
+            itt*.ignoreFailures = true
+        }
+        if (graph.hasTask(':' + AGGREGATE_FUNCTIONAL_TEST_REPORTS_TASK_NAME)) {
+            ftt*.ignoreFailures = true
+        }
+        if (graph.hasTask(':' + AGGREGATE_ALL_TEST_REPORTS_TASK_NAME)) {
+            tt*.ignoreFailures = true
+            itt*.ignoreFailures = true
+            ftt*.ignoreFailures = true
         }
     }
 
@@ -217,6 +265,7 @@ class TestingPlugin extends AbstractKordampPlugin {
         })
     }
 
+    @CompileDynamic
     private void configureAggregateTestReportTasks(Project project,
                                                    TaskProvider<TestReport> aggregateTestReportTask,
                                                    TaskProvider<TestReport> aggregateIntegrationTestReportTask,
@@ -228,8 +277,8 @@ class TestingPlugin extends AbstractKordampPlugin {
         }
 
         Set<Test> tt = new LinkedHashSet<>(effectiveConfig.testing.testTasks())
-        Set<IntegrationTest> itt = new LinkedHashSet<>(effectiveConfig.testing.integrationTasks())
-        Set<FunctionalTest> ftt = new LinkedHashSet<>(effectiveConfig.testing.functionalTestTasks())
+        Set<Test> itt = new LinkedHashSet<>(effectiveConfig.testing.integrationTasks())
+        Set<Test> ftt = new LinkedHashSet<>(effectiveConfig.testing.functionalTestTasks())
 
         project.childProjects.values().each {
             Testing e = resolveEffectiveConfig(it).testing
@@ -245,6 +294,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             void execute(TestReport t) {
                 t.enabled = tt.size() > 0
                 t.reportOn(tt)
+                configureAggregateTestReportTask(t, 'Unit', tt)
             }
         })
 
@@ -253,6 +303,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             void execute(TestReport t) {
                 t.enabled = itt.size() > 0
                 t.reportOn(itt)
+                configureAggregateTestReportTask(t, 'Integration', itt)
             }
         })
 
@@ -261,6 +312,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             void execute(TestReport t) {
                 t.enabled = ftt.size() > 0
                 t.reportOn(ftt)
+                configureAggregateTestReportTask(t, 'Functional', ftt)
             }
         })
 
@@ -270,7 +322,53 @@ class TestingPlugin extends AbstractKordampPlugin {
             void execute(TestReport t) {
                 t.enabled = tt.size() > 0 || itt.size() > 0 || ftt.size() > 0
                 t.reportOn(tt + itt + ftt)
+                configureAggregateTestReportTask(t, 'All', tt + itt + ftt)
             }
         })
+    }
+
+    private void configureAggregateTestReportTask(TestReport t, String category, Set<Test> testTasks) {
+        Map<String,Long> results = configureTestsForAggregation(testTasks)
+
+        t.doLast(new Action<Task>() {
+            @Override
+            void execute(Task task) {
+                AnsiConsole console = new AnsiConsole(project)
+                String indicator = console.green(WINDOWS ? '√' : '✔')
+                if (results.failure > 0) {
+                    indicator = console.red(WINDOWS ? 'X' : '✘')
+                }
+
+                String str = console.erase("${indicator} ${category} Tests ")
+                str += "Executed: ${results.total}/${console.green(String.valueOf(results.success))}/"
+                str += "${console.red(String.valueOf(results.failure))}/"
+                str += "${console.yellow(String.valueOf(results.skipped))} "
+                t.project.logger.lifecycle(str.toString())
+
+                if (results.failure > 0) {
+                    println("There were failing tests. See the report at: ${t.destinationDir}/index.html")
+                    throw new IllegalMonitorStateException('There were failing tests')
+                }
+            }
+        })
+    }
+
+    private Map<String, Long> configureTestsForAggregation(Set<Test> testTasks) {
+        Map<String, Long> results = [:].withDefault { k -> 0L }
+
+        Closure configurer = { TestDescriptor descriptor, TestResult result ->
+            if (descriptor.name.contains('Gradle Test Executor') ||
+                descriptor.name.contains('Gradle Test Run')) return
+
+            results.put('total', results.get('total') + result.testCount)
+            results.put('success', results.get('success') + result.successfulTestCount)
+            results.put('failure', results.get('failure') + result.failedTestCount)
+            results.put('skipped', results.get('skipped') + result.skippedTestCount)
+        }
+        testTasks.each { t ->
+            t.afterSuite(configurer)
+        }
+
+        results
     }
 }

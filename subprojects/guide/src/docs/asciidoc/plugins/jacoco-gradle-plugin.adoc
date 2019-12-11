@@ -32,13 +32,13 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name                 | Type           | Required | Default Value                                                | Description
-| enabled              | boolean        | no       | true                                                         | Disables `org.kordamp.gradle.jacoco` plugin if `false`
-| mergeExecFile        | File           | no       | ${project.buildDir}/jacoco/root.exec                         | Location for the root merge execution data file
-| mergeReportHtmlFile  | File           | no       | ${project.buildDir}/reports/jacoco/root/html                 | Location for root HTML reports
-| mergeReportXmlFile   | File           | no       | ${project.buildDir}/reports/jacoco/root/jacocoTestReport.xml | Location for the root XML report
-| additionalSourceDirs | FileCollection | no       | []                                                           | Additional source directories
-| additionalClassDirs  | FileCollection | no       | []                                                           | Additional class directories
+| Name                 | Type           | Required | Default Value                                                     | Description
+| enabled              | boolean        | no       | true                                                              | Disables `org.kordamp.gradle.jacoco` plugin if `false`
+| mergeExecFile        | File           | no       | ${project.buildDir}/jacoco/aggregate.exec                         | Location for the aggregate merge execution data file
+| mergeReportHtmlFile  | File           | no       | ${project.buildDir}/reports/jacoco/aggregate/html                 | Location for aggregate HTML reports
+| mergeReportXmlFile   | File           | no       | ${project.buildDir}/reports/jacoco/aggregate/jacocoTestReport.xml | Location for the aggregate XML report
+| additionalSourceDirs | FileCollection | no       | []                                                                | Additional source directories
+| additionalClassDirs  | FileCollection | no       | []                                                                | Additional class directories
 |===
 
 The value for `enabled` will automatically be set to `false` if no tests (`unit`, `integration`, or `functional`) are found.
@@ -69,30 +69,30 @@ reports.csv.enabled:: false
 reports.html.enabled:: true
 reports.xml.enabled:: true
 
-[[_task_jacoco_root_merge]]
-=== JacocoRootMerge
+[[_task_aggregate_jacoco_merge]]
+=== AggregateJacocoMerge
 
 Aggregates all execution data into a single file. +
 Consumes settings from `config.<<_org_kordamp_gradle_jacoco_dsl,jacoco>>` defined in the root project. +
 This task is added to the root project.
 
 [horizontal]
-Name:: jacocoRootMerge
+Name:: aggregateJacocoMerge
 Type:: `org.gradle.testing.jacoco.tasks.JacocoMerge`
 
 .Properties
 [horizontal]
 destinationFile:: config.jacoco.mergeExecFile
 
-[[_task_jacoco_root_report]]
-=== JacocoRootReport
+[[_task_aggregate_jacoco_report]]
+=== AggregateJacocoReport
 
 Aggregates all coverage reports into a single report. +
 Consumes settings from `config.<<_org_kordamp_gradle_jacoco_dsl,jacoco>>` defined in the root project. +
 This task is added to the root project.
 
 [horizontal]
-Name:: jacocoRootReport
+Name:: aggregateJacocoReport
 Type:: `org.gradle.testing.jacoco.tasks.JacocoReport`
 
 .Properties

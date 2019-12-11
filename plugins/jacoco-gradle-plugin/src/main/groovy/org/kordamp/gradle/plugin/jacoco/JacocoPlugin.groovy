@@ -24,6 +24,7 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.file.FileCollection
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.TaskProvider
@@ -37,6 +38,7 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.Jacoco
+import org.kordamp.gradle.plugin.base.plugins.Testing
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
@@ -48,6 +50,9 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  */
 @CompileStatic
 class JacocoPlugin extends AbstractKordampPlugin {
+    static final String AGGREGATE_JACOCO_MERGE_TASK_NAME = 'aggregateJacocoMerge'
+    static final String AGGREGATE_JACOCO_REPORT_TASK_NAME = 'aggregateJacocoReport'
+
     Project project
 
     void apply(Project project) {
@@ -121,7 +126,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
         }
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
-            TaskProvider<JacocoMerge> jacocoRootMerge = project.tasks.register('jacocoRootMerge', JacocoMerge,
+            TaskProvider<JacocoMerge> aggregateJacocoMerge = project.tasks.register(AGGREGATE_JACOCO_MERGE_TASK_NAME, JacocoMerge,
                 new Action<JacocoMerge>() {
                     @Override
                     void execute(JacocoMerge t) {
@@ -131,12 +136,12 @@ class JacocoPlugin extends AbstractKordampPlugin {
                     }
                 })
 
-            TaskProvider<JacocoReport> jacocoRootReport = project.tasks.register('jacocoRootReport', JacocoReport,
+            TaskProvider<JacocoReport> aggregateJacocoReport = project.tasks.register(AGGREGATE_JACOCO_REPORT_TASK_NAME, JacocoReport,
                 new Action<JacocoReport>() {
                     @Override
                     void execute(JacocoReport t) {
                         t.enabled = false
-                        t.dependsOn jacocoRootMerge
+                        t.dependsOn aggregateJacocoMerge
                         t.group = 'Reporting'
                         t.description = 'Generate aggregate Jacoco coverage report.'
 
@@ -153,7 +158,14 @@ class JacocoPlugin extends AbstractKordampPlugin {
             project.gradle.addBuildListener(new BuildAdapter() {
                 @Override
                 void projectsEvaluated(Gradle gradle) {
-                    applyJacocoMerge(project, jacocoRootMerge, jacocoRootReport)
+                    applyJacocoMerge(project, aggregateJacocoMerge, aggregateJacocoReport)
+                }
+            })
+
+            project.gradle.taskGraph.whenReady(new Action<TaskExecutionGraph>() {
+                @Override
+                void execute(TaskExecutionGraph graph) {
+                    configureAggregates(project, graph)
                 }
             })
         }
@@ -161,6 +173,30 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
     static String resolveJacocoReportTaskName(String name) {
         return 'jacoco' + StringUtils.capitalize(name) + 'Report'
+    }
+
+    @CompileDynamic
+    private void configureAggregates(Project project, TaskExecutionGraph graph) {
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+
+        Set<Test> tt = new LinkedHashSet<>(effectiveConfig.testing.testTasks())
+        Set<Test> itt = new LinkedHashSet<>(effectiveConfig.testing.integrationTasks())
+        Set<Test> ftt = new LinkedHashSet<>(effectiveConfig.testing.functionalTestTasks())
+
+        project.childProjects.values().each {
+            Testing e = resolveEffectiveConfig(it).testing
+            if (e.enabled) {
+                tt.addAll(e.testTasks())
+                itt.addAll(e.integrationTasks())
+                ftt.addAll(e.functionalTestTasks())
+            }
+        }
+
+        if (graph.hasTask(':' + AGGREGATE_JACOCO_MERGE_TASK_NAME)) {
+            tt*.ignoreFailures = true
+            itt*.ignoreFailures = true
+            ftt*.ignoreFailures = true
+        }
     }
 
     @CompileDynamic
@@ -222,7 +258,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
         project.files(projects.collect { resolveClassDirs(effectiveConfig, it) }.flatten().unique())
     }
 
-    private void applyJacocoMerge(Project project, TaskProvider<JacocoMerge> jacocoRootMerge, TaskProvider<JacocoReport> jacocoRootReport) {
+    private void applyJacocoMerge(Project project, TaskProvider<JacocoMerge> aggregateJacocoMerge, TaskProvider<JacocoReport> aggregateJacocoReport) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (!effectiveConfig.jacoco.enabled) {
             return
@@ -241,7 +277,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
             }
         }
 
-        jacocoRootMerge.configure(new Action<JacocoMerge>() {
+        aggregateJacocoMerge.configure(new Action<JacocoMerge>() {
             @Override
             @CompileDynamic
             void execute(JacocoMerge t) {
@@ -252,7 +288,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
             }
         })
 
-        jacocoRootReport.configure(new Action<JacocoReport>() {
+        aggregateJacocoReport.configure(new Action<JacocoReport>() {
             @Override
             void execute(JacocoReport t) {
                 t.enabled = effectiveConfig.jacoco.enabled
@@ -260,7 +296,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
                 t.additionalSourceDirs.from project.files(resolveSourceDirs(effectiveConfig, projects))
                 t.sourceDirectories.from project.files(resolveSourceDirs(effectiveConfig, projects))
                 t.classDirectories.from project.files(resolveClassDirs(effectiveConfig, projects))
-                t.executionData project.files(jacocoRootMerge.get().destinationFile)
+                t.executionData project.files(aggregateJacocoMerge.get().destinationFile)
 
                 t.reports(new Action<JacocoReportsContainer>() {
                     @Override

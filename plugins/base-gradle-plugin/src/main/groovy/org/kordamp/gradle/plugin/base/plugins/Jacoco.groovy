@@ -47,8 +47,8 @@ class Jacoco extends AbstractFeature {
 
     Jacoco(ProjectConfigurationExtension config, Project project) {
         super(config, project)
-        File destinationDir = project.file("${project.buildDir}/reports/jacoco/root")
-        mergeExecFile = project.file("${project.buildDir}/jacoco/root.exec")
+        File destinationDir = project.file("${project.buildDir}/reports/jacoco/aggregate")
+        mergeExecFile = project.file("${project.buildDir}/jacoco/aggregate.exec")
         mergeReportHtmlFile = project.file("${destinationDir}/html")
         mergeReportXmlFile = project.file("${destinationDir}/jacocoTestReport.xml")
         additionalSourceDirs = project.files()
