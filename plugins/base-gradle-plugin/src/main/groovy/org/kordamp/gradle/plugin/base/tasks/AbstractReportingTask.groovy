@@ -20,6 +20,8 @@ package org.kordamp.gradle.plugin.base.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.AnsiConsole
 
@@ -193,6 +195,16 @@ abstract class AbstractReportingTask extends DefaultTask {
             return console.cyan(s)
         } catch (Exception e) {
             return null
+        }
+    }
+
+    protected Object unwrapValue(Object value) {
+        if (value instanceof Property) {
+            return ((Property) value).getOrNull()
+        } else if (value instanceof Provider) {
+            return ((Property) value).getOrNull()
+        } else {
+            value
         }
     }
 }

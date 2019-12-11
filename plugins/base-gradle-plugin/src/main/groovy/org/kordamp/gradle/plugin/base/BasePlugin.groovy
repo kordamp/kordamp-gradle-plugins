@@ -26,6 +26,7 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationsTask
 import org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask
+import org.kordamp.gradle.plugin.base.tasks.ExtensionSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ExtensionsTask
 import org.kordamp.gradle.plugin.base.tasks.ListIncludedBuildsTask
 import org.kordamp.gradle.plugin.base.tasks.ListProjectsTask
@@ -117,6 +118,33 @@ class BasePlugin extends AbstractKordampPlugin {
                     t.description = "Displays all properties found in project '$project.name'."
                 }
             })
+
+        project.tasks.register('extensionSettings', ExtensionSettingsTask,
+            new Action<ExtensionSettingsTask>() {
+                @Override
+                void execute(ExtensionSettingsTask t) {
+                    t.group = 'Insight'
+                    t.description = 'Display the settings of an Extension.'
+                }
+            })
+
+        project.tasks.addRule('Pattern: <ExtensionName>ExtensionSettings: Displays the settings of an Extension.', new Action<String>() {
+            @Override
+            void execute(String extensionName) {
+                if (extensionName.endsWith('ExtensionSettings')) {
+                    String resolvedExtensionName = extensionName - 'ExtensionSettings'
+                    project.tasks.register(extensionName, ExtensionSettingsTask,
+                        new Action<ExtensionSettingsTask>() {
+                            @Override
+                            void execute(ExtensionSettingsTask t) {
+                                t.group = 'Insight'
+                                t.extension = resolvedExtensionName
+                                t.description = "Display the settings of the '${resolvedExtensionName}' Extension."
+                            }
+                        })
+                }
+            }
+        })
 
         project.tasks.register('configurationSettings', ConfigurationSettingsTask,
             new Action<ConfigurationSettingsTask>() {

@@ -68,7 +68,7 @@ class TaskSettingsTask extends AbstractReportingTask {
                 TaskDependency td = (TaskDependency) value
                 doPrintCollection(name.toString(), td.getDependencies(task), 1)
             } else {
-                doPrintMapEntry(name.toString(), value, 1)
+                doPrintMapEntry(name.toString(), unwrapValue(value), 1)
             }
         }
 

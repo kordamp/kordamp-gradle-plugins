@@ -562,6 +562,24 @@ extension 9:
     type: net.nemerosa.versioning.VersioningExtension
 ----
 
+[[_task_extension_settings]]
+=== ExtensionSettings
+
+Display settings of an Extension
+
+[horizontal]
+Name:: extensionSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.ExtensionSettingsTask`
+
+.Options
+[horizontal]
+show-paths:: Display path information (OPTIONAL).
+extension:: The extension to generate the report for.
+extensions:: The extensions to generate the report for.
+
+You may specify either of the two, be advised that `extensions` has precedence over `extension`. All extensions will be displayed
+if neither of these options is specified.
+
 [[_task_list_included_builds]]
 === ListIncludedBuilds
 
@@ -1102,6 +1120,12 @@ if neither of these options is specified.
 [horizontal]
 Pattern:: <ConfigurationName>ConfigurationSettings
 Type:: `org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask`
+
+=== Extensions
+
+[horizontal]
+Pattern:: <ExtensionName>ExtensionSettings
+Type:: `org.kordamp.gradle.plugin.base.tasks.ExtensionSettingsTask`
 
 === Tars
 

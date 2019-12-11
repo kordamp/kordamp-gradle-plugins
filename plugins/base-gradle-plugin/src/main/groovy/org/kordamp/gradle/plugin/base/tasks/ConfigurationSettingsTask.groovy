@@ -92,7 +92,7 @@ class ConfigurationSettingsTask extends AbstractReportingTask {
             if (value instanceof Collection) {
                 doPrintCollection(name.toString(), (Collection) value, 1)
             } else {
-                doPrintMapEntry(name.toString(), value, 1)
+                doPrintMapEntry(name.toString(), unwrapValue(value), 1)
             }
         }
         if (isShowPaths() && configuration.canBeResolved) {
