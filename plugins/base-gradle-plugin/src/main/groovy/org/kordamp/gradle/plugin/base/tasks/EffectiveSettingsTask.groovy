@@ -30,6 +30,10 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 class EffectiveSettingsTask extends AbstractReportingTask {
+    private final List<String> COVERAGE = ['coveralls', 'jacoco'].asImmutable()
+    private final List<String> DOCS = ['guide', 'apidoc', 'groovydoc', ';javadoc', 'kotlindoc', 'scaladoc', 'sourceHtml', 'sourceXref'].asImmutable()
+    private final List<String> QUALITY = ['checkstyle', 'codenarc', 'detekt', 'pmd'].asImmutable()
+
     private String section
     private Set<String> sections
 
@@ -64,6 +68,13 @@ class EffectiveSettingsTask extends AbstractReportingTask {
         if (map.containsKey(section)) {
             println "${section}:"
             doPrint((Map<String, ?>) map[section], 1)
+        } else if (section in QUALITY) {
+            printSection((Map<String, Object>) map.quality, section)
+        } else if (section in DOCS) {
+            printSection((Map<String, Object>) map.docs, section)
+
+        } else if (section in COVERAGE) {
+            printSection((Map<String, Object>) map.coverage, section)
         } else {
             throw new IllegalStateException("Unknown section '$section'")
         }

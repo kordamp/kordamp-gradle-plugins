@@ -23,6 +23,8 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.tasks.JavaExec
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
+import org.kordamp.gradle.plugin.checkstyle.CheckstylePlugin
+import org.kordamp.gradle.plugin.pmd.PmdPlugin
 import org.kordamp.gradle.plugin.project.ProjectPlugin
 import org.kordamp.gradle.plugin.project.java.tasks.JarSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.JavaCompilerSettingsTask
@@ -69,6 +71,8 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         ProjectPlugin.applyIfMissing(project)
+        CheckstylePlugin.applyIfMissing(project)
+        PmdPlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {
             @Override

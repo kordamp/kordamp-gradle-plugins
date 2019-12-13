@@ -98,18 +98,18 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             project.afterEvaluate {
                 ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
-                if (effectiveConfig.sourceHtml.enabled) {
+                if (effectiveConfig.docs.sourceHtml.enabled) {
                     if (configureSourceHtmlTask(project, configuration)) {
-                        effectiveConfig.sourceHtml.projects() << project
+                        effectiveConfig.docs.sourceHtml.projects() << project
                     } else {
-                        effectiveConfig.sourceHtml.enabled = false
+                        effectiveConfig.docs.sourceHtml.enabled = false
                     }
                 }
-                setEnabled(effectiveConfig.sourceHtml.enabled)
+                setEnabled(effectiveConfig.docs.sourceHtml.enabled)
             }
         }
 
-        if (isRootProject(project) && !project.childProjects.isEmpty()) {
+        if (isRootProject(project)) {
             TaskProvider<Copy> sourceHtmlTask = project.tasks.register(AGGREGATE_SOURCE_HTML_TASK_NAME, Copy,
                 new Action<Copy>() {
                     @Override
@@ -128,7 +128,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                         t.dependsOn sourceHtmlTask
                         t.group = 'Documentation'
                         t.description = 'An archive of the HTML report the source code.'
-                        t.classifier = 'sources-html'
+                        t.archiveClassifier.set 'sources-html'
                         t.from sourceHtmlTask.get().destinationDir
                         t.enabled = false
                     }
@@ -145,7 +145,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
 
     private boolean configureSourceHtmlTask(Project project, Configuration configuration) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.sourceHtml.enabled) {
+        if (!effectiveConfig.docs.sourceHtml.enabled) {
             return false
         }
 
@@ -154,34 +154,34 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             return false
         }
 
-        effectiveConfig.sourceHtml.srcDirs = resolveSrcDirs(project, effectiveConfig.sourceHtml.conversion.srcDirs)
+        effectiveConfig.docs.sourceHtml.srcDirs = resolveSrcDirs(project, effectiveConfig.docs.sourceHtml.conversion.srcDirs)
 
         TaskProvider<ConvertCodeTask> convertCodeTask = project.tasks.register('convertCodeToHtml', ConvertCodeTask,
             new Action<ConvertCodeTask>() {
                 @Override
                 void execute(ConvertCodeTask t) {
-                    t.enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
+                    t.enabled = !effectiveConfig.docs.sourceHtml.srcDirs.isEmpty()
                     t.dependsOn classesTask
                     t.group = 'Documentation'
                     t.description = 'Converts source code into HTML.'
                     t.classpath = configuration.asFileTree
-                    t.srcDirs = effectiveConfig.sourceHtml.srcDirs
-                    t.destDir = effectiveConfig.sourceHtml.conversion.destDir
-                    t.includes = effectiveConfig.sourceHtml.conversion.includes
-                    t.outputFormat = effectiveConfig.sourceHtml.conversion.outputFormat
-                    t.tabs = effectiveConfig.sourceHtml.conversion.tabs
-                    t.style = effectiveConfig.sourceHtml.conversion.style
-                    t.showLineNumbers = effectiveConfig.sourceHtml.conversion.showLineNumbers
-                    t.showFileName = effectiveConfig.sourceHtml.conversion.showFileName
-                    t.showDefaultTitle = effectiveConfig.sourceHtml.conversion.showDefaultTitle
-                    t.showTableBorder = effectiveConfig.sourceHtml.conversion.showTableBorder
-                    t.includeDocumentHeader = effectiveConfig.sourceHtml.conversion.includeDocumentHeader
-                    t.includeDocumentFooter = effectiveConfig.sourceHtml.conversion.includeDocumentFooter
-                    t.addLineAnchors = effectiveConfig.sourceHtml.conversion.addLineAnchors
-                    t.lineAnchorPrefix = effectiveConfig.sourceHtml.conversion.lineAnchorPrefix
-                    t.horizontalAlignment = effectiveConfig.sourceHtml.conversion.horizontalAlignment
-                    t.useShortFileName = effectiveConfig.sourceHtml.conversion.useShortFileName
-                    t.overwrite = effectiveConfig.sourceHtml.conversion.overwrite
+                    t.srcDirs = effectiveConfig.docs.sourceHtml.srcDirs
+                    t.destDir = effectiveConfig.docs.sourceHtml.conversion.destDir
+                    t.includes = effectiveConfig.docs.sourceHtml.conversion.includes
+                    t.outputFormat = effectiveConfig.docs.sourceHtml.conversion.outputFormat
+                    t.tabs = effectiveConfig.docs.sourceHtml.conversion.tabs
+                    t.style = effectiveConfig.docs.sourceHtml.conversion.style
+                    t.showLineNumbers = effectiveConfig.docs.sourceHtml.conversion.showLineNumbers
+                    t.showFileName = effectiveConfig.docs.sourceHtml.conversion.showFileName
+                    t.showDefaultTitle = effectiveConfig.docs.sourceHtml.conversion.showDefaultTitle
+                    t.showTableBorder = effectiveConfig.docs.sourceHtml.conversion.showTableBorder
+                    t.includeDocumentHeader = effectiveConfig.docs.sourceHtml.conversion.includeDocumentHeader
+                    t.includeDocumentFooter = effectiveConfig.docs.sourceHtml.conversion.includeDocumentFooter
+                    t.addLineAnchors = effectiveConfig.docs.sourceHtml.conversion.addLineAnchors
+                    t.lineAnchorPrefix = effectiveConfig.docs.sourceHtml.conversion.lineAnchorPrefix
+                    t.horizontalAlignment = effectiveConfig.docs.sourceHtml.conversion.horizontalAlignment
+                    t.useShortFileName = effectiveConfig.docs.sourceHtml.conversion.useShortFileName
+                    t.overwrite = effectiveConfig.docs.sourceHtml.conversion.overwrite
                 }
             })
 
@@ -189,18 +189,18 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             new Action<GenerateOverviewTask>() {
                 @Override
                 void execute(GenerateOverviewTask t) {
-                    t.enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
+                    t.enabled = !effectiveConfig.docs.sourceHtml.srcDirs.isEmpty()
                     t.dependsOn convertCodeTask
                     t.group = 'Documentation'
                     t.description = 'Generate an overview of converted source code.'
-                    t.srcDirs = project.files(effectiveConfig.sourceHtml.conversion.destDir)
-                    t.destDir = effectiveConfig.sourceHtml.overview.destDir
-                    t.pattern = effectiveConfig.sourceHtml.overview.pattern
-                    t.windowTitle = effectiveConfig.sourceHtml.overview.windowTitle
-                    t.docTitle = effectiveConfig.sourceHtml.overview.docTitle
-                    t.docDescription = effectiveConfig.sourceHtml.overview.docDescription ?: ''
-                    t.icon = effectiveConfig.sourceHtml.overview.icon
-                    t.stylesheet = effectiveConfig.sourceHtml.overview.stylesheet
+                    t.srcDirs = project.files(effectiveConfig.docs.sourceHtml.conversion.destDir)
+                    t.destDir = effectiveConfig.docs.sourceHtml.overview.destDir
+                    t.pattern = effectiveConfig.docs.sourceHtml.overview.pattern
+                    t.windowTitle = effectiveConfig.docs.sourceHtml.overview.windowTitle
+                    t.docTitle = effectiveConfig.docs.sourceHtml.overview.docTitle
+                    t.docDescription = effectiveConfig.docs.sourceHtml.overview.docDescription ?: ''
+                    t.icon = effectiveConfig.docs.sourceHtml.overview.icon
+                    t.stylesheet = effectiveConfig.docs.sourceHtml.overview.stylesheet
                 }
             })
 
@@ -208,7 +208,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             new Action<Copy>() {
                 @Override
                 void execute(Copy t) {
-                    t.enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
+                    t.enabled = !effectiveConfig.docs.sourceHtml.srcDirs.isEmpty()
                     t.dependsOn generateOverviewTask
                     t.group = 'Documentation'
                     t.description = 'Generates a HTML report of the source code.'
@@ -222,16 +222,16 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
-                    t.enabled = !effectiveConfig.sourceHtml.srcDirs.isEmpty()
+                    t.enabled = !effectiveConfig.docs.sourceHtml.srcDirs.isEmpty()
                     t.dependsOn sourceHtmlTask
                     t.group = 'Documentation'
                     t.description = 'An archive of the HTML report the source code.'
-                    t.classifier = 'sources-html'
+                    t.archiveClassifier.set 'sources-html'
                     t.from sourceHtmlTask.get().destinationDir
                 }
             })
 
-        return !effectiveConfig.sourceHtml.srcDirs.isEmpty()
+        return !effectiveConfig.docs.sourceHtml.srcDirs.isEmpty()
     }
 
     private void configureAggregateSourceHtmlTask(Project project, Configuration configuration, TaskProvider<Copy> sourceHtmlTask, TaskProvider<Jar> sourceHtmlJarTask) {
@@ -242,8 +242,8 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
         List<Task> sourceHtmlTasks = []
 
         project.childProjects.values().each {
-            SourceHtml e = resolveEffectiveConfig(it).sourceHtml
-            if (!e.enabled || effectiveConfig.sourceHtml.excludedProjects().intersect(e.projects())) return
+            SourceHtml e = resolveEffectiveConfig(it).docs.sourceHtml
+            if (!e.enabled || effectiveConfig.docs.sourceHtml.excludedProjects().intersect(e.projects())) return
             projects.addAll(e.projects())
             srcdirs = project.files(srcdirs, e.srcDirs)
         }
@@ -261,22 +261,22 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                     t.description = 'Converts source code into HTML.'
                     t.classpath = configuration.asFileTree
                     t.srcDirs = srcdirs
-                    t.destDir = effectiveConfig.sourceHtml.conversion.destDir
-                    t.includes = effectiveConfig.sourceHtml.conversion.includes
-                    t.outputFormat = effectiveConfig.sourceHtml.conversion.outputFormat
-                    t.tabs = effectiveConfig.sourceHtml.conversion.tabs
-                    t.style = effectiveConfig.sourceHtml.conversion.style
-                    t.showLineNumbers = effectiveConfig.sourceHtml.conversion.showLineNumbers
-                    t.showFileName = effectiveConfig.sourceHtml.conversion.showFileName
-                    t.showDefaultTitle = effectiveConfig.sourceHtml.conversion.showDefaultTitle
-                    t.showTableBorder = effectiveConfig.sourceHtml.conversion.showTableBorder
-                    t.includeDocumentHeader = effectiveConfig.sourceHtml.conversion.includeDocumentHeader
-                    t.includeDocumentFooter = effectiveConfig.sourceHtml.conversion.includeDocumentFooter
-                    t.addLineAnchors = effectiveConfig.sourceHtml.conversion.addLineAnchors
-                    t.lineAnchorPrefix = effectiveConfig.sourceHtml.conversion.lineAnchorPrefix
-                    t.horizontalAlignment = effectiveConfig.sourceHtml.conversion.horizontalAlignment
-                    t.useShortFileName = effectiveConfig.sourceHtml.conversion.useShortFileName
-                    t.overwrite = effectiveConfig.sourceHtml.conversion.overwrite
+                    t.destDir = effectiveConfig.docs.sourceHtml.conversion.destDir
+                    t.includes = effectiveConfig.docs.sourceHtml.conversion.includes
+                    t.outputFormat = effectiveConfig.docs.sourceHtml.conversion.outputFormat
+                    t.tabs = effectiveConfig.docs.sourceHtml.conversion.tabs
+                    t.style = effectiveConfig.docs.sourceHtml.conversion.style
+                    t.showLineNumbers = effectiveConfig.docs.sourceHtml.conversion.showLineNumbers
+                    t.showFileName = effectiveConfig.docs.sourceHtml.conversion.showFileName
+                    t.showDefaultTitle = effectiveConfig.docs.sourceHtml.conversion.showDefaultTitle
+                    t.showTableBorder = effectiveConfig.docs.sourceHtml.conversion.showTableBorder
+                    t.includeDocumentHeader = effectiveConfig.docs.sourceHtml.conversion.includeDocumentHeader
+                    t.includeDocumentFooter = effectiveConfig.docs.sourceHtml.conversion.includeDocumentFooter
+                    t.addLineAnchors = effectiveConfig.docs.sourceHtml.conversion.addLineAnchors
+                    t.lineAnchorPrefix = effectiveConfig.docs.sourceHtml.conversion.lineAnchorPrefix
+                    t.horizontalAlignment = effectiveConfig.docs.sourceHtml.conversion.horizontalAlignment
+                    t.useShortFileName = effectiveConfig.docs.sourceHtml.conversion.useShortFileName
+                    t.overwrite = effectiveConfig.docs.sourceHtml.conversion.overwrite
                 }
             })
 
@@ -287,14 +287,14 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                     t.dependsOn convertCodeTask
                     t.group = 'Documentation'
                     t.description = 'Generate an overview of converted source code.'
-                    t.srcDirs = project.files(effectiveConfig.sourceHtml.conversion.destDir)
-                    t.destDir = effectiveConfig.sourceHtml.overview.destDir
-                    t.pattern = effectiveConfig.sourceHtml.overview.pattern
-                    t.windowTitle = effectiveConfig.sourceHtml.overview.windowTitle
-                    t.docTitle = effectiveConfig.sourceHtml.overview.docTitle
-                    t.docDescription = effectiveConfig.sourceHtml.overview.docDescription ?: ''
-                    t.icon = effectiveConfig.sourceHtml.overview.icon
-                    t.stylesheet = effectiveConfig.sourceHtml.overview.stylesheet
+                    t.srcDirs = project.files(effectiveConfig.docs.sourceHtml.conversion.destDir)
+                    t.destDir = effectiveConfig.docs.sourceHtml.overview.destDir
+                    t.pattern = effectiveConfig.docs.sourceHtml.overview.pattern
+                    t.windowTitle = effectiveConfig.docs.sourceHtml.overview.windowTitle
+                    t.docTitle = effectiveConfig.docs.sourceHtml.overview.docTitle
+                    t.docDescription = effectiveConfig.docs.sourceHtml.overview.docDescription ?: ''
+                    t.icon = effectiveConfig.docs.sourceHtml.overview.icon
+                    t.stylesheet = effectiveConfig.docs.sourceHtml.overview.stylesheet
                 }
             })
 

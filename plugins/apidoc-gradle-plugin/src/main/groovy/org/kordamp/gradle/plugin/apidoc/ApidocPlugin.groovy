@@ -101,7 +101,7 @@ class ApidocPlugin extends AbstractKordampPlugin {
 
         BasePlugin.applyIfMissing(project)
 
-        if (isRootProject(project) && !project.childProjects.isEmpty()) {
+        if (isRootProject(project)) {
             createAggregateGroovydocsTask(project, createAggregateJavadocsTask(project))
             createAggregateApidocTask(project)
 
@@ -116,17 +116,13 @@ class ApidocPlugin extends AbstractKordampPlugin {
 
     private void doConfigureRootProject(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        setEnabled(effectiveConfig.apidoc.enabled)
-
-        if (!enabled) {
-            return
-        }
+        setEnabled(effectiveConfig.docs.apidoc.enabled)
 
         if (!project.childProjects.isEmpty()) {
             List<Javadoc> javadocs = []
             project.tasks.withType(Javadoc) { Javadoc javadoc -> if (javadoc.name != AGGREGATE_JAVADOCS_TASK_NAME && javadoc.enabled) javadocs << javadoc }
             project.childProjects.values().each { Project p ->
-                if (p in effectiveConfig.apidoc.excludedProjects()) return
+                if (p in effectiveConfig.docs.apidoc.excludedProjects()) return
                 p.tasks.withType(Javadoc) { Javadoc javadoc -> if (javadoc.enabled) javadocs << javadoc }
             }
             javadocs = javadocs.unique()
@@ -134,7 +130,7 @@ class ApidocPlugin extends AbstractKordampPlugin {
             List<Groovydoc> groovydocs = []
             project.tasks.withType(Groovydoc) { Groovydoc groovydoc -> if (groovydoc.name != AGGREGATE_GROOVYDOCS_TASK_NAME && groovydoc.enabled) groovydocs << groovydoc }
             project.childProjects.values().each { Project p ->
-                if (p in effectiveConfig.apidoc.excludedProjects()) return
+                if (p in effectiveConfig.docs.apidoc.excludedProjects()) return
                 p.tasks.withType(Groovydoc) { Groovydoc groovydoc -> if (groovydoc.enabled) groovydocs << groovydoc }
             }
             groovydocs = groovydocs.unique()
@@ -145,43 +141,43 @@ class ApidocPlugin extends AbstractKordampPlugin {
             Jar aggregateGroovydocsJar = (Jar) project.tasks.findByName(AGGREGATE_GROOVYDOCS_JAR_TASK_NAME)
             Task aggregateApidocTask = project.tasks.findByName(AGGREGATE_APIDOCS_TASK_NAME)
 
-            if (javadocs && !effectiveConfig.groovydoc.replaceJavadoc) {
+            if (javadocs && !effectiveConfig.docs.groovydoc.replaceJavadoc) {
                 aggregateJavadocs.configure { task ->
-                    task.enabled = true
+                    task.enabled = effectiveConfig.docs.apidoc.enabled
                     task.dependsOn javadocs
                     task.source javadocs.source
                     task.classpath = project.files(javadocs.classpath)
 
-                    effectiveConfig.javadoc.applyTo(task)
+                    effectiveConfig.docs.javadoc.applyTo(task)
                     task.options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.authors.join(', ')}. All rights reserved."
                 }
                 aggregateJavadocsJar.configure {
-                    enabled = true
+                    enabled = effectiveConfig.docs.apidoc.enabled
                     from aggregateJavadocs.destinationDir
                 }
 
-                aggregateApidocTask.enabled = true
+                aggregateApidocTask.enabled = effectiveConfig.docs.apidoc.enabled
                 aggregateApidocTask.dependsOn aggregateJavadocs
             }
 
-            if (groovydocs && effectiveConfig.groovydoc.enabled) {
+            if (groovydocs && effectiveConfig.docs.groovydoc.enabled) {
                 aggregateGroovydocs.configure { task ->
-                    task.enabled = true
+                    task.enabled = effectiveConfig.docs.apidoc.enabled
                     task.dependsOn groovydocs + javadocs
                     task.source groovydocs.source + javadocs.source
                     task.classpath = project.files(groovydocs.classpath + javadocs.classpath)
                     task.groovyClasspath = project.files(groovydocs.groovyClasspath.flatten().unique())
 
-                    effectiveConfig.groovydoc.applyTo(task)
+                    effectiveConfig.docs.groovydoc.applyTo(task)
                     task.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.authors.join(', ')}. All rights reserved."
                 }
                 aggregateGroovydocsJar.configure {
-                    enabled = true
+                    enabled = effectiveConfig.docs.apidoc.enabled
                     from aggregateGroovydocs.destinationDir
-                    archiveClassifier.set(effectiveConfig.groovydoc.replaceJavadoc ? 'javadoc' : 'groovydoc')
+                    archiveClassifier.set(effectiveConfig.docs.groovydoc.replaceJavadoc ? 'javadoc' : 'groovydoc')
                 }
 
-                aggregateApidocTask.enabled = true
+                aggregateApidocTask.enabled = effectiveConfig.docs.apidoc.enabled
                 aggregateApidocTask.dependsOn aggregateGroovydocs
             }
         }

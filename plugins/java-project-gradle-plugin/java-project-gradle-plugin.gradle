@@ -17,4 +17,6 @@
  */
 dependencies {
     api project(':project-gradle-plugin')
+    api project(':checkstyle-gradle-plugin')
+    api project(':pmd-gradle-plugin')
 }

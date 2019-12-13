@@ -25,6 +25,7 @@ import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.bintray.BintrayPlugin
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
+import org.kordamp.gradle.plugin.coveralls.CoverallsPlugin
 import org.kordamp.gradle.plugin.groovydoc.GroovydocPlugin
 import org.kordamp.gradle.plugin.jacoco.JacocoPlugin
 import org.kordamp.gradle.plugin.jar.JarPlugin
@@ -76,6 +77,7 @@ class ProjectPlugin extends AbstractKordampPlugin {
 
         BasePlugin.applyIfMissing(project)
         JacocoPlugin.applyIfMissing(project)
+        CoverallsPlugin.applyIfMissing(project)
         LicensingPlugin.applyIfMissing(project)
         BuildInfoPlugin.applyIfMissing(project)
         SourceJarPlugin.applyIfMissing(project)

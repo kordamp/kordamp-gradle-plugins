@@ -1,0 +1,38 @@
+
+[[_org_kordamp_gradle_coveralls]]
+= Coveralls
+
+[horizontal]
+id:: `org.kordamp.gradle.coveralls`
+class:: `org.kordamp.gradle.plugin.coveralls.CoverallsPlugin`
+    (link:api/org/kordamp/gradle/plugin/coveralls/CoverallsPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/coveralls/CoverallsPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
+`link:https://github.com/kt3k/coveralls-gradle-plugin[com.github.kt3k.coveralls]`
+
+Configures Coveralls on the root project.
+
+All projects with tasks of type `org.gradle.testing.jacoco.tasks.JacocoReport`
+contribute to the `sourceDirs` property of the `coveralls` extension. The output of the `aggregateJacocoReport` is used
+as input for the `coveralls` task. The `coveralls` task will execute only if `System.getenv().CI || System.getenv().GITHUB_ACTIONS`.
+
+[[_org_kordamp_gradle_coveralls_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    coverage {
+        coveralls {
+            enabled
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name    | Type     | Required | Default Value | Description
+| enabled | boolean  | no       | true          | Disables `org.kordamp.gradle.coveralls` plugin if `false`
+|===

@@ -102,6 +102,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
         BintrayExtension bintray = project.extensions.findByType(BintrayExtension)
         if (isBlank(bintray.user)) bintray.user = effectiveConfig.bintray.credentials.username
         if (isBlank(bintray.key)) bintray.key = effectiveConfig.bintray.credentials.password
+        bintray.publish = effectiveConfig.bintray.publish
         if (!bintray.publications) bintray.publications = publications.toArray(new String[0])
         if (isBlank(bintray.pkg.repo)) bintray.pkg.repo = effectiveConfig.bintray.repo
         if (isBlank(bintray.pkg.userOrg)) bintray.pkg.userOrg = effectiveConfig.bintray.userOrg
@@ -112,7 +113,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
         if (isBlank(bintray.pkg.vcsUrl)) bintray.pkg.vcsUrl = effectiveConfig.info.resolveScmLink()
         if (!bintray.pkg.licenses) bintray.pkg.licenses = effectiveConfig.licensing.resolveBintrayLicenseIds().toArray(new String[0])
         if (!bintray.pkg.labels) bintray.pkg.labels = effectiveConfig.info.tags.toArray(new String[0])
-        bintray.pkg.publicDownloadNumbers = true // TODO: fin a way to conditionally set this value
+        bintray.pkg.publicDownloadNumbers = effectiveConfig.bintray.publicDownloadNumbers
         if (isBlank(bintray.pkg.githubRepo)) bintray.pkg.githubRepo = effectiveConfig.bintray.githubRepo
         if (isBlank(bintray.pkg.version.name)) bintray.pkg.version.name = project.version
         if (isBlank(bintray.pkg.version.vcsTag)) bintray.pkg.version.vcsTag = "${effectiveConfig.bintray.name}-${project.version}".toString()

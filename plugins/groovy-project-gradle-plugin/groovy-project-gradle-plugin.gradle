@@ -18,4 +18,5 @@
 dependencies {
     api project(':java-project-gradle-plugin')
     api project(':groovydoc-gradle-plugin')
+    api project(':codenarc-gradle-plugin')
 }

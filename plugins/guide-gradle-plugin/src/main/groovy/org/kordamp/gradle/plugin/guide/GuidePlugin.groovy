@@ -194,8 +194,19 @@ class GuidePlugin extends AbstractKordampPlugin {
                     guideTask.configure(new Action<Copy>() {
                         @Override
                         void execute(Copy t) {
-                            t.dependsOn project.rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)
+                            t.dependsOn task
                             t.from(task.destinationDir) { into extension.sourceHtmlDir }
+                        }
+                    })
+                }
+
+                task = project.rootProject.tasks.findByName('aggregateSourceXref')
+                if (task?.enabled) {
+                    guideTask.configure(new Action<Copy>() {
+                        @Override
+                        void execute(Copy t) {
+                            t.dependsOn task
+                            t.from(task.outputDirectory) { into extension.sourceXrefDir }
                         }
                     })
                 }
@@ -221,8 +232,7 @@ class GuidePlugin extends AbstractKordampPlugin {
     @CompileDynamic
     private void configurePublishing(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        println "guide publish ${effectiveConfig.guide.publish.enabled}"
-        if (!effectiveConfig.guide.publish.enabled) {
+        if (!effectiveConfig.docs.guide.publish.enabled) {
             return
         }
 
@@ -230,11 +240,11 @@ class GuidePlugin extends AbstractKordampPlugin {
 
         project.gitPublish {
             repoUri = effectiveConfig.info.resolveScmLink()
-            branch = effectiveConfig.guide.publish.branch
+            branch = effectiveConfig.docs.guide.publish.branch
             contents {
                 from createGuideTask.outputs.files
             }
-            commitMessage = effectiveConfig.guide.publish.message
+            commitMessage = effectiveConfig.docs.guide.publish.message
         }
 
         project.gitPublishCommit.dependsOn(createGuideTask)

@@ -193,7 +193,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
             postConfigureDownloadLicensesExtension(project)
         }
 
-        if (isRootProject(project) && !project.childProjects.isEmpty()) {
+        if (isRootProject(project)) {
             TaskProvider<AggregateLicenseReportTask> task = project.tasks.register('aggregateLicenseReport', AggregateLicenseReportTask,
                 new Action<AggregateLicenseReportTask>() {
                     @Override

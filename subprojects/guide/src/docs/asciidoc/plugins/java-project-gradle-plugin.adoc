@@ -7,7 +7,9 @@ id:: `org.kordamp.gradle.java-project`
 class:: `org.kordamp.gradle.plugin.project.java.JavaProjectPlugin`
     (link:api/org/kordamp/gradle/plugin/project/java/JavaProjectPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/project/java/JavaProjectPlugin.html[source])
-applies:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
+applies:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`, +
+`<<_org_kordamp_gradle_checkstyle,org.kordamp.gradle.checkstyle>>`, +
+`<<_org_kordamp_gradle_pmd,org.kordamp.gradle.pmd>>`
 
 Configures a project with Java conventions.
 

@@ -40,7 +40,7 @@ class CheckAutoLinksTask extends AbstractReportingTask {
     void checkAutoLinks() {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
-        List<String> links = effectiveConfig.javadoc.autoLinks.resolveLinks(project)
+        List<String> links = effectiveConfig.docs.javadoc.autoLinks.resolveLinks(project)
         if (!links) {
             println "There are no links to be checked."
             return

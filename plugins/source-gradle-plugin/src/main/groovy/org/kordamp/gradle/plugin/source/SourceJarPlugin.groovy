@@ -90,7 +90,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
             }
         }
 
-        if (isRootProject(project) && !project.childProjects.isEmpty()) {
+        if (isRootProject(project)) {
             TaskProvider<Jar> sourceJarTask = project.tasks.register(AGGREGATE_SOURCE_JAR_TASK_NAME, Jar,
                 new Action<Jar>() {
                     @Override

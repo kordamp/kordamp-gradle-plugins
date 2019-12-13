@@ -20,36 +20,38 @@ NOTE: This plugin relies on the `com.bmuschko.java2html` plugin but does not app
 [subs="+macros"]
 ----
 config {
-    sourceHtml {
-        enabled
-        excludedProjects
-        <<_sourcehtml_conversion,conversion>> {
-            srcDirs
-            destDir
-            includes
-            outputFormat
-            tabs
-            style
-            lineAnchorPrefix
-            horizontalAlignment
-            showLineNumbers
-            showFileName
-            showDefaultTitle
-            showTableBorder
-            includeDocumentHeader
-            includeDocumentFooter
-            addLineAnchors
-            useShortFileName
-            overwrite
-        }
-        <<_sourcehtml_overview,overview>> {
-            destDir
-            pattern
-            windowTitle
-            docTitle
-            docDescription
-            icon
-            stylesheet
+    docs {
+        sourceHtml {
+            enabled
+            excludedProjects
+            <<_sourcehtml_conversion,conversion>> {
+                srcDirs
+                destDir
+                includes
+                outputFormat
+                tabs
+                style
+                lineAnchorPrefix
+                horizontalAlignment
+                showLineNumbers
+                showFileName
+                showDefaultTitle
+                showTableBorder
+                includeDocumentHeader
+                includeDocumentFooter
+                addLineAnchors
+                useShortFileName
+                overwrite
+            }
+            <<_sourcehtml_overview,overview>> {
+                destDir
+                pattern
+                windowTitle
+                docTitle
+                docDescription
+                icon
+                stylesheet
+            }
         }
     }
 }
@@ -117,7 +119,7 @@ Name:: convertCodeToHtml
 Type:: `com.bmuschko.gradle.java2html.ConvertCodeTask`
 
 .Properties
-Consumes all settings found in the `config.sourceHtml.conversion` block.
+Consumes all settings found in the `config.docs.sourceHtml.conversion` block.
 
 [[_task_generate_source_html_overview]]
 === GenerateSourceHtmlOverview
@@ -129,7 +131,7 @@ Name:: generateSourceHtmlOverview
 Type:: `com.bmuschko.gradle.java2html.GenerateOverviewTask`
 
 .Properties
-Consumes all settings found in the `config.sourceHtml.overview` block.
+Consumes all settings found in the `config.docs.sourceHtml.overview` block.
 
 [[_task_source_html]]
 === SourceHtml
@@ -155,7 +157,7 @@ Name:: aggregateConvertCodeToHtml
 Type:: `com.bmuschko.gradle.java2html.ConvertCodeTask`
 
 .Properties
-Consumes all settings found in the `config.sourceHtml.conversion` block.
+Consumes all settings found in the `config.docs.sourceHtml.conversion` block.
 
 [[_task_aggregate_generate_source_html_overview]]
 === AggregateGenerateSourceHtmlOverview
@@ -168,7 +170,7 @@ Name:: aggregateGenerateSourceHtmlOverview
 Type:: `com.bmuschko.gradle.java2html.GenerateOverviewTask`
 
 .Properties
-Consumes all settings found in the `config.sourceHtml.overview` block.
+Consumes all settings found in the `config.docs.sourceHtml.overview` block.
 
 [[_task_aggregate_source_html]]
 === AggregateSourceHtml

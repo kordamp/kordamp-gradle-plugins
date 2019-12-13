@@ -19,10 +19,12 @@ Responsible for aggregating API docs. Currently Javadocs (Java) and Groovydocs (
 [source,groovy]
 ----
 config {
-    apidoc {
-        enabled
-        replaceJavadoc
-        excludedProjects
+    docs {
+        apidoc {
+            enabled
+            replaceJavadoc
+            excludedProjects
+        }
     }
 }
 ----

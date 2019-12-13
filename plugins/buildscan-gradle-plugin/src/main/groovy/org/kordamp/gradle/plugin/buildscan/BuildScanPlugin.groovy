@@ -39,6 +39,7 @@ class BuildScanPlugin extends AbstractKordampPlugin {
     Project project
 
     void apply(Project project) {
+        println("The build-scan plugin has been deprecated and will be removed in a future release")
         this.project = project
 
         if (isRootProject(project)) {

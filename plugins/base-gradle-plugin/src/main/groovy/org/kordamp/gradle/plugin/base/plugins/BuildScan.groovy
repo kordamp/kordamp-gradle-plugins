@@ -28,7 +28,6 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  */
 @CompileStatic
 @Canonical
-@Deprecated
 class BuildScan extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.build-scan'
 

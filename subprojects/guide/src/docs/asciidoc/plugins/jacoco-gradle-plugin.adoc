@@ -19,13 +19,15 @@ Configures aggregate reports on the root project.
 [source,groovy]
 ----
 config {
-    jacoco {
-        enabled
-        mergeExecFile
-        mergeReportHtmlFile
-        mergeReportXmlFile
-        additionalSourceDirs
-        additionalClassDirs
+    coverage {
+        jacoco {
+            enabled
+            mergeExecFile
+            mergeReportHtmlFile
+            mergeReportXmlFile
+            additionalSourceDirs
+            additionalClassDirs
+        }
     }
 }
 ----
@@ -82,7 +84,7 @@ Type:: `org.gradle.testing.jacoco.tasks.JacocoMerge`
 
 .Properties
 [horizontal]
-destinationFile:: config.jacoco.mergeExecFile
+destinationFile:: config.docs.jacoco.mergeExecFile
 
 [[_task_aggregate_jacoco_report]]
 === AggregateJacocoReport
@@ -97,7 +99,7 @@ Type:: `org.gradle.testing.jacoco.tasks.JacocoReport`
 
 .Properties
 [horizontal]
-reports.html.destination:: config.jacoco.mergeReportHtmlFile
+reports.html.destination:: config.docs.jacoco.mergeReportHtmlFile
 reports.xml.destination:: config..jacoco.mergeReportXmlFile
 reports.html.enabled:: true
 reports.xml.enabled:: true

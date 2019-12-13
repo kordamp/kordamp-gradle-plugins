@@ -19,22 +19,24 @@ Generates and packages Groovydoc documentation.
 [subs="+macros"]
 ----
 config {
-    groovydoc {
-        enabled
-        includes
-        excludes
-        replaceJavadoc
-        <<_groovydoc_options,options>> {
-            windowTitle
-            docTitle
-            header
-            footer
-            overviewText
-            links
-            noTimestamp
-            noVersionStamp
-            includePrivate
-            use
+    docs {
+        groovydoc {
+            enabled
+            includes
+            excludes
+            replaceJavadoc
+            <<_groovydoc_options,options>> {
+                windowTitle
+                docTitle
+                header
+                footer
+                overviewText
+                links
+                noTimestamp
+                noVersionStamp
+                includePrivate
+                use
+            }
         }
     }
 }
@@ -42,11 +44,11 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name           | Type         | Required | Default Value | Description
-| enabled        | boolean      | no       | true          | Disables `org.kordamp.gradle.groovydoc` plugin if `false`
-| includes       | Set<String>  | no       | []            |
-| excludes       | Set<String>  | no       | []            |
-| replaceJavadoc | boolean      | no       | false         | Disables `javadocJar` and applies the `javadoc` classifier
+| Name           | Type        | Required | Default Value | Description
+| enabled        | boolean     | no       | true          | Disables `org.kordamp.gradle.groovydoc` plugin if `false`
+| includes       | Set<String> | no       | []            |
+| excludes       | Set<String> | no       | []            |
+| replaceJavadoc | boolean     | no       | false         | Disables `javadocJar` and applies the `javadoc` classifier
 |===
 
 .Methods

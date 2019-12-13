@@ -19,19 +19,21 @@ link:https://maven.apache.org/jxr/index.html[Maven JXR] project.
 [subs="+macros"]
 ----
 config {
-    sourceXref {
-        enabled
-        excludedProjects
-        templateDir
-        inputEncoding
-        outputEncoding
-        windowTitle
-        docTitle
-        bottom
-        stylesheet
-        javaVersion
-        excludes
-        includes
+    docs {
+        sourceXref {
+            enabled
+            excludedProjects
+            templateDir
+            inputEncoding
+            outputEncoding
+            windowTitle
+            docTitle
+            bottom
+            stylesheet
+            javaVersion
+            excludes
+            includes
+        }
     }
 }
 ----
@@ -74,7 +76,7 @@ Type:: `org.kordamp.gradle.plugin.sourcexref.JxrTask`
 [horizontal]
 outputDir:: `${project.buildDir}/docs/source-xref`
 
-Consumes all settings found in the `config.sourceXref.conversion` block.
+Consumes all settings found in the `config.docs.sourceXref.conversion` block.
 
 [[_task_aggregate_source_xref]]
 === AggregateSourceXref
@@ -90,7 +92,7 @@ Type:: `org.kordamp.gradle.plugin.sourcexref.JxrTask`
 [horizontal]
 outputDir:: `${project.buildDir}/docs/source-xref`
 
-Consumes all settings found in the `config.sourceXref.conversion` block.
+Consumes all settings found in the `config.docs.sourceXref.conversion` block.
 
 [[_task_aggregate_source_xref_jar]]
 === AggregateSourceXrefJar

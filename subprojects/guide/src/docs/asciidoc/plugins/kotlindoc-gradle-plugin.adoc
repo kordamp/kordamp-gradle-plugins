@@ -20,45 +20,47 @@ NOTE: This plugin relies on the `org.jetbrains.dokka` plugin but does not apply 
 [subs="+macros"]
 ----
 config {
-    kotlindoc {
-        enabled
-        moduleName
-        outputFormats
-        outputDirectory
-        includes
-        samples
-        jdkVersion
-        cacheRoot
-        languageVersion
-        apiVersion
-        includeNonPublic
-        skipDeprecated
-        reportUndocumented
-        skipEmptyPackages
-        noStdlibLink
-        impliedPlatforms
-        replaceJavadoc
-        excludedProjects
-        <<_kotlindoc_source_links,sourceLinks>> {
-            <<_kotlindoc_source_link,sourceLink>> {
-                dir
-                url
-                path
+    docs {
+        kotlindoc {
+            enabled
+            moduleName
+            outputFormats
+            outputDirectory
+            includes
+            samples
+            jdkVersion
+            cacheRoot
+            languageVersion
+            apiVersion
+            includeNonPublic
+            skipDeprecated
+            reportUndocumented
+            skipEmptyPackages
+            noStdlibLink
+            impliedPlatforms
+            replaceJavadoc
+            excludedProjects
+            <<_kotlindoc_source_links,sourceLinks>> {
+                <<_kotlindoc_source_link,sourceLink>> {
+                    dir
+                    url
+                    path
+                }
             }
-        }
-        <<_kotlindoc_external_documentation_links,externalDocumentationLinks>> {
-            <<_kotlindoc_external_documentation_link,externalDocumentationLink>> {
-                url
-                packageListUrl
+            <<_kotlindoc_external_documentation_links,externalDocumentationLinks>> {
+                <<_kotlindoc_external_documentation_link,externalDocumentationLink>> {
+                    url
+                    packageListUrl
+                }
             }
-        }
-        <<_kotlindoc_package_options,packageOptions>> {
-            <<_kotlindoc_package_option,packageOption>> {
-                prefix
-                includeNonPublic
-                reportUndocumented
-                skipEmptyPackages
-                suppress
+            <<_kotlindoc_package_options,packageOptions>> {
+                <<_kotlindoc_package_option,packageOption>> {
+                    prefix
+                    includeNonPublic
+                    reportUndocumented
+                    skipEmptyPackages
+                    suppress
+                }
             }
         }
     }

@@ -274,18 +274,6 @@ class BasePlugin extends AbstractKordampPlugin {
                         t.description = 'List all included builds.'
                     }
                 })
-
-            /*
-            project.gradle.addBuildListener(new BuildAdapter() {
-                @Override
-                void projectsEvaluated(Gradle gradle) {
-                    project.subprojects.each { Project subproject ->
-                        PluginUtils.resolveEffectiveConfig(subproject).rootReady()
-                    }
-                    PluginUtils.resolveEffectiveConfig(project).rootReady()
-                }
-            })
-            */
         }
 
         project.afterEvaluate {

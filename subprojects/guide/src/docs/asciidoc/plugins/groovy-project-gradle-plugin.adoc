@@ -7,7 +7,8 @@ id:: `org.kordamp.gradle.groovy-project`
 class:: `org.kordamp.gradle.plugin.project.groovy.GroovyProjectPlugin`
     (link:api/org/kordamp/gradle/plugin/project/groovy/GroovyProjectPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/project/groovy/GroovyProjectPlugin.html[source])
-applies:: `<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>`
+applies:: `<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>`, +
+`<<_org_kordamp_gradle_codenarc,org.kordamp.gradle.codenarc>>`
 
 Configures a project with Groovy conventions.
 

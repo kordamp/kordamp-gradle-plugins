@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.plugins.AppliedPlugin
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
+import org.kordamp.gradle.plugin.detekt.DetektPlugin
 import org.kordamp.gradle.plugin.project.java.JavaProjectPlugin
 import org.kordamp.gradle.plugin.project.kotlin.tasks.KotlinCompilerSettingsTask
 
@@ -61,6 +62,7 @@ class KotlinProjectPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         JavaProjectPlugin.applyIfMissing(project)
+        DetektPlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('org.jetbrains.kotlin.jvm', new Action<AppliedPlugin>() {
             @Override

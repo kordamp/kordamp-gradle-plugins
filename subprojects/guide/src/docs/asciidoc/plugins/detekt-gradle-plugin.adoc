@@ -1,0 +1,82 @@
+
+[[_org_kordamp_gradle_detekt]]
+= Detekt
+
+[horizontal]
+id:: `org.kordamp.gradle.detekt`
+class:: `org.kordamp.gradle.plugin.detekt.DetektPlugin`
+    (link:api/org/kordamp/gradle/plugin/detekt/DetektPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/detekt/DetektPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
+`link:https://arturbosch.github.io/detekt/[io.gitlab.arturbosch.detekt.detekt]`
+
+Configures Detekt on Kotlin projects and aggregate reports on the root project.
+
+[[_org_kordamp_gradle_detekt_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    quality {
+        detekt {
+            enabled
+            configFile
+            baselineFile
+            parallel
+            buildUponDefaultConfig
+            disableDefaultRuleSets
+            toolVersion
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name                   | Type                | Required | Default Value     | Description
+| enabled                | boolean             | no       | true              | Disables `org.kordamp.gradle.detekt` plugin if `false`
+| configFile             | Set<String>         | no       |                   |
+| baselineFile           | Set<String>         | no       |                   |
+| parallel               | boolean             | no       | yes               |
+| buildUponDefaultConfig | boolean             | no       | no                |
+| disableDefaultRuleSets | boolean             | no       | no                |
+| toolVersion            | String              | no       | 1.2.2             |
+|===
+
+
+[[_org_kordamp_gradle_detekt_tasks]]
+== Tasks
+
+[[_task_aggregate_detekt]]
+=== AggregateDetekt
+
+Aggregates all detekt reports for all projects. +
+Consumes settings from `config.quality.<<_org_kordamp_gradle_detekt_dsl,detekt>>`. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateDetekt
+Type:: `io.gitlab.arturbosch.detekt.Detekt`
+
+.Properties
+[horizontal]
+reports.html.destination:: `${project.buildDir}/reports/detekt/aggregate.html`
+reports.xml.destination:: `${project.buildDir}/reports/detekt/aggregate.xml`
+
+[[_task_all_detekt]]
+=== AllDetekt
+
+Aggregates all detekt reports for a single project. +
+Consumes settings from `config.quality.<<_org_kordamp_gradle_detekt_dsl,detekt>>`.
+
+[horizontal]
+Name:: allDetekt
+Type:: `io.gitlab.arturbosch.detekt.Detekt`
+
+.Properties
+[horizontal]
+reports.html.destination:: `${project.buildDir}/reports/detekt/${project.name}.html`
+reports.xml.destination:: `${project.buildDir}/reports/detekt/${project.name}.xml`
+

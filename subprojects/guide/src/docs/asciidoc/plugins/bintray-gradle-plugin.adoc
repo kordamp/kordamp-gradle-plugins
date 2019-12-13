@@ -40,21 +40,25 @@ config {
         githubRepo
         skipMavenSync
         publications
+        publish
+        publicDownloadNumbers
     }
 }
 ----
 
 [options="header", cols="5*"]
 |===
-| Name          | Type         | Required | Default Value   | Description
-| enabled       | boolean      | no       | true            | Disables `org.kordamp.gradle.bintray` plugin if `false`
-| credentials   | Credentials  | yes      |                 | Values map to `bintray.user` and `bintray.key`
-| repo          | String       | no       | maven           | Mapped to `bintray.pkg.repo`
-| userOrg       | String       | yes      |                 | Mapped to `bintray.pkg.userOrg`
-| name          | String       | no       | project.name    | Mapped to `bintray.pkg.name`
-| githubRepo    | String       | no       | $userOrg/$name  | Mapped to `bintray.pkg.githubRepo`
-| skipMavenSync | boolean      | no       | false           | No not sync with Maven Central
-| publications  | List<String> | no       | ['main']        | Configures the publications that should be published to Bintray.
+| Name                  | Type         | Required | Default Value   | Description
+| enabled               | boolean      | no       | true            | Disables `org.kordamp.gradle.bintray` plugin if `false`
+| credentials           | Credentials  | yes      |                 | Values map to `bintray.user` and `bintray.key`
+| repo                  | String       | no       | maven           | Mapped to `bintray.pkg.repo`
+| userOrg               | String       | yes      |                 | Mapped to `bintray.pkg.userOrg`
+| name                  | String       | no       | project.name    | Mapped to `bintray.pkg.name`
+| githubRepo            | String       | no       | $userOrg/$name  | Mapped to `bintray.pkg.githubRepo`
+| skipMavenSync         | boolean      | no       | false           | No not sync with Maven Central
+| publications          | List<String> | no       | ['main']        | Configures the publications that should be published to Bintray
+| publish               | boolean      | no       | false           | Whether version should be auto published after an upload
+| publicDownloadNumbers | boolean      | no       | true            | Whether download numbers should be public or not
 |===
 
 The value of `info.tags` is mapped to `bintray.pkg.labels`.

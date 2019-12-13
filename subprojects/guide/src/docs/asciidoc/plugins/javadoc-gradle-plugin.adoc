@@ -18,17 +18,19 @@ Generates and packages Javadoc documentation.
 [subs="+macros"]
 ----
 config {
-    javadoc {
-        enabled
-        includes
-        excludes
-        title
-        options { ... }
-        <<_javadoc_autolinks,autoLinks>> {
+    docs {
+        javadoc {
             enabled
-            configurations
+            includes
             excludes
-            linksOffline
+            title
+            options { ... }
+            <<_javadoc_autolinks,autoLinks>> {
+                enabled
+                configurations
+                excludes
+                linksOffline
+            }
         }
     }
 }

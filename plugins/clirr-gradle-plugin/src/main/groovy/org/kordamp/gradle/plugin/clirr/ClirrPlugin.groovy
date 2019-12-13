@@ -91,7 +91,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
             }
         }
 
-        if (isRootProject(project) && !project.childProjects.isEmpty()) {
+        if (isRootProject(project)) {
             TaskProvider<AggregateClirrReportTask> aggregateClirrReportTask = project.tasks.register('aggregateClirr', AggregateClirrReportTask,
                 new Action<AggregateClirrReportTask>() {
                     @Override

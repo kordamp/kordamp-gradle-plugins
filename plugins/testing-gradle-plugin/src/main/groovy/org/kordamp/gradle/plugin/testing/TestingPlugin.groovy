@@ -26,6 +26,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.TestDescriptor
@@ -84,48 +85,53 @@ class TestingPlugin extends AbstractKordampPlugin {
 
         BasePlugin.applyIfMissing(project)
 
-        TaskProvider<DefaultTask> allTestsTask = null
-        if (project.childProjects.isEmpty()) {
-            allTestsTask = project.tasks.register(ALL_TESTS_TASK_NAME, DefaultTask,
-                new Action<DefaultTask>() {
-                    @Override
-                    void execute(DefaultTask t) {
-                        t.enabled = false
-                        t.group = 'Verification'
-                        t.description = 'Executes all tests.'
+        project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {
+            @Override
+            void execute(AppliedPlugin appliedPlugin) {
+                TaskProvider<DefaultTask> allTestsTask = null
+                if (project.childProjects.isEmpty()) {
+                    allTestsTask = project.tasks.register(ALL_TESTS_TASK_NAME, DefaultTask,
+                        new Action<DefaultTask>() {
+                            @Override
+                            void execute(DefaultTask t) {
+                                t.enabled = false
+                                t.group = 'Verification'
+                                t.description = 'Executes all tests.'
+                            }
+                        })
+                }
+
+                project.afterEvaluate {
+                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+                    setEnabled(effectiveConfig.testing.enabled)
+
+                    if (!enabled) {
+                        return
                     }
-                })
-        }
 
-        project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-            setEnabled(effectiveConfig.testing.enabled)
+                    project.tasks.withType(Test) { Test testTask ->
+                        if (!testTask.enabled) {
+                            return
+                        }
 
-            if (!enabled) {
-                return
-            }
+                        if (testTask instanceof IntegrationTest) {
+                            configureLogging(testTask, effectiveConfig.testing.integration.logging)
+                            effectiveConfig.testing.integrationTasks() << (IntegrationTest) testTask
+                        } else if (testTask instanceof FunctionalTest) {
+                            configureLogging(testTask, effectiveConfig.testing.functional.logging)
+                            effectiveConfig.testing.functionalTestTasks() << (FunctionalTest) testTask
+                        } else {
+                            configureLogging(testTask, effectiveConfig.testing.logging)
+                            effectiveConfig.testing.testTasks() << testTask
+                        }
+                    }
 
-            project.tasks.withType(Test) { Test testTask ->
-                if (!testTask.enabled) {
-                    return
-                }
-
-                if (testTask instanceof IntegrationTest) {
-                    configureLogging(testTask, effectiveConfig.testing.integration.logging)
-                    effectiveConfig.testing.integrationTasks() << (IntegrationTest) testTask
-                } else if (testTask instanceof FunctionalTest) {
-                    configureLogging(testTask, effectiveConfig.testing.functional.logging)
-                    effectiveConfig.testing.functionalTestTasks() << (FunctionalTest) testTask
-                } else {
-                    configureLogging(testTask, effectiveConfig.testing.logging)
-                    effectiveConfig.testing.testTasks() << testTask
+                    if (allTestsTask) {
+                        configureAllTestsTask(project, allTestsTask)
+                    }
                 }
             }
-
-            if (allTestsTask) {
-                configureAllTestsTasks(project, allTestsTask)
-            }
-        }
+        })
 
         if (isRootProject(project) && !project.childProjects.isEmpty()) {
             TaskProvider<TestReport> aggregateTestReportTask = project.tasks.register(AGGREGATE_TEST_REPORTS_TASK_NAME, TestReport,
@@ -225,13 +231,13 @@ class TestingPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private void configureLogging(Test testTask, boolean logging) {
+    private static void configureLogging(Test testTask, boolean logging) {
         if (!logging) return
 
         testTask.afterSuite { TestDescriptor descriptor, TestResult result ->
             if (descriptor.name.contains('Gradle Test Executor')) return
 
-            AnsiConsole console = new AnsiConsole(project)
+            AnsiConsole console = new AnsiConsole(testTask.project)
             String indicator = console.green(WINDOWS ? '√' : '✔')
             if (result.failedTestCount > 0) {
                 indicator = console.red(WINDOWS ? 'X' : '✘')
@@ -241,12 +247,12 @@ class TestingPlugin extends AbstractKordampPlugin {
             str += "Executed: ${result.testCount}/${console.green(String.valueOf(result.successfulTestCount))}/"
             str += "${console.red(String.valueOf(result.failedTestCount))}/"
             str += "${console.yellow(String.valueOf(result.skippedTestCount))} "
-            project.logger.lifecycle(str.toString())
+            testTask.project.logger.lifecycle(str.toString())
         }
     }
 
-    private void configureAllTestsTasks(Project project,
-                                        TaskProvider<DefaultTask> allTestsTask) {
+    private void configureAllTestsTask(Project project,
+                                       TaskProvider<DefaultTask> allTestsTask) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (!effectiveConfig.testing.enabled) {
             return

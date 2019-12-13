@@ -80,7 +80,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
             }
         }
 
-        if (isRootProject(project) && !project.childProjects.isEmpty()) {
+        if (isRootProject(project)) {
             TaskProvider<AggregateSourceStatsReportTask> task = project.tasks.register(
                     AGGREGATE_STATS_TASK_NAME,
                     AggregateSourceStatsReportTask,

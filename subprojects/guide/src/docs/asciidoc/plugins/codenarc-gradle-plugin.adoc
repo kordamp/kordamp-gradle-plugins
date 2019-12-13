@@ -1,0 +1,93 @@
+
+[[_org_kordamp_gradle_codenarc]]
+= Codenarc
+
+[horizontal]
+id:: `org.kordamp.gradle.codenarc`
+class:: `org.kordamp.gradle.plugin.codenarc.CodenarcPlugin`
+    (link:api/org/kordamp/gradle/plugin/codenarc/CodenarcPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/codenarc/CodenarcPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
+`link:https://docs.gradle.org/current/userguide/codenarc_plugin.html[codenarc]`
+
+Configures Codenarc on Groovy projects and aggregate reports on the root project.
+
+[[_org_kordamp_gradle_codenarc_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    quality {
+        codenarc {
+            enabled
+            configFile
+            maxPriority1Violations
+            maxPriority2Violations
+            maxPriority3Violations
+            toolVersion
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name                   | Type        | Required | Default Value     | Description
+| enabled                | boolean     | no       | true              | Disables `org.kordamp.gradle.codenarc` plugin if `false`
+| configFile             | Set<String> | no       |                   | Either `config/codenarc/${project.name}.xml` or `config/codenarc/codenarc.xml`
+| maxPriority1Violations | int         | no       |                   |
+| maxPriority2Violations | int         | no       |                   |
+| maxPriority3Violations | int         | no       |                   |
+| toolVersion            | String      | no       | 1.5               |
+|===
+
+[[_org_kordamp_gradle_codenarc_tasks]]
+== Tasks
+
+[[_task_aggregate_codenarc]]
+=== AggregateCodenarc
+
+Aggregates all codenarc reports for all projects. +
+Consumes settings from `config.quality.<<_org_kordamp_gradle_codenarc_dsl,codenarc>>`. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateCodenarc
+Type:: `org.gradle.api.plugins.quality.CodeNarc`
+
+.Properties
+[horizontal]
+reports.html.destination:: `${project.buildDir}/reports/codenarc/aggregate.html`
+reports.xml.destination:: `${project.buildDir}/reports/codenarc/aggregate.xml`
+
+[[_task_all_codenarc]]
+=== AllCodenarc
+
+Aggregates all codenarc reports for a single project. +
+Consumes settings from `config.quality.<<_org_kordamp_gradle_codenarc_dsl,codenarc>>`.
+
+[horizontal]
+Name:: allCodenarc
+Type:: `org.gradle.api.plugins.quality.CodeNarc`
+
+.Properties
+[horizontal]
+reports.html.destination:: `${project.buildDir}/reports/codenarc/${project.name}.html`
+reports.xml.destination:: `${project.buildDir}/reports/codenarc/${project.name}.xml`
+
+[[_task_init_codenarc]]
+=== InitCodenarc
+
+Creates a default Codenarc configuration file.
+
+[horizontal]
+Name:: initCodenarc
+Type:: `org.kordamp.gradle.plugin.codenarc.tasks.InitCodenarcTask`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.projectDir}/config/codenarc`
+overwrite:: Overwrite existing file if there's a match
+

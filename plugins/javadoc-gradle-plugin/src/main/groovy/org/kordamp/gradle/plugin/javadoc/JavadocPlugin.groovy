@@ -92,7 +92,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
 
                 project.afterEvaluate {
                     ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-                    setEnabled(effectiveConfig.javadoc.enabled)
+                    setEnabled(effectiveConfig.docs.javadoc.enabled)
 
                     if (!enabled) {
                         return
@@ -100,16 +100,16 @@ class JavadocPlugin extends AbstractKordampPlugin {
 
                     Javadoc javadoc = createJavadocTaskIfNeeded(project)
                     if (!javadoc) return
-                    effectiveConfig.javadoc.javadocTasks() << javadoc
+                    effectiveConfig.docs.javadoc.javadocTasks() << javadoc
 
                     TaskProvider<Jar> javadocJar = createJavadocJarTask(project, javadoc)
                     project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(javadocJar)
-                    effectiveConfig.javadoc.javadocJarTasks() << javadocJar
+                    effectiveConfig.docs.javadoc.javadocJarTasks() << javadocJar
 
-                    effectiveConfig.javadoc.projects() << project
+                    effectiveConfig.docs.javadoc.projects() << project
 
                     project.tasks.withType(Javadoc) { Javadoc task ->
-                        effectiveConfig.javadoc.applyTo(task)
+                        effectiveConfig.docs.javadoc.applyTo(task)
                         task.options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
 
                         if (JavaVersion.current().isJava8Compatible()) {
@@ -142,8 +142,8 @@ class JavadocPlugin extends AbstractKordampPlugin {
         if (javadocTask) {
             ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
             javadocTask.configure {
-                include(effectiveConfig.javadoc.includes)
-                exclude(effectiveConfig.javadoc.excludes)
+                include(effectiveConfig.docs.javadoc.includes)
+                exclude(effectiveConfig.docs.javadoc.excludes)
             }
         }
 

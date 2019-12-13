@@ -1,0 +1,105 @@
+
+[[_org_kordamp_gradle_checkstyle]]
+= Checkstyle
+
+[horizontal]
+id:: `org.kordamp.gradle.checkstyle`
+class:: `org.kordamp.gradle.plugin.checkstyle.CheckstylePlugin`
+    (link:api/org/kordamp/gradle/plugin/checkstyle/CheckstylePlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/checkstyle/CheckstylePlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
+`link:https://docs.gradle.org/current/userguide/checkstyle_plugin.html[checkstyle]`
+
+Configures Checkstyle on Java projects and aggregate reports on the root project.
+
+[[_org_kordamp_gradle_checkstyle_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    quality {
+        checkstyle {
+            enabled
+            includes
+            excludes
+            configFile
+            configProperties
+            maxErrors
+            maxWarnings
+            showViolations
+            toolVersion
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name             | Type                | Required | Default Value     | Description
+| enabled          | boolean             | no       | true              | Disables `org.kordamp.gradle.checkstyle` plugin if `false`
+| includes         | Set<String>         | no       | []                |
+| excludes         | Set<String>         | no       | []                |
+| configFile       | Set<String>         | no       |                   | Either `config/checkstyle/${project.name}.xml` or `config/checkstyle/checkstyle.xml`
+| configProperties | Map<String, Object> | no       | [:]               |
+| maxErrors        | int                 | no       | 0                 |
+| maxWarnings      | int                 | no       | Integer.MAX_VALUE |
+| showViolations   | boolean             | no       | yes               |
+| toolVersion      | String              | no       | 8.27              |
+|===
+
+.Methods
+
+void exclude(String):: Adds a source exclusion rule (Ant pattern).
+void include(String):: Adds a source inclusion rule (Ant pattern).
+
+
+[[_org_kordamp_gradle_checkstyle_tasks]]
+== Tasks
+
+[[_task_aggregate_checkstyle]]
+=== AggregateCheckstyle
+
+Aggregates all checkstyle reports for all projects. +
+Consumes settings from `config.quality.<<_org_kordamp_gradle_checkstyle_dsl,checkstyle>>`. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateCheckstyle
+Type:: `org.gradle.api.plugins.quality.Checkstyle`
+
+.Properties
+[horizontal]
+reports.html.destination:: `${project.buildDir}/reports/checkstyle/aggregate.html`
+reports.xml.destination:: `${project.buildDir}/reports/checkstyle/aggregate.xml`
+
+[[_task_all_checkstyle]]
+=== AllCheckstyle
+
+Aggregates all checkstyle reports for a single project. +
+Consumes settings from `config.quality.<<_org_kordamp_gradle_checkstyle_dsl,checkstyle>>`.
+
+[horizontal]
+Name:: allCheckstyle
+Type:: `org.gradle.api.plugins.quality.Checkstyle`
+
+.Properties
+[horizontal]
+reports.html.destination:: `${project.buildDir}/reports/checkstyle/${project.name}.html`
+reports.xml.destination:: `${project.buildDir}/reports/checkstyle/${project.name}.xml`
+
+[[_task_init_checkstyle]]
+=== InitCheckstyle
+
+Creates a default Checkstyle configuration file.
+
+[horizontal]
+Name:: initCheckstyle
+Type:: `org.kordamp.gradle.plugin.checkstyle.tasks.InitCheckstyleTask`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.projectDir}/config/checkstyle`
+overwrite:: Overwrite existing file if there's a match
+

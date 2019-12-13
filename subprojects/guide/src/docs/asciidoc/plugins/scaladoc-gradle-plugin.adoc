@@ -18,20 +18,22 @@ Generates and packages Scaladoc documentation.
 [subs="+macros"]
 ----
 config {
-    scaladoc {
-        enabled
-        title
-        includes
-        excludes
-        replaceJavadoc
-        excludedProjects
-        <<_scaladoc_options,options>> {
-            bottom
-            top
-            docTitle
-            deprecation
-            unchecked
-            additionalParameters
+    docs {
+        scaladoc {
+            enabled
+            title
+            includes
+            excludes
+            replaceJavadoc
+            excludedProjects
+            <<_scaladoc_options,options>> {
+                bottom
+                top
+                docTitle
+                deprecation
+                unchecked
+                additionalParameters
+            }
         }
     }
 }

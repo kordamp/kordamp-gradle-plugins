@@ -43,8 +43,12 @@ class Bintray extends AbstractFeature {
     List<String> publications = new ArrayList<>()
 
     boolean skipMavenSync = false
+    boolean publish = false
+    boolean publicDownloadNumbers = true
 
     private boolean skipMavenSyncSet
+    private boolean publishSet
+    private boolean publicDownloadNumbersSet
 
     Bintray(ProjectConfigurationExtension config, Project project) {
         super(config, project)
@@ -65,6 +69,8 @@ class Bintray extends AbstractFeature {
             map.userOrg = userOrg
             map.repo = getRepo()
             map.githubRepo = getGithubRepo()
+            map.publish = publish
+            map.publicDownloadNumbers = publicDownloadNumbers
             map.skipMavenSync = skipMavenSync
             map.publications = resolvePublications()
             if (!credentials.empty) {
@@ -99,6 +105,24 @@ class Bintray extends AbstractFeature {
         this.skipMavenSyncSet
     }
 
+    void setPublish(boolean publish) {
+        this.publish = publish
+        this.publishSet = true
+    }
+
+    boolean isPublishSet() {
+        this.publishSet
+    }
+
+    void setPublicDownloadNumbers(boolean publicDownloadNumbers) {
+        this.publicDownloadNumbers = publicDownloadNumbers
+        this.publicDownloadNumbersSet = true
+    }
+
+    boolean isPublicDownloadNumbersSet() {
+        this.publicDownloadNumbersSet
+    }
+
     void credentials(Action<? super Credentials> action) {
         action.execute(credentials)
     }
@@ -112,6 +136,10 @@ class Bintray extends AbstractFeature {
 
         copy.@skipMavenSync = skipMavenSync
         copy.@skipMavenSyncSet = skipMavenSyncSet
+        copy.@publish = publish
+        copy.@publishSet = publishSet
+        copy.@publicDownloadNumbers = publicDownloadNumbers
+        copy.@publicDownloadNumbersSet = publicDownloadNumbersSet
         copy.@repo = this.@repo
         copy.@name = this.@name
         copy.userOrg = userOrg
@@ -123,6 +151,8 @@ class Bintray extends AbstractFeature {
     static void merge(Bintray o1, Bintray o2) {
         AbstractFeature.merge(o1, o2)
         o1.setSkipMavenSync((boolean) (o1.skipMavenSyncSet ? o1.skipMavenSync : o2.skipMavenSync))
+        o1.setPublish((boolean) (o1.publishSet ? o1.publish : o2.publish))
+        o1.setPublicDownloadNumbers((boolean) (o1.publicDownloadNumbersSet ? o1.publicDownloadNumbers : o2.publicDownloadNumbers))
         o1.name = o1.@name ?: o2.@name
         o1.repo = o1.@repo ?: o2.@repo
         o1.userOrg = o1.userOrg ?: o2.userOrg

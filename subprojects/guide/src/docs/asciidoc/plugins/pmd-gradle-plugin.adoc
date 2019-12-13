@@ -1,0 +1,91 @@
+
+[[_org_kordamp_gradle_pmd]]
+= Pmd
+
+[horizontal]
+id:: `org.kordamp.gradle.pmd`
+class:: `org.kordamp.gradle.plugin.pmd.PmdPlugin`
+    (link:api/org/kordamp/gradle/plugin/pmd/PmdPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/pmd/PmdPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
+`link:https://docs.gradle.org/current/userguide/pmd_plugin.html[pmd]`
+
+Configures Pmd on Java projects and aggregate reports on the root project.
+
+[[_org_kordamp_gradle_pmd_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    quality {
+        pmd {
+            enabled
+            ruleSetFiles
+            incrementalAnalysis
+            rulePriority
+            toolVersion
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name                | Type           | Required | Default Value     | Description
+| enabled             | boolean        | no       | true              | Disables `org.kordamp.gradle.pmd` plugin if `false`
+| ruleSetFiles        | FileCollection | no       |                   | Either `config/pmd/${project.name}.xml` or `config/pmd/pmd.xml`
+| incrementalAnalysis | boolean        | no       | false             |
+| rulePriority        | int            | no       | 5                 |
+| toolVersion         | String         | no       | 6.2.0             |
+|===
+
+[[_org_kordamp_gradle_pmd_tasks]]
+== Tasks
+
+[[_task_aggregate_pmd]]
+=== AggregatePmd
+
+Aggregates all pmd reports for all projects. +
+Consumes settings from `config.quality.<<_org_kordamp_gradle_pmd_dsl,pmd>>`. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregatePmd
+Type:: `org.gradle.api.plugins.quality.Pmd`
+
+.Properties
+[horizontal]
+reports.html.destination:: `${project.buildDir}/reports/pmd/aggregate.html`
+reports.xml.destination:: `${project.buildDir}/reports/pmd/aggregate.xml`
+
+[[_task_all_pmd]]
+=== AllPmd
+
+Aggregates all pmd reports for a single project. +
+Consumes settings from `config.quality.<<_org_kordamp_gradle_pmd_dsl,pmd>>`.
+
+[horizontal]
+Name:: allPmd
+Type:: `org.gradle.api.plugins.quality.Pmd`
+
+.Properties
+[horizontal]
+reports.html.destination:: `${project.buildDir}/reports/pmd/${project.name}.html`
+reports.xml.destination:: `${project.buildDir}/reports/pmd/${project.name}.xml`
+
+[[_task_init_pmd]]
+=== InitPmd
+
+Creates a default Pmd configuration file.
+
+[horizontal]
+Name:: initPmd
+Type:: `org.kordamp.gradle.plugin.pmd.tasks.InitPmdTask`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.projectDir}/config/pmd`
+overwrite:: Overwrite existing file if there's a match
+

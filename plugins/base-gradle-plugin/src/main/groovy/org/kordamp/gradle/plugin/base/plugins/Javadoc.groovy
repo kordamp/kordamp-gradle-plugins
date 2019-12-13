@@ -318,11 +318,11 @@ class Javadoc extends AbstractFeature {
             ProjectConfigurationExtension config = resolveEffectiveConfig(project) ?: resolveConfig(project)
 
             Task taskDependency = null
-            if (config.javadoc.enabled) {
+            if (config.docs.javadoc.enabled) {
                 taskDependency = project.tasks.findByName('javadoc')
             }
 
-            if (config.groovydoc.enabled && config.groovydoc.replaceJavadoc) {
+            if (config.docs.groovydoc.enabled && config.docs.groovydoc.replaceJavadoc) {
                 taskDependency = project.tasks.findByName('groovydoc')
             }
 

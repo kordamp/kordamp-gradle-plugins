@@ -18,6 +18,7 @@
 dependencies {
     api project(':java-project-gradle-plugin')
     api project(':kotlindoc-gradle-plugin')
+    api project(':detekt-gradle-plugin')
     compileOnly "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     compileOnly "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion"
     compileOnly "org.jetbrains.kotlin:kotlin-daemon-embeddable:$kotlinVersion"
