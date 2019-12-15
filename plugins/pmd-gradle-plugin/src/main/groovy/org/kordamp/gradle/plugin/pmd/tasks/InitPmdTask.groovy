@@ -20,6 +20,7 @@ package org.kordamp.gradle.plugin.pmd.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 
@@ -29,6 +30,7 @@ import org.gradle.api.tasks.options.Option
  */
 @CompileStatic
 class InitPmdTask extends DefaultTask {
+    @Input
     final Property<Boolean> overwrite = project.objects.property(Boolean).convention(false)
 
     @Option(option = 'overwrite', description = 'Overwrite existing configuration file')
