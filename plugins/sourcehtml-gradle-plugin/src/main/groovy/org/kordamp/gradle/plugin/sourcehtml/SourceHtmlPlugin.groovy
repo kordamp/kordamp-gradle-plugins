@@ -118,7 +118,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                 void execute(Copy t) {
                     t.group = 'Documentation'
                     t.description = 'Generates a HTML report of the source code.'
-                    t.destinationDir = project.file("${project.buildDir}/docs/source-html")
+                    t.destinationDir = project.file("${project.buildDir}/docs/aggregate-source-html")
                     t.enabled = false
                 }
             })

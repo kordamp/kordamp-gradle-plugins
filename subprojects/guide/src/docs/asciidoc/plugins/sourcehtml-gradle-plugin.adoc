@@ -109,43 +109,6 @@ This block is optional.
 [[_org_kordamp_gradle_sourcehtml_tasks]]
 == Tasks
 
-[[_task_convert_code_to_html]]
-=== ConvertCodeToHtml
-
-Converts source code files to Java2HTML documentation.
-
-[horizontal]
-Name:: convertCodeToHtml
-Type:: `com.bmuschko.gradle.java2html.ConvertCodeTask`
-
-.Properties
-Consumes all settings found in the `config.docs.sourceHtml.conversion` block.
-
-[[_task_generate_source_html_overview]]
-=== GenerateSourceHtmlOverview
-
-Generates HTML overview files for Java2HTML documentation.
-
-[horizontal]
-Name:: generateSourceHtmlOverview
-Type:: `com.bmuschko.gradle.java2html.GenerateOverviewTask`
-
-.Properties
-Consumes all settings found in the `config.docs.sourceHtml.overview` block.
-
-[[_task_source_html]]
-=== SourceHtml
-
-Collects the results of the `convertCodeToHtml` and `generateSourceHtmlOverview` tasks.
-
-[horizontal]
-Name:: sourceHtml
-Type:: `org.gradle.api.tasks.Copy`
-
-.Properties
-[horizontal]
-destinationDir:: `${project.buildDir}/docs/source-html`
-
 [[_task_aggregate_convert_code_to_html]]
 === AggregateConvertCodeToHtml
 
@@ -184,7 +147,7 @@ Type:: `org.gradle.api.tasks.Copy`
 
 .Properties
 [horizontal]
-destinationDir:: `${rootProject.buildDir}/docs/source-html`
+destinationDir:: `${rootProject.buildDir}/docs/aggregate-source-html`
 
 [[_task_aggregate_source_html_jar]]
 === AggregateSourceHtmlJar
@@ -200,3 +163,39 @@ Type:: `org.gradle.api.tasks.bundling.Jar`
 [horizontal]
 destinationDir:: `${rootProject.buildDir}/build/libs`
 
+[[_task_convert_code_to_html]]
+=== ConvertCodeToHtml
+
+Converts source code files to Java2HTML documentation.
+
+[horizontal]
+Name:: convertCodeToHtml
+Type:: `com.bmuschko.gradle.java2html.ConvertCodeTask`
+
+.Properties
+Consumes all settings found in the `config.docs.sourceHtml.conversion` block.
+
+[[_task_generate_source_html_overview]]
+=== GenerateSourceHtmlOverview
+
+Generates HTML overview files for Java2HTML documentation.
+
+[horizontal]
+Name:: generateSourceHtmlOverview
+Type:: `com.bmuschko.gradle.java2html.GenerateOverviewTask`
+
+.Properties
+Consumes all settings found in the `config.docs.sourceHtml.overview` block.
+
+[[_task_source_html]]
+=== SourceHtml
+
+Collects the results of the `convertCodeToHtml` and `generateSourceHtmlOverview` tasks.
+
+[horizontal]
+Name:: sourceHtml
+Type:: `org.gradle.api.tasks.Copy`
+
+.Properties
+[horizontal]
+destinationDir:: `${project.buildDir}/docs/source-html`

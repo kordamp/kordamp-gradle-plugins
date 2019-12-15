@@ -194,7 +194,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     t.enabled = false
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Aggregates Javadoc API docs for all projects.'
-                    t.destinationDir = project.file("${project.buildDir}/docs/javadoc")
+                    t.destinationDir = project.file("${project.buildDir}/docs/aggregate-javadoc")
                     effectiveConfig.docs.javadoc.applyTo(t)
                     t.options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
                     if (JavaVersion.current().isJava8Compatible()) {

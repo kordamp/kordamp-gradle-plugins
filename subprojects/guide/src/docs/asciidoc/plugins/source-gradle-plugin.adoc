@@ -36,21 +36,6 @@ This block is optional.
 [[_org_kordamp_gradle_source_tasks]]
 == Tasks
 
-[[_task_source_jar]]
-=== SourceJar
-
-An archive of the source code.
-
-[horizontal]
-Name:: sourceJar
-Type:: `org.gradle.api.tasks.bundling.Jar`
-
-.Properties
-[horizontal]
-classifier:: sources
-destinationDir:: `${project.buildDir}/build/libs`
-from:: `project.sourceSets.main.allSource`
-
 [[_task_aggregate_source_jar]]
 === AggregateSourceJar
 
@@ -65,3 +50,17 @@ Type:: `org.gradle.api.tasks.bundling.Jar`
 [horizontal]
 destinationDir:: `${rootProject.buildDir}/build/libs`
 
+[[_task_source_jar]]
+=== SourceJar
+
+An archive of the source code.
+
+[horizontal]
+Name:: sourceJar
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+classifier:: sources
+destinationDir:: `${project.buildDir}/build/libs`
+from:: `project.sourceSets.main.allSource`

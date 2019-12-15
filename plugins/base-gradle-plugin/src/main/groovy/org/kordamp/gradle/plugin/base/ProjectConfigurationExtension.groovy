@@ -18,10 +18,9 @@
 package org.kordamp.gradle.plugin.base
 
 import groovy.transform.CompileStatic
-import kotlin.reflect.jvm.internal.impl.util.Check
-import org.codehaus.groovy.transform.sc.StaticCompileTransformation
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.model.Information
 import org.kordamp.gradle.plugin.base.plugins.Apidoc

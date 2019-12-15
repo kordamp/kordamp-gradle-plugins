@@ -92,7 +92,7 @@ Type:: `org.gradle.api.tasks.javadoc.Groovydoc`
 
 .Properties
 [horizontal]
-destinationDir:: `${rootProject.buildDir}/docs/groovydoc`
+destinationDir:: `${rootProject.buildDir}/docs/aggregate-groovydoc`
 
 [[_task_aggregate_groovydoc_jar]]
 === AggregateGroovydocJar

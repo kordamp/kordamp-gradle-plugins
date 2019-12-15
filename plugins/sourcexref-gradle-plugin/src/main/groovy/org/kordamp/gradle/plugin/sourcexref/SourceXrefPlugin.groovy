@@ -98,7 +98,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
                 void execute(JxrTask t) {
                     t.group = 'Documentation'
                     t.description = 'Generates an aggregate JXR report of the source code.'
-                    t.outputDirectory = project.file("${project.buildDir}/docs/source-xref")
+                    t.outputDirectory = project.file("${project.buildDir}/docs/aggregate-source-xref")
                     t.enabled = false
                 }
             })

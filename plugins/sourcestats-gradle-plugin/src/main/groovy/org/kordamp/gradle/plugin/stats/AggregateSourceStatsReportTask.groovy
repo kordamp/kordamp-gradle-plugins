@@ -50,7 +50,7 @@ class AggregateSourceStatsReportTask extends DefaultTask {
     @CompileDynamic
     void computeAggregate() {
         if (!reportDir) reportDir = project.file("${project.reporting.baseDir.path}/stats")
-        if (!xmlReport) xmlReport = project.file("${reportDir}/${project.name}-all.xml")
+        if (!xmlReport) xmlReport = project.file("${reportDir}/aggregate-${project.name}.xml")
         reportDir.mkdirs()
 
         Map<String, Map<String, Integer>> stats = [:]
@@ -155,6 +155,6 @@ class AggregateSourceStatsReportTask extends DefaultTask {
 
     private getOutputFile(String suffix) {
         reportDir.mkdirs()
-        new File(reportDir, project.name + '-all.' + suffix)
+        new File(reportDir, 'aggregate-' + project.name + '.' + suffix)
     }
 }

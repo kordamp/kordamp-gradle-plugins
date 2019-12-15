@@ -206,7 +206,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                     t.enabled = false
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Aggregates Scaladoc API docs for all projects.'
-                    t.destinationDir = project.file("${project.buildDir}/docs/scaladoc")
+                    t.destinationDir = project.file("${project.buildDir}/docs/aggregate-scaladoc")
                     effectiveConfig.docs.scaladoc.applyTo(t)
                 }
             })

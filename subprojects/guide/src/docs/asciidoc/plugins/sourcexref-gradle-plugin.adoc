@@ -63,21 +63,6 @@ void include(String):: Adds a source inclusion rule (Ant pattern).
 [[_org_kordamp_gradle_sourcexref_tasks]]
 == Tasks
 
-[[_task_source_xref]]
-=== SourceXref
-
-Generates a JXR report of all Java source code found in this project.
-
-[horizontal]
-Name:: sourceXref
-Type:: `org.kordamp.gradle.plugin.sourcexref.JxrTask`
-
-.Properties
-[horizontal]
-outputDir:: `${project.buildDir}/docs/source-xref`
-
-Consumes all settings found in the `config.docs.sourceXref.conversion` block.
-
 [[_task_aggregate_source_xref]]
 === AggregateSourceXref
 
@@ -90,7 +75,7 @@ Type:: `org.kordamp.gradle.plugin.sourcexref.JxrTask`
 
 .Properties
 [horizontal]
-outputDir:: `${project.buildDir}/docs/source-xref`
+outputDir:: `${project.buildDir}/docs/aggregate-source-xref`
 
 Consumes all settings found in the `config.docs.sourceXref.conversion` block.
 
@@ -108,3 +93,17 @@ Type:: `org.gradle.api.tasks.bundling.Jar`
 [horizontal]
 destinationDir:: `${rootProject.buildDir}/build/libs`
 
+[[_task_source_xref]]
+=== SourceXref
+
+Generates a JXR report of all Java source code found in this project.
+
+[horizontal]
+Name:: sourceXref
+Type:: `org.kordamp.gradle.plugin.sourcexref.JxrTask`
+
+.Properties
+[horizontal]
+outputDir:: `${project.buildDir}/docs/source-xref`
+
+Consumes all settings found in the `config.docs.sourceXref.conversion` block.

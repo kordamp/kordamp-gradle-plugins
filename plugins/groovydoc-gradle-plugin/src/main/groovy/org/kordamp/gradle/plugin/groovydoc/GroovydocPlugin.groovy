@@ -210,7 +210,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                     t.enabled = false
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Aggregates Groovydoc API docs for all projects.'
-                    t.destinationDir = project.file("${project.buildDir}/docs/groovydoc")
+                    t.destinationDir = project.file("${project.buildDir}/docs/aggregate-groovydoc")
                     effectiveConfig.docs.groovydoc.applyTo(t)
                     t.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
                 }

@@ -74,35 +74,6 @@ This block is optional.
 [[_org_kordamp_gradle_scaladoc_tasks]]
 == Tasks
 
-[[_task_scaladoc]]
-=== Scaladoc
-
-Generates Scaladoc API documentation. +
-Consumes settings from `config.<<_org_kordamp_gradle_scaladoc_dsl,scaladoc>>`.
-
-[horizontal]
-Name:: scaladoc
-Type:: `org.gradle.api.tasks.scala.ScalaDoc`
-
-.Properties
-[horizontal]
-destinationDir:: `${project.buildDir}/docs/scaladoc`
-
-[[_task_scaladoc_jar]]
-=== ScaladocJar
-
-An archive of the Scaladoc API docs.
-
-[horizontal]
-Name:: scaladocJar
-Type:: `org.gradle.api.tasks.bundling.Jar`
-
-.Properties
-[horizontal]
-classifier:: scaladoc
-destinationDir:: `${project.buildDir}/build/libs`
-from:: `scaladoc.destinationDir`
-
 [[_task_aggregate_scaladocs]]
 === AggregateScaladocs
 
@@ -133,3 +104,31 @@ Type:: `org.gradle.api.tasks.bundling.Jar`
 classifier:: scaladoc
 destinationDir:: `${rootProject.buildDir}/build/libs`
 
+[[_task_scaladoc]]
+=== Scaladoc
+
+Generates Scaladoc API documentation. +
+Consumes settings from `config.<<_org_kordamp_gradle_scaladoc_dsl,scaladoc>>`.
+
+[horizontal]
+Name:: scaladoc
+Type:: `org.gradle.api.tasks.scala.ScalaDoc`
+
+.Properties
+[horizontal]
+destinationDir:: `${project.buildDir}/docs/aggregate-scaladoc`
+
+[[_task_scaladoc_jar]]
+=== ScaladocJar
+
+An archive of the Scaladoc API docs.
+
+[horizontal]
+Name:: scaladocJar
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+classifier:: scaladoc
+destinationDir:: `${project.buildDir}/build/libs`
+from:: `scaladoc.destinationDir`

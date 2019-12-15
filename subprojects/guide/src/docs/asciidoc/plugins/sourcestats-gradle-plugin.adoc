@@ -81,22 +81,6 @@ This block is optional.
 [[_org_kordamp_gradle_sourcestats_tasks]]
 == Tasks
 
-[[_task_source_stats]]
-=== SourceStats
-
-Generates a source code statistics report
-
-[horizontal]
-Name:: sourceStats
-Type:: `org.kordamp.gradle.plugin.stats.SourceStatsTask`
-
-.Properties
-[horizontal]
-formats:: List of output formats. Valid values are +xml+, +html+ and +txt+.
-reportDir:: `${project.reporting.baseDir.path}/stats`
-counters:: a Map of additional `org.kordamp.gradle.plugin.stats.Counter` implementations, keyed by extension.
-paths:: Maps of additional source paths that contain sources to be counted.
-
 [[_task_aggregate_source_stats]]
 === AggregateSourceStats
 
@@ -112,3 +96,18 @@ Type:: `org.kordamp.gradle.plugin.stats.AggregateSourceStatsReportTask`
 [horizontal]
 destinationDir:: `${rootProject.reporting.baseDir.path}/stats`
 
+[[_task_source_stats]]
+=== SourceStats
+
+Generates a source code statistics report
+
+[horizontal]
+Name:: sourceStats
+Type:: `org.kordamp.gradle.plugin.stats.SourceStatsTask`
+
+.Properties
+[horizontal]
+formats:: List of output formats. Valid values are +xml+, +html+ and +txt+.
+reportDir:: `${project.reporting.baseDir.path}/stats`
+counters:: a Map of additional `org.kordamp.gradle.plugin.stats.Counter` implementations, keyed by extension.
+paths:: Maps of additional source paths that contain sources to be counted.

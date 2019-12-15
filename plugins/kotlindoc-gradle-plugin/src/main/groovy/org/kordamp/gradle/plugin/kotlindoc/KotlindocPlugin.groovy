@@ -251,8 +251,10 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                         t.extensions.add('multiplatform', project.container(GradlePassConfigurationImpl))
                         t.extensions.add('configuration', new GradlePassConfigurationImpl())
                         applyConfiguration(effectiveConfig.docs.kotlindoc, t, format, formatName)
+                        t.outputDirectory = effectiveConfig.docs.kotlindoc.outputDirectory.absolutePath + File.separator + 'aggregate-' + formatName
                     }
                 })
+
             project.tasks.register(taskName + 'Jar', Jar,
                 new Action<Jar>() {
                     @Override

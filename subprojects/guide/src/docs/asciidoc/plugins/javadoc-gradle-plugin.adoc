@@ -89,7 +89,7 @@ Type:: `org.gradle.api.tasks.javadoc.Javadoc`
 
 .Properties
 [horizontal]
-destinationDir:: `${rootProject.buildDir}/docs/javadoc`
+destinationDir:: `${rootProject.buildDir}/docs/aggregate-javadoc`
 
 [[_task_aggregate_javadoc_jar]]
 === AggregateJavadocJar

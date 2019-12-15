@@ -50,27 +50,6 @@ This block is optional.
 [[_org_kordamp_gradle_jacoco_tasks]]
 == Tasks
 
-[[_task_jacoco_report]]
-=== Jacoco<Test>Report
-
-Generates code coverage report for a task of type `link:https://docs.gradle.org/4.10/dsl/org.gradle.api.tasks.testing.Test.html[Test]`. +
-
-[horizontal]
-Name:: jacoco<Name>Report, where `Name` stands for the name of the matching `Test` task.
-Type:: `org.gradle.testing.jacoco.tasks.JacocoReport`
-
-.Properties
-[horizontal]
-additionalSourceDirs:: jacoco.additionalSourceDirs
-sourceDirectories:: jacoco.additionalSourceDirs
-classDirectories:: jacoco.additionalClassDirs
-executionData:: testTask
-reports.html.destination:: "${project.reporting.baseDir.path}/jacoco/${testTask.name}/html"
-reports.xml.destination:: "${project.reporting.baseDir.path}/jacoco/${testTask.name}/jacocoTestReport.xml"
-reports.csv.enabled:: false
-reports.html.enabled:: true
-reports.xml.enabled:: true
-
 [[_task_aggregate_jacoco_merge]]
 === AggregateJacocoMerge
 
@@ -113,3 +92,23 @@ Executes all JaCoCo reports found in a project (unit, integration, functional, e
 Name:: allTests
 Type:: `org.gradle.api.DefaultTask`
 
+[[_task_jacoco_report]]
+=== Jacoco<Test>Report
+
+Generates code coverage report for a task of type `link:https://docs.gradle.org/4.10/dsl/org.gradle.api.tasks.testing.Test.html[Test]`. +
+
+[horizontal]
+Name:: jacoco<Name>Report, where `Name` stands for the name of the matching `Test` task.
+Type:: `org.gradle.testing.jacoco.tasks.JacocoReport`
+
+.Properties
+[horizontal]
+additionalSourceDirs:: jacoco.additionalSourceDirs
+sourceDirectories:: jacoco.additionalSourceDirs
+classDirectories:: jacoco.additionalClassDirs
+executionData:: testTask
+reports.html.destination:: "${project.reporting.baseDir.path}/jacoco/${testTask.name}/html"
+reports.xml.destination:: "${project.reporting.baseDir.path}/jacoco/${testTask.name}/jacocoTestReport.xml"
+reports.csv.enabled:: false
+reports.html.enabled:: true
+reports.xml.enabled:: true
