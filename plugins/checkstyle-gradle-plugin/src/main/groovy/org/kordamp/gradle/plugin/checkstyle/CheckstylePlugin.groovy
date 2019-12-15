@@ -49,12 +49,13 @@ class CheckstylePlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
+        configureProject(project)
         if (isRootProject(project)) {
+            configureRootProject(project)
             project.childProjects.values().each {
                 configureProject(it)
             }
         }
-        configureProject(project)
     }
 
     static void applyIfMissing(Project project) {
@@ -114,26 +115,26 @@ class CheckstylePlugin extends AbstractKordampPlugin {
                 }
             }
         })
+    }
 
-        if (isRootProject(project)) {
-            TaskProvider<Checkstyle> aggregateCheckstyleTask = project.tasks.register(AGGREGATE_CHECKSTYLE_TASK_NAME, Checkstyle,
-                new Action<Checkstyle>() {
-                    @Override
-                    void execute(Checkstyle t) {
-                        t.enabled = false
-                        t.group = 'Quality'
-                        t.description = 'Aggregate all checkstyle reports.'
-                    }
-                })
-
-            project.gradle.addBuildListener(new BuildAdapter() {
+    private void configureRootProject(Project project) {
+        TaskProvider<Checkstyle> aggregateCheckstyleTask = project.tasks.register(AGGREGATE_CHECKSTYLE_TASK_NAME, Checkstyle,
+            new Action<Checkstyle>() {
                 @Override
-                void projectsEvaluated(Gradle gradle) {
-                    configureAggregateCheckstyleTask(project,
-                        aggregateCheckstyleTask)
+                void execute(Checkstyle t) {
+                    t.enabled = false
+                    t.group = 'Quality'
+                    t.description = 'Aggregate all checkstyle reports.'
                 }
             })
-        }
+
+        project.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                configureAggregateCheckstyleTask(project,
+                    aggregateCheckstyleTask)
+            }
+        })
     }
 
     @CompileDynamic

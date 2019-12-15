@@ -30,7 +30,6 @@ import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.PluginUtils.resolveSourceSets
 import static org.kordamp.gradle.StringUtils.isBlank
-import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
  * Configures artifact publication via Bintray.
@@ -45,16 +44,9 @@ class BintrayPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
-        if (isRootProject(project)) {
-            if (project.childProjects.size()) {
-                project.childProjects.values().each {
-                    configureProject(it)
-                }
-            } else {
-                configureProject(project)
-            }
-        } else {
-            configureProject(project)
+        configureProject(project)
+        project.childProjects.values().each {
+            configureProject(it)
         }
     }
 
@@ -86,6 +78,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
     @CompileDynamic
     private void updatePublications(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        setEnabled(effectiveConfig.bintray.enabled)
 
         if (!effectiveConfig.bintray.enabled || !resolveSourceSets(project).findByName('main')) {
             project.getTasks().findByName(BintrayUploadTask.TASK_NAME)?.enabled = false

@@ -24,6 +24,7 @@ import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.tasks.JavaExec
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.checkstyle.CheckstylePlugin
+import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 import org.kordamp.gradle.plugin.pmd.PmdPlugin
 import org.kordamp.gradle.plugin.project.ProjectPlugin
 import org.kordamp.gradle.plugin.project.java.tasks.JarSettingsTask
@@ -33,8 +34,6 @@ import org.kordamp.gradle.plugin.project.java.tasks.SourceSetSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.SourceSetsTask
 import org.kordamp.gradle.plugin.project.java.tasks.TestSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.WarSettingsTask
-
-import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
  *
@@ -48,13 +47,9 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
-        if (isRootProject(project)) {
-            applyPlugins(project)
-            project.childProjects.values().each {
-                applyPlugins(it)
-            }
-        } else {
-            applyPlugins(project)
+        applyPlugins(project)
+        project.childProjects.values().each {
+            applyPlugins(it)
         }
     }
 
@@ -71,6 +66,7 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         ProjectPlugin.applyIfMissing(project)
+        JavadocPlugin.applyIfMissing(project)
         CheckstylePlugin.applyIfMissing(project)
         PmdPlugin.applyIfMissing(project)
 

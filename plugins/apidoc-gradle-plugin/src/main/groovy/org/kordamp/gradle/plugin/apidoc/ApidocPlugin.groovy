@@ -45,6 +45,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  * @author Andres Almiray
  * @since 0.1.0
  */
+@Deprecated
 class ApidocPlugin extends AbstractKordampPlugin {
     static final String AGGREGATE_APIDOCS_TASK_NAME = 'aggregateApidocs'
     static final String AGGREGATE_JAVADOCS_TASK_NAME = 'aggregateJavadocs'
@@ -56,6 +57,7 @@ class ApidocPlugin extends AbstractKordampPlugin {
 
     @CompileStatic
     void apply(Project project) {
+        println("The apidoc plugin has been deprecated and will be removed in a future release")
         this.project = project
 
         if (isRootProject(project)) {

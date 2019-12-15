@@ -63,12 +63,13 @@ class TestingPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
+        configureProject(project)
         if (isRootProject(project)) {
+            configureRootProject(project)
             project.childProjects.values().each {
                 configureProject(it)
             }
         }
-        configureProject(project)
     }
 
     static void applyIfMissing(Project project) {
@@ -132,70 +133,70 @@ class TestingPlugin extends AbstractKordampPlugin {
                 }
             }
         })
+    }
 
-        if (isRootProject(project) && !project.childProjects.isEmpty()) {
-            TaskProvider<TestReport> aggregateTestReportTask = project.tasks.register(AGGREGATE_TEST_REPORTS_TASK_NAME, TestReport,
-                new Action<TestReport>() {
-                    @Override
-                    void execute(TestReport t) {
-                        t.enabled = false
-                        t.group = 'Verification'
-                        t.description = 'Aggregate test reports.'
-                        t.destinationDir = project.file("${project.buildDir}/reports/aggregate-tests")
-                    }
-                })
-
-            TaskProvider<TestReport> aggregateIntegrationTestReportTask = project.tasks.register(AGGREGATE_INTEGRATION_TEST_REPORTS_TASK_NAME, TestReport,
-                new Action<TestReport>() {
-                    @Override
-                    void execute(TestReport t) {
-                        t.enabled = false
-                        t.group = 'Verification'
-                        t.description = 'Aggregate integration test reports.'
-                        t.destinationDir = project.file("${project.buildDir}/reports/aggregate-integration-tests")
-                    }
-                })
-
-            TaskProvider<TestReport> aggregateFunctionalTestReportTask = project.tasks.register(AGGREGATE_FUNCTIONAL_TEST_REPORTS_TASK_NAME, TestReport,
-                new Action<TestReport>() {
-                    @Override
-                    void execute(TestReport t) {
-                        t.enabled = false
-                        t.group = 'Verification'
-                        t.description = 'Aggregate functional test reports.'
-                        t.destinationDir = project.file("${project.buildDir}/reports/aggregate-functional-tests")
-                    }
-                })
-
-            TaskProvider<TestReport> aggregateAllTestReportTask = project.tasks.register(AGGREGATE_ALL_TEST_REPORTS_TASK_NAME, TestReport,
-                new Action<TestReport>() {
-                    @Override
-                    void execute(TestReport t) {
-                        t.enabled = false
-                        t.group = 'Verification'
-                        t.description = 'Aggregate all test reports.'
-                        t.destinationDir = project.file("${project.buildDir}/reports/aggregate-all-tests")
-                    }
-                })
-
-            project.gradle.addBuildListener(new BuildAdapter() {
+    private void configureRootProject(Project project) {
+        TaskProvider<TestReport> aggregateTestReportTask = project.tasks.register(AGGREGATE_TEST_REPORTS_TASK_NAME, TestReport,
+            new Action<TestReport>() {
                 @Override
-                void projectsEvaluated(Gradle gradle) {
-                    configureAggregateTestReportTasks(project,
-                        aggregateTestReportTask,
-                        aggregateIntegrationTestReportTask,
-                        aggregateFunctionalTestReportTask,
-                        aggregateAllTestReportTask)
+                void execute(TestReport t) {
+                    t.enabled = false
+                    t.group = 'Verification'
+                    t.description = 'Aggregate test reports.'
+                    t.destinationDir = project.file("${project.buildDir}/reports/aggregate-tests")
                 }
             })
 
-            project.gradle.taskGraph.whenReady(new Action<TaskExecutionGraph>() {
+        TaskProvider<TestReport> aggregateIntegrationTestReportTask = project.tasks.register(AGGREGATE_INTEGRATION_TEST_REPORTS_TASK_NAME, TestReport,
+            new Action<TestReport>() {
                 @Override
-                void execute(TaskExecutionGraph graph) {
-                    configureAggregates(project, graph)
+                void execute(TestReport t) {
+                    t.enabled = false
+                    t.group = 'Verification'
+                    t.description = 'Aggregate integration test reports.'
+                    t.destinationDir = project.file("${project.buildDir}/reports/aggregate-integration-tests")
                 }
             })
-        }
+
+        TaskProvider<TestReport> aggregateFunctionalTestReportTask = project.tasks.register(AGGREGATE_FUNCTIONAL_TEST_REPORTS_TASK_NAME, TestReport,
+            new Action<TestReport>() {
+                @Override
+                void execute(TestReport t) {
+                    t.enabled = false
+                    t.group = 'Verification'
+                    t.description = 'Aggregate functional test reports.'
+                    t.destinationDir = project.file("${project.buildDir}/reports/aggregate-functional-tests")
+                }
+            })
+
+        TaskProvider<TestReport> aggregateAllTestReportTask = project.tasks.register(AGGREGATE_ALL_TEST_REPORTS_TASK_NAME, TestReport,
+            new Action<TestReport>() {
+                @Override
+                void execute(TestReport t) {
+                    t.enabled = false
+                    t.group = 'Verification'
+                    t.description = 'Aggregate all test reports.'
+                    t.destinationDir = project.file("${project.buildDir}/reports/aggregate-all-tests")
+                }
+            })
+
+        project.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                configureAggregateTestReportTasks(project,
+                    aggregateTestReportTask,
+                    aggregateIntegrationTestReportTask,
+                    aggregateFunctionalTestReportTask,
+                    aggregateAllTestReportTask)
+            }
+        })
+
+        project.gradle.taskGraph.whenReady(new Action<TaskExecutionGraph>() {
+            @Override
+            void execute(TaskExecutionGraph graph) {
+                configureAggregates(project, graph)
+            }
+        })
     }
 
     @CompileDynamic
@@ -215,7 +216,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             }
         }
 
-        if (graph.hasTask( ':'+AGGREGATE_TEST_REPORTS_TASK_NAME)) {
+        if (graph.hasTask(':' + AGGREGATE_TEST_REPORTS_TASK_NAME)) {
             tt*.setIgnoreFailures(true)
         }
         if (graph.hasTask(':' + AGGREGATE_INTEGRATION_TEST_REPORTS_TASK_NAME)) {
@@ -334,7 +335,7 @@ class TestingPlugin extends AbstractKordampPlugin {
     }
 
     private void configureAggregateTestReportTask(TestReport t, String category, Set<Test> testTasks) {
-        Map<String,Long> results = configureTestsForAggregation(testTasks)
+        Map<String, Long> results = configureTestsForAggregation(testTasks)
 
         t.doLast(new Action<Task>() {
             @Override

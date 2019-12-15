@@ -26,7 +26,6 @@ import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
  * Configures a {@code minpom} task.
@@ -45,16 +44,9 @@ class MinPomPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
-        if (isRootProject(project)) {
-            if (project.childProjects.size()) {
-                project.childProjects.values().each {
-                    configureProject(it)
-                }
-            } else {
-                configureProject(project)
-            }
-        } else {
-            configureProject(project)
+        configureProject(project)
+        project.childProjects.values().each {
+            configureProject(it)
         }
     }
 

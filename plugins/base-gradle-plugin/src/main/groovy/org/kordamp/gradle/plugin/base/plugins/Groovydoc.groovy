@@ -22,8 +22,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -41,15 +39,10 @@ class Groovydoc extends AbstractFeature {
     Set<String> includes = new LinkedHashSet<>()
     final GroovydocOptions options = new GroovydocOptions()
 
-    private final Set<Project> projects = new LinkedHashSet<>()
-    private final Set<org.gradle.api.tasks.javadoc.Groovydoc> groovydocTasks = new LinkedHashSet<>()
-    private final Set<TaskProvider<Jar>> groovydocJarTasks = new LinkedHashSet<>()
-
     private boolean replaceJavadocSet
 
     Groovydoc(ProjectConfigurationExtension config, Project project) {
         super(config, project)
-        doSetEnabled(project.pluginManager.hasPlugin('groovy-base'))
 
         options.use            = true
         options.windowTitle    = "${project.name} ${project.version}"
@@ -110,12 +103,6 @@ class Groovydoc extends AbstractFeature {
         new LinkedHashMap<>('groovydoc': map)
     }
 
-    void normalize() {
-        if (!enabledSet && isRoot()) {
-            setEnabled(project.pluginManager.hasPlugin('groovy-base'))
-        }
-    }
-
     void setReplaceJavadoc(boolean replaceJavadoc) {
         this.replaceJavadoc = replaceJavadoc
         this.replaceJavadocSet = true
@@ -156,21 +143,6 @@ class Groovydoc extends AbstractFeature {
         CollectionUtils.merge(o1.excludes, o2?.excludes)
         CollectionUtils.merge(o1.includes, o2?.includes)
         GroovydocOptions.merge(o1.options, o2.options)
-        o1.projects().addAll(o2.projects())
-        o1.groovydocTasks().addAll(o2.groovydocTasks())
-        o1.groovydocJarTasks().addAll(o2.groovydocJarTasks())
-    }
-
-    Set<Project> projects() {
-        projects
-    }
-
-    Set<org.gradle.api.tasks.javadoc.Groovydoc> groovydocTasks() {
-        groovydocTasks
-    }
-
-    Set<TaskProvider<Jar>> groovydocJarTasks() {
-        groovydocJarTasks
     }
 
     void applyTo(org.gradle.api.tasks.javadoc.Groovydoc groovydoc) {

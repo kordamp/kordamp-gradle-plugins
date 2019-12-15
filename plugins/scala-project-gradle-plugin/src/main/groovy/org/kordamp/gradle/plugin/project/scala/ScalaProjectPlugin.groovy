@@ -24,8 +24,7 @@ import org.gradle.api.plugins.AppliedPlugin
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.project.java.JavaProjectPlugin
 import org.kordamp.gradle.plugin.project.scala.tasks.ScalaCompilerSettingsTask
-
-import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import org.kordamp.gradle.plugin.scaladoc.ScaladocPlugin
 
 /**
  * @author Andres Almiray
@@ -38,13 +37,9 @@ class ScalaProjectPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
-        if (isRootProject(project)) {
-            applyPlugins(project)
-            project.childProjects.values().each {
-                applyPlugins(it)
-            }
-        } else {
-            applyPlugins(project)
+        applyPlugins(project)
+        project.childProjects.values().each {
+            applyPlugins(it)
         }
     }
 
@@ -61,6 +56,7 @@ class ScalaProjectPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         JavaProjectPlugin.applyIfMissing(project)
+        ScaladocPlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('scala-base', new Action<AppliedPlugin>() {
             @Override

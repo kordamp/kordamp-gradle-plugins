@@ -50,12 +50,13 @@ class DetektPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
+        configureProject(project)
         if (isRootProject(project)) {
+            configureRootProject(project)
             project.childProjects.values().each {
                 configureProject(it)
             }
         }
-        configureProject(project)
     }
 
     static void applyIfMissing(Project project) {
@@ -115,26 +116,26 @@ class DetektPlugin extends AbstractKordampPlugin {
                 }
             }
         })
+    }
 
-        if (isRootProject(project)) {
-            TaskProvider<Detekt> aggregateDetektTask = project.tasks.register(AGGREGATE_DETEKT_TASK_NAME, Detekt,
-                new Action<Detekt>() {
-                    @Override
-                    void execute(Detekt t) {
-                        t.enabled = false
-                        t.group = 'Quality'
-                        t.description = 'Aggregate all detekt reports.'
-                    }
-                })
-
-            project.gradle.addBuildListener(new BuildAdapter() {
+    private void configureRootProject(Project project) {
+        TaskProvider<Detekt> aggregateDetektTask = project.tasks.register(AGGREGATE_DETEKT_TASK_NAME, Detekt,
+            new Action<Detekt>() {
                 @Override
-                void projectsEvaluated(Gradle gradle) {
-                    configureAggregateDetektTask(project,
-                        aggregateDetektTask)
+                void execute(Detekt t) {
+                    t.enabled = false
+                    t.group = 'Quality'
+                    t.description = 'Aggregate all detekt reports.'
                 }
             })
-        }
+
+        project.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                configureAggregateDetektTask(project,
+                    aggregateDetektTask)
+            }
+        })
     }
 
     @CompileDynamic

@@ -76,6 +76,36 @@ Offline links are automatically calculated for project dependencies using absolu
 [[_org_kordamp_gradle_javadoc_tasks]]
 == Tasks
 
+[[_task_aggregate_javadoc]]
+=== AggregateJavadoc
+
+Aggregates Javadoc API docs for all projects. +
+Consumes settings from `config.<<_org_kordamp_gradle_javadoc,javadoc>>` defined in the root project. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateJavadoc
+Type:: `org.gradle.api.tasks.javadoc.Javadoc`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.buildDir}/docs/javadoc`
+
+[[_task_aggregate_javadoc_jar]]
+=== AggregateJavadocJar
+
+An archive of the aggregate Javadoc API docs. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateJavadocJar
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+classifier:: javadoc
+destinationDir:: `${rootProject.buildDir}/build/libs`
+
 [[_task_check_auto_links]]
 === CheckAutoLinks
 

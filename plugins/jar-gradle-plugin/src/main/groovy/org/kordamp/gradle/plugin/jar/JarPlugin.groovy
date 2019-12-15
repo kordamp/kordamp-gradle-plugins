@@ -49,16 +49,12 @@ class JarPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
+        configureProject(project)
         if (isRootProject(project)) {
-            if (project.childProjects.size()) {
-                project.childProjects.values().each {
-                    configureProject(it)
-                }
-            } else {
-                configureProject(project)
+            configureRootProject(project)
+            project.childProjects.values().each {
+                configureProject(it)
             }
-        } else {
-            configureProject(project)
         }
     }
 
@@ -83,13 +79,21 @@ class JarPlugin extends AbstractKordampPlugin {
                 createJarTaskIfNeeded(project)
             }
         }
+    }
 
+    private void configureRootProject(Project project) {
         project.rootProject.gradle.addBuildListener(new BuildAdapter() {
             @Override
             void projectsEvaluated(Gradle gradle) {
-                project.tasks.withType(Jar) { Jar jarTask ->
-                    if (jarTask.name == 'jar') configureJarMetainf(project, jarTask)
-                    configureJarManifest(project, jarTask)
+                project.tasks.withType(Jar) { Jar t ->
+                    if (t.name == 'jar') configureJarMetainf(project, t)
+                    configureJarManifest(project, t)
+                }
+                project.childProjects.values().each { Project p ->
+                    p.tasks.withType(Jar) { Jar t ->
+                        if (t.name == 'jar') configureJarMetainf(p, t)
+                        configureJarManifest(p, t)
+                    }
                 }
             }
         })
@@ -123,11 +127,10 @@ class JarPlugin extends AbstractKordampPlugin {
     }
 
     @CompileDynamic
-    private void configureJarMetainf(Project project, Jar jarTask) {
+    private static void configureJarMetainf(Project project, Jar jarTask) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project.rootProject) ?: resolveEffectiveConfig(project)
-        setEnabled(effectiveConfig.minpom.enabled)
 
-        if (enabled) {
+        if (effectiveConfig.minpom.enabled) {
             jarTask.configure {
                 dependsOn MinPomPlugin.MINPOM_TASK_NAME
                 metaInf {
@@ -140,7 +143,7 @@ class JarPlugin extends AbstractKordampPlugin {
     }
 
     @CompileDynamic
-    private void configureJarManifest(Project project, Jar jarTask) {
+    private static void configureJarManifest(Project project, Jar jarTask) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project.rootProject) ?: resolveEffectiveConfig(project)
 
         if (effectiveConfig.release) {

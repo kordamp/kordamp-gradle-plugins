@@ -44,9 +44,9 @@ class CoverallsPlugin extends AbstractKordampPlugin {
         this.project = project
 
         if (isRootProject(project)) {
-            configureProject(project)
+            configureRootProject(project)
         } else {
-            configureProject(project.rootProject)
+            configureRootProject(project.rootProject)
         }
     }
 
@@ -56,7 +56,7 @@ class CoverallsPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private void configureProject(Project project) {
+    private void configureRootProject(Project project) {
         if (hasBeenVisited(project)) {
             return
         }

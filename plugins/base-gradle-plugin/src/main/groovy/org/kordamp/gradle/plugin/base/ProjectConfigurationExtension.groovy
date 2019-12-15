@@ -151,35 +151,15 @@ class ProjectConfigurationExtension {
         map
     }
 
-    Information getInfo() {
-        info
-    }
-
     @Deprecated
     Apidoc getApidoc() {
         println("The method config.apidoc is deprecated and will be removed in the future. Use config.docs.apidoc instead")
         docs.apidoc
     }
 
-    Bom getBom() {
-        bom
-    }
-
-    Bintray getBintray() {
-        bintray
-    }
-
-    BuildInfo getBuildInfo() {
-        buildInfo
-    }
-
     @Deprecated
     BuildScan getBuildScan() {
         buildScan
-    }
-
-    Clirr getClirr() {
-        clirr
     }
 
     @Deprecated
@@ -206,30 +186,10 @@ class ProjectConfigurationExtension {
         docs.javadoc
     }
 
-    Licensing getLicensing() {
-        licensing
-    }
-
-    Minpom getMinpom() {
-        minpom
-    }
-
-    Plugin getPlugin() {
-        plugin
-    }
-
-    Publishing getPublishing() {
-        publishing
-    }
-
     @Deprecated
     Scaladoc getScaladoc() {
         println("The method config.scaladoc is deprecated and will be removed in the future. Use config.docs.scaladoc instead")
         docs.scaladoc
-    }
-
-    Source getSource() {
-        source
     }
 
     @Deprecated
@@ -242,26 +202,6 @@ class ProjectConfigurationExtension {
     SourceXref getSourceXref() {
         println("The method config.sourceXref is deprecated and will be removed in the future. Use config.docs.sourceXref instead")
         docs.sourceXref
-    }
-
-    Stats getStats() {
-        stats
-    }
-
-    Testing getTesting() {
-        testing
-    }
-
-    Docs getDocs() {
-        docs
-    }
-
-    Coverage getCoverage() {
-        coverage
-    }
-
-    Quality getQuality() {
-        quality
     }
 
     void info(Action<? super Information> action) {
@@ -585,7 +525,6 @@ class ProjectConfigurationExtension {
         final Codenarc codenarc
         final Detekt detekt
         final Pmd pmd
-        Boolean enabled
 
         private final ProjectConfigurationExtension config
         private final Project project
@@ -615,22 +554,6 @@ class ProjectConfigurationExtension {
             codenarc.copyInto(copy.codenarc)
             detekt.copyInto(copy.detekt)
             pmd.copyInto(copy.pmd)
-        }
-
-        Checkstyle getCheckstyle() {
-            checkstyle
-        }
-
-        Codenarc getCodenarc() {
-            codenarc
-        }
-
-        Detekt getDetekt() {
-            detekt
-        }
-
-        Pmd getPmd() {
-            pmd
         }
 
         void checkstyle(Action<? super Checkstyle> action) {
@@ -722,14 +645,6 @@ class ProjectConfigurationExtension {
             new LinkedHashMap<>('coverage': map)
         }
 
-        Coveralls getCoveralls() {
-            coveralls
-        }
-
-        Jacoco getJacoco() {
-            jacoco
-        }
-
         void coveralls(Action<? super Coveralls> action) {
             action.execute(coveralls)
         }
@@ -811,10 +726,6 @@ class ProjectConfigurationExtension {
             map.putAll(guide.toMap())
 
             new LinkedHashMap<>('docs': map)
-        }
-
-        Guide getGuide() {
-            guide
         }
 
         void guide(Action<? super Guide> action) {
@@ -925,9 +836,7 @@ class ProjectConfigurationExtension {
         }
 
         Docs normalize() {
-            groovydoc.normalize()
             kotlindoc.normalize()
-            scaladoc.normalize()
             guide.normalize()
             this
         }

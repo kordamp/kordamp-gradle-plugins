@@ -21,15 +21,12 @@ import com.github.benmanes.gradle.versions.VersionsPlugin
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
-import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.bintray.BintrayPlugin
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.coveralls.CoverallsPlugin
-import org.kordamp.gradle.plugin.groovydoc.GroovydocPlugin
 import org.kordamp.gradle.plugin.jacoco.JacocoPlugin
 import org.kordamp.gradle.plugin.jar.JarPlugin
-import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 import org.kordamp.gradle.plugin.licensing.LicensingPlugin
 import org.kordamp.gradle.plugin.minpom.MinPomPlugin
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
@@ -37,8 +34,6 @@ import org.kordamp.gradle.plugin.source.SourceJarPlugin
 import org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
 import org.kordamp.gradle.plugin.stats.SourceStatsPlugin
 import org.kordamp.gradle.plugin.testing.TestingPlugin
-
-import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
  * Aggregator for all Kordamp plugins.
@@ -53,13 +48,9 @@ class ProjectPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
-        if (isRootProject(project)) {
-            applyPlugins(project)
-            project.childProjects.values().each {
-                applyPlugins(it)
-            }
-        } else {
-            applyPlugins(project)
+        applyPlugins(project)
+        project.childProjects.values().each {
+            applyPlugins(it)
         }
     }
 
@@ -76,14 +67,11 @@ class ProjectPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
+        BuildInfoPlugin.applyIfMissing(project)
         JacocoPlugin.applyIfMissing(project)
         CoverallsPlugin.applyIfMissing(project)
         LicensingPlugin.applyIfMissing(project)
-        BuildInfoPlugin.applyIfMissing(project)
         SourceJarPlugin.applyIfMissing(project)
-        JavadocPlugin.applyIfMissing(project)
-        GroovydocPlugin.applyIfMissing(project)
-        ApidocPlugin.applyIfMissing(project)
         MinPomPlugin.applyIfMissing(project)
         JarPlugin.applyIfMissing(project)
         PublishingPlugin.applyIfMissing(project)

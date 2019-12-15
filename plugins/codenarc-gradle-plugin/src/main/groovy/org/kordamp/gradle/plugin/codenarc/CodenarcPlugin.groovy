@@ -51,12 +51,13 @@ class CodenarcPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
+        configureProject(project)
         if (isRootProject(project)) {
+            configureRootProject(project)
             project.childProjects.values().each {
                 configureProject(it)
             }
         }
-        configureProject(project)
     }
 
     static void applyIfMissing(Project project) {
@@ -117,26 +118,26 @@ class CodenarcPlugin extends AbstractKordampPlugin {
                 }
             }
         })
+    }
 
-        if (isRootProject(project)) {
-            TaskProvider<CodeNarc> aggregateCodenarcTask = project.tasks.register(AGGREGATE_CODENARC_TASK_NAME, CodeNarc,
-                new Action<CodeNarc>() {
-                    @Override
-                    void execute(CodeNarc t) {
-                        t.enabled = false
-                        t.group = 'Quality'
-                        t.description = 'Aggregate all codenarc reports.'
-                    }
-                })
-
-            project.gradle.addBuildListener(new BuildAdapter() {
+    private void configureRootProject(Project project) {
+        TaskProvider<CodeNarc> aggregateCodenarcTask = project.tasks.register(AGGREGATE_CODENARC_TASK_NAME, CodeNarc,
+            new Action<CodeNarc>() {
                 @Override
-                void projectsEvaluated(Gradle gradle) {
-                    configureAggregateCodenarcTask(project,
-                        aggregateCodenarcTask)
+                void execute(CodeNarc t) {
+                    t.enabled = false
+                    t.group = 'Quality'
+                    t.description = 'Aggregate all codenarc reports.'
                 }
             })
-        }
+
+        project.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                configureAggregateCodenarcTask(project,
+                    aggregateCodenarcTask)
+            }
+        })
     }
 
     @CompileDynamic

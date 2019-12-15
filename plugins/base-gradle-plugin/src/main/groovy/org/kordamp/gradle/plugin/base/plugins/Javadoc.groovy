@@ -27,8 +27,6 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.Jar
 import org.gradle.external.javadoc.MinimalJavadocOptions
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.util.ConfigureUtil
@@ -52,10 +50,6 @@ class Javadoc extends AbstractFeature {
     String title
     final ExtStandardJavadocDocletOptions options = new ExtStandardJavadocDocletOptions()
     final AutoLinks autoLinks
-
-    private final Set<Project> projects = new LinkedHashSet<>()
-    private final Set<org.gradle.api.tasks.javadoc.Javadoc> javadocTasks = new LinkedHashSet<>()
-    private final Set<TaskProvider<Jar>> javadocJarTasks = new LinkedHashSet<>()
 
     Javadoc(ProjectConfigurationExtension config, Project project) {
         super(config, project)
@@ -156,22 +150,7 @@ class Javadoc extends AbstractFeature {
         CollectionUtils.merge(o1.includes, o2.includes)
         o1.title = o1.title ?: o2.title
         ExtStandardJavadocDocletOptions.merge(o1.options, o2.options)
-        o1.projects().addAll(o2.projects())
-        o1.javadocTasks().addAll(o2.javadocTasks())
-        o1.javadocJarTasks().addAll(o2.javadocJarTasks())
         AutoLinks.merge(o1.autoLinks, o2.autoLinks)
-    }
-
-    Set<Project> projects() {
-        projects
-    }
-
-    Set<org.gradle.api.tasks.javadoc.Javadoc> javadocTasks() {
-        javadocTasks
-    }
-
-    Set<TaskProvider<Jar>> javadocJarTasks() {
-        javadocJarTasks
     }
 
     void autoLinks(Action<? super AutoLinks> action) {

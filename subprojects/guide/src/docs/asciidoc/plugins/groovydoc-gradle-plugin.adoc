@@ -79,6 +79,36 @@ This block is optional.
 [[_org_kordamp_gradle_groovydoc_tasks]]
 == Tasks
 
+[[_task_aggregate_groovydoc]]
+=== AggregateGroovydoc
+
+Aggregates Groovy API docs for all projects. +
+Consumes settings from `config.<<_org_kordamp_gradle_groovydoc,groovydoc>>` defined in the root project. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateGroovydoc
+Type:: `org.gradle.api.tasks.javadoc.Groovydoc`
+
+.Properties
+[horizontal]
+destinationDir:: `${rootProject.buildDir}/docs/groovydoc`
+
+[[_task_aggregate_groovydoc_jar]]
+=== AggregateGroovydocJar
+
+An archive of the aggregate Groovy API docs. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateGroovydocJar
+Type:: `org.gradle.api.tasks.bundling.Jar`
+
+.Properties
+[horizontal]
+classifier:: groovydoc
+destinationDir:: `${rootProject.buildDir}/build/libs`
+
 [[_task_groovydoc]]
 === Groovydoc
 

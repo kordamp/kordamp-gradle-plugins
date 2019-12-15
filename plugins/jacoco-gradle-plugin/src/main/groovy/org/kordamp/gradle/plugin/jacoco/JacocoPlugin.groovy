@@ -59,12 +59,13 @@ class JacocoPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
+        configureProject(project)
         if (isRootProject(project)) {
+            configureRootProject(project)
             project.childProjects.values().each {
                 configureProject(it)
             }
         }
-        configureProject(project)
     }
 
     static void applyIfMissing(Project project) {
@@ -130,51 +131,51 @@ class JacocoPlugin extends AbstractKordampPlugin {
                 }
             }
         })
+    }
 
-        if (isRootProject(project)) {
-            TaskProvider<JacocoMerge> aggregateJacocoMerge = project.tasks.register(AGGREGATE_JACOCO_MERGE_TASK_NAME, JacocoMerge,
-                new Action<JacocoMerge>() {
-                    @Override
-                    void execute(JacocoMerge t) {
-                        t.enabled = false
-                        t.group = 'Reporting'
-                        t.description = 'Aggregate Jacoco coverage reports.'
-                    }
-                })
-
-            TaskProvider<JacocoReport> aggregateJacocoReport = project.tasks.register(AGGREGATE_JACOCO_REPORT_TASK_NAME, JacocoReport,
-                new Action<JacocoReport>() {
-                    @Override
-                    void execute(JacocoReport t) {
-                        t.enabled = false
-                        t.dependsOn aggregateJacocoMerge
-                        t.group = 'Reporting'
-                        t.description = 'Generate aggregate Jacoco coverage report.'
-
-                        t.reports(new Action<JacocoReportsContainer>() {
-                            @Override
-                            void execute(JacocoReportsContainer reports) {
-                               reports.html.enabled = true
-                               reports.xml.enabled = true
-                            }
-                        })
-                    }
-                })
-
-            project.gradle.addBuildListener(new BuildAdapter() {
+    private void configureRootProject(Project project) {
+        TaskProvider<JacocoMerge> aggregateJacocoMerge = project.tasks.register(AGGREGATE_JACOCO_MERGE_TASK_NAME, JacocoMerge,
+            new Action<JacocoMerge>() {
                 @Override
-                void projectsEvaluated(Gradle gradle) {
-                    applyJacocoMerge(project, aggregateJacocoMerge, aggregateJacocoReport)
+                void execute(JacocoMerge t) {
+                    t.enabled = false
+                    t.group = 'Reporting'
+                    t.description = 'Aggregate Jacoco coverage reports.'
                 }
             })
 
-            project.gradle.taskGraph.whenReady(new Action<TaskExecutionGraph>() {
+        TaskProvider<JacocoReport> aggregateJacocoReport = project.tasks.register(AGGREGATE_JACOCO_REPORT_TASK_NAME, JacocoReport,
+            new Action<JacocoReport>() {
                 @Override
-                void execute(TaskExecutionGraph graph) {
-                    configureAggregates(project, graph)
+                void execute(JacocoReport t) {
+                    t.enabled = false
+                    t.dependsOn aggregateJacocoMerge
+                    t.group = 'Reporting'
+                    t.description = 'Generate aggregate Jacoco coverage report.'
+
+                    t.reports(new Action<JacocoReportsContainer>() {
+                        @Override
+                        void execute(JacocoReportsContainer reports) {
+                            reports.html.enabled = true
+                            reports.xml.enabled = true
+                        }
+                    })
                 }
             })
-        }
+
+        project.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                applyJacocoMerge(project, aggregateJacocoMerge, aggregateJacocoReport)
+            }
+        })
+
+        project.gradle.taskGraph.whenReady(new Action<TaskExecutionGraph>() {
+            @Override
+            void execute(TaskExecutionGraph graph) {
+                configureAggregates(project, graph)
+            }
+        })
     }
 
     static String resolveJacocoReportTaskName(String name) {
@@ -316,8 +317,8 @@ class JacocoPlugin extends AbstractKordampPlugin {
     }
 
     private static void configureAllJacocoReportsTask(Project project,
-                                        TaskProvider<DefaultTask> allJacocoReports,
-                                               Set<JacocoReport> reportTasks) {
+                                                      TaskProvider<DefaultTask> allJacocoReports,
+                                                      Set<JacocoReport> reportTasks) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (!effectiveConfig.coverage.jacoco.enabled) {
             return

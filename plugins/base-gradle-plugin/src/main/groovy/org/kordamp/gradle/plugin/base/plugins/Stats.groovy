@@ -20,8 +20,6 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
@@ -42,9 +40,6 @@ class Stats extends AbstractFeature {
     Map<String, String> counters = [:]
     Map<String, Map<String, String>> paths = [:]
     List<String> formats = ['xml', 'txt']
-
-    private final Set<Project> projects = new LinkedHashSet<>()
-    private final Set<TaskProvider<? extends Task>> statsTasks = new LinkedHashSet<>()
 
     Stats(ProjectConfigurationExtension config, Project project) {
         super(config, project)
@@ -129,15 +124,5 @@ class Stats extends AbstractFeature {
         o1.counters.putAll(o2.counters)
         o1.paths.putAll(o2.paths)
         CollectionUtils.merge(o1.formats, o2?.formats)
-        o1.projects().addAll(o2.projects())
-        o1.statsTasks().addAll(o2.statsTasks())
-    }
-
-    Set<Project> projects() {
-        projects
-    }
-
-    Set<TaskProvider<? extends Task>> statsTasks() {
-        statsTasks
     }
 }

@@ -51,12 +51,13 @@ class SourceJarPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
+        configureProject(project)
         if (isRootProject(project)) {
+            configureRootProject(project)
             project.childProjects.values().each {
                 configureProject(it)
             }
         }
-        configureProject(project)
     }
 
     static void applyIfMissing(Project project) {
@@ -78,10 +79,6 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                 ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
                 setEnabled(effectiveConfig.source.enabled)
 
-                if (!enabled) {
-                    return
-                }
-
                 TaskProvider<Jar> sourceTask = createSourceJarTask(project)
                 if (sourceTask) {
                     effectiveConfig.source.sourceTasks() << sourceTask
@@ -89,31 +86,28 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                 }
             }
         }
+    }
 
-        if (isRootProject(project)) {
-            TaskProvider<Jar> sourceJarTask = project.tasks.register(AGGREGATE_SOURCE_JAR_TASK_NAME, Jar,
-                new Action<Jar>() {
-                    @Override
-                    void execute(Jar t) {
-                        t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-                        t.description = 'An archive of all the source code.'
-                        t.archiveClassifier.set('sources')
-                        t.enabled = false
-                    }
-                })
-            project.gradle.addBuildListener(new BuildAdapter() {
+    private void configureRootProject(Project project) {
+        TaskProvider<Jar> sourceJarTask = project.tasks.register(AGGREGATE_SOURCE_JAR_TASK_NAME, Jar,
+            new Action<Jar>() {
                 @Override
-                void projectsEvaluated(Gradle gradle) {
-                    configureAggregateSourceJarTask(project, sourceJarTask)
+                void execute(Jar t) {
+                    t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
+                    t.description = 'An archive of all the source code.'
+                    t.archiveClassifier.set('sources')
+                    t.enabled = false
                 }
             })
-        }
+        project.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                configureAggregateSourceJarTask(project, sourceJarTask)
+            }
+        })
     }
 
     private TaskProvider<Jar> createSourceJarTask(Project project) {
-        Task classesTask = project.tasks.findByName('classes')
-
-        if (classesTask) {
             TaskProvider<Jar> sourceJarTask = project.tasks.register(SOURCE_JAR_TASK_NAME, Jar,
                 new Action<Jar>() {
                     @Override
@@ -122,16 +116,14 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                         t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
                         t.description = 'An archive of the source code.'
                         t.archiveClassifier.set('sources')
-                        t.dependsOn classesTask
+                        t.dependsOn project.tasks.named('classes')
+                        t.setEnabled(resolveEffectiveConfig(t.project).source.enabled)
                         t.from PluginUtils.resolveSourceSets(project).main.allSource
                     }
                 })
 
             project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(sourceJarTask)
             return sourceJarTask
-        }
-
-        return null
     }
 
     private void configureAggregateSourceJarTask(Project project, TaskProvider<Jar> sourceJarTask) {
@@ -153,7 +145,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
             void execute(Jar t) {
                 t.dependsOn sourceTasks
                 t.from PluginUtils.resolveSourceSets(projects).main.allSource
-                t.enabled = true
+                t.enabled = effectiveConfig.source.enabled
             }
         })
     }

@@ -21,7 +21,6 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
 import org.gradle.api.Action
-import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
@@ -51,12 +50,13 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
+        configureProject(project)
         if (isRootProject(project)) {
+            configureRootProject(project)
             project.childProjects.values().each {
                 configureProject(it)
             }
         }
-        configureProject(project)
     }
 
     static void applyIfMissing(Project project) {
@@ -78,7 +78,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
                 ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
                 if (effectiveConfig.docs.sourceXref.enabled) {
-                    TaskProvider<? extends Task> xrefTask = configureSourceXrefTask(project)
+                    TaskProvider<JxrTask> xrefTask = configureSourceXrefTask(project)
                     if (xrefTask?.get()?.enabled) {
                         effectiveConfig.docs.sourceXref.projects() << project
                         effectiveConfig.docs.sourceXref.xrefTasks() << xrefTask
@@ -89,63 +89,49 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
                 setEnabled(effectiveConfig.docs.sourceXref.enabled)
             }
         }
-
-        if (isRootProject(project)) {
-            TaskProvider<JxrTask> jxrTask = project.tasks.register(AGGREGATE_SOURCE_XREF_TASK_NAME, JxrTask,
-                new Action<JxrTask>() {
-                    @Override
-                    void execute(JxrTask t) {
-                        t.group = 'Documentation'
-                        t.description = 'Generates an aggregate JXR report of the source code.'
-                        t.outputDirectory = project.file("${project.buildDir}/docs/source-xref")
-                        t.enabled = false
-                    }
-                })
-
-            TaskProvider<Jar> jxrJarTask = project.tasks.register(AGGREGATE_SOURCE_XREF_TASK_NAME + 'Jar', Jar,
-                new Action<Jar>() {
-                    @Override
-                    void execute(Jar t) {
-                        t.dependsOn jxrTask
-                        t.group = 'Documentation'
-                        t.description = 'An archive of the JXR report the source code.'
-                        t.archiveClassifier.set 'sources-jxr'
-                        t.from jxrTask.get().outputDirectory
-                        t.enabled = false
-                    }
-                })
-
-            project.gradle.addBuildListener(new BuildAdapter() {
-                @Override
-                void projectsEvaluated(Gradle gradle) {
-                    configureAggregateSourceXrefTask(project, jxrTask, jxrJarTask)
-                }
-            })
-        }
     }
 
-    private TaskProvider<? extends Task> configureSourceXrefTask(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.docs.sourceXref.enabled) {
-            return
-        }
-
-        Task classesTask = project.tasks.findByName('classes')
-        if (!classesTask) {
-            return project.tasks.register(SOURCE_XREF_TASK_NAME, DefaultTask, new Action<DefaultTask>() {
+    private void configureRootProject(Project project) {
+        TaskProvider<JxrTask> jxrTask = project.tasks.register(AGGREGATE_SOURCE_XREF_TASK_NAME, JxrTask,
+            new Action<JxrTask>() {
                 @Override
-                void execute(DefaultTask t) {
-                    t.enabled = false
+                void execute(JxrTask t) {
                     t.group = 'Documentation'
-                    t.description = 'Generates a JXR report of the source code.'
+                    t.description = 'Generates an aggregate JXR report of the source code.'
+                    t.outputDirectory = project.file("${project.buildDir}/docs/source-xref")
+                    t.enabled = false
                 }
             })
-        }
+
+        TaskProvider<Jar> jxrJarTask = project.tasks.register(AGGREGATE_SOURCE_XREF_TASK_NAME + 'Jar', Jar,
+            new Action<Jar>() {
+                @Override
+                void execute(Jar t) {
+                    t.dependsOn jxrTask
+                    t.group = 'Documentation'
+                    t.description = 'An archive of the JXR report the source code.'
+                    t.archiveClassifier.set 'sources-jxr'
+                    t.from jxrTask.get().outputDirectory
+                    t.enabled = false
+                }
+            })
+
+        project.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                configureAggregateSourceXrefTask(project, jxrTask, jxrJarTask)
+            }
+        })
+    }
+
+    private TaskProvider<JxrTask> configureSourceXrefTask(Project project) {
+        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
         TaskProvider<JxrTask> jxrTask = project.tasks.register(SOURCE_XREF_TASK_NAME, JxrTask,
             new Action<JxrTask>() {
                 @Override
                 void execute(JxrTask t) {
+                    t.dependsOn project.tasks.named('classes')
                     t.group = 'Documentation'
                     t.description = 'Generates a JXR report of the source code.'
                     t.outputDirectory = project.file("${project.buildDir}/docs/source-xref")
@@ -190,7 +176,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
             void execute(JxrTask t) {
                 t.dependsOn xrefTasks
                 t.sourceDirs = srcdirs
-                t.enabled = true
+                t.enabled = effectiveConfig.docs.sourceXref.enabled
             }
         })
         configureTask(effectiveConfig.docs.sourceXref, jxrTask)
@@ -198,7 +184,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
         jxrJarTask.configure(new Action<Jar>() {
             @Override
             void execute(Jar t) {
-                t.enabled = true
+                t.enabled = effectiveConfig.docs.sourceXref.enabled
             }
         })
     }

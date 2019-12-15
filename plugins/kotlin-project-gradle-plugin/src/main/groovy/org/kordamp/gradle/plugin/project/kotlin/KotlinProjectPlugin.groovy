@@ -23,10 +23,9 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.AppliedPlugin
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.detekt.DetektPlugin
+import org.kordamp.gradle.plugin.kotlindoc.KotlindocPlugin
 import org.kordamp.gradle.plugin.project.java.JavaProjectPlugin
 import org.kordamp.gradle.plugin.project.kotlin.tasks.KotlinCompilerSettingsTask
-
-import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
  * @author Andres Almiray
@@ -39,13 +38,9 @@ class KotlinProjectPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
-        if (isRootProject(project)) {
-            applyPlugins(project)
-            project.childProjects.values().each {
-                applyPlugins(it)
-            }
-        } else {
-            applyPlugins(project)
+        applyPlugins(project)
+        project.childProjects.values().each {
+            applyPlugins(it)
         }
     }
 
@@ -62,6 +57,7 @@ class KotlinProjectPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         JavaProjectPlugin.applyIfMissing(project)
+        KotlindocPlugin.applyIfMissing(project)
         DetektPlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('org.jetbrains.kotlin.jvm', new Action<AppliedPlugin>() {

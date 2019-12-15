@@ -82,7 +82,7 @@ class Guide extends AbstractFeature {
         String branch = 'gh-pages'
         String message
 
-        private boolean enabled = false
+        private Boolean enabled
         final Project project
 
         Publish(ProjectConfigurationExtension config) {
@@ -91,17 +91,19 @@ class Guide extends AbstractFeature {
         }
 
         boolean isEnabled() {
-            this.@enabled
+            this.@enabled != null && this.@enabled
         }
 
         void normalize() {
-            enabled = project.pluginManager.hasPlugin('org.ajoberstar.git-publish')
+            if (null == enabled) {
+                enabled = project.pluginManager.hasPlugin('org.ajoberstar.git-publish')
+            }
         }
 
         void copyInto(Publish copy) {
-            copy.@enabled = this.enabled
-            copy.@branch = this.branch
-            copy.@message = this.message
+            copy.@enabled = this.@enabled
+            copy.@branch = this.@branch
+            copy.@message = this.@message
         }
 
         static void merge(Publish o1, Publish o2) {
@@ -111,7 +113,7 @@ class Guide extends AbstractFeature {
 
         Map<String, Object> toMap() {
             new LinkedHashMap<String, Object>(
-                enabled: enabled,
+                enabled: isEnabled(),
                 branch: branch,
                 message: message)
         }

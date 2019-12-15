@@ -53,12 +53,13 @@ class ClirrPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
+        configureProject(project)
         if (isRootProject(project)) {
+            configureRootProject(project)
             project.childProjects.values().each {
                 configureProject(it)
             }
         }
-        configureProject(project)
     }
 
     static void applyIfMissing(Project project) {
@@ -91,26 +92,27 @@ class ClirrPlugin extends AbstractKordampPlugin {
             }
         }
 
-        if (isRootProject(project)) {
-            TaskProvider<AggregateClirrReportTask> aggregateClirrReportTask = project.tasks.register('aggregateClirr', AggregateClirrReportTask,
-                new Action<AggregateClirrReportTask>() {
-                    @Override
-                    @CompileDynamic
-                    void execute(AggregateClirrReportTask t) {
-                        t.enabled = false
-                        t.group = 'Verification'
-                        t.description = 'Aggregates binary compatibility reports.'
-                        t.reportFile = project.file("${project.reporting.baseDir.path}/clirr/aggregate-compatibility-report.html")
-                    }
-                })
+    }
 
-            project.gradle.addBuildListener(new BuildAdapter() {
+    private void configureRootProject(Project project) {
+        TaskProvider<AggregateClirrReportTask> aggregateClirrReportTask = project.tasks.register('aggregateClirr', AggregateClirrReportTask,
+            new Action<AggregateClirrReportTask>() {
                 @Override
-                void projectsEvaluated(Gradle gradle) {
-                    configureAggregateClirrTask(project, aggregateClirrReportTask)
+                @CompileDynamic
+                void execute(AggregateClirrReportTask t) {
+                    t.enabled = false
+                    t.group = 'Verification'
+                    t.description = 'Aggregates binary compatibility reports.'
+                    t.reportFile = project.file("${project.reporting.baseDir.path}/clirr/aggregate-compatibility-report.html")
                 }
             })
-        }
+
+        project.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                configureAggregateClirrTask(project, aggregateClirrReportTask)
+            }
+        })
     }
 
     private TaskProvider<ClirrTask> configureClirrTask(Project project) {

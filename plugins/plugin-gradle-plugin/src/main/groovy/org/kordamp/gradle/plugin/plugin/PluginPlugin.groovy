@@ -36,7 +36,6 @@ import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 import static org.kordamp.gradle.PluginUtils.resolveConfig
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.StringUtils.isBlank
-import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
  * @author Andres Almiray
@@ -49,12 +48,10 @@ class PluginPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
-        if (isRootProject(project)) {
-            project.childProjects.values().each {
-                configureProject(it)
-            }
-        }
         configureProject(project)
+        project.childProjects.values().each {
+            configureProject(it)
+        }
     }
 
     private void configureProject(Project project) {

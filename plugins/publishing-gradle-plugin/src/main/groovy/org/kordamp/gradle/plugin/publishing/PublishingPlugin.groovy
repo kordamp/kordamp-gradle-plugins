@@ -38,7 +38,6 @@ import org.kordamp.gradle.plugin.source.SourceJarPlugin
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.PluginUtils.resolveSourceSets
 import static org.kordamp.gradle.StringUtils.isNotBlank
-import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
  * Configures artifact publication.
@@ -53,16 +52,9 @@ class PublishingPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
-        if (isRootProject(project)) {
-            if (project.childProjects.size()) {
-                project.childProjects.values().each {
-                    configureProject(it)
-                }
-            } else {
-                configureProject(project)
-            }
-        } else {
-            configureProject(project)
+        configureProject(project)
+        project.childProjects.values().each {
+            configureProject(it)
         }
     }
 

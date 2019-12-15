@@ -59,12 +59,13 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
+        configureProject(project)
         if (isRootProject(project)) {
+            configureRootProject(project)
             project.childProjects.values().each {
                 configureProject(it)
             }
         }
-        configureProject(project)
     }
 
     static void applyIfMissing(Project project) {
@@ -108,49 +109,45 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                 setEnabled(effectiveConfig.docs.sourceHtml.enabled)
             }
         }
+    }
 
-        if (isRootProject(project)) {
-            TaskProvider<Copy> sourceHtmlTask = project.tasks.register(AGGREGATE_SOURCE_HTML_TASK_NAME, Copy,
-                new Action<Copy>() {
-                    @Override
-                    void execute(Copy t) {
-                        t.group = 'Documentation'
-                        t.description = 'Generates a HTML report of the source code.'
-                        t.destinationDir = project.file("${project.buildDir}/docs/source-html")
-                        t.enabled = false
-                    }
-                })
-
-            TaskProvider<Jar> sourceHtmlJarTask = project.tasks.register(AGGREGATE_SOURCE_HTML_TASK_NAME + 'Jar', Jar,
-                new Action<Jar>() {
-                    @Override
-                    void execute(Jar t) {
-                        t.dependsOn sourceHtmlTask
-                        t.group = 'Documentation'
-                        t.description = 'An archive of the HTML report the source code.'
-                        t.archiveClassifier.set 'sources-html'
-                        t.from sourceHtmlTask.get().destinationDir
-                        t.enabled = false
-                    }
-                })
-
-            project.gradle.addBuildListener(new BuildAdapter() {
+    private void configureRootProject(Project project) {
+        TaskProvider<Copy> sourceHtmlTask = project.tasks.register(AGGREGATE_SOURCE_HTML_TASK_NAME, Copy,
+            new Action<Copy>() {
                 @Override
-                void projectsEvaluated(Gradle gradle) {
-                    configureAggregateSourceHtmlTask(project, configuration, sourceHtmlTask, sourceHtmlJarTask)
+                void execute(Copy t) {
+                    t.group = 'Documentation'
+                    t.description = 'Generates a HTML report of the source code.'
+                    t.destinationDir = project.file("${project.buildDir}/docs/source-html")
+                    t.enabled = false
                 }
             })
-        }
+
+        TaskProvider<Jar> sourceHtmlJarTask = project.tasks.register(AGGREGATE_SOURCE_HTML_TASK_NAME + 'Jar', Jar,
+            new Action<Jar>() {
+                @Override
+                void execute(Jar t) {
+                    t.dependsOn sourceHtmlTask
+                    t.group = 'Documentation'
+                    t.description = 'An archive of the HTML report the source code.'
+                    t.archiveClassifier.set 'sources-html'
+                    t.from sourceHtmlTask.get().destinationDir
+                    t.enabled = false
+                }
+            })
+
+        project.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                Configuration configuration = project.configurations.findByName(CONFIGURATION_NAME)
+                configureAggregateSourceHtmlTask(project, configuration, sourceHtmlTask, sourceHtmlJarTask)
+            }
+        })
     }
 
     private boolean configureSourceHtmlTask(Project project, Configuration configuration) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (!effectiveConfig.docs.sourceHtml.enabled) {
-            return false
-        }
-
-        Task classesTask = project.tasks.findByName('classes')
-        if (!classesTask) {
             return false
         }
 
@@ -161,7 +158,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(ConvertCodeTask t) {
                     t.enabled = !effectiveConfig.docs.sourceHtml.srcDirs.isEmpty()
-                    t.dependsOn classesTask
+                    t.dependsOn project.tasks.named('classes')
                     t.group = 'Documentation'
                     t.description = 'Converts source code into HTML.'
                     t.classpath = configuration.asFileTree

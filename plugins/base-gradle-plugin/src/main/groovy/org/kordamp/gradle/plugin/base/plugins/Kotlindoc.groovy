@@ -22,9 +22,6 @@ import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -64,10 +61,6 @@ class Kotlindoc extends AbstractFeature {
 
     private final Set<Project> excludedProjects = new LinkedHashSet<>()
 
-    private final Set<Project> projects = new LinkedHashSet<>()
-    private final Set<Task> kotlindocTasks = new LinkedHashSet<>()
-    private final Set<TaskProvider<Jar>> kotlindocJarTasks = new LinkedHashSet<>()
-
     private boolean replaceJavadocSet
     private boolean includeNonPublicSet
     private boolean skipDeprecatedSet
@@ -77,7 +70,6 @@ class Kotlindoc extends AbstractFeature {
 
     Kotlindoc(ProjectConfigurationExtension config, Project project) {
         super(config, project)
-        doSetEnabled(project.plugins.findPlugin('org.jetbrains.kotlin.jvm') != null)
     }
 
     @Override
@@ -145,10 +137,6 @@ class Kotlindoc extends AbstractFeature {
     }
 
     void normalize() {
-        if (!enabledSet && isRoot()) {
-            setEnabled(project.plugins.findPlugin('org.jetbrains.kotlin.jvm') != null)
-        }
-
         if (!impliedPlatforms) {
             impliedPlatforms << 'JVM'
         }
@@ -281,9 +269,6 @@ class Kotlindoc extends AbstractFeature {
         CollectionUtils.merge(o1.impliedPlatforms, o2?.impliedPlatforms)
         CollectionUtils.merge(o1.includes, o2?.includes)
         CollectionUtils.merge(o1.samples, o2?.samples)
-        o1.projects().addAll(o2.projects())
-        o1.kotlindocTasks().addAll(o2.kotlindocTasks())
-        o1.kotlindocJarTasks().addAll(o2.kotlindocJarTasks())
         SourceLinkSet.merge(o1.sourceLinks, o2.sourceLinks)
         ExternalDocumentationLinkSet.merge(o1.externalDocumentationLinks, o2.externalDocumentationLinks)
         PackageOptionSet.merge(o1.packageOptions, o2.packageOptions)
@@ -318,18 +303,6 @@ class Kotlindoc extends AbstractFeature {
         }
 
         errors
-    }
-
-    Set<Project> projects() {
-        projects
-    }
-
-    Set<Task> kotlindocTasks() {
-        kotlindocTasks
-    }
-
-    Set<TaskProvider<Jar>> kotlindocJarTasks() {
-        kotlindocJarTasks
     }
 
     @CompileStatic

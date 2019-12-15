@@ -30,7 +30,6 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
-import org.kordamp.gradle.plugin.apidoc.ApidocPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
@@ -60,7 +59,6 @@ class GuidePlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
-        ApidocPlugin.applyIfMissing(project.rootProject)
         SourceHtmlPlugin.applyIfMissing(project.rootProject)
         project.pluginManager.apply(AsciidoctorJPlugin)
 
@@ -68,7 +66,7 @@ class GuidePlugin extends AbstractKordampPlugin {
 
         project.afterEvaluate {
             configureAsciidoctorTask(project)
-            createGuideTaskIfNeeded(project)
+            createGuideTask(project)
             createInitGuideTask(project)
             configurePublishing(project)
         }
@@ -137,37 +135,37 @@ class GuidePlugin extends AbstractKordampPlugin {
         if (!src.containsKey(key)) dest[key + '@'] = value
     }
 
-    private void createGuideTaskIfNeeded(Project project) {
+    private void createGuideTask(Project project) {
         TaskProvider<Copy> guideTask = project.tasks.register(CREATE_GUIDE_TASK_NAME, Copy,
-                new Action<Copy>() {
-                    @Override
-                    void execute(Copy t) {
-                        t.group = 'Documentation'
-                        t.description = 'Creates an Asciidoctor based guide.'
-                        t.dependsOn project.tasks.named(ASCIIDOCTOR)
-                        t.setDestinationDir(project.file("${project.buildDir}/guide"))
-                        t.from(project.tasks.asciidoctor.outputDir)
-                    }
-                })
+            new Action<Copy>() {
+                @Override
+                void execute(Copy t) {
+                    t.group = 'Documentation'
+                    t.description = 'Creates an Asciidoctor based guide.'
+                    t.dependsOn project.tasks.named(ASCIIDOCTOR)
+                    t.setDestinationDir(project.file("${project.buildDir}/guide"))
+                    t.from(project.tasks.asciidoctor.outputDir)
+                }
+            })
 
         project.tasks.register(ZIP_GUIDE_TASK_NAME, Zip,
-                new Action<Zip>() {
-                    @Override
-                    void execute(Zip t) {
-                        t.dependsOn guideTask
-                        t.group = 'Documentation'
-                        t.description = 'An archive of the generated guide.'
-                        t.setArchiveBaseName(project.rootProject.name + '-guide')
-                        t.from guideTask.get().destinationDir
-                    }
-                })
+            new Action<Zip>() {
+                @Override
+                void execute(Zip t) {
+                    t.dependsOn guideTask
+                    t.group = 'Documentation'
+                    t.description = 'An archive of the generated guide.'
+                    t.setArchiveBaseName(project.rootProject.name + '-guide')
+                    t.from guideTask.get().destinationDir
+                }
+            })
 
         project.rootProject.gradle.addBuildListener(new BuildAdapter() {
             @Override
             void projectsEvaluated(Gradle gradle) {
                 GuideExtension extension = project.extensions.findByType(GuideExtension)
 
-                Task task = project.rootProject.tasks.findByName(ApidocPlugin.AGGREGATE_JAVADOCS_TASK_NAME)
+                Task task = project.rootProject.tasks.findByName('aggregateJavadoc')
                 if (task?.enabled) {
                     guideTask.configure(new Action<Copy>() {
                         @Override
@@ -178,7 +176,7 @@ class GuidePlugin extends AbstractKordampPlugin {
                     })
                 }
 
-                task = project.rootProject.tasks.findByName(ApidocPlugin.AGGREGATE_GROOVYDOCS_TASK_NAME)
+                task = project.rootProject.tasks.findByName('aggregateGroovydoc')
                 if (task?.enabled) {
                     guideTask.configure(new Action<Copy>() {
                         @Override

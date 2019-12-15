@@ -21,8 +21,6 @@ import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.scala.ScalaDoc
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
@@ -44,15 +42,10 @@ class Scaladoc extends AbstractFeature {
 
     private final Set<Project> excludedProjects = new LinkedHashSet<>()
 
-    private final Set<Project> projects = new LinkedHashSet<>()
-    private final Set<ScalaDoc> scaladocTasks = new LinkedHashSet<>()
-    private final Set<TaskProvider<Jar>> scaladocJarTasks = new LinkedHashSet<>()
-
     private boolean replaceJavadocSet
 
     Scaladoc(ProjectConfigurationExtension config, Project project) {
         super(config, project)
-        doSetEnabled(project.plugins.findPlugin('scala') != null)
 
         title               = "${project.name} ${project.version}"
         options.windowTitle = "${project.name} ${project.version}"
@@ -92,12 +85,6 @@ class Scaladoc extends AbstractFeature {
         }
 
         new LinkedHashMap<>('scaladoc': map)
-    }
-
-    void normalize() {
-        if (!enabledSet && isRoot()) {
-            setEnabled(project.plugins.findPlugin('scala') != null)
-        }
     }
 
     void setReplaceJavadoc(boolean replaceJavadoc) {
@@ -143,26 +130,10 @@ class Scaladoc extends AbstractFeature {
         CollectionUtils.merge(o1.excludes, o2?.excludes)
         CollectionUtils.merge(o1.includes, o2?.includes)
         ScaladocOptions.merge(o1.options, o2.options)
-        o1.projects().addAll(o2.projects())
-        o1.scaladocTasks().addAll(o2.scaladocTasks())
-        o1.scaladocJarTasks().addAll(o2.scaladocJarTasks())
-        o1.excludedProjects().addAll(o2.excludedProjects())
     }
 
     Set<Project> excludedProjects() {
         excludedProjects
-    }
-
-    Set<Project> projects() {
-        projects
-    }
-
-    Set<ScalaDoc> scaladocTasks() {
-        scaladocTasks
-    }
-
-    Set<TaskProvider<Jar>> scaladocJarTasks() {
-        scaladocJarTasks
     }
 
     void applyTo(ScalaDoc scaladoc) {

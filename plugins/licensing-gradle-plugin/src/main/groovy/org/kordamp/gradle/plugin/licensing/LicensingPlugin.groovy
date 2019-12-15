@@ -127,15 +127,12 @@ class LicensingPlugin extends AbstractKordampPlugin {
     void apply(Project project) {
         this.project = project
 
+        configureProject(project)
         if (isRootProject(project)) {
-            if (project.childProjects.size()) {
-                project.childProjects.values().each {
-                    configureProject(it)
-                }
+            configureRootProject(project)
+            project.childProjects.values().each {
+                configureProject(it)
             }
-            configureProject(project)
-        } else {
-            configureProject(project)
         }
     }
 
@@ -192,25 +189,25 @@ class LicensingPlugin extends AbstractKordampPlugin {
             configureLicenseExtension(project)
             postConfigureDownloadLicensesExtension(project)
         }
+    }
 
-        if (isRootProject(project)) {
-            TaskProvider<AggregateLicenseReportTask> task = project.tasks.register('aggregateLicenseReport', AggregateLicenseReportTask,
-                new Action<AggregateLicenseReportTask>() {
-                    @Override
-                    void execute(AggregateLicenseReportTask t) {
-                        t.enabled = false
-                        t.group = 'Reporting'
-                        t.description = 'Generates an aggregate license report.'
-                    }
-                })
-
-            project.gradle.addBuildListener(new BuildAdapter() {
+    private void configureRootProject(Project project) {
+        TaskProvider<AggregateLicenseReportTask> task = project.tasks.register('aggregateLicenseReport', AggregateLicenseReportTask,
+            new Action<AggregateLicenseReportTask>() {
                 @Override
-                void projectsEvaluated(Gradle gradle) {
-                    configureAggregateLicenseReportTask(project, task)
+                void execute(AggregateLicenseReportTask t) {
+                    t.enabled = false
+                    t.group = 'Reporting'
+                    t.description = 'Generates an aggregate license report.'
                 }
             })
-        }
+
+        project.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                configureAggregateLicenseReportTask(project, task)
+            }
+        })
     }
 
     @CompileDynamic

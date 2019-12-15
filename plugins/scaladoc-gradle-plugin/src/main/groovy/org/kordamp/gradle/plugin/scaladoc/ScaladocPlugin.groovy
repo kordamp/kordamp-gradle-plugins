@@ -22,7 +22,6 @@ import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
@@ -49,26 +48,20 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 class ScaladocPlugin extends AbstractKordampPlugin {
     static final String SCALADOC_TASK_NAME = 'scaladoc'
     static final String SCALADOC_JAR_TASK_NAME = 'scaladocJar'
-    static final String AGGREGATE_SCALADOCS_TASK_NAME = 'aggregateScaladocs'
-    static final String AGGREGATE_SCALADOCS_JAR_TASK_NAME = 'aggregateScaladocsJar'
+    static final String AGGREGATE_SCALADOC_TASK_NAME = 'aggregateScaladoc'
+    static final String AGGREGATE_SCALADOC_JAR_TASK_NAME = 'aggregateScaladocJar'
 
     Project project
 
     void apply(Project project) {
         this.project = project
 
+        configureProject(project)
         if (isRootProject(project)) {
-            if (project.childProjects.size()) {
-                project.childProjects.values().each {
-                    configureProject(it)
-                }
-                configureRootProject(project, true)
-            } else {
-                configureProject(project)
-                configureRootProject(project, false)
+            configureRootProject(project)
+            project.childProjects.values().each {
+                configureProject(it)
             }
-        } else {
-            configureProject(project)
         }
     }
 
@@ -78,63 +71,51 @@ class ScaladocPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private void configureRootProject(Project project, boolean checkIfApplied) {
-        if (checkIfApplied && hasBeenVisited(project)) {
-            return
-        }
-        setVisited(project, true)
+    private void configureRootProject(Project project) {
+        createAggregateTasks(project)
 
-        BasePlugin.applyIfMissing(project)
-
-        if (isRootProject(project)) {
-            createAggregateScaladocsTask(project)
-
-            project.gradle.addBuildListener(new BuildAdapter() {
-                @Override
-                void projectsEvaluated(Gradle gradle) {
-                    doConfigureRootProject(project)
-                }
-            })
-        }
+        project.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                doConfigureRootProject(project)
+            }
+        })
     }
 
-    @CompileDynamic
     private void doConfigureRootProject(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         setEnabled(effectiveConfig.docs.scaladoc.enabled)
 
-        if (!enabled) {
-            return
+        List<ScalaDoc> docTasks = []
+        project.tasks.withType(ScalaDoc) { ScalaDoc t -> if (t.name != AGGREGATE_SCALADOC_TASK_NAME && t.enabled) docTasks << t }
+        project.childProjects.values().each { Project p ->
+            if (p in effectiveConfig.docs.scaladoc.excludedProjects()) return
+            p.tasks.withType(ScalaDoc) { ScalaDoc t -> if (t.enabled) docTasks << t }
         }
+        docTasks = docTasks.unique()
 
-        if (!project.childProjects.isEmpty()) {
-            List<ScalaDoc> scaladocs = []
-            project.tasks.withType(ScalaDoc) { ScalaDoc scaladoc -> if (scaladoc.name != AGGREGATE_SCALADOCS_TASK_NAME && scaladoc.enabled) scaladocs << scaladoc }
-            project.childProjects.values().each { Project p ->
-                if (p in effectiveConfig.docs.scaladoc.excludedProjects()) return
-                p.tasks.withType(ScalaDoc) { ScalaDoc scaladoc -> if (scaladoc.enabled) scaladocs << scaladoc }
-            }
-            scaladocs = scaladocs.unique()
+        if (docTasks) {
+            TaskProvider<ScalaDoc> aggregateScaladoc = project.tasks.named(AGGREGATE_SCALADOC_TASK_NAME, ScalaDoc,
+                new Action<ScalaDoc>() {
+                    @Override
+                    void execute(ScalaDoc t) {
+                        t.enabled = effectiveConfig.docs.scaladoc.enabled
+                        t.dependsOn docTasks
+                        t.source docTasks.source
+                        t.classpath = project.files(docTasks.classpath)
+                    }
+                })
 
-            ScalaDoc aggregateScaladocs = (ScalaDoc) project.tasks.findByName(AGGREGATE_SCALADOCS_TASK_NAME)
-            Jar aggregateScaladocsJar = (Jar) project.tasks.findByName(AGGREGATE_SCALADOCS_JAR_TASK_NAME)
-
-            if (scaladocs) {
-                aggregateScaladocs.configure { ScalaDoc task ->
-                    task.enabled = true
-                    task.dependsOn scaladocs
-                    task.source scaladocs.source
-                    task.classpath = project.files(scaladocs.classpath)
-
-                    effectiveConfig.docs.scaladoc.applyTo(task)
-                    // task.options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.authors.join(', ')}. All rights reserved."
-                }
-                aggregateScaladocsJar.configure {
-                    enabled true
-                    from aggregateScaladocs.destinationDir
-                    classifier = effectiveConfig.docs.scaladoc.replaceJavadoc ? 'javadoc' : 'scaladoc'
-                }
-            }
+            project.tasks.named(AGGREGATE_SCALADOC_JAR_TASK_NAME, Jar,
+                new Action<Jar>() {
+                    @Override
+                    void execute(Jar t) {
+                        t.enabled = effectiveConfig.docs.scaladoc.enabled
+                        t.from aggregateScaladoc.get().destinationDir
+                        t.archiveClassifier.set effectiveConfig.docs.scaladoc.replaceJavadoc ? 'javadoc' : 'scaladoc'
+                        t.onlyIf { aggregateScaladoc.get().didWork }
+                    }
+                })
         }
     }
 
@@ -151,69 +132,47 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                 ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
                 setEnabled(effectiveConfig.docs.scaladoc.enabled)
 
-                if (!enabled) {
-                    return
-                }
-
-                ScalaDoc scaladoc = configureScaladocTask(project)
-                effectiveConfig.docs.scaladoc.scaladocTasks() << scaladoc
-
+                TaskProvider<ScalaDoc> scaladoc = createScaladocTask(project)
                 TaskProvider<Jar> scaladocJar = createScaladocJarTask(project, scaladoc)
                 project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(scaladocJar)
-                effectiveConfig.docs.scaladoc.scaladocJarTasks() << scaladocJar
+            }
+        }
+    }
 
-                effectiveConfig.docs.scaladoc.projects() << project
-
-                project.tasks.withType(ScalaDoc) { ScalaDoc task ->
-                    effectiveConfig.docs.scaladoc.applyTo(task)
-                    // task.scalaDocOptions.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
+    private TaskProvider<ScalaDoc> createScaladocTask(Project project) {
+        project.tasks.named(SCALADOC_TASK_NAME, ScalaDoc,
+            new Action<ScalaDoc>() {
+                @Override
+                @CompileDynamic
+                void execute(ScalaDoc t) {
+                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+                    t.enabled = effectiveConfig.docs.scaladoc.enabled
+                    t.dependsOn project.tasks.named('classes')
+                    t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                    t.description = 'Generates Scaladoc API documentation'
+                    t.source project.sourceSets.main.allSource
+                    t.destinationDir = project.file("${project.buildDir}/docs/scaladoc")
+                    effectiveConfig.docs.scaladoc.applyTo(t)
                 }
-            }
-        }
+            })
     }
 
-    @CompileDynamic
-    private ScalaDoc configureScaladocTask(Project project) {
-        String taskName = SCALADOC_TASK_NAME
-
-        ScalaDoc scaladocTask = project.tasks.findByName(taskName)
-        Task classesTask = project.tasks.findByName('classes')
-
-        if (classesTask && !scaladocTask) {
-            scaladocTask = project.tasks.create(taskName, ScalaDoc) {
-                dependsOn classesTask
-                group = JavaBasePlugin.DOCUMENTATION_GROUP
-                description = 'Generates Scaladoc API documentation'
-                source project.sourceSets.main.allSource
-                destinationDir = project.file("${project.buildDir}/docs/scaladoc")
-            }
-        }
-
+    private TaskProvider<Jar> createScaladocJarTask(Project project, TaskProvider<ScalaDoc> scaladoc) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        scaladocTask.configure {
-            include(effectiveConfig.docs.scaladoc.includes)
-            exclude(effectiveConfig.docs.scaladoc.excludes)
-        }
 
-        scaladocTask
-    }
+        TaskProvider<Jar> scaladocJarTask = project.tasks.register(SCALADOC_JAR_TASK_NAME, Jar,
+            new Action<Jar>() {
+                @Override
+                void execute(Jar t) {
+                    t.enabled = effectiveConfig.docs.scaladoc.enabled
+                    t.dependsOn scaladoc
+                    t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                    t.description = 'An archive of the Scaladoc API docs'
+                    t.archiveClassifier.set('scaladoc')
+                    t.from scaladoc.get().destinationDir
+                }
+            })
 
-    private TaskProvider<Jar> createScaladocJarTask(Project project, ScalaDoc scaladoc) {
-        String taskName = SCALADOC_JAR_TASK_NAME
-
-        TaskProvider<Jar> scaladocJarTask = project.tasks.register(taskName, Jar,
-                new Action<Jar>() {
-                    @Override
-                    void execute(Jar t) {
-                        t.dependsOn scaladoc
-                        t.group = JavaBasePlugin.DOCUMENTATION_GROUP
-                        t.description = 'An archive of the Scaladoc API docs'
-                        t.archiveClassifier.set('scaladoc')
-                        t.from scaladoc.destinationDir
-                    }
-                })
-
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (effectiveConfig.docs.scaladoc.replaceJavadoc) {
             scaladocJarTask.configure(new Action<Jar>() {
                 @Override
@@ -238,28 +197,30 @@ class ScaladocPlugin extends AbstractKordampPlugin {
         scaladocJarTask
     }
 
-    private void createAggregateScaladocsTask(Project project) {
-        TaskProvider<ScalaDoc> aggregateScaladocs = project.tasks.register(AGGREGATE_SCALADOCS_TASK_NAME, ScalaDoc,
-                new Action<ScalaDoc>() {
-                    @Override
-                    void execute(ScalaDoc t) {
-                        t.enabled = false
-                        t.group = JavaBasePlugin.DOCUMENTATION_GROUP
-                        t.description = 'Aggregates Scaladoc API docs for all projects.'
-                        t.destinationDir = project.file("${project.buildDir}/docs/scaladoc")
-                    }
-                })
+    private void createAggregateTasks(Project project) {
+        TaskProvider<ScalaDoc> aggregateScaladoc = project.tasks.register(AGGREGATE_SCALADOC_TASK_NAME, ScalaDoc,
+            new Action<ScalaDoc>() {
+                @Override
+                void execute(ScalaDoc t) {
+                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(t.project)
+                    t.enabled = false
+                    t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                    t.description = 'Aggregates Scaladoc API docs for all projects.'
+                    t.destinationDir = project.file("${project.buildDir}/docs/scaladoc")
+                    effectiveConfig.docs.scaladoc.applyTo(t)
+                }
+            })
 
-        project.tasks.register(AGGREGATE_SCALADOCS_JAR_TASK_NAME, Jar,
-                new Action<Jar>() {
-                    @Override
-                    void execute(Jar t) {
-                        t.dependsOn aggregateScaladocs
-                        t.enabled = false
-                        t.group = JavaBasePlugin.DOCUMENTATION_GROUP
-                        t.description = 'An archive of the aggregate Scaladoc API docs'
-                        t.archiveClassifier.set('scaladoc')
-                    }
-                })
+        project.tasks.register(AGGREGATE_SCALADOC_JAR_TASK_NAME, Jar,
+            new Action<Jar>() {
+                @Override
+                void execute(Jar t) {
+                    t.dependsOn aggregateScaladoc
+                    t.enabled = false
+                    t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                    t.description = 'An archive of the aggregate Scaladoc API docs'
+                    t.archiveClassifier.set('scaladoc')
+                }
+            })
     }
 }

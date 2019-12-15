@@ -13,6 +13,8 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 
 Responsible for aggregating API docs. Currently Javadocs (Java) and Groovydocs (Groovy) are supported.
 
+WARNING: This plugin has been deprecated since version `0.31.0` and will be removed.
+
 [[_org_kordamp_gradle_apidoc_dsl]]
 == DSL
 

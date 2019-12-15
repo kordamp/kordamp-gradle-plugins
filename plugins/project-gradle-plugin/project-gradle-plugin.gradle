@@ -17,7 +17,6 @@
  */
 dependencies {
     api 'com.github.ben-manes:gradle-versions-plugin:0.27.0'
-    api project(':apidoc-gradle-plugin')
     api project(':base-gradle-plugin')
     api project(':bom-gradle-plugin')
     api project(':buildinfo-gradle-plugin')

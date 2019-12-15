@@ -53,13 +53,13 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
         this.project = project
 
         if (isRootProject(project)) {
-            configureProject(project)
+            configureRootProject(project)
         } else {
-            configureProject(project.rootProject)
+            configureRootProject(project.rootProject)
         }
     }
 
-    private void configureProject(Project project) {
+    private void configureRootProject(Project project) {
         if (hasBeenVisited(project)) {
             return
         }
