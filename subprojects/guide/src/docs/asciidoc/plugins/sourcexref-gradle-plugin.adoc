@@ -22,7 +22,6 @@ config {
     docs {
         sourceXref {
             enabled
-            excludedProjects
             templateDir
             inputEncoding
             outputEncoding
@@ -33,6 +32,10 @@ config {
             javaVersion
             excludes
             includes
+            <<_sourcexref_aggregate,aggregate>> {
+                enabled
+                excludedProjects
+            }
         }
     }
 }
@@ -40,25 +43,36 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name             | Type         | Required | Default Value                                  | Description
-| enabled          | boolean      | no       | true                                           | Disables `org.kordamp.gradle.source-xref` plugin if `false`
-| excludedProjects | Set<Project> |          | []                                             | Projects in the set are excluded from aggregation
-| templateDir      | String       | no       |                                                |
-| inputEncoding    | String       | no       | UTF-8                                          |
-| outputEncoding   | String       | no       | UTF-8                                          |
-| windowTitle      | String       | no       | "${project.name} ${project.version} Reference" |
-| docTitle         | String       | no       | "${project.name} ${project.version} Reference" |
-| bottom           | String       | no       |                                                |
-| stylesheet       | String       | no       |                                                |
-| javaVersion      | String       | no       | `JavaVersion.current()`                        |
-| excludes         | Set<String>  | no       | []                                             |
-| includes         | Set<String>  | no       | []                                             |
+| Name           | Type        | Required | Default Value                                  | Description
+| enabled        | boolean     | no       | true                                           | Disables `org.kordamp.gradle.source-xref` plugin if `false`
+| templateDir    | String      | no       |                                                |
+| inputEncoding  | String      | no       | UTF-8                                          |
+| outputEncoding | String      | no       | UTF-8                                          |
+| windowTitle    | String      | no       | "${project.name} ${project.version} Reference" |
+| docTitle       | String      | no       | "${project.name} ${project.version} Reference" |
+| bottom         | String      | no       |                                                |
+| stylesheet     | String      | no       |                                                |
+| javaVersion    | String      | no       | `JavaVersion.current()`                        |
+| excludes       | Set<String> | no       | []                                             |
+| includes       | Set<String> | no       | []                                             |
 |===
 
 .Methods
 
 void exclude(String):: Adds a source exclusion rule (Ant pattern).
 void include(String):: Adds a source inclusion rule (Ant pattern).
+
+[[_sourcexref_aggregate]]
+*aggregate*
+
+[options="header", cols="5*"]
+|===
+| Name             | Type         | Required | Default Value | Description
+| enabled          | boolean      | no       | true          | Enables or disables aggregation
+| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
+|===
+
+This block should be configured on the root project.
 
 [[_org_kordamp_gradle_sourcexref_tasks]]
 == Tasks

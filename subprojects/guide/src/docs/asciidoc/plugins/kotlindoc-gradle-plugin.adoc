@@ -39,7 +39,6 @@ config {
             noStdlibLink
             impliedPlatforms
             replaceJavadoc
-            excludedProjects
             <<_kotlindoc_source_links,sourceLinks>> {
                 <<_kotlindoc_source_link,sourceLink>> {
                     dir
@@ -61,6 +60,12 @@ config {
                     skipEmptyPackages
                     suppress
                 }
+            }
+            <<_kotlindoc_aggregate,aggregate>> {
+                enabled
+                fast
+                replaceJavadoc
+                excludedProjects
             }
         }
     }
@@ -87,7 +92,6 @@ config {
 | noStdlibLink       | boolean      | no       | false                                | No default documentation link to kotlin-stdlib
 | impliedPlatforms   | List<String> | no       | ['JVM']                              | Valid values are 'Common', 'JVM', 'JS', 'Native'.
 | replaceJavadoc     | boolean      | no       | false                                | Disables `javadocJar` and applies the `javadoc` classifier.
-| excludedProjects   | Set<Project> |          | []                                   | Projects in the set are excluded from aggregation
 |===
 
 [[_kotlindoc_source_links]]
@@ -149,6 +153,20 @@ Allows to customize documentation generation options on a per-package basis.
 |===
 
 This block is optional.
+
+[[_kotlindoc_aggregate]]
+*aggregate*
+
+[options="header", cols="5*"]
+|===
+| Name             | Type         | Required | Default Value | Description
+| enabled          | boolean      | no       | true          | Enables or disables aggregation
+| fast             | boolean      | no       | true          | Does not execute child `kotlindoc` tasks if `true`
+| replaceJavadoc   | boolean      | no       | false         | Disables `aggregateJavadoc` and applies the `javadoc` classifier
+| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
+|===
+
+This block should be configured on the root project.
 
 [[_org_kordamp_gradle_kotlindoc_tasks]]
 == Tasks

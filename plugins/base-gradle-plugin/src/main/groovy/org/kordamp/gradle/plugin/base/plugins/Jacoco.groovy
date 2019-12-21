@@ -34,9 +34,10 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 @Canonical
 @EqualsAndHashCode(excludes = ['additionalSourceDirs', 'additionalClassDirs'])
 class Jacoco extends AbstractFeature {
-    File mergeExecFile
-    File mergeReportHtmlFile
-    File mergeReportXmlFile
+    File aggregateExecFile
+    File aggregateReportHtmlFile
+    File aggregateReportXmlFile
+    String toolVersion = '0.8.5'
 
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<Test> testTasks = new LinkedHashSet<>()
@@ -48,11 +49,47 @@ class Jacoco extends AbstractFeature {
     Jacoco(ProjectConfigurationExtension config, Project project) {
         super(config, project)
         File destinationDir = project.layout.buildDirectory.file('reports/jacoco/aggregate').get().asFile
-        mergeExecFile = project.layout.buildDirectory.file('jacoco/aggregate.exec').get().asFile
-        mergeReportHtmlFile = project.file("${destinationDir}/html")
-        mergeReportXmlFile = project.file("${destinationDir}/jacocoTestReport.xml")
+        aggregateExecFile = project.layout.buildDirectory.file('jacoco/aggregate.exec').get().asFile
+        aggregateReportHtmlFile = project.file("${destinationDir}/html")
+        aggregateReportXmlFile = project.file("${destinationDir}/jacocoTestReport.xml")
         additionalSourceDirs = project.files()
         additionalClassDirs = project.files()
+    }
+
+    @Deprecated
+    File getMergeExecFile() {
+        println("Property jacoco.mergeExecFile is deprecated and will be removed in the future. Use jacoco.aggregateExecFile instead")
+        aggregateExecFile
+    }
+
+    @Deprecated
+    File getMergeReportHtmlFile() {
+        println("Property jacoco.mergeReportHtmlFile is deprecated and will be removed in the future. Use jacoco.aggregateReportHtmlFile instead")
+        aggregateReportHtmlFile
+    }
+
+    @Deprecated
+    File getMergeReportXmlFile() {
+        println("Property jacoco.mergeReportXmlFile is deprecated and will be removed in the future. Use jacoco.aggregateReportXmlFile instead")
+        aggregateReportXmlFile
+    }
+
+    @Deprecated
+    void setMergeExecFile(File f) {
+        println("Property jacoco.mergeExecFile is deprecated and will be removed in the future. Use jacoco.aggregateExecFile instead")
+        aggregateExecFile = f
+    }
+
+    @Deprecated
+    void setMergeReportHtmlFile(File f) {
+        println("Property jacoco.mergeReportHtmlFile is deprecated and will be removed in the future. Use jacoco.aggregateReportHtmlFile instead")
+        aggregateReportHtmlFile = f
+    }
+
+    @Deprecated
+    void setMergeReportXmlFile(File f) {
+        println("Property jacoco.mergeReportXmlFile is deprecated and will be removed in the future. Use jacoco.aggregateReportXmlFile instead")
+        aggregateReportXmlFile = f
     }
 
     @Override
@@ -64,16 +101,15 @@ class Jacoco extends AbstractFeature {
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
-        if (enabled) {
-            if (isRoot()) {
-                map.mergeExecFile = mergeExecFile
-                map.mergeReportHtmlFile = mergeReportHtmlFile
-                map.mergeReportXmlFile = mergeReportXmlFile
-            } else {
-                map.additionalSourceDirs = additionalSourceDirs.files*.absolutePath
-                map.additionalClassDirs = additionalClassDirs.files*.absolutePath
-            }
+        if (isRoot()) {
+            map.aggregateExecFile = aggregateExecFile
+            map.aggregateReportHtmlFile = aggregateReportHtmlFile
+            map.aggregateReportXmlFile = aggregateReportXmlFile
+        } else {
+            map.additionalSourceDirs = additionalSourceDirs.files*.absolutePath
+            map.additionalClassDirs = additionalClassDirs.files*.absolutePath
         }
+        map.toolVersion = toolVersion
 
         new LinkedHashMap<>('jacoco': map)
     }
@@ -92,8 +128,8 @@ class Jacoco extends AbstractFeature {
 
     boolean hasTestSourceSets() {
         hasTestsAt(project.file('src/test')) ||
-                hasTestsAt(project.file('src/integration-test')) ||
-                hasTestsAt(project.file('src/functional-test'))
+            hasTestsAt(project.file('src/integration-test')) ||
+            hasTestsAt(project.file('src/functional-test'))
     }
 
     private static boolean hasTestsAt(File testDir) {
@@ -102,23 +138,25 @@ class Jacoco extends AbstractFeature {
 
     void copyInto(Jacoco copy) {
         super.copyInto(copy)
-        copy.mergeExecFile = mergeExecFile
-        copy.mergeReportHtmlFile = mergeReportHtmlFile
-        copy.mergeReportXmlFile = mergeReportXmlFile
+        copy.aggregateExecFile = aggregateExecFile
+        copy.aggregateReportHtmlFile = aggregateReportHtmlFile
+        copy.aggregateReportXmlFile = aggregateReportXmlFile
         copy.additionalSourceDirs.from(project.files(additionalSourceDirs))
         copy.additionalClassDirs.from(project.files(additionalClassDirs))
+        copy.toolVersion = toolVersion
     }
 
     static void merge(Jacoco o1, Jacoco o2) {
         AbstractFeature.merge(o1, o2)
-        o1.mergeExecFile = o1.mergeExecFile ?: o2.mergeExecFile
-        o1.mergeReportHtmlFile = o1.mergeReportHtmlFile ?: o2.mergeReportHtmlFile
-        o1.mergeReportXmlFile = o1.mergeReportXmlFile ?: o2.mergeReportXmlFile
+        o1.aggregateExecFile = o1.aggregateExecFile ?: o2.aggregateExecFile
+        o1.aggregateReportHtmlFile = o1.aggregateReportHtmlFile ?: o2.aggregateReportHtmlFile
+        o1.aggregateReportXmlFile = o1.aggregateReportXmlFile ?: o2.aggregateReportXmlFile
         o1.projects().addAll(o2.projects())
         o1.testTasks().addAll(o2.testTasks())
         o1.reportTasks().addAll(o2.reportTasks())
         o1.additionalSourceDirs.from(o2.additionalSourceDirs)
         o1.additionalClassDirs.from(o2.additionalClassDirs)
+        o1.toolVersion = o1.toolVersion ?: o2.toolVersion
     }
 
     Set<Project> projects() {

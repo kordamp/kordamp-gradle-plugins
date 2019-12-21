@@ -22,7 +22,6 @@ import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
@@ -30,7 +29,6 @@ import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.plugins.Source
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
@@ -76,14 +74,10 @@ class SourceJarPlugin extends AbstractKordampPlugin {
 
         project.pluginManager.withPlugin('java-base') {
             project.afterEvaluate {
-                ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-                setEnabled(effectiveConfig.source.enabled)
+                ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                setEnabled(config.source.enabled)
 
-                TaskProvider<Jar> sourceTask = createSourceJarTask(project)
-                if (sourceTask) {
-                    effectiveConfig.source.sourceTasks() << sourceTask
-                    effectiveConfig.source.projects() << project
-                }
+                createSourceJarTask(project)
             }
         }
     }
@@ -108,44 +102,44 @@ class SourceJarPlugin extends AbstractKordampPlugin {
     }
 
     private TaskProvider<Jar> createSourceJarTask(Project project) {
-            TaskProvider<Jar> sourceJarTask = project.tasks.register(SOURCE_JAR_TASK_NAME, Jar,
-                new Action<Jar>() {
-                    @Override
-                    @CompileDynamic
-                    void execute(Jar t) {
-                        t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-                        t.description = 'An archive of the source code.'
-                        t.archiveClassifier.set('sources')
-                        t.dependsOn project.tasks.named('classes')
-                        t.setEnabled(resolveEffectiveConfig(t.project).source.enabled)
-                        t.from PluginUtils.resolveSourceSets(project).main.allSource
-                    }
-                })
+        TaskProvider<Jar> sourceJarTask = project.tasks.register(SOURCE_JAR_TASK_NAME, Jar,
+            new Action<Jar>() {
+                @Override
+                @CompileDynamic
+                void execute(Jar t) {
+                    t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
+                    t.description = 'An archive of the source code.'
+                    t.archiveClassifier.set('sources')
+                    t.dependsOn project.tasks.named('classes')
+                    t.setEnabled(resolveEffectiveConfig(t.project).source.enabled)
+                    t.from PluginUtils.resolveSourceSets(project).main.allSource
+                }
+            })
 
-            project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(sourceJarTask)
-            return sourceJarTask
+        project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(sourceJarTask)
+        return sourceJarTask
     }
 
-    private void configureAggregateSourceJarTask(Project project, TaskProvider<Jar> sourceJarTask) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+    private void configureAggregateSourceJarTask(Project project,
+                                                 TaskProvider<Jar> aggregateSourceJarTask) {
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
-        Set<Project> projects = new LinkedHashSet<>(effectiveConfig.source.projects())
-        Set<TaskProvider<Jar>> sourceTasks = new LinkedHashSet<>(effectiveConfig.source.sourceTasks())
-
-        project.childProjects.values().each {
-            Source e = resolveEffectiveConfig(it).source
-            if (!e.enabled || effectiveConfig.source.excludedProjects().intersect(e.projects())) return
-            projects.addAll(e.projects())
-            sourceTasks.addAll(e.sourceTasks())
+        Set<Project> projects = new LinkedHashSet<>()
+        if (!(project in config.source.aggregate.excludedProjects()) && config.source.enabled) {
+            projects << project
         }
 
-        sourceJarTask.configure(new Action<Jar>() {
+        project.childProjects.values().each { p ->
+            if (p in config.source.aggregate.excludedProjects() || !config.source.enabled) return
+            projects << p
+        }
+
+        aggregateSourceJarTask.configure(new Action<Jar>() {
             @Override
             @CompileDynamic
             void execute(Jar t) {
-                t.dependsOn sourceTasks
                 t.from PluginUtils.resolveSourceSets(projects).main.allSource
-                t.enabled = effectiveConfig.source.enabled
+                t.enabled = config.source.aggregate.enabled
             }
         })
     }

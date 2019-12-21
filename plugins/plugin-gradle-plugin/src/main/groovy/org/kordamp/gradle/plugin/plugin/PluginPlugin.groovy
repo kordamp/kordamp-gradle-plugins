@@ -36,6 +36,7 @@ import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 import static org.kordamp.gradle.PluginUtils.resolveConfig
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -82,7 +83,7 @@ class PluginPlugin extends AbstractKordampPlugin {
         project.afterEvaluate {
             ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
-            if (isBlank(pbe.website)) {
+            if (isBlank(pbe.website) && isNotBlank(effectiveConfig.info.url)) {
                 pbe.website = effectiveConfig.info.url
             }
             if (isBlank(pbe.vcsUrl)) {

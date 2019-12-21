@@ -31,6 +31,11 @@ config {
                 excludes
                 linksOffline
             }
+            <<_javadoc_aggregate,aggregate>> {
+                enabled
+                fast
+                excludedProjects
+            }
         }
     }
 }
@@ -72,6 +77,19 @@ void offlineLink(String, String):: Adds an offline link definition. The first ar
 
 Offline links are automatically calculated for project dependencies using absolute paths. These paths are skipped when the
 `<<_org_kordamp_gradle_base_dsl,release>>` flag is set to `true`.
+
+[[_javadoc_aggregate]]
+*aggregate*
+
+[options="header", cols="5*"]
+|===
+| Name             | Type         | Required | Default Value | Description
+| enabled          | boolean      | no       | true          | Enables or disables aggregation
+| fast             | boolean      | no       | true          | Does not execute child `javadoc` tasks if `true`
+| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
+|===
+
+This block should be configured on the root project.
 
 [[_org_kordamp_gradle_javadoc_tasks]]
 == Tasks

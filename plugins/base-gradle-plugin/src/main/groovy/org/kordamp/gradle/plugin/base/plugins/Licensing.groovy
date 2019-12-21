@@ -35,6 +35,8 @@ import org.kordamp.gradle.plugin.base.model.LicenseSet
 class Licensing extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.licensing'
 
+    String mergeStrategy
+
     final LicenseSet licenses = new LicenseSet()
 
     Licensing(ProjectConfigurationExtension config, Project project) {
@@ -50,6 +52,7 @@ class Licensing extends AbstractFeature {
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
+        map.mergeStrategy = mergeStrategy
         map.licenses = licenses.licenses.collectEntries { License license ->
             [(license.licenseId?.name() ?: license.name): license.toMap()]
         }
@@ -73,18 +76,31 @@ class Licensing extends AbstractFeature {
 
     void copyInto(Licensing copy) {
         super.copyInto(copy)
+        copy.@mergeStrategy = this.@mergeStrategy
         licenses.copyInto(copy.licenses)
     }
 
     static void merge(Licensing o1, Licensing o2) {
         AbstractFeature.merge(o1, o2)
-        LicenseSet.merge(o1.licenses, o2.licenses)
+        o1.mergeStrategy = o1.mergeStrategy? o1.mergeStrategy : o2?.mergeStrategy
+        switch (o1.mergeStrategy) {
+            case 'overwrite':
+                break
+            case 'merge':
+            default:
+                LicenseSet.merge(o1.licenses, o2.licenses)
+                break
+        }
     }
 
     List<String> validate(ProjectConfigurationExtension extension) {
         List<String> errors = []
 
         if (!enabled) return errors
+
+        if (!(mergeStrategy in ['merge', 'overwrite'])) {
+            errors << "Invalid value for licensing.mergeStrategy '${mergeStrategy}'. It should be one of merge, overwrite".toString()
+        }
 
         errors = licenses.validate(extension)
 

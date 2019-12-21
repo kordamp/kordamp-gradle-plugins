@@ -35,6 +35,9 @@ import static org.kordamp.gradle.StringUtils.isBlank
 @CompileStatic
 @Canonical
 class Kotlindoc extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.kotlindoc'
+    static final String KOTLIN_JVM_PLUGIN_ID = 'org.jetbrains.kotlin.jvm'
+
     private final Set<String> PLATFORMS = ['Common', 'JVM', 'JS', 'Native'] as Set
     private final Set<String> FORMATS = ['html', 'javadoc', 'html-as-java', 'markdown', 'gfm', 'jekyll'] as Set
 
@@ -56,10 +59,9 @@ class Kotlindoc extends AbstractFeature {
     final SourceLinkSet sourceLinks = new SourceLinkSet()
     final ExternalDocumentationLinkSet externalDocumentationLinks = new ExternalDocumentationLinkSet()
     final PackageOptionSet packageOptions = new PackageOptionSet()
+    final Aggregate aggregate
 
     boolean replaceJavadoc = false
-
-    private final Set<Project> excludedProjects = new LinkedHashSet<>()
 
     private boolean replaceJavadocSet
     private boolean includeNonPublicSet
@@ -70,6 +72,7 @@ class Kotlindoc extends AbstractFeature {
 
     Kotlindoc(ProjectConfigurationExtension config, Project project) {
         super(config, project)
+        aggregate = new Aggregate(config, project)
     }
 
     @Override
@@ -81,56 +84,54 @@ class Kotlindoc extends AbstractFeature {
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
-        if (enabled && isRoot()) {
-            map.excludedProjects = excludedProjects
+        List<Map<String, Map<String, String>>> lms = []
+        sourceLinks.sourceLinks.each { lm ->
+            if (!lm.empty) lms << new LinkedHashMap<String, Map<String, String>>([(lm.url): new LinkedHashMap<String, String>([
+                url   : lm.url,
+                path  : lm.path,
+                suffix: lm.suffix
+            ])])
         }
 
-        if (enabled) {
-            List<Map<String, Map<String, String>>> lms = []
-            sourceLinks.sourceLinks.each { lm ->
-                if (!lm.empty) lms << new LinkedHashMap<String, Map<String, String>>([(lm.url): new LinkedHashMap<String, String>([
-                    url   : lm.url,
-                    path  : lm.path,
-                    suffix: lm.suffix
-                ])])
-            }
+        List<Map<String, Map<String, String>>> edls = []
+        externalDocumentationLinks.externalDocumentationLinks.each { el ->
+            if (!el.empty) edls << new LinkedHashMap<String, Map<String, String>>([(el.url): new LinkedHashMap<String, String>([
+                packageListUrl: el.packageListUrl
+            ])])
+        }
 
-            List<Map<String, Map<String, String>>> edls = []
-            externalDocumentationLinks.externalDocumentationLinks.each { el ->
-                if (!el.empty) edls << new LinkedHashMap<String, Map<String, String>>([(el.url): new LinkedHashMap<String, String>([
-                    packageListUrl: el.packageListUrl
-                ])])
-            }
+        List<Map<String, Map<String, String>>> pos = []
+        packageOptions.packageOptions.each { po ->
+            if (!po.empty) pos << new LinkedHashMap<String, Map<String, String>>([(po.prefix): new LinkedHashMap<String, String>([
+                includeNonPublic  : po.includeNonPublic.toString(),
+                reportUndocumented: po.reportUndocumented.toString(),
+                skipDeprecated    : po.skipDeprecated.toString(),
+                suppress          : po.suppress.toString()
+            ])])
+        }
 
-            List<Map<String, Map<String, String>>> pos = []
-            packageOptions.packageOptions.each { po ->
-                if (!po.empty) pos << new LinkedHashMap<String, Map<String, String>>([(po.prefix): new LinkedHashMap<String, String>([
-                    includeNonPublic  : po.includeNonPublic.toString(),
-                    reportUndocumented: po.reportUndocumented.toString(),
-                    skipDeprecated    : po.skipDeprecated.toString(),
-                    suppress          : po.suppress.toString()
-                ])])
-            }
+        map.replaceJavadoc = replaceJavadoc
+        map.moduleName = moduleName
+        map.outputDirectory = outputDirectory
+        map.outputFormats = outputFormats
+        map.includes = includes
+        map.samples = samples
+        map.jdkVersion = jdkVersion
+        map.cacheRoot = cacheRoot
+        map.languageVersion = languageVersion
+        map.samapiVersionples = apiVersion
+        map.includeNonPublic = includeNonPublic
+        map.skipDeprecated = skipDeprecated
+        map.reportUndocumented = reportUndocumented
+        map.skipEmptyPackages = skipEmptyPackages
+        map.noStdlibLink = noStdlibLink
+        map.impliedPlatforms = impliedPlatforms
+        map.sourceLinks = lms
+        map.externalDocumentationLinks = edls
+        map.packageOptions = pos
 
-            map.replaceJavadoc = replaceJavadoc
-            map.moduleName = moduleName
-            map.outputDirectory = outputDirectory
-            map.outputFormats = outputFormats
-            map.includes = includes
-            map.samples = samples
-            map.jdkVersion = jdkVersion
-            map.cacheRoot = cacheRoot
-            map.languageVersion = languageVersion
-            map.samapiVersionples = apiVersion
-            map.includeNonPublic = includeNonPublic
-            map.skipDeprecated = skipDeprecated
-            map.reportUndocumented = reportUndocumented
-            map.skipEmptyPackages = skipEmptyPackages
-            map.noStdlibLink = noStdlibLink
-            map.impliedPlatforms = impliedPlatforms
-            map.sourceLinks = lms
-            map.externalDocumentationLinks = edls
-            map.packageOptions = pos
+        if (isRoot()) {
+            map.putAll(aggregate.toMap())
         }
 
         new LinkedHashMap<>('kotlindoc': map)
@@ -139,6 +140,18 @@ class Kotlindoc extends AbstractFeature {
     void normalize() {
         if (!impliedPlatforms) {
             impliedPlatforms << 'JVM'
+        }
+
+        if (!enabledSet) {
+            if (isRoot()) {
+                if (project.childProjects.isEmpty()) {
+                    enabled = project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && project.pluginManager.hasPlugin(PLUGIN_ID)
+                } else {
+                    enabled = project.childProjects.values().any { p -> p.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && p.pluginManager.hasPlugin(PLUGIN_ID)}
+                }
+            } else {
+                enabled = project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && project.pluginManager.hasPlugin(PLUGIN_ID)
+            }
         }
     }
 
@@ -220,6 +233,14 @@ class Kotlindoc extends AbstractFeature {
         ConfigureUtil.configure(action, packageOptions)
     }
 
+    void aggregate(Action<? super Aggregate> action) {
+        action.execute(aggregate)
+    }
+
+    void aggregate(@DelegatesTo(Aggregate) Closure action) {
+        ConfigureUtil.configure(action, aggregate)
+    }
+
     void copyInto(Kotlindoc copy) {
         super.copyInto(copy)
         copy.@replaceJavadoc = replaceJavadoc
@@ -244,10 +265,10 @@ class Kotlindoc extends AbstractFeature {
         copy.impliedPlatforms.addAll(impliedPlatforms)
         copy.includes = new ArrayList<>(includes)
         copy.samples = new ArrayList<>(samples)
-        copy.excludedProjects.addAll(excludedProjects)
         sourceLinks.copyInto(copy.sourceLinks)
         externalDocumentationLinks.copyInto(copy.externalDocumentationLinks)
         packageOptions.copyInto(copy.packageOptions)
+        aggregate.copyInto(copy.aggregate)
     }
 
     static void merge(Kotlindoc o1, Kotlindoc o2) {
@@ -272,12 +293,8 @@ class Kotlindoc extends AbstractFeature {
         SourceLinkSet.merge(o1.sourceLinks, o2.sourceLinks)
         ExternalDocumentationLinkSet.merge(o1.externalDocumentationLinks, o2.externalDocumentationLinks)
         PackageOptionSet.merge(o1.packageOptions, o2.packageOptions)
-        o1.excludedProjects().addAll(o2.excludedProjects())
+        o1.aggregate.merge(o2.aggregate)
         o1.normalize()
-    }
-
-    Set<Project> excludedProjects() {
-        excludedProjects
     }
 
     void postMerge() {
@@ -566,6 +583,70 @@ class Kotlindoc extends AbstractFeature {
 
         boolean isEmpty() {
             isBlank(prefix)
+        }
+    }
+
+    @CompileStatic
+    static class Aggregate {
+        Boolean enabled
+        Boolean fast
+        Boolean replaceJavadoc
+        private final Set<Project> excludedProjects = new LinkedHashSet<>()
+
+        private final ProjectConfigurationExtension config
+        private final Project project
+
+        Aggregate(ProjectConfigurationExtension config, Project project) {
+            this.config = config
+            this.project = project
+        }
+
+        Map<String, Object> toMap() {
+            Map<String, Object> map = new LinkedHashMap<String, Object>()
+
+            map.enabled = getEnabled()
+            map.fast = getFast()
+            map.replaceJavadoc = getReplaceJavadoc()
+            map.excludedProjects = excludedProjects
+
+            new LinkedHashMap<>('aggregate': map)
+        }
+
+        boolean getEnabled() {
+            this.@enabled == null || this.@enabled
+        }
+
+        boolean getFast() {
+            this.@fast == null || this.@fast
+        }
+
+        boolean getReplaceJavadoc() {
+            this.@replaceJavadoc == null || this.@replaceJavadoc
+        }
+
+        void copyInto(Aggregate copy) {
+            copy.@enabled = this.@enabled
+            copy.@fast = this.@fast
+            copy.@replaceJavadoc = this.@replaceJavadoc
+            copy.excludedProjects.addAll(excludedProjects)
+        }
+
+        Aggregate copyOf() {
+            Aggregate copy = new Aggregate(config, project)
+            copyInto(copy)
+            copy
+        }
+
+        Aggregate merge(Aggregate other) {
+            Aggregate copy = copyOf()
+            copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
+            copy.fast = copy.@fast != null ? copy.getFast() : other.getFast()
+            copy.replaceJavadoc = copy.@replaceJavadoc != null ? copy.getReplaceJavadoc() : other.getReplaceJavadoc()
+            copy
+        }
+
+        Set<Project> excludedProjects() {
+            excludedProjects
         }
     }
 }

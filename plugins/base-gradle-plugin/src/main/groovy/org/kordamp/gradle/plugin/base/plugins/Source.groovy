@@ -19,9 +19,9 @@ package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.Jar
+import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
@@ -31,12 +31,11 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 @CompileStatic
 @Canonical
 class Source extends AbstractFeature {
-    private final Set<Project> projects = new LinkedHashSet<>()
-    private final Set<TaskProvider<Jar>> sourceTasks = new LinkedHashSet<>()
-    private final Set<Project> excludedProjects = new LinkedHashSet<>()
+    final Aggregate aggregate
 
     Source(ProjectConfigurationExtension config, Project project) {
         super(config, project)
+        aggregate = new Aggregate(config, project)
     }
 
     @Override
@@ -49,30 +48,75 @@ class Source extends AbstractFeature {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (isRoot()) {
-            if (enabled) {
-                map.excludedProjects = excludedProjects
-            }
+            map.putAll(aggregate.toMap())
         }
 
         new LinkedHashMap<>('source': map)
     }
 
+    void aggregate(Action<? super Aggregate> action) {
+        action.execute(aggregate)
+    }
+
+    void aggregate(@DelegatesTo(Aggregate) Closure action) {
+        ConfigureUtil.configure(action, aggregate)
+    }
+
+    void copyInto(Source copy) {
+        super.copyInto(copy)
+        aggregate.copyInto(copy.aggregate)
+    }
+
     static void merge(Source o1, Source o2) {
         AbstractFeature.merge(o1, o2)
-        o1.projects().addAll(o2.projects())
-        o1.sourceTasks().addAll(o2.sourceTasks())
-        o1.excludedProjects().addAll(o2.excludedProjects())
+        o1.aggregate.merge(o2.aggregate)
     }
 
-    Set<Project> excludedProjects() {
-        excludedProjects
-    }
+    @CompileStatic
+    static class Aggregate {
+        Boolean enabled
+        private final Set<Project> excludedProjects = new LinkedHashSet<>()
 
-    Set<Project> projects() {
-        projects
-    }
+        private final ProjectConfigurationExtension config
+        private final Project project
 
-    Set<TaskProvider<Jar>> sourceTasks() {
-        sourceTasks
+        Aggregate(ProjectConfigurationExtension config, Project project) {
+            this.config = config
+            this.project = project
+        }
+
+        Map<String, Object> toMap() {
+            Map<String, Object> map = new LinkedHashMap<String, Object>()
+
+            map.enabled = getEnabled()
+            map.excludedProjects = excludedProjects
+
+            new LinkedHashMap<>('aggregate': map)
+        }
+
+        boolean getEnabled() {
+            this.@enabled == null || this.@enabled
+        }
+
+        void copyInto(Aggregate copy) {
+            copy.@enabled = this.@enabled
+            copy.excludedProjects.addAll(excludedProjects)
+        }
+
+        Aggregate copyOf() {
+            Aggregate copy = new Aggregate(config, project)
+            copyInto(copy)
+            copy
+        }
+
+        Aggregate merge(Aggregate other) {
+            Aggregate copy = copyOf()
+            copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
+            copy
+        }
+
+        Set<Project> excludedProjects() {
+            excludedProjects
+        }
     }
 }

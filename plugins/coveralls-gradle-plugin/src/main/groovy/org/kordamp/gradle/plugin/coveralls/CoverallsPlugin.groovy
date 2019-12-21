@@ -104,7 +104,7 @@ class CoverallsPlugin extends AbstractKordampPlugin {
         }
 
         CoverallsPluginExtension coveralls = project.extensions.findByType(CoverallsPluginExtension)
-        coveralls.jacocoReportPath = effectiveConfig.coverage.jacoco.mergeReportXmlFile
+        coveralls.jacocoReportPath = effectiveConfig.coverage.jacoco.aggregateReportXmlFile
         coveralls.sourceDirs.addAll(project.files(files))
     }
 }

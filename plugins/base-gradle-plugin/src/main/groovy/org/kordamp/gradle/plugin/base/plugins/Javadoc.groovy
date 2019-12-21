@@ -49,11 +49,13 @@ class Javadoc extends AbstractFeature {
     Set<String> includes = new LinkedHashSet<>()
     String title
     final ExtStandardJavadocDocletOptions options = new ExtStandardJavadocDocletOptions()
+    final Aggregate aggregate
     final AutoLinks autoLinks
 
     Javadoc(ProjectConfigurationExtension config, Project project) {
         super(config, project)
         options.setVersion(true)
+        aggregate           = new Aggregate(config, project)
         autoLinks           = new AutoLinks(config)
         options.use         = true
         options.splitIndex  = true
@@ -89,27 +91,29 @@ class Javadoc extends AbstractFeature {
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
-        if (enabled) {
-            List<String> links = []
-            options.links.each { link ->
-                links << link
-            }
+        List<String> links = []
+        options.links.each { link ->
+            links << link
+        }
 
-            map.title = title
-            map.excludes = excludes
-            map.includes = includes
-            map.autoLinks = autoLinks.toMap()
-            map.options = new LinkedHashMap<String, Object>([
-                windowTitle: options.windowTitle,
-                docTitle   : options.docTitle,
-                header     : options.header,
-                encoding   : options.encoding,
-                author     : options.author,
-                version    : options.version,
-                splitIndex : options.splitIndex,
-                use        : options.use,
-                links      : links
-            ])
+        map.title = title
+        map.excludes = excludes
+        map.includes = includes
+        map.autoLinks = autoLinks.toMap()
+        map.options = new LinkedHashMap<String, Object>([
+            windowTitle: options.windowTitle,
+            docTitle   : options.docTitle,
+            header     : options.header,
+            encoding   : options.encoding,
+            author     : options.author,
+            version    : options.version,
+            splitIndex : options.splitIndex,
+            use        : options.use,
+            links      : links
+        ])
+
+        if (isRoot()) {
+            map.putAll(aggregate.toMap())
         }
 
         new LinkedHashMap<>(['javadoc': map])
@@ -135,6 +139,14 @@ class Javadoc extends AbstractFeature {
         ConfigureUtil.configure(action, options)
     }
 
+    void aggregate(Action<? super Aggregate> action) {
+        action.execute(aggregate)
+    }
+
+    void aggregate(@DelegatesTo(Aggregate) Closure action) {
+        ConfigureUtil.configure(action, aggregate)
+    }
+
     void copyInto(Javadoc copy) {
         super.copyInto(copy)
         copy.excludes.addAll(excludes)
@@ -142,6 +154,7 @@ class Javadoc extends AbstractFeature {
         copy.title = title
         options.copyInto(copy.options)
         autoLinks.copyInto(copy.autoLinks)
+        aggregate.copyInto(copy.aggregate)
     }
 
     static void merge(Javadoc o1, Javadoc o2) {
@@ -151,6 +164,7 @@ class Javadoc extends AbstractFeature {
         o1.title = o1.title ?: o2.title
         ExtStandardJavadocDocletOptions.merge(o1.options, o2.options)
         AutoLinks.merge(o1.autoLinks, o2.autoLinks)
+        o1.aggregate.merge(o2.aggregate)
     }
 
     void autoLinks(Action<? super AutoLinks> action) {
@@ -310,6 +324,62 @@ class Javadoc extends AbstractFeature {
                 dependentProject.tasks.findByName('javadoc').dependsOn(taskDependency)
                 taskDependency.destinationDir.absolutePath.replace('\\', '/')
             }
+        }
+    }
+
+    @CompileStatic
+    static class Aggregate {
+        Boolean enabled
+        Boolean fast
+        private final Set<Project> excludedProjects = new LinkedHashSet<>()
+
+        private final ProjectConfigurationExtension config
+        private final Project project
+
+        Aggregate(ProjectConfigurationExtension config, Project project) {
+            this.config = config
+            this.project = project
+        }
+
+        Map<String, Object> toMap() {
+            Map<String, Object> map = new LinkedHashMap<String, Object>()
+
+            map.enabled = getEnabled()
+            map.fast = getFast()
+            map.excludedProjects = excludedProjects
+
+            new LinkedHashMap<>('aggregate': map)
+        }
+
+        boolean getEnabled() {
+            this.@enabled == null || this.@enabled
+        }
+
+        boolean getFast() {
+            this.@fast == null || this.@fast
+        }
+
+        void copyInto(Aggregate copy) {
+            copy.@enabled = this.@enabled
+            copy.@fast = this.@fast
+            copy.excludedProjects.addAll(excludedProjects)
+        }
+
+        Aggregate copyOf() {
+            Aggregate copy = new Aggregate(config, project)
+            copyInto(copy)
+            copy
+        }
+
+        Aggregate merge(Aggregate other) {
+            Aggregate copy = copyOf()
+            copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
+            copy.fast = copy.@fast != null ? copy.getFast() : other.getFast()
+            copy
+        }
+
+        Set<Project> excludedProjects() {
+            excludedProjects
         }
     }
 }

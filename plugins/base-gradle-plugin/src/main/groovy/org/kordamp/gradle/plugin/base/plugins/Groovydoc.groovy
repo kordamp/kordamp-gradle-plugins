@@ -34,16 +34,21 @@ import org.kordamp.gradle.plugin.base.model.impl.GroovydocOptions
 @CompileStatic
 @Canonical
 class Groovydoc extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.groovydoc'
+
     boolean replaceJavadoc = false
     Set<String> excludes = new LinkedHashSet<>()
     Set<String> includes = new LinkedHashSet<>()
     final GroovydocOptions options = new GroovydocOptions()
+    final Aggregate aggregate
 
     private boolean replaceJavadocSet
 
     Groovydoc(ProjectConfigurationExtension config, Project project) {
         super(config, project)
+        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
 
+        aggregate              = new Aggregate(config, project)
         options.use            = true
         options.windowTitle    = "${project.name} ${project.version}"
         options.docTitle       = "${project.name} ${project.version}"
@@ -99,8 +104,25 @@ class Groovydoc extends AbstractFeature {
                 links         : links
             ])
         }
+        if (isRoot()) {
+            map.putAll(aggregate.toMap())
+        }
 
         new LinkedHashMap<>('groovydoc': map)
+    }
+
+    void normalize() {
+        if (!enabledSet) {
+            if (isRoot()) {
+                if (project.childProjects.isEmpty()) {
+                    enabled = project.pluginManager.hasPlugin('groovy') && project.pluginManager.hasPlugin(PLUGIN_ID)
+                } else {
+                    enabled = project.childProjects.values().any { p -> p.pluginManager.hasPlugin('groovy') && p.pluginManager.hasPlugin(PLUGIN_ID)}
+                }
+            } else {
+                enabled = project.pluginManager.hasPlugin('groovy') && project.pluginManager.hasPlugin(PLUGIN_ID)
+            }
+        }
     }
 
     void setReplaceJavadoc(boolean replaceJavadoc) {
@@ -128,6 +150,14 @@ class Groovydoc extends AbstractFeature {
         ConfigureUtil.configure(action, options)
     }
 
+    void aggregate(Action<? super Aggregate> action) {
+        action.execute(aggregate)
+    }
+
+    void aggregate(@DelegatesTo(Aggregate) Closure action) {
+        ConfigureUtil.configure(action, aggregate)
+    }
+
     void copyInto(Groovydoc copy) {
         super.copyInto(copy)
         copy.@replaceJavadoc = replaceJavadoc
@@ -135,6 +165,7 @@ class Groovydoc extends AbstractFeature {
         copy.excludes.addAll(excludes)
         copy.includes.addAll(includes)
         options.copyInto(copy.options)
+        aggregate.copyInto(copy.aggregate)
     }
 
     static void merge(Groovydoc o1, Groovydoc o2) {
@@ -143,11 +174,76 @@ class Groovydoc extends AbstractFeature {
         CollectionUtils.merge(o1.excludes, o2?.excludes)
         CollectionUtils.merge(o1.includes, o2?.includes)
         GroovydocOptions.merge(o1.options, o2.options)
+        o1.aggregate.merge(o2.aggregate)
     }
 
     void applyTo(org.gradle.api.tasks.javadoc.Groovydoc groovydoc) {
         groovydoc.getIncludes().addAll(includes)
         groovydoc.getExcludes().addAll(excludes)
         options.applyTo(groovydoc)
+    }
+
+    @CompileStatic
+    static class Aggregate {
+        Boolean enabled
+        Boolean fast
+        Boolean replaceJavadoc
+        private final Set<Project> excludedProjects = new LinkedHashSet<>()
+
+        private final ProjectConfigurationExtension config
+        private final Project project
+
+        Aggregate(ProjectConfigurationExtension config, Project project) {
+            this.config = config
+            this.project = project
+        }
+
+        Map<String, Object> toMap() {
+            Map<String, Object> map = new LinkedHashMap<String, Object>()
+
+            map.enabled = getEnabled()
+            map.fast = getFast()
+            map.replaceJavadoc = getReplaceJavadoc()
+            map.excludedProjects = excludedProjects
+
+            new LinkedHashMap<>('aggregate': map)
+        }
+
+        boolean getEnabled() {
+            this.@enabled == null || this.@enabled
+        }
+
+        boolean getFast() {
+            this.@fast == null || this.@fast
+        }
+
+        boolean getReplaceJavadoc() {
+            this.@replaceJavadoc == null || this.@replaceJavadoc
+        }
+
+        void copyInto(Aggregate copy) {
+            copy.@enabled = this.@enabled
+            copy.@fast = this.@fast
+            copy.@replaceJavadoc = this.@replaceJavadoc
+            copy.excludedProjects.addAll(excludedProjects)
+        }
+
+        Aggregate copyOf() {
+            Aggregate copy = new Aggregate(config, project)
+            copyInto(copy)
+            copy
+        }
+
+        Aggregate merge(Aggregate other) {
+            Aggregate copy = copyOf()
+            copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
+            copy.fast = copy.@fast != null ? copy.getFast() : other.getFast()
+            copy.replaceJavadoc = copy.@replaceJavadoc != null ? copy.getReplaceJavadoc() : other.getReplaceJavadoc()
+            copy
+        }
+
+        Set<Project> excludedProjects() {
+            excludedProjects
+        }
     }
 }

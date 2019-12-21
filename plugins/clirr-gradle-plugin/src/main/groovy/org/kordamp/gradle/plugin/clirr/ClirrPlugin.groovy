@@ -22,7 +22,6 @@ import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.invocation.Gradle
@@ -33,7 +32,6 @@ import org.kordamp.gradle.Version
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.plugins.Clirr
 import org.kordamp.gradle.plugin.clirr.tasks.AggregateClirrReportTask
 import org.kordamp.gradle.plugin.clirr.tasks.ClirrTask
 
@@ -81,17 +79,8 @@ class ClirrPlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
             setEnabled(effectiveConfig.clirr.enabled)
 
-            if (!enabled) {
-                return
-            }
-
-            TaskProvider<ClirrTask> clirrTask = configureClirrTask(project)
-            if (clirrTask) {
-                effectiveConfig.clirr.projects() << project
-                effectiveConfig.clirr.clirrTasks() << clirrTask
-            }
+            configureClirrTask(project)
         }
-
     }
 
     private void configureRootProject(Project project) {
@@ -116,17 +105,13 @@ class ClirrPlugin extends AbstractKordampPlugin {
     }
 
     private TaskProvider<ClirrTask> configureClirrTask(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         FileCollection newfiles = null
         if (PluginUtils.isAndroidProject(project)) {
             newfiles = project.tasks.findByName('assemble')?.outputs?.files
         } else {
             newfiles = project.tasks.findByName('jar')?.outputs?.files
-        }
-
-        if (!newfiles || !effectiveConfig.clirr.enabled) {
-            return null
         }
 
         TaskProvider<ClirrTask> clirrTask = project.tasks.register('clirr', ClirrTask,
@@ -136,15 +121,15 @@ class ClirrPlugin extends AbstractKordampPlugin {
                 void execute(ClirrTask t) {
                     t.group = 'Verification'
                     t.description = 'Determines the binary compatibility of the current codebase against a previous release.'
-                    t.newFiles = newfiles
+                    t.newFiles = newfiles ?: project.files()
                     t.newClasspath = project.configurations[supportsApiConfiguration(project) ? 'api' : 'compile']
                     t.xmlReport = project.file("${project.reporting.baseDir.path}/clirr/compatibility-report.xml")
                     t.htmlReport = project.file("${project.reporting.baseDir.path}/clirr/compatibility-report.html")
-                    t.enabled = effectiveConfig.clirr.enabled
+                    t.enabled = newFiles && config.clirr.enabled
                 }
             })
 
-        String baseline = effectiveConfig.clirr.baseline
+        String baseline = config.clirr.baseline
         if (!baseline) {
             // attempt resolving baseline using current version
             Version current = Version.of(String.valueOf(project.version))
@@ -155,9 +140,9 @@ class ClirrPlugin extends AbstractKordampPlugin {
                 return null
             }
 
-            Versions versions = Versions.of(current, effectiveConfig.clirr.semver)
+            Versions versions = Versions.of(current, config.clirr.semver)
             if (versions.previous == Version.ZERO) {
-                project.logger.info("{}: could not determine previous version for '{}' [semver compatibility={}]", project.name, current, effectiveConfig.clirr.semver)
+                project.logger.info("{}: could not determine previous version for '{}' [semver compatibility={}]", project.name, current, config.clirr.semver)
                 project.logger.info('{}: please set clirr.baseline explicitly or disable clirr', project.name)
                 return null
             }
@@ -192,25 +177,24 @@ class ClirrPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void configureAggregateClirrTask(Project project, TaskProvider<AggregateClirrReportTask> aggregateClirrReportTask) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.clirr.enabled) {
-            return
-        }
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
-        Set<TaskProvider<? extends Task>> clirrTasks = new LinkedHashSet<>(effectiveConfig.clirr.clirrTasks())
-
-        project.childProjects.values().each {
-            Clirr e = resolveEffectiveConfig(it).clirr
-            if (e.enabled) {
-                clirrTasks.addAll(e.clirrTasks())
-            }
+        List<ClirrTask> clirrTasks = []
+        project.tasks.withType(ClirrTask) { ClirrTask t ->
+            if (project in config.clirr.aggregate.excludedProjects()) return
+            if (t.enabled) clirrTasks << t
         }
+        project.childProjects.values().each { Project p ->
+            if (p in config.clir.aggregate.excludedProjects()) return
+            p.tasks.withType(ClirrTask) { ClirrTask t -> if (t.enabled) clirrTasks << t }
+        }
+        clirrTasks = clirrTasks.unique()
 
         aggregateClirrReportTask.configure(new Action<AggregateClirrReportTask>() {
             @Override
             void execute(AggregateClirrReportTask t) {
                 t.dependsOn clirrTasks
-                t.enabled = effectiveConfig.clirr.enabled
+                t.enabled = config.clirr.aggregate.enabled
                 t.reports = project.files(clirrTasks*.get()*.xmlReport)
             }
         })

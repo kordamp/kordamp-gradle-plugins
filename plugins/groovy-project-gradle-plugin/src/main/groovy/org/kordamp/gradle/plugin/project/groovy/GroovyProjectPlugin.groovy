@@ -22,7 +22,6 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.plugins.AppliedPlugin
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
-import org.kordamp.gradle.plugin.codenarc.CodenarcPlugin
 import org.kordamp.gradle.plugin.groovydoc.GroovydocPlugin
 import org.kordamp.gradle.plugin.project.groovy.tasks.GroovyCompilerSettingsTask
 import org.kordamp.gradle.plugin.project.java.JavaProjectPlugin
@@ -58,7 +57,6 @@ class GroovyProjectPlugin extends AbstractKordampPlugin {
 
         JavaProjectPlugin.applyIfMissing(project)
         GroovydocPlugin.applyIfMissing(project)
-        CodenarcPlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('groovy-base', new Action<AppliedPlugin>() {
             @Override

@@ -30,6 +30,7 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
+import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
 import org.gradle.testing.jacoco.tasks.JacocoMerge
 import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.gradle.testing.jacoco.tasks.JacocoReportsContainer
@@ -100,27 +101,26 @@ class JacocoPlugin extends AbstractKordampPlugin {
                 }
 
                 project.afterEvaluate {
-                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-                    setEnabled(effectiveConfig.coverage.jacoco.enabled)
+                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                    setEnabled(config.coverage.jacoco.enabled)
 
-                    if (!enabled) {
-                        return
-                    }
+                    JacocoPluginExtension jacocoExt = project.extensions.findByType(JacocoPluginExtension)
+                    jacocoExt.toolVersion = config.coverage.jacoco.toolVersion
 
                     project.pluginManager.withPlugin('java-base') {
                         // Do not aggregate root report if it does not have tests #198
-                        if (isRootProject(project) && !effectiveConfig.coverage.jacoco.hasTestSourceSets()) {
+                        if (isRootProject(project) && !config.coverage.jacoco.hasTestSourceSets()) {
                             return
                         }
 
                         Set<JacocoReport> reportTasks = []
                         project.tasks.withType(Test) { Test testTask ->
                             JacocoReport reportTask = configureJacocoReportTask(project, testTask)
-                            reportTask.enabled &= testTask.enabled
+                            reportTask.enabled &= testTask.enabled & config.coverage.jacoco.enabled
                             if (reportTask.enabled) {
-                                effectiveConfig.coverage.jacoco.testTasks() << testTask
-                                effectiveConfig.coverage.jacoco.reportTasks() << reportTask
-                                effectiveConfig.coverage.jacoco.projects() << project
+                                config.coverage.jacoco.testTasks() << testTask
+                                config.coverage.jacoco.reportTasks() << reportTask
+                                config.coverage.jacoco.projects() << project
                                 reportTasks << reportTask
                             }
                         }
@@ -184,11 +184,11 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void configureAggregates(Project project, TaskExecutionGraph graph) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
-        Set<Test> tt = new LinkedHashSet<>(effectiveConfig.testing.testTasks())
-        Set<Test> itt = new LinkedHashSet<>(effectiveConfig.testing.integrationTasks())
-        Set<Test> ftt = new LinkedHashSet<>(effectiveConfig.testing.functionalTestTasks())
+        Set<Test> tt = new LinkedHashSet<>(config.testing.testTasks())
+        Set<Test> itt = new LinkedHashSet<>(config.testing.integrationTasks())
+        Set<Test> ftt = new LinkedHashSet<>(config.testing.functionalTestTasks())
 
         project.childProjects.values().each {
             Testing e = resolveEffectiveConfig(it).testing
@@ -208,7 +208,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private static JacocoReport configureJacocoReportTask(Project project, Test testTask) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         String taskName = resolveJacocoReportTaskName(testTask.name)
 
@@ -222,9 +222,9 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
                 jacocoClasspath = project.configurations.jacocoAnt
 
-                additionalSourceDirs.from project.files(resolveSourceDirs(effectiveConfig, project))
-                sourceDirectories.from project.files(resolveSourceDirs(effectiveConfig, project))
-                classDirectories.from project.files(resolveClassDirs(effectiveConfig, project))
+                additionalSourceDirs.from project.files(resolveSourceDirs(config, project))
+                sourceDirectories.from project.files(resolveSourceDirs(config, project))
+                classDirectories.from project.files(resolveClassDirs(config, project))
                 executionData testTask
 
                 reports {
@@ -235,7 +235,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
         }
 
         jacocoReportTask.configure {
-            enabled = effectiveConfig.coverage.jacoco.enabled
+            enabled = config.coverage.jacoco.enabled
             reports {
                 xml.enabled = true
                 csv.enabled = false
@@ -265,11 +265,16 @@ class JacocoPlugin extends AbstractKordampPlugin {
         project.files(projects.collect { resolveClassDirs(effectiveConfig, it) }.flatten().unique())
     }
 
-    private void applyJacocoMerge(Project project, TaskProvider<JacocoMerge> aggregateJacocoMerge, TaskProvider<JacocoReport> aggregateJacocoReport) {
+    private void applyJacocoMerge(Project project,
+                                  TaskProvider<JacocoMerge> aggregateJacocoMerge,
+                                  TaskProvider<JacocoReport> aggregateJacocoReport) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         if (!effectiveConfig.coverage.jacoco.enabled) {
             return
         }
+
+        JacocoPluginExtension jacocoExt = project.extensions.findByType(JacocoPluginExtension)
+        jacocoExt.toolVersion = effectiveConfig.coverage.jacoco.toolVersion
 
         Set<Project> projects = new LinkedHashSet<>(effectiveConfig.coverage.jacoco.projects())
         Set<Test> testTasks = new LinkedHashSet<>(effectiveConfig.coverage.jacoco.testTasks())
@@ -291,7 +296,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
                 t.dependsOn testTasks + reportTasks
                 t.enabled = effectiveConfig.coverage.jacoco.enabled
                 t.executionData = project.files(reportTasks.executionData.files.flatten())
-                t.destinationFile = effectiveConfig.coverage.jacoco.mergeExecFile
+                t.destinationFile = effectiveConfig.coverage.jacoco.aggregateExecFile
             }
         })
 
@@ -308,8 +313,8 @@ class JacocoPlugin extends AbstractKordampPlugin {
                 t.reports(new Action<JacocoReportsContainer>() {
                     @Override
                     void execute(JacocoReportsContainer reports) {
-                        reports.html.setDestination(effectiveConfig.coverage.jacoco.mergeReportHtmlFile)
-                        reports.xml.setDestination(effectiveConfig.coverage.jacoco.mergeReportXmlFile)
+                        reports.html.setDestination(effectiveConfig.coverage.jacoco.aggregateReportHtmlFile)
+                        reports.xml.setDestination(effectiveConfig.coverage.jacoco.aggregateReportXmlFile)
                     }
                 })
             }
@@ -319,15 +324,11 @@ class JacocoPlugin extends AbstractKordampPlugin {
     private static void configureAllJacocoReportsTask(Project project,
                                                       TaskProvider<DefaultTask> allJacocoReports,
                                                       Set<JacocoReport> reportTasks) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.coverage.jacoco.enabled) {
-            return
-        }
-
         allJacocoReports.configure(new Action<DefaultTask>() {
             @Override
             void execute(DefaultTask t) {
-                t.enabled = reportTasks.size() > 0
+                ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                t.enabled = config.coverage.jacoco.enabled && reportTasks.size() > 0
                 t.dependsOn(reportTasks)
             }
         })

@@ -27,6 +27,10 @@ config {
             maxPriority2Violations
             maxPriority3Violations
             toolVersion
+            <<_codenarc_aggregate,aggregate>> {
+                enabled
+                excludedProjects
+            }
         }
     }
 }
@@ -34,14 +38,31 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name                   | Type        | Required | Default Value     | Description
-| enabled                | boolean     | no       | true              | Disables `org.kordamp.gradle.codenarc` plugin if `false`
-| configFile             | Set<String> | no       |                   | Either `config/codenarc/${project.name}.xml` or `config/codenarc/codenarc.xml`
-| maxPriority1Violations | int         | no       |                   |
-| maxPriority2Violations | int         | no       |                   |
-| maxPriority3Violations | int         | no       |                   |
-| toolVersion            | String      | no       | 1.5               |
+| Name                   | Type        | Required | Default Value | Description
+| enabled                | boolean     | no       | true          | Disables `org.kordamp.gradle.codenarc` plugin if `false`
+| configFile             | Set<String> | no       |               | Either `config/codenarc/${project.name}.xml` or `config/codenarc/codenarc.xml`
+| maxPriority1Violations | int         | no       |               |
+| maxPriority2Violations | int         | no       |               |
+| maxPriority3Violations | int         | no       |               |
+| toolVersion            | String      | no       | 1.5           |
 |===
+
+.Methods
+
+void exclude(String):: Adds a source exclusion rule (Ant pattern).
+void include(String):: Adds a source inclusion rule (Ant pattern).
+
+[[_codenarc_aggregate]]
+*aggregate*
+
+[options="header", cols="5*"]
+|===
+| Name             | Type         | Required | Default Value | Description
+| enabled          | boolean      | no       | true          | Enables or disables aggregation
+| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
+|===
+
+This block should be configured on the root project.
 
 [[_org_kordamp_gradle_codenarc_tasks]]
 == Tasks

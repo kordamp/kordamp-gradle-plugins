@@ -19,7 +19,9 @@ package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
@@ -40,9 +42,11 @@ class Stats extends AbstractFeature {
     Map<String, String> counters = [:]
     Map<String, Map<String, String>> paths = [:]
     List<String> formats = ['xml', 'txt']
+    final Aggregate aggregate
 
     Stats(ProjectConfigurationExtension config, Project project) {
         super(config, project)
+        aggregate = new Aggregate(config, project)
         paths.putAll(defaultPaths())
     }
 
@@ -55,10 +59,12 @@ class Stats extends AbstractFeature {
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
-        if (enabled) {
-            map.formats = formats
-            map.counters = counters
-            map.paths = paths
+        map.formats = formats
+        map.counters = counters
+        map.paths = paths
+
+        if (isRoot()) {
+            map.putAll(aggregate.toMap())
         }
 
         new LinkedHashMap<>('stats': map)
@@ -109,6 +115,14 @@ class Stats extends AbstractFeature {
         basePaths
     }
 
+    void aggregate(Action<? super Aggregate> action) {
+        action.execute(aggregate)
+    }
+
+    void aggregate(@DelegatesTo(Aggregate) Closure action) {
+        ConfigureUtil.configure(action, aggregate)
+    }
+
     void copyInto(Stats copy) {
         super.copyInto(copy)
         copy.counters.putAll(counters)
@@ -117,6 +131,7 @@ class Stats extends AbstractFeature {
         copy.formats.clear()
         copy.formats.addAll((fmts + formats).unique())
         copy.formats.addAll(formats)
+        aggregate.copyInto(copy.aggregate)
     }
 
     static void merge(Stats o1, Stats o2) {
@@ -124,5 +139,54 @@ class Stats extends AbstractFeature {
         o1.counters.putAll(o2.counters)
         o1.paths.putAll(o2.paths)
         CollectionUtils.merge(o1.formats, o2?.formats)
+        o1.aggregate.merge(o2.aggregate)
+    }
+
+    @CompileStatic
+    static class Aggregate {
+        Boolean enabled
+        private final Set<Project> excludedProjects = new LinkedHashSet<>()
+
+        private final ProjectConfigurationExtension config
+        private final Project project
+
+        Aggregate(ProjectConfigurationExtension config, Project project) {
+            this.config = config
+            this.project = project
+        }
+
+        Map<String, Object> toMap() {
+            Map<String, Object> map = new LinkedHashMap<String, Object>()
+
+            map.enabled = getEnabled()
+            map.excludedProjects = excludedProjects
+
+            new LinkedHashMap<>('aggregate': map)
+        }
+
+        boolean getEnabled() {
+            this.@enabled == null || this.@enabled
+        }
+
+        void copyInto(Aggregate copy) {
+            copy.@enabled = this.@enabled
+            copy.excludedProjects.addAll(excludedProjects)
+        }
+
+        Aggregate copyOf() {
+            Aggregate copy = new Aggregate(config, project)
+            copyInto(copy)
+            copy
+        }
+
+        Aggregate merge(Aggregate other) {
+            Aggregate copy = copyOf()
+            copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
+            copy
+        }
+
+        Set<Project> excludedProjects() {
+            excludedProjects
+        }
     }
 }

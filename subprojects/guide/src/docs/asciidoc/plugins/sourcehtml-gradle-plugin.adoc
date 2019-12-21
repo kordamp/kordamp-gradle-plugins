@@ -23,7 +23,6 @@ config {
     docs {
         sourceHtml {
             enabled
-            excludedProjects
             <<_sourcehtml_conversion,conversion>> {
                 srcDirs
                 destDir
@@ -52,6 +51,10 @@ config {
                 icon
                 stylesheet
             }
+            <<_sourcehtml_aggregate,aggregate>> {
+                enabled
+                excludedProjects
+            }
         }
     }
 }
@@ -59,9 +62,8 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name             | Type         | Required | Default Value | Description
-| enabled          | boolean      | no       | true          | Disables `org.kordamp.gradle.source-html` plugin if `false`
-| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
+| Name    | Type    | Required | Default Value | Description
+| enabled | boolean | no       | true          | Disables `org.kordamp.gradle.source-html` plugin if `false`
 |===
 
 [[_sourcehtml_conversion]]
@@ -105,6 +107,18 @@ config {
 |===
 
 This block is optional.
+
+[[_sourcehtml_aggregate]]
+*aggregate*
+
+[options="header", cols="5*"]
+|===
+| Name             | Type         | Required | Default Value | Description
+| enabled          | boolean      | no       | true          | Enables or disables aggregation
+| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
+|===
+
+This block should be configured on the root project.
 
 [[_org_kordamp_gradle_sourcehtml_tasks]]
 == Tasks

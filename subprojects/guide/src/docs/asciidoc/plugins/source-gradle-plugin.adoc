@@ -15,23 +15,38 @@ Packages the project's source code into a single JAR file.
 == DSL
 
 [source,groovy]
+[subs="+macros"]
 ----
 config {
     source {
         enabled
-        excludedProjects
+        <<_source_aggregate,aggregate>> {
+            enabled
+            excludedProjects
+        }
     }
 }
 ----
 
 [options="header", cols="5*"]
 |===
-| Name             | Type         | Required | Default Value | Description
-| enabled          | boolean      | no       | true          | Disables `org.kordamp.gradle.source-jar` plugin if `false`
-| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
+| Name    | Type    | Required | Default Value | Description
+| enabled | boolean | no       | true          | Disables `org.kordamp.gradle.source-jar` plugin if `false`
 |===
 
 This block is optional.
+
+[[_source_aggregate]]
+*aggregate*
+
+[options="header", cols="5*"]
+|===
+| Name             | Type         | Required | Default Value | Description
+| enabled          | boolean      | no       | true          | Enables or disables aggregation
+| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
+|===
+
+This block should be configured on the root project.
 
 [[_org_kordamp_gradle_source_tasks]]
 == Tasks

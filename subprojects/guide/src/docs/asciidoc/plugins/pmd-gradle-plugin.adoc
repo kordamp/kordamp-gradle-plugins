@@ -26,6 +26,10 @@ config {
             incrementalAnalysis
             rulePriority
             toolVersion
+            <<_pmd_aggregate,aggregate>> {
+                enabled
+                excludedProjects
+            }
         }
     }
 }
@@ -33,13 +37,30 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name                | Type           | Required | Default Value     | Description
-| enabled             | boolean        | no       | true              | Disables `org.kordamp.gradle.pmd` plugin if `false`
-| ruleSetFiles        | FileCollection | no       |                   | Either `config/pmd/${project.name}.xml` or `config/pmd/pmd.xml`
-| incrementalAnalysis | boolean        | no       | false             |
-| rulePriority        | int            | no       | 5                 |
-| toolVersion         | String         | no       | 6.2.0             |
+| Name                | Type           | Required | Default Value | Description
+| enabled             | boolean        | no       | true          | Disables `org.kordamp.gradle.pmd` plugin if `false`
+| ruleSetFiles        | FileCollection | no       |               | Either `config/pmd/${project.name}.xml` or `config/pmd/pmd.xml`
+| incrementalAnalysis | boolean        | no       | false         |
+| rulePriority        | int            | no       | 5             |
+| toolVersion         | String         | no       | 6.2.0         |
 |===
+
+.Methods
+
+void exclude(String):: Adds a source exclusion rule (Ant pattern).
+void include(String):: Adds a source inclusion rule (Ant pattern).
+
+[[_pmd_aggregate]]
+*aggregate*
+
+[options="header", cols="5*"]
+|===
+| Name             | Type         | Required | Default Value | Description
+| enabled          | boolean      | no       | true          | Enables or disables aggregation
+| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
+|===
+
+This block should be configured on the root project.
 
 [[_org_kordamp_gradle_pmd_tasks]]
 == Tasks

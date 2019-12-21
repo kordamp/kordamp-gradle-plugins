@@ -26,12 +26,14 @@ config {
         tags
 
         <<_base_info_links,links>> {
+            enabled
             website
             issueTracker
             scm
         }
 
         <<_base_info_scm,scm>> {
+            enabled
             url
             tag
             connection
@@ -148,12 +150,13 @@ The value for `vendor` may be omitted if a value for `organization.name` is give
 
 [options="header", cols="5*"]
 |===
-| Name         | Type   | Required | Default Value | Description
-| website      | String | yes      | empty         | Mapped to the `<url>` block in POM.
+| Name         | Type    | Required | Default Value | Description
+| enabled      | boolean | no       | true          | Enables or disables this block.
+| website      | String  | yes      | empty         | Mapped to the `<url>` block in POM.
                                                       Mapped to `bintray.pkg.websiteUrl`
-| issueTracker | String | no*      | empty         | Mapped to `bintray.pkg.issueTracker`
-| scm          | String | no*      | empty         | Mapped to the `<scm>` block in POM.
-                                                     Mapped to `bintray.pkg.websiteUrl`
+| issueTracker | String  | no*      | empty         | Mapped to `bintray.pkg.issueTracker`
+| scm          | String  | no*      | empty         | Mapped to the `<scm>` block in POM.
+                                                      Mapped to `bintray.pkg.websiteUrl`
 |===
 
 Values for `issueTracker` and `scm` should be defined if the `<<_org_kordamp_gradle_bintray,org.kordamp.gradle.bintray>>`
@@ -164,10 +167,11 @@ plugin is used.
 
 [options="header", cols="5*"]
 |===
-| Name                | Type   | Required | Default Value | Description
-| url                 | String | yes      | empty         | Mapped to the `<scm><url>` block in POM.OM.
-| connection          | String | no*      | empty         | Mapped to the `<scm><connection>` block in POM.`
-| developerconnection | String | no*      | empty         | Mapped to the `<scm><developerConnection>` block in POM.
+| Name                | Type    | Required | Default Value | Description
+| enabled             | boolean | no       | true          | Enables or disables this block.
+| url                 | String  | yes      | empty         | Mapped to the `<scm><url>` block in POM.OM.
+| connection          | String  | no*      | empty         | Mapped to the `<scm><connection>` block in POM.`
+| developerconnection | String  | no*      | empty         | Mapped to the `<scm><developerConnection>` block in POM.
 |===
 
 This block has precedence over `links.scm`.

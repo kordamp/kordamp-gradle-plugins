@@ -20,7 +20,9 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
@@ -31,6 +33,8 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 @CompileStatic
 @Canonical
 class Checkstyle extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.checkstyle'
+
     File configFile
     Map<String, Object> configProperties = [:]
     int maxErrors
@@ -40,12 +44,15 @@ class Checkstyle extends AbstractFeature {
     String toolVersion = '8.27'
     Set<String> excludes = new LinkedHashSet<>()
     Set<String> includes = new LinkedHashSet<>()
+    final Aggregate aggregate
 
     private boolean showViolationsSet
     private boolean ignoreFailuresSet
 
     Checkstyle(ProjectConfigurationExtension config, Project project) {
         super(config, project)
+        aggregate = new Aggregate(config, project)
+        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
     }
 
     @Override
@@ -55,7 +62,7 @@ class Checkstyle extends AbstractFeature {
 
     @Override
     Map<String, Map<String, Object>> toMap() {
-        new LinkedHashMap<>('checkstyle': new LinkedHashMap<String, Object>(
+        Map<String, Object> map = new LinkedHashMap<String, Object>(
             enabled: enabled,
             configFile: configFile,
             configProperties: configProperties,
@@ -66,7 +73,12 @@ class Checkstyle extends AbstractFeature {
             showViolations: showViolations,
             ignoreFailures: ignoreFailures,
             toolVersion: toolVersion
-        ))
+        )
+        if (isRoot()) {
+            map.putAll(aggregate.toMap())
+        }
+
+        new LinkedHashMap<>('checkstyle': map)
     }
 
     void normalize() {
@@ -81,12 +93,12 @@ class Checkstyle extends AbstractFeature {
         if (!enabledSet) {
             if (isRoot()) {
                 if (project.childProjects.isEmpty()) {
-                    enabled = project.pluginManager.hasPlugin('java')
+                    enabled = project.pluginManager.hasPlugin('java') && project.pluginManager.hasPlugin(PLUGIN_ID)
                 } else {
-                    enabled = project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java') }
+                    enabled = project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java') && p.pluginManager.hasPlugin(PLUGIN_ID)}
                 }
             } else {
-                enabled = project.pluginManager.hasPlugin('java')
+                enabled = project.pluginManager.hasPlugin('java') && project.pluginManager.hasPlugin(PLUGIN_ID)
             }
         }
     }
@@ -117,6 +129,14 @@ class Checkstyle extends AbstractFeature {
         excludes << str
     }
 
+    void aggregate(Action<? super Aggregate> action) {
+        action.execute(aggregate)
+    }
+
+    void aggregate(@DelegatesTo(Aggregate) Closure action) {
+        ConfigureUtil.configure(action, aggregate)
+    }
+
     void copyInto(Checkstyle copy) {
         super.copyInto(copy)
         copy.@showViolations = showViolations
@@ -130,6 +150,7 @@ class Checkstyle extends AbstractFeature {
         copy.maxWarnings = maxWarnings
         copy.toolVersion = toolVersion
         copy.configProperties.putAll(configProperties)
+        aggregate.copyInto(copy.aggregate)
     }
 
     static void merge(Checkstyle o1, Checkstyle o2) {
@@ -143,6 +164,7 @@ class Checkstyle extends AbstractFeature {
         o1.maxWarnings = o1.maxWarnings ?: o2.maxWarnings
         o1.toolVersion = o1.toolVersion ?: o2.toolVersion
         CollectionUtils.merge(o1.configProperties, o2?.configProperties)
+        o1.aggregate.merge(o2.aggregate)
     }
 
     @CompileDynamic
@@ -162,5 +184,53 @@ class Checkstyle extends AbstractFeature {
         checkstyleTask.reports.xml.enabled = true
         checkstyleTask.reports.html.destination = project.layout.buildDirectory.file("reports/checkstyle/${sourceSetName}.html").get().asFile
         checkstyleTask.reports.xml.destination = project.layout.buildDirectory.file("reports/checkstyle/${sourceSetName}.xml").get().asFile
+    }
+
+    @CompileStatic
+    static class Aggregate {
+        Boolean enabled
+        private final Set<Project> excludedProjects = new LinkedHashSet<>()
+
+        private final ProjectConfigurationExtension config
+        private final Project project
+
+        Aggregate(ProjectConfigurationExtension config, Project project) {
+            this.config = config
+            this.project = project
+        }
+
+        Map<String, Object> toMap() {
+            Map<String, Object> map = new LinkedHashMap<String, Object>()
+
+            map.enabled = getEnabled()
+            map.excludedProjects = excludedProjects
+
+            new LinkedHashMap<>('aggregate': map)
+        }
+
+        boolean getEnabled() {
+            this.@enabled == null || this.@enabled
+        }
+
+        void copyInto(Aggregate copy) {
+            copy.@enabled = this.@enabled
+            copy.excludedProjects.addAll(excludedProjects)
+        }
+
+        Aggregate copyOf() {
+            Aggregate copy = new Aggregate(config, project)
+            copyInto(copy)
+            copy
+        }
+
+        Aggregate merge(Aggregate other) {
+            Aggregate copy = copyOf()
+            copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
+            copy
+        }
+
+        Set<Project> excludedProjects() {
+            excludedProjects
+        }
     }
 }

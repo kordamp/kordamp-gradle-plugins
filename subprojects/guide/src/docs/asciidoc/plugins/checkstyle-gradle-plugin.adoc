@@ -30,6 +30,10 @@ config {
             maxWarnings
             showViolations
             toolVersion
+            <<_checkstyle_aggregate,aggregate>> {
+                enabled
+                excludedProjects
+            }
         }
     }
 }
@@ -54,6 +58,17 @@ config {
 void exclude(String):: Adds a source exclusion rule (Ant pattern).
 void include(String):: Adds a source inclusion rule (Ant pattern).
 
+[[_checkstyle_aggregate]]
+*aggregate*
+
+[options="header", cols="5*"]
+|===
+| Name             | Type         | Required | Default Value | Description
+| enabled          | boolean      | no       | true          | Enables or disables aggregation
+| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
+|===
+
+This block should be configured on the root project.
 
 [[_org_kordamp_gradle_checkstyle_tasks]]
 == Tasks

@@ -98,18 +98,21 @@ class KotlindocPlugin extends AbstractKordampPlugin {
     }
 
     private void doConfigureRootProject(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        setEnabled(effectiveConfig.docs.kotlindoc.enabled)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        setEnabled(config.docs.kotlindoc.aggregate.enabled)
 
-        effectiveConfig.docs.kotlindoc.outputFormats.each { String format ->
+        config.docs.kotlindoc.outputFormats.each { String format ->
             String formatName = format == 'html-as-java' ? 'htmljava' : format
             String suffix = StringUtils.capitalize(formatName)
             String taskName = AGGREGATE_KOTLINDOC_BASENAME + suffix
 
             List<DokkaTask> docTasks = []
-            project.tasks.withType(DokkaTask) { DokkaTask t -> if (t.name != taskName && t.enabled && t.name.endsWith(suffix)) docTasks << t }
+            project.tasks.withType(DokkaTask) { DokkaTask t ->
+                if (project in config.docs.kotlindoc.aggregate.excludedProjects()) return
+                if (t.name != taskName && t.enabled && t.name.endsWith(suffix)) docTasks << t
+            }
             project.childProjects.values().each { Project p ->
-                if (p in effectiveConfig.docs.kotlindoc.excludedProjects()) return
+                if (p in config.docs.kotlindoc.aggregate.excludedProjects()) return
                 p.tasks.withType(DokkaTask) { DokkaTask t -> if (t.enabled && t.name.endsWith(suffix)) docTasks << t }
             }
             docTasks = docTasks.unique()
@@ -120,8 +123,8 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                         @Override
                         @CompileDynamic
                         void execute(DokkaTask t) {
-                            t.enabled = effectiveConfig.docs.kotlindoc.enabled
-                            t.dependsOn docTasks
+                            t.enabled = config.docs.kotlindoc.aggregate.enabled
+                            if (!config.docs.kotlindoc.aggregate.fast) t.dependsOn docTasks
                             t.configuration.classpath = docTasks.configuration.classpath.flatten().unique()
                         }
                     })
@@ -130,10 +133,10 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                     new Action<Jar>() {
                         @Override
                         void execute(Jar t) {
-                            t.enabled = effectiveConfig.docs.kotlindoc.enabled
+                            t.enabled = config.docs.kotlindoc.aggregate.enabled
                             t.from aggregateKotlindoc.get().outputDirectory
                             t.onlyIf { aggregateKotlindoc.get().didWork }
-                            // classifier = effectiveConfig.docs.kotlindoc.replaceJavadoc ? 'javadoc' : 'kotlindoc'
+                            // classifier = config.docs.kotlindoc.aggregate.replaceJavadoc ? 'javadoc' : 'kotlindoc'
                         }
                     })
             }
@@ -150,10 +153,10 @@ class KotlindocPlugin extends AbstractKordampPlugin {
 
         project.pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
             project.afterEvaluate {
-                ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-                setEnabled(effectiveConfig.docs.kotlindoc.enabled)
+                ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                setEnabled(config.docs.kotlindoc.enabled)
 
-                effectiveConfig.docs.kotlindoc.outputFormats.each { String format ->
+                config.docs.kotlindoc.outputFormats.each { String format ->
                     TaskProvider<DokkaTask> kotlindoc = createKotlindocTask(project, format)
                     TaskProvider<Jar> kotlindocJar = createKotlindocJarTask(project, kotlindoc, format)
                     project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(kotlindocJar)
@@ -167,20 +170,20 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         String formatName = format == 'html-as-java' ? 'htmljava' : format
         String taskName = KOTLINDOC_BASENAME + StringUtils.capitalize(formatName)
 
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         project.tasks.register(taskName, DokkaTask,
             new Action<DokkaTask>() {
                 @Override
                 void execute(DokkaTask t) {
-                    t.enabled = effectiveConfig.docs.kotlindoc.enabled
+                    t.enabled = config.docs.kotlindoc.enabled
                     t.dependsOn project.tasks.named('classes')
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = "Generates Kotlindoc API documentation in $format format"
                     t.dokkaRuntime = project.configurations.findByName(DOKKA_RUNTIME_CONFIGURATION_NAME)
                     t.extensions.add('multiplatform', project.container(GradlePassConfigurationImpl))
                     t.extensions.add('configuration', new GradlePassConfigurationImpl())
-                    applyConfiguration(effectiveConfig.docs.kotlindoc, t, format, formatName)
+                    applyConfiguration(config.docs.kotlindoc, t, format, formatName)
                 }
             })
     }
@@ -189,9 +192,9 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         String formatName = format == 'html-as-java' ? 'htmljava' : format
         String resolvedClassifier = 'kotlindoc'
         String taskName = KOTLINDOC_BASENAME + StringUtils.capitalize(formatName) + 'Jar'
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
-        if (effectiveConfig.docs.kotlindoc.outputFormats.size() > 1) {
+        if (config.docs.kotlindoc.outputFormats.size() > 1) {
             resolvedClassifier += '-' + formatName
         }
 
@@ -199,16 +202,17 @@ class KotlindocPlugin extends AbstractKordampPlugin {
             new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
-                    t.enabled = effectiveConfig.docs.kotlindoc.enabled
+                    t.enabled = config.docs.kotlindoc.enabled
                     t.dependsOn kotlindoc
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = "An archive of the $format formatted Kotlindoc API docs"
                     t.archiveClassifier.set(resolvedClassifier)
                     t.from kotlindoc.get().outputDirectory
+                    t.onlyIf { kotlindoc.get().didWork }
                 }
             })
 
-        if (effectiveConfig.docs.kotlindoc.replaceJavadoc && effectiveConfig.docs.kotlindoc.outputFormats.indexOf(format) == 0) {
+        if (config.docs.kotlindoc.replaceJavadoc && config.docs.kotlindoc.outputFormats.indexOf(format) == 0) {
             kotlindocJarTask.configure(new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
@@ -222,7 +226,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         if (project.pluginManager.hasPlugin('maven-publish')) {
             PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
             MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (effectiveConfig.docs.kotlindoc.replaceJavadoc) {
+            if (config.docs.kotlindoc.replaceJavadoc) {
                 MavenArtifact javadocJar = mainPublication.artifacts.find { it.classifier == 'javadoc' }
                 mainPublication.artifacts.remove(javadocJar)
             }
@@ -233,9 +237,9 @@ class KotlindocPlugin extends AbstractKordampPlugin {
     }
 
     private void createAggregateTasks(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
-        effectiveConfig.docs.kotlindoc.outputFormats.each { String format ->
+        config.docs.kotlindoc.outputFormats.each { String format ->
             String formatName = format == 'html-as-java' ? 'htmljava' : format
             String suffix = StringUtils.capitalize(formatName)
             String taskName = AGGREGATE_KOTLINDOC_BASENAME + suffix
@@ -250,8 +254,8 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                         t.dokkaRuntime = project.configurations.findByName(DOKKA_RUNTIME_CONFIGURATION_NAME)
                         t.extensions.add('multiplatform', project.container(GradlePassConfigurationImpl))
                         t.extensions.add('configuration', new GradlePassConfigurationImpl())
-                        applyConfiguration(effectiveConfig.docs.kotlindoc, t, format, formatName)
-                        t.outputDirectory = effectiveConfig.docs.kotlindoc.outputDirectory.absolutePath + File.separator + 'aggregate-' + formatName
+                        applyConfiguration(config.docs.kotlindoc, t, format, formatName)
+                        t.outputDirectory = config.docs.kotlindoc.outputDirectory.absolutePath + File.separator + 'aggregate-' + formatName
                     }
                 })
 

@@ -81,12 +81,16 @@ class JavadocPlugin extends AbstractKordampPlugin {
     }
 
     private void doConfigureRootProject(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        setEnabled(effectiveConfig.docs.javadoc.enabled)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        setEnabled(config.docs.javadoc.aggregate.enabled)
 
         List<Javadoc> docTasks = []
-        project.tasks.withType(Javadoc) { Javadoc t -> if (t.name != AGGREGATE_JAVADOC_TASK_NAME && t.enabled) docTasks << t }
+        project.tasks.withType(Javadoc) { Javadoc t ->
+            if (project in config.docs.javadoc.aggregate.excludedProjects()) return
+            if (t.name != AGGREGATE_JAVADOC_TASK_NAME && t.enabled) docTasks << t
+        }
         project.childProjects.values().each { Project p ->
+            if (p in config.docs.javadoc.aggregate.excludedProjects()) return
             p.tasks.withType(Javadoc) { Javadoc t -> if (t.enabled) docTasks << t }
         }
         docTasks = docTasks.unique()
@@ -96,8 +100,8 @@ class JavadocPlugin extends AbstractKordampPlugin {
                 new Action<Javadoc>() {
                     @Override
                     void execute(Javadoc t) {
-                        t.enabled = effectiveConfig.docs.javadoc.enabled
-                        t.dependsOn docTasks
+                        t.enabled = config.docs.javadoc.aggregate.enabled
+                        if (!config.docs.javadoc.aggregate.fast) t.dependsOn docTasks
                         t.source docTasks.source
                         t.classpath = project.files(docTasks.classpath)
                     }
@@ -107,7 +111,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                 new Action<Jar>() {
                     @Override
                     void execute(Jar t) {
-                        t.enabled = effectiveConfig.docs.javadoc.enabled
+                        t.enabled = config.docs.javadoc.aggregate.enabled
                         t.from aggregateJavadoc.get().destinationDir
                         t.onlyIf { aggregateJavadoc.get().didWork }
                     }
@@ -135,8 +139,8 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     })
 
                 project.afterEvaluate {
-                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-                    setEnabled(effectiveConfig.docs.javadoc.enabled)
+                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                    setEnabled(config.docs.javadoc.enabled)
 
                     TaskProvider<Javadoc> javadoc = createJavadocTask(project)
                     TaskProvider<Jar> javadocJar = createJavadocJarTask(project, javadoc)
@@ -152,15 +156,15 @@ class JavadocPlugin extends AbstractKordampPlugin {
                 @Override
                 @CompileDynamic
                 void execute(Javadoc t) {
-                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(t.project)
-                    t.enabled = effectiveConfig.docs.javadoc.enabled
+                    ProjectConfigurationExtension config = resolveEffectiveConfig(t.project)
+                    t.enabled = config.docs.javadoc.enabled
                     t.dependsOn project.tasks.named('classes')
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Generates Javadoc API documentation'
                     t.destinationDir = project.file("${project.buildDir}/docs/javadoc")
                     t.source project.sourceSets.main.allJava
-                    effectiveConfig.docs.javadoc.applyTo(t)
-                    t.options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
+                    config.docs.javadoc.applyTo(t)
+                    t.options.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
                     if (JavaVersion.current().isJava8Compatible()) {
                         t.options.addBooleanOption('Xdoclint:none', true)
                         t.options.quiet()
@@ -180,6 +184,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     t.archiveClassifier.set('javadoc')
                     t.dependsOn javadoc
                     t.from javadoc.get().destinationDir
+                    t.onlyIf { javadoc.get().didWork }
                 }
             })
     }
@@ -190,13 +195,13 @@ class JavadocPlugin extends AbstractKordampPlugin {
                 @Override
                 @CompileDynamic
                 void execute(Javadoc t) {
-                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(t.project)
+                    ProjectConfigurationExtension config = resolveEffectiveConfig(t.project)
                     t.enabled = false
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Aggregates Javadoc API docs for all projects.'
                     t.destinationDir = project.file("${project.buildDir}/docs/aggregate-javadoc")
-                    effectiveConfig.docs.javadoc.applyTo(t)
-                    t.options.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
+                    config.docs.javadoc.applyTo(t)
+                    t.options.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
                     if (JavaVersion.current().isJava8Compatible()) {
                         t.options.addBooleanOption('Xdoclint:none', true)
                         t.options.quiet()

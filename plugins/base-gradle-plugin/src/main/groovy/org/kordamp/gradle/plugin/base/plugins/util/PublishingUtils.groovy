@@ -271,7 +271,7 @@ class PublishingUtils {
     static void configurePom(MavenPom pom, ProjectConfigurationExtension effectiveConfig, PomOptions pomOptions) {
         pom.name.set(effectiveConfig.info.name)
         pom.description.set(effectiveConfig.info.description)
-        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteUrl)) pom.url.set(effectiveConfig.info.url)
+        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteUrl) && isNotBlank(effectiveConfig.info.url)) pom.url.set(effectiveConfig.info.url)
         if (isOverwriteAllowed(pomOptions, pomOptions.overwriteInceptionYear)) pom.inceptionYear.set(effectiveConfig.info.inceptionYear)
 
         if (isOverwriteAllowed(pomOptions, pomOptions.overwriteLicenses)) {
@@ -294,29 +294,31 @@ class PublishingUtils {
         }
 
         if (isOverwriteAllowed(pomOptions, pomOptions.overwriteScm)) {
-            if (isNotBlank(effectiveConfig.info.scm.url)) {
-                pom.scm(new Action<MavenPomScm>() {
-                    @Override
-                    void execute(MavenPomScm scm) {
-                        scm.url.set(effectiveConfig.info.scm.url)
-                        if (effectiveConfig.info.scm.tag) {
-                            scm.tag.set(effectiveConfig.info.scm.tag)
+            if (effectiveConfig.info.scm.enabled) {
+                if (isNotBlank(effectiveConfig.info.scm.url)) {
+                    pom.scm(new Action<MavenPomScm>() {
+                        @Override
+                        void execute(MavenPomScm scm) {
+                            scm.url.set(effectiveConfig.info.scm.url)
+                            if (effectiveConfig.info.scm.tag) {
+                                scm.tag.set(effectiveConfig.info.scm.tag)
+                            }
+                            if (effectiveConfig.info.scm.connection) {
+                                scm.connection.set(effectiveConfig.info.scm.connection)
+                            }
+                            if (effectiveConfig.info.scm.connection) {
+                                scm.developerConnection.set(effectiveConfig.info.scm.developerConnection)
+                            }
                         }
-                        if (effectiveConfig.info.scm.connection) {
-                            scm.connection.set(effectiveConfig.info.scm.connection)
+                    })
+                } else if (effectiveConfig.info.links.scm) {
+                    pom.scm(new Action<MavenPomScm>() {
+                        @Override
+                        void execute(MavenPomScm scm) {
+                            scm.url.set(effectiveConfig.info.links.scm)
                         }
-                        if (effectiveConfig.info.scm.connection) {
-                            scm.developerConnection.set(effectiveConfig.info.scm.developerConnection)
-                        }
-                    }
-                })
-            } else if (effectiveConfig.info.links.scm) {
-                pom.scm(new Action<MavenPomScm>() {
-                    @Override
-                    void execute(MavenPomScm scm) {
-                        scm.url.set(effectiveConfig.info.links.scm)
-                    }
-                })
+                    })
+                }
             }
         }
 

@@ -31,10 +31,13 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 @CompileStatic
 @Canonical
 class Guide extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.guide'
+
     final Publish publish
 
     Guide(ProjectConfigurationExtension config, Project project) {
         super(config, project)
+        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
         publish = new Publish(config)
     }
 
@@ -73,6 +76,9 @@ class Guide extends AbstractFeature {
     }
 
     void normalize() {
+        if(!enabledSet) {
+            doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        }
         publish.normalize()
     }
 

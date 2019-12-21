@@ -22,11 +22,12 @@ config {
     coverage {
         jacoco {
             enabled
-            mergeExecFile
-            mergeReportHtmlFile
-            mergeReportXmlFile
+            aggregateExecFile
+            aggregateReportHtmlFile
+            aggregateReportXmlFile
             additionalSourceDirs
             additionalClassDirs
+            toolVersion
         }
     }
 }
@@ -34,13 +35,14 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name                 | Type           | Required | Default Value                                                     | Description
-| enabled              | boolean        | no       | true                                                              | Disables `org.kordamp.gradle.jacoco` plugin if `false`
-| mergeExecFile        | File           | no       | ${project.buildDir}/jacoco/aggregate.exec                         | Location for the aggregate merge execution data file
-| mergeReportHtmlFile  | File           | no       | ${project.buildDir}/reports/jacoco/aggregate/html                 | Location for aggregate HTML reports
-| mergeReportXmlFile   | File           | no       | ${project.buildDir}/reports/jacoco/aggregate/jacocoTestReport.xml | Location for the aggregate XML report
-| additionalSourceDirs | FileCollection | no       | []                                                                | Additional source directories
-| additionalClassDirs  | FileCollection | no       | []                                                                | Additional class directories
+| Name                    | Type           | Required | Default Value                                                     | Description
+| enabled                 | boolean        | no       | true                                                              | Disables `org.kordamp.gradle.jacoco` plugin if `false`
+| aggregateExecFile       | File           | no       | ${project.buildDir}/jacoco/aggregate.exec                         | Location for the aggregate merge execution data file
+| aggregateReportHtmlFile | File           | no       | ${project.buildDir}/reports/jacoco/aggregate/html                 | Location for aggregate HTML reports
+| aggregateReportXmlFile  | File           | no       | ${project.buildDir}/reports/jacoco/aggregate/jacocoTestReport.xml | Location for the aggregate XML report
+| additionalSourceDirs    | FileCollection | no       | []                                                                | Additional source directories
+| additionalClassDirs     | FileCollection | no       | []                                                                | Additional class directories
+| toolVersion             | String         | no       | 0.8.5                                                             |
 |===
 
 The value for `enabled` will automatically be set to `false` if no tests (`unit`, `integration`, or `functional`) are found.
@@ -63,7 +65,7 @@ Type:: `org.gradle.testing.jacoco.tasks.JacocoMerge`
 
 .Properties
 [horizontal]
-destinationFile:: config.docs.jacoco.mergeExecFile
+destinationFile:: config.docs.jacoco.aggregateExecFile
 
 [[_task_aggregate_jacoco_report]]
 === AggregateJacocoReport
@@ -78,8 +80,8 @@ Type:: `org.gradle.testing.jacoco.tasks.JacocoReport`
 
 .Properties
 [horizontal]
-reports.html.destination:: config.docs.jacoco.mergeReportHtmlFile
-reports.xml.destination:: config..jacoco.mergeReportXmlFile
+reports.html.destination:: config.docs.jacoco.aggregateReportHtmlFile
+reports.xml.destination:: config..jacoco.aggregateReportXmlFile
 reports.html.enabled:: true
 reports.xml.enabled:: true
 

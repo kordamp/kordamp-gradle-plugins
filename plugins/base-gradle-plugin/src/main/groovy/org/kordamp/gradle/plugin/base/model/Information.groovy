@@ -156,11 +156,11 @@ class Information {
             (extension.publishing.enabled || extension.bintray.enabled)) {
             errors << "[${project.name}] Project vendor is blank".toString()
         }
-        if (isBlank(organization.url) && isBlank(links.website) &&
+        if (isBlank(getUrl()) &&
             (extension.publishing.enabled || extension.bintray.enabled)) {
             errors << "[${project.name}] Project organization.url is blank".toString()
         }
-        if (isBlank(scm.url) && isBlank(links.scm) &&
+        if ((scm.enabled && isBlank(scm.url)) && (links.enabled && isBlank(links.scm)) &&
             (extension.publishing.enabled || extension.bintray.enabled)) {
             errors << "[${project.name}] Project scm.url is blank".toString()
         }

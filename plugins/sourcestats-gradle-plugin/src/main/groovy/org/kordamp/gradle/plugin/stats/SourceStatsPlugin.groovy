@@ -27,7 +27,6 @@ import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.plugins.Stats
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
@@ -72,7 +71,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
             setEnabled(effectiveConfig.stats.enabled)
 
-            maybeCreateStatsTask(project)
+            createSourceStatsTask(project)
         }
     }
 
@@ -97,59 +96,47 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
         })
     }
 
-    private void maybeCreateStatsTask(Project project) {
-        try {
-            // see if the project supports sourceSets
-            PluginUtils.resolveSourceSets(project)
-            createStatsTask(project)
-        } catch (Exception ignored) {
-            // incompatible project, skip it
-        }
-    }
+    private void createSourceStatsTask(Project project) {
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
-    private void createStatsTask(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-
-        TaskProvider<SourceStatsTask> statsTask = project.tasks.register('sourceStats', SourceStatsTask,
+        project.tasks.register('sourceStats', SourceStatsTask,
             new Action<SourceStatsTask>() {
                 @Override
                 void execute(SourceStatsTask t) {
-                    t.enabled = effectiveConfig.stats.enabled
+                    t.enabled = PluginUtils.resolveSourceSets(project) && config.stats.enabled
                     t.group = 'Reporting'
                     t.description = 'Generates a report on lines of code.'
-                    t.paths = effectiveConfig.stats.paths
-                    t.formats = effectiveConfig.stats.formats
-                    t.counters = effectiveConfig.stats.counters
+                    t.paths = config.stats.paths
+                    t.formats = config.stats.formats
+                    t.counters = config.stats.counters
                 }
             })
     }
 
-    private void applyAggregateStats(Project project, TaskProvider<AggregateSourceStatsReportTask> task) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.stats.enabled) {
-            return
-        }
+    private void applyAggregateStats(Project project, TaskProvider<AggregateSourceStatsReportTask> aggregateSourceStatsTask) {
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         Set<SourceStatsTask> tt = new LinkedHashSet<>()
-        project.tasks.withType(SourceStatsTask) { SourceStatsTask t ->
-            tt << t
+        project.tasks.withType(SourceStatsTask) { SourceStatsTask task ->
+            if (project in config.stats.aggregate.excludedProjects()) return
+            if (task.name != AGGREGATE_STATS_TASK_NAME &&
+                task.enabled)
+                tt << task
         }
 
         project.childProjects.values().each { p ->
-            Stats e = resolveEffectiveConfig(p).stats
-            if (e.enabled) {
-                p.tasks.withType(SourceStatsTask) { SourceStatsTask t ->
-                    tt << t
-                }
+            if (p in config.stats.aggregate.excludedProjects()) return
+            p.tasks.withType(SourceStatsTask) { SourceStatsTask task ->
+                if (task.enabled) tt << task
             }
         }
 
-        task.configure(new Action<AggregateSourceStatsReportTask>() {
+        aggregateSourceStatsTask.configure(new Action<AggregateSourceStatsReportTask>() {
             @Override
             void execute(AggregateSourceStatsReportTask t) {
                 t.dependsOn tt
-                t.enabled = effectiveConfig.stats.enabled
-                t.formats = effectiveConfig.stats.formats
+                t.enabled = config.stats.aggregate.enabled
+                t.formats = config.stats.formats
             }
         })
     }

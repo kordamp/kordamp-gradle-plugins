@@ -30,6 +30,7 @@ import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.PluginUtils.resolveSourceSets
 import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * Configures artifact publication via Bintray.
@@ -90,7 +91,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
         PublishingExtension pubExt = project.extensions.findByType(PublishingExtension)
         publications.addAll(effectiveConfig.bintray.resolvePublications())
         publications.addAll(effectiveConfig.publishing.publications)
-        publications = publications.grep { pub -> pubExt.publications.findByName(pub) }
+        publications = publications.grep { String pub -> pubExt.publications.findByName(pub) }
 
         BintrayExtension bintray = project.extensions.findByType(BintrayExtension)
         if (isBlank(bintray.user)) bintray.user = effectiveConfig.bintray.credentials.username
@@ -101,7 +102,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
         if (isBlank(bintray.pkg.userOrg)) bintray.pkg.userOrg = effectiveConfig.bintray.userOrg
         if (isBlank(bintray.pkg.name)) bintray.pkg.name = effectiveConfig.bintray.name
         if (isBlank(bintray.pkg.desc)) bintray.pkg.desc = effectiveConfig.info.description
-        if (isBlank(bintray.pkg.websiteUrl)) bintray.pkg.websiteUrl = effectiveConfig.info.url
+        if (isBlank(bintray.pkg.websiteUrl) && isNotBlank(effectiveConfig.info.url)) bintray.pkg.websiteUrl = effectiveConfig.info.url
         if (isBlank(bintray.pkg.issueTrackerUrl)) bintray.pkg.issueTrackerUrl = effectiveConfig.info.links.issueTracker
         if (isBlank(bintray.pkg.vcsUrl)) bintray.pkg.vcsUrl = effectiveConfig.info.resolveScmLink()
         if (!bintray.pkg.licenses) bintray.pkg.licenses = effectiveConfig.licensing.resolveBintrayLicenseIds().toArray(new String[0])

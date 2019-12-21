@@ -11,6 +11,10 @@ applies:: `<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>`
 
 Configures a project with Kotlin conventions.
 
+This plugin adds the following plugins to the classpath without applying them:
+
+* `<<_org_kordamp_gradle_detekt,org.kordamp.gradle.detekt>>`
+
 [[_org_kordamp_gradle_kotlin_project_tasks]]
 == Tasks
 

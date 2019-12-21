@@ -54,6 +54,8 @@ abstract class AbstractReportingTask extends DefaultTask {
             doPrintMap((Map) value, offset)
         } else if (value instanceof Collection) {
             doPrintCollection(value, offset)
+        } else if (value?.class?.array) {
+            doPrintArray((Object[]) value, offset)
         } else {
             doPrintElement(value, offset)
         }
@@ -71,6 +73,11 @@ abstract class AbstractReportingTask extends DefaultTask {
                     if (!value.isEmpty()) {
                         println(('    ' * offset) + key + ':')
                         doPrintCollection((Collection) value, offset + 1)
+                    }
+                } else if (value?.class?.array) {
+                    if (((Object[]) value).size()) {
+                        println(('    ' * offset) + key + ':')
+                        doPrintArray((Object[]) value, offset + 1)
                     }
                 } else if (isNotNullNorBlank(value)) {
                     doPrintMapEntry(key, value, offset)
@@ -94,8 +101,16 @@ abstract class AbstractReportingTask extends DefaultTask {
     }
 
     protected void doPrintMapEntry(String key, value, int offset) {
-        String result = formatValue(value, isSecret(key), offset)
-        if (isNotBlank(result)) println(('    ' * offset) + key + ': ' + result)
+        if (value instanceof Map) {
+            doPrintMap(key, (Map) value, offset)
+        } else if (value instanceof Collection) {
+            doPrintCollection(key, value, offset)
+        } else if (value?.class?.array) {
+            doPrintArray(key, (Object[]) value, offset)
+        } else {
+            String result = formatValue(unwrapValue(value), isSecret(key), offset)
+            if (isNotBlank(result)) println(('    ' * offset) + key + ': ' + result)
+        }
     }
 
     protected void doPrintCollection(Collection<?> collection, int offset) {
@@ -105,9 +120,35 @@ abstract class AbstractReportingTask extends DefaultTask {
                     if (!value.isEmpty()) {
                         doPrintMap(value, offset)
                     }
-                } else if (value instanceof Collection && !((Collection) value).empty) {
+                } else if (value instanceof Collection) {
                     if (!value.isEmpty()) {
                         doPrintCollection((Collection) value, offset + 1)
+                    }
+                } else if (value?.class?.array) {
+                    if (((Object[]) value).size()) {
+                        doPrintArray((Object[]) value, offset + 1)
+                    }
+                } else if (isNotNullNorBlank(value)) {
+                    doPrintElement(value, offset)
+                }
+            }
+        }
+    }
+
+    protected void doPrintArray(Object[] array, int offset) {
+        if (array != null) {
+            array.each { value ->
+                if (value instanceof Map) {
+                    if (!value.isEmpty()) {
+                        doPrintMap(value, offset)
+                    }
+                } else if (value instanceof Collection) {
+                    if (!value.isEmpty()) {
+                        doPrintCollection((Collection) value, offset + 1)
+                    }
+                } else if (value?.class?.array) {
+                    if (((Object[]) value).size()) {
+                        doPrintArray((Object[]) value, offset + 1)
                     }
                 } else if (isNotNullNorBlank(value)) {
                     doPrintElement(value, offset)
@@ -137,6 +178,13 @@ abstract class AbstractReportingTask extends DefaultTask {
         }
     }
 
+    protected void doPrintArray(String key, Object[] array, int offset) {
+        if (array != null && array.size()) {
+            println(('    ' * offset) + key + ':')
+            doPrintArray(array, offset + 1)
+        }
+    }
+
     protected void doPrintElement(value, int offset) {
         println(('    ' * offset) + formatValue(value, offset))
     }
@@ -146,7 +194,7 @@ abstract class AbstractReportingTask extends DefaultTask {
     }
 
     protected String formatValue(value, int offset) {
-        formatValue(value, false, offset)
+        formatValue(unwrapValue(value), false, offset)
     }
 
     protected String formatValue(value, boolean secret, int offset) {
@@ -202,7 +250,7 @@ abstract class AbstractReportingTask extends DefaultTask {
         if (value instanceof Property) {
             return ((Property) value).getOrNull()
         } else if (value instanceof Provider) {
-            return ((Property) value).getOrNull()
+            return ((Provider) value).getOrNull()
         } else {
             value
         }

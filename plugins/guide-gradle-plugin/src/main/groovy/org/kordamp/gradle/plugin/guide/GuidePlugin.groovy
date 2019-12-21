@@ -165,49 +165,34 @@ class GuidePlugin extends AbstractKordampPlugin {
             void projectsEvaluated(Gradle gradle) {
                 GuideExtension extension = project.extensions.findByType(GuideExtension)
 
-                Task task = project.rootProject.tasks.findByName('aggregateJavadoc')
-                if (task?.enabled) {
-                    guideTask.configure(new Action<Copy>() {
-                        @Override
-                        void execute(Copy t) {
+                guideTask.configure(new Action<Copy>() {
+                    @Override
+                    void execute(Copy t) {
+                        Task task = project.rootProject.tasks.findByName('aggregateJavadoc')
+                        if (task?.enabled) {
                             t.dependsOn task
                             t.from(task.destinationDir) { into extension.javadocApiDir }
                         }
-                    })
-                }
 
-                task = project.rootProject.tasks.findByName('aggregateGroovydoc')
-                if (task?.enabled) {
-                    guideTask.configure(new Action<Copy>() {
-                        @Override
-                        void execute(Copy t) {
+                        task = project.rootProject.tasks.findByName('aggregateGroovydoc')
+                        if (task?.enabled) {
                             t.dependsOn task
                             t.from(task.destinationDir) { into extension.groovydocApiDir }
                         }
-                    })
-                }
 
-                task = project.rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)
-                if (task?.enabled) {
-                    guideTask.configure(new Action<Copy>() {
-                        @Override
-                        void execute(Copy t) {
+                        task = project.rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)
+                        if (task?.enabled) {
                             t.dependsOn task
                             t.from(task.destinationDir) { into extension.sourceHtmlDir }
                         }
-                    })
-                }
 
-                task = project.rootProject.tasks.findByName('aggregateSourceXref')
-                if (task?.enabled) {
-                    guideTask.configure(new Action<Copy>() {
-                        @Override
-                        void execute(Copy t) {
+                        task = project.rootProject.tasks.findByName('aggregateSourceXref')
+                        if (task?.enabled) {
                             t.dependsOn task
                             t.from(task.outputDirectory) { into extension.sourceXrefDir }
                         }
-                    })
-                }
+                    }
+                })
             }
         })
     }

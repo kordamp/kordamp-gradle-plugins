@@ -7,10 +7,13 @@ id:: `org.kordamp.gradle.groovy-project`
 class:: `org.kordamp.gradle.plugin.project.groovy.GroovyProjectPlugin`
     (link:api/org/kordamp/gradle/plugin/project/groovy/GroovyProjectPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/project/groovy/GroovyProjectPlugin.html[source])
-applies:: `<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>`, +
-`<<_org_kordamp_gradle_codenarc,org.kordamp.gradle.codenarc>>`
+applies:: `<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>`
 
 Configures a project with Groovy conventions.
+
+This plugin adds the following plugins to the classpath without applying them:
+
+* `<<_org_kordamp_gradle_codenarc,org.kordamp.gradle.codenarc>>`
 
 [[_org_kordamp_gradle_groovy_project_tasks]]
 == Tasks

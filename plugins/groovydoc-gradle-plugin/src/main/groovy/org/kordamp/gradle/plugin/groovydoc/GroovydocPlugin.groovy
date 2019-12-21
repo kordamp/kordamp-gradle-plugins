@@ -85,12 +85,16 @@ class GroovydocPlugin extends AbstractKordampPlugin {
     }
 
     private void doConfigureRootProject(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        setEnabled(effectiveConfig.docs.groovydoc.enabled)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        setEnabled(config.docs.groovydoc.aggregate.enabled)
 
         List<Groovydoc> docTasks = []
-        project.tasks.withType(Groovydoc) { Groovydoc t -> if (t.name != AGGREGATE_GROOVYDOC_TASK_NAME && t.enabled) docTasks << t }
+        project.tasks.withType(Groovydoc) { Groovydoc t ->
+            if (project in config.docs.groovydoc.aggregate.excludedProjects()) return
+            if (t.name != AGGREGATE_GROOVYDOC_TASK_NAME && t.enabled) docTasks << t
+        }
         project.childProjects.values().each { Project p ->
+            if (p in config.docs.groovydoc.aggregate.excludedProjects()) return
             p.tasks.withType(Groovydoc) { Groovydoc t -> if (t.enabled) docTasks << t }
         }
         docTasks = docTasks.unique()
@@ -100,8 +104,8 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                 new Action<Groovydoc>() {
                     @Override
                     void execute(Groovydoc t) {
-                        t.enabled = effectiveConfig.docs.groovydoc.enabled
-                        t.dependsOn docTasks
+                        t.enabled = config.docs.groovydoc.aggregate.enabled
+                        if (!config.docs.groovydoc.aggregate.fast) t.dependsOn docTasks
                         t.source docTasks.source
                         t.classpath = project.files(docTasks.classpath)
                         t.groovyClasspath = project.files(docTasks.groovyClasspath)
@@ -112,9 +116,9 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                 new Action<Jar>() {
                     @Override
                     void execute(Jar t) {
-                        t.enabled = effectiveConfig.docs.groovydoc.enabled
+                        t.enabled = config.docs.groovydoc.aggregate.enabled
                         t.from aggregateGroovydoc.get().destinationDir
-                        t.archiveClassifier.set effectiveConfig.docs.groovydoc.replaceJavadoc ? 'javadoc' : 'groovydoc'
+                        t.archiveClassifier.set config.docs.groovydoc.aggregate.replaceJavadoc ? 'javadoc' : 'groovydoc'
                         t.onlyIf { aggregateGroovydoc.get().didWork }
                     }
                 })
@@ -136,8 +140,8 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                 JavadocPlugin.applyIfMissing(project)
 
                 project.afterEvaluate {
-                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-                    setEnabled(effectiveConfig.docs.groovydoc.enabled)
+                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                    setEnabled(config.docs.groovydoc.enabled)
 
                     TaskProvider<Groovydoc> groovydoc = createGroovydocTask(project)
                     TaskProvider<Jar> groovydocJar = createGroovydocJarTask(project, groovydoc)
@@ -153,46 +157,47 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                 @Override
                 @CompileDynamic
                 void execute(Groovydoc t) {
-                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
                     t.dependsOn project.tasks.named('classes')
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Generates Groovydoc API documentation'
                     t.source project.sourceSets.main.allSource
                     t.destinationDir = project.file("${project.buildDir}/docs/groovydoc")
                     t.classpath = project.tasks.named('javadoc', Javadoc).get().classpath
-                    t.enabled = effectiveConfig.docs.groovydoc.enabled
-                    effectiveConfig.docs.groovydoc.applyTo(t)
-                    t.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
+                    t.enabled = config.docs.groovydoc.enabled
+                    config.docs.groovydoc.applyTo(t)
+                    t.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
                 }
             })
     }
 
     private TaskProvider<Jar> createGroovydocJarTask(Project project, TaskProvider<Groovydoc> groovydoc) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
         TaskProvider<Jar> groovydocJar = project.tasks.register(GROOVYDOC_JAR_TASK_NAME, Jar,
             new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
-                    t.enabled = effectiveConfig.docs.groovydoc.enabled
+                    t.enabled = config.docs.groovydoc.enabled
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'An archive of the Groovydoc API docs'
-                    t.archiveClassifier.set(effectiveConfig.docs.groovydoc.replaceJavadoc ? 'javadoc' : 'groovydoc')
+                    t.archiveClassifier.set(config.docs.groovydoc.replaceJavadoc ? 'javadoc' : 'groovydoc')
                     t.dependsOn groovydoc
                     t.from groovydoc.get().destinationDir
+                    t.onlyIf { groovydoc.get().didWork }
                 }
             })
 
         if (project.pluginManager.hasPlugin('maven-publish')) {
             PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
             MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (effectiveConfig.docs.groovydoc.replaceJavadoc) {
+            if (config.docs.groovydoc.replaceJavadoc) {
                 MavenArtifact javadocJar = mainPublication.artifacts.find { it.classifier == 'javadoc' }
                 mainPublication.artifacts.remove(javadocJar)
             }
             mainPublication.artifact(groovydocJar.get())
         }
 
-        if (effectiveConfig.docs.groovydoc.replaceJavadoc) {
+        if (config.docs.groovydoc.replaceJavadoc) {
             project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
             project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
         }
@@ -206,13 +211,13 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                 @Override
                 @CompileDynamic
                 void execute(Groovydoc t) {
-                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(t.project)
+                    ProjectConfigurationExtension config = resolveEffectiveConfig(t.project)
                     t.enabled = false
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Aggregates Groovydoc API docs for all projects.'
                     t.destinationDir = project.file("${project.buildDir}/docs/aggregate-groovydoc")
-                    effectiveConfig.docs.groovydoc.applyTo(t)
-                    t.footer = "Copyright &copy; ${effectiveConfig.info.copyrightYear} ${effectiveConfig.info.getAuthors().join(', ')}. All rights reserved."
+                    config.docs.groovydoc.applyTo(t)
+                    t.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
                 }
             })
 

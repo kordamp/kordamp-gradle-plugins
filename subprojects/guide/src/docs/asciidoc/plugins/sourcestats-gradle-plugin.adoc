@@ -56,6 +56,7 @@ config {
 == DSL
 
 [source,groovy]
+[subs="+macros"]
 ----
 config {
     stats {
@@ -63,6 +64,10 @@ config {
         counters
         formats
         paths
+        <<_sourcestats_aggregate,aggregate>> {
+            enabled
+            excludedProjects
+        }
     }
 }
 ----
@@ -77,6 +82,18 @@ config {
 |===
 
 This block is optional.
+
+[[_sourcestats_aggregate]]
+*aggregate*
+
+[options="header", cols="5*"]
+|===
+| Name             | Type         | Required | Default Value | Description
+| enabled          | boolean      | no       | true          | Enables or disables aggregation
+| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
+|===
+
+This block should be configured on the root project.
 
 [[_org_kordamp_gradle_sourcestats_tasks]]
 == Tasks

@@ -30,6 +30,7 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
+import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
@@ -71,6 +72,7 @@ class DetektPlugin extends AbstractKordampPlugin {
         }
         setVisited(project, true)
 
+        BasePlugin.applyIfMissing(project)
         project.pluginManager.apply(io.gitlab.arturbosch.detekt.DetektPlugin)
 
         project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {
@@ -91,15 +93,15 @@ class DetektPlugin extends AbstractKordampPlugin {
                 }
 
                 project.afterEvaluate {
-                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-                    setEnabled(effectiveConfig.quality.detekt.enabled)
+                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                    setEnabled(config.quality.detekt.enabled)
 
                     DetektExtension detektExt = project.extensions.findByType(DetektExtension)
-                    detektExt.toolVersion = effectiveConfig.quality.detekt.toolVersion
+                    detektExt.toolVersion = config.quality.detekt.toolVersion
 
                     project.tasks.withType(Detekt) { Detekt task ->
                         task.setGroup('Quality')
-                        DetektPlugin.applyTo(effectiveConfig, task)
+                        DetektPlugin.applyTo(config, task)
                     }
 
                     if (allDetektTask) {
@@ -141,31 +143,34 @@ class DetektPlugin extends AbstractKordampPlugin {
     @CompileDynamic
     private void configureAggregateDetektTask(Project project,
                                               TaskProvider<Detekt> aggregateDetektTask) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.quality.detekt.enabled) {
-            return
-        }
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+
+        DetektExtension detektExt = project.extensions.findByType(DetektExtension)
+        detektExt.toolVersion = config.quality.detekt.toolVersion
 
         Set<Detekt> tt = new LinkedHashSet<>()
         project.tasks.withType(Detekt) { Detekt task ->
+            if (project in config.quality.detekt.aggregate.excludedProjects()) return
             if (task.name != ALL_DETEKT_TASK_NAME &&
-                task.name != AGGREGATE_DETEKT_TASK_NAME) tt << task
+                task.name != AGGREGATE_DETEKT_TASK_NAME &&
+                task.enabled) tt << task
         }
 
         project.childProjects.values().each { p ->
-            org.kordamp.gradle.plugin.base.plugins.Detekt e = resolveEffectiveConfig(p).quality.detekt
-            if (e.enabled) {
-                p.tasks.withType(Detekt) { Detekt task ->
-                    if (task.name != ALL_DETEKT_TASK_NAME) tt << task
-                }
+            if (p in config.quality.detekt.aggregate.excludedProjects()) return
+            p.tasks.withType(Detekt) { Detekt task ->
+                if (task.name != ALL_DETEKT_TASK_NAME &&
+                    task.enabled) tt << task
             }
         }
 
         aggregateDetektTask.configure(new Action<Detekt>() {
             @Override
             void execute(Detekt t) {
-                applyTo(effectiveConfig, t)
-                t.enabled &= tt.size() > 0
+                applyTo(config, t)
+                t.enabled = config.quality.detekt.aggregate.enabled &&
+                    config.quality.detekt.configFile.exists() &&
+                    tt.size() > 0
                 t.ignoreFailures = false
                 t.source(*((tt*.source).unique()))
                 t.classpath.from project.files(*((tt*.classpath).unique()))
@@ -177,21 +182,19 @@ class DetektPlugin extends AbstractKordampPlugin {
 
     private void configureAllDetektTask(Project project,
                                         TaskProvider<Detekt> allDetektTasks) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.quality.detekt.enabled) {
-            return
-        }
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         Set<Detekt> tt = new LinkedHashSet<>()
         project.tasks.withType(Detekt) { Detekt task ->
-            if (task.name != ALL_DETEKT_TASK_NAME) tt << task
+            if (task.name != ALL_DETEKT_TASK_NAME &&
+                task.enabled) tt << task
         }
 
         allDetektTasks.configure(new Action<Detekt>() {
             @Override
             @CompileDynamic
             void execute(Detekt t) {
-                applyTo(effectiveConfig, t)
+                applyTo(config, t)
                 t.enabled &= tt.size() > 0
                 t.source(*((tt*.source).unique()))
                 t.classpath.from project.files(*((tt*.classpath).unique()))

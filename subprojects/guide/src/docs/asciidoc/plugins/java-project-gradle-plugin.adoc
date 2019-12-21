@@ -7,11 +7,14 @@ id:: `org.kordamp.gradle.java-project`
 class:: `org.kordamp.gradle.plugin.project.java.JavaProjectPlugin`
     (link:api/org/kordamp/gradle/plugin/project/java/JavaProjectPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/project/java/JavaProjectPlugin.html[source])
-applies:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`, +
-`<<_org_kordamp_gradle_checkstyle,org.kordamp.gradle.checkstyle>>`, +
-`<<_org_kordamp_gradle_pmd,org.kordamp.gradle.pmd>>`
+applies:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
 
 Configures a project with Java conventions.
+
+This plugin adds the following plugins to the classpath without applying them:
+
+ * `<<_org_kordamp_gradle_checkstyle,org.kordamp.gradle.checkstyle>>`
+ * `<<_org_kordamp_gradle_pmd,org.kordamp.gradle.pmd>>`
 
 [[_org_kordamp_gradle_java_project_tasks]]
 == Tasks

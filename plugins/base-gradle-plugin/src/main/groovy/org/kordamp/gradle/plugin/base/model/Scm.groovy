@@ -32,6 +32,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
 @Canonical
 @ToString(includeNames = true)
 class Scm {
+    Boolean enabled
     String url
     String tag
     String connection
@@ -44,6 +45,7 @@ class Scm {
 
     Map<String, Object> toMap() {
         new LinkedHashMap<String, Object>([
+            enabled            : getEnabled(),
             url                : url,
             tag                : tag,
             connection         : connection,
@@ -51,7 +53,12 @@ class Scm {
         ])
     }
 
+    boolean getEnabled() {
+        this.@enabled == null || this.@enabled
+    }
+
     void copyInto(Scm copy) {
+        copy.enabled = this.@enabled
         copy.url = url
         copy.tag = tag
         copy.connection = connection
@@ -59,6 +66,7 @@ class Scm {
     }
 
     static void merge(Scm o1, Scm o2) {
+        o1.enabled = o1.@enabled != null ? o1.getEnabled() : o2.getEnabled()
         o1.url = o1.url ?: o2.url
         o1.tag = o1.tag ?: o2.tag
         o1.connection = o1.connection ?: o2.connection
@@ -68,7 +76,7 @@ class Scm {
     List<String> validate(Project project) {
         List<String> errors = []
 
-        if (isBlank(url)) {
+        if (getEnabled() && isBlank(url)) {
             errors << "[${project.name}] Project links:url is blank".toString()
         }
 
@@ -76,6 +84,6 @@ class Scm {
     }
 
     boolean isEmpty() {
-        isBlank(url)
+        !getEnabled() && isBlank(url)
     }
 }

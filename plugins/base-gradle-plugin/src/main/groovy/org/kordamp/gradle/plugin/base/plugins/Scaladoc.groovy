@@ -34,19 +34,22 @@ import org.kordamp.gradle.plugin.base.model.impl.ScaladocOptions
 @CompileStatic
 @Canonical
 class Scaladoc extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.scaladoc'
+
     String title
     boolean replaceJavadoc = false
     Set<String> excludes = new LinkedHashSet<>()
     Set<String> includes = new LinkedHashSet<>()
     final ScaladocOptions options = new ScaladocOptions()
-
-    private final Set<Project> excludedProjects = new LinkedHashSet<>()
+    final Aggregate aggregate
 
     private boolean replaceJavadocSet
 
     Scaladoc(ProjectConfigurationExtension config, Project project) {
         super(config, project)
+        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
 
+        aggregate           = new Aggregate(config, project)
         title               = "${project.name} ${project.version}"
         options.windowTitle = "${project.name} ${project.version}"
         options.docTitle    = "${project.name} ${project.version}"
@@ -62,29 +65,41 @@ class Scaladoc extends AbstractFeature {
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
-        if (enabled && isRoot()) {
-            map.excludedProjects = excludedProjects
-        }
+        map.title = title
+        map.replaceJavadoc = replaceJavadoc
+        map.excludes = excludes
+        map.includes = includes
+        map.options = new LinkedHashMap<String, Object>([
+            windowTitle         : options.windowTitle,
+            docTitle            : options.docTitle,
+            header              : options.header,
+            footer              : options.footer,
+            bottom              : options.bottom,
+            top                 : options.top,
+            deprecation         : options.deprecation,
+            unchecked           : options.unchecked,
+            additionalParameters: options.additionalParameters
+        ])
 
-        if (enabled) {
-            map.title = title
-            map.replaceJavadoc = replaceJavadoc
-            map.excludes = excludes
-            map.includes = includes
-            map.options = new LinkedHashMap<String, Object>([
-                windowTitle         : options.windowTitle,
-                docTitle            : options.docTitle,
-                header              : options.header,
-                footer              : options.footer,
-                bottom              : options.bottom,
-                top                 : options.top,
-                deprecation         : options.deprecation,
-                unchecked           : options.unchecked,
-                additionalParameters: options.additionalParameters
-            ])
+        if (isRoot()) {
+            map.putAll(aggregate.toMap())
         }
 
         new LinkedHashMap<>('scaladoc': map)
+    }
+
+    void normalize() {
+        if (!enabledSet) {
+            if (isRoot()) {
+                if (project.childProjects.isEmpty()) {
+                    enabled = project.pluginManager.hasPlugin('scala') && project.pluginManager.hasPlugin(PLUGIN_ID)
+                } else {
+                    enabled = project.childProjects.values().any { p -> p.pluginManager.hasPlugin('scala') && p.pluginManager.hasPlugin(PLUGIN_ID)}
+                }
+            } else {
+                enabled = project.pluginManager.hasPlugin('scala') && project.pluginManager.hasPlugin(PLUGIN_ID)
+            }
+        }
     }
 
     void setReplaceJavadoc(boolean replaceJavadoc) {
@@ -112,6 +127,14 @@ class Scaladoc extends AbstractFeature {
         ConfigureUtil.configure(action, options)
     }
 
+    void aggregate(Action<? super Aggregate> action) {
+        action.execute(aggregate)
+    }
+
+    void aggregate(@DelegatesTo(Aggregate) Closure action) {
+        ConfigureUtil.configure(action, aggregate)
+    }
+
     void copyInto(Scaladoc copy) {
         super.copyInto(copy)
         copy.title = title
@@ -119,8 +142,8 @@ class Scaladoc extends AbstractFeature {
         copy.@replaceJavadocSet = replaceJavadocSet
         copy.excludes.addAll(excludes)
         copy.includes.addAll(includes)
-        copy.excludedProjects.addAll(excludedProjects)
         options.copyInto(copy.options)
+        aggregate.copyInto(copy.aggregate)
     }
 
     static void merge(Scaladoc o1, Scaladoc o2) {
@@ -130,10 +153,7 @@ class Scaladoc extends AbstractFeature {
         CollectionUtils.merge(o1.excludes, o2?.excludes)
         CollectionUtils.merge(o1.includes, o2?.includes)
         ScaladocOptions.merge(o1.options, o2.options)
-    }
-
-    Set<Project> excludedProjects() {
-        excludedProjects
+        o1.aggregate.merge(o2.aggregate)
     }
 
     void applyTo(ScalaDoc scaladoc) {
@@ -141,5 +161,69 @@ class Scaladoc extends AbstractFeature {
         scaladoc.getIncludes().addAll(includes)
         scaladoc.getExcludes().addAll(excludes)
         options.applyTo(scaladoc)
+    }
+
+    @CompileStatic
+    static class Aggregate {
+        Boolean enabled
+        Boolean fast
+        Boolean replaceJavadoc
+        private final Set<Project> excludedProjects = new LinkedHashSet<>()
+
+        private final ProjectConfigurationExtension config
+        private final Project project
+
+        Aggregate(ProjectConfigurationExtension config, Project project) {
+            this.config = config
+            this.project = project
+        }
+
+        Map<String, Object> toMap() {
+            Map<String, Object> map = new LinkedHashMap<String, Object>()
+
+            map.enabled = getEnabled()
+            map.fast = getFast()
+            map.replaceJavadoc = getReplaceJavadoc()
+            map.excludedProjects = excludedProjects
+
+            new LinkedHashMap<>('aggregate': map)
+        }
+
+        boolean getEnabled() {
+            this.@enabled == null || this.@enabled
+        }
+
+        boolean getFast() {
+            this.@fast == null || this.@fast
+        }
+
+        boolean getReplaceJavadoc() {
+            this.@replaceJavadoc == null || this.@replaceJavadoc
+        }
+
+        void copyInto(Aggregate copy) {
+            copy.@enabled = this.@enabled
+            copy.@fast = this.@fast
+            copy.@replaceJavadoc = this.@replaceJavadoc
+            copy.excludedProjects.addAll(excludedProjects)
+        }
+
+        Aggregate copyOf() {
+            Aggregate copy = new Aggregate(config, project)
+            copyInto(copy)
+            copy
+        }
+
+        Aggregate merge(Aggregate other) {
+            Aggregate copy = copyOf()
+            copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
+            copy.fast = copy.@fast != null ? copy.getFast() : other.getFast()
+            copy.replaceJavadoc = copy.@replaceJavadoc != null ? copy.getReplaceJavadoc() : other.getReplaceJavadoc()
+            copy
+        }
+
+        Set<Project> excludedProjects() {
+            excludedProjects
+        }
     }
 }

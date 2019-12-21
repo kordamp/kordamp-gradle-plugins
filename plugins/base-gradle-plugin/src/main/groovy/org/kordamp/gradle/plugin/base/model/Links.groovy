@@ -32,6 +32,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
 @Canonical
 @ToString(includeNames = true)
 class Links {
+    Boolean enabled
     String website
     String issueTracker
     String scm
@@ -43,19 +44,26 @@ class Links {
 
     Map<String, Object> toMap() {
         new LinkedHashMap<String, Object>([
+            enabled     : getEnabled(),
             website     : website,
             issueTracker: issueTracker,
             scm         : scm
         ])
     }
 
+    boolean getEnabled() {
+        this.@enabled == null || this.@enabled
+    }
+
     void copyInto(Links copy) {
+        copy.enabled = this.@enabled
         copy.website = website
         copy.issueTracker = issueTracker
         copy.scm = scm
     }
 
     static void merge(Links o1, Links o2) {
+        o1.enabled = o1.@enabled != null ? o1.getEnabled() : o2.getEnabled()
         o1.website = o1.website ?: o2.website
         o1.issueTracker = o1.issueTracker ?: o2.issueTracker
         o1.scm = o1.scm ?: o2.scm
@@ -64,14 +72,14 @@ class Links {
     List<String> validate(ProjectConfigurationExtension extension) {
         List<String> errors = []
 
-        if (isBlank(website) && isBlank(extension.info.organization.url) &&
+        if (getEnabled() && isBlank(website) && isBlank(extension.info.organization.url) &&
             (extension.publishing.enabled || extension.bintray.enabled)) {
             errors << "[${extension.project.name}] Project links.website is blank".toString()
         }
-        if (isBlank(issueTracker) && extension.bintray.enabled) {
+        if (getEnabled() && isBlank(issueTracker) && extension.bintray.enabled) {
             errors << "[${extension.project.name}] Project links.issueTracker is blank".toString()
         }
-        if (isBlank(scm) && isBlank(extension.info.scm.url) &&
+        if (getEnabled() && isBlank(scm) && isBlank(extension.info.scm.url) &&
             (extension.publishing.enabled || extension.bintray.enabled)) {
             errors << "[${extension.project.name}] Project links.scm is blank".toString()
         }

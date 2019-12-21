@@ -1,0 +1,116 @@
+
+[[_org_kordamp_gradle_spotbugs]]
+= SpotBugs
+
+[horizontal]
+id:: `org.kordamp.gradle.spotbugs`
+class:: `org.kordamp.gradle.plugin.spotbugs.SpotbugsPlugin`
+    (link:api/org/kordamp/gradle/plugin/spotbugs/SpotbugsPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/spotbugs/SpotbugsPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
+`link:https://spotbugs.github.io/[com.github.spotbugs]`
+
+Configures SpotBugs on Java projects and aggregate reports on the root project.
+
+[[_org_kordamp_gradle_spotbugs_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    quality {
+        spotbugs {
+            enabled
+            includeFilterFile
+            excludeFilterFile
+            excludeBugsFilterFile
+            effort
+            reportLevel
+            report
+            visitors
+            omitVisitors
+            extraArgs
+            jvmArgs
+            ignoreFailures
+            jvmArgs
+            showProgress
+            <<_spotbugs_aggregate,aggregate>> {
+                enabled
+                excludedProjects
+            }
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name                  | Type         | Required | Default Value | Description
+| enabled               | boolean      | no       | true          | Disables `org.kordamp.gradle.spotbugs` plugin if `false`
+| includeFilterFile     | File         | no       |               | Either `config/spotbugs/${project.name}-includeFilter.xml` or `config/spotbugs/includeFilter.xml`
+| excludeFilterFile     | File         | no       |               | Either `config/spotbugs/${project.name}-excludeFilter.xml` or `config/spotbugs/excludeFilter.xml`
+| excludeBugsFilterFile | File         | no       |               | Either `config/spotbugs/${project.name}-excludeBugsFilterFile.xml` or `config/spotbugs/excludeBugsFilterFile.xml`
+| effort                | String       | no       | max           |
+| reportLevel           | String       | no       | high          |
+| report                | String       | no       | html          | Either `html` or `xml`
+| visitors              | List<String> | no       | []            |
+| omitVisitors          | List<String> | no       | []            |
+| extraArgs             | List<String> | no       | []            |
+| jvmArgs               | List<String> | no       | []            |
+| ignoreFailures        | boolean      | no       | true          |
+| showProgress          | boolean      | no       | true          |
+| toolVersion           | String       | no       | 3.1.12        |
+|===
+
+.Methods
+
+void exclude(String):: Adds a source exclusion rule (Ant pattern).
+void include(String):: Adds a source inclusion rule (Ant pattern).
+
+[[_spotbugs_aggregate]]
+*aggregate*
+
+[options="header", cols="5*"]
+|===
+| Name             | Type         | Required | Default Value | Description
+| enabled          | boolean      | no       | true          | Enables or disables aggregation
+| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
+|===
+
+This block should be configured on the root project.
+
+[[_org_kordamp_gradle_spotbugs_tasks]]
+== Tasks
+
+[[_task_aggregate_spotbugs]]
+=== AggregateSpotbugs
+
+Aggregates all spotbugs reports for all projects. +
+Consumes settings from `config.quality.<<_org_kordamp_gradle_spotbugs_dsl,spotbugs>>`. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateSpotbugs
+Type:: `com.github.spotbugs.SpotBugsTask`
+
+.Properties
+[horizontal]
+reports.html.destination:: `${project.buildDir}/reports/spotbugs/aggregate.html`
+reports.xml.destination:: `${project.buildDir}/reports/spotbugs/aggregate.xml`
+
+[[_task_all_spotbugs]]
+=== AllSpotbugs
+
+Aggregates all spotbugs reports for a single project. +
+Consumes settings from `config.quality.<<_org_kordamp_gradle_spotbugs_dsl,spotbugs>>`.
+
+[horizontal]
+Name:: allSpotbugs
+Type:: `com.github.spotbugs.SpotBugsTask`
+
+.Properties
+[horizontal]
+reports.html.destination:: `${project.buildDir}/reports/spotbugs/${project.name}.html`
+reports.xml.destination:: `${project.buildDir}/reports/spotbugs/${project.name}.xml`
+

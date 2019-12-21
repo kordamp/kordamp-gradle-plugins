@@ -29,8 +29,8 @@ import org.gradle.api.plugins.quality.CodeNarcExtension
 import org.gradle.api.plugins.quality.CodeNarcPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
+import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.plugins.Codenarc
 import org.kordamp.gradle.plugin.codenarc.tasks.InitCodenarcTask
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
@@ -72,6 +72,7 @@ class CodenarcPlugin extends AbstractKordampPlugin {
         }
         setVisited(project, true)
 
+        BasePlugin.applyIfMissing(project)
         project.pluginManager.apply(CodeNarcPlugin)
 
         project.tasks.register(INIT_CODENARC_TASK_NAME, InitCodenarcTask,
@@ -101,15 +102,15 @@ class CodenarcPlugin extends AbstractKordampPlugin {
                 }
 
                 project.afterEvaluate {
-                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-                    setEnabled(effectiveConfig.quality.codenarc.enabled)
+                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                    setEnabled(config.quality.codenarc.enabled)
 
                     CodeNarcExtension codenarcExt = project.extensions.findByType(CodeNarcExtension)
-                    codenarcExt.toolVersion = effectiveConfig.quality.codenarc.toolVersion
+                    codenarcExt.toolVersion = config.quality.codenarc.toolVersion
 
                     project.tasks.withType(CodeNarc) { CodeNarc task ->
                         task.setGroup('Quality')
-                        effectiveConfig.quality.codenarc.applyTo(task)
+                        config.quality.codenarc.applyTo(task)
                     }
 
                     if (allCodenarcTask) {
@@ -143,31 +144,32 @@ class CodenarcPlugin extends AbstractKordampPlugin {
     @CompileDynamic
     private void configureAggregateCodenarcTask(Project project,
                                                 TaskProvider<CodeNarc> aggregateCodenarcTask) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.quality.codenarc.enabled) {
-            return
-        }
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+
+        CodeNarcExtension codenarcExt = project.extensions.findByType(CodeNarcExtension)
+        codenarcExt.toolVersion = config.quality.codenarc.toolVersion
 
         Set<CodeNarc> tt = new LinkedHashSet<>()
         project.tasks.withType(CodeNarc) { CodeNarc task ->
+            if (project in config.quality.codenarc.aggregate.excludedProjects()) return
             if (task.name != ALL_CODENARC_TASK_NAME &&
-                task.name != AGGREGATE_CODENARC_TASK_NAME) tt << task
+                task.name != AGGREGATE_CODENARC_TASK_NAME &&
+                task.enabled) tt << task
         }
 
         project.childProjects.values().each { p ->
-            Codenarc e = resolveEffectiveConfig(p).quality.codenarc
-            if (e.enabled) {
-                p.tasks.withType(CodeNarc) { CodeNarc task ->
-                    if (task.name != ALL_CODENARC_TASK_NAME) tt << task
-                }
+            if (p in config.quality.codenarc.aggregate.excludedProjects()) return
+            p.tasks.withType(CodeNarc) { CodeNarc task ->
+                if (task.name != ALL_CODENARC_TASK_NAME &&
+                    task.enabled) tt << task
             }
         }
 
         aggregateCodenarcTask.configure(new Action<CodeNarc>() {
             @Override
             void execute(CodeNarc t) {
-                effectiveConfig.quality.codenarc.applyTo(t)
-                t.enabled &= tt.size() > 0
+                config.quality.codenarc.applyTo(t)
+                t.enabled = config.quality.codenarc.aggregate.enabled && config.quality.codenarc.configFile.exists() && tt.size() > 0
                 t.ignoreFailures = false
                 t.source(*((tt*.source).unique()))
                 t.compilationClasspath = project.files(*((tt*.compilationClasspath).unique()))
@@ -178,21 +180,19 @@ class CodenarcPlugin extends AbstractKordampPlugin {
 
     private void configureAllCodenarcTask(Project project,
                                           TaskProvider<CodeNarc> allCodenarcTasks) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.quality.codenarc.enabled) {
-            return
-        }
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         Set<CodeNarc> tt = new LinkedHashSet<>()
         project.tasks.withType(CodeNarc) { CodeNarc task ->
-            if (task.name != ALL_CODENARC_TASK_NAME) tt << task
+            if (task.name != ALL_CODENARC_TASK_NAME &&
+                task.enabled) tt << task
         }
 
         allCodenarcTasks.configure(new Action<CodeNarc>() {
             @Override
             @CompileDynamic
             void execute(CodeNarc t) {
-                effectiveConfig.quality.codenarc.applyTo(t)
+                config.quality.codenarc.applyTo(t)
                 t.enabled &= tt.size() > 0
                 t.source(*((tt*.source).unique()))
                 t.compilationClasspath = project.files(*((tt*.compilationClasspath).unique()))

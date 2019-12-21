@@ -28,6 +28,7 @@ import org.gradle.api.plugins.quality.Checkstyle
 import org.gradle.api.plugins.quality.CheckstyleExtension
 import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
+import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.checkstyle.tasks.InitCheckstyleTask
 
@@ -70,6 +71,7 @@ class CheckstylePlugin extends AbstractKordampPlugin {
         }
         setVisited(project, true)
 
+        BasePlugin.applyIfMissing(project)
         project.pluginManager.apply(org.gradle.api.plugins.quality.CheckstylePlugin)
 
         project.tasks.register(INIT_CHECKSTYLE_TASK_NAME, InitCheckstyleTask,
@@ -98,15 +100,15 @@ class CheckstylePlugin extends AbstractKordampPlugin {
                 }
 
                 project.afterEvaluate {
-                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-                    setEnabled(effectiveConfig.quality.checkstyle.enabled)
+                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                    setEnabled(config.quality.checkstyle.enabled)
 
                     CheckstyleExtension checkstyleExt = project.extensions.findByType(CheckstyleExtension)
-                    checkstyleExt.toolVersion = effectiveConfig.quality.checkstyle.toolVersion
+                    checkstyleExt.toolVersion = config.quality.checkstyle.toolVersion
 
                     project.tasks.withType(Checkstyle) { Checkstyle task ->
                         task.setGroup('Quality')
-                        effectiveConfig.quality.checkstyle.applyTo(task)
+                        config.quality.checkstyle.applyTo(task)
                     }
 
                     if (allCheckstyleTask) {
@@ -140,31 +142,33 @@ class CheckstylePlugin extends AbstractKordampPlugin {
     @CompileDynamic
     private void configureAggregateCheckstyleTask(Project project,
                                                   TaskProvider<Checkstyle> aggregateCheckstyleTask) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.quality.checkstyle.enabled) {
-            return
-        }
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+
+        CheckstyleExtension checkstyleExt = project.extensions.findByType(CheckstyleExtension)
+        checkstyleExt.toolVersion = config.quality.checkstyle.toolVersion
 
         Set<Checkstyle> tt = new LinkedHashSet<>()
         project.tasks.withType(Checkstyle) { Checkstyle task ->
+            if (project in config.quality.checkstyle.aggregate.excludedProjects()) return
             if (task.name != ALL_CHECKSTYLE_TASK_NAME &&
-                task.name != AGGREGATE_CHECKSTYLE_TASK_NAME) tt << task
+                task.name != AGGREGATE_CHECKSTYLE_TASK_NAME &&
+                task.enabled)
+                tt << task
         }
 
         project.childProjects.values().each { p ->
-            org.kordamp.gradle.plugin.base.plugins.Checkstyle e = resolveEffectiveConfig(p).quality.checkstyle
-            if (e.enabled) {
-                p.tasks.withType(Checkstyle) { Checkstyle task ->
-                    if (task.name != ALL_CHECKSTYLE_TASK_NAME) tt << task
-                }
+            if (p in config.quality.checkstyle.aggregate.excludedProjects()) return
+            p.tasks.withType(Checkstyle) { Checkstyle task ->
+                if (task.name != ALL_CHECKSTYLE_TASK_NAME &&
+                    task.enabled) tt << task
             }
         }
 
         aggregateCheckstyleTask.configure(new Action<Checkstyle>() {
             @Override
             void execute(Checkstyle t) {
-                effectiveConfig.quality.checkstyle.applyTo(t)
-                t.enabled &= tt.size() > 0
+                config.quality.checkstyle.applyTo(t)
+                t.enabled = config.quality.checkstyle.aggregate.enabled && config.quality.checkstyle.configFile.exists() && tt.size() > 0
                 t.ignoreFailures = false
                 t.source(*((tt*.source).unique()))
                 t.classpath = project.files(*((tt*.classpath).unique()))
@@ -175,21 +179,19 @@ class CheckstylePlugin extends AbstractKordampPlugin {
 
     private void configureAllCheckstyleTask(Project project,
                                             TaskProvider<Checkstyle> allCheckstyleTasks) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.quality.checkstyle.enabled) {
-            return
-        }
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         Set<Checkstyle> tt = new LinkedHashSet<>()
         project.tasks.withType(Checkstyle) { Checkstyle task ->
-            if (task.name != ALL_CHECKSTYLE_TASK_NAME) tt << task
+            if (task.name != ALL_CHECKSTYLE_TASK_NAME &&
+                task.enabled) tt << task
         }
 
         allCheckstyleTasks.configure(new Action<Checkstyle>() {
             @Override
             @CompileDynamic
             void execute(Checkstyle t) {
-                effectiveConfig.quality.checkstyle.applyTo(t)
+                config.quality.checkstyle.applyTo(t)
                 t.enabled &= tt.size() > 0
                 t.source(*((tt*.source).unique()))
                 t.classpath = project.files(*((tt*.classpath).unique()))

@@ -83,13 +83,16 @@ class ScaladocPlugin extends AbstractKordampPlugin {
     }
 
     private void doConfigureRootProject(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        setEnabled(effectiveConfig.docs.scaladoc.enabled)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        setEnabled(config.docs.scaladoc.aggregate.enabled)
 
         List<ScalaDoc> docTasks = []
-        project.tasks.withType(ScalaDoc) { ScalaDoc t -> if (t.name != AGGREGATE_SCALADOC_TASK_NAME && t.enabled) docTasks << t }
+        project.tasks.withType(ScalaDoc) { ScalaDoc t ->
+            if (project in config.docs.scaladoc.aggregate.excludedProjects()) return
+            if (t.name != AGGREGATE_SCALADOC_TASK_NAME && t.enabled) docTasks << t
+        }
         project.childProjects.values().each { Project p ->
-            if (p in effectiveConfig.docs.scaladoc.excludedProjects()) return
+            if (p in config.docs.scaladoc.aggregate.excludedProjects()) return
             p.tasks.withType(ScalaDoc) { ScalaDoc t -> if (t.enabled) docTasks << t }
         }
         docTasks = docTasks.unique()
@@ -99,8 +102,9 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                 new Action<ScalaDoc>() {
                     @Override
                     void execute(ScalaDoc t) {
-                        t.enabled = effectiveConfig.docs.scaladoc.enabled
+                        t.enabled = config.docs.scaladoc.aggregate.enabled
                         t.dependsOn docTasks
+                        if (!config.docs.scaladoc.aggregate.fast) t.dependsOn docTasks
                         t.source docTasks.source
                         t.classpath = project.files(docTasks.classpath)
                     }
@@ -110,9 +114,9 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                 new Action<Jar>() {
                     @Override
                     void execute(Jar t) {
-                        t.enabled = effectiveConfig.docs.scaladoc.enabled
+                        t.enabled = config.docs.scaladoc.aggregate.enabled
                         t.from aggregateScaladoc.get().destinationDir
-                        t.archiveClassifier.set effectiveConfig.docs.scaladoc.replaceJavadoc ? 'javadoc' : 'scaladoc'
+                        t.archiveClassifier.set config.docs.scaladoc.aggregate.replaceJavadoc ? 'javadoc' : 'scaladoc'
                         t.onlyIf { aggregateScaladoc.get().didWork }
                     }
                 })
@@ -129,8 +133,8 @@ class ScaladocPlugin extends AbstractKordampPlugin {
 
         project.pluginManager.withPlugin('scala-base') {
             project.afterEvaluate {
-                ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-                setEnabled(effectiveConfig.docs.scaladoc.enabled)
+                ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                setEnabled(config.docs.scaladoc.enabled)
 
                 TaskProvider<ScalaDoc> scaladoc = createScaladocTask(project)
                 TaskProvider<Jar> scaladocJar = createScaladocJarTask(project, scaladoc)
@@ -145,35 +149,36 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                 @Override
                 @CompileDynamic
                 void execute(ScalaDoc t) {
-                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-                    t.enabled = effectiveConfig.docs.scaladoc.enabled
+                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                    t.enabled = config.docs.scaladoc.enabled
                     t.dependsOn project.tasks.named('classes')
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Generates Scaladoc API documentation'
                     t.source project.sourceSets.main.allSource
                     t.destinationDir = project.file("${project.buildDir}/docs/scaladoc")
-                    effectiveConfig.docs.scaladoc.applyTo(t)
+                    config.docs.scaladoc.applyTo(t)
                 }
             })
     }
 
     private TaskProvider<Jar> createScaladocJarTask(Project project, TaskProvider<ScalaDoc> scaladoc) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         TaskProvider<Jar> scaladocJarTask = project.tasks.register(SCALADOC_JAR_TASK_NAME, Jar,
             new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
-                    t.enabled = effectiveConfig.docs.scaladoc.enabled
+                    t.enabled = config.docs.scaladoc.enabled
                     t.dependsOn scaladoc
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'An archive of the Scaladoc API docs'
                     t.archiveClassifier.set('scaladoc')
                     t.from scaladoc.get().destinationDir
+                    t.onlyIf { scaladoc.get().didWork }
                 }
             })
 
-        if (effectiveConfig.docs.scaladoc.replaceJavadoc) {
+        if (config.docs.scaladoc.replaceJavadoc) {
             scaladocJarTask.configure(new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
@@ -187,7 +192,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
         if (project.pluginManager.hasPlugin('maven-publish')) {
             PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
             MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (effectiveConfig.docs.scaladoc.replaceJavadoc) {
+            if (config.docs.scaladoc.replaceJavadoc) {
                 MavenArtifact javadocJar = mainPublication.artifacts.find { it.classifier == 'javadoc' }
                 mainPublication.artifacts.remove(javadocJar)
             }
@@ -202,12 +207,12 @@ class ScaladocPlugin extends AbstractKordampPlugin {
             new Action<ScalaDoc>() {
                 @Override
                 void execute(ScalaDoc t) {
-                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(t.project)
+                    ProjectConfigurationExtension config = resolveEffectiveConfig(t.project)
                     t.enabled = false
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Aggregates Scaladoc API docs for all projects.'
                     t.destinationDir = project.file("${project.buildDir}/docs/aggregate-scaladoc")
-                    effectiveConfig.docs.scaladoc.applyTo(t)
+                    config.docs.scaladoc.applyTo(t)
                 }
             })
 

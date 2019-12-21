@@ -16,6 +16,7 @@
  * limitations under the License.
  */
 processResources {
+    inputs.property('version', project.version)
     filesMatching(['**/*.properties']) {
         expand(
             'version': project.version,

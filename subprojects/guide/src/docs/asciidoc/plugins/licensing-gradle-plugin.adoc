@@ -21,6 +21,7 @@ Configures aggregate license reports on the root project.
 config {
     licensing {
         enabled
+        mergeStrategy
         licenses {
             license {
                 id
@@ -38,10 +39,11 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name     | Type       | Required | Default Value | Description
-| enabled  | boolean    | no       | true          | Disables `org.kordamp.gradle.licensing` plugin if `false`
-| licenses | LicenseSet | yes      |               | This block maps to the `<licenses>` block in POM. +
-                                                     At least one nested `license` block must be defined.
+| Name          | Type       | Required | Default Value | Description
+| enabled       | boolean    | no       | true          | Disables `org.kordamp.gradle.licensing` plugin if `false`
+| mergeStrategy | String     | no       | merge         | Either `merge` or `overwrite`
+| licenses      | LicenseSet | yes      |               | This block maps to the `<licenses>` block in POM. +
+                                                          At least one nested `license` block must be defined.
 |===
 
 [[_licensing_licenses_license]]

@@ -1,0 +1,55 @@
+
+[[_org_kordamp_gradle_errorprone]]
+= SpotBugs
+
+[horizontal]
+id:: `org.kordamp.gradle.errorprone`
+class:: `org.kordamp.gradle.plugin.errorprone.SpotBugsPlugin`
+    (link:api/org/kordamp/gradle/plugin/errorprone/SpotBugsPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/errorprone/SpotBugsPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
+`link:https://github.com/tbroyer/gradle-errorprone-plugin[net.ltgt.errorprone]`
+
+Configures ErrorProne on Java projects (applies all settings to tasks of type `JavaCompile`.
+
+[[_org_kordamp_gradle_errorprone_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    quality {
+        errorprone {
+            enabled
+            disableAllChecks
+            allErrorsAsWarnings
+            allDisabledChecksAsWarnings
+            disableWarningsInGeneratedCode
+            ignoreUnknownCheckNames
+            ignoreSuppressionAnnotations
+            compilingTestOnlyCode
+            excludedPaths
+            errorProneVersion
+            errorProneJavacVersion
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name                           | Type         | Required | Default Value | Description
+| enabled                        | boolean      | no       | true          | Disables `org.kordamp.gradle.errorprone` plugin if `false`
+| disableAllChecks               | boolean      | no       | false         |
+| allErrorsAsWarnings            | boolean      | no       | false         |
+| allDisabledChecksAsWarnings    | boolean      | no       | false         |
+| disableWarningsInGeneratedCode | boolean      | no       | true          |
+| ignoreUnknownCheckNames        | boolean      | no       | false         |
+| ignoreSuppressionAnnotations   | boolean      | no       | false         |
+| compilingTestOnlyCode          | boolean      | no       | false         |
+| excludedPaths                  | String       | no       |               |
+| errorProneVersion              | String       | no       | 2.3.4         |
+| errorProneJavacVersion         | String       | no       | 9+181-r4173-1 |
+|===
+

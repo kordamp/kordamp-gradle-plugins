@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.base
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.provider.Property
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.model.Information
 import org.kordamp.gradle.plugin.base.plugins.Apidoc
@@ -47,8 +46,10 @@ import org.kordamp.gradle.plugin.base.plugins.Scaladoc
 import org.kordamp.gradle.plugin.base.plugins.Source
 import org.kordamp.gradle.plugin.base.plugins.SourceHtml
 import org.kordamp.gradle.plugin.base.plugins.SourceXref
+import org.kordamp.gradle.plugin.base.plugins.Spotbugs
 import org.kordamp.gradle.plugin.base.plugins.Stats
 import org.kordamp.gradle.plugin.base.plugins.Testing
+import org.kordamp.gradle.plugin.base.plugins.ErrorProne
 
 /**
  * @author Andres Almiray
@@ -131,21 +132,20 @@ class ProjectConfigurationExtension {
         Map<String, Object> map = new LinkedHashMap<String, Object>(release: release)
 
         map.putAll(info.toMap())
-        map.putAll(bom.toMap())
-        map.putAll(bintray.toMap())
         map.putAll(buildInfo.toMap())
-        map.putAll(buildScan.toMap())
-        map.putAll(clirr.toMap())
-        map.putAll(licensing.toMap())
         map.putAll(minpom.toMap())
-        map.putAll(plugin.toMap())
+        map.putAll(bintray.toMap())
         map.putAll(publishing.toMap())
-        map.putAll(source.toMap())
-        map.putAll(stats.toMap())
-        map.putAll(testing.toMap())
+        map.putAll(bom.toMap())
+        map.putAll(licensing.toMap())
         map.putAll(docs.toMap())
         map.putAll(coverage.toMap())
         map.putAll(quality.toMap())
+        map.putAll(testing.toMap())
+        map.putAll(clirr.toMap())
+        map.putAll(plugin.toMap())
+        map.putAll(source.toMap())
+        map.putAll(stats.toMap())
 
         map
     }
@@ -523,7 +523,9 @@ class ProjectConfigurationExtension {
         final Checkstyle checkstyle
         final Codenarc codenarc
         final Detekt detekt
+        final ErrorProne errorprone
         final Pmd pmd
+        final Spotbugs spotbugs
 
         private final ProjectConfigurationExtension config
         private final Project project
@@ -534,7 +536,9 @@ class ProjectConfigurationExtension {
             checkstyle = new Checkstyle(config, project)
             codenarc = new Codenarc(config, project)
             detekt = new Detekt(config, project)
+            errorprone = new ErrorProne(config, project)
             pmd = new Pmd(config, project)
+            spotbugs = new Spotbugs(config, project)
         }
 
         Map<String, Object> toMap() {
@@ -543,7 +547,9 @@ class ProjectConfigurationExtension {
             map.putAll(checkstyle.toMap())
             map.putAll(codenarc.toMap())
             map.putAll(detekt.toMap())
+            map.putAll(errorprone.toMap())
             map.putAll(pmd.toMap())
+            map.putAll(spotbugs.toMap())
 
             new LinkedHashMap<>('quality': map)
         }
@@ -552,7 +558,9 @@ class ProjectConfigurationExtension {
             checkstyle.copyInto(copy.checkstyle)
             codenarc.copyInto(copy.codenarc)
             detekt.copyInto(copy.detekt)
+            errorprone.copyInto(copy.errorprone)
             pmd.copyInto(copy.pmd)
+            spotbugs.copyInto(copy.spotbugs)
         }
 
         void checkstyle(Action<? super Checkstyle> action) {
@@ -579,6 +587,14 @@ class ProjectConfigurationExtension {
             ConfigureUtil.configure(action, detekt)
         }
 
+        void errorprone(Action<? super ErrorProne> action) {
+            action.execute(errorprone)
+        }
+
+        void errorprone(@DelegatesTo(ErrorProne) Closure action) {
+            ConfigureUtil.configure(action, errorprone)
+        }
+
         void pmd(Action<? super Pmd> action) {
             action.execute(pmd)
         }
@@ -587,12 +603,22 @@ class ProjectConfigurationExtension {
             ConfigureUtil.configure(action, pmd)
         }
 
+        void spotbugs(Action<? super Spotbugs> action) {
+            action.execute(spotbugs)
+        }
+
+        void spotbugs(@DelegatesTo(Spotbugs) Closure action) {
+            ConfigureUtil.configure(action, spotbugs)
+        }
+
         Quality copyOf() {
             Quality copy = new Quality(config, project)
             this.@checkstyle.copyInto(copy.@checkstyle)
             this.@codenarc.copyInto(copy.@codenarc)
             this.@detekt.copyInto(copy.@detekt)
+            this.@errorprone.copyInto(copy.@detekt)
             this.@pmd.copyInto(copy.@pmd)
+            this.@spotbugs.copyInto(copy.@spotbugs)
             copy
         }
 
@@ -602,7 +628,9 @@ class ProjectConfigurationExtension {
             Checkstyle.merge(copy.@checkstyle, other.@checkstyle)
             Codenarc.merge(copy.@codenarc, other.@codenarc)
             Detekt.merge(copy.@detekt, other.@detekt)
+            ErrorProne.merge(copy.@errorprone, other.@errorprone)
             Pmd.merge(copy.@pmd, other.@pmd)
+            Spotbugs.merge(copy.@spotbugs, other.@spotbugs)
 
             copy
         }
@@ -615,7 +643,9 @@ class ProjectConfigurationExtension {
             checkstyle.normalize()
             codenarc.normalize()
             detekt.normalize()
+            errorprone.normalize()
             pmd.normalize()
+            spotbugs.normalize()
             this
         }
     }
@@ -835,8 +865,12 @@ class ProjectConfigurationExtension {
         }
 
         Docs normalize() {
+            groovydoc.normalize()
             kotlindoc.normalize()
+            scaladoc.normalize()
             guide.normalize()
+            sourceHtml.normalize()
+            sourceXref.normalize()
             this
         }
 
