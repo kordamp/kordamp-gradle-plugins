@@ -47,6 +47,10 @@ class CheckstylePlugin extends AbstractKordampPlugin {
 
     Project project
 
+    CheckstylePlugin() {
+        super(org.kordamp.gradle.plugin.base.plugins.Checkstyle.PLUGIN_ID)
+    }
+
     void apply(Project project) {
         this.project = project
 

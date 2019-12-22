@@ -47,6 +47,10 @@ class PmdPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    PmdPlugin() {
+        super(org.kordamp.gradle.plugin.base.plugins.Pmd.PLUGIN_ID)
+    }
+
     void apply(Project project) {
         this.project = project
 

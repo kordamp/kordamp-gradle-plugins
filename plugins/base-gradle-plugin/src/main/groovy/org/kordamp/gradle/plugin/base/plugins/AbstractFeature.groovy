@@ -18,8 +18,10 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
@@ -65,5 +67,11 @@ abstract class AbstractFeature implements Feature {
 
     static void merge(AbstractFeature o1, AbstractFeature o2) {
         o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
+    }
+
+    @CompileDynamic
+    protected isApplied() {
+        ExtraPropertiesExtension ext = project.extensions.findByType(ExtraPropertiesExtension)
+        ext.has('VISITED_' + getClass().PLUGIN_ID.replace('.', '_') + '_' + project.name)
     }
 }

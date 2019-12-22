@@ -35,6 +35,8 @@ import static org.kordamp.gradle.StringUtils.getPropertyNameForLowerCaseHyphenSe
 @CompileStatic
 @Canonical
 class Stats extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.source-stats'
+
     static final String XML = 'xml'
     static final String HTML = 'html'
     static final String TXT = 'txt'

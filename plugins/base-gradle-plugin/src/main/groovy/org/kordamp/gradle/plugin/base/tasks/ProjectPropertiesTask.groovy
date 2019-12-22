@@ -72,6 +72,7 @@ class ProjectPropertiesTask extends AbstractReportingTask {
 
         props.ext = new TreeMap<>()
         props.ext.putAll(project.extensions.findByType(ExtraPropertiesExtension).properties)
+        props.ext.removeAll { k, v -> k.startsWith('VISITED_org_kordamp_gradle_') }
 
         props
     }

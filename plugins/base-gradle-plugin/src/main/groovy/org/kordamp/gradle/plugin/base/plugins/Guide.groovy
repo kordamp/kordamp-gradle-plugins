@@ -50,9 +50,7 @@ class Guide extends AbstractFeature {
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
-        if (enabled) {
-            map.publish = publish.toMap()
-        }
+        map.publish = publish.toMap()
 
         new LinkedHashMap<>(['guide': map])
     }

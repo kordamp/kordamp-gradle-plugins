@@ -34,6 +34,8 @@ import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
 @CompileStatic
 @Canonical
 class Testing extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.testing'
+
     boolean logging = true
     boolean aggregate = true
 

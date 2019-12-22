@@ -45,6 +45,8 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 @Canonical
 class Javadoc extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.javadoc'
+
     Set<String> excludes = new LinkedHashSet<>()
     Set<String> includes = new LinkedHashSet<>()
     String title

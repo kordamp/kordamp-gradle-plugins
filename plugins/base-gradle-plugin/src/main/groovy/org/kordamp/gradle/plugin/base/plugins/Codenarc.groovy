@@ -85,12 +85,12 @@ class Codenarc extends AbstractFeature {
         if (!enabledSet) {
             if (isRoot()) {
                 if (project.childProjects.isEmpty()) {
-                    enabled = project.pluginManager.hasPlugin('groovy') && project.pluginManager.hasPlugin(PLUGIN_ID)
+                    setEnabled(project.pluginManager.hasPlugin('groovy') && isApplied())
                 } else {
-                    enabled = project.childProjects.values().any { p -> p.pluginManager.hasPlugin('groovy') && p.pluginManager.hasPlugin(PLUGIN_ID)}
+                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('groovy') && isApplied()})
                 }
             } else {
-                enabled = project.pluginManager.hasPlugin('groovy') && project.pluginManager.hasPlugin(PLUGIN_ID)
+                setEnabled(project.pluginManager.hasPlugin('groovy') && isApplied())
             }
         }
     }

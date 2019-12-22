@@ -29,6 +29,8 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 @CompileStatic
 @Canonical
 class Apidoc extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.apidoc'
+
     boolean replaceJavadoc = false
 
     private boolean replaceJavadocSet

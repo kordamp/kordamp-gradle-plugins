@@ -89,12 +89,12 @@ class Detekt extends AbstractFeature {
         if (!enabledSet) {
             if (isRoot()) {
                 if (project.childProjects.isEmpty()) {
-                    enabled = project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && project.pluginManager.hasPlugin(PLUGIN_ID)
+                    setEnabled(project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && isApplied())
                 } else {
-                    enabled = project.childProjects.values().any { p -> p.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && p.pluginManager.hasPlugin(PLUGIN_ID)}
+                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && isApplied()})
                 }
             } else {
-                enabled = project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && project.pluginManager.hasPlugin(PLUGIN_ID)
+                setEnabled(project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && isApplied())
             }
         }
     }

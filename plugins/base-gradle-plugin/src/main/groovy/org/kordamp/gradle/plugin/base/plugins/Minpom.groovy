@@ -29,6 +29,8 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 @CompileStatic
 @Canonical
 class Minpom extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.minpom'
+
     Minpom(ProjectConfigurationExtension config, Project project) {
         super(config, project)
     }

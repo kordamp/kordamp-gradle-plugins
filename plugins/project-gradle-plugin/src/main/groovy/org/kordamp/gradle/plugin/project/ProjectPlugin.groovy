@@ -32,6 +32,7 @@ import org.kordamp.gradle.plugin.minpom.MinPomPlugin
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 import org.kordamp.gradle.plugin.source.SourceJarPlugin
 import org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
+import org.kordamp.gradle.plugin.sourcexref.SourceXrefPlugin
 import org.kordamp.gradle.plugin.stats.SourceStatsPlugin
 import org.kordamp.gradle.plugin.testing.TestingPlugin
 
@@ -77,6 +78,7 @@ class ProjectPlugin extends AbstractKordampPlugin {
         PublishingPlugin.applyIfMissing(project)
         SourceStatsPlugin.applyIfMissing(project)
         SourceHtmlPlugin.applyIfMissing(project)
+        SourceXrefPlugin.applyIfMissing(project)
         BintrayPlugin.applyIfMissing(project)
         TestingPlugin.applyIfMissing(project)
 

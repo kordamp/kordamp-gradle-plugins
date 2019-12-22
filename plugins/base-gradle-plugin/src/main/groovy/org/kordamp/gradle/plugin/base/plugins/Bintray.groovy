@@ -35,6 +35,8 @@ import static org.kordamp.gradle.StringUtils.isBlank
 @CompileStatic
 @Canonical
 class Bintray extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.bintray'
+
     String repo
     String userOrg
     String name

@@ -29,6 +29,8 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 @CompileStatic
 @Canonical
 class BuildInfo extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.build-info'
+
     boolean clearTime
     boolean skipBuildBy
     boolean skipBuildDate

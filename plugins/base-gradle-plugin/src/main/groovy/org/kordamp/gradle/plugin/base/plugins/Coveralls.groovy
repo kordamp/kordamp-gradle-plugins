@@ -29,6 +29,8 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 @CompileStatic
 @Canonical
 class Coveralls extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.coveralls'
+
     Coveralls(ProjectConfigurationExtension config, Project project) {
         super(config, project)
     }

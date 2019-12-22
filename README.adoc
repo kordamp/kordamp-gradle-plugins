@@ -1,12 +1,15 @@
 = kordamp-gradle-plugins
 :linkattrs:
-:project-name: kordamp-gradle-plugins
-:plugin-version: 0.30.4
+:project-owner:   kordamp
+:project-repo:    kordamp
+:project-name:    kordamp-gradle-plugins
+:project-group:   org.kordamp.gradle
+:project-version: 0.30.4
 
-image:https://img.shields.io/travis/aalmiray/{project-name}/master.svg?logo=travis["Build Status", link="https://travis-ci.org/aalmiray/{project-name}"]
-image:https://img.shields.io/badge/license-ASF2-blue.svg?logo=apache["Apache License 2", link="http://www.apache.org/licenses/LICENSE-2.0.txt"]
-image:https://api.bintray.com/packages/aalmiray/kordamp/{project-name}/images/download.svg[link="https://bintray.com/aalmiray/kordamp/{project-name}/_latestVersion"]
-image:https://img.shields.io/badge/donations-Patreon-f96854.svg?logo=patreon[link="https://www.patreon.com/user?u=6609318"]
+image:http://img.shields.io/travis/{project-owner}/{project-name}/master.svg["Build Status (travis)", link="https://travis-ci.org/{project-owner}/{project-name}"]
+image:http://img.shields.io/badge/license-ASL2-blue.svg["ASL2 Licensed", link="http://opensource.org/licenses/ASL2"]
+image:https://api.bintray.com/packages/{project-owner}/{project-repo}/{project-name}/images/download.svg[link="https://bintray.com/{project-owner}/{project-repo}/{project-name}/_latestVersion"]
+image:https://img.shields.io/badge/donations-Patreon-orange.svg[link="https://www.patreon.com/user?u=6609318"]
 
 ---
 
@@ -21,10 +24,10 @@ Option #1
 buildscript {
     repositories {
         jcenter()
-        maven {  url 'https://plugins.gradle.org/m2/' }
+        gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:{plugin-id}:{plugin-version}'
+        classpath '{project-group}:{plugin-id}:{plugin-version}'
     }
 }
 apply plugin: '{plugin-id}'
@@ -40,9 +43,9 @@ plugins {
 ----
 
 Where `{plugin-id}` stands for any of the ids described in the following section. Most times it's enough to simply apply
-the `org.kordamp.gradle.project` at the root. All plugins may be applied independently as well.
+the `{project-group}.project` at the root. All plugins may be applied independently as well.
 
-Refer to the link:http://aalmiray.github.io/{project-name}[guide, window="_blank"] for further information on configuration
+Refer to the link:http://{project-owner}.github.io/{project-name}[guide, window="_blank"] for further information on configuration
 and usage.
 
 == Requirements

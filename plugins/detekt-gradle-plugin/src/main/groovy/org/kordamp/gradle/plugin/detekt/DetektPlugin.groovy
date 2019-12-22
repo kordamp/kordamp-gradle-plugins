@@ -42,11 +42,14 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  */
 @CompileStatic
 class DetektPlugin extends AbstractKordampPlugin {
-    static final String INIT_DETEKT_TASK_NAME = 'initDetekt'
     static final String ALL_DETEKT_TASK_NAME = 'allDetekt'
     static final String AGGREGATE_DETEKT_TASK_NAME = 'aggregateDetekt'
 
     Project project
+
+    DetektPlugin() {
+        super(org.kordamp.gradle.plugin.base.plugins.Detekt.PLUGIN_ID)
+    }
 
     void apply(Project project) {
         this.project = project

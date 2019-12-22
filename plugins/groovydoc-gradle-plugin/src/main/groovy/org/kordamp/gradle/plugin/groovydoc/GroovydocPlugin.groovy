@@ -55,6 +55,10 @@ class GroovydocPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    GroovydocPlugin() {
+        super(org.kordamp.gradle.plugin.base.plugins.Groovydoc.PLUGIN_ID)
+    }
+
     void apply(Project project) {
         this.project = project
 
@@ -119,7 +123,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                         t.enabled = config.docs.groovydoc.aggregate.enabled
                         t.from aggregateGroovydoc.get().destinationDir
                         t.archiveClassifier.set config.docs.groovydoc.aggregate.replaceJavadoc ? 'javadoc' : 'groovydoc'
-                        t.onlyIf { aggregateGroovydoc.get().didWork }
+                        t.onlyIf { aggregateGroovydoc.get().enabled }
                     }
                 })
         }
@@ -183,23 +187,25 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                     t.archiveClassifier.set(config.docs.groovydoc.replaceJavadoc ? 'javadoc' : 'groovydoc')
                     t.dependsOn groovydoc
                     t.from groovydoc.get().destinationDir
-                    t.onlyIf { groovydoc.get().didWork }
+                    t.onlyIf { groovydoc.get().enabled }
                 }
             })
 
-        if (project.pluginManager.hasPlugin('maven-publish')) {
-            PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
-            MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (config.docs.groovydoc.replaceJavadoc) {
-                MavenArtifact javadocJar = mainPublication.artifacts.find { it.classifier == 'javadoc' }
-                mainPublication.artifacts.remove(javadocJar)
+        if (config.docs.groovydoc.enabled) {
+            if (project.pluginManager.hasPlugin('maven-publish')) {
+                PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
+                MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
+                if (config.docs.groovydoc.replaceJavadoc) {
+                    MavenArtifact javadocJar = mainPublication.artifacts.find { it.classifier == 'javadoc' }
+                    mainPublication.artifacts.remove(javadocJar)
+                }
+                mainPublication.artifact(groovydocJar.get())
             }
-            mainPublication.artifact(groovydocJar.get())
-        }
 
-        if (config.docs.groovydoc.replaceJavadoc) {
-            project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
-            project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
+            if (config.docs.groovydoc.replaceJavadoc) {
+                project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
+                project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
+            }
         }
 
         groovydocJar

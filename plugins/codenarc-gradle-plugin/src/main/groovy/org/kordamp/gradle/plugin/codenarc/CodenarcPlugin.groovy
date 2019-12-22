@@ -48,6 +48,10 @@ class CodenarcPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    CodenarcPlugin() {
+        super(org.kordamp.gradle.plugin.base.plugins.Codenarc.PLUGIN_ID)
+    }
+
     void apply(Project project) {
         this.project = project
 

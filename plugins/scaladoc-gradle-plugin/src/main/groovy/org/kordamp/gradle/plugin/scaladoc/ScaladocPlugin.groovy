@@ -53,6 +53,10 @@ class ScaladocPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    ScaladocPlugin() {
+        super(org.kordamp.gradle.plugin.base.plugins.Scaladoc.PLUGIN_ID)
+    }
+
     void apply(Project project) {
         this.project = project
 
@@ -117,7 +121,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                         t.enabled = config.docs.scaladoc.aggregate.enabled
                         t.from aggregateScaladoc.get().destinationDir
                         t.archiveClassifier.set config.docs.scaladoc.aggregate.replaceJavadoc ? 'javadoc' : 'scaladoc'
-                        t.onlyIf { aggregateScaladoc.get().didWork }
+                        t.onlyIf { aggregateScaladoc.get().enabled }
                     }
                 })
         }
@@ -174,7 +178,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                     t.description = 'An archive of the Scaladoc API docs'
                     t.archiveClassifier.set('scaladoc')
                     t.from scaladoc.get().destinationDir
-                    t.onlyIf { scaladoc.get().didWork }
+                    t.onlyIf { scaladoc.get().enabled }
                 }
             })
 
@@ -189,14 +193,16 @@ class ScaladocPlugin extends AbstractKordampPlugin {
             project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
         }
 
-        if (project.pluginManager.hasPlugin('maven-publish')) {
-            PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
-            MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (config.docs.scaladoc.replaceJavadoc) {
-                MavenArtifact javadocJar = mainPublication.artifacts.find { it.classifier == 'javadoc' }
-                mainPublication.artifacts.remove(javadocJar)
+        if (config.docs.scaladoc.enabled) {
+            if (project.pluginManager.hasPlugin('maven-publish')) {
+                PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
+                MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
+                if (config.docs.scaladoc.replaceJavadoc) {
+                    MavenArtifact javadocJar = mainPublication.artifacts.find { it.classifier == 'javadoc' }
+                    mainPublication.artifacts.remove(javadocJar)
+                }
+                mainPublication.artifact(scaladocJarTask.get())
             }
-            mainPublication.artifact(scaladocJarTask.get())
         }
 
         scaladocJarTask

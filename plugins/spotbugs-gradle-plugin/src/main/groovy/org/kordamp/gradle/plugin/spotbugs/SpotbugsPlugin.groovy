@@ -46,6 +46,10 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    SpotbugsPlugin() {
+        super(org.kordamp.gradle.plugin.base.plugins.Spotbugs.PLUGIN_ID)
+    }
+
     void apply(Project project) {
         this.project = project
 

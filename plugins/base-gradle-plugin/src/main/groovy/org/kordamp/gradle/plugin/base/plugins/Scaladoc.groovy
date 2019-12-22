@@ -92,12 +92,12 @@ class Scaladoc extends AbstractFeature {
         if (!enabledSet) {
             if (isRoot()) {
                 if (project.childProjects.isEmpty()) {
-                    enabled = project.pluginManager.hasPlugin('scala') && project.pluginManager.hasPlugin(PLUGIN_ID)
+                    setEnabled(project.pluginManager.hasPlugin('scala') && isApplied())
                 } else {
-                    enabled = project.childProjects.values().any { p -> p.pluginManager.hasPlugin('scala') && p.pluginManager.hasPlugin(PLUGIN_ID)}
+                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('scala') && isApplied()})
                 }
             } else {
-                enabled = project.pluginManager.hasPlugin('scala') && project.pluginManager.hasPlugin(PLUGIN_ID)
+                setEnabled(project.pluginManager.hasPlugin('scala') && isApplied())
             }
         }
     }
@@ -198,7 +198,7 @@ class Scaladoc extends AbstractFeature {
         }
 
         boolean getReplaceJavadoc() {
-            this.@replaceJavadoc == null || this.@replaceJavadoc
+            this.@replaceJavadoc != null && this.@replaceJavadoc
         }
 
         void copyInto(Aggregate copy) {

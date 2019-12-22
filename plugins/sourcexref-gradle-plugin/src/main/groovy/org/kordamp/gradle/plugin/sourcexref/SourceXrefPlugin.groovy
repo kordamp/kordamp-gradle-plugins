@@ -46,6 +46,10 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    SourceXrefPlugin() {
+        super(org.kordamp.gradle.plugin.base.plugins.SourceXref.PLUGIN_ID)
+    }
+
     void apply(Project project) {
         this.project = project
 
@@ -103,7 +107,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
                     t.description = 'An archive of the JXR report the source code.'
                     t.archiveClassifier.set 'sources-jxr'
                     t.from aggregateJxrTask.get().outputDirectory
-                    t.onlyIf { aggregateJxrTask.get().didWork }
+                    t.onlyIf { aggregateJxrTask.get().enabled }
                     t.enabled = false
                 }
             })
@@ -144,7 +148,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
                     t.description = 'An archive of the JXR report the source code.'
                     t.archiveClassifier.set 'sources-jxr'
                     t.from jxrTask.get().outputDirectory
-                    t.onlyIf { jxrTask.get().didWork }
+                    t.onlyIf { jxrTask.get().enabled }
                 }
             })
 

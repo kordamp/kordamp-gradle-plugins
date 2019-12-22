@@ -53,6 +53,10 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    SourceHtmlPlugin() {
+        super(org.kordamp.gradle.plugin.base.plugins.SourceHtml.PLUGIN_ID)
+    }
+
     void apply(Project project) {
         this.project = project
 
@@ -186,6 +190,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                     t.docDescription = config.docs.sourceHtml.overview.docDescription ?: ''
                     t.icon = config.docs.sourceHtml.overview.icon
                     t.stylesheet = config.docs.sourceHtml.overview.stylesheet
+                    t.onlyIf { convertCodeTask.get().enabled }
                 }
             })
 
@@ -200,6 +205,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                     t.destinationDir = project.file("${project.buildDir}/docs/source-html")
                     t.from convertCodeTask.get().destDir
                     t.from generateOverviewTask.get().destDir
+                    t.onlyIf { generateOverviewTask.get().enabled }
                 }
             })
 
@@ -213,7 +219,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                     t.description = 'An archive of the HTML report the source code.'
                     t.archiveClassifier.set 'sources-html'
                     t.from sourceHtmlTask.get().destinationDir
-                    t.onlyIf { sourceHtmlTask.get().didWork }
+                    t.onlyIf { sourceHtmlTask.get().enabled }
                 }
             })
 
@@ -302,7 +308,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             @Override
             void execute(Jar t) {
                 t.enabled = config.docs.sourceHtml.aggregate.enabled
-                t.onlyIf { aggregateSourceHtmlTask.get().didWork }
+                t.onlyIf { aggregateSourceHtmlTask.get().enabled }
             }
         })
     }

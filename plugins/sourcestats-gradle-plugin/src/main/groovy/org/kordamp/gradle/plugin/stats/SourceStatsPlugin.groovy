@@ -41,6 +41,10 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    SourceStatsPlugin() {
+        super(org.kordamp.gradle.plugin.base.plugins.Stats.PLUGIN_ID)
+    }
+
     void apply(Project project) {
         this.project = project
 

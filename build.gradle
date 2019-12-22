@@ -35,9 +35,9 @@ config {
         tags          = ['project', 'configuration']
 
         links {
-            website      = "https://github.com/aalmiray/${rootProject.name}"
-            issueTracker = "https://github.com/aalmiray/${rootProject.name}/issues"
-            scm          = "https://github.com/aalmiray/${rootProject.name}.git"
+            website      = "https://github.com/kordamp/${rootProject.name}"
+            issueTracker = "https://github.com/kordamp/${rootProject.name}/issues"
+            scm          = "https://github.com/kordamp/${rootProject.name}.git"
         }
 
         specification {
@@ -100,7 +100,7 @@ config {
             password = project.bintrayApiKey
         }
         repo    = 'kordamp'
-        userOrg = 'aalmiray'
+        userOrg = 'kordamp'
         name    = rootProject.name
     }
 }

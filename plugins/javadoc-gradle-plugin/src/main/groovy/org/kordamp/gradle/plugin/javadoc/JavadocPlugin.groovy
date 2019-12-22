@@ -113,7 +113,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     void execute(Jar t) {
                         t.enabled = config.docs.javadoc.aggregate.enabled
                         t.from aggregateJavadoc.get().destinationDir
-                        t.onlyIf { aggregateJavadoc.get().didWork }
+                        t.onlyIf { aggregateJavadoc.get().enabled }
                     }
                 })
         }
@@ -184,7 +184,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     t.archiveClassifier.set('javadoc')
                     t.dependsOn javadoc
                     t.from javadoc.get().destinationDir
-                    t.onlyIf { javadoc.get().didWork }
+                    t.onlyIf { javadoc.get().enabled }
                 }
             })
     }

@@ -46,6 +46,10 @@ class SourceJarPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    SourceJarPlugin() {
+        super(org.kordamp.gradle.plugin.base.plugins.Source.PLUGIN_ID)
+    }
+
     void apply(Project project) {
         this.project = project
 

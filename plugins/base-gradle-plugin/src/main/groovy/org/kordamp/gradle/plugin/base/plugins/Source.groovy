@@ -31,6 +31,8 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 @CompileStatic
 @Canonical
 class Source extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.source-jar'
+
     final Aggregate aggregate
 
     Source(ProjectConfigurationExtension config, Project project) {

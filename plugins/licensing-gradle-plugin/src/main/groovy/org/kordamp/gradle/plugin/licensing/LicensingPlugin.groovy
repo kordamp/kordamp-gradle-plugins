@@ -167,6 +167,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
                 t.source = project.fileTree(project.projectDir) {
                     include('**/*.gradle')
                     include('**/*.gradle.kts')
+                    include('gradle.properties')
                 }
             }
         })
@@ -180,6 +181,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
                 t.source = project.fileTree(project.projectDir) {
                     include('**/*.gradle')
                     include('**/*.gradle.kts')
+                    include('gradle.properties')
                 }
             }
         })

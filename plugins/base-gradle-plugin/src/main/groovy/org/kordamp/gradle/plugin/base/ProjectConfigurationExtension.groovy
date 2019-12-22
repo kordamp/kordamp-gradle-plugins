@@ -479,9 +479,9 @@ class ProjectConfigurationExtension {
         Source.merge(copy.@source, other.@source)
         Stats.merge(copy.@stats, other.@stats)
         Testing.merge(copy.@testing, other.@testing)
-        copy.@docs.merge(other.@docs).copyInto(copy.@docs)
-        copy.@coverage.merge(other.@coverage).copyInto(copy.@coverage)
-        copy.@quality.merge(other.@quality).copyInto(copy.@quality)
+        Docs.merge(copy.@docs, other.@docs)
+        Coverage.merge(copy.@coverage, other.@coverage)
+        Quality.merge(copy.@quality, other.@quality)
 
         copy.postMerge()
     }
@@ -622,17 +622,15 @@ class ProjectConfigurationExtension {
             copy
         }
 
-        Quality merge(Quality other) {
-            Quality copy = copyOf()
+        static Quality merge(Quality o1, Quality o2) {
+            Checkstyle.merge(o1.@checkstyle, o2.@checkstyle)
+            Codenarc.merge(o1.@codenarc, o2.@codenarc)
+            Detekt.merge(o1.@detekt, o2.@detekt)
+            ErrorProne.merge(o1.@errorprone, o2.@errorprone)
+            Pmd.merge(o1.@pmd, o2.@pmd)
+            Spotbugs.merge(o1.@spotbugs, o2.@spotbugs)
 
-            Checkstyle.merge(copy.@checkstyle, other.@checkstyle)
-            Codenarc.merge(copy.@codenarc, other.@codenarc)
-            Detekt.merge(copy.@detekt, other.@detekt)
-            ErrorProne.merge(copy.@errorprone, other.@errorprone)
-            Pmd.merge(copy.@pmd, other.@pmd)
-            Spotbugs.merge(copy.@spotbugs, other.@spotbugs)
-
-            copy
+            o1
         }
 
         Quality postMerge() {
@@ -702,11 +700,10 @@ class ProjectConfigurationExtension {
             copy
         }
 
-        Coverage merge(Coverage other) {
-            Coverage copy = copyOf()
-            Coveralls.merge(copy.@coveralls, other.@coveralls)
-            Jacoco.merge(copy.@jacoco, other.@jacoco)
-            copy
+        static Coverage merge(Coverage o1, Coverage o2) {
+            Coveralls.merge(o1.@coveralls, o2.@coveralls)
+            Jacoco.merge(o1.@jacoco, o2.@jacoco)
+            o1
         }
 
         Coverage normalize() {
@@ -845,17 +842,16 @@ class ProjectConfigurationExtension {
             copy
         }
 
-        Docs merge(Docs other) {
-            Docs copy = copyOf()
-            Guide.merge(copy.@guide, other.@guide)
-            Apidoc.merge(copy.@apidoc, other.@apidoc)
-            Groovydoc.merge(copy.@groovydoc, other.@groovydoc)
-            Kotlindoc.merge(copy.@kotlindoc, other.@kotlindoc)
-            Javadoc.merge(copy.@javadoc, other.@javadoc)
-            Scaladoc.merge(copy.@scaladoc, other.@scaladoc)
-            SourceHtml.merge(copy.@sourceHtml, other.@sourceHtml)
-            SourceXref.merge(copy.@sourceXref, other.@sourceXref)
-            copy
+        static Docs merge(Docs o1, Docs o2) {
+            Guide.merge(o1.@guide, o2.@guide)
+            Apidoc.merge(o1.@apidoc, o2.@apidoc)
+            Groovydoc.merge(o1.@groovydoc, o2.@groovydoc)
+            Kotlindoc.merge(o1.@kotlindoc, o2.@kotlindoc)
+            Javadoc.merge(o1.@javadoc, o2.@javadoc)
+            Scaladoc.merge(o1.@scaladoc, o2.@scaladoc)
+            SourceHtml.merge(o1.@sourceHtml, o2.@sourceHtml)
+            SourceXref.merge(o1.@sourceXref, o2.@sourceXref)
+            o1
         }
 
         Docs postMerge() {

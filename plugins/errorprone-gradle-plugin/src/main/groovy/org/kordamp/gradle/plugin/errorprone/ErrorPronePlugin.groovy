@@ -38,6 +38,10 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 class ErrorPronePlugin extends AbstractKordampPlugin {
     Project project
 
+    ErrorPronePlugin() {
+        super(org.kordamp.gradle.plugin.base.plugins.ErrorProne.PLUGIN_ID)
+    }
+
     void apply(Project project) {
         this.project = project
 

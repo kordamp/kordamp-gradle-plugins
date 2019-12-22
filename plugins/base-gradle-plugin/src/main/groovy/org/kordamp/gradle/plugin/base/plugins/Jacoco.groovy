@@ -34,6 +34,8 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 @Canonical
 @EqualsAndHashCode(excludes = ['additionalSourceDirs', 'additionalClassDirs'])
 class Jacoco extends AbstractFeature {
+    static final String PLUGIN_ID = 'org.kordamp.gradle.jacoco'
+
     File aggregateExecFile
     File aggregateReportHtmlFile
     File aggregateReportXmlFile

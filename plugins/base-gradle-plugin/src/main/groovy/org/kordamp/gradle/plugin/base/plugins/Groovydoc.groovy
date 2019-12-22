@@ -82,28 +82,27 @@ class Groovydoc extends AbstractFeature {
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
-        if (enabled) {
-            List<Map<String, String>> links = []
-            options.links.each { link ->
-                links << [(link.url): link.packages.join(', ')]
-            }
-
-            map.replaceJavadoc = replaceJavadoc
-            map.excludes = excludes
-            map.includes = includes
-            map.options = new LinkedHashMap<String, Object>([
-                windowTitle   : options.windowTitle,
-                docTitle      : options.docTitle,
-                header        : options.header,
-                footer        : options.footer,
-                overviewText  : options.overviewText?.asFile(),
-                noTimestamp   : options.noTimestamp,
-                noVersionStamp: options.noVersionStamp,
-                includePrivate: options.includePrivate,
-                use           : options.use,
-                links         : links
-            ])
+        List<Map<String, String>> links = []
+        options.links.each { link ->
+            links << [(link.url): link.packages.join(', ')]
         }
+
+        map.replaceJavadoc = replaceJavadoc
+        map.excludes = excludes
+        map.includes = includes
+        map.options = new LinkedHashMap<String, Object>([
+            windowTitle   : options.windowTitle,
+            docTitle      : options.docTitle,
+            header        : options.header,
+            footer        : options.footer,
+            overviewText  : options.overviewText?.asFile(),
+            noTimestamp   : options.noTimestamp,
+            noVersionStamp: options.noVersionStamp,
+            includePrivate: options.includePrivate,
+            use           : options.use,
+            links         : links
+        ])
+
         if (isRoot()) {
             map.putAll(aggregate.toMap())
         }
@@ -115,12 +114,12 @@ class Groovydoc extends AbstractFeature {
         if (!enabledSet) {
             if (isRoot()) {
                 if (project.childProjects.isEmpty()) {
-                    enabled = project.pluginManager.hasPlugin('groovy') && project.pluginManager.hasPlugin(PLUGIN_ID)
+                    setEnabled(project.pluginManager.hasPlugin('groovy') && isApplied())
                 } else {
-                    enabled = project.childProjects.values().any { p -> p.pluginManager.hasPlugin('groovy') && p.pluginManager.hasPlugin(PLUGIN_ID)}
+                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('groovy') && isApplied()})
                 }
             } else {
-                enabled = project.pluginManager.hasPlugin('groovy') && project.pluginManager.hasPlugin(PLUGIN_ID)
+                setEnabled(project.pluginManager.hasPlugin('groovy') && isApplied())
             }
         }
     }
@@ -218,7 +217,7 @@ class Groovydoc extends AbstractFeature {
         }
 
         boolean getReplaceJavadoc() {
-            this.@replaceJavadoc == null || this.@replaceJavadoc
+            this.@replaceJavadoc != null && this.@replaceJavadoc
         }
 
         void copyInto(Aggregate copy) {

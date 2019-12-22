@@ -73,12 +73,12 @@ class ErrorProne extends AbstractFeature {
         if (!enabledSet) {
             if (isRoot()) {
                 if (project.childProjects.isEmpty()) {
-                    enabled = project.pluginManager.hasPlugin('java') && project.pluginManager.hasPlugin(PLUGIN_ID)
+                    setEnabled(project.pluginManager.hasPlugin('java') && isApplied())
                 } else {
-                    enabled = project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java') && p.pluginManager.hasPlugin(PLUGIN_ID)}
+                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java') && isApplied()})
                 }
             } else {
-                enabled = project.pluginManager.hasPlugin('java') && project.pluginManager.hasPlugin(PLUGIN_ID)
+                setEnabled(project.pluginManager.hasPlugin('java') && isApplied())
             }
         }
     }
