@@ -232,7 +232,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                                                   TaskProvider<Jar> aggregateSourceHtmlJarTask) {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
-        FileCollection srcdirs = project.files()
+        FileCollection srcdirs = project.objects.fileCollection()
         project.tasks.withType(SourceHtmlTask) { SourceHtmlTask task ->
             if (project in config.docs.sourceHtml.aggregate.excludedProjects()) return
             if (task.name != AGGREGATE_SOURCE_HTML_TASK_NAME &&
@@ -341,7 +341,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             }
         } catch (Exception ignored) {
             // ignore this project
-            return project.files()
+            return project.objects.fileCollection()
         }
 
         files

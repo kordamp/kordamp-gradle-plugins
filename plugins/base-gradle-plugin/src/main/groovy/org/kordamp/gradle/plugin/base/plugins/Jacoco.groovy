@@ -54,8 +54,8 @@ class Jacoco extends AbstractFeature {
         aggregateExecFile = project.layout.buildDirectory.file('jacoco/aggregate.exec').get().asFile
         aggregateReportHtmlFile = project.file("${destinationDir}/html")
         aggregateReportXmlFile = project.file("${destinationDir}/jacocoTestReport.xml")
-        additionalSourceDirs = project.files()
-        additionalClassDirs = project.files()
+        additionalSourceDirs = project.objects.fileCollection()
+        additionalClassDirs = project.objects.fileCollection()
     }
 
     @Deprecated
@@ -108,8 +108,8 @@ class Jacoco extends AbstractFeature {
             map.aggregateReportHtmlFile = aggregateReportHtmlFile
             map.aggregateReportXmlFile = aggregateReportXmlFile
         } else {
-            map.additionalSourceDirs = additionalSourceDirs.files*.absolutePath
-            map.additionalClassDirs = additionalClassDirs.files*.absolutePath
+            if (!additionalSourceDirs.empty) map.additionalSourceDirs = additionalSourceDirs.files*.absolutePath
+            if (!additionalClassDirs.empty) map.additionalClassDirs = additionalClassDirs.files*.absolutePath
         }
         map.toolVersion = toolVersion
 

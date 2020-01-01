@@ -160,7 +160,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
                                                   TaskProvider<Jar> aggregateJxrJarTask) {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
-        FileCollection srcdirs = project.files()
+        FileCollection srcdirs = project.objects.fileCollection()
         project.tasks.withType(JxrTask) { JxrTask task ->
             if (project in config.docs.sourceHtml.aggregate.excludedProjects()) return
             if (task.name != AGGREGATE_SOURCE_XREF_TASK_NAME &&
@@ -239,7 +239,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
             }
         } catch (Exception ignored) {
             // ignore this project
-            return project.files()
+            return project.objects.fileCollection()
         }
     }
 }

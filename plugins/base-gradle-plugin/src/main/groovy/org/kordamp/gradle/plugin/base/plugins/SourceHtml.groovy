@@ -47,7 +47,7 @@ class SourceHtml extends AbstractFeature {
         aggregate = new Aggregate(config, project)
         this.conversion = new Conversion(project)
         this.overview = new Overview(project)
-        srcDirs = project.files()
+        srcDirs = project.objects.fileCollection()
     }
 
     @Override
