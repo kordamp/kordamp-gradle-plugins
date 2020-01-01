@@ -24,7 +24,9 @@ import com.jfrog.bintray.gradle.BintrayExtension
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
@@ -121,6 +123,20 @@ class PluginPlugin extends AbstractKordampPlugin {
 
             updatePublication(project)
         }
+
+        project.tasks.register('publishRelease', DefaultTask,
+            new Action<DefaultTask>() {
+                @Override
+                void execute(DefaultTask t) {
+                    t.group = 'Publishing'
+                    t.description = 'Publishes plugin artifacts to Bintray and the Gradle Plugin Portal'
+                    Task bintrayUpload = project.tasks.findByName('bintrayUpload')
+                    if (bintrayUpload) {
+                        t.dependsOn(bintrayUpload)
+                    }
+                    t.dependsOn(project.tasks.named('publishPlugins'))
+                }
+            })
     }
 
     @CompileDynamic
