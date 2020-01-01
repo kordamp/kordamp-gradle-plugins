@@ -97,6 +97,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                     t.enabled = false
                 }
             })
+
         project.gradle.addBuildListener(new BuildAdapter() {
             @Override
             void projectsEvaluated(Gradle gradle) {

@@ -68,9 +68,9 @@ class PluginPlugin extends AbstractKordampPlugin {
         String pluginName = resolveConfig(project).plugin.pluginName
 
         GradlePluginDevelopmentExtension gpde = project.extensions.findByType(GradlePluginDevelopmentExtension)
-        project.tasks.register('listPluginDescriptors', ListPluginDescriptors.class,
-            new Action<ListPluginDescriptors>() {
-                void execute(ListPluginDescriptors t) {
+        project.tasks.register('listPluginDescriptors', ListPluginDescriptorsTask.class,
+            new Action<ListPluginDescriptorsTask>() {
+                void execute(ListPluginDescriptorsTask t) {
                     t.group = 'Plugin development'
                     t.description = 'Lists plugin descriptors from plugin declarations.'
                     t.declarations.set(gpde.plugins)

@@ -29,11 +29,11 @@ import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
  * @since 0.16.0
  */
 @CompileStatic
-class ListPluginDescriptors extends AbstractReportingTask {
+class ListPluginDescriptorsTask extends AbstractReportingTask {
     @Input
     final ListProperty<PluginDeclaration> declarations
 
-    ListPluginDescriptors() {
+    ListPluginDescriptorsTask() {
         this.declarations = project.objects.listProperty(PluginDeclaration)
     }
 
