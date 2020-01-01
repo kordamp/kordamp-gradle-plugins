@@ -26,6 +26,9 @@ import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenArtifact
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -174,11 +177,12 @@ class JavadocPlugin extends AbstractKordampPlugin {
     }
 
     private TaskProvider<Jar> createJavadocJarTask(Project project, TaskProvider<Javadoc> javadoc) {
-        project.tasks.register(JAVADOC_JAR_TASK_NAME, Jar,
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        TaskProvider<Jar> javadocJar = project.tasks.register(JAVADOC_JAR_TASK_NAME, Jar,
             new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
-                    t.enabled = resolveEffectiveConfig(t.project).docs.javadoc.enabled
+                    t.enabled = config.docs.javadoc.enabled
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'An archive of the Javadoc API docs'
                     t.archiveClassifier.set('javadoc')
@@ -187,6 +191,18 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     t.onlyIf { javadoc.get().enabled }
                 }
             })
+
+        if (config.docs.javadoc.enabled) {
+            if (project.pluginManager.hasPlugin('maven-publish')) {
+                PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
+                MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
+                MavenArtifact oldJavadocJar = mainPublication.artifacts.find { it.classifier == 'javadoc' }
+                mainPublication.artifacts.remove(oldJavadocJar)
+                mainPublication.artifact(javadocJar.get())
+            }
+        }
+
+        javadocJar
     }
 
     private void createAggregateTasks(Project project) {
