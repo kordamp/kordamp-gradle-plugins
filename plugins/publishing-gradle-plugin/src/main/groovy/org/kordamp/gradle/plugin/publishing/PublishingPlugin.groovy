@@ -129,9 +129,6 @@ class PublishingPlugin extends AbstractKordampPlugin {
         }
 
         Task jar = project.tasks.findByName('jar')
-        Task javadocJar = project.tasks.findByName('javadocJar')
-        Task groovydocJar = project.tasks.findByName('groovydocJar')
-        Task sourceJar = project.tasks.findByName(SourceJarPlugin.SOURCE_JAR_TASK_NAME)
 
         project.publishing {
             publications {
@@ -163,10 +160,6 @@ class PublishingPlugin extends AbstractKordampPlugin {
                                 PublishingUtils.configureDependencies(pom, effectiveConfig, project)
                             }
                         }
-
-                        if (javadocJar?.enabled) artifact javadocJar
-                        if (groovydocJar?.enabled) artifact groovydocJar
-                        if (sourceJar?.enabled) artifact sourceJar
 
                         PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.publishing.pom)
                     }

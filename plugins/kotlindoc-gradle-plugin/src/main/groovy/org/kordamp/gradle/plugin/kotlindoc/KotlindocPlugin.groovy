@@ -202,7 +202,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
             resolvedClassifier += '-' + formatName
         }
 
-        TaskProvider<Jar> kotlindocJarTask = project.tasks.register(taskName, Jar,
+        TaskProvider<Jar> kotlindocJar = project.tasks.register(taskName, Jar,
             new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
@@ -218,7 +218,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
 
         if (config.docs.kotlindoc.enabled) {
             if (config.docs.kotlindoc.replaceJavadoc && config.docs.kotlindoc.outputFormats.indexOf(format) == 0) {
-                kotlindocJarTask.configure(new Action<Jar>() {
+                kotlindocJar.configure(new Action<Jar>() {
                     @Override
                     void execute(Jar t) {
                         t.archiveClassifier.set('javadoc')
@@ -232,14 +232,14 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                 PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
                 MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
                 if (config.docs.kotlindoc.replaceJavadoc) {
-                    MavenArtifact javadocJar = mainPublication.artifacts.find { it.classifier == 'javadoc' }
-                    mainPublication.artifacts.remove(javadocJar)
+                    MavenArtifact javadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
+                    if (javadocJar) mainPublication.artifacts.remove(javadocJar)
                 }
-                mainPublication.artifact(kotlindocJarTask.get())
+                mainPublication.artifact(kotlindocJar.get())
             }
         }
 
-        kotlindocJarTask
+        kotlindocJar
     }
 
     private void createAggregateTasks(Project project) {

@@ -173,36 +173,26 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(Jar t) {
                     t.enabled = config.docs.scaladoc.enabled
-                    t.dependsOn scaladoc
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'An archive of the Scaladoc API docs'
-                    t.archiveClassifier.set('scaladoc')
+                    t.archiveClassifier.set(config.docs.groovydoc.replaceJavadoc ? 'javadoc' : 'scaladoc')
+                    t.dependsOn scaladoc
                     t.from scaladoc.get().destinationDir
                     t.onlyIf { scaladoc.get().enabled }
                 }
             })
 
-        if (config.docs.scaladoc.replaceJavadoc) {
-            scaladocJarTask.configure(new Action<Jar>() {
-                @Override
-                void execute(Jar t) {
-                    t.archiveClassifier.set('javadoc')
-                }
-            })
-            project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
-            project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
-        }
+        if (config.docs.scaladoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
+            PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
+            MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
+            if (config.docs.scaladoc.replaceJavadoc) {
+                MavenArtifact javadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
+                if (javadocJar) mainPublication.artifacts.remove(javadocJar)
 
-        if (config.docs.scaladoc.enabled) {
-            if (project.pluginManager.hasPlugin('maven-publish')) {
-                PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
-                MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-                if (config.docs.scaladoc.replaceJavadoc) {
-                    MavenArtifact javadocJar = mainPublication.artifacts.find { it.classifier == 'javadoc' }
-                    mainPublication.artifacts.remove(javadocJar)
-                }
-                mainPublication.artifact(scaladocJarTask.get())
+                project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
+                project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
             }
+            mainPublication.artifact(scaladocJarTask.get())
         }
 
         scaladocJarTask

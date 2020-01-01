@@ -178,6 +178,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
 
     private TaskProvider<Jar> createJavadocJarTask(Project project, TaskProvider<Javadoc> javadoc) {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+
         TaskProvider<Jar> javadocJar = project.tasks.register(JAVADOC_JAR_TASK_NAME, Jar,
             new Action<Jar>() {
                 @Override
@@ -192,14 +193,12 @@ class JavadocPlugin extends AbstractKordampPlugin {
                 }
             })
 
-        if (config.docs.javadoc.enabled) {
-            if (project.pluginManager.hasPlugin('maven-publish')) {
-                PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
-                MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-                MavenArtifact oldJavadocJar = mainPublication.artifacts.find { it.classifier == 'javadoc' }
-                mainPublication.artifacts.remove(oldJavadocJar)
-                mainPublication.artifact(javadocJar.get())
-            }
+        if (config.docs.javadoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
+            PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
+            MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
+            MavenArtifact oldJavadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
+            if (oldJavadocJar) mainPublication.artifacts.remove(oldJavadocJar)
+            mainPublication.artifact(javadocJar.get())
         }
 
         javadocJar
