@@ -32,7 +32,7 @@ ProjectPropertiesTask.groovy
 <a name="1"><font color="#808080">01</font>&nbsp;</a><font color="#008000">/*</font><br />
 <a name="2"><font color="#808080">02</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;SPDX-License-Identifier:&nbsp;Apache-2.0</font><br />
 <a name="3"><font color="#808080">03</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*</font><br />
-<a name="4"><font color="#808080">04</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Copyright&nbsp;2018-2019&nbsp;Andres&nbsp;Almiray.</font><br />
+<a name="4"><font color="#808080">04</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Copyright&nbsp;2018-2020&nbsp;Andres&nbsp;Almiray.</font><br />
 <a name="5"><font color="#808080">05</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*</font><br />
 <a name="6"><font color="#808080">06</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Licensed&nbsp;under&nbsp;the&nbsp;Apache&nbsp;License,&nbsp;Version&nbsp;2.0&nbsp;(the&nbsp;&#34;License&#34;);</font><br />
 <a name="7"><font color="#808080">07</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;you&nbsp;may&nbsp;not&nbsp;use&nbsp;this&nbsp;file&nbsp;except&nbsp;in&nbsp;compliance&nbsp;with&nbsp;the&nbsp;License.</font><br />
@@ -103,10 +103,11 @@ ProjectPropertiesTask.groovy
 <a name="72"><font color="#808080">72</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="73"><font color="#808080">73</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">props.ext&nbsp;=&nbsp;</font><font color="#0000c0"><b>new&nbsp;</b></font><font color="#000000">TreeMap&lt;&gt;</font><font color="#000000">()</font><br />
 <a name="74"><font color="#808080">74</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">props.ext.putAll</font><font color="#000000">(</font><font color="#000000">project.extensions.findByType</font><font color="#000000">(</font><font color="#000000">ExtraPropertiesExtension</font><font color="#000000">)</font><font color="#000000">.properties</font><font color="#000000">)</font><br />
-<a name="75"><font color="#808080">75</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="76"><font color="#808080">76</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">props</font><br />
-<a name="77"><font color="#808080">77</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
-<a name="78"><font color="#808080">78</font>&nbsp;</a><font color="#000000">}</font></code>
+<a name="75"><font color="#808080">75</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">props.ext.removeAll&nbsp;</font><font color="#000000">{&nbsp;</font><font color="#000000">k,&nbsp;v&nbsp;-&gt;&nbsp;k.startsWith</font><font color="#000000">(</font><font color="#ff6100">'VI</font><font color="#000000">SITED_org_kordamp_gradle_</font><font color="#ff6100">')&nbsp;</font><font color="#000000">}</font><br />
+<a name="76"><font color="#808080">76</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="77"><font color="#808080">77</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">props</font><br />
+<a name="78"><font color="#808080">78</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
+<a name="79"><font color="#808080">79</font>&nbsp;</a><font color="#000000">}</font></code>
     
    </td>
   <!-- end source code -->
