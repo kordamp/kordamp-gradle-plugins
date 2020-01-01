@@ -52,7 +52,12 @@ config {
             person {
                 id    = 'aalmiray'
                 name  = 'Andres Almiray'
+                url   = 'http://andresalmiray.com/'
                 roles = ['developer']
+                properties = [
+                    twitter: 'aalmiray',
+                    github : 'aalmiray'
+                ]
             }
         }
 
@@ -99,8 +104,8 @@ config {
             username = project.bintrayUsername
             password = project.bintrayApiKey
         }
-        repo    = 'kordamp'
         userOrg = 'kordamp'
+        repo    = 'maven'
         name    = rootProject.name
     }
 }

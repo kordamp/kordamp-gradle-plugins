@@ -1,10 +1,10 @@
 = kordamp-gradle-plugins
 :linkattrs:
 :project-owner:   kordamp
-:project-repo:    kordamp
+:project-repo:    maven
 :project-name:    kordamp-gradle-plugins
 :project-group:   org.kordamp.gradle
-:project-version: 0.30.4
+:project-version: 0.31.0
 
 image:http://img.shields.io/travis/{project-owner}/{project-name}/master.svg["Build Status (travis)", link="https://travis-ci.org/{project-owner}/{project-name}"]
 image:http://img.shields.io/badge/license-ASL2-blue.svg["ASL2 Licensed", link="http://opensource.org/licenses/ASL2"]

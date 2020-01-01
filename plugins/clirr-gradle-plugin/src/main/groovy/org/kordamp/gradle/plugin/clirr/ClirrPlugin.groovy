@@ -208,7 +208,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
             void execute(AggregateClirrReportTask t) {
                 t.dependsOn clirrTasks
                 t.enabled = config.clirr.aggregate.enabled
-                t.reports = project.files(clirrTasks*.get()*.xmlReport)
+                t.reports = project.files(clirrTasks*.xmlReport)
             }
         })
     }
