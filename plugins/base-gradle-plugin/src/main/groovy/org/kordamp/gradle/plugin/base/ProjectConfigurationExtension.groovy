@@ -124,10 +124,6 @@ class ProjectConfigurationExtension {
         other.quality.copyInto(quality)
     }
 
-    String toString() {
-        toMap().toString()
-    }
-
     Map<String, Object> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(release: release)
 
