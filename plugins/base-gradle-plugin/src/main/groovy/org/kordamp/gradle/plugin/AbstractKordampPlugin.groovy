@@ -40,12 +40,12 @@ abstract class AbstractKordampPlugin implements KordampPlugin {
     }
 
     protected boolean hasBeenVisited(Project project) {
-        return project.findProperty(visitedKey + '_' + project.name)
+        return project.findProperty(visitedKey + '_' + project.path.replace(':','#'))
     }
 
     protected void setVisited(Project project, boolean visited) {
         ExtraPropertiesExtension ext = project.extensions.findByType(ExtraPropertiesExtension)
-        ext.set(visitedKey + '_' + project.name, visited)
+        ext.set(visitedKey + '_' + project.path.replace(':','#'), visited)
     }
 
     protected void setEnabled(boolean enabled) {

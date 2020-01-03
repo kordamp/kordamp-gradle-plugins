@@ -110,7 +110,11 @@ class PublishingUtils {
                     if (effectiveConfig.publishing.signingSet) {
                         return effectiveConfig.publishing.signing
                     } else {
-                        return project.gradle.taskGraph.hasTask(":${project.name}:uploadArchives".toString())
+                        String taskPath = ':uploadArchives'
+                        if (project.rootProject != project) {
+                            taskPath = project.path + taskPath
+                        }
+                        return project.gradle.taskGraph.hasTask(taskPath)
                     }
                 }
             }
