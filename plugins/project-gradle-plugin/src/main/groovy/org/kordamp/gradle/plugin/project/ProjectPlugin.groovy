@@ -69,9 +69,9 @@ class ProjectPlugin extends AbstractKordampPlugin {
 
         BasePlugin.applyIfMissing(project)
         BuildInfoPlugin.applyIfMissing(project)
+        LicensingPlugin.applyIfMissing(project)
         JacocoPlugin.applyIfMissing(project)
         CoverallsPlugin.applyIfMissing(project)
-        LicensingPlugin.applyIfMissing(project)
         PublishingPlugin.applyIfMissing(project)
         MinPomPlugin.applyIfMissing(project)
         JarPlugin.applyIfMissing(project)
