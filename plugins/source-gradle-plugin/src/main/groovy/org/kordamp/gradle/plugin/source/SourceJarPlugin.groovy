@@ -133,9 +133,11 @@ class SourceJarPlugin extends AbstractKordampPlugin {
         if (config.source.enabled && project.pluginManager.hasPlugin('maven-publish')) {
             PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
             MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            MavenArtifact oldSourceJar = mainPublication.artifacts?.find { it.classifier == 'sources' }
-            if (oldSourceJar) mainPublication.artifacts.remove(oldSourceJar)
-            mainPublication.artifact(sourceJar.get())
+            if (mainPublication) {
+                MavenArtifact oldSourceJar = mainPublication.artifacts?.find { it.classifier == 'sources' }
+                if (oldSourceJar) mainPublication.artifacts.remove(oldSourceJar)
+                mainPublication.artifact(sourceJar.get())
+            }
         }
 
         sourceJar
