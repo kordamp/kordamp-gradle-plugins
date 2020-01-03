@@ -168,6 +168,8 @@ class LicensingPlugin extends AbstractKordampPlugin {
                     include('**/*.gradle')
                     include('**/*.gradle.kts')
                     include('gradle.properties')
+                    exclude('build/**/*.gradle')
+                    exclude('build/**/*.gradle.kts')
                 }
             }
         })
@@ -182,6 +184,8 @@ class LicensingPlugin extends AbstractKordampPlugin {
                     include('**/*.gradle')
                     include('**/*.gradle.kts')
                     include('gradle.properties')
+                    exclude('build/**/*.gradle')
+                    exclude('build/**/*.gradle.kts')
                 }
             }
         })
