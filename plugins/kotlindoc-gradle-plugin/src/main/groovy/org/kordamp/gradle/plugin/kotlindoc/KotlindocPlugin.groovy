@@ -216,26 +216,25 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                 }
             })
 
-        if (config.docs.kotlindoc.enabled) {
-            if (config.docs.kotlindoc.replaceJavadoc && config.docs.kotlindoc.outputFormats.indexOf(format) == 0) {
-                kotlindocJar.configure(new Action<Jar>() {
-                    @Override
-                    void execute(Jar t) {
-                        t.archiveClassifier.set('javadoc')
-                    }
-                })
-                project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
-                project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
-            }
-
-            if (project.pluginManager.hasPlugin('maven-publish')) {
-                PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
-                MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
+        if (config.docs.kotlindoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
+            PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
+            MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
+            if (mainPublication) {
                 if (config.docs.kotlindoc.replaceJavadoc) {
                     MavenArtifact javadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
                     if (javadocJar) mainPublication.artifacts.remove(javadocJar)
+                    if (config.docs.kotlindoc.outputFormats.indexOf(format) == 0) {
+                        kotlindocJar.configure(new Action<Jar>() {
+                            @Override
+                            void execute(Jar t) {
+                                t.archiveClassifier.set('javadoc')
+                            }
+                        })
+                        project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
+                        project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
+                    }
+                    mainPublication.artifact(kotlindocJar.get())
                 }
-                mainPublication.artifact(kotlindocJar.get())
             }
         }
 

@@ -185,14 +185,16 @@ class ScaladocPlugin extends AbstractKordampPlugin {
         if (config.docs.scaladoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
             PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
             MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (config.docs.scaladoc.replaceJavadoc) {
-                MavenArtifact javadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
-                if (javadocJar) mainPublication.artifacts.remove(javadocJar)
+            if (mainPublication) {
+                if (config.docs.scaladoc.replaceJavadoc) {
+                    MavenArtifact javadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
+                    if (javadocJar) mainPublication.artifacts.remove(javadocJar)
 
-                project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
-                project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
+                    project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
+                    project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
+                }
+                mainPublication.artifact(scaladocJarTask.get())
             }
-            mainPublication.artifact(scaladocJarTask.get())
         }
 
         scaladocJarTask

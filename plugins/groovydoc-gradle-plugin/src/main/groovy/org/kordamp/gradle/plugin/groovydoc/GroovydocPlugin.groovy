@@ -195,14 +195,16 @@ class GroovydocPlugin extends AbstractKordampPlugin {
         if (config.docs.groovydoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
             PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
             MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (config.docs.groovydoc.replaceJavadoc) {
-                MavenArtifact javadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
-                if (javadocJar) mainPublication.artifacts.remove(javadocJar)
+            if (mainPublication) {
+                if (config.docs.groovydoc.replaceJavadoc) {
+                    MavenArtifact javadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
+                    if (javadocJar) mainPublication.artifacts.remove(javadocJar)
 
-                project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
-                project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
+                    project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
+                    project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
+                }
+                mainPublication.artifact(groovydocJar.get())
             }
-            mainPublication.artifact(groovydocJar.get())
         }
 
         groovydocJar
