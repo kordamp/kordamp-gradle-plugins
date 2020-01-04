@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 plugins {
-    id 'org.kordamp.gradle.groovy-project' version '0.30.4'
-    id 'org.kordamp.gradle.bintray'        version '0.30.4'
-    id 'org.kordamp.gradle.plugin'         version '0.30.4' apply false
+    id 'org.kordamp.gradle.groovy-project' version '0.31.2'
+    id 'org.kordamp.gradle.bintray'        version '0.31.2'
+    id 'org.kordamp.gradle.plugin'         version '0.31.2' apply false
 }
 
 if (!project.hasProperty('bintrayUsername')) ext.bintrayUsername = '**UNDEFINED**'
@@ -73,15 +73,17 @@ config {
         }
     }
 
-    javadoc {
-        enabled = false
-    }
+    docs {
+        javadoc {
+            enabled = false
+        }
 
-    groovydoc {
-        enabled        = true
-        replaceJavadoc = true
-        options {
-            link 'https://docs.gradle.org/5.0/javadoc/', 'org.gradle.'
+        groovydoc {
+            enabled = true
+            replaceJavadoc = true
+            options {
+                link 'https://docs.gradle.org/5.0/javadoc/', 'org.gradle.'
+            }
         }
     }
 
@@ -171,7 +173,5 @@ subprojects {
             sourceCompatibility = project.sourceCompatibility
             targetCompatibility = project.targetCompatibility
         }
-
-        task publishRelease(dependsOn: [bintrayUpload, publishPlugins]) {}
     }
 }

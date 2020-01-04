@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 plugins {
-    id 'org.kordamp.gradle.guide'   version '0.30.4'
+    id 'org.kordamp.gradle.guide'   version '0.31.2'
     id 'org.ajoberstar.git-publish' version '0.3.2'
 }
 
@@ -38,19 +38,4 @@ asciidoctor {
         'gradle-version': project.gradle.gradleVersion,
         'source-highlighter': 'prettify'
     ]
-}
-
-afterEvaluate {
-    project.tasks.findByName('createGuide')
-
-    gitPublish {
-        repoUri = rootProject.extensions.findByName('config').info.links.scm
-        branch  = 'gh-pages'
-        contents {
-            from project.tasks.findByName('createGuide').outputs.files
-        }
-        commitMessage = "Publish guide for $version"
-    }
-
-    gitPublishCommit.dependsOn(project.tasks.findByName('createGuide'))
 }
