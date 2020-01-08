@@ -54,7 +54,7 @@ class MailingListSet {
         mailingLists << mailingList
     }
 
-    void mailingList(@DelegatesTo(MailingList) Closure action) {
+    void mailingList(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MailingList) Closure action) {
         MailingList mailingList = new MailingList()
         ConfigureUtil.configure(action, mailingList)
         mailingLists << mailingList

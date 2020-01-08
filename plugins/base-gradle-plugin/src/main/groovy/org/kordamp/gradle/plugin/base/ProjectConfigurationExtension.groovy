@@ -203,7 +203,7 @@ class ProjectConfigurationExtension {
         action.execute(info)
     }
 
-    void info(@DelegatesTo(Information) Closure action) {
+    void info(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Information) Closure action) {
         ConfigureUtil.configure(action, info)
     }
 
@@ -214,7 +214,7 @@ class ProjectConfigurationExtension {
     }
 
     @Deprecated
-    void apidoc(@DelegatesTo(Apidoc) Closure action) {
+    void apidoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Apidoc) Closure action) {
         println("The method config.apidoc() is deprecated and will be removed in the future. Use config.docs.apidoc() instead")
         docs.apidoc(action)
     }
@@ -223,7 +223,7 @@ class ProjectConfigurationExtension {
         action.execute(bom)
     }
 
-    void bom(@DelegatesTo(Bom) Closure action) {
+    void bom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Bom) Closure action) {
         ConfigureUtil.configure(action, bom)
     }
 
@@ -231,7 +231,7 @@ class ProjectConfigurationExtension {
         action.execute(bintray)
     }
 
-    void bintray(@DelegatesTo(Bintray) Closure action) {
+    void bintray(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Bintray) Closure action) {
         ConfigureUtil.configure(action, bintray)
     }
 
@@ -239,7 +239,7 @@ class ProjectConfigurationExtension {
         action.execute(buildInfo)
     }
 
-    void buildInfo(@DelegatesTo(BuildInfo) Closure action) {
+    void buildInfo(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = BuildInfo) Closure action) {
         ConfigureUtil.configure(action, buildInfo)
     }
 
@@ -249,7 +249,7 @@ class ProjectConfigurationExtension {
     }
 
     @Deprecated
-    void buildScan(@DelegatesTo(BuildScan) Closure action) {
+    void buildScan(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = BuildScan) Closure action) {
         ConfigureUtil.configure(action, buildScan)
     }
 
@@ -257,7 +257,7 @@ class ProjectConfigurationExtension {
         action.execute(clirr)
     }
 
-    void clirr(@DelegatesTo(Clirr) Closure action) {
+    void clirr(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Clirr) Closure action) {
         ConfigureUtil.configure(action, clirr)
     }
 
@@ -268,7 +268,7 @@ class ProjectConfigurationExtension {
     }
 
     @Deprecated
-    void groovydoc(@DelegatesTo(Groovydoc) Closure action) {
+    void groovydoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Groovydoc) Closure action) {
         println("The method config.groovydoc() is deprecated and will be removed in the future. Use config.docs.groovydoc() instead")
         docs.groovydoc(action)
     }
@@ -280,7 +280,7 @@ class ProjectConfigurationExtension {
     }
 
     @Deprecated
-    void kotlindoc(@DelegatesTo(Kotlindoc) Closure action) {
+    void kotlindoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Kotlindoc) Closure action) {
         println("The method config.kotlindoc() is deprecated and will be removed in the future. Use config.docs.kotlindoc() instead")
         docs.kotlindoc(action)
     }
@@ -292,7 +292,7 @@ class ProjectConfigurationExtension {
     }
 
     @Deprecated
-    void jacoco(@DelegatesTo(Jacoco) Closure action) {
+    void jacoco(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jacoco) Closure action) {
         println("The method config.jacoco() is deprecated and will be removed in the future. Use config.coverage.jacoco() instead")
         coverage.jacoco(action)
     }
@@ -304,7 +304,7 @@ class ProjectConfigurationExtension {
     }
 
     @Deprecated
-    void javadoc(@DelegatesTo(Javadoc) Closure action) {
+    void javadoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Javadoc) Closure action) {
         println("The method config.javadoc() is deprecated and will be removed in the future. Use config.docs.javadoc() instead")
         docs.javadoc(action)
     }
@@ -313,7 +313,7 @@ class ProjectConfigurationExtension {
         action.execute(licensing)
     }
 
-    void licensing(@DelegatesTo(Licensing) Closure action) {
+    void licensing(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Licensing) Closure action) {
         ConfigureUtil.configure(action, licensing)
     }
 
@@ -321,7 +321,7 @@ class ProjectConfigurationExtension {
         action.execute(minpom)
     }
 
-    void minpom(@DelegatesTo(Minpom) Closure action) {
+    void minpom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Minpom) Closure action) {
         ConfigureUtil.configure(action, minpom)
     }
 
@@ -329,7 +329,7 @@ class ProjectConfigurationExtension {
         action.execute(plugin)
     }
 
-    void plugin(@DelegatesTo(Plugin) Closure action) {
+    void plugin(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Plugin) Closure action) {
         ConfigureUtil.configure(action, plugin)
     }
 
@@ -337,7 +337,7 @@ class ProjectConfigurationExtension {
         action.execute(publishing)
     }
 
-    void publishing(@DelegatesTo(Publishing) Closure action) {
+    void publishing(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Publishing) Closure action) {
         ConfigureUtil.configure(action, publishing)
     }
 
@@ -348,7 +348,7 @@ class ProjectConfigurationExtension {
     }
 
     @Deprecated
-    void scaladoc(@DelegatesTo(Scaladoc) Closure action) {
+    void scaladoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scaladoc) Closure action) {
         println("The method config.scaladoc() is deprecated and will be removed in the future. Use config.docs.scaladoc() instead")
         docs.scaladoc(action)
     }
@@ -357,7 +357,7 @@ class ProjectConfigurationExtension {
         action.execute(source)
     }
 
-    void source(@DelegatesTo(Source) Closure action) {
+    void source(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Source) Closure action) {
         ConfigureUtil.configure(action, source)
     }
 
@@ -365,7 +365,7 @@ class ProjectConfigurationExtension {
         action.execute(stats)
     }
 
-    void stats(@DelegatesTo(Stats) Closure action) {
+    void stats(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Stats) Closure action) {
         ConfigureUtil.configure(action, stats)
     }
 
@@ -376,7 +376,7 @@ class ProjectConfigurationExtension {
     }
 
     @Deprecated
-    void sourceHtml(@DelegatesTo(SourceHtml) Closure action) {
+    void sourceHtml(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SourceHtml) Closure action) {
         println("The method config.sourceHtml() is deprecated and will be removed in the future. Use config.docs.sourceHtml() instead")
         docs.sourceHtml(action)
     }
@@ -388,7 +388,7 @@ class ProjectConfigurationExtension {
     }
 
     @Deprecated
-    void sourceXref(@DelegatesTo(SourceXref) Closure action) {
+    void sourceXref(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SourceXref) Closure action) {
         println("The method config.sourceXref() is deprecated and will be removed in the future. Use config.docs.sourceXref() instead")
         docs.sourceXref(action)
     }
@@ -397,7 +397,7 @@ class ProjectConfigurationExtension {
         action.execute(testing)
     }
 
-    void testing(@DelegatesTo(Testing) Closure action) {
+    void testing(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Testing) Closure action) {
         ConfigureUtil.configure(action, testing)
     }
 
@@ -405,7 +405,7 @@ class ProjectConfigurationExtension {
         action.execute(docs)
     }
 
-    void docs(@DelegatesTo(Docs) Closure action) {
+    void docs(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Docs) Closure action) {
         ConfigureUtil.configure(action, docs)
     }
 
@@ -413,7 +413,7 @@ class ProjectConfigurationExtension {
         action.execute(coverage)
     }
 
-    void coverage(@DelegatesTo(Coverage) Closure action) {
+    void coverage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Coverage) Closure action) {
         ConfigureUtil.configure(action, coverage)
     }
 
@@ -421,7 +421,7 @@ class ProjectConfigurationExtension {
         action.execute(quality)
     }
 
-    void quality(@DelegatesTo(Quality) Closure action) {
+    void quality(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Quality) Closure action) {
         ConfigureUtil.configure(action, quality)
     }
 
@@ -563,7 +563,7 @@ class ProjectConfigurationExtension {
             action.execute(checkstyle)
         }
 
-        void checkstyle(@DelegatesTo(Checkstyle) Closure action) {
+        void checkstyle(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Checkstyle) Closure action) {
             ConfigureUtil.configure(action, checkstyle)
         }
 
@@ -571,7 +571,7 @@ class ProjectConfigurationExtension {
             action.execute(codenarc)
         }
 
-        void codenarc(@DelegatesTo(Codenarc) Closure action) {
+        void codenarc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Codenarc) Closure action) {
             ConfigureUtil.configure(action, codenarc)
         }
 
@@ -579,7 +579,7 @@ class ProjectConfigurationExtension {
             action.execute(detekt)
         }
 
-        void detekt(@DelegatesTo(Detekt) Closure action) {
+        void detekt(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Detekt) Closure action) {
             ConfigureUtil.configure(action, detekt)
         }
 
@@ -587,7 +587,7 @@ class ProjectConfigurationExtension {
             action.execute(errorprone)
         }
 
-        void errorprone(@DelegatesTo(ErrorProne) Closure action) {
+        void errorprone(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ErrorProne) Closure action) {
             ConfigureUtil.configure(action, errorprone)
         }
 
@@ -595,7 +595,7 @@ class ProjectConfigurationExtension {
             action.execute(pmd)
         }
 
-        void pmd(@DelegatesTo(Pmd) Closure action) {
+        void pmd(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Pmd) Closure action) {
             ConfigureUtil.configure(action, pmd)
         }
 
@@ -603,7 +603,7 @@ class ProjectConfigurationExtension {
             action.execute(spotbugs)
         }
 
-        void spotbugs(@DelegatesTo(Spotbugs) Closure action) {
+        void spotbugs(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Spotbugs) Closure action) {
             ConfigureUtil.configure(action, spotbugs)
         }
 
@@ -672,7 +672,7 @@ class ProjectConfigurationExtension {
             action.execute(coveralls)
         }
 
-        void coveralls(@DelegatesTo(Coveralls) Closure action) {
+        void coveralls(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Coveralls) Closure action) {
             ConfigureUtil.configure(action, coveralls)
         }
 
@@ -680,7 +680,7 @@ class ProjectConfigurationExtension {
             action.execute(jacoco)
         }
 
-        void jacoco(@DelegatesTo(Jacoco) Closure action) {
+        void jacoco(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jacoco) Closure action) {
             ConfigureUtil.configure(action, jacoco)
         }
 
@@ -754,7 +754,7 @@ class ProjectConfigurationExtension {
             action.execute(guide)
         }
 
-        void guide(@DelegatesTo(Guide) Closure action) {
+        void guide(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Guide) Closure action) {
             ConfigureUtil.configure(action, guide)
         }
 
@@ -762,7 +762,7 @@ class ProjectConfigurationExtension {
             action.execute(apidoc)
         }
 
-        void apidoc(@DelegatesTo(Apidoc) Closure action) {
+        void apidoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Apidoc) Closure action) {
             ConfigureUtil.configure(action, apidoc)
         }
 
@@ -770,7 +770,7 @@ class ProjectConfigurationExtension {
             action.execute(groovydoc)
         }
 
-        void groovydoc(@DelegatesTo(Groovydoc) Closure action) {
+        void groovydoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Groovydoc) Closure action) {
             ConfigureUtil.configure(action, groovydoc)
         }
 
@@ -778,7 +778,7 @@ class ProjectConfigurationExtension {
             action.execute(kotlindoc)
         }
 
-        void kotlindoc(@DelegatesTo(Kotlindoc) Closure action) {
+        void kotlindoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Kotlindoc) Closure action) {
             ConfigureUtil.configure(action, kotlindoc)
         }
 
@@ -786,7 +786,7 @@ class ProjectConfigurationExtension {
             action.execute(javadoc)
         }
 
-        void javadoc(@DelegatesTo(Javadoc) Closure action) {
+        void javadoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Javadoc) Closure action) {
             ConfigureUtil.configure(action, javadoc)
         }
 
@@ -794,7 +794,7 @@ class ProjectConfigurationExtension {
             action.execute(scaladoc)
         }
 
-        void scaladoc(@DelegatesTo(Scaladoc) Closure action) {
+        void scaladoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scaladoc) Closure action) {
             ConfigureUtil.configure(action, scaladoc)
         }
 
@@ -802,7 +802,7 @@ class ProjectConfigurationExtension {
             action.execute(sourceHtml)
         }
 
-        void sourceHtml(@DelegatesTo(SourceHtml) Closure action) {
+        void sourceHtml(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SourceHtml) Closure action) {
             ConfigureUtil.configure(action, sourceHtml)
         }
 
@@ -810,7 +810,7 @@ class ProjectConfigurationExtension {
             action.execute(sourceXref)
         }
 
-        void sourceXref(@DelegatesTo(SourceXref) Closure action) {
+        void sourceXref(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SourceXref) Closure action) {
             ConfigureUtil.configure(action, sourceXref)
         }
 

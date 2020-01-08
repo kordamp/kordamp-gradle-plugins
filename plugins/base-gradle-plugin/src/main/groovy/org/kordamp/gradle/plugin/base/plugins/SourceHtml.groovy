@@ -88,7 +88,7 @@ class SourceHtml extends AbstractFeature {
         action.execute(aggregate)
     }
 
-    void aggregate(@DelegatesTo(Aggregate) Closure action) {
+    void aggregate(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Aggregate) Closure action) {
         ConfigureUtil.configure(action, aggregate)
     }
 
@@ -111,7 +111,7 @@ class SourceHtml extends AbstractFeature {
         action.execute(conversion)
     }
 
-    void conversion(@DelegatesTo(Conversion) Closure action) {
+    void conversion(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Conversion) Closure action) {
         ConfigureUtil.configure(action, conversion)
     }
 
@@ -119,7 +119,7 @@ class SourceHtml extends AbstractFeature {
         action.execute(overview)
     }
 
-    void overview(@DelegatesTo(Overview) Closure action) {
+    void overview(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Overview) Closure action) {
         ConfigureUtil.configure(action, overview)
     }
 

@@ -96,7 +96,7 @@ class Person {
         action.execute(organization)
     }
 
-    void organization(@DelegatesTo(Organization) Closure action) {
+    void organization(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Organization) Closure action) {
         if (!organization) organization = new Organization()
         ConfigureUtil.configure(action, organization)
     }

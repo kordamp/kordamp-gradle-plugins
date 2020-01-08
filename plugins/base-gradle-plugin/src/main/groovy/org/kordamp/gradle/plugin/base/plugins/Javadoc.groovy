@@ -137,7 +137,7 @@ class Javadoc extends AbstractFeature {
         action.execute(options)
     }
 
-    void options(@DelegatesTo(ExtStandardJavadocDocletOptions) Closure action) {
+    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ExtStandardJavadocDocletOptions) Closure action) {
         ConfigureUtil.configure(action, options)
     }
 
@@ -145,7 +145,7 @@ class Javadoc extends AbstractFeature {
         action.execute(aggregate)
     }
 
-    void aggregate(@DelegatesTo(Aggregate) Closure action) {
+    void aggregate(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Aggregate) Closure action) {
         ConfigureUtil.configure(action, aggregate)
     }
 
@@ -173,7 +173,7 @@ class Javadoc extends AbstractFeature {
         action.execute(autoLinks)
     }
 
-    void autoLinks(@DelegatesTo(AutoLinks) Closure action) {
+    void autoLinks(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = AutoLinks) Closure action) {
         ConfigureUtil.configure(action, autoLinks)
     }
 

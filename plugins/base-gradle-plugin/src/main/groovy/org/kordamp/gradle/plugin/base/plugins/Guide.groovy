@@ -69,7 +69,7 @@ class Guide extends AbstractFeature {
         action.execute(publish)
     }
 
-    void publish(@DelegatesTo(Publish) Closure action) {
+    void publish(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Publish) Closure action) {
         ConfigureUtil.configure(action, publish)
     }
 

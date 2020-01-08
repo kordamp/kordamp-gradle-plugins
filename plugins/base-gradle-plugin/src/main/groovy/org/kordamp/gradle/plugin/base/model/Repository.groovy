@@ -67,7 +67,7 @@ class Repository {
         action.execute(credentials)
     }
 
-    void credentials(@DelegatesTo(Credentials) Closure action) {
+    void credentials(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Credentials) Closure action) {
         ConfigureUtil.configure(action, credentials)
     }
 

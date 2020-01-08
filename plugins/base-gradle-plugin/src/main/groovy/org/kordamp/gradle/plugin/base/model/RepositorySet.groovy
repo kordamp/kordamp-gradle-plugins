@@ -58,7 +58,7 @@ class RepositorySet {
         repositories << repository
     }
 
-    void repository(@DelegatesTo(Repository) Closure action) {
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Repository) Closure action) {
         Repository repository = new Repository()
         ConfigureUtil.configure(action, repository)
         repositories << repository

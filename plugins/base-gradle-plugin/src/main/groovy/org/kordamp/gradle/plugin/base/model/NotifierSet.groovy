@@ -54,7 +54,7 @@ class NotifierSet {
         notifiers << notifier
     }
 
-    void notifier(@DelegatesTo(Notifier) Closure action) {
+    void notifier(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Notifier) Closure action) {
         Notifier notifier = new Notifier()
         ConfigureUtil.configure(action, notifier)
         notifiers << notifier

@@ -54,7 +54,7 @@ class PersonSet {
         people << person
     }
 
-    void person(@DelegatesTo(Person) Closure action) {
+    void person(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Person) Closure action) {
         Person person = new Person()
         ConfigureUtil.configure(action, person)
         people << person

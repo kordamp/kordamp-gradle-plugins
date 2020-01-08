@@ -55,7 +55,7 @@ class LicenseSet {
         licenses << license
     }
 
-    void license(@DelegatesTo(License) Closure action) {
+    void license(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = License) Closure action) {
         License license = new License()
         ConfigureUtil.configure(action, license)
         licenses << license
@@ -77,7 +77,7 @@ class LicenseSet {
         o1.licenses.addAll(a.values())
     }
 
-    void forEach(@DelegatesTo(License) Closure<Void> action) {
+    void forEach(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = License) Closure<Void> action) {
         licenses.each(action)
     }
 
