@@ -92,29 +92,29 @@ This block should be configured on the root project.
 [[_org_kordamp_gradle_scaladoc_tasks]]
 == Tasks
 
-[[_task_aggregate_scaladocs]]
-=== AggregateScaladocs
+[[_task_aggregate_scaladoc]]
+=== AggregateScaladoc
 
 Aggregates Scaladoc API docs for all projects. +
 Consumes settings from `config.<<_org_kordamp_gradle_scaladoc,scaladoc>>` defined in the root project. +
 This task is added to the root project.
 
 [horizontal]
-Name:: aggregateScaladocs
+Name:: aggregateScaladoc
 Type:: `org.gradle.api.tasks.scala.ScalaDoc`
 
 .Properties
 [horizontal]
 destinationDir:: `${rootProject.buildDir}/docs/scaladoc`
 
-[[_task_aggregate_scaladocs_jar]]
-=== AggregateScaladocsJar
+[[_task_aggregate_scaladoc_jar]]
+=== AggregateScaladocJar
 
 An archive of the aggregate Scaladoc API docs. +
 This task is added to the root project.
 
 [horizontal]
-Name:: aggregateScaladocsJar
+Name:: aggregateScaladocJar
 Type:: `org.gradle.api.tasks.bundling.Jar`
 
 .Properties

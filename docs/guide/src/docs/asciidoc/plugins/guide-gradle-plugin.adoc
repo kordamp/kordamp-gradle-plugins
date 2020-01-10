@@ -131,8 +131,8 @@ destinationDir:: `${project.projectDir}/src/docs/asciidoc`
 Creates an Asciidoctor based guide. Depends on the output of the following tasks:
 
  * `asciidoctor`
- * `aggregateJavadocs` (if enabled)
- * `aggregateGroovydocs` (if enabled)
+ * `aggregateJavadoc` (if enabled)
+ * `aggregateGroovydoc` (if enabled)
  * `aggregateSourceHtml` (if enabled)
  * `aggregateSourceXref` (if enabled)
 

@@ -192,6 +192,7 @@ class Javadoc extends AbstractFeature {
             'api', 'implementation', 'compileOnly', 'annotationProcessor', 'runtimeOnly'
         ]
 
+        Boolean useJavadocIo
         boolean enabled = true
         Set<String> excludes = new LinkedHashSet<>()
         List<String> configurations = []
@@ -225,9 +226,14 @@ class Javadoc extends AbstractFeature {
             offlineLinks[url1] = url2
         }
 
+        boolean getUseJavadocIo() {
+            null == useJavadocIo || useJavadocIo
+        }
+
         void copyInto(AutoLinks copy) {
             copy.@enabled = this.enabled
             copy.@enabledSet = this.enabledSet
+            copy.@useJavadocIo = this.useJavadocIo
             copy.configurations.addAll(this.configurations)
             copy.excludes.addAll(this.excludes)
             copy.offlineLinks.putAll(offlineLinks)
@@ -235,6 +241,7 @@ class Javadoc extends AbstractFeature {
 
         static void merge(AutoLinks o1, AutoLinks o2) {
             o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
+            o1.useJavadocIo = o1.useJavadocIo != null ? o1.getUseJavadocIo() : o2.getUseJavadocIo()
             CollectionUtils.merge(o1.@excludes, o2?.excludes)
             CollectionUtils.merge(o1.@configurations, o2?.configurations)
             CollectionUtils.merge(o1.@offlineLinks, o2?.offlineLinks)
@@ -249,6 +256,7 @@ class Javadoc extends AbstractFeature {
                     cs = DEFAULT_CONFIGURATIONS
                 }
                 map.excludes = excludes
+                map.useJavadocIo = getUseJavadocIo()
                 map.configurations = cs
                 map.offlineLinks = offlineLinks
             }
@@ -297,8 +305,40 @@ class Javadoc extends AbstractFeature {
         }
 
         private String calculateRemoteJavadocLink(String group, String name, String version) {
-            String normalizedGroup = group.replace('.', '/')
-            "https://oss.sonatype.org/service/local/repositories/releases/archive/$normalizedGroup/$name/$version/$name-$version-javadoc.jar/!/".toString()
+            if (group == 'javax' && name == 'javaee-api' && version.matches('[567]\\..*')) {
+                'https://docs.oracle.com/javaee/' + version[0, 1] + '/api/'
+            } else if (group == 'javax' && name == 'javaee-api' && version.startsWith('8')) {
+                'https://javaee.github.io/javaee-spec/javadocs/'
+            } else if (group == 'org.springframework' && name.startsWith('spring-')) {
+                'https://docs.spring.io/spring/docs/' + version + '/javadoc-api/'
+            } else if (group == 'org.springframework.boot' && name.startsWith('spring-boot')) {
+                'https://docs.spring.io/spring-boot/docs/' + version + '/api/'
+            } else if (group == 'org.springframework.security' && name.startsWith('spring-security')) {
+                'https://docs.spring.io/spring-security/site/docs/' + version + '/api/'
+            } else if (group == 'org.springframework.data' && name == 'spring-data-jpa') {
+                'https://docs.spring.io/spring-data/jpa/docs/' + version + '/api/'
+            } else if (group == 'org.springframework.webflow' && name == 'spring-webflow') {
+                'https://docs.spring.io/spring-webflow/docs/' + version + '/api/'
+            } else if (group == 'com.squareup.okio' && version.startsWith('1.')) {
+                'https://square.github.io/okio/1.x/' + name + '/'
+            } else if (group == 'com.squareup.okhttp3') {
+                'https://square.github.io/okhttp/3.x/' + name + '/'
+            } else if (group == 'org.hibernate' && name == 'hibernate-core') {
+                'https://docs.jboss.org/hibernate/orm/' + version[0, 3] + '/javadocs/'
+            } else if ((group == 'org.hibernate' || group == 'org.hibernate.validator') && name == 'hibernate-validator') {
+                'https://docs.jboss.org/hibernate/validator/' + version[0, 3] + '/api/'
+            } else if (group == 'org.eclipse.jetty') {
+                'https://www.eclipse.org/jetty/javadoc/' + version + '/'
+            } else if (group == 'org.ow2.asm') {
+                'https://asm.ow2.io/javadoc/'
+            } else if (group.startsWith('org.apache.tomcat')) {
+                'https://tomcat.apache.org/tomcat-' + version[0, 3] + '-doc/api/'
+            } else if (getUseJavadocIo()) {
+                "https://static.javadoc.io/${group}/${name}/${version}/".toString()
+            } else {
+                String normalizedGroup = group.replace('.', '/')
+                "https://oss.sonatype.org/service/local/repositories/releases/archive/$normalizedGroup/$name/$version/$name-$version-javadoc.jar/!/".toString()
+            }
         }
 
         void applyTo(MinimalJavadocOptions options) {

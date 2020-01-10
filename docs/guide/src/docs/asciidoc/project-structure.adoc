@@ -304,8 +304,8 @@ This minimal configuration enables the following features:
  * Configure the `javadoc` task for each project using information found in the config block, such as author, copyright
    year, default settings.
  * Generate a `-javadoc` JAR file with the output of the `javadoc` task, per project.
- * Generate a task on the root project that collects all Javadocs.
- * Generate a task on the root project that packages the aggregated javadocs.
+ * Generate a task on the root project that collects all Javadoc.
+ * Generate a task on the root project that packages the aggregated javadoc.
  * Configure the license plugin with the license details [conum,data-value=4]_4_.
  * Configure the `maven-publish` plugin with data defined in [conum,data-value=3]_3_ and [conum,data-value=4]_4_. The
   `-sources` and  `-javadoc` JARs are automatically added to the default publication.
