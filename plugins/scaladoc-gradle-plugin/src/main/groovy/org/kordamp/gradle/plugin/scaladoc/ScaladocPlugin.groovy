@@ -35,6 +35,8 @@ import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 
+import static org.kordamp.gradle.PluginUtils.isGradle6Compatible
+import static org.kordamp.gradle.PluginUtils.registerJarVariant
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -193,8 +195,12 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                     project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
                     project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
                 }
-                mainPublication.artifact(scaladocJarTask.get())
+                if (!isGradle6Compatible()) {
+                    mainPublication.artifact(scaladocJarTask.get())
+                }
             }
+
+            registerJarVariant('Scaladoc', config.docs.scaladoc.replaceJavadoc ? 'javadoc' : 'scaladoc', scaladocJarTask, project)
         }
 
         scaladocJarTask

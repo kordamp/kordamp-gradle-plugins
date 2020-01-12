@@ -38,4 +38,18 @@ class Source extends AbstractAggregateFeature {
     @Override
     protected void populateMapDescription(Map<String, Object> map) {
     }
+
+    void normalize() {
+        if (!enabledSet) {
+            if (isRoot()) {
+                if (project.childProjects.isEmpty()) {
+                    setEnabled(isApplied())
+                } else {
+                    setEnabled(project.childProjects.values().any { p -> isApplied(p) })
+                }
+            } else {
+                setEnabled(isApplied())
+            }
+        }
+    }
 }

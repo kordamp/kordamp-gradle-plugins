@@ -69,7 +69,7 @@ abstract class AbstractAggregateFeature extends AbstractFeature {
                 if (project.childProjects.isEmpty()) {
                     setEnabled(project.pluginManager.hasPlugin('java') && isApplied())
                 } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java') && isApplied() })
+                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java') && isApplied(p) })
                 }
             } else {
                 setEnabled(project.pluginManager.hasPlugin('java') && isApplied())

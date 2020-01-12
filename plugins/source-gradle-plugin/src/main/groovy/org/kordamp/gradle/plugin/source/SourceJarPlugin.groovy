@@ -34,6 +34,8 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
+import static org.kordamp.gradle.PluginUtils.isGradle6Compatible
+import static org.kordamp.gradle.PluginUtils.registerJarVariant
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -45,8 +47,8 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  */
 @CompileStatic
 class SourceJarPlugin extends AbstractKordampPlugin {
-    static final String SOURCE_JAR_TASK_NAME = 'sourceJar'
-    static final String AGGREGATE_SOURCE_JAR_TASK_NAME = 'aggregateSourceJar'
+    static final String SOURCE_JAR_TASK_NAME = 'sourcesJar'
+    static final String AGGREGATE_SOURCE_JAR_TASK_NAME = 'aggregateSourcesJar'
 
     Project project
 
@@ -133,11 +135,13 @@ class SourceJarPlugin extends AbstractKordampPlugin {
         if (config.source.enabled && project.pluginManager.hasPlugin('maven-publish')) {
             PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
             MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (mainPublication) {
+            if (mainPublication && !isGradle6Compatible()) {
                 MavenArtifact oldSourceJar = mainPublication.artifacts?.find { it.classifier == 'sources' }
                 if (oldSourceJar) mainPublication.artifacts.remove(oldSourceJar)
                 mainPublication.artifact(sourceJar.get())
             }
+
+            registerJarVariant('Source', 'sources', sourceJar, project)
         }
 
         sourceJar

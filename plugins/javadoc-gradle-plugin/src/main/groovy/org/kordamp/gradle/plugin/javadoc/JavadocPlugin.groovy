@@ -36,6 +36,8 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
+import static org.kordamp.gradle.PluginUtils.isGradle6Compatible
+import static org.kordamp.gradle.PluginUtils.registerJarVariant
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -196,11 +198,13 @@ class JavadocPlugin extends AbstractKordampPlugin {
         if (config.docs.javadoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
             PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
             MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (mainPublication) {
+            if (mainPublication && !isGradle6Compatible()) {
                 MavenArtifact oldJavadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
                 if (oldJavadocJar) mainPublication.artifacts.remove(oldJavadocJar)
                 mainPublication.artifact(javadocJar.get())
             }
+
+            registerJarVariant('Javadoc', 'javadoc', javadocJar, project)
         }
 
         javadocJar

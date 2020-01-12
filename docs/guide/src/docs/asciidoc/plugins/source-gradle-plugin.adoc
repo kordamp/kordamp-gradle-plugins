@@ -51,27 +51,27 @@ This block should be configured on the root project.
 [[_org_kordamp_gradle_source_tasks]]
 == Tasks
 
-[[_task_aggregate_source_jar]]
-=== AggregateSourceJar
+[[_task_aggregate_sources_jar]]
+=== AggregateSourcesJar
 
-Collects the results of the `sourceJar` tasks. +
+Collects the results of the `sourcesJar` tasks. +
 This task is added to the root project.
 
 [horizontal]
-Name:: aggregateSourceJar
+Name:: aggregateSourcesJar
 Type:: `org.gradle.api.tasks.bundling.Jar`
 
 .Properties
 [horizontal]
 destinationDir:: `${rootProject.buildDir}/build/libs`
 
-[[_task_source_jar]]
-=== SourceJar
+[[_task_sources_jar]]
+=== SourcesJar
 
 An archive of the source code.
 
 [horizontal]
-Name:: sourceJar
+Name:: sourcesJar
 Type:: `org.gradle.api.tasks.bundling.Jar`
 
 .Properties

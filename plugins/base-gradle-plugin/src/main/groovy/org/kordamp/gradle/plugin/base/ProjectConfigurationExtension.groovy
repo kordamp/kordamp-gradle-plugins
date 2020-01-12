@@ -457,6 +457,8 @@ class ProjectConfigurationExtension {
         info.normalize()
         bom.normalize()
         clirr.normalize()
+        source.normalize()
+        stats.normalize()
         licensing.normalize()
         plugin.normalize()
         publishing.normalize()

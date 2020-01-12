@@ -70,7 +70,12 @@ abstract class AbstractFeature implements Feature {
     }
 
     @CompileDynamic
-    protected isApplied() {
+    protected boolean isApplied() {
+        isApplied(project)
+    }
+
+    @CompileDynamic
+    protected boolean isApplied(Project project) {
         ExtraPropertiesExtension ext = project.extensions.findByType(ExtraPropertiesExtension)
         ext.has('VISITED_' + getClass().PLUGIN_ID.replace('.', '_') + '_' + project.path.replace(':','#'))
     }
