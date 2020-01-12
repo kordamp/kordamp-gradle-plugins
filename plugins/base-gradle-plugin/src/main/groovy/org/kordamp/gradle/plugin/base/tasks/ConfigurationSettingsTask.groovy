@@ -92,7 +92,13 @@ class ConfigurationSettingsTask extends AbstractReportingTask {
             if (value instanceof Collection) {
                 doPrintCollection(name.toString(), (Collection) value, 1)
             } else {
-                doPrintMapEntry(name.toString(), value, 1)
+                try {
+                    doPrintMapEntry(name.toString(), value, 1)
+                } catch (IllegalStateException ise) {
+                    if (configuration.canBeResolved) {
+                        throw ise
+                    }
+                }
             }
         }
         if (isShowPaths() && configuration.canBeResolved) {
