@@ -259,7 +259,7 @@ the repository name.
 This block defines data associated with a particular person.
 
 This block is optional if none of the following plugins are used: `<<_org_kordamp_gradle_javadoc,org.kordamp.gradle.javadoc>>`,
-`<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>`, `<<_org_kordamp_gradle_apidoc,org.kordamp.gradle.apidoc>>`,
+`<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>`,
 `<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>`, `<<_org_kordamp_gradle_bintray,org.kordamp.gradle.bintray>>`.
 
 [[_base_info_person]]
@@ -791,16 +791,16 @@ Results in the following output
 Total plugins: 29
 
 plugin 0:
+    id: help-tasks
+    implementationClass: org.gradle.api.plugins.HelpTasksPlugin
+
+plugin 1:
     id: build-init
     implementationClass: org.gradle.buildinit.plugins.BuildInitPlugin
 
-plugin 1:
+plugin 2:
     id: wrapper
     implementationClass: org.gradle.buildinit.plugins.WrapperPlugin
-
-plugin 2:
-    id: help-tasks
-    implementationClass: org.gradle.api.plugins.HelpTasksPlugin
 
 plugin 3:
     id: lifecycle-base
@@ -816,59 +816,57 @@ plugin 5:
     enabled: true
 
 plugin 6:
-    id: reporting-base
-    implementationClass: org.gradle.api.plugins.ReportingBasePlugin
-
-plugin 7:
-    id: jacoco
-    implementationClass: org.gradle.testing.jacoco.plugins.JacocoPlugin
-
-plugin 8:
-    id: org.kordamp.gradle.jacoco
-    implementationClass: org.kordamp.gradle.plugin.jacoco.JacocoPlugin
-    enabled: true
-
-plugin 9:
-    id: com.github.hierynomus.license-report
-    implementationClass: com.hierynomus.gradle.license.LicenseReportingPlugin
-
-plugin 10:
-    id: com.github.hierynomus.license-base
-    implementationClass: com.hierynomus.gradle.license.LicenseBasePlugin
-
-plugin 11:
-    id: license
-    implementationClass: nl.javadude.gradle.plugins.license.LicensePlugin
-
-plugin 12:
-    id: org.kordamp.gradle.licensing
-    implementationClass: org.kordamp.gradle.plugin.licensing.LicensingPlugin
-    enabled: false
-
-plugin 13:
     id: org.kordamp.gradle.build-info
     implementationClass: org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
     enabled: true
 
-plugin 14:
-    id: org.kordamp.gradle.source-jar
-    implementationClass: org.kordamp.gradle.plugin.source.SourceJarPlugin
+plugin 7:
+    id: reporting-base
+    implementationClass: org.gradle.api.plugins.ReportingBasePlugin
+
+plugin 8:
+    id: com.github.hierynomus.license-report
+    implementationClass: com.hierynomus.gradle.license.LicenseReportingPlugin
+
+plugin 9:
+    id: com.github.hierynomus.license-base
+    implementationClass: com.hierynomus.gradle.license.LicenseBasePlugin
+
+plugin 10:
+    id: license
+    implementationClass: nl.javadude.gradle.plugins.license.LicensePlugin
+
+plugin 11:
+    id: org.kordamp.gradle.licensing
+    implementationClass: org.kordamp.gradle.plugin.licensing.LicensingPlugin
+    enabled: false
+
+plugin 12:
+    id: jacoco
+    implementationClass: org.gradle.testing.jacoco.plugins.JacocoPlugin
+
+plugin 13:
+    id: org.kordamp.gradle.jacoco
+    implementationClass: org.kordamp.gradle.plugin.jacoco.JacocoPlugin
     enabled: true
 
+plugin 14:
+    id: com.github.kt3k.coveralls
+    implementationClass: org.kt3k.gradle.plugin.CoverallsPlugin
+
 plugin 15:
-    id: org.kordamp.gradle.javadoc
-    implementationClass: org.kordamp.gradle.plugin.javadoc.JavadocPlugin
+    id: org.kordamp.gradle.coveralls
+    implementationClass: org.kordamp.gradle.plugin.coveralls.CoverallsPlugin
     enabled: true
 
 plugin 16:
-    id: org.kordamp.gradle.groovydoc
-    implementationClass: org.kordamp.gradle.plugin.groovydoc.GroovydocPlugin
-    enabled: false
+    id: org.kordamp.gradle.publishing
+    implementationClass: org.kordamp.gradle.plugin.publishing.PublishingPlugin
+    enabled: true
 
 plugin 17:
-    id: org.kordamp.gradle.apidoc
-    implementationClass: org.kordamp.gradle.plugin.apidoc.ApidocPlugin
-    enabled: true
+    id: signing
+    implementationClass: org.gradle.plugins.signing.SigningPlugin
 
 plugin 18:
     id: org.kordamp.gradle.minpom
@@ -881,22 +879,23 @@ plugin 19:
     enabled: true
 
 plugin 20:
-    id: org.kordamp.gradle.publishing
-    implementationClass: org.kordamp.gradle.plugin.publishing.PublishingPlugin
+    id: org.kordamp.gradle.source-jar
+    implementationClass: org.kordamp.gradle.plugin.source.SourceJarPlugin
     enabled: true
 
 plugin 21:
-    id: signing
-    implementationClass: org.gradle.plugins.signing.SigningPlugin
-
-plugin 22:
     id: org.kordamp.gradle.source-stats
     implementationClass: org.kordamp.gradle.plugin.stats.SourceStatsPlugin
+    enabled: false
+
+plugin 22:
+    id: org.kordamp.gradle.source-html
+    implementationClass: org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
     enabled: true
 
 plugin 23:
-    id: org.kordamp.gradle.source-html
-    implementationClass: org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
+    id: org.kordamp.gradle.source-xref
+    implementationClass: org.kordamp.gradle.plugin.sourcexref.SourceXrefPlugin
     enabled: true
 
 plugin 24:
@@ -916,6 +915,7 @@ plugin 26:
 plugin 27:
     id: org.kordamp.gradle.project
     implementationClass: org.kordamp.gradle.plugin.project.ProjectPlugin
+    enabled: true
 
 plugin 28:
     id: net.nemerosa.versioning

@@ -8,7 +8,6 @@ class:: `org.kordamp.gradle.plugin.project.ProjectPlugin`
     (link:api/org/kordamp/gradle/plugin/project/ProjectPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/project/ProjectPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
-`<<_org_kordamp_gradle_apidoc,org.kordamp.gradle.apidoc>>`, +
 `<<_org_kordamp_gradle_buildinfo,org.kordamp.gradle.build-info>>`, +
 `<<_org_kordamp_gradle_jacoco,org.kordamp.gradle.jacoco>>`, +
 `<<_org_kordamp_gradle_coveralls,org.kordamp.gradle.coveralls>>`, +

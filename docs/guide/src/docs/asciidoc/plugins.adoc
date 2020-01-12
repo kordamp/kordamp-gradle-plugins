@@ -3,7 +3,6 @@
 = Plugins
 
 :leveloffset: 2
-include::{includedir}/plugins/apidoc-gradle-plugin.adoc[]
 include::{includedir}/plugins/base-gradle-plugin.adoc[]
 include::{includedir}/plugins/bintray-gradle-plugin.adoc[]
 include::{includedir}/plugins/bom-gradle-plugin.adoc[]

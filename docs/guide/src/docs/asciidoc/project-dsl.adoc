@@ -25,7 +25,6 @@ config {
     <<_org_kordamp_gradle_sourcestats,stats>> { ... }
     <<_org_kordamp_gradle_testing,testing>> { ... }
     docs {
-        <<_org_kordamp_gradle_apidoc,apidoc>> { ... }
         <<_org_kordamp_gradle_guide,guide>> { ... }
         <<_org_kordamp_gradle_groovydoc,groovydoc>> { ... }
         <<_org_kordamp_gradle_javadoc,javadoc>> { ... }

@@ -22,7 +22,6 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.model.Information
-import org.kordamp.gradle.plugin.base.plugins.Apidoc
 import org.kordamp.gradle.plugin.base.plugins.Bintray
 import org.kordamp.gradle.plugin.base.plugins.Bom
 import org.kordamp.gradle.plugin.base.plugins.BuildInfo
@@ -147,12 +146,6 @@ class ProjectConfigurationExtension {
     }
 
     @Deprecated
-    Apidoc getApidoc() {
-        println("The method config.apidoc is deprecated and will be removed in the future. Use config.docs.apidoc instead")
-        docs.apidoc
-    }
-
-    @Deprecated
     BuildScan getBuildScan() {
         buildScan
     }
@@ -165,7 +158,7 @@ class ProjectConfigurationExtension {
 
     @Deprecated
     Kotlindoc getKotlindoc() {
-        println("The method config.apidoc is deprecated and will be removed in the future. Use config.docs.apidoc instead")
+        println("The method config.kotlindoc is deprecated and will be removed in the future. Use config.docs.kotlindoc instead")
         docs.kotlindoc
     }
 
@@ -205,18 +198,6 @@ class ProjectConfigurationExtension {
 
     void info(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Information) Closure action) {
         ConfigureUtil.configure(action, info)
-    }
-
-    @Deprecated
-    void apidoc(Action<? super Apidoc> action) {
-        println("The method config.apidoc() is deprecated and will be removed in the future. Use config.docs.apidoc() instead")
-        docs.apidoc(action)
-    }
-
-    @Deprecated
-    void apidoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Apidoc) Closure action) {
-        println("The method config.apidoc() is deprecated and will be removed in the future. Use config.docs.apidoc() instead")
-        docs.apidoc(action)
     }
 
     void bom(Action<? super Bom> action) {
@@ -710,7 +691,6 @@ class ProjectConfigurationExtension {
 
     @CompileStatic
     static class Docs {
-        final Apidoc apidoc
         final Guide guide
         final Groovydoc groovydoc
         final Kotlindoc kotlindoc
@@ -726,7 +706,6 @@ class ProjectConfigurationExtension {
             this.config = config
             this.project = project
             guide = new Guide(config, project)
-            apidoc = new Apidoc(config, project)
             groovydoc = new Groovydoc(config, project)
             kotlindoc = new Kotlindoc(config, project)
             javadoc = new Javadoc(config, project)
@@ -738,7 +717,6 @@ class ProjectConfigurationExtension {
         Map<String, Object> toMap() {
             Map<String, Object> map = new LinkedHashMap<String, Object>()
 
-            map.putAll(apidoc.toMap())
             map.putAll(javadoc.toMap())
             map.putAll(groovydoc.toMap())
             map.putAll(kotlindoc.toMap())
@@ -756,14 +734,6 @@ class ProjectConfigurationExtension {
 
         void guide(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Guide) Closure action) {
             ConfigureUtil.configure(action, guide)
-        }
-
-        void apidoc(Action<? super Apidoc> action) {
-            action.execute(apidoc)
-        }
-
-        void apidoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Apidoc) Closure action) {
-            ConfigureUtil.configure(action, apidoc)
         }
 
         void groovydoc(Action<? super Groovydoc> action) {
@@ -816,7 +786,6 @@ class ProjectConfigurationExtension {
 
         void copyInto(Docs copy) {
             guide.copyInto(copy.guide)
-            apidoc.copyInto(copy.apidoc)
             groovydoc.copyInto(copy.groovydoc)
             kotlindoc.copyInto(copy.kotlindoc)
             javadoc.copyInto(copy.javadoc)
@@ -828,7 +797,6 @@ class ProjectConfigurationExtension {
         Docs copyOf() {
             Docs copy = new Docs(config, project)
             this.@guide.copyInto(copy.@guide)
-            this.@apidoc.copyInto(apidoc)
             this.@groovydoc.copyInto(groovydoc)
             this.@kotlindoc.copyInto(kotlindoc)
             this.@javadoc.copyInto(javadoc)
@@ -840,7 +808,6 @@ class ProjectConfigurationExtension {
 
         static Docs merge(Docs o1, Docs o2) {
             Guide.merge(o1.@guide, o2.@guide)
-            Apidoc.merge(o1.@apidoc, o2.@apidoc)
             Groovydoc.merge(o1.@groovydoc, o2.@groovydoc)
             Kotlindoc.merge(o1.@kotlindoc, o2.@kotlindoc)
             Javadoc.merge(o1.@javadoc, o2.@javadoc)
