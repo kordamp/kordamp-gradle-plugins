@@ -19,9 +19,7 @@ package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import java.util.function.Predicate
@@ -32,7 +30,7 @@ import java.util.function.Predicate
  */
 @CompileStatic
 @Canonical
-class Clirr extends AbstractFeature {
+class Clirr extends AbstractAggregateFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.clirr'
 
     String baseline
@@ -41,16 +39,13 @@ class Clirr extends AbstractFeature {
     boolean failOnErrors = true
     boolean failOnException = false
     boolean semver = true
-    final Aggregate aggregate
 
     private boolean failOnErrorsSet
     private boolean failOnExceptionSet
     private boolean semverSet
 
     Clirr(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        aggregate = new Aggregate(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        super(config, project, PLUGIN_ID, 'clirr')
     }
 
     void normalize() {
@@ -59,7 +54,7 @@ class Clirr extends AbstractFeature {
                 if (project.childProjects.isEmpty()) {
                     setEnabled(project.pluginManager.hasPlugin('java') && isApplied())
                 } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java') && isApplied()})
+                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java') && isApplied() })
                 }
             } else {
                 setEnabled(project.pluginManager.hasPlugin('java') && isApplied())
@@ -68,33 +63,13 @@ class Clirr extends AbstractFeature {
     }
 
     @Override
-    String toString() {
-        isRoot() ? toMap().toString() : ''
-    }
-
-    @Override
-    Map<String, Map<String, Object>> toMap() {
-        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled,
-            baseline: baseline,
-            filterFile: filterFile,
-            failOnErrors: failOnErrors,
-            failOnException: failOnException,
-            semver: semver,
-            filter: (filter != null))
-
-        if (isRoot()) {
-            map.putAll(aggregate.toMap())
-        }
-
-        new LinkedHashMap<>('clirr': map)
-    }
-
-    void aggregate(Action<? super Aggregate> action) {
-        action.execute(aggregate)
-    }
-
-    void aggregate(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Aggregate) Closure action) {
-        ConfigureUtil.configure(action, aggregate)
+    protected void populateMapDescription(Map<String, Object> map) {
+        map.baseline = this.baseline
+        map.filterFile = this.filterFile
+        map.failOnErrors = this.failOnErrors
+        map.failOnException = this.failOnException
+        map.semver = this.semver
+        map.filter = this.filter != null
     }
 
     void copyInto(Clirr copy) {
@@ -108,18 +83,16 @@ class Clirr extends AbstractFeature {
         copy.baseline = baseline
         copy.filterFile = filterFile
         copy.filter = filter
-        aggregate.copyInto(copy.aggregate)
     }
 
     static void merge(Clirr o1, Clirr o2) {
-        AbstractFeature.merge(o1, o2)
+        AbstractAggregateFeature.merge(o1, o2)
         o1.setFailOnErrors((boolean) (o1.failOnErrorsSet ? o1.failOnErrors : o2.failOnErrors))
         o1.setFailOnException((boolean) (o1.failOnExceptionSet ? o1.failOnException : o2.failOnException))
         o1.setSemver((boolean) (o1.semverSet ? o1.semver : o2.semver))
         o1.baseline = o1.baseline ?: o2.baseline
         o1.filterFile = o1.filterFile ?: o2.filterFile
         o1.filter = o1.filter ?: o2.filter
-        o1.aggregate.merge(o2.aggregate)
     }
 
     @Canonical
@@ -132,54 +105,6 @@ class Clirr extends AbstractFeature {
         @Override
         int compareTo(Difference o) {
             return classname <=> o.classname
-        }
-    }
-
-    @CompileStatic
-    static class Aggregate {
-        Boolean enabled
-        private final Set<Project> excludedProjects = new LinkedHashSet<>()
-
-        private final ProjectConfigurationExtension config
-        private final Project project
-
-        Aggregate(ProjectConfigurationExtension config, Project project) {
-            this.config = config
-            this.project = project
-        }
-
-        Map<String, Object> toMap() {
-            Map<String, Object> map = new LinkedHashMap<String, Object>()
-
-            map.enabled = getEnabled()
-            map.excludedProjects = excludedProjects
-
-            new LinkedHashMap<>('aggregate': map)
-        }
-
-        boolean getEnabled() {
-            this.@enabled == null || this.@enabled
-        }
-
-        void copyInto(Aggregate copy) {
-            copy.@enabled = this.@enabled
-            copy.excludedProjects.addAll(excludedProjects)
-        }
-
-        Aggregate copyOf() {
-            Aggregate copy = new Aggregate(config, project)
-            copyInto(copy)
-            copy
-        }
-
-        Aggregate merge(Aggregate other) {
-            Aggregate copy = copyOf()
-            copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
-            copy
-        }
-
-        Set<Project> excludedProjects() {
-            excludedProjects
         }
     }
 }

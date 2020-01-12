@@ -114,6 +114,10 @@ class PmdPlugin extends AbstractKordampPlugin {
                     project.tasks.withType(Pmd) { Pmd task ->
                         task.setGroup('Quality')
                         config.quality.pmd.applyTo(task)
+                        String sourceSetName = task.name['pmd'.size()..-1].uncapitalize()
+                        if (sourceSetName in config.quality.pmd.excludedSourceSets) {
+                            task.enabled = false
+                        }
                     }
 
                     if (allPmdTask) {
@@ -154,14 +158,14 @@ class PmdPlugin extends AbstractKordampPlugin {
 
         Set<Pmd> tt = new LinkedHashSet<>()
         project.tasks.withType(Pmd) { Pmd task ->
-            if (project in config.quality.pmd.aggregate.excludedProjects()) return
+            if (project in config.quality.pmd.aggregate.excludedProjects) return
             if (task.name != ALL_PMD_TASK_NAME &&
                 task.name != AGGREGATE_PMD_TASK_NAME &&
                 task.enabled) tt << task
         }
 
         project.childProjects.values().each { p ->
-            if (p in config.quality.pmd.aggregate.excludedProjects()) return
+            if (p in config.quality.pmd.aggregate.excludedProjects) return
             p.tasks.withType(Pmd) { Pmd task ->
                 if (task.name != ALL_PMD_TASK_NAME &&
                     task.enabled) tt << task

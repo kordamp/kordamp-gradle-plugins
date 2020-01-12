@@ -92,11 +92,11 @@ class ScaladocPlugin extends AbstractKordampPlugin {
 
         List<ScalaDoc> docTasks = []
         project.tasks.withType(ScalaDoc) { ScalaDoc t ->
-            if (project in config.docs.scaladoc.aggregate.excludedProjects()) return
+            if (project in config.docs.scaladoc.aggregate.excludedProjects) return
             if (t.name != AGGREGATE_SCALADOC_TASK_NAME && t.enabled) docTasks << t
         }
         project.childProjects.values().each { Project p ->
-            if (p in config.docs.scaladoc.aggregate.excludedProjects()) return
+            if (p in config.docs.scaladoc.aggregate.excludedProjects) return
             p.tasks.withType(ScalaDoc) { ScalaDoc t -> if (t.enabled) docTasks << t }
         }
         docTasks = docTasks.unique()

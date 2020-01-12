@@ -194,11 +194,11 @@ class ClirrPlugin extends AbstractKordampPlugin {
 
         List<ClirrTask> clirrTasks = []
         project.tasks.withType(ClirrTask) { ClirrTask t ->
-            if (project in config.clirr.aggregate.excludedProjects()) return
+            if (project in config.clirr.aggregate.excludedProjects) return
             if (t.enabled) clirrTasks << t
         }
         project.childProjects.values().each { Project p ->
-            if (p in config.clirr.aggregate.excludedProjects()) return
+            if (p in config.clirr.aggregate.excludedProjects) return
             p.tasks.withType(ClirrTask) { ClirrTask t -> if (t.enabled) clirrTasks << t }
         }
         clirrTasks = clirrTasks.unique()

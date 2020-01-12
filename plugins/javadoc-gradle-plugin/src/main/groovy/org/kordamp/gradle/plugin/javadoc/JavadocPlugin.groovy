@@ -89,11 +89,11 @@ class JavadocPlugin extends AbstractKordampPlugin {
 
         List<Javadoc> docTasks = []
         project.tasks.withType(Javadoc) { Javadoc t ->
-            if (project in config.docs.javadoc.aggregate.excludedProjects()) return
+            if (project in config.docs.javadoc.aggregate.excludedProjects) return
             if (t.name != AGGREGATE_JAVADOC_TASK_NAME && t.enabled) docTasks << t
         }
         project.childProjects.values().each { Project p ->
-            if (p in config.docs.javadoc.aggregate.excludedProjects()) return
+            if (p in config.docs.javadoc.aggregate.excludedProjects) return
             p.tasks.withType(Javadoc) { Javadoc t -> if (t.enabled) docTasks << t }
         }
         docTasks = docTasks.unique()

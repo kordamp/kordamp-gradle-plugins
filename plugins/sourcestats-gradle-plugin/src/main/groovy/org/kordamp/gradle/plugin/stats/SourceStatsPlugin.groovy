@@ -122,14 +122,14 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
 
         Set<SourceStatsTask> tt = new LinkedHashSet<>()
         project.tasks.withType(SourceStatsTask) { SourceStatsTask task ->
-            if (project in config.stats.aggregate.excludedProjects()) return
+            if (project in config.stats.aggregate.excludedProjects) return
             if (task.name != AGGREGATE_STATS_TASK_NAME &&
                 task.enabled)
                 tt << task
         }
 
         project.childProjects.values().each { p ->
-            if (p in config.stats.aggregate.excludedProjects()) return
+            if (p in config.stats.aggregate.excludedProjects) return
             p.tasks.withType(SourceStatsTask) { SourceStatsTask task ->
                 if (task.enabled) tt << task
             }

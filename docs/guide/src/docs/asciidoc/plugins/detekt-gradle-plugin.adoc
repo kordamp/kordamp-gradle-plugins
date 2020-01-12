@@ -47,12 +47,12 @@ config {
 | buildUponDefaultConfig | boolean     | no       | no            |
 | disableDefaultRuleSets | boolean     | no       | no            |
 | toolVersion            | String      | no       | 1.2.2         |
+| excludedSourceSets     | Set<String> | no       | []            |
 |===
 
 .Methods
 
-void exclude(String):: Adds a source exclusion rule (Ant pattern).
-void include(String):: Adds a source inclusion rule (Ant pattern).
+void excludeSourceSet(String):: Adds a sourceSet exclusion.
 
 [[_detekt_aggregate]]
 *aggregate*

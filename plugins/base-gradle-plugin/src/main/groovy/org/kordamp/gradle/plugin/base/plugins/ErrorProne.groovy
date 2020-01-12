@@ -127,13 +127,13 @@ class ErrorProne extends AbstractFeature {
 
     static void merge(ErrorProne o1, ErrorProne o2) {
         AbstractFeature.merge(o1, o2)
-        o1.disableAllChecks = o1.disableAllChecks != null ? o1.getDisableAllChecks() : o2.getDisableAllChecks()
-        o1.allErrorsAsWarnings = o1.allErrorsAsWarnings != null ? o1.getAllErrorsAsWarnings() : o2.getAllErrorsAsWarnings()
-        o1.allDisabledChecksAsWarnings = o1.allDisabledChecksAsWarnings != null ? o1.getAllDisabledChecksAsWarnings() : o2.getAllDisabledChecksAsWarnings()
-        o1.disableWarningsInGeneratedCode = o1.disableWarningsInGeneratedCode != null ? o1.getDisableWarningsInGeneratedCode() : o2.getDisableWarningsInGeneratedCode()
-        o1.ignoreUnknownCheckNames = o1.ignoreUnknownCheckNames != null ? o1.ignoreUnknownCheckNames : o2.ignoreUnknownCheckNames
-        o1.ignoreSuppressionAnnotations = o1.ignoreSuppressionAnnotations != null ? o1.getIgnoreSuppressionAnnotations() : o2.getIgnoreSuppressionAnnotations()
-        o1.compilingTestOnlyCode = o1.compilingTestOnlyCode != null ? o1.getCompilingTestOnlyCode() : o2.getCompilingTestOnlyCode()
+        o1.disableAllChecks = o1.@disableAllChecks != null ? o1.getDisableAllChecks() : o2.getDisableAllChecks()
+        o1.allErrorsAsWarnings = o1.@allErrorsAsWarnings != null ? o1.getAllErrorsAsWarnings() : o2.getAllErrorsAsWarnings()
+        o1.allDisabledChecksAsWarnings = o1.@allDisabledChecksAsWarnings != null ? o1.getAllDisabledChecksAsWarnings() : o2.getAllDisabledChecksAsWarnings()
+        o1.disableWarningsInGeneratedCode = o1.@disableWarningsInGeneratedCode != null ? o1.getDisableWarningsInGeneratedCode() : o2.getDisableWarningsInGeneratedCode()
+        o1.ignoreUnknownCheckNames = o1.@ignoreUnknownCheckNames != null ? o1.getIgnoreUnknownCheckNames() : o2.getIgnoreUnknownCheckNames()
+        o1.ignoreSuppressionAnnotations = o1.@ignoreSuppressionAnnotations != null ? o1.getIgnoreSuppressionAnnotations() : o2.getIgnoreSuppressionAnnotations()
+        o1.compilingTestOnlyCode = o1.@compilingTestOnlyCode != null ? o1.getCompilingTestOnlyCode() : o2.getCompilingTestOnlyCode()
         o1.excludedPaths = o1.excludedPaths ?: o2.excludedPaths
         o1.errorProneVersion = o1.errorProneVersion ?: o2.errorProneVersion
         o1.errorProneJavacVersion = o1.errorProneJavacVersion ?: o2.errorProneJavacVersion

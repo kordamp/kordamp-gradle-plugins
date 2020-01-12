@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.gradle.api.Action
@@ -33,63 +32,24 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  */
 @CompileStatic
 @Canonical
-class SourceHtml extends AbstractFeature {
+class SourceHtml extends AbstractAggregateFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.source-html'
 
     final Conversion conversion
     final Overview overview
     FileCollection srcDirs
-    final Aggregate aggregate
 
     SourceHtml(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
-        aggregate = new Aggregate(config, project)
+        super(config, project, PLUGIN_ID, 'sourceHtml')
         this.conversion = new Conversion(project)
         this.overview = new Overview(project)
         srcDirs = project.objects.fileCollection()
     }
 
     @Override
-    String toString() {
-        toMap().toString()
-    }
-
-    @Override
-    Map<String, Map<String, Object>> toMap() {
-        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
-
+    protected void populateMapDescription(Map<String, Object> map) {
         map.conversion = conversion.toMap()
         map.overview = overview.toMap()
-
-        if (isRoot()) {
-            map.putAll(aggregate.toMap())
-        }
-
-        new LinkedHashMap<>('sourceHtml': map)
-    }
-
-    @CompileDynamic
-    void normalize() {
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    setEnabled(project.pluginManager.hasPlugin('java') && isApplied())
-                } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java') && isApplied()})
-                }
-            } else {
-                setEnabled(project.pluginManager.hasPlugin('java') && isApplied())
-            }
-        }
-    }
-
-    void aggregate(Action<? super Aggregate> action) {
-        action.execute(aggregate)
-    }
-
-    void aggregate(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Aggregate) Closure action) {
-        ConfigureUtil.configure(action, aggregate)
     }
 
     void copyInto(SourceHtml copy) {
@@ -97,14 +57,12 @@ class SourceHtml extends AbstractFeature {
         conversion.copyInto(copy.conversion)
         overview.copyInto(overview)
         copy.srcDirs = srcDirs
-        aggregate.copyInto(copy.aggregate)
     }
 
     static void merge(SourceHtml o1, SourceHtml o2) {
-        AbstractFeature.merge(o1, o2)
+        AbstractAggregateFeature.merge(o1, o2)
         Conversion.merge(o1.conversion, o2.conversion)
         Overview.merge(o1.overview, o2.overview)
-        o1.aggregate.merge(o2.aggregate)
     }
 
     void conversion(Action<? super Conversion> action) {
@@ -369,54 +327,6 @@ class SourceHtml extends AbstractFeature {
             o1.docDescription = o1.docDescription ?: o2.docDescription
             o1.icon = o1.icon ?: o2.icon
             o1.stylesheet = o1.stylesheet ?: o2.stylesheet
-        }
-    }
-
-    @CompileStatic
-    static class Aggregate {
-        Boolean enabled
-        private final Set<Project> excludedProjects = new LinkedHashSet<>()
-
-        private final ProjectConfigurationExtension config
-        private final Project project
-
-        Aggregate(ProjectConfigurationExtension config, Project project) {
-            this.config = config
-            this.project = project
-        }
-
-        Map<String, Object> toMap() {
-            Map<String, Object> map = new LinkedHashMap<String, Object>()
-
-            map.enabled = getEnabled()
-            map.excludedProjects = excludedProjects
-
-            new LinkedHashMap<>('aggregate': map)
-        }
-
-        boolean getEnabled() {
-            this.@enabled == null || this.@enabled
-        }
-
-        void copyInto(Aggregate copy) {
-            copy.@enabled = this.@enabled
-            copy.excludedProjects.addAll(excludedProjects)
-        }
-
-        Aggregate copyOf() {
-            Aggregate copy = new Aggregate(config, project)
-            copyInto(copy)
-            copy
-        }
-
-        Aggregate merge(Aggregate other) {
-            Aggregate copy = copyOf()
-            copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
-            copy
-        }
-
-        Set<Project> excludedProjects() {
-            excludedProjects
         }
     }
 }

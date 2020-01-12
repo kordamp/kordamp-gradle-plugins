@@ -105,6 +105,10 @@ class DetektPlugin extends AbstractKordampPlugin {
                     project.tasks.withType(Detekt) { Detekt task ->
                         task.setGroup('Quality')
                         DetektPlugin.applyTo(config, task)
+                        String sourceSetName = task.name['detekt'.size()..-1].uncapitalize()
+                        if (sourceSetName in config.quality.detekt.excludedSourceSets) {
+                            task.enabled = false
+                        }
                     }
 
                     if (allDetektTask) {
@@ -153,14 +157,14 @@ class DetektPlugin extends AbstractKordampPlugin {
 
         Set<Detekt> tt = new LinkedHashSet<>()
         project.tasks.withType(Detekt) { Detekt task ->
-            if (project in config.quality.detekt.aggregate.excludedProjects()) return
+            if (project in config.quality.detekt.aggregate.excludedProjects) return
             if (task.name != ALL_DETEKT_TASK_NAME &&
                 task.name != AGGREGATE_DETEKT_TASK_NAME &&
                 task.enabled) tt << task
         }
 
         project.childProjects.values().each { p ->
-            if (p in config.quality.detekt.aggregate.excludedProjects()) return
+            if (p in config.quality.detekt.aggregate.excludedProjects) return
             p.tasks.withType(Detekt) { Detekt task ->
                 if (task.name != ALL_DETEKT_TASK_NAME &&
                     task.enabled) tt << task

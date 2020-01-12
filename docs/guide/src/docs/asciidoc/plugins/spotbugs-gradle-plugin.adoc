@@ -61,10 +61,12 @@ config {
 | ignoreFailures        | boolean      | no       | true          |
 | showProgress          | boolean      | no       | true          |
 | toolVersion           | String       | no       | 3.1.12        |
+| excludedSourceSets    | Set<String>  | no       | []            |
 |===
 
 .Methods
 
+void excludeSourceSet(String):: Adds a sourceSet exclusion.
 void exclude(String):: Adds a source exclusion rule (Ant pattern).
 void include(String):: Adds a source inclusion rule (Ant pattern).
 

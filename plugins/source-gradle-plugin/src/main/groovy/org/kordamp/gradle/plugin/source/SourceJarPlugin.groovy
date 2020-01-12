@@ -148,12 +148,12 @@ class SourceJarPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         Set<Project> projects = new LinkedHashSet<>()
-        if (!(project in config.source.aggregate.excludedProjects()) && config.source.enabled) {
+        if (!(project in config.source.aggregate.excludedProjects) && config.source.enabled) {
             projects << project
         }
 
         project.childProjects.values().each { p ->
-            if (p in config.source.aggregate.excludedProjects() || !config.source.enabled) return
+            if (p in config.source.aggregate.excludedProjects || !config.source.enabled) return
             projects << p
         }
 

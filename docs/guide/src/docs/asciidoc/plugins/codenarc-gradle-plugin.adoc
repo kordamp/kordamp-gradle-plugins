@@ -45,12 +45,12 @@ config {
 | maxPriority2Violations | int         | no       |               |
 | maxPriority3Violations | int         | no       |               |
 | toolVersion            | String      | no       | 1.5           |
+| excludedSourceSets     | Set<String> | no       | []            |
 |===
 
 .Methods
 
-void exclude(String):: Adds a source exclusion rule (Ant pattern).
-void include(String):: Adds a source inclusion rule (Ant pattern).
+void excludeSourceSet(String):: Adds a sourceSet exclusion.
 
 [[_codenarc_aggregate]]
 *aggregate*

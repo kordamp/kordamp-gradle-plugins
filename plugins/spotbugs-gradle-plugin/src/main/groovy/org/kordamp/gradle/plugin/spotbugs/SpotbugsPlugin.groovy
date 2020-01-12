@@ -103,6 +103,10 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
                     project.tasks.withType(SpotBugsTask) { SpotBugsTask task ->
                         task.setGroup('Quality')
                         applyTo(config, task)
+                        String sourceSetName = task.name['spotbugs'.size()..-1].uncapitalize()
+                        if (sourceSetName in config.quality.spotbugs.excludedSourceSets) {
+                            task.enabled = false
+                        }
                     }
 
                     if (allSpotBugsTask) {
@@ -143,14 +147,14 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
 
         Set<SpotBugsTask> tt = new LinkedHashSet<>()
         project.tasks.withType(SpotBugsTask) { SpotBugsTask task ->
-            if (project in config.quality.spotbugs.aggregate.excludedProjects()) return
+            if (project in config.quality.spotbugs.aggregate.excludedProjects) return
             if (task.name != ALL_SPOTBUGS_TASK_NAME &&
                 task.name != AGGREGATE_SPOTBUGS_TASK_NAME &&
                 task.name) tt << task
         }
 
         project.childProjects.values().each { p ->
-            if (p in config.quality.spotbugs.aggregate.excludedProjects()) return
+            if (p in config.quality.spotbugs.aggregate.excludedProjects) return
             p.tasks.withType(SpotBugsTask) { SpotBugsTask task ->
                 if (task.name != ALL_SPOTBUGS_TASK_NAME &&
                     task.enabled) tt << task

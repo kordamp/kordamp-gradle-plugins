@@ -94,11 +94,11 @@ class GroovydocPlugin extends AbstractKordampPlugin {
 
         List<Groovydoc> docTasks = []
         project.tasks.withType(Groovydoc) { Groovydoc t ->
-            if (project in config.docs.groovydoc.aggregate.excludedProjects()) return
+            if (project in config.docs.groovydoc.aggregate.excludedProjects) return
             if (t.name != AGGREGATE_GROOVYDOC_TASK_NAME && t.enabled) docTasks << t
         }
         project.childProjects.values().each { Project p ->
-            if (p in config.docs.groovydoc.aggregate.excludedProjects()) return
+            if (p in config.docs.groovydoc.aggregate.excludedProjects) return
             p.tasks.withType(Groovydoc) { Groovydoc t -> if (t.enabled) docTasks << t }
         }
         docTasks = docTasks.unique()

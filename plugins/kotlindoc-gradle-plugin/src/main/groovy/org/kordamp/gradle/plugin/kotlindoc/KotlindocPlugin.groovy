@@ -112,11 +112,11 @@ class KotlindocPlugin extends AbstractKordampPlugin {
 
             List<DokkaTask> docTasks = []
             project.tasks.withType(DokkaTask) { DokkaTask t ->
-                if (project in config.docs.kotlindoc.aggregate.excludedProjects()) return
+                if (project in config.docs.kotlindoc.aggregate.excludedProjects) return
                 if (t.name != taskName && t.enabled && t.name.endsWith(suffix)) docTasks << t
             }
             project.childProjects.values().each { Project p ->
-                if (p in config.docs.kotlindoc.aggregate.excludedProjects()) return
+                if (p in config.docs.kotlindoc.aggregate.excludedProjects) return
                 p.tasks.withType(DokkaTask) { DokkaTask t -> if (t.enabled && t.name.endsWith(suffix)) docTasks << t }
             }
             docTasks = docTasks.unique()

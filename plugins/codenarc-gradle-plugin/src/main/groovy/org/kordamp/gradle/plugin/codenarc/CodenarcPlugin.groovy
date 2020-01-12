@@ -115,6 +115,10 @@ class CodenarcPlugin extends AbstractKordampPlugin {
                     project.tasks.withType(CodeNarc) { CodeNarc task ->
                         task.setGroup('Quality')
                         config.quality.codenarc.applyTo(task)
+                        String sourceSetName = task.name['codenarc'.size()..-1].uncapitalize()
+                        if (sourceSetName in config.quality.codenarc.excludedSourceSets) {
+                            task.enabled = false
+                        }
                     }
 
                     if (allCodenarcTask) {
@@ -155,14 +159,14 @@ class CodenarcPlugin extends AbstractKordampPlugin {
 
         Set<CodeNarc> tt = new LinkedHashSet<>()
         project.tasks.withType(CodeNarc) { CodeNarc task ->
-            if (project in config.quality.codenarc.aggregate.excludedProjects()) return
+            if (project in config.quality.codenarc.aggregate.excludedProjects) return
             if (task.name != ALL_CODENARC_TASK_NAME &&
                 task.name != AGGREGATE_CODENARC_TASK_NAME &&
                 task.enabled) tt << task
         }
 
         project.childProjects.values().each { p ->
-            if (p in config.quality.codenarc.aggregate.excludedProjects()) return
+            if (p in config.quality.codenarc.aggregate.excludedProjects) return
             p.tasks.withType(CodeNarc) { CodeNarc task ->
                 if (task.name != ALL_CODENARC_TASK_NAME &&
                     task.enabled) tt << task

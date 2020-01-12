@@ -42,13 +42,12 @@ config {
 | ruleSetFiles        | FileCollection | no       |               | Either `config/pmd/${project.name}.xml` or `config/pmd/pmd.xml`
 | incrementalAnalysis | boolean        | no       | false         |
 | rulePriority        | int            | no       | 5             |
-| toolVersion         | String         | no       | 6.2.0         |
+| excludedSourceSets  | Set<String>    | no       | []            |
 |===
 
 .Methods
 
-void exclude(String):: Adds a source exclusion rule (Ant pattern).
-void include(String):: Adds a source inclusion rule (Ant pattern).
+void excludeSourceSet(String):: Adds a sourceSet exclusion.
 
 [[_pmd_aggregate]]
 *aggregate*

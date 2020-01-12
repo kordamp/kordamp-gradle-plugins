@@ -113,6 +113,10 @@ class CheckstylePlugin extends AbstractKordampPlugin {
                     project.tasks.withType(Checkstyle) { Checkstyle task ->
                         task.setGroup('Quality')
                         config.quality.checkstyle.applyTo(task)
+                        String sourceSetName = task.name['checkstyle'.size()..-1].uncapitalize()
+                        if (sourceSetName in config.quality.checkstyle.excludedSourceSets) {
+                            task.enabled = false
+                        }
                     }
 
                     if (allCheckstyleTask) {
@@ -153,7 +157,7 @@ class CheckstylePlugin extends AbstractKordampPlugin {
 
         Set<Checkstyle> tt = new LinkedHashSet<>()
         project.tasks.withType(Checkstyle) { Checkstyle task ->
-            if (project in config.quality.checkstyle.aggregate.excludedProjects()) return
+            if (project in config.quality.checkstyle.aggregate.excludedProjects) return
             if (task.name != ALL_CHECKSTYLE_TASK_NAME &&
                 task.name != AGGREGATE_CHECKSTYLE_TASK_NAME &&
                 task.enabled)
@@ -161,7 +165,7 @@ class CheckstylePlugin extends AbstractKordampPlugin {
         }
 
         project.childProjects.values().each { p ->
-            if (p in config.quality.checkstyle.aggregate.excludedProjects()) return
+            if (p in config.quality.checkstyle.aggregate.excludedProjects) return
             p.tasks.withType(Checkstyle) { Checkstyle task ->
                 if (task.name != ALL_CHECKSTYLE_TASK_NAME &&
                     task.enabled) tt << task

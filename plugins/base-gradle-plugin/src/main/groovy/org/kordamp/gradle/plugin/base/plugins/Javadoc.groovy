@@ -373,7 +373,7 @@ class Javadoc extends AbstractFeature {
     static class Aggregate {
         Boolean enabled
         Boolean fast
-        private final Set<Project> excludedProjects = new LinkedHashSet<>()
+        final Set<Project> excludedProjects = new LinkedHashSet<>()
 
         private final ProjectConfigurationExtension config
         private final Project project
@@ -418,10 +418,6 @@ class Javadoc extends AbstractFeature {
             copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
             copy.fast = copy.@fast != null ? copy.getFast() : other.getFast()
             copy
-        }
-
-        Set<Project> excludedProjects() {
-            excludedProjects
         }
     }
 }

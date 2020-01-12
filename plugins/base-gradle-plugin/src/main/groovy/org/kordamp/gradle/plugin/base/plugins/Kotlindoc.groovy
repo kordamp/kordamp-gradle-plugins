@@ -591,7 +591,7 @@ class Kotlindoc extends AbstractFeature {
         Boolean enabled
         Boolean fast
         Boolean replaceJavadoc
-        private final Set<Project> excludedProjects = new LinkedHashSet<>()
+        final Set<Project> excludedProjects = new LinkedHashSet<>()
 
         private final ProjectConfigurationExtension config
         private final Project project
@@ -643,10 +643,6 @@ class Kotlindoc extends AbstractFeature {
             copy.fast = copy.@fast != null ? copy.getFast() : other.getFast()
             copy.replaceJavadoc = copy.@replaceJavadoc != null ? copy.getReplaceJavadoc() : other.getReplaceJavadoc()
             copy
-        }
-
-        Set<Project> excludedProjects() {
-            excludedProjects
         }
     }
 }
