@@ -25,7 +25,6 @@ import org.kordamp.gradle.plugin.base.model.Information
 import org.kordamp.gradle.plugin.base.plugins.Bintray
 import org.kordamp.gradle.plugin.base.plugins.Bom
 import org.kordamp.gradle.plugin.base.plugins.BuildInfo
-import org.kordamp.gradle.plugin.base.plugins.BuildScan
 import org.kordamp.gradle.plugin.base.plugins.Checkstyle
 import org.kordamp.gradle.plugin.base.plugins.Clirr
 import org.kordamp.gradle.plugin.base.plugins.Codenarc
@@ -66,7 +65,6 @@ class ProjectConfigurationExtension {
     final Bom bom
     final Bintray bintray
     final BuildInfo buildInfo
-    final BuildScan buildScan
     final Clirr clirr
     final Licensing licensing
     final Minpom minpom
@@ -87,7 +85,6 @@ class ProjectConfigurationExtension {
         bom = new Bom(this, project)
         bintray = new Bintray(this, project)
         buildInfo = new BuildInfo(this, project)
-        buildScan = new BuildScan(this, project)
         clirr = new Clirr(this, project)
         licensing = new Licensing(this, project)
         minpom = new Minpom(this, project)
@@ -109,7 +106,6 @@ class ProjectConfigurationExtension {
         other.bom.copyInto(bom)
         other.bintray.copyInto(bintray)
         other.buildInfo.copyInto(buildInfo)
-        other.@buildScan.copyInto(buildScan)
         other.clirr.copyInto(clirr)
         other.licensing.copyInto(licensing)
         other.minpom.copyInto(minpom)
@@ -144,12 +140,6 @@ class ProjectConfigurationExtension {
 
         map
     }
-
-    @Deprecated
-    BuildScan getBuildScan() {
-        buildScan
-    }
-
     @Deprecated
     Groovydoc getGroovydoc() {
         println("The method config.groovydoc is deprecated and will be removed in the future. Use config.docs.groovydoc instead")
@@ -222,16 +212,6 @@ class ProjectConfigurationExtension {
 
     void buildInfo(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = BuildInfo) Closure action) {
         ConfigureUtil.configure(action, buildInfo)
-    }
-
-    @Deprecated
-    void buildScan(Action<? super BuildScan> action) {
-        action.execute(buildScan)
-    }
-
-    @Deprecated
-    void buildScan(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = BuildScan) Closure action) {
-        ConfigureUtil.configure(action, buildScan)
     }
 
     void clirr(Action<? super Clirr> action) {
@@ -424,7 +404,6 @@ class ProjectConfigurationExtension {
         this.@bom.copyInto(copy.@bom)
         this.@bintray.copyInto(copy.@bintray)
         this.@buildInfo.copyInto(copy.@buildInfo)
-        this.@buildScan.copyInto(copy.@buildScan)
         this.@clirr.copyInto(copy.@clirr)
         this.@licensing.copyInto(copy.@licensing)
         this.@minpom.copyInto(copy.@minpom)
@@ -447,7 +426,6 @@ class ProjectConfigurationExtension {
         Bom.merge(copy.@bom, other.@bom)
         Bintray.merge(copy.@bintray, other.@bintray)
         BuildInfo.merge(copy.@buildInfo, other.@buildInfo)
-        BuildScan.merge(copy.@buildScan, other.@buildScan)
         Clirr.merge(copy.@clirr, other.@clirr)
         Licensing.merge(copy.@licensing, other.@licensing)
         Minpom.merge(copy.@minpom, other.@minpom)
@@ -478,7 +456,6 @@ class ProjectConfigurationExtension {
     ProjectConfigurationExtension normalize() {
         info.normalize()
         bom.normalize()
-        buildScan.normalize()
         clirr.normalize()
         licensing.normalize()
         plugin.normalize()

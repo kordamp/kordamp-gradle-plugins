@@ -31,7 +31,7 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 class EffectiveSettingsTask extends AbstractReportingTask {
     private final List<String> COVERAGE = ['coveralls', 'jacoco'].asImmutable()
-    private final List<String> DOCS = ['guide', groovydoc', 'javadoc', 'kotlindoc', 'scaladoc', 'sourceHtml', 'sourceXref'].asImmutable()
+    private final List<String> DOCS = ['guide', 'groovydoc', 'javadoc', 'kotlindoc', 'scaladoc', 'sourceHtml', 'sourceXref'].asImmutable()
     private final List<String> QUALITY = ['checkstyle', 'codenarc', 'detekt', 'pmd', 'spotbugs'].asImmutable()
 
     private String section
