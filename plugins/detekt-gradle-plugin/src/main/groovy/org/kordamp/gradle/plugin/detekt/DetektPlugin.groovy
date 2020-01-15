@@ -220,6 +220,7 @@ class DetektPlugin extends AbstractKordampPlugin {
         detektTask.config.setFrom(config.quality.detekt.configFile)
         detektTask.baseline.set(config.quality.detekt.baselineFile)
         detektTask.parallel = config.quality.detekt.parallel
+        detektTask.failFast = config.quality.detekt.failFast
         detektTask.buildUponDefaultConfig = config.quality.detekt.buildUponDefaultConfig
         detektTask.disableDefaultRuleSets = config.quality.detekt.disableDefaultRuleSets
         detektTask.ignoreFailures = config.quality.detekt.ignoreFailures
