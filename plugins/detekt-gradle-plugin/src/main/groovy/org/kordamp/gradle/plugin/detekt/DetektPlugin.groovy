@@ -78,7 +78,7 @@ class DetektPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
         project.pluginManager.apply(io.gitlab.arturbosch.detekt.DetektPlugin)
 
-        project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {
+        project.pluginManager.withPlugin('kotlin-base', new Action<AppliedPlugin>() {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
 
