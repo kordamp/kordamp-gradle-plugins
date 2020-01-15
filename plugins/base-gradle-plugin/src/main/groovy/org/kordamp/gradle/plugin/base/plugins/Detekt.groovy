@@ -44,7 +44,7 @@ class Detekt extends AbstractQualityFeature {
 
     Detekt(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'detekt')
-        toolVersion = '1.2.2'
+        toolVersion = '1.4.0'
     }
 
     @Override
