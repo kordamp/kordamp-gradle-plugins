@@ -25,6 +25,7 @@ config {
             configFile
             baselineFile
             parallel
+            failFast
             buildUponDefaultConfig
             disableDefaultRuleSets
             toolVersion
@@ -44,6 +45,7 @@ config {
 | configFile             | Set<String> | no       |               |
 | baselineFile           | Set<String> | no       |               |
 | parallel               | boolean     | no       | yes           |
+| failFast               | boolean     | no       | no            |
 | buildUponDefaultConfig | boolean     | no       | no            |
 | disableDefaultRuleSets | boolean     | no       | no            |
 | toolVersion            | String      | no       | 1.2.2         |

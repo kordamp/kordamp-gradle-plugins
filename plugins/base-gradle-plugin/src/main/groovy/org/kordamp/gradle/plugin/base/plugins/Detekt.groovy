@@ -37,14 +37,16 @@ class Detekt extends AbstractQualityFeature {
     boolean parallel = true
     boolean buildUponDefaultConfig = false
     boolean disableDefaultRuleSets = false
+    boolean failFast = false
 
     private boolean parallelSet
     private boolean buildUponDefaultConfigSet
     private boolean disableDefaultRuleSetsSet
+    private boolean failFastSet
 
     Detekt(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'detekt')
-        toolVersion = '1.2.2'
+        toolVersion = '1.4.0'
     }
 
     @Override
@@ -53,6 +55,7 @@ class Detekt extends AbstractQualityFeature {
         map.configFile = this.configFile
         map.baselineFile = this.baselineFile
         map.parallel = this.parallel
+        map.failFast = this.failFast
         map.buildUponDefaultConfig = this.buildUponDefaultConfig
         map.disableDefaultRuleSets = this.disableDefaultRuleSets
     }
@@ -89,6 +92,15 @@ class Detekt extends AbstractQualityFeature {
         this.parallelSet
     }
 
+    void setFailFast(boolean failFast) {
+        this.failFast = failFast
+        this.failFastSet = true
+    }
+
+    boolean isFailFastSet() {
+        this.failFastSet
+    }
+
     void setBuildUponDefaultConfig(boolean buildUponDefaultConfig) {
         this.buildUponDefaultConfig = buildUponDefaultConfig
         this.buildUponDefaultConfigSet = true
@@ -111,6 +123,8 @@ class Detekt extends AbstractQualityFeature {
         super.copyInto(copy)
         copy.@parallel = parallel
         copy.@parallelSet = parallelSet
+        copy.@failFast = failFast
+        copy.@failFastSet = failFastSet
         copy.@buildUponDefaultConfig = buildUponDefaultConfig
         copy.@buildUponDefaultConfigSet = buildUponDefaultConfigSet
         copy.@disableDefaultRuleSets = disableDefaultRuleSets
@@ -122,6 +136,7 @@ class Detekt extends AbstractQualityFeature {
     static void merge(Detekt o1, Detekt o2) {
         AbstractQualityFeature.merge(o1, o2)
         o1.setParallel((boolean) (o1.parallelSet ? o1.parallel : o2.parallel))
+        o1.setFailFast((boolean) (o1.failFastSet ? o1.failFast : o2.failFast))
         o1.setBuildUponDefaultConfig((boolean) (o1.buildUponDefaultConfigSet ? o1.buildUponDefaultConfig : o2.buildUponDefaultConfig))
         o1.setDisableDefaultRuleSets((boolean) (o1.disableDefaultRuleSetsSet ? o1.disableDefaultRuleSets : o2.disableDefaultRuleSets))
         o1.configFile = o1.configFile ?: o2.configFile
