@@ -85,6 +85,12 @@ class PublishingPlugin extends AbstractKordampPlugin {
             }
         }
 
+        project.pluginManager.withPlugin('java-platform') {
+            if (!project.pluginManager.hasPlugin('maven-publish')) {
+                project.pluginManager.apply(MavenPublishPlugin)
+            }
+        }
+
         project.pluginManager.withPlugin('maven-publish') {
             project.afterEvaluate {
                 updatePublications(project)
@@ -123,13 +129,10 @@ class PublishingPlugin extends AbstractKordampPlugin {
     private void updatePublications(Project project) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
 
-        if (!effectiveConfig.publishing.enabled || !resolveSourceSets(project)?.findByName('main')) {
+        if (!effectiveConfig.publishing.enabled) {
             setEnabled(false)
             return
         }
-
-        Task jar = project.tasks.findByName('jar')
-        Task sourceJar = project.tasks.findByName('sourceJar')
 
         project.publishing {
             publications {
@@ -141,28 +144,35 @@ class PublishingPlugin extends AbstractKordampPlugin {
 
                 if (!effectiveConfig.publishing.publications.contains('main') && !effectiveConfig.publishing.publications) {
                     main(MavenPublication) {
-                        if (effectiveConfig.publishing.filterDependencies) {
-                            groupId = project.group
-                            artifactId = project.name
-                            version = project.version
-                            if (jar?.enabled) artifact jar
-                            PublishingUtils.configureDependencies(pom, effectiveConfig, project)
+                        if (project.pluginManager.hasPlugin('java-platform')) {
+                            from project.components.javaPlatform
                         } else {
-                            try {
-                                if (project.components.java) {
-                                    from project.components.java
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace()
+                            Task jar = project.tasks.findByName('jar')
+                            Task sourceJar = project.tasks.findByName('sourceJar')
+
+                            if (effectiveConfig.publishing.filterDependencies) {
                                 groupId = project.group
                                 artifactId = project.name
                                 version = project.version
                                 if (jar?.enabled) artifact jar
                                 PublishingUtils.configureDependencies(pom, effectiveConfig, project)
+                            } else {
+                                try {
+                                    if (project.components.java) {
+                                        from project.components.java
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace()
+                                    groupId = project.group
+                                    artifactId = project.name
+                                    version = project.version
+                                    if (jar?.enabled) artifact jar
+                                    PublishingUtils.configureDependencies(pom, effectiveConfig, project)
+                                }
                             }
-                        }
 
-                        if (sourceJar?.enabled && !artifacts.find{ it.classifier == 'sources'}) artifact sourceJar
+                            if (sourceJar?.enabled && !artifacts.find { it.classifier == 'sources' }) artifact sourceJar
+                        }
 
                         PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.publishing.pom)
                     }

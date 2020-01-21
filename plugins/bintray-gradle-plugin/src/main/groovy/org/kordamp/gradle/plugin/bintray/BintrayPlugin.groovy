@@ -74,6 +74,16 @@ class BintrayPlugin extends AbstractKordampPlugin {
                 updatePublications(project)
             }
         }
+
+        project.pluginManager.withPlugin('java-platform') {
+            if (!project.plugins.findPlugin(com.jfrog.bintray.gradle.BintrayPlugin)) {
+                project.pluginManager.apply(com.jfrog.bintray.gradle.BintrayPlugin)
+            }
+
+            project.afterEvaluate {
+                updatePublications(project)
+            }
+        }
     }
 
     @CompileDynamic
@@ -81,7 +91,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
         setEnabled(effectiveConfig.bintray.enabled)
 
-        if (!effectiveConfig.bintray.enabled || !resolveSourceSets(project).findByName('main')) {
+        if (!effectiveConfig.bintray.enabled) {
             project.getTasks().findByName(BintrayUploadTask.TASK_NAME)?.enabled = false
             setEnabled(false)
             return
