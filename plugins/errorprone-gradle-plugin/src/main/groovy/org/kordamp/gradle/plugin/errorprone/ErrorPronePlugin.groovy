@@ -47,7 +47,7 @@ class ErrorPronePlugin extends AbstractKordampPlugin {
 
         configureProject(project)
         project.childProjects.values().each {
-            configureProject(it)
+            it.pluginManager.apply(ErrorPronePlugin)
         }
     }
 

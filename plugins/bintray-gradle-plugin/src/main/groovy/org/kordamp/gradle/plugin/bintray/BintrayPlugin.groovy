@@ -47,7 +47,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
 
         configureProject(project)
         project.childProjects.values().each {
-            configureProject(it)
+            it.pluginManager.apply(BintrayPlugin)
         }
     }
 

@@ -66,7 +66,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
         if (isRootProject(project)) {
             configureRootProject(project)
             project.childProjects.values().each {
-                configureProject(it)
+                it.pluginManager.apply(ScaladocPlugin)
             }
         }
     }

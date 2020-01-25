@@ -46,7 +46,7 @@ class MinPomPlugin extends AbstractKordampPlugin {
 
         configureProject(project)
         project.childProjects.values().each {
-            configureProject(it)
+            it.pluginManager.apply(MinPomPlugin)
         }
     }
 
