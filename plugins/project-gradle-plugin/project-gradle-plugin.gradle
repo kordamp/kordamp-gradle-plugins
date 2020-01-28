@@ -35,4 +35,5 @@ dependencies {
     api project(':testing-gradle-plugin')
     api project(':integrationtest-gradle-plugin')
     api project(':functionaltest-gradle-plugin')
+    api project(':sonar-gradle-plugin')
 }
