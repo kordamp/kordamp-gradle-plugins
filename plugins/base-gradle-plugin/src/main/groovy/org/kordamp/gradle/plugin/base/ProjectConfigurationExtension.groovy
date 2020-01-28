@@ -30,6 +30,7 @@ import org.kordamp.gradle.plugin.base.plugins.Clirr
 import org.kordamp.gradle.plugin.base.plugins.Codenarc
 import org.kordamp.gradle.plugin.base.plugins.Coveralls
 import org.kordamp.gradle.plugin.base.plugins.Detekt
+import org.kordamp.gradle.plugin.base.plugins.ErrorProne
 import org.kordamp.gradle.plugin.base.plugins.Groovydoc
 import org.kordamp.gradle.plugin.base.plugins.Guide
 import org.kordamp.gradle.plugin.base.plugins.Jacoco
@@ -41,13 +42,13 @@ import org.kordamp.gradle.plugin.base.plugins.Plugin
 import org.kordamp.gradle.plugin.base.plugins.Pmd
 import org.kordamp.gradle.plugin.base.plugins.Publishing
 import org.kordamp.gradle.plugin.base.plugins.Scaladoc
+import org.kordamp.gradle.plugin.base.plugins.Sonar
 import org.kordamp.gradle.plugin.base.plugins.Source
 import org.kordamp.gradle.plugin.base.plugins.SourceHtml
 import org.kordamp.gradle.plugin.base.plugins.SourceXref
 import org.kordamp.gradle.plugin.base.plugins.Spotbugs
 import org.kordamp.gradle.plugin.base.plugins.Stats
 import org.kordamp.gradle.plugin.base.plugins.Testing
-import org.kordamp.gradle.plugin.base.plugins.ErrorProne
 
 /**
  * @author Andres Almiray
@@ -140,6 +141,7 @@ class ProjectConfigurationExtension {
 
         map
     }
+
     @Deprecated
     Groovydoc getGroovydoc() {
         println("The method config.groovydoc is deprecated and will be removed in the future. Use config.docs.groovydoc instead")
@@ -449,6 +451,7 @@ class ProjectConfigurationExtension {
         errors.addAll(this.@bintray.validate(this))
         errors.addAll(this.@licensing.validate(this))
         errors.addAll(this.@plugin.validate(this))
+        errors.addAll(this.@quality.validate(this))
 
         errors
     }
@@ -482,6 +485,7 @@ class ProjectConfigurationExtension {
         final ErrorProne errorprone
         final Pmd pmd
         final Spotbugs spotbugs
+        final Sonar sonar
 
         private final ProjectConfigurationExtension config
         private final Project project
@@ -494,6 +498,7 @@ class ProjectConfigurationExtension {
             detekt = new Detekt(config, project)
             errorprone = new ErrorProne(config, project)
             pmd = new Pmd(config, project)
+            sonar = new Sonar(config, project)
             spotbugs = new Spotbugs(config, project)
         }
 
@@ -505,6 +510,7 @@ class ProjectConfigurationExtension {
             map.putAll(detekt.toMap())
             map.putAll(errorprone.toMap())
             map.putAll(pmd.toMap())
+            map.putAll(sonar.toMap())
             map.putAll(spotbugs.toMap())
 
             new LinkedHashMap<>('quality': map)
@@ -516,6 +522,7 @@ class ProjectConfigurationExtension {
             detekt.copyInto(copy.detekt)
             errorprone.copyInto(copy.errorprone)
             pmd.copyInto(copy.pmd)
+            sonar.copyInto(copy.sonar)
             spotbugs.copyInto(copy.spotbugs)
         }
 
@@ -559,6 +566,14 @@ class ProjectConfigurationExtension {
             ConfigureUtil.configure(action, pmd)
         }
 
+        void sonar(Action<? super Sonar> action) {
+            action.execute(sonar)
+        }
+
+        void sonar(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sonar) Closure action) {
+            ConfigureUtil.configure(action, sonar)
+        }
+
         void spotbugs(Action<? super Spotbugs> action) {
             action.execute(spotbugs)
         }
@@ -569,12 +584,13 @@ class ProjectConfigurationExtension {
 
         Quality copyOf() {
             Quality copy = new Quality(config, project)
-            this.@checkstyle.copyInto(copy.@checkstyle)
-            this.@codenarc.copyInto(copy.@codenarc)
-            this.@detekt.copyInto(copy.@detekt)
-            this.@errorprone.copyInto(copy.@detekt)
-            this.@pmd.copyInto(copy.@pmd)
-            this.@spotbugs.copyInto(copy.@spotbugs)
+            this.checkstyle.copyInto(copy.@checkstyle)
+            this.codenarc.copyInto(copy.@codenarc)
+            this.detekt.copyInto(copy.@detekt)
+            this.errorprone.copyInto(copy.@detekt)
+            this.pmd.copyInto(copy.@pmd)
+            this.sonar.copyInto(copy.@sonar)
+            this.spotbugs.copyInto(copy.@spotbugs)
             copy
         }
 
@@ -584,6 +600,7 @@ class ProjectConfigurationExtension {
             Detekt.merge(o1.@detekt, o2.@detekt)
             ErrorProne.merge(o1.@errorprone, o2.@errorprone)
             Pmd.merge(o1.@pmd, o2.@pmd)
+            Sonar.merge(o1.@sonar, o2.@sonar)
             Spotbugs.merge(o1.@spotbugs, o2.@spotbugs)
 
             o1
@@ -593,12 +610,21 @@ class ProjectConfigurationExtension {
             this
         }
 
+        List<String> validate(ProjectConfigurationExtension extension) {
+            List<String> errors = []
+
+            errors.addAll(sonar.validate(extension))
+
+            errors
+        }
+
         Quality normalize() {
             checkstyle.normalize()
             codenarc.normalize()
             detekt.normalize()
             errorprone.normalize()
             pmd.normalize()
+            sonar.normalize()
             spotbugs.normalize()
             this
         }
