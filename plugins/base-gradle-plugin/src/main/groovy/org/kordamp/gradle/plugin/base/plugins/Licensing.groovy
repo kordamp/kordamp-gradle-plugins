@@ -22,9 +22,12 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.License
 import org.kordamp.gradle.plugin.base.model.LicenseSet
+
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -38,6 +41,7 @@ class Licensing extends AbstractFeature {
     String mergeStrategy
 
     final LicenseSet licenses = new LicenseSet()
+    final Set<String> excludedSourceSets = new LinkedHashSet<>()
 
     Licensing(ProjectConfigurationExtension config, Project project) {
         super(config, project)
@@ -53,6 +57,7 @@ class Licensing extends AbstractFeature {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         map.mergeStrategy = mergeStrategy
+        map.excludedSourceSets = excludedSourceSets
         map.licenses = licenses.licenses.collectEntries { License license ->
             [(license.licenseId?.name() ?: license.name): license.toMap()]
         }
@@ -74,15 +79,23 @@ class Licensing extends AbstractFeature {
         ConfigureUtil.configure(action, licenses)
     }
 
+    void excludeSourceSet(String s) {
+        if (isNotBlank(s)) {
+            excludedSourceSets << s
+        }
+    }
+
     void copyInto(Licensing copy) {
         super.copyInto(copy)
-        copy.@mergeStrategy = this.@mergeStrategy
+        copy.mergeStrategy = this.mergeStrategy
+        copy.excludedSourceSets.addAll(this.excludedSourceSets)
         licenses.copyInto(copy.licenses)
     }
 
     static void merge(Licensing o1, Licensing o2) {
         AbstractFeature.merge(o1, o2)
         o1.mergeStrategy = o1.mergeStrategy? o1.mergeStrategy : o2?.mergeStrategy
+        CollectionUtils.merge(o1.excludedSourceSets, o2?.excludedSourceSets)
         switch (o1.mergeStrategy) {
             case 'overwrite':
                 break

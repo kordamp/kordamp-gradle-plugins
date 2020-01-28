@@ -218,20 +218,20 @@ class LicensingPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void configureLicenseExtension(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        setEnabled(effectiveConfig.licensing.enabled)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        setEnabled(config.licensing.enabled)
 
-        if (!enabled || effectiveConfig.licensing.empty) {
+        if (!enabled || config.licensing.empty) {
             project.tasks.withType(LicenseCheck).each { it.enabled = false }
             project.tasks.withType(LicenseFormat).each { it.enabled = false }
             return
         }
 
-        License lic = effectiveConfig.licensing.allLicenses()[0]
-        if (effectiveConfig.licensing.allLicenses().size() > 1) {
-            lic = effectiveConfig.licensing.allLicenses().find {
+        License lic = config.licensing.allLicenses()[0]
+        if (config.licensing.allLicenses().size() > 1) {
+            lic = config.licensing.allLicenses().find {
                 it.primary
-            } ?: effectiveConfig.licensing.allLicenses()[0]
+            } ?: config.licensing.allLicenses()[0]
         }
 
         LicenseExtension licenseExtension = project.extensions.findByType(LicenseExtension)
@@ -248,9 +248,9 @@ class LicensingPlugin extends AbstractKordampPlugin {
         }
         licenseExtension.ext.project = project.name
         licenseExtension.ext {
-            projectName = effectiveConfig.info.name
-            copyrightYear = effectiveConfig.info.copyrightYear
-            author = effectiveConfig.info.getAuthors().join(', ')
+            projectName = config.info.name
+            copyrightYear = config.info.copyrightYear
+            author = config.info.getAuthors().join(', ')
             license = lic.licenseId?.spdx()
         }
         licenseExtension.exclude '**/*.png'
@@ -258,6 +258,22 @@ class LicensingPlugin extends AbstractKordampPlugin {
         licenseExtension.exclude '**/*.jpg'
         licenseExtension.exclude '**/*.jpeg'
         licenseExtension.exclude 'META-INF/services/*'
+
+        project.tasks.withType(LicenseCheck, new Action<LicenseCheck>() {
+            @Override
+            void execute(LicenseCheck t) {
+                String sourceSetName = t.name[7..-1].uncapitalize()
+                t.enabled = !config.licensing.excludedSourceSets.contains(sourceSetName)
+            }
+        })
+
+        project.tasks.withType(LicenseFormat, new Action<LicenseFormat>() {
+            @Override
+            void execute(LicenseFormat t) {
+                String sourceSetName = t.name[7..-1].uncapitalize()
+                t.enabled = !config.licensing.excludedSourceSets.contains(sourceSetName)
+            }
+        })
     }
 
     private void preConfigureDownloadLicensesExtension(Project project) {
