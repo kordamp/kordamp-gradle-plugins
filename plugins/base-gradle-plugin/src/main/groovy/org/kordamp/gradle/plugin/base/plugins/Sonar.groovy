@@ -139,5 +139,6 @@ class Sonar extends AbstractFeature {
         o1.username = o1.username ?: o2.username
         CollectionUtils.merge(o1.configProperties, o2?.configProperties)
         CollectionUtils.merge(o1.excludes, o2?.excludes)
+        o1.ignoreFailures = o1.ignoreFailuresSet ? o1.getIgnoreFailures() : o2.getIgnoreFailures()
     }
 }
