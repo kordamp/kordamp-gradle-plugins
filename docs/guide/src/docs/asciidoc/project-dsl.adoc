@@ -43,6 +43,7 @@ config {
         <<_org_kordamp_gradle_errorprone,errorprone>> { ... }
         <<_org_kordamp_gradle_pmd,pmd>> { ... }
         <<_org_kordamp_gradle_spotbugs,spotbugs>> { ... }
+        <<_org_kordamp_gradle_sonar,sonar>> { ... }
     }
 }
 ----
