@@ -5,7 +5,7 @@
 It's expected of projects that make use of these plugins to follow a certain directory structure that enables them to gain
 higher benefits via conventions rather than writing lots of custom configuration elements.
 
-To begin with, projects should have a multi-project nature, i.e, be comprised of a root project and at least 1 subproject
+To begin with, projects should have a multi-project nature, i.e. be comprised of a root project and at least one subproject
 or module. Why is this? This way a root project serves as the central point of configuration, while additional subprojects
 may be added at later stages during development. Thus the minimum structure could look like this
 
