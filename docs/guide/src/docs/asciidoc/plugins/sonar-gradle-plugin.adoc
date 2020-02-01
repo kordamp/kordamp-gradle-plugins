@@ -16,6 +16,8 @@ If link:https://www.eclemma.org/jacoco/[JaCoCo] is enabled, the output of the
 For kotlin projects, if link:https://arturbosch.github.io/detekt/[detekt] is enabled, the output of the
 <<_task_aggregate_detekt,aggregateDetekt>> task is also used as input for the sonarqube task.
 
+Data defined in the DSL’s `config.info` block will be used to provide additional information to SonarQube.
+
 [[_org_kordamp_gradle_sonar_dsl]]
 == DSL
 
@@ -61,12 +63,12 @@ This block should be configured on the root project.
 | `config.quality.sonar.excludes`                 | `sonar.exclusions`                     |
 | `config.coverage.jacoco.aggregateReportXmlFile` | `sonar.coverage.jacoco.xmlReportPaths` | if jacoco is enabled
 | 'build/reports/detekt/aggregate.xml'            | `sonar.kotlin.detekt.reportPaths`      | if detekt is enabled
+| `config.info.description`                       | `sonar.projectDescription`             |
+| `config.info.links.website`                     | `sonar.links.homepage`                 |
+| `config.info.ciManagement.url`                  | `sonar.links.ci`                       |
+| `config.info.issueManagement.url`               | `sonar.links.issue`                    |
+| `config.info.scm.url`                           | `sonar.links.scm`                      |
 |===
-
-The SonarQube property `sonar.tests` is enriched automatically with the respective test sets,
-if any of the <<_org_kordamp_gradle_integrationtest,org.kordamp.gradle.integration-test>>
-or <<_org_kordamp_gradle_functionaltest,org.kordamp.gradle.functional-test>> plugins are enabled. +
-Likewise, the SonarQube property `sonar.java.test.binaries`
 
 .Methods
 
