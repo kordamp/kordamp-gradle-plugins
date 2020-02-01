@@ -18,8 +18,11 @@
 package org.kordamp.gradle.plugin.project
 
 import com.github.benmanes.gradle.versions.VersionsPlugin
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.bintray.BintrayPlugin
@@ -29,6 +32,8 @@ import org.kordamp.gradle.plugin.jacoco.JacocoPlugin
 import org.kordamp.gradle.plugin.jar.JarPlugin
 import org.kordamp.gradle.plugin.licensing.LicensingPlugin
 import org.kordamp.gradle.plugin.minpom.MinPomPlugin
+import org.kordamp.gradle.plugin.project.tasks.reports.GenerateDependencyUpdatesReportTask
+import org.kordamp.gradle.plugin.project.tasks.reports.GenerateTeamReportTask
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 import org.kordamp.gradle.plugin.source.SourceJarPlugin
 import org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
@@ -83,5 +88,41 @@ class ProjectPlugin extends AbstractKordampPlugin {
         TestingPlugin.applyIfMissing(project)
 
         project.pluginManager.apply(VersionsPlugin)
+
+        registerTasks(project)
+    }
+
+    private void registerTasks(Project project) {
+        TaskProvider<DependencyUpdatesTask> dependencyUpdates = project.tasks.named('dependencyUpdates', DependencyUpdatesTask,
+            new Action<DependencyUpdatesTask>() {
+                @Override
+                void execute(DependencyUpdatesTask t) {
+                    t.outputFormatter = 'plain,xml'
+                }
+            })
+
+        project.tasks.register('generateDependencyUpdatesReport', GenerateDependencyUpdatesReportTask,
+            new Action<GenerateDependencyUpdatesReportTask>() {
+                @Override
+                void execute(GenerateDependencyUpdatesReportTask t) {
+                    t.dependsOn(dependencyUpdates)
+                    t.group = 'Reports'
+                    t.description = "Generates a dependency updates report for '$project.name'."
+                    t.dependencyUpdatesXmlReport.set(new File(
+                        dependencyUpdates.get().outputDir +
+                            File.separator +
+                            dependencyUpdates.get().reportfileName +
+                            '.xml'))
+                }
+            })
+
+        project.tasks.register('generateTeamReport', GenerateTeamReportTask,
+            new Action<GenerateTeamReportTask>() {
+                @Override
+                void execute(GenerateTeamReportTask t) {
+                    t.group = 'Reports'
+                    t.description = "Generates a team report for '$project.name'."
+                }
+            })
     }
 }
