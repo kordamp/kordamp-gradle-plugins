@@ -78,7 +78,7 @@ ErrorPronePlugin.groovy
 <a name="47"><font color="#808080">47</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="48"><font color="#808080">48</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">configureProject</font><font color="#000000">(</font><font color="#000000">project</font><font color="#000000">)</font><br />
 <a name="49"><font color="#808080">49</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">project.childProjects.values</font><font color="#000000">()</font><font color="#000000">.each&nbsp;</font><font color="#000000">{</font><br />
-<a name="50"><font color="#808080">50</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">configureProject</font><font color="#000000">(</font><font color="#000000">it</font><font color="#000000">)</font><br />
+<a name="50"><font color="#808080">50</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">it.pluginManager.apply</font><font color="#000000">(</font><font color="#000000">ErrorPronePlugin</font><font color="#000000">)</font><br />
 <a name="51"><font color="#808080">51</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="52"><font color="#808080">52</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="53"><font color="#808080">53</font>&nbsp;</a><font color="#ffffff"></font><br />

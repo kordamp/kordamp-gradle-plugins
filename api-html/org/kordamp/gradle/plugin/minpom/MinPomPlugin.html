@@ -77,7 +77,7 @@ MinPomPlugin.groovy
 <a name="46"><font color="#808080">046</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="47"><font color="#808080">047</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">configureProject</font><font color="#000000">(</font><font color="#000000">project</font><font color="#000000">)</font><br />
 <a name="48"><font color="#808080">048</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">project.childProjects.values</font><font color="#000000">()</font><font color="#000000">.each&nbsp;</font><font color="#000000">{</font><br />
-<a name="49"><font color="#808080">049</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">configureProject</font><font color="#000000">(</font><font color="#000000">it</font><font color="#000000">)</font><br />
+<a name="49"><font color="#808080">049</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">it.pluginManager.apply</font><font color="#000000">(</font><font color="#000000">MinPomPlugin</font><font color="#000000">)</font><br />
 <a name="50"><font color="#808080">050</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="51"><font color="#808080">051</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="52"><font color="#808080">052</font>&nbsp;</a><font color="#ffffff"></font><br />

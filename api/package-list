@@ -1,6 +1,5 @@
 org.kordamp.gradle
 org.kordamp.gradle.plugin
-org.kordamp.gradle.plugin.apidoc
 org.kordamp.gradle.plugin.base
 org.kordamp.gradle.plugin.base.model
 org.kordamp.gradle.plugin.base.model.impl
@@ -10,7 +9,6 @@ org.kordamp.gradle.plugin.base.tasks
 org.kordamp.gradle.plugin.bintray
 org.kordamp.gradle.plugin.bom
 org.kordamp.gradle.plugin.buildinfo
-org.kordamp.gradle.plugin.buildscan
 org.kordamp.gradle.plugin.checkstyle
 org.kordamp.gradle.plugin.checkstyle.tasks
 org.kordamp.gradle.plugin.clirr
