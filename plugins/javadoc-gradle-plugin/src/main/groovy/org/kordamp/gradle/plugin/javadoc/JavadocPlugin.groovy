@@ -198,7 +198,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
         if (config.docs.javadoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
             PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
             MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (mainPublication && !isGradle6Compatible()) {
+            if (mainPublication /*&& !isGradle6Compatible()*/) {
                 MavenArtifact oldJavadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
                 if (oldJavadocJar) mainPublication.artifacts.remove(oldJavadocJar)
                 mainPublication.artifact(javadocJar.get())

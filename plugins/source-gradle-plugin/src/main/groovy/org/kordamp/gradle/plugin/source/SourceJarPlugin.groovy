@@ -34,21 +34,20 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
-import static org.kordamp.gradle.PluginUtils.isGradle6Compatible
 import static org.kordamp.gradle.PluginUtils.registerJarVariant
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
- * Configures a {@code sourceJar} task.
+ * Configures a {@code sourcesJar} task.
  *
  * @author Andres Almiray
  * @since 0.1.0
  */
 @CompileStatic
 class SourceJarPlugin extends AbstractKordampPlugin {
-    static final String SOURCE_JAR_TASK_NAME = 'sourcesJar'
-    static final String AGGREGATE_SOURCE_JAR_TASK_NAME = 'aggregateSourcesJar'
+    static final String SOURCES_JAR_TASK_NAME = 'sourcesJar'
+    static final String AGGREGATE_SOURCES_JAR_TASK_NAME = 'aggregateSourcesJar'
 
     Project project
 
@@ -89,15 +88,15 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                     ProjectConfigurationExtension config = resolveEffectiveConfig(project)
                     setEnabled(config.source.enabled)
 
-                    TaskProvider<Jar> sourceJar = createSourceJarTask(project)
-                    project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(sourceJar)
+                    TaskProvider<Jar> sourcesJar = createSourceJarTask(project)
+                    project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(sourcesJar)
                 }
             }
         })
     }
 
     private void configureRootProject(Project project) {
-        TaskProvider<Jar> sourceJarTask = project.tasks.register(AGGREGATE_SOURCE_JAR_TASK_NAME, Jar,
+        TaskProvider<Jar> sourcesJarTask = project.tasks.register(AGGREGATE_SOURCES_JAR_TASK_NAME, Jar,
             new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
@@ -111,14 +110,14 @@ class SourceJarPlugin extends AbstractKordampPlugin {
         project.gradle.addBuildListener(new BuildAdapter() {
             @Override
             void projectsEvaluated(Gradle gradle) {
-                configureAggregateSourceJarTask(project, sourceJarTask)
+                configureAggregateSourceJarTask(project, sourcesJarTask)
             }
         })
     }
 
     private TaskProvider<Jar> createSourceJarTask(Project project) {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-        TaskProvider<Jar> sourceJar = project.tasks.register(SOURCE_JAR_TASK_NAME, Jar,
+        TaskProvider<Jar> sourcesJar = project.tasks.register(SOURCES_JAR_TASK_NAME, Jar,
             new Action<Jar>() {
                 @Override
                 @CompileDynamic
@@ -135,16 +134,16 @@ class SourceJarPlugin extends AbstractKordampPlugin {
         if (config.source.enabled && project.pluginManager.hasPlugin('maven-publish')) {
             PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
             MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (mainPublication && !isGradle6Compatible()) {
+            if (mainPublication /*&& !isGradle6Compatible()*/) {
                 MavenArtifact oldSourceJar = mainPublication.artifacts?.find { it.classifier == 'sources' }
                 if (oldSourceJar) mainPublication.artifacts.remove(oldSourceJar)
-                mainPublication.artifact(sourceJar.get())
+                mainPublication.artifact(sourcesJar.get())
             }
 
-            registerJarVariant('Source', 'sources', sourceJar, project)
+            registerJarVariant('Source', 'sources', sourcesJar, project)
         }
 
-        sourceJar
+        sourcesJar
     }
 
     private void configureAggregateSourceJarTask(Project project,

@@ -148,7 +148,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
                             from project.components.javaPlatform
                         } else {
                             Task jar = project.tasks.findByName('jar')
-                            Task sourceJar = project.tasks.findByName('sourceJar')
+                            Task sourcesJar = project.tasks.findByName('sourcesJar')
 
                             if (effectiveConfig.publishing.filterDependencies) {
                                 groupId = project.group
@@ -171,7 +171,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
                                 }
                             }
 
-                            if (sourceJar?.enabled && !artifacts.find { it.classifier == 'sources' }) artifact sourceJar
+                            if (sourcesJar?.enabled && !artifacts.find { it.classifier == 'sources' }) artifact sourcesJar
                         }
 
                         PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.publishing.pom)

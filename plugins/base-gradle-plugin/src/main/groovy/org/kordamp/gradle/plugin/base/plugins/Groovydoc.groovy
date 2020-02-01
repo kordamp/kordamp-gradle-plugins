@@ -116,7 +116,7 @@ class Groovydoc extends AbstractFeature {
                 if (project.childProjects.isEmpty()) {
                     setEnabled(project.pluginManager.hasPlugin('groovy') && isApplied())
                 } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('groovy') && isApplied()})
+                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('groovy') && isApplied() })
                 }
             } else {
                 setEnabled(project.pluginManager.hasPlugin('groovy') && isApplied())
@@ -180,6 +180,10 @@ class Groovydoc extends AbstractFeature {
         groovydoc.getIncludes().addAll(includes)
         groovydoc.getExcludes().addAll(excludes)
         options.applyTo(groovydoc)
+    }
+
+    void postMerge() {
+        if (replaceJavadoc) config.docs.javadoc.enabled = false
     }
 
     @CompileStatic

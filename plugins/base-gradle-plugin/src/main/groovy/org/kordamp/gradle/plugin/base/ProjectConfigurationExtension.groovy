@@ -798,7 +798,9 @@ class ProjectConfigurationExtension {
 
         Docs postMerge() {
             javadoc.postMerge()
+            groovydoc.postMerge()
             kotlindoc.postMerge()
+            scaladoc.postMerge()
             this
         }
 

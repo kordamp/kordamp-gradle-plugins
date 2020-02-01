@@ -195,9 +195,9 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                     project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
                     project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
                 }
-                if (!isGradle6Compatible()) {
+                // if (!isGradle6Compatible()) {
                     mainPublication.artifact(scaladocJarTask.get())
-                }
+                // }
             }
 
             registerJarVariant('Scaladoc', config.docs.scaladoc.replaceJavadoc ? 'javadoc' : 'scaladoc', scaladocJarTask, project)

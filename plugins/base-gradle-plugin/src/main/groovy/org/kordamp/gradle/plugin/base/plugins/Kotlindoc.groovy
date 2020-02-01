@@ -300,6 +300,7 @@ class Kotlindoc extends AbstractFeature {
     void postMerge() {
         outputDirectory = outputDirectory ?: project.file("${project.buildDir}/docs/kotlindoc")
         jdkVersion = jdkVersion ?: 6
+        if (replaceJavadoc) config.docs.javadoc.enabled = false
     }
 
     List<String> validate(ProjectConfigurationExtension extension) {

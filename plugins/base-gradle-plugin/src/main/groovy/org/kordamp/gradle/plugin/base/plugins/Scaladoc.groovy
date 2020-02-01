@@ -163,6 +163,10 @@ class Scaladoc extends AbstractFeature {
         options.applyTo(scaladoc)
     }
 
+    void postMerge() {
+        if (replaceJavadoc) config.docs.javadoc.enabled = false
+    }
+
     @CompileStatic
     static class Aggregate {
         Boolean enabled

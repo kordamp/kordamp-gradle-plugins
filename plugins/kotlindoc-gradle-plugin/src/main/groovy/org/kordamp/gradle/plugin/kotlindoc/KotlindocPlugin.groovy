@@ -235,9 +235,9 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                         project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
                         project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
                     }
-                    if (!isGradle6Compatible()) {
+                    // if (!isGradle6Compatible()) {
                         mainPublication.artifact(kotlindocJar.get())
-                    }
+                    // }
                 }
             }
 
