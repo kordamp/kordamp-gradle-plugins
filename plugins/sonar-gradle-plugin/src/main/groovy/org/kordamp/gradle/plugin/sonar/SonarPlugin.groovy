@@ -135,20 +135,6 @@ class SonarPlugin extends AbstractKordampPlugin {
             }
         })
 
-        for (Project p : project.childProjects.values()) {
-            if (config.quality.sonar.excludedProjects.contains(p.name)) {
-                continue
-            }
-
-            p.pluginManager.withPlugin('org.kordamp.gradle.integration-test') {
-                configureProperties(p, 'integrationTest', 'integration-test')
-            }
-
-            p.pluginManager.withPlugin('org.kordamp.gradle.functional-test') {
-                configureProperties(p, 'functionalTest', 'functional-test')
-            }
-        }
-
         project.tasks.withType(SonarQubeTask, new Action<SonarQubeTask>() {
             @Override
             void execute(SonarQubeTask t) {
@@ -159,41 +145,6 @@ class SonarPlugin extends AbstractKordampPlugin {
                 if (config.quality.detekt.enabled) {
                     t.dependsOn(project.tasks.named('aggregateDetekt'))
                 }
-            }
-        })
-    }
-
-    private static void configureProperties(Project project, String cname, String sname) {
-        Configuration c = project.configurations.findByName(cname)
-
-        Set<File> sourcePaths = new LinkedHashSet<>()
-        Set<String> classPaths = new LinkedHashSet<>()
-        for (String sourceSetName in ['java', 'groovy', 'kotlin', 'scala']) {
-            File dir = project.file('src/' + sname + '/' + sourceSetName)
-            if (dir.exists()) {
-                sourcePaths << dir
-            }
-            dir = project.layout.buildDirectory.file('classes/' + sourceSetName + '/' + sname).get().asFile
-            classPaths << dir.absolutePath
-        }
-
-        SonarQubeExtension extension = project.extensions.findByType(SonarQubeExtension)
-        extension.properties(new Action<SonarQubeProperties>() {
-            @Override
-            void execute(SonarQubeProperties props) {
-                Collection<File> spaths = (Collection<File>) (props.properties.get('sonar.tests') ?: [])
-                for (File path : spaths) {
-                    sourcePaths.add(path)
-                }
-                props.properties.put('sonar.tests', new ArrayList<File>(sourcePaths))
-
-                Collection<String> cpaths = (Collection<String>) (props.properties.get('sonar.java.test.binaries') ?: [])
-                for (String path : cpaths) {
-                    classPaths.add(path)
-                }
-                println classPaths
-                classPaths.retainAll { new File(it).exists() }
-                props.properties.put('sonar.java.test.binaries', new ArrayList<String>(classPaths))
             }
         })
     }
