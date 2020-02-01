@@ -38,5 +38,6 @@ include::{includedir}/plugins/sourcehtml-gradle-plugin.adoc[]
 include::{includedir}/plugins/sourcestats-gradle-plugin.adoc[]
 include::{includedir}/plugins/sourcexref-gradle-plugin.adoc[]
 include::{includedir}/plugins/spotbugs-gradle-plugin.adoc[]
+include::{includedir}/plugins/sonar-gradle-plugin.adoc[]
 include::{includedir}/plugins/testing-gradle-plugin.adoc[]
 :leveloffset: 1
