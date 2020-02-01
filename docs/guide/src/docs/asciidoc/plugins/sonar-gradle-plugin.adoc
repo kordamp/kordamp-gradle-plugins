@@ -19,6 +19,8 @@ For kotlin projects, if link:https://arturbosch.github.io/detekt/[detekt] is ena
 [[_org_kordamp_gradle_sonar_dsl]]
 == DSL
 
+// TODO configProperties is currently defined, but not actually used, or is it?
+
 [source,groovy]
 [subs="+macros"]
 ----
@@ -30,7 +32,6 @@ config {
             username
             projectKey
             ignoreFailures
-            configProperties
         }
     }
 }
@@ -46,7 +47,7 @@ config {
 | projectKey       | String              | no       | $username + '_' + ${project.rootProject.name} | The project's unique key.
 | ignoreFailures   | boolean             | no       | true                                          |
 | excludedProjects | Set<Project>        | no       | []                                            | Projects in the set are excluded from aggregation
-| configProperties | Map<String, Object> | no       | [:]                                           |
+//| configProperties | Map<String, Object> | no       | [:]                                           | // TODO configProperties is currently defined, but not actually used, or is it?
 |===
 
 This block should be configured on the root project.
