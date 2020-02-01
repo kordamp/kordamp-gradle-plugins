@@ -1,12 +1,12 @@
 
 [[_org_kordamp_gradle_errorprone]]
-= SpotBugs
+= Error Prone
 
 [horizontal]
 id:: `org.kordamp.gradle.errorprone`
-class:: `org.kordamp.gradle.plugin.errorprone.SpotBugsPlugin`
-    (link:api/org/kordamp/gradle/plugin/errorprone/SpotBugsPlugin.html[groovydoc],
-     link:api-html/org/kordamp/gradle/plugin/errorprone/SpotBugsPlugin.html[source])
+class:: `org.kordamp.gradle.plugin.errorprone.ErrorPronePlugin`
+    (link:api/org/kordamp/gradle/plugin/errorprone/ErrorPronePlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/errorprone/ErrorPronePlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `link:https://github.com/tbroyer/gradle-errorprone-plugin[net.ltgt.errorprone]`
 
