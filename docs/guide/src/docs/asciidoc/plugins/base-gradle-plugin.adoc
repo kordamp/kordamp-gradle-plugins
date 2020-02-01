@@ -8,7 +8,7 @@ class:: `org.kordamp.gradle.plugin.base.BasePlugin`
     (link:api/org/kordamp/gradle/plugin/base/BasePlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/base/BasePlugin.html[source])
 
-Enables de configuration DSL. Settings made via this DSL are consumed by multiple plugins.
+Enables the configuration DSL. Settings made via this DSL are consumed by multiple plugins.
 
 [[_org_kordamp_gradle_base_dsl]]
 == DSL
