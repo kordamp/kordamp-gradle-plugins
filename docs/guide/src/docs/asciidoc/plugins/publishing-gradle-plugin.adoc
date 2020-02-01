@@ -83,9 +83,9 @@ This block is optional.
 
 The format for `parent` may be any of the following ones:
 
- * Plain name of a project within the same multi-project, i.e, `kordamp-core`.
- * Project path within the same multi-project, i.e, `:kordamp-core`.
- * Full maven coordinates, i.e, `org.kordamp:kordamp-core:1.2.3`.
+ * Plain name of a project within the same multi-project, i.e. `kordamp-core`.
+ * Project path within the same multi-project, i.e. `:kordamp-core`.
+ * Full maven coordinates, i.e. `org.kordamp:kordamp-core:1.2.3`.
 
 This block is optional.
 
