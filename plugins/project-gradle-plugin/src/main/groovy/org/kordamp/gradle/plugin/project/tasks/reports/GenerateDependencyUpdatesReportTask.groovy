@@ -24,12 +24,13 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.kordamp.gradle.plugin.base.tasks.reports.ReportGeneratingTask
 
 /**
  * @author Andres Almiray
  * @since 0.33.0
  */
-class GenerateDependencyUpdatesReportTask extends DefaultTask {
+class GenerateDependencyUpdatesReportTask extends DefaultTask implements ReportGeneratingTask {
     @InputFile
     final RegularFileProperty dependencyUpdatesXmlReport = project.objects.fileProperty()
 
@@ -72,7 +73,6 @@ class GenerateDependencyUpdatesReportTask extends DefaultTask {
 
         StringBuilder table = new StringBuilder('''|
         |[options="header", cols="3*"]
-        |[subs="+macros"]
         ||===
         || Group
         || Name
@@ -101,7 +101,6 @@ class GenerateDependencyUpdatesReportTask extends DefaultTask {
 
         StringBuilder table = new StringBuilder('''|
         |[options="header", cols="4*"]
-        |[subs="+macros"]
         ||===
         || Group
         || Name
@@ -137,7 +136,6 @@ class GenerateDependencyUpdatesReportTask extends DefaultTask {
 
         StringBuilder table = new StringBuilder('''|
         |[options="header", cols="4*"]
-        |[subs="+macros"]
         ||===
         || Group
         || Name
@@ -168,7 +166,6 @@ class GenerateDependencyUpdatesReportTask extends DefaultTask {
 
         StringBuilder table = new StringBuilder('''|
         |[options="header", cols="4*"]
-        |[subs="+macros"]
         ||===
         || Group
         || Name

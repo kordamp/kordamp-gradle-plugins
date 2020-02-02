@@ -21,10 +21,12 @@ import com.github.benmanes.gradle.versions.VersionsPlugin
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
+import org.kordamp.gradle.plugin.base.tasks.reports.ReportGeneratingTask
 import org.kordamp.gradle.plugin.bintray.BintrayPlugin
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.coveralls.CoverallsPlugin
@@ -33,6 +35,8 @@ import org.kordamp.gradle.plugin.jar.JarPlugin
 import org.kordamp.gradle.plugin.licensing.LicensingPlugin
 import org.kordamp.gradle.plugin.minpom.MinPomPlugin
 import org.kordamp.gradle.plugin.project.tasks.reports.GenerateDependencyUpdatesReportTask
+import org.kordamp.gradle.plugin.project.tasks.reports.GeneratePluginReportTask
+import org.kordamp.gradle.plugin.project.tasks.reports.GenerateSummaryReportTask
 import org.kordamp.gradle.plugin.project.tasks.reports.GenerateTeamReportTask
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 import org.kordamp.gradle.plugin.source.SourceJarPlugin
@@ -122,6 +126,59 @@ class ProjectPlugin extends AbstractKordampPlugin {
                 void execute(GenerateTeamReportTask t) {
                     t.group = 'Reports'
                     t.description = "Generates a team report for '$project.name'."
+                }
+            })
+
+        project.tasks.register('generatePluginReport', GeneratePluginReportTask,
+            new Action<GeneratePluginReportTask>() {
+                @Override
+                void execute(GeneratePluginReportTask t) {
+                    t.group = 'Reports'
+                    t.description = "Generates a plugin report for '$project.name'."
+                }
+            })
+
+        project.tasks.register('generateSummaryReport', GenerateSummaryReportTask,
+            new Action<GenerateSummaryReportTask>() {
+                @Override
+                void execute(GenerateSummaryReportTask t) {
+                    t.group = 'Reports'
+                    t.description = "Generates a summary report for '$project.name'."
+                }
+            })
+
+        project.tasks.register('generateAllReports', DefaultTask,
+            new Action<DefaultTask>() {
+                @Override
+                void execute(DefaultTask t) {
+                    t.group = 'Reports'
+                    t.description = "Generates all reports for '$project.name'."
+                }
+            })
+
+        project.afterEvaluate(new Action<Project>() {
+            @Override
+            void execute(Project p) {
+                configureAggregatingReportTasks(p)
+            }
+        })
+    }
+
+
+    private void configureAggregatingReportTasks(Project project) {
+        Set<ReportGeneratingTask> tasks = []
+        project.tasks.withType(ReportGeneratingTask, new Action<ReportGeneratingTask>() {
+            @Override
+            void execute(ReportGeneratingTask t) {
+                tasks << t
+            }
+        })
+
+        project.tasks.named('generateAllReports', DefaultTask,
+            new Action<DefaultTask>() {
+                @Override
+                void execute(DefaultTask t) {
+                    t.dependsOn(tasks)
                 }
             })
     }

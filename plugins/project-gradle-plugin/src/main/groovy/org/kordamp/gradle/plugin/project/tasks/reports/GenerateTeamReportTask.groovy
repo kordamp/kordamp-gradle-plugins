@@ -28,6 +28,7 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Person
+import org.kordamp.gradle.plugin.base.tasks.reports.ReportGeneratingTask
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 
@@ -36,7 +37,7 @@ import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
  * @since 0.33.0
  */
 @CompileStatic
-class GenerateTeamReportTask extends DefaultTask {
+class GenerateTeamReportTask extends DefaultTask implements ReportGeneratingTask {
     @Optional
     @InputFile
     final RegularFileProperty teamHeaderTemplate = project.objects.fileProperty()
