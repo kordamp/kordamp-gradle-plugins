@@ -35,6 +35,7 @@ import org.sonarqube.gradle.SonarQubeTask
 
 import static org.kordamp.gradle.PluginUtils.resolveConfig
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
 /**
@@ -106,20 +107,30 @@ class SonarPlugin extends AbstractKordampPlugin {
         sonarExt.properties(new Action<SonarQubeProperties>() {
             @Override
             void execute(SonarQubeProperties p) {
-                ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+                config.quality.sonar.getConfigProperties().each { property, value ->
+                    p.property(property, value)
+                }
                 p.property('sonar.host.url', config.quality.sonar.hostUrl)
                 p.property('sonar.projectKey', config.quality.sonar.projectKey)
                 p.property('sonar.exclusions', config.quality.sonar.excludes.join(','))
-                p.property('sonar.projectDescription', effectiveConfig.info.description)
-                p.property('sonar.links.homepage', effectiveConfig.info.links.website)
-                p.property('sonar.links.scm', effectiveConfig.info.scm.url)
-                p.property('sonar.links.issue', effectiveConfig.info.issueManagement.url)
-                p.property('sonar.links.ci', effectiveConfig.info.ciManagement.url)
                 if (config.coverage.jacoco.enabled) {
                     p.property('sonar.coverage.jacoco.xmlReportPaths', config.coverage.jacoco.aggregateReportXmlFile)
                 }
                 if (config.quality.detekt.enabled) {
                     p.property('sonar.kotlin.detekt.reportPaths', project.layout.buildDirectory.file('reports/detekt/aggregate.xml').get().asFile.absolutePath)
+                }
+                ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+                addIfUndefined('sonar.projectDescription', effectiveConfig.info.description, p)
+                addIfUndefined('sonar.links.homepage', effectiveConfig.info.links.website, p)
+                addIfUndefined('sonar.links.scm', effectiveConfig.info.scm.url, p)
+                addIfUndefined('sonar.links.issue', effectiveConfig.info.issueManagement.url, p)
+                addIfUndefined('sonar.links.ci', effectiveConfig.info.ciManagement.url, p)
+            }
+
+            private void addIfUndefined(final String sonarProperty, final String value, final SonarQubeProperties p) {
+                final Map<String, Object> properties = p.getProperties()
+                if (!properties.containsKey(sonarProperty) || isBlank(properties.get(sonarProperty) as String)) {
+                    p.property(sonarProperty, value)
                 }
             }
         })
