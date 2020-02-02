@@ -140,7 +140,7 @@ class PluginUtils {
     }
 
     static void registerJarVariant(String feature, String classifier, TaskProvider<Jar> jarProvider, Project project) {
-        /*if (isGradle6Compatible()) {
+        if (isGradle6Compatible()) {
             Configuration variant = project.configurations.maybeCreate(classifier + 'Elements')
             variant.visible = false
             variant.description = feature + ' elements for main.'
@@ -156,6 +156,6 @@ class PluginUtils {
             if (component != null) {
                 component.addVariantsFromConfiguration(variant, new JavaConfigurationVariantMapping('runtime', true))
             }
-        }*/
+        }
     }
 }

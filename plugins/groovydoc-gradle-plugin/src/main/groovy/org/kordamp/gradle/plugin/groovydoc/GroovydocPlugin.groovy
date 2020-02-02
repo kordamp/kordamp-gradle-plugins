@@ -37,7 +37,6 @@ import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 
-import static org.kordamp.gradle.PluginUtils.isGradle6Compatible
 import static org.kordamp.gradle.PluginUtils.registerJarVariant
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
@@ -205,9 +204,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                     project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
                     project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
                 }
-                // if (!isGradle6Compatible()) {
-                    mainPublication.artifact(groovydocJar.get())
-                // }
+                mainPublication.artifact(groovydocJar.get())
             }
 
             registerJarVariant('Groovydoc', config.docs.groovydoc.replaceJavadoc ? 'javadoc' : 'groovydoc', groovydocJar, project)
