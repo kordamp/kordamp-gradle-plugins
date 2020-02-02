@@ -38,7 +38,7 @@ class Sonar extends AbstractFeature {
     String hostUrl = 'https://sonarcloud.io'
     String username
     String projectKey
-    Map<String, Object> configProperties = [:] // TODO currently not used, or is it?
+    Map<String, Object> configProperties = [:]
     Set<String> excludes = new LinkedHashSet<>()
     final Set<Project> excludedProjects = new LinkedHashSet<>()
 
