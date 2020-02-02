@@ -11,9 +11,9 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `link:https://plugins.gradle.org/plugin/org.sonarqube[org.sonarsource.scanner.gradle:sonarqube-gradle-plugin]`
 
 Configures the SonarQube gradle plugin to analyze your project with link:https://www.sonarqube.org/[SonarQube]. +
-If link:https://www.eclemma.org/jacoco/[JaCoCo] is enabled, the output of the
+If <<_org_kordamp_gradle_jacoco,org.kordamp.gradle.jacoco>> is enabled, the output of the
 <<_task_aggregate_jacoco_report,aggregateJacocoReport>> task is used as input for the sonarqube task. +
-For kotlin projects, if link:https://arturbosch.github.io/detekt/[detekt] is enabled, the output of the
+For kotlin projects, if <<_org_kordamp_gradle_detekt,org.kordamp.gradle.detekt>> is enabled, the output of the
 <<_task_aggregate_detekt,aggregateDetekt>> task is also used as input for the sonarqube task.
 
 Data defined in the DSL’s `config.info` block will be used to provide additional information to SonarQube.
