@@ -43,7 +43,7 @@ class GenerateSummaryReportTask extends DefaultTask implements ReportGeneratingT
         ProjectConfigurationExtension config = resolveEffectiveConfig(project.rootProject)
 
         StringBuilder document = new StringBuilder("""|
-        |# Summary
+        |= Summary
         |
         |[cols="<40,<60"]
         ||===
@@ -115,6 +115,10 @@ class GenerateSummaryReportTask extends DefaultTask implements ReportGeneratingT
                 |""".stripMargin('|'))
             }
         }
+
+        document.append('''|
+        ||===
+        |'''.stripMargin('|'))
 
         outputFile.asFile.get().text = document.toString()
     }

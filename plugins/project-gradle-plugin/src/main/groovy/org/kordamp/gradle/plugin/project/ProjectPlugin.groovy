@@ -34,6 +34,7 @@ import org.kordamp.gradle.plugin.jacoco.JacocoPlugin
 import org.kordamp.gradle.plugin.jar.JarPlugin
 import org.kordamp.gradle.plugin.licensing.LicensingPlugin
 import org.kordamp.gradle.plugin.minpom.MinPomPlugin
+import org.kordamp.gradle.plugin.project.tasks.reports.GenerateDependenciesReportTask
 import org.kordamp.gradle.plugin.project.tasks.reports.GenerateDependencyUpdatesReportTask
 import org.kordamp.gradle.plugin.project.tasks.reports.GeneratePluginReportTask
 import org.kordamp.gradle.plugin.project.tasks.reports.GenerateSummaryReportTask
@@ -117,6 +118,15 @@ class ProjectPlugin extends AbstractKordampPlugin {
                             File.separator +
                             dependencyUpdates.get().reportfileName +
                             '.xml'))
+                }
+            })
+
+        project.tasks.register('generateDependenciesReport', GenerateDependenciesReportTask,
+            new Action<GenerateDependenciesReportTask>() {
+                @Override
+                void execute(GenerateDependenciesReportTask t) {
+                    t.group = 'Reports'
+                    t.description = "Generates a dependencies report for '$project.name'."
                 }
             })
 

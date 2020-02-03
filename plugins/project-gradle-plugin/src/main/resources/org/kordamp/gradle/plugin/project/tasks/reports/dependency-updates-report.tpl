@@ -1,23 +1,23 @@
 
-# Dependency Updates
+= Dependency Updates
 
-## Current
+== Current
 
 ${dependencies_current}
 
-## Outdated
+== Outdated
 
 ${dependencies_outdated}
 
-## Exceeded
+== Exceeded
 
 ${dependencies_exceeded}
 
-## Unresolved
+== Unresolved
 
 ${dependencies_unresolved}
 
-## Gradle
+== Gradle
 
 [horizontal]
 Running:: ${gradle_running}

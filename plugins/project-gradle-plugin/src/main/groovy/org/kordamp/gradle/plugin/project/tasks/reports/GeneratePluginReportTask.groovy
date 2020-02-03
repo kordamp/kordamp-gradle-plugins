@@ -47,12 +47,10 @@ class GeneratePluginReportTask extends DefaultTask implements ReportGeneratingTa
         SimpleTemplateEngine engine = new SimpleTemplateEngine()
 
         StringBuilder document = new StringBuilder('''|
-        |# Plugins
+        |= Plugins
         |
         |[options="header", cols="^,,,^"]
-        |[subs="+macros"]
         ||===
-        || 
         || Id
         || Implementation Class
         || Enabled
