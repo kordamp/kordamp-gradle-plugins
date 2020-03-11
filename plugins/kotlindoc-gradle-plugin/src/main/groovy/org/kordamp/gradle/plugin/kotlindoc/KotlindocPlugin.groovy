@@ -319,7 +319,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
             task.configuration.sourceLink {
                 delegate.url = sourceLink.url
                 delegate.path = sourceLink.path
-                delegate.suffix = sourceLink.suffix
+                delegate.lineSuffix = sourceLink.suffix
             }
         }
 

@@ -43,6 +43,7 @@ config {
                 <<_kotlindoc_source_link,sourceLink>> {
                     url
                     path
+                    suffix
                 }
             }
             <<_kotlindoc_external_documentation_links,externalDocumentationLinks>> {
