@@ -305,7 +305,6 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         task.configuration.moduleName = kotlindoc.moduleName
         task.configuration.jdkVersion = kotlindoc.jdkVersion
         task.configuration.languageVersion = kotlindoc.languageVersion
-        task.configuration.languageVersion = kotlindoc.languageVersion
         task.configuration.apiVersion = kotlindoc.apiVersion
         task.configuration.includeNonPublic = kotlindoc.includeNonPublic
         task.configuration.skipDeprecated = kotlindoc.skipDeprecated
