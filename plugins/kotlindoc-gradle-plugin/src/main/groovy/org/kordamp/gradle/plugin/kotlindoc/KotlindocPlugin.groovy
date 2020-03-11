@@ -141,7 +141,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                             t.enabled = config.docs.kotlindoc.aggregate.enabled
                             t.from aggregateKotlindoc.get().outputDirectory
                             t.onlyIf { aggregateKotlindoc.get().enabled }
-                            // classifier = config.docs.kotlindoc.aggregate.replaceJavadoc ? 'javadoc' : 'kotlindoc'
+                            t.archiveClassifier.set(config.docs.kotlindoc.aggregate.replaceJavadoc ? 'javadoc' : 'kotlindoc')
                         }
                     })
             }
