@@ -166,7 +166,7 @@ copyrightYear:: config.info.copyrightYear
 author:: config.info.resolveAuthors().join(', ')
 license:: primaryLicense.id?.spdx()
 
-The following exclusions patterns are added by default: '**/*.png', 'META-INF/services/*'.
+The following exclusions patterns are added by default: 'pass:[**/*].png', 'META-INF/services/*'.
 
 [[_extension_download_licenses]]
 === DownloadLicensesExtension

@@ -71,24 +71,24 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name                  | Type           | Required | Default Value                          | Description
-| srcDirs               | FileCollection | no       |                                        |
-| destDir               | File           | no       | "${project.buildDir}/docs/source-html" |
-| includes              | String         | no       | '**/*.java,**/*.groovy'                |
-| outputFormat          | String         | no       | 'html'                                 |
-| tabs                  | int            | no       | 4                                      |
-| style                 | String         | no       | 'kawa'                                 | Valid values are 'kawa', 'monochrome', 'eclipse'
-| lineAnchorPrefix      | String         | no       | ''                                     |
-| horizontalAlignment   | String         | no       | 'left'                                 |
-| showLineNumbers       | boolean        | no       | true                                   |
-| showFileName          | boolean        | no       | true                                   |
-| showDefaultTitle      | boolean        | no       | true                                   |
-| showTableBorder       | boolean        | no       | false                                  |
-| includeDocumentHeader | boolean        | no       | true                                   |
-| includeDocumentFooter | boolean        | no       | true                                   |
-| addLineAnchors        | boolean        | no       | true                                   |
-| useShortFileName      | boolean        | no       | true                                   |
-| overwrite             | boolean        | no       | true                                   |
+| Name                  | Type           | Required | Default Value                                       | Description
+| srcDirs               | FileCollection | no       |                                                     |
+| destDir               | File           | no       | "${project.buildDir}/docs/source-html"              |
+| includes              | String         | no       | 'pass:[**/*].java,pass:[**/*].groovy' |
+| outputFormat          | String         | no       | 'html'                                              |
+| tabs                  | int            | no       | 4                                                   |
+| style                 | String         | no       | 'kawa'                                              | Valid values are 'kawa', 'monochrome', 'eclipse'
+| lineAnchorPrefix      | String         | no       | ''                                                  |
+| horizontalAlignment   | String         | no       | 'left'                                              |
+| showLineNumbers       | boolean        | no       | true                                                |
+| showFileName          | boolean        | no       | true                                                |
+| showDefaultTitle      | boolean        | no       | true                                                |
+| showTableBorder       | boolean        | no       | false                                               |
+| includeDocumentHeader | boolean        | no       | true                                                |
+| includeDocumentFooter | boolean        | no       | true                                                |
+| addLineAnchors        | boolean        | no       | true                                                |
+| useShortFileName      | boolean        | no       | true                                                |
+| overwrite             | boolean        | no       | true                                                |
 |===
 
 [[_sourcehtml_overview]]
@@ -98,7 +98,7 @@ config {
 |===
 | Name           | Type   | Required | Default Value                          | Description
 | destDir        | File   | no       | "${project.buildDir}/docs/source-html" |
-| pattern        | String | no       | '**/*.html'                            |
+| pattern        | String | no       | 'pass:[**/*].html'                     |
 | windowTitle    | String | no       | "$project.name $project.version"       |
 | docTitle       | String | no       | "$project.name $project.version"       |
 | docDescription | String | no       |                                        |
