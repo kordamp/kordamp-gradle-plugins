@@ -316,7 +316,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         task.configuration.samples = new ArrayList<>(kotlindoc.samples)
 
         kotlindoc.sourceLinks.resolveSourceLinks().each { sourceLink ->
-            task.configuration.sourceLinks {
+            task.configuration.sourceLink {
                 delegate.url = sourceLink.url
                 delegate.path = sourceLink.path
                 delegate.suffix = sourceLink.suffix
