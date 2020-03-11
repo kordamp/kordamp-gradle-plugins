@@ -289,7 +289,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
             void execute(ResolvableDependencies resolvableDependencies) {
                 DependencyHandler dependencyHandler = project.dependencies
                 DependencySet dependencies = dokkaRuntime.dependencies
-                dependencies.add(project.dependencies.create("org.jetbrains.dokka:dokka-fatjar:${DOKKA_VERSION.version}"))
+                dependencies.add(dependencyHandler.create("org.jetbrains.dokka:dokka-fatjar:${DOKKA_VERSION.version}"))
             }
         })
 
