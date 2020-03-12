@@ -119,7 +119,7 @@ class Kotlindoc extends AbstractFeature {
         map.jdkVersion = jdkVersion
         map.cacheRoot = cacheRoot
         map.languageVersion = languageVersion
-        map.samapiVersionples = apiVersion
+        map.apiVersion = apiVersion
         map.includeNonPublic = includeNonPublic
         map.skipDeprecated = skipDeprecated
         map.reportUndocumented = reportUndocumented
