@@ -87,7 +87,7 @@ class SourceHtml extends AbstractAggregateFeature {
     static class Conversion {
         FileCollection srcDirs
         File destDir
-        String includes = '**/*.java,**/*.groovy'
+        String includes = '**/*.java,**/*.groovy,**/*.kt,**/*.scala'
         String outputFormat = 'html'
         int tabs = 4
         String style = 'kawa'
