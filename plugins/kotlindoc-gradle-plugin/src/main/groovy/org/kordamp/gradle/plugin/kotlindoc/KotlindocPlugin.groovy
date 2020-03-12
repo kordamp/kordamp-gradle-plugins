@@ -141,7 +141,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                             t.enabled = config.docs.kotlindoc.aggregate.enabled
                             t.from aggregateKotlindoc.get().outputDirectory
                             t.onlyIf { aggregateKotlindoc.get().enabled }
-                            // classifier = config.docs.kotlindoc.aggregate.replaceJavadoc ? 'javadoc' : 'kotlindoc'
+                            t.archiveClassifier.set(config.docs.kotlindoc.aggregate.replaceJavadoc ? 'javadoc' : 'kotlindoc')
                         }
                     })
             }
@@ -289,7 +289,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
             void execute(ResolvableDependencies resolvableDependencies) {
                 DependencyHandler dependencyHandler = project.dependencies
                 DependencySet dependencies = dokkaRuntime.dependencies
-                dependencies.add(project.dependencies.create("org.jetbrains.dokka:dokka-fatjar:${DOKKA_VERSION.version}"))
+                dependencies.add(dependencyHandler.create("org.jetbrains.dokka:dokka-fatjar:${DOKKA_VERSION.version}"))
             }
         })
 
@@ -305,7 +305,6 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         task.configuration.moduleName = kotlindoc.moduleName
         task.configuration.jdkVersion = kotlindoc.jdkVersion
         task.configuration.languageVersion = kotlindoc.languageVersion
-        task.configuration.languageVersion = kotlindoc.languageVersion
         task.configuration.apiVersion = kotlindoc.apiVersion
         task.configuration.includeNonPublic = kotlindoc.includeNonPublic
         task.configuration.skipDeprecated = kotlindoc.skipDeprecated
@@ -316,10 +315,10 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         task.configuration.samples = new ArrayList<>(kotlindoc.samples)
 
         kotlindoc.sourceLinks.resolveSourceLinks().each { sourceLink ->
-            task.configuration.sourceLinks {
+            task.configuration.sourceLink {
                 delegate.url = sourceLink.url
                 delegate.path = sourceLink.path
-                delegate.suffix = sourceLink.suffix
+                delegate.lineSuffix = sourceLink.suffix
             }
         }
 

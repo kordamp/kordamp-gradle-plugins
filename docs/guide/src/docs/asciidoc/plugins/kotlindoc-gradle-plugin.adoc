@@ -41,9 +41,9 @@ config {
             replaceJavadoc
             <<_kotlindoc_source_links,sourceLinks>> {
                 <<_kotlindoc_source_link,sourceLink>> {
-                    dir
                     url
                     path
+                    suffix
                 }
             }
             <<_kotlindoc_external_documentation_links,externalDocumentationLinks>> {
@@ -107,9 +107,8 @@ If provided, Dokka generates "source" links for each declaration.
 [options="header", cols="5*"]
 |===
 | Name           | Type   | Required | Default Value | Description
-| dir            | String | yes      |               | Source directory, i.e, `src/main/kotlin`.
+| path           | String | yes      |               | Source directory, i.e, `src/main/kotlin`.
 | url            | String | yes      |               | URL showing where the source code can be accessed through the web browser.
-| path           | String | yes      |               |
 | suffix         | String | no       |               | Suffix which is used to append the line number to the URL. Use #L for GitHub.
 |===
 
