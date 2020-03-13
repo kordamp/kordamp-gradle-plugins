@@ -18,6 +18,5 @@
 dependencies {
     api project(':base-gradle-plugin')
 
-    // TODO bump to >2.12.0 as soon as available (See https://github.com/nemerosa/versioning/pull/74)
-    api 'gradle.plugin.net.nemerosa:versioning:2.11.0'
+    api 'gradle.plugin.net.nemerosa:versioning:2.12.1'
 }
