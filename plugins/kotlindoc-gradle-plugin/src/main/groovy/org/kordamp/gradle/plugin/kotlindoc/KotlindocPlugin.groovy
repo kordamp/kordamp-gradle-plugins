@@ -262,6 +262,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                         t.dokkaRuntime = project.configurations.findByName(DOKKA_RUNTIME_CONFIGURATION_NAME)
                         t.extensions.add('multiplatform', project.container(GradlePassConfigurationImpl))
                         t.extensions.add('configuration', new GradlePassConfigurationImpl())
+                        t.subProjects = project.subprojects.collect { it.name }.toList()
                         applyConfiguration(config.docs.kotlindoc, t, format, formatName)
                         t.outputDirectory = config.docs.kotlindoc.outputDirectory.absolutePath + File.separator + 'aggregate-' + formatName
                     }
