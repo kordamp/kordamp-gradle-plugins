@@ -116,7 +116,7 @@ class Groovydoc extends AbstractFeature {
                 if (project.childProjects.isEmpty()) {
                     setEnabled(project.pluginManager.hasPlugin('groovy') && isApplied())
                 } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('groovy') && isApplied() })
+                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('groovy') && isApplied(p) })
                 }
             } else {
                 setEnabled(project.pluginManager.hasPlugin('groovy') && isApplied())
