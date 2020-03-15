@@ -94,6 +94,7 @@ config {
 guide {
     javadocApiDir
     groovydocApiDir
+    kotlindocApiDir
     sourceHtmlDir
     sourceXrefDir
 }
@@ -104,6 +105,7 @@ guide {
 | Name            | Type   | Required | Default Value | Description
 | javadocApiDir   | String | no       | 'api'         | Director where javadoc will be copied
 | groovydocApiDir | String | no       | 'gapi'        | Director where groovydoc will be copied
+| kotlindocApiDir | String | no       | 'kapi'        | Director where kotlindoc will be copied
 | sourceHtmlDir   | String | no       | 'api-html'    | Director where source-html will be copied
 | sourceXrefDir   | String | no       | 'api-xref'    | Director where source-xref will be copied
 |===
@@ -132,6 +134,7 @@ Creates an Asciidoctor based guide. Depends on the output of the following tasks
  * `asciidoctor`
  * `aggregateJavadoc` (if enabled)
  * `aggregateGroovydoc` (if enabled)
+ * `aggregateKotlindocHtml` (if enabled)
  * `aggregateSourceHtml` (if enabled)
  * `aggregateSourceXref` (if enabled)
 

@@ -180,6 +180,12 @@ class GuidePlugin extends AbstractKordampPlugin {
                             t.from(task.destinationDir) { into extension.groovydocApiDir }
                         }
 
+                        task = project.rootProject.tasks.findByName('aggregateKotlindocHtml')
+                        if (task?.enabled) {
+                            t.dependsOn task
+                            t.from(task.outputDirectory) { into extension.kotlindocApiDir }
+                        }
+
                         task = project.rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)
                         if (task?.enabled) {
                             t.dependsOn task
