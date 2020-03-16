@@ -94,7 +94,7 @@ class Scaladoc extends AbstractFeature {
                 if (project.childProjects.isEmpty()) {
                     setEnabled(project.pluginManager.hasPlugin('scala') && isApplied())
                 } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('scala') && isApplied()})
+                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('scala') && isApplied(p)})
                 }
             } else {
                 setEnabled(project.pluginManager.hasPlugin('scala') && isApplied())
