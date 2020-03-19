@@ -244,6 +244,7 @@ class GuidePlugin extends AbstractKordampPlugin {
         GuideExtension extension = project.extensions.findByType(GuideExtension)
 
         project.file(ASCIIDOCTOR_RESOURCE_DIR).mkdirs()
+        project.file("$ASCIIDOCTOR_RESOURCE_DIR/$IMAGES_DIR").mkdirs()
         File asciidocDir = project.file(ASCIIDOCTOR_SRC_DIR)
         asciidocDir.mkdirs()
 
