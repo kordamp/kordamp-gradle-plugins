@@ -47,6 +47,7 @@ class GuidePlugin extends AbstractKordampPlugin {
     static final String ASCIIDOCTOR = 'asciidoctor'
     static final String ASCIIDOCTOR_SRC_DIR = 'src/docs/asciidoc'
     static final String ASCIIDOCTOR_RESOURCE_DIR = 'src/docs/resources'
+    static final String IMAGES_DIR = 'images'
 
     Project project
 
@@ -94,7 +95,7 @@ class GuidePlugin extends AbstractKordampPlugin {
                 checkAttribute(attrs, t.attributes, 'sectanchors', true)
                 checkAttribute(attrs, t.attributes, 'numbered', true)
                 checkAttribute(attrs, t.attributes, 'linkattrs', true)
-                checkAttribute(attrs, t.attributes, 'imagesdir', 'images')
+                checkAttribute(attrs, t.attributes, 'imagesdir', IMAGES_DIR)
                 checkAttribute(attrs, t.attributes, 'linkcss', true)
                 checkAttribute(attrs, t.attributes, 'source-highlighter', 'coderay')
                 checkAttribute(attrs, t.attributes, 'coderay-linenums-mode', 'table')
@@ -250,7 +251,13 @@ class GuidePlugin extends AbstractKordampPlugin {
 
         File index = touchFile(project.file("${asciidocDir}/index.adoc"))
         if (!index.text) {
-            index.text = """|= {project-title}
+            index.text = """|ifndef::imagesdir[]
+                            |:imagesdir: ../resources/$IMAGES_DIR
+                            |endif::[]
+                            |ifndef::includedir[]
+                            |:includedir: .
+                            |endif::[]
+                            |= {project-title}
                             |:author: {project-author}
                             |:revnumber: {project-version}
                             |:toclevels: 4
