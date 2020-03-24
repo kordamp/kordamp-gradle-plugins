@@ -27,7 +27,7 @@ The following attributes will be added to the default `asciidoctor` task if they
 | sectanchors            | true
 | numbered               | true
 | linkattrs              | true
-| imagesdir              | 'images'
+| imagesdir              | 'images' (`src/docs/resources/images`)
 | linkcss                | true
 | source-highlighter     | 'coderay'
 | coderay-linenums-mode  | 'table'
