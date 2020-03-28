@@ -6,6 +6,7 @@ org.kordamp.gradle.plugin.base.model.impl
 org.kordamp.gradle.plugin.base.plugins
 org.kordamp.gradle.plugin.base.plugins.util
 org.kordamp.gradle.plugin.base.tasks
+org.kordamp.gradle.plugin.base.tasks.reports
 org.kordamp.gradle.plugin.bintray
 org.kordamp.gradle.plugin.bom
 org.kordamp.gradle.plugin.buildinfo
@@ -41,9 +42,11 @@ org.kordamp.gradle.plugin.project.kotlin
 org.kordamp.gradle.plugin.project.kotlin.tasks
 org.kordamp.gradle.plugin.project.scala
 org.kordamp.gradle.plugin.project.scala.tasks
+org.kordamp.gradle.plugin.project.tasks.reports
 org.kordamp.gradle.plugin.publishing
 org.kordamp.gradle.plugin.scaladoc
 org.kordamp.gradle.plugin.settings
+org.kordamp.gradle.plugin.sonar
 org.kordamp.gradle.plugin.source
 org.kordamp.gradle.plugin.sourcehtml
 org.kordamp.gradle.plugin.sourcexref
