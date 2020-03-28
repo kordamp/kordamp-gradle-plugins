@@ -19,6 +19,7 @@ plugins {
     id 'org.kordamp.gradle.groovy-project'
     id 'org.kordamp.gradle.bintray'
     id 'org.kordamp.gradle.plugin' apply false
+    id 'com.gradle.plugin-publish' version '0.11.0' apply false
 }
 
 if (!project.hasProperty('bintrayUsername')) ext.bintrayUsername = '**UNDEFINED**'
@@ -139,6 +140,7 @@ subprojects {
     if (project.name.endsWith('-plugin')) {
         apply plugin: 'groovy'
         apply plugin: 'java-library'
+        apply plugin: 'com.gradle.plugin-publish'
         apply plugin: 'org.kordamp.gradle.plugin'
 
         config {
