@@ -17,5 +17,5 @@
  */
 dependencies {
     api project(':base-gradle-plugin')
-    api 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.8'
+    api 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.8.0.1969'
 }
