@@ -38,6 +38,7 @@ class Bom extends AbstractFeature implements PomOptions {
     Set<String> compile = new LinkedHashSet<>()
     Set<String> runtime = new LinkedHashSet<>()
     Set<String> test = new LinkedHashSet<>()
+    private Set<String> _import = new LinkedHashSet<>()
     Set<String> excludes = new LinkedHashSet<>()
 
     boolean autoIncludes = true
@@ -71,6 +72,14 @@ class Bom extends AbstractFeature implements PomOptions {
         doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
     }
 
+    void setImport(Set<String> set) {
+        _import = set
+    }
+
+    Set<String> getImport() {
+        _import
+    }
+
     void normalize() {
         if (!enabledSet) {
             setEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
@@ -91,6 +100,7 @@ class Bom extends AbstractFeature implements PomOptions {
             map.compile = compile
             map.runtime = runtime
             map.test = test
+            map.import = _import
             map.excludes = excludes
             if (isNotBlank(parent)) {
                 map.parent = parent
@@ -122,6 +132,10 @@ class Bom extends AbstractFeature implements PomOptions {
         test << str
     }
 
+    void imports(String str) {
+        _import << str
+    }
+
     void exclude(String str) {
         excludes << str
     }
@@ -147,7 +161,7 @@ class Bom extends AbstractFeature implements PomOptions {
         return overwriteLicensesSet
     }
 
-    boolean overwriteCiManagementisOverwriteScmSet() {
+    boolean isOverwriteScmSet() {
         return overwriteScmSet
     }
 
@@ -180,6 +194,7 @@ class Bom extends AbstractFeature implements PomOptions {
         copy.compile.addAll(compile)
         copy.runtime.addAll(runtime)
         copy.test.addAll(test)
+        copy.import.addAll(_import)
         copy.excludes.addAll(excludes)
         copy.@autoIncludes = this.autoIncludes
         copy.@autoIncludesSet = this.autoIncludesSet
@@ -212,6 +227,7 @@ class Bom extends AbstractFeature implements PomOptions {
         CollectionUtils.merge(o1.compile, o2.compile)
         CollectionUtils.merge(o1.runtime, o2.runtime)
         CollectionUtils.merge(o1.test, o2.test)
+        CollectionUtils.merge(o1.import, o2.import)
         CollectionUtils.merge(o1.excludes, o2.excludes)
         o1.setAutoIncludes((boolean) (o1.autoIncludesSet ? o1.autoIncludes : o2.autoIncludes))
 

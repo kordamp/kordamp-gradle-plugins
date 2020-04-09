@@ -80,25 +80,26 @@ class BomPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void updatePublications(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        setEnabled(effectiveConfig.bom.enabled)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        setEnabled(config.bom.enabled)
 
         if (!enabled) {
             return
         }
 
-        List<Dependency> compileDeps = effectiveConfig.bom.compile.collect { Dependency.parseDependency(project, it) }
-        List<Dependency> runtimeDeps = effectiveConfig.bom.runtime.collect { Dependency.parseDependency(project, it) }
-        List<Dependency> testDeps = effectiveConfig.bom.test.collect { Dependency.parseDependency(project, it) }
+        List<Dependency> compileDeps = config.bom.compile.collect { Dependency.parseDependency(project, it) }
+        List<Dependency> runtimeDeps = config.bom.runtime.collect { Dependency.parseDependency(project, it) }
+        List<Dependency> testDeps = config.bom.test.collect { Dependency.parseDependency(project, it) }
+        List<Dependency> importDeps = config.bom.import.collect { Dependency.parseDependency(project, it) }
 
-        if (effectiveConfig.bom.autoIncludes) {
+        if (config.bom.autoIncludes) {
             project.rootProject.subprojects.each { Project prj ->
                 if (prj == project) return
 
                 Closure<Boolean> predicate = { Dependency d ->
                     d.artifactId == prj.name && (d.groupId == project.group || d.groupId == '${project.groupId}')
                 }
-                if ((!effectiveConfig.bom.excludes.contains(prj.name) && !effectiveConfig.bom.excludes.contains(':' + prj.name)) &&
+                if ((!config.bom.excludes.contains(prj.name) && !config.bom.excludes.contains(':' + prj.name)) &&
                     !compileDeps.find(predicate) && !runtimeDeps.find(predicate) && !testDeps.find(predicate)) {
                     compileDeps << new Dependency('${project.groupId}', prj.name, '${project.version}')
                 }
@@ -110,7 +111,7 @@ class BomPlugin extends AbstractKordampPlugin {
                 main(MavenPublication) {
                     artifacts = []
 
-                    PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.bom)
+                    PublishingUtils.configurePom(pom, config, config.bom)
 
                     pom {
                         packaging = 'pom'
@@ -141,13 +142,22 @@ class BomPlugin extends AbstractKordampPlugin {
                                 appendNode('scope', 'test')
                             }
                         }
+                        importDeps.each { Dependency dep ->
+                            dependencyManagementNode.appendNode('dependency').with {
+                                appendNode('groupId', dep.groupId)
+                                appendNode('artifactId', dep.artifactId)
+                                appendNode('version', dep.version)
+                                appendNode('scope', 'import')
+                                appendNode('type', 'pom')
+                            }
+                        }
                     }
                 }
             }
 
-            String repositoryName = effectiveConfig.release ? effectiveConfig.publishing.releasesRepository : effectiveConfig.publishing.snapshotsRepository
+            String repositoryName = config.release ? config.publishing.releasesRepository : config.publishing.snapshotsRepository
             if (isNotBlank(repositoryName)) {
-                Repository repo = effectiveConfig.info.repositories.getRepository(repositoryName)
+                Repository repo = config.info.repositories.getRepository(repositoryName)
                 if (repo == null) {
                     throw new IllegalStateException("Repository '${repositoryName}' was not found")
                 }
@@ -156,7 +166,7 @@ class BomPlugin extends AbstractKordampPlugin {
                     maven {
                         name = repositoryName
                         url = repo.url
-                        Credentials creds = effectiveConfig.info.credentials.getCredentials(repo.name)
+                        Credentials creds = config.info.credentials.getCredentials(repo.name)
                         if (repo.credentials && !repo.credentials.empty) {
                             credentials {
                                 username = repo.credentials.username
@@ -173,6 +183,6 @@ class BomPlugin extends AbstractKordampPlugin {
             }
         }
 
-        PublishingUtils.configureSigning(effectiveConfig, project)
+        PublishingUtils.configureSigning(config, project)
     }
 }
