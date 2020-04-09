@@ -671,8 +671,8 @@ class ProjectConfigurationExtension {
         }
 
         void copyInto(Coverage copy) {
-            coveralls.copyInto(copy.coveralls)
-            jacoco.copyInto(jacoco)
+            coveralls.copyInto(copy.@coveralls)
+            jacoco.copyInto(copy.@jacoco)
         }
 
         Coverage copyOf() {

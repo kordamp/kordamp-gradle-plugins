@@ -40,6 +40,7 @@ class Jacoco extends AbstractFeature {
     File aggregateReportHtmlFile
     File aggregateReportXmlFile
     String toolVersion = '0.8.5'
+    Set<String> excludes = new LinkedHashSet<>()
 
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<Test> testTasks = new LinkedHashSet<>()
@@ -112,6 +113,7 @@ class Jacoco extends AbstractFeature {
             if (!additionalClassDirs.empty) map.additionalClassDirs = additionalClassDirs.files*.absolutePath
         }
         map.toolVersion = toolVersion
+        map.excludes = excludes
 
         new LinkedHashMap<>('jacoco': map)
     }
@@ -126,6 +128,10 @@ class Jacoco extends AbstractFeature {
                 enabled = hasTestSourceSets()
             }
         }
+    }
+
+    void exclude(String str) {
+        excludes << str
     }
 
     boolean hasTestSourceSets() {
@@ -146,6 +152,7 @@ class Jacoco extends AbstractFeature {
         copy.additionalSourceDirs.from(project.files(additionalSourceDirs))
         copy.additionalClassDirs.from(project.files(additionalClassDirs))
         copy.toolVersion = toolVersion
+        copy.excludes.addAll(excludes)
     }
 
     static void merge(Jacoco o1, Jacoco o2) {

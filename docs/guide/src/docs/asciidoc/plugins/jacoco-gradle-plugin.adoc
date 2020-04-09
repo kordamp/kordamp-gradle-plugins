@@ -28,6 +28,7 @@ config {
             additionalSourceDirs
             additionalClassDirs
             toolVersion
+            excludes
         }
     }
 }
@@ -43,11 +44,16 @@ config {
 | additionalSourceDirs    | FileCollection | no       | []                                                                | Additional source directories
 | additionalClassDirs     | FileCollection | no       | []                                                                | Additional class directories
 | toolVersion             | String         | no       | 0.8.5                                                             |
+| excludes                | Set<String>    | no       | []                                                                |
 |===
 
 The value for `enabled` will automatically be set to `false` if no tests (`unit`, `integration`, or `functional`) are found.
 
 This block is optional.
+
+.Methods
+
+void exclude(String):: Adds a source exclusion rule (Ant pattern).
 
 [[_org_kordamp_gradle_jacoco_tasks]]
 == Tasks

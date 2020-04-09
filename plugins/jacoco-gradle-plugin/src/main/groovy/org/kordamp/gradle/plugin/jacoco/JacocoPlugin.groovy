@@ -214,22 +214,24 @@ class JacocoPlugin extends AbstractKordampPlugin {
         Task jacocoReportTask = project.tasks.findByName(taskName)
 
         if (!jacocoReportTask) {
-            jacocoReportTask = project.tasks.create(taskName, JacocoReport) {
-                dependsOn testTask
-                group = 'Verification'
-                description = "Generates code coverage report for the ${testTask.name} task."
+            jacocoReportTask = project.tasks.create(taskName, JacocoReport) { t ->
+                t.dependsOn testTask
+                t.group = 'Verification'
+                t.description = "Generates code coverage report for the ${testTask.name} task."
 
-                jacocoClasspath = project.configurations.jacocoAnt
+                t.jacocoClasspath = project.configurations.jacocoAnt
 
-                additionalSourceDirs.from project.files(resolveSourceDirs(config, project))
-                sourceDirectories.from project.files(resolveSourceDirs(config, project))
-                classDirectories.from project.files(resolveClassDirs(config, project))
-                executionData testTask
+                t.additionalSourceDirs.from project.files(resolveSourceDirs(config, project))
+                t.sourceDirectories.from project.files(resolveSourceDirs(config, project))
+                t.classDirectories.from project.files(resolveClassDirs(config, project))
+                t.executionData testTask
 
-                reports {
+                t.reports {
                     html.destination = project.file("${project.reporting.baseDir.path}/jacoco/${testTask.name}/html")
                     xml.destination = project.file("${project.reporting.baseDir.path}/jacoco/${testTask.name}/jacocoTestReport.xml")
                 }
+
+                adjustClassDirectories(t, config.coverage.jacoco.excludes)
             }
         }
 
@@ -267,17 +269,18 @@ class JacocoPlugin extends AbstractKordampPlugin {
     private void applyJacocoMerge(Project project,
                                   TaskProvider<JacocoMerge> aggregateJacocoMerge,
                                   TaskProvider<JacocoReport> aggregateJacocoReport) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.coverage.jacoco.enabled) {
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        if (!config.coverage.jacoco.enabled) {
             return
         }
 
         JacocoPluginExtension jacocoExt = project.extensions.findByType(JacocoPluginExtension)
-        jacocoExt.toolVersion = effectiveConfig.coverage.jacoco.toolVersion
+        jacocoExt.toolVersion = config.coverage.jacoco.toolVersion
 
-        Set<Project> projects = new LinkedHashSet<>(effectiveConfig.coverage.jacoco.projects())
-        Set<Test> testTasks = new LinkedHashSet<>(effectiveConfig.coverage.jacoco.testTasks())
-        Set<JacocoReport> reportTasks = new LinkedHashSet<>(effectiveConfig.coverage.jacoco.reportTasks())
+        Set<Project> projects = new LinkedHashSet<>(config.coverage.jacoco.projects())
+        Set<Test> testTasks = new LinkedHashSet<>(config.coverage.jacoco.testTasks())
+        Set<JacocoReport> reportTasks = new LinkedHashSet<>(config.coverage.jacoco.reportTasks())
+        Set<String> excludes = new LinkedHashSet<>()
 
         project.childProjects.values().each {
             Jacoco e = resolveEffectiveConfig(it).coverage.jacoco
@@ -285,6 +288,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
                 projects.addAll(e.projects())
                 testTasks.addAll(e.testTasks())
                 reportTasks.addAll(e.reportTasks())
+                excludes.addAll(e.excludes)
             }
         }
 
@@ -293,31 +297,42 @@ class JacocoPlugin extends AbstractKordampPlugin {
             @CompileDynamic
             void execute(JacocoMerge t) {
                 t.dependsOn testTasks + reportTasks
-                t.enabled = effectiveConfig.coverage.jacoco.enabled
+                t.enabled = config.coverage.jacoco.enabled
                 t.executionData = project.files(reportTasks.executionData.files.flatten())
-                t.destinationFile = effectiveConfig.coverage.jacoco.aggregateExecFile
+                t.destinationFile = config.coverage.jacoco.aggregateExecFile
             }
         })
 
         aggregateJacocoReport.configure(new Action<JacocoReport>() {
             @Override
             void execute(JacocoReport t) {
-                t.enabled = effectiveConfig.coverage.jacoco.enabled
+                t.enabled = config.coverage.jacoco.enabled
 
-                t.additionalSourceDirs.from project.files(resolveSourceDirs(effectiveConfig, projects))
-                t.sourceDirectories.from project.files(resolveSourceDirs(effectiveConfig, projects))
-                t.classDirectories.from project.files(resolveClassDirs(effectiveConfig, projects))
+                t.additionalSourceDirs.from project.files(resolveSourceDirs(config, projects))
+                t.sourceDirectories.from project.files(resolveSourceDirs(config, projects))
+                t.classDirectories.from project.files(resolveClassDirs(config, projects))
                 t.executionData project.files(aggregateJacocoMerge.get().destinationFile)
 
                 t.reports(new Action<JacocoReportsContainer>() {
                     @Override
                     void execute(JacocoReportsContainer reports) {
-                        reports.html.setDestination(effectiveConfig.coverage.jacoco.aggregateReportHtmlFile)
-                        reports.xml.setDestination(effectiveConfig.coverage.jacoco.aggregateReportXmlFile)
+                        reports.html.setDestination(config.coverage.jacoco.aggregateReportHtmlFile)
+                        reports.xml.setDestination(config.coverage.jacoco.aggregateReportXmlFile)
                     }
                 })
+
+                adjustClassDirectories(t, excludes)
             }
         })
+    }
+
+    @CompileDynamic
+    private static void adjustClassDirectories(JacocoReport t, Set<String> excludes) {
+        if (excludes) {
+            t.classDirectories.setFrom(t.project.files(t.classDirectories.files.collect { d ->
+                t.project.fileTree(dir: d, exclude: excludes)
+            }))
+        }
     }
 
     private static void configureAllJacocoReportsTask(Project project,
