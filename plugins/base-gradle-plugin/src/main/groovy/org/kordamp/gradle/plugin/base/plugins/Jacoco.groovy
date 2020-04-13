@@ -118,7 +118,7 @@ class Jacoco extends AbstractFeature {
         new LinkedHashMap<>('jacoco': map)
     }
 
-    void normalize() {
+    void postMerge() {
         if (!enabledSet) {
             if (isRoot()) {
                 if (project.childProjects.isEmpty()) {
@@ -136,8 +136,8 @@ class Jacoco extends AbstractFeature {
 
     boolean hasTestSourceSets() {
         hasTestsAt(project.file('src/test')) ||
-            hasTestsAt(project.file('src/integration-test')) ||
-            hasTestsAt(project.file('src/functional-test'))
+            hasTestsAt(project.file(config.testing.integration.baseDir)) ||
+            hasTestsAt(project.file(config.testing.functional.baseDir))
     }
 
     private static boolean hasTestsAt(File testDir) {
@@ -156,7 +156,7 @@ class Jacoco extends AbstractFeature {
     }
 
     static void merge(Jacoco o1, Jacoco o2) {
-        AbstractFeature.merge(o1, o2)
+        // AbstractFeature.merge(o1, o2)
         o1.aggregateExecFile = o1.aggregateExecFile ?: o2.aggregateExecFile
         o1.aggregateReportHtmlFile = o1.aggregateReportHtmlFile ?: o2.aggregateReportHtmlFile
         o1.aggregateReportXmlFile = o1.aggregateReportXmlFile ?: o2.aggregateReportXmlFile

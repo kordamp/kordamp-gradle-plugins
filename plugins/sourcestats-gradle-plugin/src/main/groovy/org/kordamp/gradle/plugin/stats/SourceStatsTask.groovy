@@ -29,6 +29,7 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.PluginUtils
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.Stats
 import org.kordamp.gradle.plugin.stats.counter.CssCounter
 import org.kordamp.gradle.plugin.stats.counter.HashCounter
@@ -38,6 +39,7 @@ import org.kordamp.gradle.plugin.stats.counter.SemiColonCounter
 import org.kordamp.gradle.plugin.stats.counter.SqlCounter
 import org.kordamp.gradle.plugin.stats.counter.XmlCounter
 
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.StringUtils.getFilenameExtension
 import static org.kordamp.gradle.plugin.base.plugins.Stats.HTML
 import static org.kordamp.gradle.plugin.base.plugins.Stats.TXT
@@ -72,8 +74,10 @@ class SourceStatsTask extends DefaultTask {
 
         Map<String, Counter> counterInstances = resolveCounterInstances()
 
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+
         Map<String, Map<String, String>> merged = [:]
-        merged.putAll(Stats.defaultPaths())
+        merged.putAll(config.stats.paths)
         // deep copy
         paths.each { key, val ->
             Map<String, String> map = [:]

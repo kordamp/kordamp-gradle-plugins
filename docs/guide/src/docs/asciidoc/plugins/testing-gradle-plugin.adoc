@@ -25,10 +25,12 @@ config {
         integration {
             logging
             aggregate
+            baseDir
         }
         functional {
             logging
             aggregate
+            baseDir
         }
     }
 }
@@ -47,9 +49,10 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name      | Type    | Required | Default Value | Description
-| logging   | boolean | no       | true          | Enables verbose output
-| aggregate | boolean | no       | true          | Enables test report aggregation
+| Name      | Type    | Required | Default Value        | Description
+| logging   | boolean | no       | true                 | Enables verbose output
+| aggregate | boolean | no       | true                 | Enables test report aggregation
+| baseDir   | String  | no       | src/integration-test |
 |===
 
 [[_testing_functional]]
@@ -57,9 +60,10 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name      | Type    | Required | Default Value | Description
-| logging   | boolean | no       | true          | Enables verbose output
-| aggregate | boolean | no       | true          | Enables test report aggregation
+| Name      | Type    | Required | Default Value       | Description
+| logging   | boolean | no       | true                | Enables verbose output
+| aggregate | boolean | no       | true                | Enables test report aggregation
+| baseDir   | String  | no       | src/functional-test |
 |===
 
 [[_org_kordamp_gradle_testing_tasks]]

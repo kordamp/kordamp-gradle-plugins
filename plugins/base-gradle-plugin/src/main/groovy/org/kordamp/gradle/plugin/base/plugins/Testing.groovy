@@ -124,6 +124,11 @@ class Testing extends AbstractFeature {
         Functional.merge(o1.functional, o2.functional)
     }
 
+    void postMerge() {
+        integration.postMerge()
+        functional.postMerge()
+    }
+
     Set<Test> testTasks() {
         testTasks
     }

@@ -13,8 +13,8 @@ Responsibilities:
 
  * Create two additional configurations: `functionalTestImplementation` and `functionalTestRuntimeOnly`. These configurations
    extend from `imlementation` and `runtimeOnly` respectively.
- * Create a `SourceSet` named `functionalTest` pointing to `src/main/[java|groovy|kotlin|scala]`.
- * Create a `Test` task named `functionalTest` pointing to `src/functional-test/[java|groovy|kotlin|scala]`.
+ * Create a `SourceSet` named `functionalTest` pointing to `${config.testing.functional.baseDir}/[java|groovy|kotlin|scala]`.
+ * Create a `Test` task named `functionalTest` pointing to `${config.testing.functional.baseDir}/[java|groovy|kotlin|scala]`.
  * Create a `TestReport` task named `functionalTestReport`. This task is added as a dependency to `check`.
 
 NOTE: You must add testing dependencies to `functionalTestImplementation` as this configuration is independent from `testImplementation`.

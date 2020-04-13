@@ -20,6 +20,8 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 
+import static org.kordamp.gradle.StringUtils.isNotBlank
+
 /**
  * @author Andres Almiray
  * @since 0.14.0
@@ -31,6 +33,7 @@ class Integration {
 
     boolean logging = true
     boolean aggregate = true
+    String baseDir
 
     private boolean loggingSet = false
     private boolean aggregateSet = false
@@ -67,7 +70,8 @@ class Integration {
     Map<String, Object> toMap() {
         new LinkedHashMap<String, Object>([
             logging  : logging,
-            aggregate: aggregate
+            aggregate: aggregate,
+            baseDir  : baseDir
         ])
     }
 
@@ -76,10 +80,16 @@ class Integration {
         copy.@loggingSet = loggingSet
         copy.@aggregate = aggregate
         copy.@aggregateSet = aggregateSet
+        copy.@baseDir = baseDir
     }
 
     static void merge(Integration o1, Integration o2) {
         o1.setLogging((boolean) (o1.loggingSet ? o1.logging : (o2.loggingSet ? o2.logging : (o1.test.loggingSet ? o1.test.logging : o2.test.logging))))
         o1.setAggregate((boolean) (o1.aggregateSet ? o1.aggregate : (o2.aggregateSet ? o2.aggregate : (o1.test.aggregateSet ? o1.test.aggregate : o2.test.aggregate))))
+        o1.setBaseDir(isNotBlank(o1.baseDir) ? o1.baseDir : o2.baseDir)
+    }
+
+    void postMerge() {
+        baseDir = baseDir ?: 'src/integration-test'
     }
 }

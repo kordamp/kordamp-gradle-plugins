@@ -45,7 +45,6 @@ class Stats extends AbstractAggregateFeature {
 
     Stats(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'stats')
-        paths.putAll(defaultPaths())
     }
 
     @Override
@@ -55,7 +54,7 @@ class Stats extends AbstractAggregateFeature {
         map.paths = paths
     }
 
-    static Map<String, Map<String, String>> defaultPaths() {
+    private Map<String, Map<String, String>> defaultPaths() {
         Map<String, Map<String, String>> basePaths = [:]
 
         [
@@ -75,9 +74,12 @@ class Stats extends AbstractAggregateFeature {
             yaml      : 'YAML',
             clojure   : 'Clojure'
         ].each { extension, name ->
-            ['test', 'integration-test', 'functional-test'].each { source ->
-                String classifier = getPropertyNameForLowerCaseHyphenSeparatedName(source)
-                basePaths[classifier + extension.capitalize()] = [name: name + ' ' + getNaturalName(classifier) + ' Sources', path: 'src/' + source, extension: extension]
+            ['src/test',
+             config.testing.integration.baseDir,
+             config.testing.functional.baseDir].each { source ->
+                String[] parts = source.split(File.separator)
+                String classifier = getPropertyNameForLowerCaseHyphenSeparatedName(parts[-1])
+                basePaths[classifier + extension.capitalize()] = [name: name + ' ' + getNaturalName(classifier) + ' Sources', path: source, extension: extension]
             }
         }
 
@@ -115,5 +117,12 @@ class Stats extends AbstractAggregateFeature {
         o1.counters.putAll(o2.counters)
         o1.paths.putAll(o2.paths)
         CollectionUtils.merge(o1.formats, o2?.formats)
+    }
+
+    void postMerge() {
+        Map<String, Map<String, String>> mergedPaths = [:]
+        mergedPaths.putAll(defaultPaths())
+        mergedPaths.putAll(paths)
+        paths.putAll(mergedPaths)
     }
 }

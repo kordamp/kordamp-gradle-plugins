@@ -20,6 +20,8 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 
+import static org.kordamp.gradle.StringUtils.isNotBlank
+
 /**
  * @author Andres Almiray
  * @since 0.14.0
@@ -31,6 +33,7 @@ class Functional {
 
     boolean logging = true
     boolean aggregate = true
+    String baseDir
 
     private boolean loggingSet = false
     private boolean aggregateSet = false
@@ -67,7 +70,8 @@ class Functional {
     Map<String, Object> toMap() {
         new LinkedHashMap<>([
             logging  : logging,
-            aggregate: aggregate
+            aggregate: aggregate,
+            baseDir  : baseDir
         ])
     }
 
@@ -76,6 +80,7 @@ class Functional {
         copy.@loggingSet = loggingSet
         copy.@aggregate = aggregate
         copy.@aggregateSet = aggregateSet
+        copy.@baseDir = baseDir
     }
 
     static void merge(Functional o1, Functional o2) {
@@ -86,5 +91,10 @@ class Functional {
         boolean thisAggregate = (boolean) (o1.aggregateSet ? o1.aggregate : o2.aggregate)
         boolean superAggregate = (boolean) (o1.test.aggregateSet) ? o1.test.aggregate : o2.aggregate
         o1.setAggregate(thisAggregate ?: superAggregate)
+        o1.setBaseDir(isNotBlank(o1.baseDir) ? o1.baseDir : o2.baseDir)
+    }
+
+    void postMerge() {
+        baseDir = baseDir ?: 'src/functional-test'
     }
 }

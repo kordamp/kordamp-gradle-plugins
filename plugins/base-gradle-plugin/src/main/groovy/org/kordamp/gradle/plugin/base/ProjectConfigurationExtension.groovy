@@ -466,14 +466,16 @@ class ProjectConfigurationExtension {
         plugin.normalize()
         publishing.normalize()
         docs.normalize()
-        coverage.normalize()
         quality.normalize()
         this
     }
 
     ProjectConfigurationExtension postMerge() {
+        testing.postMerge()
         docs.postMerge()
         quality.postMerge()
+        coverage.postMerge()
+        stats.postMerge()
         this
     }
 
@@ -688,8 +690,8 @@ class ProjectConfigurationExtension {
             o1
         }
 
-        Coverage normalize() {
-            jacoco.normalize()
+        Coverage postMerge() {
+            jacoco.postMerge()
             this
         }
     }

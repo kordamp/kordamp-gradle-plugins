@@ -25,8 +25,10 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.testing.TestReport
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
 
+import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.PluginUtils.resolveSourceSets
 import static org.kordamp.gradle.PluginUtils.supportsApiConfiguration
 
@@ -49,25 +51,25 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('java-base') {
-            createSourceSetsIfNeeded(project, 'java')
+            createSourceSetsIfNeeded(project)
             createConfigurationsIfNeeded(project)
             createTasksIfNeeded(project)
         }
 
         project.pluginManager.withPlugin('groovy-base') {
-            createSourceSetsIfNeeded(project, 'groovy')
+            createSourceSetsIfNeeded(project)
             createConfigurationsIfNeeded(project)
             createTasksIfNeeded(project)
         }
 
         project.pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
-            createSourceSetsIfNeeded(project, 'kotlin')
+            createSourceSetsIfNeeded(project)
             createConfigurationsIfNeeded(project)
             createTasksIfNeeded(project)
         }
 
         project.pluginManager.withPlugin('scala-base') {
-            createSourceSetsIfNeeded(project, 'scala')
+            createSourceSetsIfNeeded(project)
             createConfigurationsIfNeeded(project)
             createTasksIfNeeded(project)
         }
@@ -81,6 +83,25 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
 
     private void adjustSourceSets(Project project) {
         SourceSet sourceSet = resolveSourceSets(project).integrationTest
+
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        String sourceSetDir = config.testing.integration.baseDir
+        project.pluginManager.withPlugin('java-base') {
+            adjustSourceSet(project, sourceSetDir, 'java')
+        }
+
+        project.pluginManager.withPlugin('groovy-base') {
+            adjustSourceSet(project, sourceSetDir, 'groovy')
+        }
+
+        project.pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
+            adjustSourceSet(project, sourceSetDir, 'kotlin')
+        }
+
+        project.pluginManager.withPlugin('scala-base') {
+            adjustSourceSet(project, sourceSetDir, 'scala')
+        }
+
         sourceSet.compileClasspath += resolveSourceSets(project).main.output
         sourceSet.compileClasspath += project.configurations.compileClasspath
         sourceSet.compileClasspath += project.configurations.testCompileClasspath
@@ -88,9 +109,9 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
         sourceSet.runtimeClasspath += project.configurations.testRuntimeClasspath
 
         project.configurations.findByName('integrationTestCompileClasspath')
-                .extendsFrom(project.configurations.compileClasspath, project.configurations.testCompileClasspath)
+            .extendsFrom(project.configurations.compileClasspath, project.configurations.testCompileClasspath)
         project.configurations.findByName('integrationTestRuntimeClasspath')
-                .extendsFrom(project.configurations.compileClasspath, project.configurations.testRuntimeClasspath)
+            .extendsFrom(project.configurations.compileClasspath, project.configurations.testRuntimeClasspath)
     }
 
     @CompileStatic
@@ -103,9 +124,9 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
         }
 
         project.configurations.findByName('integrationTest' + compileSuffix)
-                .extendsFrom(project.configurations.findByName('test' + compileSuffix))
+            .extendsFrom(project.configurations.findByName('test' + compileSuffix))
         project.configurations.findByName('integrationTest' + runtimeSuffix)
-                .extendsFrom(project.configurations.findByName('test' + runtimeSuffix))
+            .extendsFrom(project.configurations.findByName('test' + runtimeSuffix))
     }
 
     @CompileStatic
@@ -134,46 +155,51 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
         project.configurations.maybeCreate('integrationTest' + runtimeSuffix)
     }
 
-    private void createSourceSetsIfNeeded(Project project, String sourceSetName) {
+    private void createSourceSetsIfNeeded(Project project) {
+        project.sourceSets.maybeCreate('integrationTest')
+    }
+
+    private void adjustSourceSet(Project project, String sourceSetDir, String sourceSetName) {
         SourceSet sourceSet = project.sourceSets.maybeCreate('integrationTest')
-        if (project.file('src/integration-test/' + sourceSetName).exists()) {
-            sourceSet[sourceSetName].srcDirs project.file('src/integration-test/' + sourceSetName)
+
+        if (project.file(sourceSetDir + File.separator + sourceSetName).exists()) {
+            sourceSet[sourceSetName].srcDirs project.file(sourceSetDir + File.separator + sourceSetName)
         }
-        if (project.file('src/integration-test/resources').exists()) {
-            sourceSet.resources.srcDir project.file('src/integration-test/resources')
+        if (project.file(sourceSetDir + File.separator + 'resources').exists()) {
+            sourceSet.resources.srcDir project.file(sourceSetDir + File.separator + 'resources')
         }
     }
 
     private void createTasksIfNeeded(Project project) {
         if (!project.tasks.findByName('integrationTest')) {
             project.tasks.register('integrationTest', IntegrationTest,
-                    new Action<IntegrationTest>() {
-                        @Override
-                        void execute(IntegrationTest t) {
-                            t.group = 'Verification'
-                            t.description = 'Runs the integration tests.'
-                            t.testClassesDirs = resolveSourceSets(project).integrationTest.output.classesDirs
-                            t.classpath = resolveSourceSets(project).integrationTest.runtimeClasspath
-                            t.reports.html.enabled = false
-                            t.forkEvery = Runtime.runtime.availableProcessors()
+                new Action<IntegrationTest>() {
+                    @Override
+                    void execute(IntegrationTest t) {
+                        t.group = 'Verification'
+                        t.description = 'Runs the integration tests.'
+                        t.testClassesDirs = resolveSourceSets(project).integrationTest.output.classesDirs
+                        t.classpath = resolveSourceSets(project).integrationTest.runtimeClasspath
+                        t.reports.html.enabled = false
+                        t.forkEvery = Runtime.runtime.availableProcessors()
 
-                            t.testLogging {
-                                events 'passed', 'skipped', 'failed'
-                            }
+                        t.testLogging {
+                            events 'passed', 'skipped', 'failed'
                         }
-                    })
+                    }
+                })
         }
 
         if (!project.tasks.findByName('integrationTestReport')) {
             project.tasks.register('integrationTestReport', TestReport,
-                    new Action<TestReport>() {
-                        @Override
-                        void execute(TestReport t) {
-                            t.group = 'Reporting'
-                            t.description = 'Generates a report on integration tests.'
-                            t.destinationDir = project.file("${project.reporting.baseDir.path}/integration-tests")
-                        }
-                    })
+                new Action<TestReport>() {
+                    @Override
+                    void execute(TestReport t) {
+                        t.group = 'Reporting'
+                        t.description = 'Generates a report on integration tests.'
+                        t.destinationDir = project.file("${project.reporting.baseDir.path}/integration-tests")
+                    }
+                })
         }
     }
 
