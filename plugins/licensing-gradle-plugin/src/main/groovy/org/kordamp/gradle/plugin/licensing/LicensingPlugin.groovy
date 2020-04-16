@@ -26,6 +26,7 @@ import nl.javadude.gradle.plugins.license.DownloadLicenses
 import nl.javadude.gradle.plugins.license.DownloadLicensesExtension
 import nl.javadude.gradle.plugins.license.LicenseExtension
 import nl.javadude.gradle.plugins.license.LicenseMetadata
+import nl.javadude.gradle.plugins.license.LicensePlugin
 import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -153,8 +154,8 @@ class LicensingPlugin extends AbstractKordampPlugin {
         if (!project.plugins.findPlugin(LicenseReportingPlugin)) {
             project.pluginManager.apply(LicenseReportingPlugin)
         }
-        if (!project.plugins.findPlugin(nl.javadude.gradle.plugins.license.LicensePlugin)) {
-            project.pluginManager.apply(nl.javadude.gradle.plugins.license.LicensePlugin)
+        if (!project.plugins.findPlugin(LicensePlugin)) {
+            project.pluginManager.apply(LicensePlugin)
         }
 
         preConfigureDownloadLicensesExtension(project)
