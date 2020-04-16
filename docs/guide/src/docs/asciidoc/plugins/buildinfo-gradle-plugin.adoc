@@ -20,6 +20,7 @@ Defines a set of build related properties. These properties are
 | buildBy          | String           | The value of the `user.name` System property
 | buildRevision    | String           | The value of the latest commit hash
 | buildJdk         | String           | Concatenation of the following System properties [`java.version`, `java.vendor`, `java.vm.version`]
+| buildOs          | String           | Concatenation of the following System properties [`os.name`, `os.version`, `os.arch`]
 | buildCreatedBy   | String           | The Gradle version used in the build
 |===
 
@@ -41,6 +42,7 @@ config {
         skipBuildTime
         skipBuildRevision
         skipBuildJdk
+        skipBuildOs
         skipBuildCreatedBy
     }
 }
@@ -56,6 +58,7 @@ config {
 | skipBuildTime      | boolean | no       | false         | Skips calculating this value
 | skipBuildRevision  | boolean | no       | false         | Skips calculating this value
 | skipBuildJdk       | boolean | no       | false         | Skips calculating this value
+| skipBuildOs        | boolean | no       | false         | Skips calculating this value
 | skipBuildCreatedBy | boolean | no       | false         | Skips calculating this value
 |===
 

@@ -114,6 +114,10 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
             effectiveConfig.buildInfo.buildJdk = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString()
         }
 
+        if (!effectiveConfig.buildInfo.skipBuildOs) {
+            effectiveConfig.buildInfo.buildOs = "${System.properties['os.name']} (${System.properties['os.version']}; ${System.properties['os.arch']})".toString()
+        }
+
         if (!effectiveConfig.buildInfo.skipBuildCreatedBy) {
             effectiveConfig.buildInfo.buildCreatedBy = "Gradle ${project.gradle.gradleVersion}"
         }

@@ -37,6 +37,7 @@ class BuildInfo extends AbstractFeature {
     boolean skipBuildTime
     boolean skipBuildRevision
     boolean skipBuildJdk
+    boolean skipBuildOs
     boolean skipBuildCreatedBy
 
     String buildBy
@@ -44,6 +45,7 @@ class BuildInfo extends AbstractFeature {
     String buildTime
     String buildRevision
     String buildJdk
+    String buildOs
     String buildCreatedBy
 
     private boolean clearTimeSet
@@ -52,6 +54,7 @@ class BuildInfo extends AbstractFeature {
     private boolean skipBuildTimeSet
     private boolean skipBuildRevisionSet
     private boolean skipBuildJdkSet
+    private boolean skipBuildOsSet
     private boolean skipBuildCreatedBySet
 
     BuildInfo(ProjectConfigurationExtension config, Project project) {
@@ -76,6 +79,7 @@ class BuildInfo extends AbstractFeature {
             if (!skipBuildTime) map.buildTime = buildTime
             if (!skipBuildRevision) map.buildRevision = buildRevision
             if (!skipBuildJdk) map.buildJdk = buildJdk
+            if (!skipBuildOs) map.buildOs = buildOs
             if (!skipBuildCreatedBy) map.buildCreatedBy = buildCreatedBy
         }
 
@@ -136,6 +140,15 @@ class BuildInfo extends AbstractFeature {
         this.skipBuildJdkSet
     }
 
+    void setSkipBuildOs(boolean skipBuildOs) {
+        this.skipBuildOs = skipBuildOs
+        this.skipBuildOsSet = true
+    }
+
+    boolean isSkipBuildOsSet() {
+        this.skipBuildOsSet
+    }
+
     void setSkipBuildCreatedBy(boolean skipBuildCreatedBy) {
         this.skipBuildCreatedBy = skipBuildCreatedBy
         this.skipBuildCreatedBySet = true
@@ -159,6 +172,8 @@ class BuildInfo extends AbstractFeature {
         copy.@skipBuildRevisionSet = skipBuildRevisionSet
         copy.@skipBuildJdk = skipBuildJdk
         copy.@skipBuildJdkSet = skipBuildJdkSet
+        copy.@skipBuildOs = skipBuildOs
+        copy.@skipBuildOsSet = skipBuildOsSet
         copy.@skipBuildCreatedBy = skipBuildCreatedBy
         copy.@skipBuildCreatedBySet = skipBuildCreatedBySet
     }
@@ -171,6 +186,7 @@ class BuildInfo extends AbstractFeature {
         o1.setSkipBuildTime((boolean) (o1.skipBuildTimeSet ? o1.skipBuildTime : o2.skipBuildTime))
         o1.setSkipBuildRevision((boolean) (o1.skipBuildRevisionSet ? o1.skipBuildRevision : o2.skipBuildRevision))
         o1.setSkipBuildJdk((boolean) (o1.skipBuildJdkSet ? o1.skipBuildJdk : o2.skipBuildJdk))
+        o1.setSkipBuildOs((boolean) (o1.skipBuildOsSet ? o1.skipBuildOs : o2.skipBuildOs))
         o1.setSkipBuildCreatedBy((boolean) (o1.skipBuildCreatedBySet ? o1.skipBuildCreatedBy : o2.skipBuildCreatedBy))
     }
 }
