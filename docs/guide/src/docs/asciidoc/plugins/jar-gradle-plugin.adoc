@@ -74,3 +74,44 @@ normalization {
 }
 ----
 
+[[_org_kordamp_gradle_jar_dsl]]
+== DSL
+
+[dsl,groovy]
+[subs="+macros"]
+----
+config {
+    artifacts {
+        jar {
+            enabled
+            <<_jar_manifest,manifest>> {
+                enabled
+                addClasspath
+                classpathPrefix
+                classpathLayoutType
+            }
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name    | Type    | Required | Default Value | Description
+| enabled | boolean | no       | true          | Disables `org.kordamp.gradle.jar` plugin if `false`
+|===
+
+This block is optional.
+
+[[_jar_manifest]]
+*manifest*
+
+[options="header", cols="5*"]
+|===
+| Name                | Type        | Required | Default Value | Description
+| enabled             | boolean     | no       | true          | Enables or disables manifest customizations
+| addClasspath        | boolean     | no       | false         | Whether to create a `Class-Path` manifest entry
+| classpathPrefix     | String      | no       | ''            | A text that will be prefixed to all `Class-Path` entries
+| classpathLayoutType | String      | no       | simple        | The type of layout to use when formatting entries in the created `Class-Path`. Valid values are: [`simple`, `repository`] (the same as a Maven classpath layout)
+|===
+

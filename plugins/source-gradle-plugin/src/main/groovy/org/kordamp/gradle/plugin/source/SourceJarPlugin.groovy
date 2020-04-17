@@ -86,7 +86,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
             void execute(AppliedPlugin appliedPlugin) {
                 project.afterEvaluate {
                     ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-                    setEnabled(config.source.enabled)
+                    setEnabled(config.artifacts.source.enabled)
 
                     TaskProvider<Jar> sourcesJar = createSourceJarTask(project)
                     project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(sourcesJar)
@@ -126,12 +126,12 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                     t.description = 'An archive of the source code.'
                     t.archiveClassifier.set('sources')
                     t.dependsOn project.tasks.named('classes')
-                    t.setEnabled(resolveEffectiveConfig(t.project).source.enabled)
+                    t.setEnabled(resolveEffectiveConfig(t.project).artifacts.source.enabled)
                     t.from PluginUtils.resolveSourceSets(project).main.allSource
                 }
             })
 
-        if (config.source.enabled && project.pluginManager.hasPlugin('maven-publish')) {
+        if (config.artifacts.source.enabled && project.pluginManager.hasPlugin('maven-publish')) {
             PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
             MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
             if (mainPublication) {
@@ -151,12 +151,12 @@ class SourceJarPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         Set<Project> projects = new LinkedHashSet<>()
-        if (!(project in config.source.aggregate.excludedProjects) && config.source.enabled) {
+        if (!(project in config.artifacts.source.aggregate.excludedProjects) && config.artifacts.source.enabled) {
             projects << project
         }
 
         project.childProjects.values().each { p ->
-            if (p in config.source.aggregate.excludedProjects || !config.source.enabled) return
+            if (p in config.artifacts.source.aggregate.excludedProjects || !config.artifacts.source.enabled) return
             projects << p
         }
 
@@ -165,7 +165,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
             @CompileDynamic
             void execute(Jar t) {
                 t.from PluginUtils.resolveSourceSets(projects).main.allSource
-                t.enabled = config.source.aggregate.enabled
+                t.enabled = config.artifacts.source.aggregate.enabled
             }
         })
     }

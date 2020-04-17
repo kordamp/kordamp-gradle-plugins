@@ -31,6 +31,7 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 class EffectiveSettingsTask extends AbstractReportingTask {
     private final List<String> COVERAGE = ['coveralls', 'jacoco'].asImmutable()
+    private final List<String> ARTIFACTS = ['jar', 'source', 'minpom'].asImmutable()
     private final List<String> DOCS = ['guide', 'groovydoc', 'javadoc', 'kotlindoc', 'scaladoc', 'sourceHtml', 'sourceXref'].asImmutable()
     private final List<String> QUALITY = ['checkstyle', 'codenarc', 'detekt', 'pmd', 'sonar', 'spotbugs'].asImmutable()
 
@@ -72,6 +73,8 @@ class EffectiveSettingsTask extends AbstractReportingTask {
             printSection((Map<String, Object>) map.quality, section)
         } else if (section in DOCS) {
             printSection((Map<String, Object>) map.docs, section)
+        } else if (section in ARTIFACTS) {
+            printSection((Map<String, Object>) map.artifacts, section)
         } else if (section in COVERAGE) {
             printSection((Map<String, Object>) map.coverage, section)
         } else {

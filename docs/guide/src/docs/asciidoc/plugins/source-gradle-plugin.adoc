@@ -18,11 +18,13 @@ Packages the project's source code into a single JAR file.
 [subs="+macros"]
 ----
 config {
-    source {
-        enabled
-        <<_source_aggregate,aggregate>> {
+    artifacts {
+        source {
             enabled
-            excludedProjects
+            <<_source_aggregate,aggregate>> {
+                enabled
+                excludedProjects
+            }
         }
     }
 }

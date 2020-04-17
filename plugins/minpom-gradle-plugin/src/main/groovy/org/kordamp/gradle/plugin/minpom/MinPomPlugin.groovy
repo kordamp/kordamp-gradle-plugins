@@ -66,7 +66,7 @@ class MinPomPlugin extends AbstractKordampPlugin {
 
         project.afterEvaluate {
             ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-            setEnabled(effectiveConfig.minpom.enabled)
+            setEnabled(effectiveConfig.artifacts.minpom.enabled)
 
             if (!enabled) {
                 return

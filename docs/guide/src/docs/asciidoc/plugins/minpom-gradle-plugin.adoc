@@ -90,8 +90,10 @@ artifactId=sample
 [source,groovy]
 ----
 config {
-    minpom {
-        enabled
+    artifacts {
+        minpom {
+            enabled
+        }
     }
 }
 ----

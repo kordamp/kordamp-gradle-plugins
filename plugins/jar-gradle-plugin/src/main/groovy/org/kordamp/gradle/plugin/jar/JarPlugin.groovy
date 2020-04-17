@@ -20,8 +20,10 @@ package org.kordamp.gradle.plugin.jar
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.bundling.Jar
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
@@ -45,6 +47,10 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 @CompileStatic
 class JarPlugin extends AbstractKordampPlugin {
     Project project
+
+    JarPlugin() {
+        super(org.kordamp.gradle.plugin.base.plugins.Jar.PLUGIN_ID)
+    }
 
     void apply(Project project) {
         this.project = project
@@ -86,12 +92,18 @@ class JarPlugin extends AbstractKordampPlugin {
             @Override
             void projectsEvaluated(Gradle gradle) {
                 project.tasks.withType(Jar) { Jar t ->
-                    if (t.name == 'jar') configureJarMetainf(project, t)
+                    if (t.name == 'jar') {
+                        configureJarMetainf(project, t)
+                        configureClasspathManifest(project, t)
+                    }
                     configureJarManifest(project, t)
                 }
                 project.childProjects.values().each { Project p ->
                     p.tasks.withType(Jar) { Jar t ->
-                        if (t.name == 'jar') configureJarMetainf(p, t)
+                        if (t.name == 'jar') {
+                            configureJarMetainf(p, t)
+                            configureClasspathManifest(project, t)
+                        }
                         configureJarManifest(p, t)
                     }
                 }
@@ -130,7 +142,7 @@ class JarPlugin extends AbstractKordampPlugin {
     private static void configureJarMetainf(Project project, Jar jarTask) {
         ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project.rootProject) ?: resolveEffectiveConfig(project)
 
-        if (effectiveConfig.minpom.enabled) {
+        if (effectiveConfig.artifacts.minpom.enabled) {
             jarTask.configure {
                 dependsOn MinPomPlugin.MINPOM_TASK_NAME
                 metaInf {
@@ -144,31 +156,31 @@ class JarPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private static void configureJarManifest(Project project, Jar jarTask) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project.rootProject) ?: resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project.rootProject) ?: resolveEffectiveConfig(project)
 
-        if (effectiveConfig.release) {
+        if (config.release) {
             Map<String, String> attributesMap = [:]
 
-            if (effectiveConfig.buildInfo.enabled) {
-                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildCreatedBy', attributesMap, 'Created-By')
-                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildBy', attributesMap, 'Build-By')
-                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildJdk', attributesMap, 'Build-Jdk')
-                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildOs', attributesMap, 'Build-Os')
-                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildDate', attributesMap, 'Build-Date')
-                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildTime', attributesMap, 'Build-Time')
-                checkBuildInfoAttribute(effectiveConfig.buildInfo, 'buildRevision', attributesMap, 'Build-Revision')
+            if (config.buildInfo.enabled) {
+                checkBuildInfoAttribute(config.buildInfo, 'buildCreatedBy', attributesMap, 'Created-By')
+                checkBuildInfoAttribute(config.buildInfo, 'buildBy', attributesMap, 'Build-By')
+                checkBuildInfoAttribute(config.buildInfo, 'buildJdk', attributesMap, 'Build-Jdk')
+                checkBuildInfoAttribute(config.buildInfo, 'buildOs', attributesMap, 'Build-Os')
+                checkBuildInfoAttribute(config.buildInfo, 'buildDate', attributesMap, 'Build-Date')
+                checkBuildInfoAttribute(config.buildInfo, 'buildTime', attributesMap, 'Build-Time')
+                checkBuildInfoAttribute(config.buildInfo, 'buildRevision', attributesMap, 'Build-Revision')
             }
 
-            if (effectiveConfig.info.specification.enabled) {
-                attributesMap.'Specification-Title' = effectiveConfig.info.specification.title
-                attributesMap.'Specification-Version' = effectiveConfig.info.specification.version
-                if (isNotBlank(effectiveConfig.info.specification.vendor)) attributesMap.'Specification-Vendor' = effectiveConfig.info.specification.vendor
+            if (config.info.specification.enabled) {
+                attributesMap.'Specification-Title' = config.info.specification.title
+                attributesMap.'Specification-Version' = config.info.specification.version
+                if (isNotBlank(config.info.specification.vendor)) attributesMap.'Specification-Vendor' = config.info.specification.vendor
             }
 
-            if (effectiveConfig.info.implementation.enabled) {
-                attributesMap.'Implementation-Title' = effectiveConfig.info.implementation.title
-                attributesMap.'Implementation-Version' = effectiveConfig.info.implementation.version
-                if (isNotBlank(effectiveConfig.info.implementation.vendor)) attributesMap.'Implementation-Vendor' = effectiveConfig.info.implementation.vendor
+            if (config.info.implementation.enabled) {
+                attributesMap.'Implementation-Title' = config.info.implementation.title
+                attributesMap.'Implementation-Version' = config.info.implementation.version
+                if (isNotBlank(config.info.implementation.vendor)) attributesMap.'Implementation-Vendor' = config.info.implementation.vendor
             }
 
             jarTask.configure {
@@ -184,5 +196,74 @@ class JarPlugin extends AbstractKordampPlugin {
         if (!buildInfo."skip${key.capitalize()}") {
             map[manifestKey] = buildInfo[key]
         }
+    }
+
+    @CompileDynamic
+    private static void configureClasspathManifest(Project project, Jar jarTask) {
+        if (!project.configurations.findByName('runtimeClasspath')) {
+            return
+        }
+
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        jarTask.setEnabled(config.artifacts.jar.enabled)
+
+        if (!config.artifacts.jar.manifest.enabled) {
+            return
+        }
+
+        if (config.artifacts.jar.manifest.addClasspath) {
+            if (config.artifacts.jar.manifest.classpathLayoutType == 'simple') {
+                calculateSimpleClasspath(project, jarTask, config.artifacts.jar.manifest.classpathPrefix)
+            } else if (config.artifacts.jar.manifest.classpathLayoutType == 'repository') {
+                calculateRepositoryClasspath(project, jarTask, config.artifacts.jar.manifest.classpathPrefix)
+            }
+        }
+    }
+
+    private static void calculateSimpleClasspath(Project project, Jar jarTask, String prefix) {
+        project.configurations.named('runtimeClasspath', new Action<Configuration>() {
+            @Override
+            @CompileDynamic
+            void execute(Configuration c) {
+                List<String> classpath = []
+                String p = isNotBlank(prefix) && !prefix.endsWith('/') ? prefix + '/' : prefix;
+
+                c.resolvedConfiguration.resolvedArtifacts.each {
+                    classpath << "${p}${it.file.name}".toString()
+                }
+                if (classpath) {
+                    jarTask.configure {
+                        manifest {
+                            attributes('Class-Path': classpath.join(' '))
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    private static void calculateRepositoryClasspath(Project project, Jar jarTask, String prefix) {
+        project.configurations.named('runtimeClasspath', new Action<Configuration>() {
+            @Override
+            @CompileDynamic
+            void execute(Configuration c) {
+                List<String> classpath = []
+                String p = isNotBlank(prefix) && !prefix.endsWith('/') ? prefix + '/' : prefix;
+
+                c.resolvedConfiguration.resolvedArtifacts.each {
+                    String g = it.moduleVersion.id.group.replace('.', '/')
+                    String m = it.moduleVersion.id.name
+                    String v = it.moduleVersion.id.version
+                    classpath << "${p}${g}/${m}/${v}/${it.file.name}".toString()
+                }
+                if (classpath) {
+                    jarTask.configure {
+                        manifest {
+                            attributes('Class-Path': classpath.join(' '))
+                        }
+                    }
+                }
+            }
+        })
     }
 }

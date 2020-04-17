@@ -34,6 +34,7 @@ import org.kordamp.gradle.plugin.base.plugins.ErrorProne
 import org.kordamp.gradle.plugin.base.plugins.Groovydoc
 import org.kordamp.gradle.plugin.base.plugins.Guide
 import org.kordamp.gradle.plugin.base.plugins.Jacoco
+import org.kordamp.gradle.plugin.base.plugins.Jar
 import org.kordamp.gradle.plugin.base.plugins.Javadoc
 import org.kordamp.gradle.plugin.base.plugins.Kotlindoc
 import org.kordamp.gradle.plugin.base.plugins.Licensing
@@ -68,12 +69,11 @@ class ProjectConfigurationExtension {
     final BuildInfo buildInfo
     final Clirr clirr
     final Licensing licensing
-    final Minpom minpom
     final Plugin plugin
     final Publishing publishing
-    final Source source
     final Stats stats
     final Testing testing
+    final Artifacts artifacts
     final Docs docs
     final Coverage coverage
     final Quality quality
@@ -88,13 +88,12 @@ class ProjectConfigurationExtension {
         buildInfo = new BuildInfo(this, project)
         clirr = new Clirr(this, project)
         licensing = new Licensing(this, project)
-        minpom = new Minpom(this, project)
         plugin = new Plugin(this, project)
         publishing = new Publishing(this, project)
-        source = new Source(this, project)
         stats = new Stats(this, project)
         testing = new Testing(this, project)
 
+        artifacts = new Artifacts(this, project)
         docs = new Docs(this, project)
         coverage = new Coverage(this, project)
         quality = new Quality(this, project)
@@ -109,12 +108,11 @@ class ProjectConfigurationExtension {
         other.buildInfo.copyInto(buildInfo)
         other.clirr.copyInto(clirr)
         other.licensing.copyInto(licensing)
-        other.minpom.copyInto(minpom)
         other.plugin.copyInto(plugin)
         other.publishing.copyInto(publishing)
-        other.source.copyInto(source)
         other.stats.copyInto(stats)
         other.testing.copyInto(testing)
+        other.artifacts.copyInto(artifacts)
         other.docs.copyInto(docs)
         other.coverage.copyInto(coverage)
         other.quality.copyInto(quality)
@@ -125,7 +123,7 @@ class ProjectConfigurationExtension {
 
         map.putAll(info.toMap())
         map.putAll(buildInfo.toMap())
-        map.putAll(minpom.toMap())
+        map.putAll(artifacts.toMap())
         map.putAll(bintray.toMap())
         map.putAll(publishing.toMap())
         map.putAll(bom.toMap())
@@ -136,7 +134,6 @@ class ProjectConfigurationExtension {
         map.putAll(testing.toMap())
         map.putAll(clirr.toMap())
         map.putAll(plugin.toMap())
-        map.putAll(source.toMap())
         map.putAll(stats.toMap())
 
         map
@@ -182,6 +179,18 @@ class ProjectConfigurationExtension {
     SourceXref getSourceXref() {
         println("The method config.sourceXref is deprecated and will be removed in the future. Use config.docs.sourceXref instead")
         docs.sourceXref
+    }
+
+    @Deprecated
+    Source getSource() {
+        println("The method config.source is deprecated and will be removed in the future. Use config.artifacts.source instead")
+        artifacts.source
+    }
+
+    @Deprecated
+    Minpom getMinpom() {
+        println("The method config.minpom is deprecated and will be removed in the future. Use config.artifacts.minpom instead")
+        artifacts.minpom
     }
 
     void info(Action<? super Information> action) {
@@ -280,12 +289,16 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, licensing)
     }
 
+    @Deprecated
     void minpom(Action<? super Minpom> action) {
-        action.execute(minpom)
+        println("The method config.minpom() is deprecated and will be removed in the future. Use config.artifacts.minpom() instead")
+        artifacts.minpom(action)
     }
 
+    @Deprecated
     void minpom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Minpom) Closure action) {
-        ConfigureUtil.configure(action, minpom)
+        println("The method config.minpom() is deprecated and will be removed in the future. Use config.artifacts.minpom() instead")
+        artifacts.minpom(action)
     }
 
     void plugin(Action<? super Plugin> action) {
@@ -316,12 +329,16 @@ class ProjectConfigurationExtension {
         docs.scaladoc(action)
     }
 
+    @Deprecated
     void source(Action<? super Source> action) {
-        action.execute(source)
+        println("The method config.source() is deprecated and will be removed in the future. Use config.artifacts.source() instead")
+        artifacts.source(action)
     }
 
+    @Deprecated
     void source(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Source) Closure action) {
-        ConfigureUtil.configure(action, source)
+        println("The method config.source() is deprecated and will be removed in the future. Use config.artifacts.source() instead")
+        artifacts.source(action)
     }
 
     void stats(Action<? super Stats> action) {
@@ -362,6 +379,14 @@ class ProjectConfigurationExtension {
 
     void testing(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Testing) Closure action) {
         ConfigureUtil.configure(action, testing)
+    }
+
+    void artifacts(Action<? super Artifacts> action) {
+        action.execute(artifacts)
+    }
+
+    void artifacts(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifacts) Closure action) {
+        ConfigureUtil.configure(action, artifacts)
     }
 
     void docs(Action<? super Docs> action) {
@@ -408,12 +433,11 @@ class ProjectConfigurationExtension {
         this.@buildInfo.copyInto(copy.@buildInfo)
         this.@clirr.copyInto(copy.@clirr)
         this.@licensing.copyInto(copy.@licensing)
-        this.@minpom.copyInto(copy.@minpom)
         this.@plugin.copyInto(copy.@plugin)
         this.@publishing.copyInto(copy.@publishing)
-        this.@source.copyInto(copy.@source)
         this.@stats.copyInto(copy.@stats)
         this.@testing.copyInto(copy.@testing)
+        this.@artifacts.copyInto(copy.@artifacts)
         this.@docs.copyInto(copy.@docs)
         this.@coverage.copyInto(copy.@coverage)
         this.@quality.copyInto(copy.@quality)
@@ -430,12 +454,11 @@ class ProjectConfigurationExtension {
         BuildInfo.merge(copy.@buildInfo, other.@buildInfo)
         Clirr.merge(copy.@clirr, other.@clirr)
         Licensing.merge(copy.@licensing, other.@licensing)
-        Minpom.merge(copy.@minpom, other.@minpom)
         Plugin.merge(copy.@plugin, other.@plugin)
         Publishing.merge(copy.@publishing, other.@publishing)
-        Source.merge(copy.@source, other.@source)
         Stats.merge(copy.@stats, other.@stats)
         Testing.merge(copy.@testing, other.@testing)
+        Artifacts.merge(copy.@artifacts, other.@artifacts)
         Docs.merge(copy.@docs, other.@docs)
         Coverage.merge(copy.@coverage, other.@coverage)
         Quality.merge(copy.@quality, other.@quality)
@@ -460,11 +483,11 @@ class ProjectConfigurationExtension {
         info.normalize()
         bom.normalize()
         clirr.normalize()
-        source.normalize()
         stats.normalize()
         licensing.normalize()
         plugin.normalize()
         publishing.normalize()
+        artifacts.normalize()
         docs.normalize()
         quality.normalize()
         this
@@ -846,6 +869,85 @@ class ProjectConfigurationExtension {
             List<String> errors = []
             errors.addAll(this.@kotlindoc.validate(config))
             errors
+        }
+    }
+
+    @CompileStatic
+    static class Artifacts {
+        final Jar jar
+        final Minpom minpom
+        final Source source
+
+        private final ProjectConfigurationExtension config
+        private final Project project
+
+        Artifacts(ProjectConfigurationExtension config, Project project) {
+            this.config = config
+            this.project = project
+            jar = new Jar(config, project)
+            minpom = new Minpom(config, project)
+            source = new Source(config, project)
+        }
+
+        Map<String, Object> toMap() {
+            Map<String, Object> map = new LinkedHashMap<String, Object>()
+
+            map.putAll(jar.toMap())
+            map.putAll(minpom.toMap())
+            map.putAll(source.toMap())
+
+            new LinkedHashMap<>('artifacts': map)
+        }
+
+        void jar(Action<? super Jar> action) {
+            action.execute(jar)
+        }
+
+        void jar(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jar) Closure action) {
+            ConfigureUtil.configure(action, jar)
+        }
+
+        void minpom(Action<? super Minpom> action) {
+            action.execute(minpom)
+        }
+
+        void minpom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Minpom) Closure action) {
+            ConfigureUtil.configure(action, minpom)
+        }
+
+        void source(Action<? super Source> action) {
+            action.execute(source)
+        }
+
+        void source(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Source) Closure action) {
+            ConfigureUtil.configure(action, source)
+        }
+
+        void copyInto(Artifacts copy) {
+            jar.copyInto(copy.jar)
+            minpom.copyInto(copy.minpom)
+            source.copyInto(copy.source)
+        }
+
+        Artifacts copyOf() {
+            Artifacts copy = new Artifacts(config, project)
+            this.@jar.copyInto(jar)
+            this.@minpom.copyInto(minpom)
+            this.@source.copyInto(source)
+            copy
+        }
+
+        static Artifacts merge(Artifacts o1, Artifacts o2) {
+            Jar.merge(o1.@jar, o2.@jar)
+            Minpom.merge(o1.@minpom, o2.@minpom)
+            Source.merge(o1.@source, o2.@source)
+            o1
+        }
+
+        Artifacts normalize() {
+            jar.normalize()
+            source.normalize()
+            this
         }
     }
 }

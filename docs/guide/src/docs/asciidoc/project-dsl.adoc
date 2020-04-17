@@ -17,12 +17,15 @@ config {
     <<_org_kordamp_gradle_buildinfo,buildInfo>> { ... }
     <<_org_kordamp_gradle_clirr,clirr>> { ... }
     <<_org_kordamp_gradle_licensing,licensing>> { ... }
-    <<_org_kordamp_gradle_minpom,minpom>> { ... }
     <<_org_kordamp_gradle_plugin,plugin>> { ... }
     <<_org_kordamp_gradle_publishing,publishing>> { ... }
-    <<_org_kordamp_gradle_source,source>> { ... }
     <<_org_kordamp_gradle_sourcestats,stats>> { ... }
     <<_org_kordamp_gradle_testing,testing>> { ... }
+    artifacts {
+        <<_org_kordamp_gradle_jar,jar>> { ... }
+        <<_org_kordamp_gradle_minpom,minpom>> { ... }
+        <<_org_kordamp_gradle_source,source>> { ... }
+    }
     docs {
         <<_org_kordamp_gradle_guide,guide>> { ... }
         <<_org_kordamp_gradle_groovydoc,groovydoc>> { ... }
