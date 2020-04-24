@@ -54,7 +54,7 @@ config {
 | userOrg               | String       | yes      |                 | Mapped to `bintray.pkg.userOrg`
 | name                  | String       | no       | project.name    | Mapped to `bintray.pkg.name`
 | githubRepo            | String       | no       | $userOrg/$name  | Mapped to `bintray.pkg.githubRepo`
-| skipMavenSync         | boolean      | no       | false           | No not sync with Maven Central
+| skipMavenSync         | boolean      | no       | false           | Do not sync with Maven Central
 | publications          | List<String> | no       | ['main']        | Configures the publications that should be published to Bintray
 | publish               | boolean      | no       | false           | Whether version should be auto published after an upload
 | publicDownloadNumbers | boolean      | no       | true            | Whether download numbers should be public or not

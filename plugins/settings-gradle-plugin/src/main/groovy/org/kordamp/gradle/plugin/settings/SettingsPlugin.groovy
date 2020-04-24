@@ -20,7 +20,10 @@ package org.kordamp.gradle.plugin.settings
 import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
 import org.gradle.api.Plugin
+import org.gradle.api.Project
 import org.gradle.api.initialization.Settings
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 
 /**
  * @author Andres Almiray
@@ -28,6 +31,8 @@ import org.gradle.api.initialization.Settings
  */
 @CompileStatic
 class SettingsPlugin implements Plugin<Settings> {
+    private static final Logger LOG = Logging.getLogger(Project)
+
     private Settings settings
 
     @Override
@@ -50,7 +55,7 @@ class SettingsPlugin implements Plugin<Settings> {
                 } else if ('standard' == projects.layout?.toLowerCase()) {
                     processStandardLayout()
                 } else {
-                    println "Unknown project layout '${projects.layout}'. No subprojects will be added."
+                    LOG.warn "Unknown project layout '${projects.layout}'. No subprojects will be added."
                 }
             }
         })
@@ -63,7 +68,7 @@ class SettingsPlugin implements Plugin<Settings> {
             for (String parentDirName : projects.directories) {
                 File parentDir = new File(settings.rootDir, parentDirName)
                 if (!parentDir.exists()) {
-                    println "Skipping ${parentDir} as it does not exist"
+                    LOG.info "Skipping ${parentDir} as it does not exist"
                     continue
                 }
 
@@ -91,7 +96,7 @@ class SettingsPlugin implements Plugin<Settings> {
         for (String path : projects.directories) {
             File projectDir = new File(settings.rootDir, path)
             if (!projectDir.exists()) {
-                println "Skipping ${projectDir} as it does not exist"
+                LOG.info "Skipping ${projectDir} as it does not exist"
                 continue
             }
             SettingsPlugin.includeProject(settings, path)

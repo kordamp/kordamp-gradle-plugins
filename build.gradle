@@ -119,6 +119,7 @@ allprojects {
         jcenter()
         gradlePluginPortal()
         flatDir { dir rootProject.file('libraries') }
+        mavenLocal()
     }
 
     dependencyUpdates.resolutionStrategy = {

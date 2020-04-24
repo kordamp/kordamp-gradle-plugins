@@ -18,5 +18,5 @@
 dependencies {
     api project(':base-gradle-plugin')
 
-    api 'gradle.plugin.net.nemerosa:versioning:2.12.1'
+    api 'gradle.plugin.net.nemerosa:versioning:2.13.1'
 }
