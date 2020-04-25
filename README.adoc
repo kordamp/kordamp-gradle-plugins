@@ -4,7 +4,7 @@
 :project-repo:    maven
 :project-name:    kordamp-gradle-plugins
 :project-group:   org.kordamp.gradle
-:project-version: 0.33.0
+:project-version: 0.34.0
 
 image:http://img.shields.io/travis/{project-owner}/{project-name}/master.svg["Build Status (travis)", link="https://travis-ci.org/{project-owner}/{project-name}"]
 image:https://github.com/{project-owner}/{project-name}/workflows/Build/badge.svg["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
