@@ -16,7 +16,7 @@
 <h1>A collection of opinionated Gradle plugins</h1>
 <div class="details">
 <span id="author" class="author">Andres Almiray</span><br>
-<span id="revnumber">version 0.33.0</span>
+<span id="revnumber">version 0.34.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -206,6 +206,7 @@
 <li><a href="#_org_kordamp_gradle_jar">5.17. Jar</a>
 <ul class="sectlevel3">
 <li><a href="#_reproducible_builds">5.17.1. Reproducible Builds</a></li>
+<li><a href="#_org_kordamp_gradle_jar_dsl">5.17.2. DSL</a></li>
 </ul>
 </li>
 <li><a href="#_org_kordamp_gradle_java_project">5.18. JavaProject</a>
@@ -516,7 +517,7 @@ still be bent to a certain degree. The plugins found in this project provide suc
         jcenter()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:{plugin-id}:0.33.0'
+        classpath 'org.kordamp.gradle:{plugin-id}:0.34.0'
     }
 }
 apply plugin: '{plugin-id}'</code></pre>
@@ -533,7 +534,7 @@ apply plugin: '{plugin-id}'</code></pre>
         jcenter()
     }
     dependencies {
-        classpath("org.kordamp.gradle:{plugin-id}:0.33.0")
+        classpath("org.kordamp.gradle:{plugin-id}:0.34.0")
     }
 }
 apply(plugin = "{plugin-id}")</code></pre>
@@ -546,7 +547,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id '{plugin-id}' version '0.33.0'
+    id '{plugin-id}' version '0.34.0'
 }</code></pre>
 </div>
 </div>
@@ -554,7 +555,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="kotlin">plugins {
-    id("{plugin-id}") version "0.33.0"
+    id("{plugin-id}") version "0.34.0"
 }</code></pre>
 </div>
 </div>
@@ -711,7 +712,7 @@ listOf("docs", "subprojects").forEach { dirName -&gt;
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.33.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.34.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -731,7 +732,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.33.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.34.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -750,8 +751,8 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.java-project' version '0.33.0'      <i class="conum" data-value="1"></i><b>(1)</b>
-    id 'org.kordamp.gradle.bintray'      version '0.33.0'      <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.java-project' version '0.34.0'      <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.bintray'      version '0.34.0'      <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 config {
@@ -831,8 +832,8 @@ allprojects {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.java-project") version "0.33.0"     <i class="conum" data-value="1"></i><b>(1)</b>
-    id("org.kordamp.gradle.bintray")      version "0.33.0"     <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.java-project") version "0.34.0"     <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.bintray")      version "0.34.0"     <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 val bintrayUsername: String by project
@@ -1062,12 +1063,15 @@ dependencies {
     <a href="#_org_kordamp_gradle_buildinfo">buildInfo</a> { ... }
     <a href="#_org_kordamp_gradle_clirr">clirr</a> { ... }
     <a href="#_org_kordamp_gradle_licensing">licensing</a> { ... }
-    <a href="#_org_kordamp_gradle_minpom">minpom</a> { ... }
     <a href="#_org_kordamp_gradle_plugin">plugin</a> { ... }
     <a href="#_org_kordamp_gradle_publishing">publishing</a> { ... }
-    <a href="#_org_kordamp_gradle_source">source</a> { ... }
     <a href="#_org_kordamp_gradle_sourcestats">stats</a> { ... }
     <a href="#_org_kordamp_gradle_testing">testing</a> { ... }
+    artifacts {
+        <a href="#_org_kordamp_gradle_jar">jar</a> { ... }
+        <a href="#_org_kordamp_gradle_minpom">minpom</a> { ... }
+        <a href="#_org_kordamp_gradle_source">source</a> { ... }
+    }
     docs {
         <a href="#_org_kordamp_gradle_guide">guide</a> { ... }
         <a href="#_org_kordamp_gradle_groovydoc">groovydoc</a> { ... }
@@ -1107,7 +1111,7 @@ publications completely:</p>
 <div class="title">build.gradle (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.33.0'
+    id 'org.kordamp.gradle.project' version '0.34.0'
 }
 
 config {
@@ -1126,7 +1130,7 @@ allprojects {
 <div class="title">build.gradle.kts (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.33.0"
+    id("org.kordamp.gradle.project") version "0.34.0"
 }
 
 config {
@@ -2028,7 +2032,7 @@ Type
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
     id 'java'
-    id 'org.kordamp.gradle.project' version '0.33.0'
+    id 'org.kordamp.gradle.project' version '0.34.0'
 }
 
 config {
@@ -2283,7 +2287,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.33.0'
+    id 'org.kordamp.gradle.project' version '0.34.0'
 }
 
 config {
@@ -2459,7 +2463,7 @@ includeBuild '../build2'</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.33.0'
+    id 'org.kordamp.gradle.project' version '0.34.0'
 }
 
 config {
@@ -2557,7 +2561,7 @@ absolute
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.33.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.34.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'</code></pre>
@@ -2567,7 +2571,7 @@ apply plugin: 'org.kordamp.gradle.settings'</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.33.0'
+    id 'org.kordamp.gradle.project' version '0.34.0'
 }
 
 config {
@@ -2661,7 +2665,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.33.0'
+    id 'org.kordamp.gradle.project' version '0.34.0'
 }
 
 config {
@@ -2895,7 +2899,7 @@ local_property = local</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.33.0'
+    id 'org.kordamp.gradle.project' version '0.34.0'
 }
 
 ext.build_property = 'build'
@@ -2974,7 +2978,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.33.0'
+    id 'org.kordamp.gradle.project' version '0.34.0'
 }
 
 config {
@@ -3435,7 +3439,7 @@ matches <code>"main"</code>.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">No not sync with Maven Central</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Do not sync with Maven Central</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">publications</p></td>
@@ -3645,6 +3649,7 @@ config {
         compile
         runtime
         test
+        import
         excludes
         parent
         overwriteInceptionYear
@@ -3710,6 +3715,13 @@ config {
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">[]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Dependencies that should be added to the <code>test</code> scope</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">import</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set&lt;String&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dependencies that should be added to the <code>import</code> scope</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">excludes</p></td>
@@ -3825,6 +3837,14 @@ test(String)
 </tr>
 <tr>
 <td class="hdlist1">
+imports(String)
+</td>
+<td class="hdlist2">
+<p>Add a dependency to the <code>import</code> scope. Its value may be a project name or a dependency definition such as 'group:artifactId:version'.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
 exclude(String)
 </td>
 <td class="hdlist2">
@@ -3912,6 +3932,11 @@ applies
 <td class="tableblock halign-left valign-top"><p class="tableblock">Concatenation of the following System properties [<code>java.version</code>, <code>java.vendor</code>, <code>java.vm.version</code>]</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"> buildOs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Concatenation of the following System properties [<code>os.name</code>, <code>os.version</code>, <code>os.arch</code>]</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"> buildCreatedBy</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The Gradle version used in the build</p></td>
@@ -3935,6 +3960,7 @@ applies
         skipBuildTime
         skipBuildRevision
         skipBuildJdk
+        skipBuildOs
         skipBuildCreatedBy
     }
 }</code></pre>
@@ -4002,6 +4028,13 @@ applies
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">skipBuildJdk</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Skips calculating this value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">skipBuildOs</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
@@ -5658,10 +5691,10 @@ applies
 extend from <code>imlementation</code> and <code>runtimeOnly</code> respectively.</p>
 </li>
 <li>
-<p>Create a <code>SourceSet</code> named <code>functionalTest</code> pointing to <code>src/main/[java|groovy|kotlin|scala]</code>.</p>
+<p>Create a <code>SourceSet</code> named <code>functionalTest</code> pointing to <code>${config.testing.functional.baseDir}/[java|groovy|kotlin|scala]</code>.</p>
 </li>
 <li>
-<p>Create a <code>Test</code> task named <code>functionalTest</code> pointing to <code>src/functional-test/[java|groovy|kotlin|scala]</code>.</p>
+<p>Create a <code>Test</code> task named <code>functionalTest</code> pointing to <code>${config.testing.functional.baseDir}/[java|groovy|kotlin|scala]</code>.</p>
 </li>
 <li>
 <p>Create a <code>TestReport</code> task named <code>functionalTestReport</code>. This task is added as a dependency to <code>check</code>.</p>
@@ -6812,10 +6845,10 @@ applies
 extend from <code>testImplementation</code> and <code>testRuntimeOnly</code> respectively.</p>
 </li>
 <li>
-<p>Create a <code>SourceSet</code> named <code>integrationTest</code> pointing to <code>src/integration-test/[java|groovy|kotlin|scala]</code>.</p>
+<p>Create a <code>SourceSet</code> named <code>integrationTest</code> pointing to <code>${config.testing.integration.baseDir}/[java|groovy|kotlin|scala]</code>.</p>
 </li>
 <li>
-<p>Create a <code>Test</code> task named <code>integrationTest</code> pointing to <code>src/integration-test/[java|groovy|kotlin|scala]</code>.</p>
+<p>Create a <code>Test</code> task named <code>integrationTest</code> pointing to <code>${config.testing.integration.baseDir}/[java|groovy|kotlin|scala]</code>.</p>
 </li>
 <li>
 <p>Create a <code>TestReport</code> task named <code>integrationTestReport</code>. This task is added as a dependency to <code>check</code>.</p>
@@ -6874,6 +6907,7 @@ Configures aggregate reports on the root project.</p>
             additionalSourceDirs
             additionalClassDirs
             toolVersion
+            excludes
         }
     }
 }</code></pre>
@@ -6946,6 +6980,13 @@ Configures aggregate reports on the root project.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0.8.5</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">excludes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set&lt;String&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[]</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
 </tbody>
 </table>
 <div class="paragraph">
@@ -6953,6 +6994,15 @@ Configures aggregate reports on the root project.</p>
 </div>
 <div class="paragraph">
 <p>This block is optional.</p>
+</div>
+<div class="dlist">
+<div class="title">Methods</div>
+<dl>
+<dt class="hdlist1">void exclude(String)</dt>
+<dd>
+<p>Adds a source exclusion rule (Ant pattern).</p>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect3">
@@ -7390,6 +7440,107 @@ the particular value to be skipped.</p>
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_org_kordamp_gradle_jar_dsl"><a class="anchor" href="#_org_kordamp_gradle_jar_dsl"></a>5.17.2. DSL</h4>
+<div class="listingblock">
+<div class="content">
+<pre>config {
+    artifacts {
+        jar {
+            enabled
+            <a href="#_jar_manifest">manifest</a> {
+                enabled
+                addClasspath
+                classpathPrefix
+                classpathLayoutType
+            }
+        }
+    }
+}</pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Default Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Disables <code>org.kordamp.gradle.jar</code> plugin if <code>false</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>This block is optional.</p>
+</div>
+<div id="_jar_manifest" class="paragraph">
+<p><strong>manifest</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Default Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables or disables manifest customizations</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">addClasspath</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to create a <code>Class-Path</code> manifest entry</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">classpathPrefix</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">''</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A text that will be prefixed to all <code>Class-Path</code> entries</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">classpathLayoutType</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">simple</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The type of layout to use when formatting entries in the created <code>Class-Path</code>. Valid values are: [<code>simple</code>, <code>repository</code>] (the same as a Maven classpath layout)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_org_kordamp_gradle_java_project"><a class="anchor" href="#_org_kordamp_gradle_java_project"></a>5.18. JavaProject</h3>
@@ -7594,7 +7745,7 @@ Type
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
     id 'java'
-    id 'org.kordamp.gradle.project' version '0.33.0'
+    id 'org.kordamp.gradle.project' version '0.34.0'
 }
 
 config {
@@ -9856,7 +10007,7 @@ the project.</p>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
     id 'groovy'
-    id 'org.kordamp.gradle.minpom' version '0.33.0'
+    id 'org.kordamp.gradle.minpom' version '0.34.0'
 }
 
 group   = 'com.acme'
@@ -9872,7 +10023,7 @@ dependencies {
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="kotlin">plugins {
     `groovy`
-    id("org.kordamp.gradle.minpom") version "0.33.0"
+    id("org.kordamp.gradle.minpom") version "0.34.0"
 }
 
 group   = "com.acme"
@@ -9911,7 +10062,7 @@ dependencies {
 <div class="listingblock">
 <div class="title">sample/build/pom/maven/pom.properties</div>
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="java"># Generated by Gradle 6.1.1
+<pre class="prettyprint highlight"><code data-lang="java"># Generated by Gradle 6.3
 version=1.0.0
 groupId=com.acme
 artifactId=sample</code></pre>
@@ -9923,8 +10074,10 @@ artifactId=sample</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
-    minpom {
-        enabled
+    artifacts {
+        minpom {
+            enabled
+        }
     }
 }</code></pre>
 </div>
@@ -11714,7 +11867,7 @@ is <code>two-level</code> however is recommended to define it if the search spac
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.33.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.34.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -11732,7 +11885,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.33.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.34.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -11771,7 +11924,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.33.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.34.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -11794,7 +11947,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.33.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.34.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -11834,7 +11987,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.33.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.34.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -11852,7 +12005,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.33.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.34.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -11904,11 +12057,13 @@ applies
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
-    source {
-        enabled
-        <a href="#_source_aggregate">aggregate</a> {
+    artifacts {
+        source {
             enabled
-            excludedProjects
+            <a href="#_source_aggregate">aggregate</a> {
+                enabled
+                excludedProjects
+            }
         }
     }
 }</code></pre>
@@ -13988,10 +14143,12 @@ applies
         integration {
             logging
             aggregate
+            baseDir
         }
         functional {
             logging
             aggregate
+            baseDir
         }
     }
 }</code></pre>
@@ -14073,6 +14230,13 @@ applies
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Enables test report aggregation</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">baseDir</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">src/integration-test</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
 </tbody>
 </table>
 <div id="_testing_functional" class="paragraph">
@@ -14109,6 +14273,13 @@ applies
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Enables test report aggregation</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">baseDir</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">src/functional-test</p></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 </tbody>
 </table>
@@ -14319,8 +14490,8 @@ Type
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.33.0<br>
-Last updated 2020-02-01 15:14:20 +0100
+Version 0.34.0<br>
+Last updated 2020-03-28 20:52:07 +0100
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

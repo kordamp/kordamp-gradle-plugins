@@ -155,18 +155,23 @@ Testing.groovy
 <a name="124"><font color="#808080">124</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Functional.merge</font><font color="#000000">(</font><font color="#000000">o1.functional,&nbsp;o2.functional</font><font color="#000000">)</font><br />
 <a name="125"><font color="#808080">125</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="126"><font color="#808080">126</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="127"><font color="#808080">127</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Set&lt;Test&gt;&nbsp;testTasks</font><font color="#000000">()&nbsp;{</font><br />
-<a name="128"><font color="#808080">128</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">testTasks</font><br />
-<a name="129"><font color="#808080">129</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
-<a name="130"><font color="#808080">130</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="131"><font color="#808080">131</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Set&lt;IntegrationTest&gt;&nbsp;integrationTasks</font><font color="#000000">()&nbsp;{</font><br />
-<a name="132"><font color="#808080">132</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">integrationTasks</font><br />
-<a name="133"><font color="#808080">133</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
-<a name="134"><font color="#808080">134</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="135"><font color="#808080">135</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Set&lt;FunctionalTest&gt;&nbsp;functionalTestTasks</font><font color="#000000">()&nbsp;{</font><br />
-<a name="136"><font color="#808080">136</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">functionalTestTasks</font><br />
-<a name="137"><font color="#808080">137</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
-<a name="138"><font color="#808080">138</font>&nbsp;</a><font color="#000000">}</font></code>
+<a name="127"><font color="#808080">127</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">postMerge</font><font color="#000000">()&nbsp;{</font><br />
+<a name="128"><font color="#808080">128</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">integration.postMerge</font><font color="#000000">()</font><br />
+<a name="129"><font color="#808080">129</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">functional.postMerge</font><font color="#000000">()</font><br />
+<a name="130"><font color="#808080">130</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
+<a name="131"><font color="#808080">131</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="132"><font color="#808080">132</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Set&lt;Test&gt;&nbsp;testTasks</font><font color="#000000">()&nbsp;{</font><br />
+<a name="133"><font color="#808080">133</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">testTasks</font><br />
+<a name="134"><font color="#808080">134</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
+<a name="135"><font color="#808080">135</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="136"><font color="#808080">136</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Set&lt;IntegrationTest&gt;&nbsp;integrationTasks</font><font color="#000000">()&nbsp;{</font><br />
+<a name="137"><font color="#808080">137</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">integrationTasks</font><br />
+<a name="138"><font color="#808080">138</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
+<a name="139"><font color="#808080">139</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="140"><font color="#808080">140</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Set&lt;FunctionalTest&gt;&nbsp;functionalTestTasks</font><font color="#000000">()&nbsp;{</font><br />
+<a name="141"><font color="#808080">141</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">functionalTestTasks</font><br />
+<a name="142"><font color="#808080">142</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
+<a name="143"><font color="#808080">143</font>&nbsp;</a><font color="#000000">}</font></code>
     
    </td>
   <!-- end source code -->
