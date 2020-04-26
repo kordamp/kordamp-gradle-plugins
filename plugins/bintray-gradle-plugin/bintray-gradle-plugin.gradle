@@ -20,5 +20,25 @@ dependencies {
     api("com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintrayVersion") {
         exclude group: 'org.apache.maven', module: 'maven-ant-tasks'
     }
-    api('org.apache.maven.resolver:maven-resolver-ant-tasks:1.2.0')
+    api('org.apache.maven.resolver:maven-resolver-ant-tasks:1.2.0') { transitive = false }
+    api "org.apache.httpcomponents:httpclient:$httpclientVersion"
+    api "org.apache.httpcomponents:httpcore:$httpcoreVersion"
+    api("org.eclipse.sisu:org.eclipse.sisu.plexus:$sisuVersion") {
+        exclude group: 'org.codehaus.plexus', module: 'plexus-component-annotations'
+    }
+    api "org.codehaus.plexus:plexus-interpolation:$plexusIVersion"
+    api "org.codehaus.plexus:plexus-component-annotations:$plexusAVersion"
+    api "org.apache.maven.resolver:maven-resolver-api:$mavenResolverVersion"
+    api "org.apache.maven.resolver:maven-resolver-util:$mavenResolverVersion"
+    api "org.apache.maven.resolver:maven-resolver-impl:$mavenResolverVersion"
+    api "org.apache.maven.resolver:maven-resolver-connector-basic:$mavenResolverVersion"
+    api "org.apache.maven.resolver:maven-resolver-transport-classpath:$mavenResolverVersion"
+    api "org.apache.maven.resolver:maven-resolver-transport-file:$mavenResolverVersion"
+    api("org.apache.maven.resolver:maven-resolver-transport-http:$mavenResolverVersion") { transitive = false }
+    api "org.apache.maven.resolver:maven-resolver-spi:$mavenResolverVersion"
+    api "org.apache.maven:maven-builder-support:$mavenVersion"
+    api "org.apache.maven:maven-settings-builder:$mavenVersion"
+    api "org.apache.maven:maven-settings:$mavenVersion"
+    api "org.apache.maven:maven-model:$mavenVersion"
+    api "org.apache.maven:maven-resolver-provider:$mavenVersion"
 }
