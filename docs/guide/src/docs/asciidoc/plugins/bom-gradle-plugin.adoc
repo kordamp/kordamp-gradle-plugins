@@ -145,6 +145,7 @@ config {
         test
         import
         excludes
+        includes
         parent
         overwriteInceptionYear
         overwriteUrl
@@ -166,7 +167,8 @@ config {
 | runtime                | Set<String> | no       | []            | Dependencies that should be added to the `runtime` scope
 | test                   | Set<String> | no       | []            | Dependencies that should be added to the `test` scope
 | import                 | Set<String> | no       | []            | Dependencies that should be added to the `import` scope
-| excludes               | Set<String> | no       | []            | Names of subprojects tat should not be included
+| excludes               | Set<String> | no       | []            | Names of subprojects that should not be included
+| includes               | Set<String> | no       | []            | Names of subprojects that should be included
 | parent                 | String      | no       |               | Defines the coordinates of the parent POM
 | overwriteInceptionYear | boolean     | no       | false         | Overwrite `<inceptionYear>` from parent POM
 | overwriteUrl           | boolean     | no       | false         | Overwrite `<url>` from parent POM
@@ -194,4 +196,5 @@ runtime(String):: Add a dependency to the `runtime` scope. Its value may be a pr
 test(String):: Add a dependency to the `test` scope. Its value may be a project name or a dependency definition such as 'group:artifactId:version'.
 imports(String):: Add a dependency to the `import` scope. Its value may be a project name or a dependency definition such as 'group:artifactId:version'.
 exclude(String):: Skips the named project from being added to the BOM.
+include(String):: Adds the named project to the BOM.
 

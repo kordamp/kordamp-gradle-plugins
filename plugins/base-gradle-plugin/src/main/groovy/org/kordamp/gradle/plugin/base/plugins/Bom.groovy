@@ -42,6 +42,7 @@ class Bom extends AbstractFeature implements PomOptions {
     Set<String> test = new LinkedHashSet<>()
     private Set<String> _import = new LinkedHashSet<>()
     Set<String> excludes = new LinkedHashSet<>()
+    Set<String> includes = new LinkedHashSet<>()
 
     boolean autoIncludes = true
     private boolean autoIncludesSet
@@ -104,6 +105,7 @@ class Bom extends AbstractFeature implements PomOptions {
             map.test = test
             map.import = _import
             map.excludes = excludes
+            map.includes = includes
             if (isNotBlank(parent)) {
                 map.parent = parent
                 map.overwriteInceptionYear = overwriteInceptionYear
@@ -140,6 +142,10 @@ class Bom extends AbstractFeature implements PomOptions {
 
     void exclude(String str) {
         excludes << str
+    }
+
+    void include(String str) {
+        includes << str
     }
 
     void setAutoIncludes(boolean autoIncludes) {
@@ -198,6 +204,7 @@ class Bom extends AbstractFeature implements PomOptions {
         copy.test.addAll(test)
         copy.import.addAll(_import)
         copy.excludes.addAll(excludes)
+        copy.includes.addAll(includes)
         copy.@autoIncludes = this.autoIncludes
         copy.@autoIncludesSet = this.autoIncludesSet
 
@@ -231,6 +238,7 @@ class Bom extends AbstractFeature implements PomOptions {
         CollectionUtils.merge(o1.test, o2.test)
         CollectionUtils.merge(o1.import, o2.import)
         CollectionUtils.merge(o1.excludes, o2.excludes)
+        CollectionUtils.merge(o1.includes, o2.includes)
         o1.setAutoIncludes((boolean) (o1.autoIncludesSet ? o1.autoIncludes : o2.autoIncludes))
 
         o1.parent = o1.parent ?: o2?.parent

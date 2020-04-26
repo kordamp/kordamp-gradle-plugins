@@ -92,6 +92,10 @@ class BomPlugin extends AbstractKordampPlugin {
         List<Dependency> testDeps = config.bom.test.collect { Dependency.parseDependency(project, it) }
         List<Dependency> importDeps = config.bom.import.collect { Dependency.parseDependency(project, it) }
 
+        List<String> excludedProjects = config.bom.excludes.collect { it.startsWith(':') ? it[1..-1] : it }
+        List<String> includedProjects = config.bom.includes.collect { it.startsWith(':') ? it[1..-1] : it }
+        excludedProjects.removeAll(includedProjects)
+
         if (config.bom.autoIncludes) {
             project.rootProject.subprojects.each { Project prj ->
                 if (prj == project) return
@@ -99,7 +103,7 @@ class BomPlugin extends AbstractKordampPlugin {
                 Closure<Boolean> predicate = { Dependency d ->
                     d.artifactId == prj.name && (d.groupId == project.group || d.groupId == '${project.groupId}')
                 }
-                if ((!config.bom.excludes.contains(prj.name) && !config.bom.excludes.contains(':' + prj.name)) &&
+                if ((!excludedProjects.contains(prj.name) && (includedProjects && includedProjects.contains(prj.name))) &&
                     !compileDeps.find(predicate) && !runtimeDeps.find(predicate) && !testDeps.find(predicate)) {
                     compileDeps << new Dependency('${project.groupId}', prj.name, '${project.version}')
                 }
