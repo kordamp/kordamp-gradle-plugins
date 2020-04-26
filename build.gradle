@@ -21,24 +21,12 @@ plugins {
     id 'org.kordamp.gradle.plugin' apply false
 }
 
-if (!project.hasProperty('bintrayUsername')) ext.bintrayUsername = '**UNDEFINED**'
-if (!project.hasProperty('bintrayApiKey'))   ext.bintrayApiKey   = '**UNDEFINED**'
-
 config {
-    release = (rootProject.findProperty('release') ?: false).toBoolean()
-
     info {
         name          = rootProject.name
-        vendor        = 'Kordamp'
         description   = 'A collection of opinionated Gradle plugins'
         inceptionYear = '2018'
         tags          = ['project', 'configuration']
-
-        links {
-            website      = "https://github.com/kordamp/${rootProject.name}"
-            issueTracker = "https://github.com/kordamp/${rootProject.name}/issues"
-            scm          = "https://github.com/kordamp/${rootProject.name}.git"
-        }
 
         specification {
             enabled = false
@@ -46,30 +34,6 @@ config {
 
         implementation {
             enabled = false
-        }
-
-        people {
-            person {
-                id    = 'aalmiray'
-                name  = 'Andres Almiray'
-                url   = 'http://andresalmiray.com/'
-                roles = ['developer']
-                properties = [
-                    twitter: 'aalmiray',
-                    github : 'aalmiray'
-                ]
-            }
-        }
-
-        repositories {
-            repository {
-                name = 'localRelease'
-                url  = "${project.rootProject.buildDir}/repos/local/release"
-            }
-            repository {
-                name = 'localSnapshot'
-                url  = "${project.rootProject.buildDir}/repos/local/snapshot"
-            }
         }
     }
 
@@ -86,53 +50,15 @@ config {
             }
         }
     }
-
-    licensing {
-        licenses {
-            license {
-                id = 'Apache-2.0'
-            }
-        }
-    }
-
-    publishing {
-        signing             = false
-        releasesRepository  = 'localRelease'
-        snapshotsRepository = 'localSnapshot'
-    }
-
-    bintray {
-        credentials {
-            username = project.bintrayUsername
-            password = project.bintrayApiKey
-        }
-        userOrg = 'kordamp'
-        repo    = 'maven'
-        name    = rootProject.name
-    }
 }
 
 allprojects {
     apply plugin: 'idea'
 
     repositories {
-        jcenter()
         gradlePluginPortal()
         flatDir { dir rootProject.file('libraries') }
         mavenLocal()
-    }
-
-    dependencyUpdates.resolutionStrategy {
-        componentSelection { rules ->
-            rules.all { selection ->
-                boolean rejected = ['alpha', 'beta', 'rc', 'cr'].any { qualifier ->
-                    selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
-                }
-                if (rejected) {
-                    selection.reject('Release candidate')
-                }
-            }
-        }
     }
 }
 
@@ -156,23 +82,12 @@ subprojects {
             }
         }
 
-        normalization {
-            runtimeClasspath {
-                ignore('/META-INF/MANIFEST.MF')
-            }
-        }
-
         dependencies {
             implementation gradleApi()
 
             testImplementation("org.spockframework:spock-core:$spockVersion") {
                 exclude group: 'org.codehaus.groovy'
             }
-        }
-
-        compileGroovy {
-            sourceCompatibility = project.sourceCompatibility
-            targetCompatibility = project.targetCompatibility
         }
     }
 }

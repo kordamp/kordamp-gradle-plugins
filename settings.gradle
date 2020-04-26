@@ -25,22 +25,72 @@ pluginManagement {
         id 'org.kordamp.gradle.bintray'        version kordampPluginVersion
         id 'org.kordamp.gradle.plugin'         version kordampPluginVersion
         id 'org.kordamp.gradle.guide'          version kordampPluginVersion
-        id 'org.ajoberstar.git-publish'        version '2.1.3'
+        id 'org.ajoberstar.git-publish'        version gitPluginVersion
     }
 }
 
 buildscript {
     repositories {
         gradlePluginPortal()
+        jcenter()
+        mavenLocal()
     }
     dependencies {
-        classpath "org.kordamp.gradle:settings-gradle-plugin:$kordampPluginVersion"
+        classpath "org.kordamp.gradle:kordamp-parentbuild:$kordampBuildVersion"
     }
 }
-apply plugin: 'org.kordamp.gradle.settings'
+apply plugin: 'org.kordamp.gradle.kordamp-parentbuild'
 
 rootProject.name = 'kordamp-gradle-plugins'
 
-projects {
-    directories = ['plugins', 'docs']
+enforce {
+    mergeStrategy = 'append'
+
+    rule(enforcer.rules.BanDuplicateClasses) { r ->
+        r.ignore('org.jetbrains.org.objectweb.asm.*')
+        r.ignore('org.jetbrains.kotlin.*')
+        r.ignore('com.sun.jna.*')
+        r.ignore('com.mycila.*')
+        r.ignore('org.xmlpull.*')
+        //r.ignore('org.cyberneko.*')
+        //r.ignore('org.apache.xerces.*')
+        //r.ignore('org.apache.maven.*')
+        //r.ignore('org.codehaus.plexus.*')
+        //r.ignore('org.codehaus.classworlds.*')
+    }
+
+    rule(enforcer.rules.ExcludeDependencies) { r ->
+        //r.exclude('commons-logging:commons-logging')
+        //r.exclude('net.java.dev.jna:platform')
+        //r.exclude('com.mycila.xmltool:xmltool')
+        //r.exclude('xmlpull:xmlpull')
+        //r.exclude('org.apache.maven:maven-ant-tasks')
+    }
+
+    rule(enforcer.rules.ForceDependencies) { r ->
+        r.dependencies.addAll 'org.codehaus.plexus:plexus-utils:3.2.1',
+            'org.codehaus.plexus:plexus-interpolation:1.25',
+            'org.codehaus.plexus:plexus-component-annotations:1.7.1',
+            'commons-lang:commons-lang:2.6',
+            'commons-beanutils:commons-beanutils:1.9.4',
+            'commons-collections:commons-collections:3.2.2',
+            'commons-logging:commons-logging:1.2',
+            'com.trilead:trilead-ssh2:1.0.0-build220',
+            'net.java.dev.jna:jna:4.1.0',
+            'org.apache.httpcomponents:httpclient:4.5.6',
+            'org.eclipse.jgit:org.eclipse.jgit:5.6.0.201912101111-r',
+            'org.codehaus.groovy.modules.http-builder:http-builder:0.7.2',
+            "org.apache.maven.resolver:maven-resolver-api:$mavenResolverVersion:",
+            "org.apache.maven.resolver:maven-resolver-spi:$mavenResolverVersion",
+            "org.apache.maven.resolver:maven-resolver-util:$mavenResolverVersion",
+            "org.apache.maven.resolver:maven-resolver-impl:$mavenResolverVersion",
+            "org.apache.maven:maven-builder-support:$mavenVersion",
+            "org.apache.maven:maven-settings-builder:$mavenVersion",
+            "org.apache.maven:maven-settings:$mavenVersion",
+            "org.apache.maven:maven-model:$mavenVersion",
+            "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
+            "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
+            "org.slf4j:slf4j-api:$slf4jVersion",
+            "junit:junit:$junitVersion"
+    }
 }
