@@ -35,6 +35,8 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 class Bom extends AbstractFeature implements PomOptions {
     static final String PLUGIN_ID = 'org.kordamp.gradle.bom'
 
+    final String packaging = 'pom'
+
     Set<String> compile = new LinkedHashSet<>()
     Set<String> runtime = new LinkedHashSet<>()
     Set<String> test = new LinkedHashSet<>()

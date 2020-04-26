@@ -127,22 +127,22 @@ class PublishingPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void updatePublications(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
-        if (!effectiveConfig.publishing.enabled) {
+        if (!config.publishing.enabled) {
             setEnabled(false)
             return
         }
 
         project.publishing {
             publications {
-                effectiveConfig.publishing.publications.each { String pub ->
+                config.publishing.publications.each { String pub ->
                     "${pub}"(MavenPublication) {
-                        PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.publishing.pom)
+                        PublishingUtils.configurePom(pom, config, config.publishing.pom)
                     }
                 }
 
-                if (!effectiveConfig.publishing.publications.contains('main') && !effectiveConfig.publishing.publications) {
+                if (!config.publishing.publications.contains('main') && !config.publishing.publications) {
                     main(MavenPublication) {
                         if (project.pluginManager.hasPlugin('java-platform')) {
                             from project.components.javaPlatform
@@ -150,12 +150,12 @@ class PublishingPlugin extends AbstractKordampPlugin {
                             Task jar = project.tasks.findByName('jar')
                             Task sourcesJar = project.tasks.findByName('sourcesJar')
 
-                            if (effectiveConfig.publishing.filterDependencies) {
+                            if (config.publishing.filterDependencies) {
                                 groupId = project.group
                                 artifactId = project.name
                                 version = project.version
                                 if (jar?.enabled) artifact jar
-                                PublishingUtils.configureDependencies(pom, effectiveConfig, project)
+                                PublishingUtils.configureDependencies(pom, config, project)
                             } else {
                                 try {
                                     if (project.components.java) {
@@ -167,21 +167,21 @@ class PublishingPlugin extends AbstractKordampPlugin {
                                     artifactId = project.name
                                     version = project.version
                                     if (jar?.enabled) artifact jar
-                                    PublishingUtils.configureDependencies(pom, effectiveConfig, project)
+                                    PublishingUtils.configureDependencies(pom, config, project)
                                 }
                             }
 
                             if (sourcesJar?.enabled && !artifacts.find { it.classifier == 'sources' }) artifact sourcesJar
                         }
 
-                        PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.publishing.pom)
+                        PublishingUtils.configurePom(pom, config, config.publishing.pom)
                     }
                 }
             }
 
-            String repositoryName = effectiveConfig.release ? effectiveConfig.publishing.releasesRepository : effectiveConfig.publishing.snapshotsRepository
+            String repositoryName = config.release ? config.publishing.releasesRepository : config.publishing.snapshotsRepository
             if (isNotBlank(repositoryName)) {
-                Repository repo = effectiveConfig.info.repositories.getRepository(repositoryName)
+                Repository repo = config.info.repositories.getRepository(repositoryName)
                 if (repo == null) {
                     throw new IllegalStateException("Repository '${repositoryName}' was not found")
                 }
@@ -190,7 +190,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
                     maven {
                         name = repositoryName
                         url = repo.url
-                        Credentials creds = effectiveConfig.info.credentials.getCredentials(repo.name)
+                        Credentials creds = config.info.credentials.getCredentials(repo.name)
                         if (repo.credentials && !repo.credentials.empty) {
                             credentials {
                                 username = repo.credentials.username
@@ -207,8 +207,8 @@ class PublishingPlugin extends AbstractKordampPlugin {
             }
         }
 
-        List<String> publications = new ArrayList<>(effectiveConfig.publishing.publications)
+        List<String> publications = new ArrayList<>(config.publishing.publications)
         if (!publications) publications << 'main'
-        PublishingUtils.configureSigning(effectiveConfig, project, *publications)
+        PublishingUtils.configureSigning(config, project, *publications)
     }
 }

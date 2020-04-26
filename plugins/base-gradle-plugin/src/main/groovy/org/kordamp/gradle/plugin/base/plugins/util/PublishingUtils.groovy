@@ -62,34 +62,34 @@ class PublishingUtils {
     static Publication configurePublication(Project project, String publicationName) {
         if (!publicationName) return
 
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
         PublishingExtension publishingExtension = project.extensions.findByType(PublishingExtension)
         Publication publication = publishingExtension.publications.findByName(publicationName)
         if (publication instanceof MavenPublication) {
             MavenPublication mavenPublication = (MavenPublication) publication
-            configurePom(mavenPublication.pom, effectiveConfig, effectiveConfig.publishing.pom)
+            configurePom(mavenPublication.pom, config, config.publishing.pom)
         }
-        configureSigning(effectiveConfig, project, publicationName)
+        configureSigning(config, project, publicationName)
         publication
     }
 
     static void configurePublications(Project project, String... publications) {
         if (!publications) return
 
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
         PublishingExtension publishingExtension = project.extensions.findByType(PublishingExtension)
         publications.each { String publicationName ->
             Publication publication = publishingExtension.publications.findByName(publicationName)
             if (publication instanceof MavenPublication) {
                 MavenPublication mavenPublication = (MavenPublication) publication
-                configurePom(mavenPublication.pom, effectiveConfig, effectiveConfig.publishing.pom)
+                configurePom(mavenPublication.pom, config, config.publishing.pom)
             }
         }
-        configureSigning(effectiveConfig, project, publications)
+        configureSigning(config, project, publications)
     }
 
     static void configureAllPublications(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
         PublishingExtension publishingExtension = project.extensions.findByType(PublishingExtension)
         SigningExtension signingExtension = project.extensions.findByType(SigningExtension)
         List<String> publications = publishingExtension.publications*.name
@@ -98,7 +98,7 @@ class PublishingUtils {
             Publication publication = publishingExtension.publications.findByName(publicationName)
             if (publication instanceof MavenPublication) {
                 MavenPublication mavenPublication = (MavenPublication) publication
-                configurePom(mavenPublication.pom, effectiveConfig, effectiveConfig.publishing.pom)
+                configurePom(mavenPublication.pom, config, config.publishing.pom)
             }
             signingExtension.sign(publication)
         }
@@ -107,8 +107,8 @@ class PublishingUtils {
             @Override
             void execute(Sign t) {
                 t.onlyIf {
-                    if (effectiveConfig.publishing.signingSet) {
-                        return effectiveConfig.publishing.signing
+                    if (config.publishing.signingSet) {
+                        return config.publishing.signing
                     } else {
                         String taskPath = ':uploadArchives'
                         if (project.rootProject != project) {
@@ -121,7 +121,7 @@ class PublishingUtils {
         })
     }
 
-    static void configureSigning(ProjectConfigurationExtension effectiveConfig, Project project, String... publications) {
+    static void configureSigning(ProjectConfigurationExtension config, Project project, String... publications) {
         SigningExtension signingExtension = project.extensions.findByType(SigningExtension)
         PublishingExtension publishingExtension = project.extensions.findByType(PublishingExtension)
 
@@ -143,8 +143,8 @@ class PublishingUtils {
             @Override
             void execute(Sign t) {
                 t.onlyIf {
-                    if (effectiveConfig.publishing.signingSet) {
-                        return effectiveConfig.publishing.signing
+                    if (config.publishing.signingSet) {
+                        return config.publishing.signing
                     } else {
                         return project.gradle.taskGraph.hasTask(":${project.name}:uploadArchives".toString())
                     }
@@ -272,17 +272,18 @@ class PublishingUtils {
         project.findProperty('optionalDeps') && project.optionalDeps.contains(dependency)
     }
 
-    static void configurePom(MavenPom pom, ProjectConfigurationExtension effectiveConfig, PomOptions pomOptions) {
-        pom.name.set(effectiveConfig.info.name)
-        pom.description.set(effectiveConfig.info.description)
-        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteUrl) && isNotBlank(effectiveConfig.info.url)) pom.url.set(effectiveConfig.info.url)
-        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteInceptionYear)) pom.inceptionYear.set(effectiveConfig.info.inceptionYear)
+    static void configurePom(MavenPom pom, ProjectConfigurationExtension config, PomOptions pomOptions) {
+        pom.name.set(config.info.name)
+        pom.description.set(config.info.description)
+        pom.packaging = pomOptions.packaging
+        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteUrl) && isNotBlank(config.info.url)) pom.url.set(config.info.url)
+        if (isOverwriteAllowed(pomOptions, pomOptions.overwriteInceptionYear)) pom.inceptionYear.set(config.info.inceptionYear)
 
         if (isOverwriteAllowed(pomOptions, pomOptions.overwriteLicenses)) {
             pom.licenses(new Action<MavenPomLicenseSpec>() {
                 @Override
                 void execute(MavenPomLicenseSpec licenses) {
-                    effectiveConfig.licensing.licenses.forEach { License lic ->
+                    config.licensing.licenses.forEach { License lic ->
                         licenses.license(new Action<MavenPomLicense>() {
                             @Override
                             void execute(MavenPomLicense license) {
@@ -298,28 +299,28 @@ class PublishingUtils {
         }
 
         if (isOverwriteAllowed(pomOptions, pomOptions.overwriteScm)) {
-            if (effectiveConfig.info.scm.enabled) {
-                if (isNotBlank(effectiveConfig.info.scm.url)) {
+            if (config.info.scm.enabled) {
+                if (isNotBlank(config.info.scm.url)) {
                     pom.scm(new Action<MavenPomScm>() {
                         @Override
                         void execute(MavenPomScm scm) {
-                            scm.url.set(effectiveConfig.info.scm.url)
-                            if (effectiveConfig.info.scm.tag) {
-                                scm.tag.set(effectiveConfig.info.scm.tag)
+                            scm.url.set(config.info.scm.url)
+                            if (config.info.scm.tag) {
+                                scm.tag.set(config.info.scm.tag)
                             }
-                            if (effectiveConfig.info.scm.connection) {
-                                scm.connection.set(effectiveConfig.info.scm.connection)
+                            if (config.info.scm.connection) {
+                                scm.connection.set(config.info.scm.connection)
                             }
-                            if (effectiveConfig.info.scm.connection) {
-                                scm.developerConnection.set(effectiveConfig.info.scm.developerConnection)
+                            if (config.info.scm.connection) {
+                                scm.developerConnection.set(config.info.scm.developerConnection)
                             }
                         }
                     })
-                } else if (effectiveConfig.info.links.scm) {
+                } else if (config.info.links.scm) {
                     pom.scm(new Action<MavenPomScm>() {
                         @Override
                         void execute(MavenPomScm scm) {
-                            scm.url.set(effectiveConfig.info.links.scm)
+                            scm.url.set(config.info.links.scm)
                         }
                     })
                 }
@@ -327,12 +328,12 @@ class PublishingUtils {
         }
 
         if (isOverwriteAllowed(pomOptions, pomOptions.overwriteOrganization)) {
-            if (!effectiveConfig.info.organization.empty) {
+            if (!config.info.organization.empty) {
                 pom.organization(new Action<MavenPomOrganization>() {
                     @Override
                     void execute(MavenPomOrganization organization) {
-                        organization.name.set(effectiveConfig.info.organization.name)
-                        organization.url.set(effectiveConfig.info.organization.url)
+                        organization.name.set(config.info.organization.name)
+                        organization.url.set(config.info.organization.url)
                     }
                 })
             }
@@ -342,7 +343,7 @@ class PublishingUtils {
             pom.developers(new Action<MavenPomDeveloperSpec>() {
                 @Override
                 void execute(MavenPomDeveloperSpec developers) {
-                    effectiveConfig.info.people.forEach { Person person ->
+                    config.info.people.forEach { Person person ->
                         if ('developer' in person.roles*.toLowerCase()) {
                             developers.developer(new Action<MavenPomDeveloper>() {
                                 @Override
@@ -367,7 +368,7 @@ class PublishingUtils {
             pom.contributors(new Action<MavenPomContributorSpec>() {
                 @Override
                 void execute(MavenPomContributorSpec contributors) {
-                    effectiveConfig.info.people.forEach { Person person ->
+                    config.info.people.forEach { Person person ->
                         if ('contributor' in person.roles*.toLowerCase()) {
                             contributors.contributor(new Action<MavenPomContributor>() {
                                 @Override
@@ -387,31 +388,31 @@ class PublishingUtils {
             })
         }
 
-        if (!effectiveConfig.info.issueManagement.empty && isOverwriteAllowed(pomOptions, pomOptions.overwriteIssueManagement)) {
+        if (!config.info.issueManagement.empty && isOverwriteAllowed(pomOptions, pomOptions.overwriteIssueManagement)) {
             pom.issueManagement(new Action<MavenPomIssueManagement>() {
                 @Override
                 void execute(MavenPomIssueManagement issueManagement) {
-                    if (isNotBlank(effectiveConfig.info.issueManagement.system)) issueManagement.system.set(effectiveConfig.info.issueManagement.system)
-                    if (isNotBlank(effectiveConfig.info.issueManagement.url)) issueManagement.url.set(effectiveConfig.info.issueManagement.url)
+                    if (isNotBlank(config.info.issueManagement.system)) issueManagement.system.set(config.info.issueManagement.system)
+                    if (isNotBlank(config.info.issueManagement.url)) issueManagement.url.set(config.info.issueManagement.url)
                 }
             })
         }
 
-        if (!effectiveConfig.info.ciManagement.empty && isOverwriteAllowed(pomOptions, pomOptions.overwriteCiManagement)) {
+        if (!config.info.ciManagement.empty && isOverwriteAllowed(pomOptions, pomOptions.overwriteCiManagement)) {
             pom.ciManagement(new Action<MavenPomCiManagement>() {
                 @Override
                 void execute(MavenPomCiManagement ciManagement) {
-                    if (isNotBlank(effectiveConfig.info.ciManagement.system)) ciManagement.system.set(effectiveConfig.info.ciManagement.system)
-                    if (isNotBlank(effectiveConfig.info.ciManagement.url)) ciManagement.url.set(effectiveConfig.info.ciManagement.url)
+                    if (isNotBlank(config.info.ciManagement.system)) ciManagement.system.set(config.info.ciManagement.system)
+                    if (isNotBlank(config.info.ciManagement.url)) ciManagement.url.set(config.info.ciManagement.url)
                 }
             })
         }
 
-        if (!effectiveConfig.info.mailingLists.empty && isOverwriteAllowed(pomOptions, pomOptions.overwriteMailingLists)) {
+        if (!config.info.mailingLists.empty && isOverwriteAllowed(pomOptions, pomOptions.overwriteMailingLists)) {
             pom.mailingLists(new Action<MavenPomMailingListSpec>() {
                 @Override
                 void execute(MavenPomMailingListSpec mailingLists) {
-                    effectiveConfig.info.mailingLists.forEach { MailingList ml ->
+                    config.info.mailingLists.forEach { MailingList ml ->
                         mailingLists.mailingList(new Action<MavenPomMailingList>() {
                             @Override
                             void execute(MavenPomMailingList mailingList) {
@@ -429,7 +430,7 @@ class PublishingUtils {
         }
 
         if (isNotBlank(pomOptions.parent)) {
-            Dependency parentPom = Dependency.parseDependency(effectiveConfig.project, pomOptions.parent, true)
+            Dependency parentPom = Dependency.parseDependency(config.project, pomOptions.parent, true)
             pom.withXml {
                 Node parentNode = new XmlParser().parseText("""
                     <parent>

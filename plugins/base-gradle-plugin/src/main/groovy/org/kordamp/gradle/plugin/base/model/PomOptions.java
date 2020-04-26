@@ -26,6 +26,8 @@ import java.util.Map;
 public interface PomOptions {
     String getParent();
 
+    String getPackaging();
+
     boolean isOverwriteInceptionYear();
 
     boolean isOverwriteUrl();

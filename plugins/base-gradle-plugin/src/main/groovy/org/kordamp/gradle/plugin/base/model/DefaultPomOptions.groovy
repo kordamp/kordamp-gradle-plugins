@@ -27,6 +27,8 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 class DefaultPomOptions implements PomOptions {
+    String packaging
+
     String parent
     boolean overwriteInceptionYear
     boolean overwriteUrl
@@ -92,8 +94,11 @@ class DefaultPomOptions implements PomOptions {
 
     @Override
     Map<String, Object> toMap() {
+        Map<String, Object> map = new LinkedHashMap<String, Object>(
+            packaging: packaging
+        )
         if (isNotBlank(parent)) {
-            new LinkedHashMap<String, Object>([
+            map.putAll([
                 parent                  : parent,
                 overwriteInceptionYear  : overwriteInceptionYear,
                 overwriteUrl            : overwriteUrl,
@@ -106,12 +111,13 @@ class DefaultPomOptions implements PomOptions {
                 overwriteCiManagement   : overwriteCiManagementSet,
                 overwriteMailingLists   : overwriteMailingListsSet
             ])
-        } else {
-            [:]
         }
+
+        map
     }
 
     void copyInto(DefaultPomOptions copy) {
+        copy.packaging = this.packaging
         copy.parent = this.parent
         copy.@overwriteInceptionYear = this.overwriteInceptionYear
         copy.@overwriteInceptionYearSet = this.overwriteInceptionYearSet
@@ -136,7 +142,8 @@ class DefaultPomOptions implements PomOptions {
     }
 
     static void merge(DefaultPomOptions o1, DefaultPomOptions o2) {
-        o1.parent = o1.parent ?: o2?.parent
+        o1.packaging = (o1.packaging ?: o2.packaging) ?: 'jar'
+        o1.parent = o1.parent ?: o2.parent
         o1.setOverwriteInceptionYear((boolean) (o1.overwriteInceptionYearSet ? o1.overwriteInceptionYear : o2.overwriteInceptionYear))
         o1.setOverwriteUrl((boolean) (o1.overwriteUrlSet ? o1.overwriteUrl : o2.overwriteUrl))
         o1.setOverwriteLicenses((boolean) (o1.overwriteLicensesSet ? o1.overwriteLicenses : o2.overwriteLicenses))

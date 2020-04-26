@@ -113,10 +113,6 @@ class BomPlugin extends AbstractKordampPlugin {
 
                     PublishingUtils.configurePom(pom, config, config.bom)
 
-                    pom {
-                        packaging = 'pom'
-                    }
-
                     pom.withXml {
                         def dependencyManagementNode = asNode().appendNode('dependencyManagement').appendNode('dependencies')
                         compileDeps.each { Dependency dep ->
