@@ -17,12 +17,10 @@
  */
 package org.kordamp.gradle.plugin.sonar
 
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.AppliedPlugin
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
@@ -101,7 +99,6 @@ class SonarPlugin extends AbstractKordampPlugin {
         })
     }
 
-    @CompileDynamic
     private static void applySonarToRoot(ProjectConfigurationExtension config, Project project) {
         SonarQubeExtension sonarExt = project.extensions.findByType(SonarQubeExtension)
         sonarExt.properties(new Action<SonarQubeProperties>() {
@@ -113,18 +110,29 @@ class SonarPlugin extends AbstractKordampPlugin {
                 p.property('sonar.host.url', config.quality.sonar.hostUrl)
                 p.property('sonar.projectKey', config.quality.sonar.projectKey)
                 p.property('sonar.exclusions', config.quality.sonar.excludes.join(','))
+                if (config.quality.checkstyle.enabled) {
+                    p.property('sonar.java.checkstyle.reportPaths', resolveBuiltFile(project, 'reports/checkstyle/aggregate.xml'))
+                }
+                if (config.quality.codenarc.enabled) {
+                    p.property('sonar.groovy.codenarc.reportPaths', resolveBuiltFile(project, 'reports/codenarc/aggregate.xml'))
+                }
                 if (config.coverage.jacoco.enabled) {
                     p.property('sonar.coverage.jacoco.xmlReportPaths', config.coverage.jacoco.aggregateReportXmlFile)
+                    p.property('sonar.groovy.jacoco.reportPath', config.coverage.jacoco.aggregateExecFile)
                 }
                 if (config.quality.detekt.enabled) {
-                    p.property('sonar.kotlin.detekt.reportPaths', project.layout.buildDirectory.file('reports/detekt/aggregate.xml').get().asFile.absolutePath)
+                    p.property('sonar.kotlin.detekt.reportPaths', resolveBuiltFile(project, 'reports/detekt/aggregate.xml'))
                 }
-                ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-                addIfUndefined('sonar.projectDescription', effectiveConfig.info.description, p)
-                addIfUndefined('sonar.links.homepage', effectiveConfig.info.links.website, p)
-                addIfUndefined('sonar.links.scm', effectiveConfig.info.scm.url, p)
-                addIfUndefined('sonar.links.issue', effectiveConfig.info.issueManagement.url, p)
-                addIfUndefined('sonar.links.ci', effectiveConfig.info.ciManagement.url, p)
+                addIfUndefined('sonar.projectName', config.info.name, p)
+                addIfUndefined('sonar.projectDescription', config.info.description, p)
+                addIfUndefined('sonar.links.homepage', config.info.links.website, p)
+                addIfUndefined('sonar.links.scm', config.info.scm.url, p)
+                addIfUndefined('sonar.links.issue', config.info.issueManagement.url, p)
+                addIfUndefined('sonar.links.ci', config.info.ciManagement.url, p)
+            }
+
+            private String resolveBuiltFile(Project p, String path) {
+                p.layout.buildDirectory.file(path).get().asFile.absolutePath
             }
 
             private void addIfUndefined(final String sonarProperty, final String value, final SonarQubeProperties p) {
@@ -144,6 +152,12 @@ class SonarPlugin extends AbstractKordampPlugin {
                 }
                 if (config.quality.detekt.enabled) {
                     t.dependsOn(project.tasks.named('aggregateDetekt'))
+                }
+                if (config.quality.codenarc.enabled) {
+                    t.dependsOn(project.tasks.named('aggregateCodenarc'))
+                }
+                if (config.quality.checkstyle.enabled) {
+                    t.dependsOn(project.tasks.named('aggregateCheckstyle'))
                 }
             }
         })
