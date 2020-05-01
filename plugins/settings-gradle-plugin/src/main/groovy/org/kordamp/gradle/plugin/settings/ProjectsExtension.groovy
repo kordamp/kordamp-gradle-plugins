@@ -18,26 +18,51 @@
 package org.kordamp.gradle.plugin.settings
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+
+import java.util.function.Supplier
 
 /**
  * @author Andres Almiray
  * @since 0.15.0
  */
 @CompileStatic
-class ProjectsExtension {
-    static final String EXTENSION_NAME = 'projects'
+interface ProjectsExtension {
+    Property<String> getLayout()
 
-    String layout = 'two-level'
+    Property<Boolean> getEnforceNamingConvention()
 
-    boolean enforceNamingConvention = true
+    ListProperty<String> getDirectories()
 
-    List<String> directories = []
+    ListProperty<String> getExcludes()
 
-    List<String> excludes = []
+    Property<String> getPrefix()
 
-    String prefix
+    Property<String> getSuffix()
 
-    String suffix
+    Property<String> getFileNameTransformation()
 
-    String fileNameTransformation
+    void plugins(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PluginsSpec) Closure<Void> action)
+
+    void plugins(Action<? super PluginsSpec> action)
+
+    DirectorySpec includeFromDir(String dir)
+
+    PathSpec includeFromPath(String path)
+
+    interface DirectorySpec {
+        DirectorySpec exclude(String projectName)
+
+        void when(boolean value)
+
+        void when(Supplier<Boolean> supplier)
+    }
+
+    interface PathSpec {
+        void when(boolean value)
+
+        void when(Supplier<Boolean> supplier)
+    }
 }

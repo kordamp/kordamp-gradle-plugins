@@ -18,12 +18,12 @@
 package org.kordamp.gradle.plugin.settings
 
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Plugin
-import org.gradle.api.Project
 import org.gradle.api.initialization.Settings
-import org.gradle.api.logging.Logger
-import org.gradle.api.logging.Logging
+import org.gradle.api.model.ObjectFactory
+import org.kordamp.gradle.plugin.settings.internal.ProjectsExtensionImpl
+
+import javax.inject.Inject
 
 /**
  * @author Andres Almiray
@@ -31,167 +31,16 @@ import org.gradle.api.logging.Logging
  */
 @CompileStatic
 class SettingsPlugin implements Plugin<Settings> {
-    private static final Logger LOG = Logging.getLogger(Project)
+    private final ObjectFactory objects
 
-    private Settings settings
+    @Inject
+    SettingsPlugin(ObjectFactory objects) {
+        this.objects = objects
+    }
 
     @Override
     void apply(Settings settings) {
-        this.settings = settings
-
-        if (!settings.extensions.findByType(ProjectsExtension)) {
-            settings.extensions.create(ProjectsExtension.EXTENSION_NAME, ProjectsExtension)
-        }
-
-        settings.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void settingsEvaluated(Settings s) {
-                ProjectsExtension projects = (ProjectsExtension) settings.extensions.findByName(ProjectsExtension.EXTENSION_NAME)
-
-                if ('two-level' == projects.layout?.toLowerCase()) {
-                    processTwoLevelLayout()
-                } else if ('multi-level' == projects.layout?.toLowerCase()) {
-                    processMultiLevelLayout()
-                } else if ('standard' == projects.layout?.toLowerCase()) {
-                    processStandardLayout()
-                } else {
-                    LOG.warn "Unknown project layout '${projects.layout}'. No subprojects will be added."
-                }
-            }
-        })
-    }
-
-    private void processTwoLevelLayout() {
-        ProjectsExtension projects = (ProjectsExtension) settings.extensions.findByName(ProjectsExtension.EXTENSION_NAME)
-
-        if (projects.directories) {
-            for (String parentDirName : projects.directories) {
-                File parentDir = new File(settings.rootDir, parentDirName)
-                if (!parentDir.exists()) {
-                    LOG.info "Skipping ${parentDir} as it does not exist"
-                    continue
-                }
-
-                doProcessTwoLevelLayout(projects, parentDir)
-            }
-        } else {
-            settings.settingsDir.eachDir { File parentDir ->
-                doProcessTwoLevelLayout(projects, parentDir)
-            }
-        }
-    }
-
-    private void doProcessTwoLevelLayout(ProjectsExtension projects, File parentDir) {
-        parentDir.eachDir { File projectDir ->
-            if (projects.excludes.contains(projectDir.name)) return
-
-            File buildFile = resolveBuildFile(projects, projectDir, projectDir.name)
-            SettingsPlugin.doIncludeProject(settings, parentDir, projectDir.name, buildFile)
-        }
-    }
-
-    private void processMultiLevelLayout() {
-        ProjectsExtension projects = (ProjectsExtension) settings.extensions.findByName(ProjectsExtension.EXTENSION_NAME)
-
-        for (String path : projects.directories) {
-            File projectDir = new File(settings.rootDir, path)
-            if (!projectDir.exists()) {
-                LOG.info "Skipping ${projectDir} as it does not exist"
-                continue
-            }
-            SettingsPlugin.includeProject(settings, path)
-        }
-    }
-
-    private void processStandardLayout() {
-        ProjectsExtension projects = (ProjectsExtension) settings.extensions.findByName(ProjectsExtension.EXTENSION_NAME)
-
-        settings.rootDir.eachDir { File projectDir ->
-            if (projects.excludes.contains(projectDir.name)) return
-
-            File buildFile = resolveBuildFile(projects, projectDir, projectDir.name)
-            SettingsPlugin.doIncludeProject(settings, settings.rootDir, projectDir.name, buildFile)
-        }
-    }
-
-    static void includeProject(Settings settings, File parentDir, String projectDirName) {
-        ProjectsExtension projects = (ProjectsExtension) settings.extensions.findByName(ProjectsExtension.EXTENSION_NAME)
-
-        File buildFile = resolveBuildFile(projects, parentDir, projectDirName)
-        doIncludeProject(settings, settings.rootDir, parentDir.name, buildFile)
-    }
-
-    static void includeProject(Settings settings, File projectDir) {
-        includeProject(settings, projectDir.parentFile, projectDir.name)
-    }
-
-    static void includeProject(Settings settings, String projectPath) {
-        ProjectsExtension projects = (ProjectsExtension) settings.extensions.findByName(ProjectsExtension.EXTENSION_NAME)
-
-        String[] parts = projectPath.split('/')
-        String projectDirName = projectPath
-        String projectName = parts[-1]
-
-        if (projects.excludes.contains(projectName)) return
-
-        File projectDir = new File(projectDirName)
-
-        assert projectDir.isDirectory()
-
-        File buildFile = resolveBuildFile(projects, projectDir, projectName)
-        if (buildFile.exists()) {
-            settings.include(projectName)
-            settings.project(":${projectName}").projectDir = projectDir
-            settings.project(":${projectName}").buildFileName = buildFile.name
-        }
-    }
-
-    private static File resolveBuildFile(ProjectsExtension projects, File projectDir, String projectName) {
-        if (projects.enforceNamingConvention) {
-            if ('add'.equalsIgnoreCase(projects.fileNameTransformation)) {
-                if (!isBlank(projects.prefix)) {
-                    projectName = projects.prefix + projectName
-                }
-                if (!isBlank(projects.suffix)) {
-                    projectName += projects.suffix
-                }
-            } else if ('remove'.equalsIgnoreCase(projects.fileNameTransformation)) {
-                if (!isBlank(projects.prefix)) {
-                    projectName -= projects.prefix
-                }
-                if (!isBlank(projects.suffix)) {
-                    projectName -= projects.suffix
-                }
-            }
-        }
-
-        File buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectName}.gradle".toString() : 'build.gradle')
-        if (!buildFile.exists()) {
-            buildFile = new File(projectDir, projects.enforceNamingConvention ? "${projectName}.gradle.kts".toString() : 'build.gradle.kts')
-        }
-        buildFile
-    }
-
-    private static void doIncludeProject(Settings settings, File parentDir, String projectDirName, File buildFile) {
-        if (buildFile.exists()) {
-            File projectDir = new File(parentDir, projectDirName)
-
-            settings.include(projectDirName)
-            settings.project(":${projectDirName}").projectDir = projectDir
-            settings.project(":${projectDirName}").buildFileName = buildFile.name
-        }
-    }
-
-    private static boolean isBlank(String str) {
-        if (str == null || str.length() == 0) {
-            return true
-        }
-        for (char c : str.toCharArray()) {
-            if (!Character.isWhitespace(c)) {
-                return false
-            }
-        }
-
-        return true
+        settings.extensions
+            .create(ProjectsExtension, 'projects', ProjectsExtensionImpl, settings, objects)
     }
 }

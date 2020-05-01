@@ -68,7 +68,6 @@ Suprojects are defined as direct children of the root project, for example
 Build files should be renamed to match their containing directory unless `enforceNamingConvention` is set
 to `false`, in which case the default build file name (`build.gradle`, `build.gradle.kts`) applies.
 
-
 [[_org_kordamp_gradle_settings_dsl]]
 == DSL
 
@@ -83,13 +82,27 @@ projects {
     fileNameTransformation
     prefix
     suffix
+
+    includeFromDir(String)
+        .exclude(String)          // optional
+        .when(boolean)            // optional
+    includeFromDir(String)
+        .exclude(String)          // optional
+        .when(Supplier<Boolean>)  // optional
+
+    includeFromPath(String)
+         .when(boolean)           // optional
+    includeFromPath(String)
+        .when(Supplier<Boolean>)  // optional
+
+    <<_plugins_dsl,plugins>> { }
 }
 ----
 
 [options="header", cols="5*"]
 |===
 | Name                    | Type         | Required | Default Value | Description
-| layout                  | boolean      | no       | two-level     | Defines the project layout. Valid values are [`two-level`, `multi-level`, `standard`].
+| layout                  | boolean      | no       | two-level     | Defines the project layout. Valid values are [`two-level`, `multi-level`, `standard`, `explicit`].
 | enforceNamingConvention | boolean      | no       | true          | If `true` then build file names must match their containing project directory name.
 | directories             | List<String> | no*      | []            | List of directories to include for `two-level` and `multi-level` layout.
 | excludes                | List<String> | no       | []            | List of directories to be excluded from automatic inclusion.
@@ -98,8 +111,23 @@ projects {
 | suffix                  | String       | no       |               | Suffix added/removed from build file name.
 |===
 
-The `directories` property is not required if the chosen layout is set to `standard`. It may be omitted if the chosen layout
+The `directories` property is not required if the chosen layout is set to `standard` or `explicit`. It may be omitted if the chosen layout
 is `two-level` however is recommended to define it if the search space is too big (too many first level directories).
+
+[[_org_kordamp_gradle_settings_methods]]
+=== Methods
+
+The following methods should be used when the chosen layout is `explicit`, otherwise no additional projects will be discovered
+and included in the build
+
+*includeFromDir(String dir)* +
+Includes projects found under the given directory unless the given condition (`when()`) evaluates to false.
+
+*exclude(String)* +
+Excludes a project directory by name.
+
+*includeFromPath(String path)* +
+Includes projects found under the given path unless the given condition (`when()`) evaluates to false.
 
 [[_org_kordamp_gradle_settings_example]]
 == Example
@@ -277,6 +305,66 @@ apply(plugin = "org.kordamp.gradle.settings")
 
 configure<org.kordamp.gradle.plugin.settings.ProjectsExtension> {
     layout = "standard"
+}
+----
+
+.Explicit
+
+A project with the following structure
+
+[source,groovy]
+----
+.
+├── build.gradle
+├── settings.gradle
+├── guide
+│   └── guide.gradle
+└── subprojects
+    ├── project1
+    │   ├── project1.gradle
+    └── project2
+        └── project2.gradle
+----
+
+Can be configured as follows
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.settings.gradle
+----
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:{project-version}'
+    }
+}
+apply plugin: 'org.kordamp.gradle.settings'
+
+projects {
+    layout = 'explicit'
+    includeFromPath('guide')
+    includeFromDir('subprojects')
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.settings.gradle.kts
+----
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath("org.kordamp.gradle:settings-gradle-plugin:{project-version}")
+    }
+}
+apply(plugin = "org.kordamp.gradle.settings")
+
+configure<org.kordamp.gradle.plugin.settings.ProjectsExtension> {
+    layout = "explicit"
+    includeFromPath("guide")
+    includeFromDir("subprojects")
 }
 ----
 

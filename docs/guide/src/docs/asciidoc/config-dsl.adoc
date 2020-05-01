@@ -2,10 +2,10 @@
 [[_config_dsl]]
 = Config DSL
 
-Most plugins take their configuration from a centralized point: the Project DSL. This feature is added by the
-`<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>` which is automatically applied by all plugins.
+Most plugins take their configuration from a centralized point: the Config DSL. This feature is added by the
+`<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>` which is automatically applied by most plugins.
 
-The DSL is comprised by the following elements
+The DSL is comprised of the following elements
 
 [source,groovy]
 [subs="+macros"]

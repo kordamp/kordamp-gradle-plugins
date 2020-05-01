@@ -88,11 +88,11 @@ class JarPlugin extends AbstractKordampPlugin {
     }
 
     private void configureRootProject(Project project) {
-        project.rootProject.gradle.addBuildListener(new BuildAdapter() {
+        project.gradle.addBuildListener(new BuildAdapter() {
             @Override
             void projectsEvaluated(Gradle gradle) {
                 project.tasks.withType(Jar) { Jar t ->
-                    if (t.name == 'jar') {
+                    if (t.name == 'jar' && resolveEffectiveConfig(project).artifacts.jar.enabled) {
                         configureJarMetainf(project, t)
                         configureClasspathManifest(project, t)
                     }
@@ -100,9 +100,9 @@ class JarPlugin extends AbstractKordampPlugin {
                 }
                 project.childProjects.values().each { Project p ->
                     p.tasks.withType(Jar) { Jar t ->
-                        if (t.name == 'jar') {
+                        if (t.name == 'jar' && resolveEffectiveConfig(p).artifacts.jar.enabled) {
                             configureJarMetainf(p, t)
-                            configureClasspathManifest(project, t)
+                            configureClasspathManifest(p, t)
                         }
                         configureJarManifest(p, t)
                     }
@@ -140,9 +140,9 @@ class JarPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private static void configureJarMetainf(Project project, Jar jarTask) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project.rootProject) ?: resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = /*resolveEffectiveConfig(project.rootProject) ?:*/ resolveEffectiveConfig(project)
 
-        if (effectiveConfig.artifacts.minpom.enabled) {
+        if (config.artifacts.minpom.enabled) {
             jarTask.configure {
                 dependsOn MinPomPlugin.MINPOM_TASK_NAME
                 metaInf {
@@ -156,7 +156,7 @@ class JarPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private static void configureJarManifest(Project project, Jar jarTask) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project.rootProject) ?: resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project.rootProject) // ?: resolveEffectiveConfig(project)
 
         if (config.release) {
             Map<String, String> attributesMap = [:]

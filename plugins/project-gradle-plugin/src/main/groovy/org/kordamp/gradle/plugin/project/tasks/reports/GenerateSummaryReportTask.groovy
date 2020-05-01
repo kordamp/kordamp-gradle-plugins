@@ -75,6 +75,9 @@ class GenerateSummaryReportTask extends DefaultTask implements ReportGeneratingT
         |a| *Build-By*
         || ${config.buildInfo.buildBy}
         |
+        |a| *Build-OS*
+        || ${config.buildInfo.buildOs}
+        |
         |a| *Build-Jdk*
         || ${config.buildInfo.buildJdk}
         |

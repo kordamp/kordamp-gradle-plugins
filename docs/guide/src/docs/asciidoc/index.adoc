@@ -1,7 +1,7 @@
 = {project-title}
 :author: {project-author}
 :revnumber: {project-version}
-:toclevels: 4
+:toclevels: 3
 :docinfo1:
 
 include::{includedir}/_links.adoc[]
@@ -10,7 +10,9 @@ include::{includedir}/_links.adoc[]
 include::{includedir}/introduction.adoc[]
 include::{includedir}/usage.adoc[]
 include::{includedir}/project-structure.adoc[]
-include::{includedir}/project-dsl.adoc[]
+include::{includedir}/config-dsl.adoc[]
+include::{includedir}/plugins-dsl.adoc[]
+include::{includedir}/projects-dsl.adoc[]
 include::{includedir}/plugins.adoc[]
 
 = Links

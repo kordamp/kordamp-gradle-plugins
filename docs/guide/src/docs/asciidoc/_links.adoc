@@ -1,0 +1,6 @@
+
+:link_gradle_enforcer_plugin: link:https://kordamp.org/enforcer-gradle-plugin/[gradle-enforcer-plugin]
+:link_require_java_version: link:https://kordamp.org/enforcer-gradle-plugin/#_requirejavaversion[RequireJavaVersion]
+:link_require_os: link:https://kordamp.org/enforcer-gradle-plugin/#_requireos[RequireOs]
+:link_maven_profiles: link:http://maven.apache.org/guides/introduction/introduction-to-profiles.html[build profiles]
+

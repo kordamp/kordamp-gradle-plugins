@@ -482,7 +482,7 @@ of the following words: `secret`, `password`, `credential`, `token`, `apikey`. T
 setting a System property named `kordamp.secret.keywords` to a comma delimited String, such as `password,secret`.
 
 You may specify either of the two, be advised that `sections` has precedence over `section`. All sections will be displayed
-if neither of these options is specified. Section names match entries found in the <<_project_dsl,DSL>>.
+if neither of these options is specified. Section names match entries found in the <<_config_dsl,DSL>>.
 
 [[_task_extensions]]
 === Extensions

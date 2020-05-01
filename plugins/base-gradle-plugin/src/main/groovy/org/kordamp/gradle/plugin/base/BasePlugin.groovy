@@ -257,6 +257,8 @@ class BasePlugin extends AbstractKordampPlugin {
         })
 
         if (isRootProject(project)) {
+            project.extensions.create('projects', ProjectsExtension, project)
+
             project.tasks.register('listProjects', ListProjectsTask,
                 new Action<ListProjectsTask>() {
                     @Override

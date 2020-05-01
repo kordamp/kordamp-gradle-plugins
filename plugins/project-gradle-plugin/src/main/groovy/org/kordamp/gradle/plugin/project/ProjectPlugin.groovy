@@ -34,6 +34,7 @@ import org.kordamp.gradle.plugin.jacoco.JacocoPlugin
 import org.kordamp.gradle.plugin.jar.JarPlugin
 import org.kordamp.gradle.plugin.licensing.LicensingPlugin
 import org.kordamp.gradle.plugin.minpom.MinPomPlugin
+import org.kordamp.gradle.plugin.profiles.ProfilesPlugin
 import org.kordamp.gradle.plugin.project.tasks.reports.GenerateDependenciesReportTask
 import org.kordamp.gradle.plugin.project.tasks.reports.GenerateDependencyUpdatesReportTask
 import org.kordamp.gradle.plugin.project.tasks.reports.GeneratePluginReportTask
@@ -78,6 +79,7 @@ class ProjectPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
+        ProfilesPlugin.applyIfMissing(project)
         BuildInfoPlugin.applyIfMissing(project)
         LicensingPlugin.applyIfMissing(project)
         JacocoPlugin.applyIfMissing(project)
