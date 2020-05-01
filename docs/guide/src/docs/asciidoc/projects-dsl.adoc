@@ -1,0 +1,149 @@
+
+[[_projects_dsl]]
+= Projects DSL
+
+This DSL becomes available when `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>` plugins is applied to a build file.
+It's function is to group common configuration matching projects by path or directory. This DSL is another way to configure
+`allprojects` or `subprojects`.
+
+The DSL is comprised of the following elements
+
+[source,groovy]
+[subs="+macros"]
+----
+projects {
+    all {
+        condition(Function<Project,Boolean>) {
+           // configuration
+        }
+        dir(String) {
+            // configuration
+        }
+        dirs(List<String>) {
+            // configuration
+        }
+        path(String) {
+            // configuration
+        }
+        paths(List<String>) {
+            // configuration
+        }
+    }
+    subprojects {
+        condition(Function<Project,Boolean>) {
+           // configuration
+        }
+        dir(String) {
+            // configuration
+        }
+        dirs(List<String>) {
+            // configuration
+        }
+        path(String) {
+            // configuration
+        }
+        paths(List<String>) {
+            // configuration
+        }
+    }
+}
+----
+
+Where each block will be applied according to these rules:
+
+[horizontal]
+all:: Lazily matches and applies configuration to all projects, including the root project.
+subprojects:: Lazily matches and applies configuration to only subprojects.
+condition:: Projects that match the given condition.
+dir:: A project whose parent directory exactly matches the given argument.
+dirs:: Projects whose parent directory exactly matches any of the elements in the given list of values.
+path:: A project that exactly matches the argument by path, _or_ projects whose path matches the argument as regex.
+paths:: Projects whose path either matches exactly any of the given elements, _or_ the path matches any of the elements as regex.
+
+The contents of the configuration block can be any valid build expression that can be applied to a `Project`.
+
+== Example
+
+Given the following project structure
+
+[source]
+----
+.
+├── settings.gradle
+├── build.gradle
+├── docs
+│   └── guide
+│       └── guide.gradle
+└── subprojects
+    ├── project1
+    │   └── project1.gradle
+    ├── project2
+    │   └── project2.gradle
+    └── project3
+        └── project3.gradle
+----
+
+And the following root build file
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.build.gradle
+----
+config {
+    // ...
+}
+
+projects
+    all {
+        path('*') {
+            repositories {
+                jcenter()
+            }
+        }
+
+        dir('subprojects') {
+            dependencies {
+                testImplementation "junit:junit:$junitVersion"
+            }
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.build.gradle.kts
+----
+import org.kordamp.gradle.plugin.base.ProjectsExtension
+
+config {
+    // ...
+}
+
+configure<ProjectsExtension> {
+    all {
+        path("*") {
+            repositories {
+                jcenter()
+            }
+        }
+
+        dir("subprojects") {
+            val junitVersion: String by project
+            dependencies {
+                testImplementation("junit:junit:$junitVersion")
+            }
+        }
+    }
+}
+----
+
+This configuration will perform the following
+
+ * Configure the `jcenter()` repository on all projects (path = *).
+ * Configure junit as dependency on `:project1`, `:project2`, and `:project3` (all projects found under dir=subprojects)
+
+== Remarks
+
+. The usage of this DSL is optional.
+
+
+

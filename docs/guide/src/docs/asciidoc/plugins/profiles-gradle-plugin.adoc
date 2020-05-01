@@ -1,0 +1,283 @@
+
+[[_org_kordamp_gradle_profiles]]
+= Profiles
+
+[horizontal]
+id:: `org.kordamp.gradle.profiles`
+class:: `org.kordamp.gradle.plugin.profiles.ProfilesPlugin`
+    (link:api/org/kordamp/gradle/plugin/profiles/ProfilesPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/profiles/ProfilesPlugin.html[source])
+
+Provides conditional configuration blocks, similar to Apache Maven's {link_maven_profiles}. Configuration
+blocks are applied immediately when their activation condition is met.
+
+.Are profiles really needed?
+This is a question that many Gradle users have asked themselves, specially if coming from Maven. On the surface profiles
+are just a way to conditionally enable blocks of configuration. Given that Gradle relies on full programmatic DSLs
+(Groovy or Kotlin) one would think that profile support such as this is superfluous, just use a series of `if` conditions
+and move on.
+
+True. Except when those conditions are
+
+* More complex than merely checking the existence of a project property.
+* Repeated in project after project in a given team or organization.
+* Subject to enviromental activation (OS, JDK, etc).
+
+In this case a custom plugin is likely to emerge, thus the existence of this plugin. Besides, this plugin provides newcomers
+form Maven with a similar experience to get started off the ground. Later one can move to more idiomatic Gradle ways if
+the facilities provided bny this plugin prove to be too constrained or inadecuate.
+
+[[_org_kordamp_gradle_profiles_dsl]]
+== DSL
+
+[source,groovy]
+----
+profiles {
+    profile(String) {
+        activation {
+            os { ... }
+            jdk { ... }
+            file { ... }
+            property { ... }
+            custom { ... }
+        }
+        action {
+            // regular project configuration
+        }
+    }
+}
+----
+
+These are the rules that govern the DSL:
+
+* Every profile must have an unique `id`.
+* Multiple activations are not allowed. The last one overrides any previously defined activations.
+* Profiles may define no activations. They can only be activated by id.
+* There is no default profile activation like there is in Maven.
+* Profiles must have an action.
+
+== Activations
+
+There are 5 types of activations available in the `profiles` DSL
+
+.os
+[source,groovy]
+----
+os {
+    name(String)
+    arch(String)
+    version(String)
+    release(String)
+    classifier(String)
+    classifierWithLikes(List<String>)
+}
+----
+
+Where each method defines elements to be matched (exactly or as regex)
+
+[horizontal]
+name:: The expected OS name.
+arch:: The expected OS architecture.
+version:: The expected OS version.
+release:: The expected OS release (Linux).
+classifier:: The expected OS classifier.
+classifierWithLikes:: Additional classifiers.
+
+.jdk
+[source,groovy]
+----
+jdk {
+    version(String)
+}
+----
+
+[horizontal]
+version:: The version number to match. It may be a version prefix, such as `1.8`, or a version range, such as `[1.7,1.8)`.
+
+.file
+[source,groovy]
+----
+file {
+    exists(String)
+    exists(File)
+    exists(RegularFile)
+    missing(String)
+    missing(File)
+    missing(RegularFile)
+}
+----
+
+[horizontal]
+exists:: The given file must exist.
+missing:: The given file must *not* exist.
+
+.property
+[source,groovy]
+----
+property {
+    key(String)
+    value(String)
+}
+----
+
+[horizontal]
+key:: The name of the property (required).
+value:: The Value of the property (optional).
+
+This activation block can match environment variables, system properties, and/or project properties. +
+Environment variables are always uppercased and require `env.` as prefix in the key. +
+System properties require `systemProp.` as prefix in the key. +
+Project properties names are used as is in the key. +
+If the `value` is omitted then the activation only checks for the existence of the `key`. If the `key` is prefixed by a `!`
+then the condition is inverted, i.e, the activation checks that the `key` does not exist. +
+If the `value` is given then the property's value must match it. If the `value` is prefixed with a `!` then the given value
+must not match.
+
+Examples:
+
+[source,groovy]
+.Environment variable SECRET_TOKEN must exist
+----
+property {
+    key('env.SECRET_TOKEN')
+}
+----
+
+[source,groovy]
+.System property server_ip must not exist
+----
+property {
+    key('!systemProp.server_ip')
+}
+----
+
+[source,groovy]
+.Project property must match value
+----
+property {
+    key('region')
+    value('Frankfurt')
+}
+----
+
+[source,groovy]
+.Project property must not match value
+----
+property {
+    key('release')
+    value('!false')
+}
+----
+
+.custom
+[source,groovy]
+----
+custom {
+    activation { Project p ->
+        // custom condition against Project p
+    }
+}
+----
+
+== Explicit Activation
+
+Profiles can be explicitly activated on the command line when their id is supplied as a project property. This will bypass
+their activation condition if they happen to have one. This behavior can be triggered by setting a project property
+named `profile` whose value is a comma separated list of profile ids.
+
+[source,groovy]
+.Example
+----
+profiles {
+    profile {
+        id('jdk9')
+        activation {
+            jdk { version = '9' }
+        }
+        action { ... }
+    }
+    profile {
+        id('jdk11')
+        activation {
+            jdk { version = '11' }
+        }
+        action { ... }
+    }
+    profile {
+        id('test')
+        action { ... }
+    }
+    profile {
+        id('prod')
+        action { ... }
+    }
+}
+----
+
+The following command invocations have these results:
+
+[source]
+.Builds with jdk9 and prod profiles
+----
+./gradlew -Pprofile=jdk9,prod build
+----
+
+[source]
+.Builds with jdk11 profile only
+----
+./gradlew -Pprofile=jdk11 build
+----
+
+In both cases the `test` profile remains inactive.
+
+== System Properties
+
+[horizontal]
+profiles.enabled:: Disables or enables the whole `profiles` block. Default is `true`.
+
+[[_org_kordamp_gradle_profiles_tasks]]
+== Tasks
+
+[[_task_active_profiles]]
+=== ActiveProfiles
+
+Displays all profiles that have been activated with the current configuration.
+
+[horizontal]
+Name:: activeProfiles
+Type:: `org.kordamp.gradle.plugin.profiles.tasks.ActiveProfilesTask`
+
+[[_task_display_activation_info]]
+=== DisplayActivationInfo
+
+Displays information used for profile activation.
+
+[horizontal]
+Name:: displayActivationInfo
+Type:: `org.kordamp.gradle.plugin.profiles.tasks.DisplayActivationInfoTask`
+
+==== Example Output
+
+[source]
+----
+$ ./gradlew :displayActivationInfo
+
+> Task :displayActivationInfo
+JDK:
+    version: 1.8.0-191
+    major: 1
+    minor: 8
+    incremental: 0
+    build: 191
+    qualifier: null
+OS:
+    name: osx
+    arch: x86_64
+    version: 10.14
+    classifier: osx-x86_64
+----
+
+This information can be used in conjuction with the {link_gradle_enforcer_plugin} to match the
+{link_require_java_version} and {link_require_os} rules.
+
+

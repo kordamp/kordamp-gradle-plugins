@@ -1,0 +1,198 @@
+
+[[_plugins_dsl]]
+= Plugins DSL
+
+This DSL becomes available when `<<_org_kordamp_gradle_settings,org.kordamp.gradle.settings>>` plugins is applied to a settings
+file (`settings.gradle` or `settings.gradle.kts`). It's function is to group and apply plugins per project during project discovery
+as specified by the chosen project `layout`.
+
+The DSL is comprised of the following elements
+
+[source,groovy]
+[subs="+macros"]
+----
+projects {
+    plugins {
+        all {
+           id(String).when(boolean)
+           id(String).when(Supplier<Boolean>)
+        }
+        dir(String) {
+            id(String).when(boolean)
+            id(String).when(Supplier<Boolean>)
+        }
+        dirs(List<String>) {
+            exclude(String)
+            id(String).when(boolean)
+            id(String).when(Supplier<Boolean>)
+        }
+        path(String) {
+            id(String).when(boolean)
+            id(String).when(Supplier<Boolean>)
+        }
+        paths(List<String>) {
+            id(String).when(boolean)
+            id(String).when(Supplier<Boolean>)
+        }
+    }
+}
+----
+
+Where each block will be applied according to these rules:
+
+[horizontal]
+all:: All projects in the build, including the root project.
+dir:: A project whose parent directory exactly matches the given argument.
+dirs:: Projects whose parent directory exactly matches any of the elements in the given list of values.
+path:: A project that exactly matches the argument by path, _or_ projects whose path matches the argument as regex.
+paths:: Projects whose path either matches exactly any of the given elements, _or_ the path matches any of the elements as regex.
+exclude:: A project path to be excluded. Path must be an exact match to the given argument.
+
+These are the usage rules:
+
+* The value of `id()` is a given plugin id, such as `org.kordamp.gradle.project`.
+* The `when()` condition (if specified) applies the plugin if `true`. Default is to apply the given plugin.
+* Every block accepts multiple invocations of `id()`.
+* No additional elements besides `id()` (or `exclude()` when using `dirs()`) can appear.
+* The value of `dir()` and `dirs()` must match any of
+ ** Elements in `projects.directories` when `projects.layout` is equal to `two-level`.
+ ** The root directory when `projects.layout` is equal to `standard`.
+ ** The parent directory of a given project when `projects.layout` is equal to `multi-level`.
+* The value of `path()` and `paths()` must be any of
+ ** A full project path, such as `:project1`.
+ ** A regex that can be matched to a project path.
+ ** A single '*' will match all paths. Equivalent to using the `all { }` DSL block.
+* Plugins must be declared in a `buildscript` block as `classpath` entries, alongside the `<<_org_kordamp_gradle_settings,org.kordamp.gradle.settings>>`.
+
+== Example
+
+Given the following project structure
+
+[source]
+----
+.
+├── settings.gradle
+├── build.gradle
+├── docs
+│   └── guide
+│       └── guide.gradle
+└── subprojects
+    ├── project1
+    │   └── project1.gradle
+    ├── project2
+    │   └── project2.gradle
+    └── project3
+        └── project3.gradle
+----
+
+And the following settings file
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.settings.gradle
+----
+buildscript {
+    repositories {
+        jcenter()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "{project-group}:settings-gradle-plugin:{project-version}"
+        classpath "{project-group}:java-project-gradle-plugin:{project-version}"
+        classpath "{project-group}:guide-gradle-plugin:{project-version}"
+        classpath "{project-group}:integrationtest-gradle-plugin:{project-version}"
+        classpath "{project-group}:functionaltest-gradle-plugin:{project-version}"
+    }
+}
+
+apply plugin: 'org.kordamp.gradle.settings'
+
+projects {
+    layout = 'two-level'
+    directories = ['docs', 'subprojects']
+
+    plugins {
+        path(':') {
+            id 'org.kordamp.gradle.java-project'
+        }
+        path(':guide') {
+            id 'org.kordamp.gradle.guide'
+        }
+        dir('subprojects') {
+            exclude(':project3')
+            id 'java-library'
+            id 'org.kordamp.gradle.integration-test'
+        }
+        path(':project3') {
+            id 'java-library'
+            id 'org.kordamp.gradle.functional-test'
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.settings.gradle.kts
+----
+import org.kordamp.gradle.plugin.settings.ProjectsExtension
+import org.kordamp.gradle.plugin.settings.SettingsPlugin
+
+buildscript {
+    repositories {
+        jcenter()
+        gradlePluginPortal()
+    }
+
+    dependencies {
+        classpath("{project-group}:settings-gradle-plugin:{project-version}")
+        classpath("{project-group}:java-project-gradle-plugin:{project-version}")
+        classpath("{project-group}:guide-gradle-plugin:{project-version}")
+        classpath("{project-group}:integrationtest-gradle-plugin:{project-version}")
+        classpath("{project-group}:functionaltest-gradle-plugin:{project-version}")
+    }
+}
+
+apply<SettingsPlugin>()
+
+configure<ProjectsExtension> {
+    layout.set("two-level")
+    directories.addAll(listOf("docs", "subprojects"))
+
+    plugins {
+        path(":") {
+            // must apply this to root otherwise configurations will fail
+            // if you define common dependencies in build.gradle.kts
+            id("java")
+            id("org.kordamp.gradle.java-project")
+        }
+        path(":guide") {
+            id("org.kordamp.gradle.guide")
+        }
+        dir("subprojects") {
+            exclude(":project3")
+            id("java-library")
+            id("org.kordamp.gradle.integration-test")
+        }
+        path(":project3") {
+            id("java-library")
+            id("org.kordamp.gradle.functional-test")
+        }
+    }
+}
+----
+
+This configuration will perform the following:
+
+ * Apply `org.kordamp.gradle.project` to the root.
+ * Apply `org.kordamp.gradle.guide` to the `:guide` project.
+ * Apply `java-library` to all projects under `subprojects` dir.
+ * Apply `org.kordamp.gradle.integration-test` to `:project1` and `:project2` projects.
+ * Apply `org.kordamp.gradle.functional-test` to the `:project3` project.
+
+== Remarks
+
+. The usage of this DSL is optional. Gradle might change how it performs plugin management and resolution at any time.
+. Plugins defined and applied with this DSL are still visible to build files using the standard Gradle facilities such
+as `plugins {}` and `apply plugin:`.
+. Plugins defined in `settings.gradle(.kts)` using the standard link:https://docs.gradle.org/current/userguide/plugins.html#sec:binary_plugins[`plugins {}`]
+from Gradle will not be visible to this DSL.
+
