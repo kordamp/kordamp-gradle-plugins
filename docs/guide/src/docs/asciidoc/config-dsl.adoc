@@ -1,6 +1,6 @@
 
-[[_project_dsl]]
-= Project DSL
+[[_config_dsl]]
+= Config DSL
 
 Most plugins take their configuration from a centralized point: the Project DSL. This feature is added by the
 `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>` which is automatically applied by all plugins.

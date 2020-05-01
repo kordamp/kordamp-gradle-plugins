@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -64,34 +65,44 @@ class MinPomPlugin extends AbstractKordampPlugin {
 
         BasePlugin.applyIfMissing(project)
 
-        project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-            setEnabled(effectiveConfig.artifacts.minpom.enabled)
+        project.pluginManager.withPlugin('java-base') {
+            TaskProvider<MinpomTask> minpomTask = createMinPomTask(project)
 
-            if (!enabled) {
-                return
-            }
+            project.afterEvaluate {
+                ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                setEnabled(config.artifacts.minpom.enabled)
 
-            project.pluginManager.withPlugin('java-base') {
-                createMinPomTask(project)
+                if (!enabled) {
+                    return
+                }
+
+                configureMinPomTask(project, minpomTask)
             }
         }
     }
 
-    private void createMinPomTask(Project project) {
-        Task classesTask = project.tasks.findByName('classes')
+    private TaskProvider<MinpomTask> createMinPomTask(Project project) {
+        project.tasks.register(MINPOM_TASK_NAME, MinpomTask,
+            new Action<MinpomTask>() {
+                @Override
+                void execute(MinpomTask t) {
+                    t.enabled = false
+                    t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
+                    t.description = 'Generates a minimum POM file.'
+                }
+            })
+    }
 
-        if (classesTask) {
-            project.tasks.register(MINPOM_TASK_NAME, MinpomTask,
-                new Action<MinpomTask>() {
-                    @Override
-                    void execute(MinpomTask t) {
-                        t.dependsOn classesTask
-                        t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-                        t.description = 'Generates a minimum POM file.'
-                    }
-                })
-        }
+    private void configureMinPomTask(Project project, TaskProvider<MinpomTask> minpomTask) {
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+
+        minpomTask.configure(new Action<MinpomTask>() {
+            @Override
+            void execute(MinpomTask t) {
+                t.enabled = config.artifacts.minpom.enabled
+                t.dependsOn project.tasks.findByName('classes')
+            }
+        })
     }
 
     static File resolveMinPomDestinationDir(Project project) {
