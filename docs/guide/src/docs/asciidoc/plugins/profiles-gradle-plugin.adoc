@@ -189,26 +189,22 @@ named `profile` whose value is a comma separated list of profile ids.
 .Example
 ----
 profiles {
-    profile {
-        id('jdk9')
+    profile('jdk9') {
         activation {
             jdk { version = '9' }
         }
         action { ... }
     }
-    profile {
-        id('jdk11')
+    profile('jdk11') {
         activation {
             jdk { version = '11' }
         }
         action { ... }
     }
-    profile {
-        id('test')
+    profile('test') {
         action { ... }
     }
-    profile {
-        id('prod')
+    profile('prod') {
         action { ... }
     }
 }
