@@ -42,7 +42,7 @@ class Pmd extends AbstractQualityFeature {
 
     Pmd(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'pmd')
-        toolVersion = '6.2.0'
+        toolVersion = '6.23.0'
     }
 
     @Override

@@ -50,7 +50,7 @@ class Spotbugs extends AbstractQualityFeature {
 
     Spotbugs(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'spotbugs')
-        toolVersion = '3.1.12'
+        toolVersion = '4.0.2'
     }
 
     @Override

@@ -45,7 +45,7 @@ class Checkstyle extends AbstractQualityFeature {
 
     Checkstyle(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'checkstyle')
-        toolVersion = '8.27'
+        toolVersion = '8.32'
     }
 
     @Override
