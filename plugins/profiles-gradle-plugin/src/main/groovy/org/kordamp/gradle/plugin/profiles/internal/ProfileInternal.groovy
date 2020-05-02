@@ -85,7 +85,7 @@ class ProfileInternal implements Profile {
         String profileIds = String.valueOf(project.findProperty('profile')) ?: ''
         if (profileIds) {
             for (String profileId : profileIds.split(',')) {
-                if (profileId == id) return true
+                if (profileId?.trim() == id) return true
             }
         }
         false
