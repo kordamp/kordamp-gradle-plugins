@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased](https://github.com/kordamp/kordamp-gradle-plugins/tree/HEAD)
+
+[Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/0.34.0...HEAD)
+
+**Implemented enhancements:**
+
+- \[Minpom\] Register minpom task and disable it by default [\#290](https://github.com/kordamp/kordamp-gradle-plugins/issues/290)
+- \[Jar\] Only update JAR metaInf/manifest if config.artifacts.jar is enabled [\#289](https://github.com/kordamp/kordamp-gradle-plugins/issues/289)
+- \[Profiles\] Support Maven like profiles [\#288](https://github.com/kordamp/kordamp-gradle-plugins/issues/288)
+- better sonar integration [\#287](https://github.com/kordamp/kordamp-gradle-plugins/issues/287)
+- \[Bom\] Add an includes list [\#286](https://github.com/kordamp/kordamp-gradle-plugins/issues/286)
+- \[Publishing\] Let packaging be configurable [\#285](https://github.com/kordamp/kordamp-gradle-plugins/issues/285)
+- kordamp.org via HTTPS [\#283](https://github.com/kordamp/kordamp-gradle-plugins/issues/283)
+- \[Settings\] Make subproject's folders more meaningful [\#237](https://github.com/kordamp/kordamp-gradle-plugins/issues/237)
+
 ## [0.34.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/0.34.0) (2020-04-25)
 
 [Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/0.33.0...0.34.0)
