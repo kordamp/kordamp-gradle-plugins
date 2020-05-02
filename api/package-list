@@ -1,6 +1,7 @@
 org.kordamp.gradle
 org.kordamp.gradle.plugin
 org.kordamp.gradle.plugin.base
+org.kordamp.gradle.plugin.base.internal
 org.kordamp.gradle.plugin.base.model
 org.kordamp.gradle.plugin.base.model.impl
 org.kordamp.gradle.plugin.base.plugins
@@ -33,6 +34,9 @@ org.kordamp.gradle.plugin.minpom
 org.kordamp.gradle.plugin.plugin
 org.kordamp.gradle.plugin.pmd
 org.kordamp.gradle.plugin.pmd.tasks
+org.kordamp.gradle.plugin.profiles
+org.kordamp.gradle.plugin.profiles.internal
+org.kordamp.gradle.plugin.profiles.tasks
 org.kordamp.gradle.plugin.project
 org.kordamp.gradle.plugin.project.groovy
 org.kordamp.gradle.plugin.project.groovy.tasks
@@ -46,6 +50,7 @@ org.kordamp.gradle.plugin.project.tasks.reports
 org.kordamp.gradle.plugin.publishing
 org.kordamp.gradle.plugin.scaladoc
 org.kordamp.gradle.plugin.settings
+org.kordamp.gradle.plugin.settings.internal
 org.kordamp.gradle.plugin.sonar
 org.kordamp.gradle.plugin.source
 org.kordamp.gradle.plugin.sourcehtml
