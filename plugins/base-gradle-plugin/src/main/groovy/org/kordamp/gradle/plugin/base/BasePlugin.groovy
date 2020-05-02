@@ -19,10 +19,9 @@ package org.kordamp.gradle.plugin.base
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
+import org.kordamp.gradle.plugin.base.internal.ProjectConfigurationExtensionImpl
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationsTask
 import org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask
@@ -44,8 +43,6 @@ import org.kordamp.gradle.plugin.base.tasks.ZipSettingsTask
  */
 @CompileStatic
 class BasePlugin extends AbstractKordampPlugin {
-    static final String ORG_KORDAMP_GRADLE_BASE_VALIDATE = 'org.kordamp.gradle.base.validate'
-
     Project project
 
     void apply(Project project) {
@@ -61,9 +58,17 @@ class BasePlugin extends AbstractKordampPlugin {
             project.pluginManager.apply(org.gradle.api.plugins.BasePlugin)
         }
 
-        if (!project.extensions.findByType(ProjectConfigurationExtension)) {
-            project.extensions.create(ProjectConfigurationExtension.CONFIG_NAME, ProjectConfigurationExtension, project)
+        ProjectConfigurationExtensionImpl parentConfig = null
+        if (!isRootProject(project)) {
+            parentConfig = (ProjectConfigurationExtensionImpl) project.rootProject.extensions.findByType(ProjectConfigurationExtension)
         }
+        ProjectConfigurationExtensionImpl config = (ProjectConfigurationExtensionImpl) project.extensions
+            .create(ProjectConfigurationExtension, 'config',
+                ProjectConfigurationExtensionImpl, project, parentConfig)
+
+        project.extensions.add(ResolvedProjectConfigurationExtension,
+            'resolvedConfig',
+            config.asResolved())
 
         project.tasks.register('effectiveSettings', EffectiveSettingsTask,
             new Action<EffectiveSettingsTask>() {
@@ -174,13 +179,13 @@ class BasePlugin extends AbstractKordampPlugin {
         })
 
         project.tasks.register('zipSettings', ZipSettingsTask,
-                new Action<ZipSettingsTask>() {
-                    @Override
-                    void execute(ZipSettingsTask t) {
-                        t.group = 'Insight'
-                        t.description = 'Display ZIP settings.'
-                    }
-                })
+            new Action<ZipSettingsTask>() {
+                @Override
+                void execute(ZipSettingsTask t) {
+                    t.group = 'Insight'
+                    t.description = 'Display ZIP settings.'
+                }
+            })
 
         project.tasks.addRule('Pattern: <ZipName>ZipSettings: Displays settings of a ZIP task.', new Action<String>() {
             @Override
@@ -189,26 +194,26 @@ class BasePlugin extends AbstractKordampPlugin {
                     String resolvedTaskName = taskName - 'ZipSettings'
                     resolvedTaskName = resolvedTaskName ?: 'zip'
                     project.tasks.register(taskName, ZipSettingsTask,
-                            new Action<ZipSettingsTask>() {
-                                @Override
-                                void execute(ZipSettingsTask t) {
-                                    t.group = 'Insight'
-                                    t.task = resolvedTaskName
-                                    t.description = "Display settings of the '${resolvedTaskName}' ZIP task."
-                                }
-                            })
+                        new Action<ZipSettingsTask>() {
+                            @Override
+                            void execute(ZipSettingsTask t) {
+                                t.group = 'Insight'
+                                t.task = resolvedTaskName
+                                t.description = "Display settings of the '${resolvedTaskName}' ZIP task."
+                            }
+                        })
                 }
             }
         })
 
         project.tasks.register('tarSettings', TarSettingsTask,
-                new Action<TarSettingsTask>() {
-                    @Override
-                    void execute(TarSettingsTask t) {
-                        t.group = 'Insight'
-                        t.description = 'Display TAR settings.'
-                    }
-                })
+            new Action<TarSettingsTask>() {
+                @Override
+                void execute(TarSettingsTask t) {
+                    t.group = 'Insight'
+                    t.description = 'Display TAR settings.'
+                }
+            })
 
         project.tasks.addRule('Pattern: <TarName>TarSettings: Displays settings of a TAR task.', new Action<String>() {
             @Override
@@ -217,26 +222,26 @@ class BasePlugin extends AbstractKordampPlugin {
                     String resolvedTaskName = taskName - 'TarSettings'
                     resolvedTaskName = resolvedTaskName ?: 'tar'
                     project.tasks.register(taskName, TarSettingsTask,
-                            new Action<TarSettingsTask>() {
-                                @Override
-                                void execute(TarSettingsTask t) {
-                                    t.group = 'Insight'
-                                    t.task = resolvedTaskName
-                                    t.description = "Display settings of the '${resolvedTaskName}' TAR task."
-                                }
-                            })
+                        new Action<TarSettingsTask>() {
+                            @Override
+                            void execute(TarSettingsTask t) {
+                                t.group = 'Insight'
+                                t.task = resolvedTaskName
+                                t.description = "Display settings of the '${resolvedTaskName}' TAR task."
+                            }
+                        })
                 }
             }
         })
 
         project.tasks.register('taskSettings', TaskSettingsTask,
-                new Action<TaskSettingsTask>() {
-                    @Override
-                    void execute(TaskSettingsTask t) {
-                        t.group = 'Insight'
-                        t.description = 'Display the settings of a Task.'
-                    }
-                })
+            new Action<TaskSettingsTask>() {
+                @Override
+                void execute(TaskSettingsTask t) {
+                    t.group = 'Insight'
+                    t.description = 'Display the settings of a Task.'
+                }
+            })
 
         project.tasks.addRule('Pattern: <TaskName>TaskSettings: Displays the settings of a Task.', new Action<String>() {
             @Override
@@ -244,14 +249,14 @@ class BasePlugin extends AbstractKordampPlugin {
                 if (taskName.endsWith('TaskSettings')) {
                     String resolvedTaskName = taskName - 'TaskSettings'
                     project.tasks.register(taskName, TaskSettingsTask,
-                            new Action<TaskSettingsTask>() {
-                                @Override
-                                void execute(TaskSettingsTask t) {
-                                    t.group = 'Insight'
-                                    t.task = resolvedTaskName
-                                    t.description = "Display the settings of the '${resolvedTaskName}' Task."
-                                }
-                            })
+                        new Action<TaskSettingsTask>() {
+                            @Override
+                            void execute(TaskSettingsTask t) {
+                                t.group = 'Insight'
+                                t.task = resolvedTaskName
+                                t.description = "Display the settings of the '${resolvedTaskName}' Task."
+                            }
+                        })
                 }
             }
         })
@@ -276,38 +281,6 @@ class BasePlugin extends AbstractKordampPlugin {
                         t.description = 'List all included builds.'
                     }
                 })
-        }
-
-        project.afterEvaluate {
-            ProjectConfigurationExtension rootExtension = project.rootProject.extensions.findByType(ProjectConfigurationExtension)
-            ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
-            extension.normalize()
-
-            boolean validate = PluginUtils.checkFlag(ORG_KORDAMP_GRADLE_BASE_VALIDATE, true)
-
-            List<String> errors = []
-            if (isRootProject(project)) {
-                // extension == rootExtension
-                ProjectConfigurationExtension merged = extension.postMerge()
-                if (validate) errors.addAll(merged.validate())
-                project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged)
-            } else {
-                // parent project may not have applied kordamp.base
-                if (rootExtension) {
-                    ProjectConfigurationExtension merged = extension.merge(rootExtension)
-                    if (validate) errors.addAll(merged.validate())
-                    project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, merged)
-                } else {
-                    extension = extension.postMerge()
-                    if (validate) errors.addAll(extension.validate())
-                    project.extensions.create(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME, ProjectConfigurationExtension, extension)
-                }
-            }
-
-            if (validate && errors) {
-                errors.each { project.logger.error(it) }
-                throw new GradleException("Project ${project.name} has not been properly configured")
-            }
         }
     }
 

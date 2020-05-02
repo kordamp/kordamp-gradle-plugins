@@ -17,87 +17,33 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.gradle.api.Action
-import org.gradle.util.ConfigureUtil
-import org.kordamp.gradle.CollectionUtils
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
-class Person {
-    String id
-    String name
-    String email
-    String url
-    String timezone
-    Organization organization
-    List<String> roles = []
-    Map<String, String> properties = [:]
+interface Person {
+    Property<String> getId()
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
+    Property<String> getName()
 
-    Map<String, Object> toMap() {
-        new LinkedHashMap<String, Object>([
-            id          : id,
-            name        : name,
-            email       : email,
-            url         : url,
-            timezone    : timezone,
-            organization: organization?.toMap(),
-            roles       : roles,
-            properties  : properties
-        ])
-    }
+    Property<String> getEmail()
 
-    Person copyOf() {
-        Person copy = new Person()
-        copy.id = id
-        copy.name = name
-        copy.email = email
-        copy.url = url
-        copy.timezone = timezone
-        copy.organization = organization?.copyOf()
-        List<String> rls = new ArrayList<>(copy.roles)
-        copy.roles.clear()
-        copy.roles.addAll(rls + roles)
-        copy.properties.putAll(properties)
-        copy
-    }
+    Property<String> getUrl()
 
-    static Person merge(Person o1, Person o2) {
-        o1.id = o1.id ?: o2?.id
-        o1.name = o1.name ?: o2?.name
-        o1.email = o1.email ?: o2?.email
-        o1.url = o1.url ?: o2?.url
-        o1.timezone = o1.timezone ?: o2?.timezone
-        CollectionUtils.merge(o1.roles, o2?.roles)
-        if (o1.organization) {
-            Organization.merge(o1.organization, o2?.organization)
-        } else {
-            o1.organization = o2?.organization?.copyOf()
-        }
-        CollectionUtils.merge(o1.properties, o2?.properties)
+    Property<String> getTimezone()
 
-        o1
-    }
+    SetProperty<String> getRoles()
 
-    void organization(Action<? super Organization> action) {
-        if (!organization) organization = new Organization()
-        action.execute(organization)
-    }
+    MapProperty<String, String> getProperties()
 
-    void organization(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Organization) Closure action) {
-        if (!organization) organization = new Organization()
-        ConfigureUtil.configure(action, organization)
-    }
+    void organization(Action<? super Organization> action)
+
+    void organization(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Organization) Closure<Void> action)
 }

@@ -1,0 +1,60 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2018-2020 Andres Almiray.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.kordamp.gradle.plugin.base.resolved.model
+
+import groovy.transform.CompileStatic
+import org.gradle.api.provider.Provider
+
+/**
+ * @author Andres Almiray
+ * @since 0.40.0
+ */
+@CompileStatic
+interface ResolvedInformation {
+    Provider<String> getName()
+
+    Provider<String> getDescription()
+
+    Provider<String> getInceptionYear()
+
+    Provider<String> getVendor()
+
+    Provider<Set<String>> getTags()
+
+    ResolvedPersonSet getPeople()
+
+    ResolvedRepositorySet getRepositories()
+
+    ResolvedOrganization getOrganization()
+
+    ResolvedLinks getLinks()
+
+    ResolvedScm getScm()
+
+    ResolvedIssueManagement getIssueManagement()
+
+    ResolvedCiManagement getCiManagement()
+
+    ResolvedMailingListSet getMailingLists()
+
+    ResolvedCredentialsSet getCredentials()
+
+    ResolvedSpecification getSpecification()
+
+    ResolvedImplementation getImplementation()
+}

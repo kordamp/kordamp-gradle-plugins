@@ -17,127 +17,50 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.Project
-import org.gradle.api.tasks.testing.Test
-import org.gradle.util.ConfigureUtil
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.test.tasks.FunctionalTest
-import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
+import org.gradle.api.provider.Property
 
 /**
  * @author Andres Almiray
  * @since 0.14.0
  */
 @CompileStatic
-@Canonical
-class Testing extends AbstractFeature {
-    static final String PLUGIN_ID = 'org.kordamp.gradle.testing'
+interface Testing extends Feature {
+    String PLUGIN_ID = 'org.kordamp.gradle.testing'
 
-    boolean logging = true
-    boolean aggregate = true
+    Property<Boolean> getLogging()
 
-    private boolean loggingSet = false
-    private boolean aggregateSet = false
+    Property<Boolean> getAggregate()
 
-    final Integration integration
-    final Functional functional
+    void integration(Action<? super Integration> action)
 
-    private final Set<Test> testTasks = new LinkedHashSet<>()
-    private final Set<IntegrationTest> integrationTasks = new LinkedHashSet<>()
-    private final Set<FunctionalTest> functionalTestTasks = new LinkedHashSet<>()
+    void integration(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Integration) Closure<Void> action)
 
-    Testing(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        integration = new Integration(this)
-        functional = new Functional(this)
+    void functional(Action<? super Functional> action)
+
+    void functional(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Functional) Closure<Void> action)
+
+    @CompileStatic
+    interface Integration extends Feature {
+        String PLUGIN_ID = 'org.kordamp.gradle.integration-test'
+
+        Property<Boolean> getLogging()
+
+        Property<Boolean> getAggregate()
+
+        Property<String> getBaseDir()
     }
 
-    void setLogging(boolean logging) {
-        this.logging = logging
-        this.loggingSet = true
-    }
+    @CompileStatic
+    interface Functional extends Feature {
+        String PLUGIN_ID = 'org.kordamp.gradle.functional-test'
 
-    boolean isLoggingSet() {
-        this.loggingSet
-    }
+        Property<Boolean> getLogging()
 
-    void setAggregate(boolean aggregate) {
-        this.aggregate = aggregate
-        this.aggregateSet = true
-    }
+        Property<Boolean> getAggregate()
 
-    boolean isAggregateSet() {
-        this.aggregateSet
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
-    }
-
-    @Override
-    Map<String, Map<String, Object>> toMap() {
-        new LinkedHashMap<>('testing': new LinkedHashMap<>([
-            enabled    : enabled,
-            logging    : logging,
-            aggregate  : aggregate,
-            integration: integration.toMap(),
-            functional : functional.toMap()
-        ]))
-    }
-
-    void integration(Action<? super Integration> action) {
-        action.execute(integration)
-    }
-
-    void integration(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Integration) Closure action) {
-        ConfigureUtil.configure(action, integration)
-    }
-
-    void functional(Action<? super Functional> action) {
-        action.execute(functional)
-    }
-
-    void functional(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Functional) Closure action) {
-        ConfigureUtil.configure(action, functional)
-    }
-
-    void copyInto(Testing copy) {
-        super.copyInto(copy)
-
-        copy.@logging = logging
-        copy.@loggingSet = loggingSet
-        copy.@aggregate = aggregate
-        copy.@aggregateSet = aggregateSet
-        integration.copyInto(copy.@integration)
-        functional.copyInto(copy.@functional)
-    }
-
-    static void merge(Testing o1, Testing o2) {
-        AbstractFeature.merge(o1, o2)
-        o1.setLogging((boolean) (o1.loggingSet ? o1.logging : o2.logging))
-        o1.setAggregate((boolean) (o1.aggregateSet ? o1.aggregate : o2.aggregate))
-        Integration.merge(o1.integration, o2.integration)
-        Functional.merge(o1.functional, o2.functional)
-    }
-
-    void postMerge() {
-        integration.postMerge()
-        functional.postMerge()
-    }
-
-    Set<Test> testTasks() {
-        testTasks
-    }
-
-    Set<IntegrationTest> integrationTasks() {
-        integrationTasks
-    }
-
-    Set<FunctionalTest> functionalTestTasks() {
-        functionalTestTasks
+        Property<String> getBaseDir()
     }
 }

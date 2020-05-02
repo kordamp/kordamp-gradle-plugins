@@ -17,314 +17,68 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
 import org.gradle.api.Action
-import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
-import org.kordamp.gradle.CollectionUtils
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-
-import static org.kordamp.gradle.StringUtils.isBlank
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-@EqualsAndHashCode(includes = ['project', 'specification', 'implementation'])
-@ToString(excludes = ['project', 'specification', 'implementation'], includeNames = true)
-class Information {
-    String name
-    String description
-    String inceptionYear
-    String vendor
-    List<String> tags = []
+interface Information {
+    Property<String> getName()
 
-    final Project project
-    final PersonSet people = new PersonSet()
-    final RepositorySet repositories = new RepositorySet()
-    final Organization organization = new Organization()
-    final Links links = new Links()
-    final Scm scm = new Scm()
-    final IssueManagement issueManagement = new IssueManagement()
-    final CiManagement ciManagement = new CiManagement()
-    final MailingListSet mailingLists = new MailingListSet()
-    final CredentialsSet credentials = new CredentialsSet()
+    Property<String> getDescription()
 
-    final Specification specification = new Specification()
-    final Implementation implementation = new Implementation()
+    Property<String> getInceptionYear()
 
-    private Specification spec = new Specification()
-    private Implementation impl = new Implementation()
+    Property<String> getVendor()
 
-    protected final ProjectConfigurationExtension config
+    SetProperty<String> getTags()
 
-    Information(ProjectConfigurationExtension config, Project project) {
-        this.config = config
-        this.project = project
-    }
+    void people(Action<? super PersonSet> action)
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
+    void people(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PersonSet) Closure<Void> action)
 
-    Map<String, Map<String, Object>> toMap() {
-        new LinkedHashMap<String, Map<String, Object>>(['info': new LinkedHashMap<String, Object>([
-            name           : getName(),
-            description    : description,
-            url            : url,
-            inceptionYear  : getInceptionYear(),
-            copyrightYear  : copyrightYear,
-            vendor         : getVendor(),
-            authors        : authors,
-            organization   : organization.toMap(),
-            people         : people.toMap(),
-            repositories   : repositories.toMap(),
-            links          : links.toMap(),
-            scm            : scm.toMap(),
-            issueManagement: issueManagement.toMap(),
-            ciManagement   : ciManagement.toMap(),
-            mailingLists   : mailingLists.toMap(),
-            specification  : specification.toMap(),
-            implementation : implementation.toMap(),
-            credentials    : credentials.toMap()
-        ])])
-    }
+    void repositories(Action<? super RepositorySet> action)
 
-    Information copyOf() {
-        Information copy = new Information(config, project)
-        copyInto(copy)
-        copy
-    }
+    void repositories(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = RepositorySet) Closure<Void> action)
 
-    void copyInto(Information copy) {
-        copy.@name = this.@name
-        copy.description = description
-        copy.@inceptionYear = this.@inceptionYear
-        copy.@vendor = this.@vendor
-        copy.tags.addAll(tags)
-        copy.spec = spec.copyOf()
-        copy.impl = impl.copyOf()
-        organization.copyInto(copy.organization)
-        people.copyInto(copy.people)
-        repositories.copyInto(copy.repositories)
-        links.copyInto(copy.links)
-        scm.copyInto(copy.scm)
-        issueManagement.copyInto(copy.issueManagement)
-        ciManagement.copyInto(copy.ciManagement)
-        mailingLists.copyInto(copy.mailingLists)
-        credentials.copyInto(copy.credentials)
+    void organization(Action<? super Organization> action)
 
-        copy.normalize()
-    }
+    void organization(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Organization) Closure<Void> action)
 
-    static void merge(Information o1, Information o2) {
-        o2.normalize()
-        o1.name = o1.@name ?: o2.name
-        o1.description = o1.description ?: o2.description
-        o1.inceptionYear = o1.@inceptionYear ?: o2.inceptionYear
-        o1.vendor = o1.@vendor ?: o2.vendor
-        CollectionUtils.merge(o1.tags, o2.tags)
-        Specification.merge(o1.spec, o2.spec)
-        Implementation.merge(o1.impl, o2.impl)
-        Organization.merge(o1.organization, o2.organization)
-        PersonSet.merge(o1.people, o2.people)
-        RepositorySet.merge(o1.repositories, o2.repositories)
-        Links.merge(o1.links, o2.links)
-        Scm.merge(o1.scm, o2.scm)
-        IssueManagement.merge(o1.issueManagement, o2.issueManagement)
-        CiManagement.merge(o1.ciManagement, o2.ciManagement)
-        MailingListSet.merge(o1.mailingLists, o2.mailingLists)
-        CredentialsSet.merge(o1.credentials, o2.credentials)
-        o1.normalize()
-    }
+    void links(Action<? super Links> action)
 
-    List<String> validate(ProjectConfigurationExtension extension) {
-        List<String> errors = []
+    void links(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Links) Closure<Void> action)
 
-        if (isBlank(description) &&
-            (extension.publishing.enabled || extension.bintray.enabled)) {
-            errors << "[${project.name}] Project description is blank".toString()
-        }
-        if (isBlank(getVendor()) &&
-            (extension.publishing.enabled || extension.bintray.enabled)) {
-            errors << "[${project.name}] Project vendor is blank".toString()
-        }
-        if (isBlank(getUrl()) &&
-            (extension.publishing.enabled || extension.bintray.enabled)) {
-            errors << "[${project.name}] Project organization.url is blank".toString()
-        }
-        if ((scm.enabled && isBlank(scm.url)) && (links.enabled && isBlank(links.scm)) &&
-            (extension.publishing.enabled || extension.bintray.enabled)) {
-            errors << "[${project.name}] Project scm.url is blank".toString()
-        }
+    void scm(Action<? super Scm> action)
 
-        errors
-    }
+    void scm(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scm) Closure<Void> action)
 
-    void people(Action<? super PersonSet> action) {
-        action.execute(people)
-    }
+    void issueManagement(Action<? super IssueManagement> action)
 
-    void repositories(Action<? super RepositorySet> action) {
-        action.execute(repositories)
-    }
+    void issueManagement(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = IssueManagement) Closure<Void> action)
 
-    void organization(Action<? super Organization> action) {
-        action.execute(organization)
-    }
+    void ciManagement(Action<? super CiManagement> action)
 
-    void links(Action<? super Links> action) {
-        action.execute(links)
-    }
+    void ciManagement(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CiManagement) Closure<Void> action)
 
-    void scm(Action<? super Scm> action) {
-        action.execute(scm)
-    }
+    void mailingLists(Action<? super MailingListSet> action)
 
-    void issueManagement(Action<? super IssueManagement> action) {
-        action.execute(issueManagement)
-    }
+    void mailingLists(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MailingListSet) Closure<Void> action)
 
-    void ciManagement(Action<? super CiManagement> action) {
-        action.execute(ciManagement)
-    }
+    void credentials(Action<? super CredentialsSet> action)
 
-    void mailingLists(Action<? super MailingListSet> action) {
-        action.execute(mailingLists)
-    }
+    void credentials(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CredentialsSet) Closure<Void> action)
 
-    void credentials(Action<? super CredentialsSet> action) {
-        action.execute(credentials)
-    }
+    void specification(Action<? super Specification> action)
 
-    void specification(Action<? super Specification> action) {
-        action.execute(spec)
-    }
+    void specification(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Specification) Closure<Void> action)
 
-    void implementation(Action<? super Implementation> action) {
-        action.execute(impl)
-    }
+    void implementation(Action<? super Implementation> action)
 
-    void people(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PersonSet) Closure action) {
-        ConfigureUtil.configure(action, people)
-    }
-
-    void repositories(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = RepositorySet) Closure action) {
-        ConfigureUtil.configure(action, repositories)
-    }
-
-    void organization(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Organization) Closure action) {
-        ConfigureUtil.configure(action, organization)
-    }
-
-    void links(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Links) Closure action) {
-        ConfigureUtil.configure(action, links)
-    }
-
-    void scm(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scm) Closure action) {
-        ConfigureUtil.configure(action, scm)
-    }
-
-    void issueManagement(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = IssueManagement) Closure action) {
-        ConfigureUtil.configure(action, issueManagement)
-    }
-
-    void ciManagement(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CiManagement) Closure action) {
-        ConfigureUtil.configure(action, ciManagement)
-    }
-
-    void mailingLists(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MailingListSet) Closure action) {
-        ConfigureUtil.configure(action, mailingLists)
-    }
-
-    void credentials(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CredentialsSet) Closure action) {
-        ConfigureUtil.configure(action, credentials)
-    }
-
-    void specification(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Specification) Closure action) {
-        ConfigureUtil.configure(action, spec)
-    }
-
-    void implementation(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Specification) Closure action) {
-        ConfigureUtil.configure(action, impl)
-    }
-
-    String getName() {
-        name ?: project.name
-    }
-
-    String getVendor() {
-        vendor ?: organization?.name
-    }
-
-    String getUrl() {
-        links.website ?: organization.url
-    }
-
-    String getInceptionYear() {
-        inceptionYear ?: currentYear()
-    }
-
-    Information normalize() {
-        if (spec.isEnabledSet()) specification.setEnabled(spec.enabled)
-        specification.title = spec.title ?: project.name
-        specification.version = spec.version ?: project.version
-        specification.vendor = spec.vendor ?: getVendor()
-
-        if (impl.isEnabledSet()) implementation.setEnabled(impl.enabled)
-        implementation.title = impl.title ?: project.name
-        implementation.version = impl.version ?: project.version
-        implementation.vendor = impl.vendor ?: getVendor()
-
-        this
-    }
-
-    List<String> getAuthors() {
-        List<String> authors = []
-
-        people.forEach { Person person ->
-            if ('author' in person.roles*.toLowerCase()) {
-                String author = person.name ?: person.id
-                if (author) authors << author
-            }
-        }
-
-        if (!authors && !people.isEmpty()) {
-            Person person = people.people[0]
-            authors << person.name ?: person.id
-        }
-
-        authors
-    }
-
-    String getCopyrightYear() {
-        String initialYear = getInceptionYear()
-        String currentYear = currentYear()
-        String year = initialYear
-        if (initialYear != currentYear) {
-            year += '-' + currentYear
-        }
-        year
-    }
-
-    static String currentYear() {
-        Date now = new Date()
-        Calendar c = Calendar.getInstance()
-        c.setTime(now)
-        return c.get(Calendar.YEAR).toString()
-    }
-
-    String resolveScmLink() {
-        if (isNotBlank(scm.url)) {
-            return scm.url
-        }
-        return links.scm
-    }
+    void implementation(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Specification) Closure<Void> action)
 }

@@ -17,407 +17,65 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.external.javadoc.MinimalJavadocOptions
-import org.gradle.external.javadoc.StandardJavadocDocletOptions
-import org.gradle.util.ConfigureUtil
-import org.kordamp.gradle.CollectionUtils
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.model.impl.ExtStandardJavadocDocletOptions
-
-import static org.kordamp.gradle.PluginUtils.resolveConfig
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
+import org.kordamp.gradle.plugin.base.model.JavadocOptions
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-class Javadoc extends AbstractFeature {
-    static final String PLUGIN_ID = 'org.kordamp.gradle.javadoc'
+interface Javadoc extends Feature {
+    String PLUGIN_ID = 'org.kordamp.gradle.javadoc'
 
-    Set<String> excludes = new LinkedHashSet<>()
-    Set<String> includes = new LinkedHashSet<>()
-    String title
-    final ExtStandardJavadocDocletOptions options = new ExtStandardJavadocDocletOptions()
-    final Aggregate aggregate
-    final AutoLinks autoLinks
+    SetProperty<String> getExcludes()
 
-    Javadoc(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        options.setVersion(true)
-        aggregate           = new Aggregate(config, project)
-        autoLinks           = new AutoLinks(config)
-        options.use         = true
-        options.splitIndex  = true
-        options.encoding    = 'UTF-8'
-        options.author      = true
-        options.windowTitle = "${project.name} ${project.version}"
-        options.docTitle    = "${project.name} ${project.version}"
-        options.header      = "${project.name} ${project.version}"
-        options.links(resolveJavadocLinks(project.findProperty('targetCompatibility')))
-    }
+    SetProperty<String> getIncludes()
 
-    private String resolveJavadocLinks(Object jv) {
-        JavaVersion javaVersion = JavaVersion.current()
+    Property<String> getTitle()
 
-        if (jv instanceof JavaVersion) {
-            javaVersion = (JavaVersion) jv
-        } else if (jv != null) {
-            javaVersion = JavaVersion.toVersion(jv)
-        }
+    void include(String str)
 
-        if (javaVersion.isJava11Compatible()) {
-            return "https://docs.oracle.com/en/java/javase/${javaVersion.majorVersion}/docs/api/".toString()
-        }
-        return "https://docs.oracle.com/javase/${javaVersion.majorVersion}/docs/api/"
-    }
+    void exclude(String str)
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
+    void options(Action<? super JavadocOptions> action)
 
-    @Override
-    Map<String, Map<String, Object>> toMap() {
-        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
+    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JavadocOptions) Closure<Void> action)
 
-        List<String> links = []
-        options.links.each { link ->
-            links << link
-        }
+    void aggregate(Action<? super Aggregate> action)
 
-        map.title = title
-        map.excludes = excludes
-        map.includes = includes
-        map.autoLinks = autoLinks.toMap()
-        map.options = new LinkedHashMap<String, Object>([
-            windowTitle: options.windowTitle,
-            docTitle   : options.docTitle,
-            header     : options.header,
-            encoding   : options.encoding,
-            author     : options.author,
-            version    : options.version,
-            splitIndex : options.splitIndex,
-            use        : options.use,
-            links      : links
-        ])
+    void aggregate(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Aggregate) Closure<Void> action)
 
-        if (isRoot()) {
-            map.putAll(aggregate.toMap())
-        }
+    void autoLinks(Action<? super AutoLinks> action)
 
-        new LinkedHashMap<>(['javadoc': map])
-    }
+    void autoLinks(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = AutoLinks) Closure<Void> action)
 
-    void postMerge() {
-        autoLinks.resolveLinks(project).each { options.links(it) }
-    }
+    @CompileStatic
+    interface AutoLinks extends Feature {
+        Property<Boolean> getUseJavadocIo()
 
-    void include(String str) {
-        includes << str
-    }
+        SetProperty<String> getExcludes()
 
-    void exclude(String str) {
-        excludes << str
-    }
+        SetProperty<String> getConfigurations()
 
-    void options(Action<? super ExtStandardJavadocDocletOptions> action) {
-        action.execute(options)
-    }
+        MapProperty<String, String> getOfflineLinks()
 
-    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ExtStandardJavadocDocletOptions) Closure action) {
-        ConfigureUtil.configure(action, options)
-    }
+        void exclude(String str)
 
-    void aggregate(Action<? super Aggregate> action) {
-        action.execute(aggregate)
-    }
-
-    void aggregate(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Aggregate) Closure action) {
-        ConfigureUtil.configure(action, aggregate)
-    }
-
-    void copyInto(Javadoc copy) {
-        super.copyInto(copy)
-        copy.excludes.addAll(excludes)
-        copy.includes.addAll(includes)
-        copy.title = title
-        options.copyInto(copy.options)
-        autoLinks.copyInto(copy.autoLinks)
-        aggregate.copyInto(copy.aggregate)
-    }
-
-    static void merge(Javadoc o1, Javadoc o2) {
-        AbstractFeature.merge(o1, o2)
-        CollectionUtils.merge(o1.excludes, o2.excludes)
-        CollectionUtils.merge(o1.includes, o2.includes)
-        o1.title = o1.title ?: o2.title
-        ExtStandardJavadocDocletOptions.merge(o1.options, o2.options)
-        AutoLinks.merge(o1.autoLinks, o2.autoLinks)
-        o1.aggregate.merge(o2.aggregate)
-    }
-
-    void autoLinks(Action<? super AutoLinks> action) {
-        action.execute(autoLinks)
-    }
-
-    void autoLinks(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = AutoLinks) Closure action) {
-        ConfigureUtil.configure(action, autoLinks)
-    }
-
-    void applyTo(org.gradle.api.tasks.javadoc.Javadoc javadoc) {
-        javadoc.title = title
-        javadoc.getIncludes().addAll(includes)
-        javadoc.getExcludes().addAll(excludes)
-        options.applyTo(javadoc.options)
-        autoLinks.applyTo(javadoc.options)
+        void offlineLink(String url1, String url2)
     }
 
     @CompileStatic
-    @Canonical
-    static class AutoLinks {
-        private static final List<String> DEFAULT_CONFIGURATIONS = [
-            'api', 'implementation', 'compileOnly', 'annotationProcessor', 'runtimeOnly'
-        ]
+    interface Aggregate extends Feature {
+        Property<Boolean> getFast()
 
-        Boolean useJavadocIo
-        boolean enabled = true
-        Set<String> excludes = new LinkedHashSet<>()
-        List<String> configurations = []
-        Map<String, String> offlineLinks = [:]
+        SetProperty<Project> getExcludedProjects()
 
-        private boolean enabledSet
-        private final ProjectConfigurationExtension config
-
-        AutoLinks(ProjectConfigurationExtension config) {
-            this.config = config
-        }
-
-        protected void doSetEnabled(boolean enabled) {
-            this.enabled = enabled
-        }
-
-        void setEnabled(boolean enabled) {
-            this.enabled = enabled
-            this.enabledSet = true
-        }
-
-        boolean isEnabledSet() {
-            this.enabledSet
-        }
-
-        void exclude(String str) {
-            excludes << str
-        }
-
-        void offlineLink(String url1, String url2) {
-            offlineLinks[url1] = url2
-        }
-
-        boolean getUseJavadocIo() {
-            null == useJavadocIo || useJavadocIo
-        }
-
-        void copyInto(AutoLinks copy) {
-            copy.@enabled = this.enabled
-            copy.@enabledSet = this.enabledSet
-            copy.@useJavadocIo = this.useJavadocIo
-            copy.configurations.addAll(this.configurations)
-            copy.excludes.addAll(this.excludes)
-            copy.offlineLinks.putAll(offlineLinks)
-        }
-
-        static void merge(AutoLinks o1, AutoLinks o2) {
-            o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
-            o1.useJavadocIo = o1.useJavadocIo != null ? o1.getUseJavadocIo() : o2.getUseJavadocIo()
-            CollectionUtils.merge(o1.@excludes, o2?.excludes)
-            CollectionUtils.merge(o1.@configurations, o2?.configurations)
-            CollectionUtils.merge(o1.@offlineLinks, o2?.offlineLinks)
-        }
-
-        Map<String, Object> toMap() {
-            Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
-
-            if (enabled) {
-                List<String> cs = new ArrayList<>(configurations)
-                if (!cs) {
-                    cs = DEFAULT_CONFIGURATIONS
-                }
-                map.excludes = excludes
-                map.useJavadocIo = getUseJavadocIo()
-                map.configurations = cs
-                map.offlineLinks = offlineLinks
-            }
-
-            map
-        }
-
-        List<String> resolveLinks(Project project) {
-            List<String> links = []
-
-            if (!enabled) return links
-
-            List<String> cs = new ArrayList<>(configurations)
-            if (!cs) {
-                cs = DEFAULT_CONFIGURATIONS
-            }
-
-            for (String cn : cs) {
-                Configuration c = project.configurations.findByName(cn)
-                c?.dependencies?.each { Dependency dep ->
-                    if (dep instanceof ProjectDependency) {
-                        ProjectDependency pdep = (ProjectDependency) dep
-                        String packageListLoc = calculateLocalJavadocLink(config.project, pdep.dependencyProject)
-                        String extDocUrl = config.release ? calculateRemoteJavadocLink(pdep.group, pdep.name, pdep.version) : packageListLoc
-                        offlineLink(extDocUrl, packageListLoc)
-                    } else {
-                        String artifactName = "${dep.name}-${dep.version}".toString()
-                        if (!isExcluded(artifactName) && dep.name != 'unspecified' &&
-                            isNotBlank(dep.group) && isNotBlank(dep.version)) {
-                            links << calculateRemoteJavadocLink(dep.group, dep.name, dep.version)
-                        }
-                    }
-                }
-            }
-
-            links
-        }
-
-        private boolean isExcluded(String artifactName) {
-            for (String s : excludes) {
-                if (artifactName.matches(s)) {
-                    return true
-                }
-            }
-            false
-        }
-
-        private String calculateRemoteJavadocLink(String group, String name, String version) {
-            if (group == 'javax' && name == 'javaee-api' && version.matches('[567]\\..*')) {
-                'https://docs.oracle.com/javaee/' + version[0, 1] + '/api/'
-            } else if (group == 'javax' && name == 'javaee-api' && version.startsWith('8')) {
-                'https://javaee.github.io/javaee-spec/javadocs/'
-            } else if (group == 'org.springframework' && name.startsWith('spring-')) {
-                'https://docs.spring.io/spring/docs/' + version + '/javadoc-api/'
-            } else if (group == 'org.springframework.boot' && name.startsWith('spring-boot')) {
-                'https://docs.spring.io/spring-boot/docs/' + version + '/api/'
-            } else if (group == 'org.springframework.security' && name.startsWith('spring-security')) {
-                'https://docs.spring.io/spring-security/site/docs/' + version + '/api/'
-            } else if (group == 'org.springframework.data' && name == 'spring-data-jpa') {
-                'https://docs.spring.io/spring-data/jpa/docs/' + version + '/api/'
-            } else if (group == 'org.springframework.webflow' && name == 'spring-webflow') {
-                'https://docs.spring.io/spring-webflow/docs/' + version + '/api/'
-            } else if (group == 'com.squareup.okio' && version.startsWith('1.')) {
-                'https://square.github.io/okio/1.x/' + name + '/'
-            } else if (group == 'com.squareup.okhttp3') {
-                'https://square.github.io/okhttp/3.x/' + name + '/'
-            } else if (group == 'org.hibernate' && name == 'hibernate-core') {
-                'https://docs.jboss.org/hibernate/orm/' + version[0, 3] + '/javadocs/'
-            } else if ((group == 'org.hibernate' || group == 'org.hibernate.validator') && name == 'hibernate-validator') {
-                'https://docs.jboss.org/hibernate/validator/' + version[0, 3] + '/api/'
-            } else if (group == 'org.eclipse.jetty') {
-                'https://www.eclipse.org/jetty/javadoc/' + version + '/'
-            } else if (group == 'org.ow2.asm') {
-                'https://asm.ow2.io/javadoc/'
-            } else if (group.startsWith('org.apache.tomcat')) {
-                'https://tomcat.apache.org/tomcat-' + version[0, 3] + '-doc/api/'
-            } else if (getUseJavadocIo()) {
-                "https://static.javadoc.io/${group}/${name}/${version}/".toString()
-            } else {
-                String normalizedGroup = group.replace('.', '/')
-                "https://oss.sonatype.org/service/local/repositories/releases/archive/$normalizedGroup/$name/$version/$name-$version-javadoc.jar/!/".toString()
-            }
-        }
-
-        void applyTo(MinimalJavadocOptions options) {
-            if (options instanceof StandardJavadocDocletOptions) {
-                StandardJavadocDocletOptions soptions = (StandardJavadocDocletOptions) options
-                offlineLinks.each { String url1, String url2 -> soptions.linksOffline(url1, url2) }
-            }
-        }
-
-        @CompileDynamic
-        private String calculateLocalJavadocLink(Project dependentProject, Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project) ?: resolveConfig(project)
-
-            Task taskDependency = null
-            if (config.docs.javadoc.enabled) {
-                taskDependency = project.tasks.findByName('javadoc')
-            }
-
-            if (config.docs.groovydoc.enabled && config.docs.groovydoc.replaceJavadoc) {
-                taskDependency = project.tasks.findByName('groovydoc')
-            }
-
-            // Android projects don't have a 'javadoc' task
-            if (taskDependency) {
-                dependentProject.tasks.findByName('javadoc').dependsOn(taskDependency)
-                taskDependency.destinationDir.absolutePath.replace('\\', '/')
-            }
-        }
-    }
-
-    @CompileStatic
-    static class Aggregate {
-        Boolean enabled
-        Boolean fast
-        final Set<Project> excludedProjects = new LinkedHashSet<>()
-
-        private final ProjectConfigurationExtension config
-        private final Project project
-
-        Aggregate(ProjectConfigurationExtension config, Project project) {
-            this.config = config
-            this.project = project
-        }
-
-        Map<String, Object> toMap() {
-            Map<String, Object> map = new LinkedHashMap<String, Object>()
-
-            map.enabled = getEnabled()
-            map.fast = getFast()
-            map.excludedProjects = excludedProjects
-
-            new LinkedHashMap<>('aggregate': map)
-        }
-
-        boolean getEnabled() {
-            this.@enabled == null || this.@enabled
-        }
-
-        boolean getFast() {
-            this.@fast == null || this.@fast
-        }
-
-        void copyInto(Aggregate copy) {
-            copy.@enabled = this.@enabled
-            copy.@fast = this.@fast
-            copy.excludedProjects.addAll(excludedProjects)
-        }
-
-        Aggregate copyOf() {
-            Aggregate copy = new Aggregate(config, project)
-            copyInto(copy)
-            copy
-        }
-
-        Aggregate merge(Aggregate other) {
-            Aggregate copy = copyOf()
-            copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
-            copy.fast = copy.@fast != null ? copy.getFast() : other.getFast()
-            copy
-        }
+        void excludeProject(Project project)
     }
 }

@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.tasks
 
-
 import groovy.transform.CompileStatic
 import org.gradle.api.Plugin
 import org.gradle.api.tasks.TaskAction

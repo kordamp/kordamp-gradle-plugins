@@ -17,52 +17,16 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
-
-import static org.kordamp.gradle.StringUtils.isBlank
+import org.gradle.api.provider.Property
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
-class Organization {
-    String name
-    String url
+interface Organization {
+    Property<String> getName()
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
-
-    Map<String, Object> toMap() {
-        new LinkedHashMap<String, Object>([
-            name: name,
-            url : url
-        ])
-    }
-
-    Organization copyOf() {
-        Organization copy = new Organization()
-        copyInto(copy)
-        copy
-    }
-
-    void copyInto(Organization copy) {
-        copy.name = name
-        copy.url = url
-    }
-
-    static void merge(Organization o1, Organization o2) {
-        o1.name = o1.name ?: o2?.name
-        o1.url = o1.url ?: o2?.url
-    }
-
-    boolean isEmpty() {
-        isBlank(name) && isBlank(url)
-    }
+    Property<String> getUrl()
 }

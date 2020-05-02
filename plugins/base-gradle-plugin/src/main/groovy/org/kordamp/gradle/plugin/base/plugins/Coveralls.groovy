@@ -17,37 +17,13 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import org.gradle.api.Project
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
  * @since 0.31.0
  */
 @CompileStatic
-@Canonical
-class Coveralls extends AbstractFeature {
-    static final String PLUGIN_ID = 'org.kordamp.gradle.coveralls'
-
-    Coveralls(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
-    }
-
-    @Override
-    Map<String, Map<String, Object>> toMap() {
-        new LinkedHashMap<>('coveralls': new LinkedHashMap<>(
-            enabled: enabled
-        ))
-    }
-
-    static void merge(Coveralls o1, Coveralls o2) {
-        AbstractFeature.merge(o1, o2)
-    }
+interface Coveralls extends Feature {
+    String PLUGIN_ID = 'org.kordamp.gradle.coveralls'
 }

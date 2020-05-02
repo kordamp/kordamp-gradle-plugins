@@ -17,128 +17,30 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import org.gradle.api.Project
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import org.gradle.api.Action
+import org.gradle.api.provider.Property
 
 /**
  * @author Andres Almiray
  * @since 0.34.0
  */
 @CompileStatic
-@Canonical
-class Jar extends AbstractFeature {
-    static final String PLUGIN_ID = 'org.kordamp.gradle.jar'
+interface Jar extends Feature {
+    String PLUGIN_ID = 'org.kordamp.gradle.jar'
 
-    final Manifest manifest
+    void manifest(Action<? super Manifest> action)
 
-    Jar(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
-        manifest = new Manifest(config, project)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
-    }
-
-    @Override
-    Map<String, Map<String, Object>> toMap() {
-        Map<String, Object> map = new LinkedHashMap<String, Object>(
-            enabled: enabled
-        )
-        map.putAll(manifest.toMap())
-
-        new LinkedHashMap<>(jar: map)
-    }
-
-    void normalize() {
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    setEnabled(isApplied())
-                } else {
-                    setEnabled(project.childProjects.values().any { p -> isApplied(p) })
-                }
-            } else {
-                setEnabled(isApplied())
-            }
-        }
-
-        if (!(manifest.classpathLayoutType in ['simple', 'repository'])) {
-            project.logger.warn("The value 'custom' for jar.manifest.classpathLayoutType is not supported. Using 'simple' instead.")
-            manifest.classpathLayoutType = 'simple'
-        }
-    }
-
-    void copyInto(Jar copy) {
-        super.copyInto(copy)
-        manifest.copyInto(copy.manifest)
-    }
-
-    static void merge(Jar o1, Jar o2) {
-        AbstractQualityFeature.merge(o1, o2)
-        o1.manifest.merge(o2.manifest)
-    }
+    void manifest(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Manifest) Closure<Void> action)
 
     @CompileStatic
-    static class Manifest {
-        Boolean enabled
-        Boolean addClasspath
-        String classpathPrefix = ''
-        String classpathLayoutType = 'simple'
+    interface Manifest {
+        Property<Boolean> getEnabled()
 
-        private final ProjectConfigurationExtension config
-        private final Project project
+        Property<Boolean> getAddClasspath()
 
-        Manifest(ProjectConfigurationExtension config, Project project) {
-            this.config = config
-            this.project = project
-        }
+        Property<String> getClasspathPrefix()
 
-        Map<String, Object> toMap() {
-            Map<String, Object> map = new LinkedHashMap<String, Object>()
-
-            map.enabled = getEnabled()
-            map.addClasspath = getAddClasspath()
-            map.classpathPrefix = getClasspathPrefix()
-            map.classpathLayoutType = getClasspathLayoutType()
-
-            new LinkedHashMap<>('manifest': map)
-        }
-
-        boolean getEnabled() {
-            this.@enabled == null || this.@enabled
-        }
-
-        boolean getAddClasspath() {
-            this.@addClasspath == null || this.@addClasspath
-        }
-
-        void copyInto(Manifest copy) {
-            copy.enabled = this.@enabled
-            copy.addClasspath = this.@addClasspath
-            copy.classpathPrefix = this.classpathPrefix
-            copy.classpathLayoutType = this.classpathLayoutType
-        }
-
-        Manifest copyOf() {
-            Manifest copy = new Manifest(config, project)
-            copyInto(copy)
-            copy
-        }
-
-        Manifest merge(Manifest other) {
-            Manifest copy = copyOf()
-            copy.setEnabled(copy.@enabled != null ? copy.getEnabled() : other.getEnabled())
-            copy.setAddClasspath(copy.@addClasspath != null ? copy.getAddClasspath() : other.getAddClasspath())
-            copy.classpathPrefix = copy.classpathPrefix ?: other.classpathPrefix
-            copy.classpathLayoutType = copy.classpathLayoutType ?: other.classpathLayoutType
-            copy
-        }
+        Property<String> getClasspathLayoutType()
     }
 }

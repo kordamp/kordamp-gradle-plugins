@@ -19,8 +19,8 @@ package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import org.gradle.api.Project
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 
 import java.util.function.Predicate
 
@@ -29,74 +29,23 @@ import java.util.function.Predicate
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-class Clirr extends AbstractAggregateFeature {
-    static final String PLUGIN_ID = 'org.kordamp.gradle.clirr'
+interface Clirr extends AggregatingFeature {
+    String PLUGIN_ID = 'org.kordamp.gradle.clirr'
 
-    String baseline
-    File filterFile
-    Predicate<? super Difference> filter
-    boolean failOnErrors = true
-    boolean failOnException = false
-    boolean semver = true
+    Property<String> getBaseline()
 
-    private boolean failOnErrorsSet
-    private boolean failOnExceptionSet
-    private boolean semverSet
+    RegularFileProperty getFilterFile()
 
-    Clirr(ProjectConfigurationExtension config, Project project) {
-        super(config, project, PLUGIN_ID, 'clirr')
-    }
+    Property<Predicate<? super Difference>> getFilter()
 
-    void normalize() {
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    setEnabled(project.pluginManager.hasPlugin('java') && isApplied())
-                } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java') && isApplied(p) })
-                }
-            } else {
-                setEnabled(project.pluginManager.hasPlugin('java') && isApplied())
-            }
-        }
-    }
+    Property<Boolean> getFailOnErrors()
 
-    @Override
-    protected void populateMapDescription(Map<String, Object> map) {
-        map.baseline = this.baseline
-        map.filterFile = this.filterFile
-        map.failOnErrors = this.failOnErrors
-        map.failOnException = this.failOnException
-        map.semver = this.semver
-        map.filter = this.filter != null
-    }
+    Property<Boolean> getFailOnException()
 
-    void copyInto(Clirr copy) {
-        super.copyInto(copy)
-        copy.@failOnErrors = this.failOnErrors
-        copy.@failOnErrorsSet = this.failOnErrorsSet
-        copy.@failOnException = this.failOnException
-        copy.@failOnExceptionSet = this.failOnExceptionSet
-        copy.@semver = this.semver
-        copy.@semverSet = this.semverSet
-        copy.baseline = baseline
-        copy.filterFile = filterFile
-        copy.filter = filter
-    }
-
-    static void merge(Clirr o1, Clirr o2) {
-        AbstractAggregateFeature.merge(o1, o2)
-        o1.setFailOnErrors((boolean) (o1.failOnErrorsSet ? o1.failOnErrors : o2.failOnErrors))
-        o1.setFailOnException((boolean) (o1.failOnExceptionSet ? o1.failOnException : o2.failOnException))
-        o1.setSemver((boolean) (o1.semverSet ? o1.semver : o2.semver))
-        o1.baseline = o1.baseline ?: o2.baseline
-        o1.filterFile = o1.filterFile ?: o2.filterFile
-        o1.filter = o1.filter ?: o2.filter
-    }
+    Property<Boolean> getSemver()
 
     @Canonical
-    static class Difference implements Comparable<Difference> {
+    static class Difference implements Serializable, Comparable<Difference> {
         String classname
         String severity
         String identifier

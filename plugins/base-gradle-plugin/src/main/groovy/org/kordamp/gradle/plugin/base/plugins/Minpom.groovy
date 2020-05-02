@@ -17,37 +17,13 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import org.gradle.api.Project
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-class Minpom extends AbstractFeature {
-    static final String PLUGIN_ID = 'org.kordamp.gradle.minpom'
-
-    Minpom(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
-    }
-
-    @Override
-    Map<String, Map<String, Object>> toMap() {
-        new LinkedHashMap<>('minpom': new LinkedHashMap<>(
-            enabled: enabled
-        ))
-    }
-
-    static void merge(Minpom o1, Minpom o2) {
-        AbstractFeature.merge(o1, o2)
-    }
+interface Minpom extends Feature {
+    String PLUGIN_ID = 'org.kordamp.gradle.minpom'
 }

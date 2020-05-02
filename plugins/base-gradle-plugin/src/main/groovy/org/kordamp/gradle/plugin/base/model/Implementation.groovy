@@ -17,62 +17,20 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
+import org.gradle.api.provider.Property
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
-class Implementation {
-    boolean enabled = true
-    String title
-    String version
-    String vendor
+interface Implementation {
+    Property<Boolean> getEnabled()
 
-    private boolean enabledSet
+    Property<String> getTitle()
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
+    Property<String> getVersion()
 
-    Map<String, Object> toMap() {
-        new LinkedHashMap<String, Object>([
-            enabled: enabled,
-            title  : title,
-            version: version,
-            vendor : vendor
-        ])
-    }
-
-    void setEnabled(boolean enabled) {
-        this.enabled = enabled
-        this.enabledSet = true
-    }
-
-    boolean isEnabledSet() {
-        this.enabledSet
-    }
-
-    Implementation copyOf() {
-        Implementation copy = new Implementation()
-        copy.@enabled = enabled
-        copy.@enabledSet = enabledSet
-        copy.title = title
-        copy.version = version
-        copy.vendor = vendor
-        copy
-    }
-
-    static void merge(Implementation o1, Implementation o2) {
-        o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
-        o1.title = o1.title ?: o2.title
-        o1.version = o1.version ?: o2.version
-        o1.vendor = o1.vendor ?: o2.vendor
-    }
+    Property<String> getVendor()
 }

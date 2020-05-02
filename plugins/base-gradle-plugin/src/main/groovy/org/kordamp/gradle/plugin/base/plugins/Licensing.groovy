@@ -17,120 +17,49 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
-import org.kordamp.gradle.CollectionUtils
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.model.License
-import org.kordamp.gradle.plugin.base.model.LicenseSet
-
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
+import org.kordamp.gradle.plugin.base.model.LicenseId
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-class Licensing extends AbstractFeature {
-    static final String PLUGIN_ID = 'org.kordamp.gradle.licensing'
+interface Licensing extends Feature {
+    String PLUGIN_ID = 'org.kordamp.gradle.licensing'
 
-    String mergeStrategy
+    Property<String> getMergeStrategy()
 
-    final LicenseSet licenses = new LicenseSet()
-    final Set<String> excludedSourceSets = new LinkedHashSet<>()
+    void licenses(Action<? super LicenseSet> action)
 
-    Licensing(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+    void licenses(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = LicenseSet) Closure<Void> action)
+
+    void excludeSourceSet(String sourceSetName)
+
+    @CompileStatic
+    interface LicenseSet {
+        void license(Action<? super License> action)
+
+        void license(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = License) Closure<Void> action)
     }
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
+    @CompileStatic
+    interface License {
+        Property<LicenseId> getId()
 
-    Map<String, Map<String, Object>> toMap() {
-        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
+        Property<String> getName()
 
-        map.mergeStrategy = mergeStrategy
-        map.excludedSourceSets = excludedSourceSets
-        map.licenses = licenses.licenses.collectEntries { License license ->
-            [(license.licenseId?.name() ?: license.name): license.toMap()]
-        }
+        Property<String> getUrl()
 
-        new LinkedHashMap<>('licensing': map)
-    }
+        Property<String> getDistribution()
 
-    void normalize() {
-        if (!enabledSet && isRoot()) {
-            setEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
-        }
-    }
+        Property<String> getComments()
 
-    void licenses(Action<? super LicenseSet> action) {
-        action.execute(licenses)
-    }
+        Property<Boolean> getPrimary()
 
-    void licenses(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = LicenseSet) Closure action) {
-        ConfigureUtil.configure(action, licenses)
-    }
-
-    void excludeSourceSet(String s) {
-        if (isNotBlank(s)) {
-            excludedSourceSets << s
-        }
-    }
-
-    void copyInto(Licensing copy) {
-        super.copyInto(copy)
-        copy.mergeStrategy = this.mergeStrategy
-        copy.excludedSourceSets.addAll(this.excludedSourceSets)
-        licenses.copyInto(copy.licenses)
-    }
-
-    static void merge(Licensing o1, Licensing o2) {
-        AbstractFeature.merge(o1, o2)
-        o1.mergeStrategy = o1.mergeStrategy? o1.mergeStrategy : o2?.mergeStrategy
-        CollectionUtils.merge(o1.excludedSourceSets, o2?.excludedSourceSets)
-        switch (o1.mergeStrategy) {
-            case 'overwrite':
-                break
-            case 'merge':
-            default:
-                LicenseSet.merge(o1.licenses, o2.licenses)
-                break
-        }
-    }
-
-    List<String> validate(ProjectConfigurationExtension extension) {
-        List<String> errors = []
-
-        if (!enabled) return errors
-
-        if (!(mergeStrategy in ['merge', 'overwrite'])) {
-            errors << "Invalid value for licensing.mergeStrategy '${mergeStrategy}'. It should be one of merge, overwrite".toString()
-        }
-
-        errors = licenses.validate(extension)
-
-        errors
-    }
-
-    List<License> allLicenses() {
-        licenses.licenses
-    }
-
-    boolean isEmpty() {
-        licenses.isEmpty()
-    }
-
-    List<String> resolveBintrayLicenseIds() {
-        List<String> ids = allLicenses().collect { it.licenseId?.bintray() ?: '' }.unique()
-        ids.remove('')
-        ids
+        SetProperty<String> getAliases()
     }
 }

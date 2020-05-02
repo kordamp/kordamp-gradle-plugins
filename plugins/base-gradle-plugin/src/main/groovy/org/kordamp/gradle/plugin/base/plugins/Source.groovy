@@ -17,39 +17,13 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import org.gradle.api.Project
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-class Source extends AbstractAggregateFeature {
+interface Source extends Feature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.source-jar'
-
-    Source(ProjectConfigurationExtension config, Project project) {
-        super(config, project, PLUGIN_ID, 'source')
-    }
-
-    @Override
-    protected void populateMapDescription(Map<String, Object> map) {
-    }
-
-    void normalize() {
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    setEnabled(isApplied())
-                } else {
-                    setEnabled(project.childProjects.values().any { p -> isApplied(p) })
-                }
-            } else {
-                setEnabled(isApplied())
-            }
-        }
-    }
 }

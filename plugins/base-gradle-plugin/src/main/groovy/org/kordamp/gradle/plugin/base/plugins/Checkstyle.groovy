@@ -17,118 +17,35 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.gradle.api.Project
-import org.kordamp.gradle.CollectionUtils
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
 /**
  * @author Andres Almiray
  * @since 0.31.0
  */
 @CompileStatic
-@Canonical
-class Checkstyle extends AbstractQualityFeature {
-    static final String PLUGIN_ID = 'org.kordamp.gradle.checkstyle'
+interface Checkstyle extends QualityFeature {
+    String PLUGIN_ID = 'org.kordamp.gradle.checkstyle'
 
-    File configFile
-    Map<String, Object> configProperties = [:]
-    int maxErrors
-    int maxWarnings = Integer.MAX_VALUE
-    boolean showViolations = true
-    Set<String> excludes = new LinkedHashSet<>()
-    Set<String> includes = new LinkedHashSet<>()
+    RegularFileProperty getConfigFile()
 
-    private boolean showViolationsSet
+    MapProperty<String, Object> getConfigProperties()
 
-    Checkstyle(ProjectConfigurationExtension config, Project project) {
-        super(config, project, PLUGIN_ID, 'checkstyle')
-        toolVersion = '8.27'
-    }
+    Property<Integer> getMaxErrors()
 
-    @Override
-    protected void populateMapDescription(Map<String, Object> map) {
-        super.populateMapDescription(map)
-        map.configFile = this.configFile
-        map.configProperties = this.configProperties
-        map.maxErrors = this.maxErrors
-        map.maxWarnings = this.maxWarnings
-        map.excludes = this.excludes
-        map.includes = this.includes
-        map.showViolations = this.showViolations
-    }
+    Property<Integer> getMaxWarnings()
 
-    @Override
-    void normalize() {
-        if (null == configFile) {
-            File file = project.rootProject.file("config/checkstyle/${project.name}.xml")
-            if (!file.exists()) {
-                file = project.rootProject.file('config/checkstyle/checkstyle.xml')
-            }
-            configFile = file
-        }
+    Property<Boolean> getShowViolations()
 
-        super.normalize()
-    }
+    SetProperty<String> getExcludes()
 
-    void setShowViolations(boolean showViolations) {
-        this.showViolations = showViolations
-        this.showViolationsSet = true
-    }
+    SetProperty<String> getIncludes()
 
-    boolean isShowViolationsSet() {
-        this.showViolationsSet
-    }
+    void include(String str)
 
-    void include(String str) {
-        includes << str
-    }
-
-    void exclude(String str) {
-        excludes << str
-    }
-
-    void copyInto(Checkstyle copy) {
-        super.copyInto(copy)
-        copy.@showViolations = showViolations
-        copy.@showViolationsSet = showViolationsSet
-        copy.excludes.addAll(excludes)
-        copy.includes.addAll(includes)
-        copy.configFile = configFile
-        copy.maxErrors = maxErrors
-        copy.maxWarnings = maxWarnings
-        copy.configProperties.putAll(configProperties)
-    }
-
-    static void merge(Checkstyle o1, Checkstyle o2) {
-        AbstractQualityFeature.merge(o1, o2)
-        o1.setShowViolations((boolean) (o1.showViolationsSet ? o1.showViolations : o2.showViolations))
-        CollectionUtils.merge(o1.excludes, o2?.excludes)
-        CollectionUtils.merge(o1.includes, o2?.includes)
-        o1.configFile = o1.configFile ?: o2.configFile
-        o1.maxErrors = o1.maxErrors ?: o2.maxErrors
-        o1.maxWarnings = o1.maxWarnings ?: o2.maxWarnings
-        CollectionUtils.merge(o1.configProperties, o2?.configProperties)
-    }
-
-    @CompileDynamic
-    void applyTo(org.gradle.api.plugins.quality.Checkstyle checkstyleTask) {
-        String sourceSetName = (checkstyleTask.name - 'checkstyle').uncapitalize()
-        sourceSetName = sourceSetName == 'allCheckstyle' ? project.name : sourceSetName
-        sourceSetName = sourceSetName == 'aggregateCheckstyle' ? 'aggregate' : sourceSetName
-        checkstyleTask.enabled = enabled && configFile.exists()
-        checkstyleTask.includes.addAll(includes)
-        checkstyleTask.excludes.addAll(excludes)
-        checkstyleTask.configFile = configFile
-        checkstyleTask.maxErrors = maxErrors
-        checkstyleTask.maxWarnings = maxWarnings
-        checkstyleTask.showViolations = showViolations
-        checkstyleTask.ignoreFailures = ignoreFailures
-        checkstyleTask.reports.html.enabled = true
-        checkstyleTask.reports.xml.enabled = true
-        checkstyleTask.reports.html.destination = project.layout.buildDirectory.file("reports/checkstyle/${sourceSetName}.html").get().asFile
-        checkstyleTask.reports.xml.destination = project.layout.buildDirectory.file("reports/checkstyle/${sourceSetName}.xml").get().asFile
-    }
+    void exclude(String str)
 }

@@ -17,70 +17,16 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.gradle.api.Action
-import org.gradle.util.ConfigureUtil
 
 /**
  * @author Andres Almiray
  * @since 0.22.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
-class NotifierSet {
-    final List<Notifier> notifiers = []
+interface NotifierSet {
+    void notifier(Action<? super Notifier> action)
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
-
-    @CompileDynamic
-    Map<String, Map<String, Object>> toMap() {
-        if (isEmpty()) return [:]
-
-        notifiers.collectEntries { Notifier notifier ->
-            [(notifier.id ?: notifier.name): notifier.toMap()]
-        }
-    }
-
-    void notifier(Action<? super Notifier> action) {
-        Notifier notifier = new Notifier()
-        action.execute(notifier)
-        notifiers << notifier
-    }
-
-    void notifier(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Notifier) Closure action) {
-        Notifier notifier = new Notifier()
-        ConfigureUtil.configure(action, notifier)
-        notifiers << notifier
-    }
-
-    void copyInto(NotifierSet notifierSet) {
-        notifierSet.notifiers.addAll(notifiers.collect { it.copyOf() })
-    }
-
-    static void merge(NotifierSet o1, NotifierSet o2) {
-        Map<String, Notifier> a = o1.notifiers.collectEntries { [(it.id): it] }
-        Map<String, Notifier> b = o2.notifiers.collectEntries { [(it.id): it] }
-
-        a.each { k, notifier ->
-            Notifier.merge(notifier, b.remove(k))
-        }
-        a.putAll(b)
-        o1.notifiers.clear()
-        o1.notifiers.addAll(a.values())
-    }
-
-    void forEach(Closure action) {
-        notifiers.each(action)
-    }
-
-    boolean isEmpty() {
-        notifiers.isEmpty()
-    }
+    void notifier(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Notifier) Closure<Void> action)
 }

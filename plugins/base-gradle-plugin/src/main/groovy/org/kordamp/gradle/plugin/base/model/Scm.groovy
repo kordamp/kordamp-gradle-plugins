@@ -17,73 +17,22 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
-import org.gradle.api.Project
-
-import static org.kordamp.gradle.StringUtils.isBlank
+import org.gradle.api.provider.Property
 
 /**
  * @author Andres Almiray
  * @since 0.9.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
-class Scm {
-    Boolean enabled
-    String url
-    String tag
-    String connection
-    String developerConnection
+interface Scm {
+    Property<Boolean> getEnabled()
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
+    Property<String> getUrl()
 
-    Map<String, Object> toMap() {
-        new LinkedHashMap<String, Object>([
-            enabled            : getEnabled(),
-            url                : url,
-            tag                : tag,
-            connection         : connection,
-            developerConnection: developerConnection
-        ])
-    }
+    Property<String> getTag()
 
-    boolean getEnabled() {
-        this.@enabled == null || this.@enabled
-    }
+    Property<String> getConnection()
 
-    void copyInto(Scm copy) {
-        copy.enabled = this.@enabled
-        copy.url = url
-        copy.tag = tag
-        copy.connection = connection
-        copy.developerConnection = developerConnection
-    }
-
-    static void merge(Scm o1, Scm o2) {
-        o1.enabled = o1.@enabled != null ? o1.getEnabled() : o2.getEnabled()
-        o1.url = o1.url ?: o2.url
-        o1.tag = o1.tag ?: o2.tag
-        o1.connection = o1.connection ?: o2.connection
-        o1.developerConnection = o1.developerConnection ?: o2.developerConnection
-    }
-
-    List<String> validate(Project project) {
-        List<String> errors = []
-
-        if (getEnabled() && isBlank(url)) {
-            errors << "[${project.name}] Project links:url is blank".toString()
-        }
-
-        errors
-    }
-
-    boolean isEmpty() {
-        !getEnabled() && isBlank(url)
-    }
+    Property<String> getDeveloperConnection()
 }

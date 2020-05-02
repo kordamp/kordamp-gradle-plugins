@@ -42,7 +42,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.model.Dependency
 import org.kordamp.gradle.plugin.base.model.License
 import org.kordamp.gradle.plugin.base.model.MailingList
 import org.kordamp.gradle.plugin.base.model.Person

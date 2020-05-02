@@ -17,73 +17,27 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
-import org.kordamp.gradle.CollectionUtils
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
 
 /**
  * @author Andres Almiray
  * @since 0.22.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
-class Notifier {
-    String id
-    String type
-    boolean sendOnError
-    boolean sendOnFailure
-    boolean sendOnSuccess
-    boolean sendOnWarning
-    Map<String, String> configuration = [:]
+interface Notifier {
+    Property<String> getId()
 
-    private boolean sendOnErrorSet
-    private boolean sendOnFailureSet
-    private boolean sendOnSuccessSet
-    private boolean sendOnWarningSet
+    Property<String> getType()
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
+    Property<Boolean> getSendOnError()
 
-    Map<String, Object> toMap() {
-        new LinkedHashMap<String, Object>([
-            id: id,
-            type         : type,
-            sendOnError  : sendOnError,
-            sendOnFailure: sendOnFailure,
-            sendOnSuccess: sendOnSuccess,
-            sendOnWarning: sendOnWarning,
-            configuration: configuration
-        ])
-    }
+    Property<Boolean> getSendOnFailure()
 
-    Notifier copyOf() {
-        Notifier copy = new Notifier()
-        copy.id = id
-        copy.type = type
-        copy.@sendOnError = this.sendOnError
-        copy.@sendOnErrorSet = this.sendOnErrorSet
-        copy.@sendOnFailure = this.sendOnFailure
-        copy.@sendOnFailureSet = this.sendOnFailureSet
-        copy.@sendOnSuccess = this.sendOnSuccess
-        copy.@sendOnSuccessSet = this.sendOnSuccessSet
-        copy.@sendOnWarning = this.sendOnWarning
-        copy.@sendOnWarningSet = this.sendOnWarningSet
-        copy.configuration.putAll(configuration)
-        copy
-    }
+    Property<Boolean> getSendOnSuccess()
 
-    static Notifier merge(Notifier o1, Notifier o2) {
-        o1.id = o1.id ?: o2?.id
-        o1.type = o1.type ?: o2?.type
-        o1.setSendOnError((boolean) (o1.sendOnErrorSet ? o1.sendOnError : o2.sendOnError))
-        o1.setSendOnFailure((boolean) (o1.sendOnFailureSet ? o1.sendOnFailure : o2.sendOnFailure))
-        o1.setSendOnSuccess((boolean) (o1.sendOnSuccessSet ? o1.sendOnSuccess : o2.sendOnSuccess))
-        o1.setSendOnWarning((boolean) (o1.sendOnWarningSet ? o1.sendOnWarning : o2.sendOnWarning))
-        CollectionUtils.merge(o1.configuration, o2?.configuration)
-        o1
-    }
+    Property<Boolean> getSendOnWarning()
+
+    MapProperty<String, String> getConfiguration()
 }

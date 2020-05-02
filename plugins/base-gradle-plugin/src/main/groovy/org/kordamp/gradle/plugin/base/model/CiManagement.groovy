@@ -17,67 +17,21 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.gradle.api.Action
-import org.gradle.util.ConfigureUtil
-
-import static org.kordamp.gradle.StringUtils.isBlank
+import org.gradle.api.provider.Property
 
 /**
  * @author Andres Almiray
  * @since 0.22.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
-class CiManagement {
-    String system
-    String url
+interface CiManagement {
+    Property<String> getSystem()
 
-    final NotifierSet notifiers = new NotifierSet()
+    Property<String> getUrl()
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
+    void notifiers(Action<? super NotifierSet> action)
 
-    Map<String, Object> toMap() {
-        new LinkedHashMap<String, Object>([
-            system   : system,
-            url      : url,
-            notifiers: notifiers.toMap()
-        ])
-    }
-
-    CiManagement copyOf() {
-        CiManagement copy = new CiManagement()
-        copyInto(copy)
-        copy
-    }
-
-    void copyInto(CiManagement copy) {
-        copy.system = system
-        copy.url = url
-        notifiers.copyInto(copy.notifiers)
-    }
-
-    static void merge(CiManagement o1, CiManagement o2) {
-        o1.system = o1.system ?: o2?.system
-        o1.url = o1.url ?: o2?.url
-        NotifierSet.merge(o1.notifiers, o2.notifiers)
-    }
-
-    boolean isEmpty() {
-        isBlank(system) && isBlank(url)
-    }
-
-    void notifiers(Action<? super NotifierSet> action) {
-        action.execute(notifiers)
-    }
-
-    void notifiers(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NotifierSet) Closure action) {
-        ConfigureUtil.configure(action, notifiers)
-    }
+    void notifiers(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NotifierSet) Closure<Void> action)
 }

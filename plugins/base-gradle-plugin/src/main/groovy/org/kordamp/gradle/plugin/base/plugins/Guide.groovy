@@ -17,109 +17,28 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.gradle.api.provider.Property
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-class Guide extends AbstractFeature {
-    static final String PLUGIN_ID = 'org.kordamp.gradle.guide'
+interface Guide extends Feature {
+    String PLUGIN_ID = 'org.kordamp.gradle.guide'
 
-    final Publish publish
+    void publish(Action<? super Publish> action)
 
-    Guide(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
-        publish = new Publish(config)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
-    }
-
-    @Override
-    Map<String, Map<String, Object>> toMap() {
-        Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
-
-        map.publish = publish.toMap()
-
-        new LinkedHashMap<>(['guide': map])
-    }
-
-    void copyInto(Guide copy) {
-        super.copyInto(copy)
-        publish.copyInto(copy.publish)
-    }
-
-    static void merge(Guide o1, Guide o2) {
-        AbstractFeature.merge(o1, o2)
-        Publish.merge(o1.publish, o2.publish)
-    }
-
-    void publish(Action<? super Publish> action) {
-        action.execute(publish)
-    }
-
-    void publish(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Publish) Closure action) {
-        ConfigureUtil.configure(action, publish)
-    }
-
-    void normalize() {
-        if(!enabledSet) {
-            doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
-        }
-        publish.normalize()
-    }
+    void publish(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Publish) Closure<Void> action)
 
     @CompileStatic
-    @Canonical
-    static class Publish {
-        String branch = 'gh-pages'
-        String message
+    interface Publish extends Feature {
+        Property<String> getBranch()
 
-        private Boolean enabled
-        final Project project
+        Property<String> getMessage()
 
-        Publish(ProjectConfigurationExtension config) {
-            project = config.project
-            message = "Publish guide for ${config.project.version}"
-        }
-
-        boolean isEnabled() {
-            this.@enabled != null && this.@enabled
-        }
-
-        void normalize() {
-            if (null == enabled) {
-                enabled = project.pluginManager.hasPlugin('org.ajoberstar.git-publish')
-            }
-        }
-
-        void copyInto(Publish copy) {
-            copy.@enabled = this.@enabled
-            copy.@branch = this.@branch
-            copy.@message = this.@message
-        }
-
-        static void merge(Publish o1, Publish o2) {
-            o1.branch = o1.branch ?: o2.branch
-            o1.message = o1.message ?: o2.message
-        }
-
-        Map<String, Object> toMap() {
-            new LinkedHashMap<String, Object>(
-                enabled: isEnabled(),
-                branch: branch,
-                message: message)
-        }
+        Property<Boolean> getEnabled()
     }
 }

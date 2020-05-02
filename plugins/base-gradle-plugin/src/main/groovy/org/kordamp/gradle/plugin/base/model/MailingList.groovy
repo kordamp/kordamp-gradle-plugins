@@ -17,62 +17,25 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
-import org.kordamp.gradle.CollectionUtils
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
 /**
  * @author Andres Almiray
  * @since 0.22.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
-class MailingList {
-    String name
-    String subscribe
-    String unsubscribe
-    String post
-    String archive
-    List<String> otherArchives = []
+interface MailingList {
+    Property<String> getName()
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
+    Property<String> getSubscribe()
 
-    Map<String, Object> toMap() {
-        new LinkedHashMap<String, Object>([
-            name         : name,
-            subscribe    : subscribe,
-            unsubscribe  : unsubscribe,
-            post         : post,
-            archive      : archive,
-            otherArchives: otherArchives
-        ])
-    }
+    Property<String> getUnsubscribe()
 
-    MailingList copyOf() {
-        MailingList copy = new MailingList()
-        copy.name = name
-        copy.subscribe = subscribe
-        copy.unsubscribe = unsubscribe
-        copy.post = post
-        copy.archive = archive
-        List<String> rls = new ArrayList<>(copy.otherArchives)
-        copy.otherArchives.clear()
-        copy.otherArchives.addAll(rls + otherArchives)
-        copy
-    }
+    Property<String> getPost()
 
-    static MailingList merge(MailingList o1, MailingList o2) {
-        o1.name = o1.name ?: o2?.name
-        o1.subscribe = o1.subscribe ?: o2?.subscribe
-        o1.unsubscribe = o1.unsubscribe ?: o2?.unsubscribe
-        o1.post = o1.post ?: o2?.post
-        o1.archive = o1.archive ?: o2?.archive
-        CollectionUtils.merge(o1.otherArchives, o2?.otherArchives)
-        o1
-    }
+    Property<String> getArchive()
+
+    SetProperty<String> getOtherArchives()
 }

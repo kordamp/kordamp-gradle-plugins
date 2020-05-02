@@ -17,63 +17,18 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
-
-import static org.kordamp.gradle.StringUtils.isBlank
+import org.gradle.api.provider.Property
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
-class Credentials {
-    String name
-    String username
-    String password
+interface Credentials {
+    Property<String> getName()
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
+    Property<String> getUsername()
 
-    Map<String, Object> toMap() {
-        new LinkedHashMap<String, Object>([
-            name    : name,
-            username: username,
-            password: password
-        ])
-    }
-
-    Credentials copyOf() {
-        Credentials copy = new Credentials()
-        copyInto(copy)
-        copy
-    }
-
-    void copyInto(Credentials copy) {
-        copy.name = name
-        copy.username = username
-        copy.password = password
-    }
-
-    static Credentials merge(Credentials o1, Credentials o2) {
-        if (o1) {
-            o1.name = o1.name ?: o2?.name
-            o1.username = o1.username ?: o2?.username
-            o1.password = o1.password ?: o2?.password
-            return o1
-        } else if (o2) {
-            return o2.copyOf()
-        } else {
-            return null
-        }
-    }
-
-    boolean isEmpty() {
-        isBlank(username) && isBlank(password)
-    }
+    Property<String> getPassword()
 }
