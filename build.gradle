@@ -50,6 +50,10 @@ config {
             }
         }
     }
+
+    bintray {
+        skipMavenSync = true
+    }
 }
 
 allprojects {
