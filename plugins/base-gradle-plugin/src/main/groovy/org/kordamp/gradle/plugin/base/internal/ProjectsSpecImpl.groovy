@@ -20,6 +20,7 @@ package org.kordamp.gradle.plugin.base.internal
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectsSpec
 
 import java.util.function.Function
@@ -195,8 +196,7 @@ final class ProjectsSpecImpl implements ProjectsSpec {
         void apply(Project project) {
             if (condition.apply(project)) {
                 if (closure) {
-                    closure.delegate = project
-                    closure.call(project)
+                    ConfigureUtil.configure(closure, project)
                 } else {
                     action.execute(project)
                 }
