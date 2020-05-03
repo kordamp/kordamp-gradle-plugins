@@ -131,7 +131,8 @@ class PublishingUtils {
                 signingExtension.sign(publication)
             }
         } else {
-            publications.each { publicationName ->
+            for(String publicationName : publications) {
+                if (publicationName.contains('PluginMarker')) continue
                 Publication publication = publishingExtension.publications.findByName(publicationName)
                 if (publication) {
                     signingExtension.sign(publication)

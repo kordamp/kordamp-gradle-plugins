@@ -36,7 +36,6 @@ import org.kordamp.gradle.plugin.jar.JarPlugin
 import org.kordamp.gradle.plugin.source.SourceJarPlugin
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.PluginUtils.resolveSourceSets
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -136,7 +135,8 @@ class PublishingPlugin extends AbstractKordampPlugin {
 
         project.publishing {
             publications {
-                config.publishing.publications.each { String pub ->
+                for(String pub: config.publishing.publications) {
+                    if (pub.contains('PluginMarker')) continue
                     "${pub}"(MavenPublication) {
                         PublishingUtils.configurePom(pom, config, config.publishing.pom)
                     }

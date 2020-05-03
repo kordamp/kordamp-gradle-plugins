@@ -149,12 +149,9 @@ class PluginPlugin extends AbstractKordampPlugin {
                 pluginMaven(MavenPublication) {
                     PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.publishing.pom)
                 }
-                "${pluginName}PluginMarkerMaven"(MavenPublication) {
-                    PublishingUtils.configurePom(pom, effectiveConfig, effectiveConfig.publishing.pom)
-                }
             }
         }
 
-        PublishingUtils.configureSigning(effectiveConfig, project, 'pluginMaven', pluginName + 'PluginMarkerMaven')
+        PublishingUtils.configureSigning(effectiveConfig, project, 'pluginMaven')
     }
 }
