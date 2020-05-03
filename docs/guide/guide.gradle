@@ -15,10 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    id 'org.kordamp.gradle.guide'
-    id 'org.ajoberstar.git-publish'
-}
 
 configurations {
     asciidoctorExtensions

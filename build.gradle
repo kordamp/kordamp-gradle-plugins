@@ -15,11 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    id 'org.kordamp.gradle.groovy-project'
-    id 'org.kordamp.gradle.bintray'
-    id 'org.kordamp.gradle.plugin' apply false
-}
 
 config {
     info {
@@ -57,8 +52,6 @@ config {
 }
 
 allprojects {
-    apply plugin: 'idea'
-
     repositories {
         gradlePluginPortal()
         flatDir { dir rootProject.file('libraries') }
@@ -66,23 +59,19 @@ allprojects {
     }
 }
 
-subprojects {
-    if (project.name.endsWith('-plugin')) {
-        apply plugin: 'groovy'
-        apply plugin: 'java-library'
-        apply plugin: 'org.kordamp.gradle.plugin'
-
+projects.subprojects {
+    dir('plugins') {
         config {
             info {
-                description = project.project_description
+                description = project_description
             }
 
             bintray { enabled = true }
 
             plugin {
                 enabled             = true
-                id                  = project.pluginId
-                implementationClass = project.pluginImplementationClass
+                id                  = pluginId
+                implementationClass = pluginImplementationClass
             }
         }
 

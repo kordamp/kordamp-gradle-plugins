@@ -15,19 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-pluginManagement {
-    repositories {
-        jcenter()
-        gradlePluginPortal()
-    }
-    plugins {
-        id 'org.kordamp.gradle.groovy-project' version kordampPluginVersion
-        id 'org.kordamp.gradle.bintray'        version kordampPluginVersion
-        id 'org.kordamp.gradle.plugin'         version kordampPluginVersion
-        id 'org.kordamp.gradle.guide'          version kordampPluginVersion
-        id 'org.ajoberstar.git-publish'        version gitPluginVersion
-    }
-}
 
 buildscript {
     repositories {
@@ -36,12 +23,39 @@ buildscript {
         mavenLocal()
     }
     dependencies {
+        classpath "org.ajoberstar:gradle-git-publish:$gitPluginVersion"
+        classpath "org.kordamp.gradle:groovy-project-gradle-plugin:$kordampPluginVersion"
+        classpath "org.kordamp.gradle:bintray-gradle-plugin:$kordampPluginVersion"
+        classpath "org.kordamp.gradle:plugin-gradle-plugin:$kordampPluginVersion"
+        classpath "org.kordamp.gradle:guide-gradle-plugin:$kordampPluginVersion"
+        classpath "org.kordamp.gradle:settings-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:kordamp-parentbuild:$kordampBuildVersion"
     }
 }
 apply plugin: 'org.kordamp.gradle.kordamp-parentbuild'
 
 rootProject.name = 'kordamp-gradle-plugins'
+
+projects {
+    plugins {
+        all {
+            id 'idea'
+        }
+        path(':') {
+            id 'org.kordamp.gradle.groovy-project'
+            id 'org.kordamp.gradle.bintray'
+        }
+        path(':guide') {
+            id 'org.kordamp.gradle.guide'
+            id 'org.ajoberstar.git-publish'
+        }
+        dir('plugins') {
+            id 'java-library'
+            id 'groovy'
+            id 'org.kordamp.gradle.plugin'
+        }
+    }
+}
 
 enforce {
     mergeStrategy = 'append'
