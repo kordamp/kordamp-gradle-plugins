@@ -166,7 +166,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                     t.dependsOn project.tasks.named('classes')
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Generates Groovydoc API documentation'
-                    t.source project.sourceSets.main.allSource
+                    t.source = project.sourceSets.main.allSource
                     t.destinationDir = project.file("${project.buildDir}/docs/groovydoc")
                     t.classpath = project.tasks.named('javadoc', Javadoc).get().classpath
                     t.enabled = config.docs.groovydoc.enabled

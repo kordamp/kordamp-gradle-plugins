@@ -159,7 +159,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                     t.dependsOn project.tasks.named('classes')
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Generates Scaladoc API documentation'
-                    t.source project.sourceSets.main.allSource
+                    t.source = project.sourceSets.main.allSource
                     t.destinationDir = project.file("${project.buildDir}/docs/scaladoc")
                     config.docs.scaladoc.applyTo(t)
                 }

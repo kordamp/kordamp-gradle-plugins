@@ -166,7 +166,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Generates Javadoc API documentation'
                     t.destinationDir = project.file("${project.buildDir}/docs/javadoc")
-                    t.source project.sourceSets.main.allJava
+                    t.source = project.sourceSets.main.allJava
                     config.docs.javadoc.applyTo(t)
                     t.options.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
                     if (JavaVersion.current().isJava8Compatible()) {
