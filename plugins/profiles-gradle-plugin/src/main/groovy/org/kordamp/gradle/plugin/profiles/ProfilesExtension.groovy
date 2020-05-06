@@ -38,9 +38,37 @@ interface ProfilesExtension {
 
         void activation(Action<? super ActivationSpec> action)
 
+        void allActivations(Action<? super ActivationsSpec> action)
+
+        void allActivations(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ActivationsSpec) Closure<Void> action)
+
+        void anyActivations(Action<? super ActivationsSpec> action)
+
+        void anyActivations(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ActivationsSpec) Closure<Void> action)
+
         void action(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Project) Closure<Void> action)
 
         void action(Action<? super Project> action)
+    }
+
+    static interface ActivationsSpec {
+        void file(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = FileSpec) Closure<Void> action)
+
+        void file(Action<? super FileSpec> action)
+
+        void jdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JdkSpec) Closure<Void> action)
+
+        void jdk(Action<? super JdkSpec> action)
+
+        void os(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = OsSpec) Closure<Void> action)
+
+        void os(Action<? super OsSpec> action)
+
+        void property(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PropertySpec) Closure<Void> action)
+
+        void property(Action<? super PropertySpec> action)
+
+        void custom(Activation activation)
     }
 
     static interface ActivationSpec {

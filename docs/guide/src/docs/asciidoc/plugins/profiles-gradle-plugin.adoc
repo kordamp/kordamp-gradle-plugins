@@ -41,6 +41,20 @@ profiles {
             property { ... }
             custom { ... }
         }
+        allActivations {
+            os { ... }
+            jdk { ... }
+            file { ... }
+            property { ... }
+            custom { ... }
+        }
+        anyActivations {
+            os { ... }
+            jdk { ... }
+            file { ... }
+            property { ... }
+            custom { ... }
+        }
         action {
             // regular project configuration
         }
@@ -51,7 +65,10 @@ profiles {
 These are the rules that govern the DSL:
 
 * Every profile must have an unique `id`.
-* Multiple activations are not allowed. The last one overrides any previously defined activations.
+* Only one of `activation`, `allActivations`, or `anyActivations` should be defined. In the case that multiple definitions
+were to be present, the last one overrides any previous blocks.
+* Every activation in `allActivations` must be true to activate the profile.
+* The first activation in `anyActivations` that evaluates to true will activate the profile.
 * Profiles may define no activations. They can only be activated by id.
 * There is no default profile activation like there is in Maven.
 * Profiles must have an action.

@@ -123,6 +123,34 @@ class ProfilesExtensionImpl implements ProfilesExtension {
         }
 
         @Override
+        void allActivations(Action<? super ActivationsSpec> action) {
+            ActivationsSpecImpl spec = new ActivationsSpecImpl(true)
+            action.execute(spec)
+            activation = spec.asActivation()
+        }
+
+        @Override
+        void allActivations(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ActivationsSpec) Closure<Void> action) {
+            ActivationsSpecImpl spec = new ActivationsSpecImpl(true)
+            ConfigureUtil.configure(action, spec)
+            activation = spec.asActivation()
+        }
+
+        @Override
+        void anyActivations(Action<? super ActivationsSpec> action) {
+            ActivationsSpecImpl spec = new ActivationsSpecImpl(false)
+            action.execute(spec)
+            activation = spec.asActivation()
+        }
+
+        @Override
+        void anyActivations(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ActivationsSpec) Closure<Void> action) {
+            ActivationsSpecImpl spec = new ActivationsSpecImpl(false)
+            ConfigureUtil.configure(action, spec)
+            activation = spec.asActivation()
+        }
+
+        @Override
         void action(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Project) Closure<Void> action) {
             this.closure = action
         }
@@ -140,6 +168,108 @@ class ProfilesExtensionImpl implements ProfilesExtension {
             new ProfileInternal(id, activation)
                 .setClosure(closure)
                 .setAction(action)
+        }
+    }
+
+    private class ActivationsSpecImpl implements ActivationsSpec {
+        private final List<Activation> activations = []
+        private final boolean all
+
+        ActivationsSpecImpl(boolean all) {
+            this.all = all
+        }
+
+        @Override
+        void file(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = FileSpec) Closure<Void> action) {
+            FileSpecImpl spec = new FileSpecImpl()
+            ConfigureUtil.configure(action, spec)
+            activations << spec.asActivation()
+        }
+
+        @Override
+        void file(Action<? super FileSpec> action) {
+            FileSpecImpl spec = new FileSpecImpl()
+            action.execute(spec)
+            activations << spec.asActivation()
+        }
+
+        @Override
+        void jdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JdkSpec) Closure<Void> action) {
+            JdkSpecImpl spec = new JdkSpecImpl()
+            ConfigureUtil.configure(action, spec)
+            activations << spec.asActivation()
+        }
+
+        @Override
+        void jdk(Action<? super JdkSpec> action) {
+            JdkSpecImpl spec = new JdkSpecImpl()
+            action.execute(spec)
+            activations << spec.asActivation()
+        }
+
+        @Override
+        void os(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = OsSpec) Closure<Void> action) {
+            OsSpecImpl spec = new OsSpecImpl()
+            ConfigureUtil.configure(action, spec)
+            activations << spec.asActivation()
+        }
+
+        @Override
+        void os(Action<? super OsSpec> action) {
+            OsSpecImpl spec = new OsSpecImpl()
+            action.execute(spec)
+            activations << spec.asActivation()
+        }
+
+        @Override
+        void property(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PropertySpec) Closure<Void> action) {
+            PropertySpecImpl spec = new PropertySpecImpl()
+            ConfigureUtil.configure(action, spec)
+            activations << spec.asActivation()
+        }
+
+        @Override
+        void property(Action<? super PropertySpec> action) {
+            PropertySpecImpl spec = new PropertySpecImpl()
+            action.execute(spec)
+            activations << spec.asActivation()
+        }
+
+        @Override
+        void custom(Activation activation) {
+            if (activation) {
+                activations << activation
+            }
+        }
+
+        Activation asActivation() {
+            new CompositeActivation(activations, all)
+        }
+    }
+
+    private class CompositeActivation implements Activation {
+        private final List<Activation> activations = []
+        private final boolean all
+
+        CompositeActivation(List<Activation> activations, boolean all) {
+            this.activations.addAll(activations)
+            this.all = all
+        }
+
+        @Override
+        boolean isActive(Project project) {
+            if (all) {
+                for (Activation activation : activations) {
+                    if (!activation.isActive(project)) return false
+                }
+                return true
+            } else {
+                boolean result = false
+                for (Activation activation : activations) {
+                    result = result || activation.isActive(project)
+                }
+                return result
+            }
         }
     }
 
