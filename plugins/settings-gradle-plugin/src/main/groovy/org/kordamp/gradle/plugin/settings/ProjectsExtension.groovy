@@ -34,6 +34,8 @@ interface ProjectsExtension {
 
     Property<Boolean> getEnforceNamingConvention()
 
+    Property<Boolean> getUseLongPaths()
+
     ListProperty<String> getDirectories()
 
     ListProperty<String> getExcludes()

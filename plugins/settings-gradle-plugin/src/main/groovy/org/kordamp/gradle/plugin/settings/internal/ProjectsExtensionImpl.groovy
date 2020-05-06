@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.initialization.ProjectDescriptor
 import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
@@ -44,6 +45,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
 
     final Property<String> layout
     final Property<Boolean> enforceNamingConvention
+    final Property<Boolean> useLongPaths
     final ListProperty<String> directories
     final ListProperty<String> excludes
     final Property<String> prefix
@@ -59,6 +61,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
         this.settings = settings
         layout = objects.property(String).convention('two-level')
         enforceNamingConvention = objects.property(Boolean).convention(true)
+        useLongPaths = objects.property(Boolean).convention(false)
         directories = objects.listProperty(String).convention([])
         excludes = objects.listProperty(String).convention([])
         prefix = objects.property(String)
@@ -79,6 +82,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
                 } else {
                     LOG.warn "Unknown project layout '${layout.orNull}'. No subprojects will be added."
                 }
+                cleanup()
             }
 
             @Override
@@ -97,6 +101,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
     void plugins(Action<? super PluginsSpec> action) {
         action.execute(plugins)
     }
+
     @Override
     DirectorySpec includeFromDir(String dir) {
         DirectorySpecImpl spec = new DirectorySpecImpl(dir)
@@ -195,9 +200,9 @@ class ProjectsExtensionImpl implements ProjectsExtension {
         includeProject(projectDir.parentFile, projectDir.name)
     }
 
-    private void includeProject(String projectPath) {
-        String[] parts = projectPath.split(File.separator)
-        String projectDirName = projectPath
+    private void includeProject(String path) {
+        String[] parts = path.split(File.separator)
+        String projectDirName = path
         String projectName = parts[-1]
 
         if (excludes.get().contains(projectName)) return
@@ -208,10 +213,13 @@ class ProjectsExtensionImpl implements ProjectsExtension {
 
         File buildFile = resolveBuildFile(projectDir, projectName)
         if (buildFile && buildFile.exists()) {
-            settings.include(projectName)
-            settings.project(':' + projectName).projectDir = projectDir
-            settings.project(':' + projectName).buildFileName = buildFile.name
-            LOG.info("[settings] Including project :${projectName} -> ${buildFile.absolutePath}")
+            String projectPath = resolveProjectPath(projectDir, projectName)
+
+            settings.include(projectPath)
+            settings.project(projectPath).name = projectName
+            settings.project(projectPath).projectDir = projectDir
+            settings.project(projectPath).buildFileName = buildFile.name
+            LOG.info("[settings] Including project ${projectPath} -> ${buildFile.absolutePath}")
         }
     }
 
@@ -251,11 +259,47 @@ class ProjectsExtensionImpl implements ProjectsExtension {
     private void doIncludeProject(File parentDir, String projectDirName, File buildFile) {
         if (buildFile && buildFile.exists()) {
             File projectDir = new File(parentDir, projectDirName)
+            String projectPath = resolveProjectPath(projectDir, projectDirName)
 
-            settings.include(projectDirName)
-            settings.project(':' + projectDirName).projectDir = projectDir
-            settings.project(':' + projectDirName).buildFileName = buildFile.name
-            LOG.info("[settings] Including project :${projectDirName} -> ${buildFile.absolutePath}")
+            settings.include(projectPath)
+            settings.project(projectPath).name = projectDirName
+            settings.project(projectPath).projectDir = projectDir
+            settings.project(projectPath).buildFileName = buildFile.name
+            LOG.info("[settings] Including project ${projectPath} -> ${buildFile.absolutePath}")
+        }
+    }
+
+    private String resolveProjectPath(File projectDir, String projectName) {
+        String projectPath = ':' + projectName
+        if (getUseLongPaths().get()) {
+            projectPath = projectDir.absolutePath - settings.rootDir.absolutePath
+            if (projectPath.endsWith(File.separator)) projectPath = projectPath[0..-2]
+            projectPath = projectPath.replace(File.separator, ':')
+        }
+        projectPath
+    }
+
+    private void cleanup() {
+        ProjectDescriptor pd = settings.rootProject
+        for (ProjectDescriptor child : pd.children) {
+            purgeEmptyProjects(child, pd)
+        }
+    }
+
+    private void purgeEmptyProjects(ProjectDescriptor project, ProjectDescriptor parent) {
+        if (!project.children) {
+            if (!project.buildFile.exists()) {
+                parent.children.remove(project)
+            }
+        } else {
+            for (ProjectDescriptor child : project.children) {
+                purgeEmptyProjects(child, project)
+            }
+
+            if (!project.buildFile.exists()) {
+                parent.children.remove(project)
+                parent.children.addAll(project.children)
+            }
         }
     }
 
