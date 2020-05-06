@@ -90,7 +90,7 @@ class StringUtils {
         if (extIndex == -1) {
             return null
         }
-        int folderIndex = path.lastIndexOf("/")
+        int folderIndex = path.lastIndexOf(File.separator)
         if (folderIndex > extIndex) {
             return null
         }

@@ -95,6 +95,6 @@ class Functional {
     }
 
     void postMerge() {
-        baseDir = baseDir ?: 'src/functional-test'
+        baseDir = baseDir ?: 'src' + File.separator + 'functional-test'
     }
 }

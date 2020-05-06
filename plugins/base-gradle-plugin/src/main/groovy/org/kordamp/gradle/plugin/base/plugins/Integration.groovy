@@ -90,6 +90,6 @@ class Integration {
     }
 
     void postMerge() {
-        baseDir = baseDir ?: 'src/integration-test'
+        baseDir = baseDir ?: 'src' + File.separator + 'integration-test'
     }
 }

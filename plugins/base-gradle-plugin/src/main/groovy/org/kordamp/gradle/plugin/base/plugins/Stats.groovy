@@ -74,7 +74,7 @@ class Stats extends AbstractAggregateFeature {
             yaml      : 'YAML',
             clojure   : 'Clojure'
         ].each { extension, name ->
-            ['src/test',
+            ['src' + File.separator + 'test',
              config.testing.integration.baseDir,
              config.testing.functional.baseDir].each { source ->
                 String[] parts = source.split(File.separator)
