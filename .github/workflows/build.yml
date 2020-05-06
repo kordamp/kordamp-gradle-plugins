@@ -1,11 +1,14 @@
-name: Build-Windows
+name: Build
 
 on: [push, pull_request]
 
 jobs:
   build:
-    name: Build-Windows
-    runs-on: windows-latest
+    name: Build
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     env:
       CI: true
     steps:
