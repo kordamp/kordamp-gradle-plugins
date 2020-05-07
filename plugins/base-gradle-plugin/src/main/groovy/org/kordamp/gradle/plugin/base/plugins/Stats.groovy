@@ -23,6 +23,8 @@ import org.gradle.api.Project
 import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
+import java.util.regex.Pattern
+
 import static org.kordamp.gradle.StringUtils.getNaturalName
 import static org.kordamp.gradle.StringUtils.getPropertyNameForLowerCaseHyphenSeparatedName
 
@@ -77,7 +79,7 @@ class Stats extends AbstractAggregateFeature {
             ['src' + File.separator + 'test',
              config.testing.integration.baseDir,
              config.testing.functional.baseDir].each { source ->
-                String[] parts = source.split(File.separator)
+                String[] parts = source.split(Pattern.quote(File.separator))
                 String classifier = getPropertyNameForLowerCaseHyphenSeparatedName(parts[-1])
                 basePaths[classifier + extension.capitalize()] = [name: name + ' ' + getNaturalName(classifier) + ' Sources', path: source, extension: extension]
             }

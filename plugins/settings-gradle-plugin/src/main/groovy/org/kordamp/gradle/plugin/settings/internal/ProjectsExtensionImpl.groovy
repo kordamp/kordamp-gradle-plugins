@@ -33,6 +33,8 @@ import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.settings.PluginsSpec
 import org.kordamp.gradle.plugin.settings.ProjectsExtension
 
+import java.util.regex.Pattern
+
 /**
  * @author Andres Almiray
  * @since 0.35.0
@@ -201,7 +203,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
     }
 
     private void includeProject(String path) {
-        String[] parts = path.split(File.separator)
+        String[] parts = path.split(Pattern.quote(File.separator))
         String projectDirName = path
         String projectName = parts[-1]
 
