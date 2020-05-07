@@ -79,7 +79,6 @@ class Stats extends AbstractAggregateFeature {
             ['src' + File.separator + 'test',
              config.testing.integration.baseDir ?: 'src' + File.separator + 'integration-test',
              config.testing.functional.baseDir ?: 'src' + File.separator + 'functional-test'].each { source ->
-                println source
                 String[] parts = source.split(Pattern.quote(File.separator))
                 String classifier = getPropertyNameForLowerCaseHyphenSeparatedName(parts[-1])
                 basePaths[classifier + extension.capitalize()] = [name: name + ' ' + getNaturalName(classifier) + ' Sources', path: source, extension: extension]
