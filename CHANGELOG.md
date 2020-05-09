@@ -6,6 +6,11 @@
 
 **Implemented enhancements:**
 
+- \[Profiles\] Support multiple activations per profile [\#299](https://github.com/kordamp/kordamp-gradle-plugins/issues/299)
+- \[Settings\] support long project paths [\#298](https://github.com/kordamp/kordamp-gradle-plugins/issues/298)
+- \[Base\] Add varargs variants for dirs\(\) and paths\(\) in projects DSL [\#295](https://github.com/kordamp/kordamp-gradle-plugins/issues/295)
+- \[Settings\] Add varargs variants for dirs\(\) and paths\(\) [\#294](https://github.com/kordamp/kordamp-gradle-plugins/issues/294)
+- \[Guide\] upgrade asciidoctorj-tabbed-code-extension to latest [\#292](https://github.com/kordamp/kordamp-gradle-plugins/issues/292)
 - \[Minpom\] Register minpom task and disable it by default [\#290](https://github.com/kordamp/kordamp-gradle-plugins/issues/290)
 - \[Jar\] Only update JAR metaInf/manifest if config.artifacts.jar is enabled [\#289](https://github.com/kordamp/kordamp-gradle-plugins/issues/289)
 - \[Profiles\] Support Maven like profiles [\#288](https://github.com/kordamp/kordamp-gradle-plugins/issues/288)
@@ -14,6 +19,16 @@
 - \[Publishing\] Let packaging be configurable [\#285](https://github.com/kordamp/kordamp-gradle-plugins/issues/285)
 - kordamp.org via HTTPS [\#283](https://github.com/kordamp/kordamp-gradle-plugins/issues/283)
 - \[Settings\] Make subproject's folders more meaningful [\#237](https://github.com/kordamp/kordamp-gradle-plugins/issues/237)
+
+**Fixed bugs:**
+
+- Can't import this project into IDEA 2020.1 on windows 10 [\#296](https://github.com/kordamp/kordamp-gradle-plugins/issues/296)
+- \[Publishing\] PluginMarker publication should not be enhanced [\#293](https://github.com/kordamp/kordamp-gradle-plugins/issues/293)
+- groovydocJar tasks produce Gradle warnings messages for Gradle 6.3 [\#291](https://github.com/kordamp/kordamp-gradle-plugins/issues/291)
+
+**Merged pull requests:**
+
+- disable fail-fast in github actions [\#300](https://github.com/kordamp/kordamp-gradle-plugins/pull/300) ([kortov](https://github.com/kortov))
 
 ## [0.34.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/0.34.0) (2020-04-25)
 
