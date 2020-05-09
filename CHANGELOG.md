@@ -1,24 +1,16 @@
 # Changelog
 
-## [Unreleased](https://github.com/kordamp/kordamp-gradle-plugins/tree/HEAD)
+## [0.36.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/0.36.0) (2020-05-09)
 
-[Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/0.34.0...HEAD)
+[Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/0.35.0...0.36.0)
 
 **Implemented enhancements:**
 
-- \[Profiles\] Support multiple activations per profile [\#299](https://github.com/kordamp/kordamp-gradle-plugins/issues/299)
-- \[Settings\] support long project paths [\#298](https://github.com/kordamp/kordamp-gradle-plugins/issues/298)
 - \[Base\] Add varargs variants for dirs\(\) and paths\(\) in projects DSL [\#295](https://github.com/kordamp/kordamp-gradle-plugins/issues/295)
 - \[Settings\] Add varargs variants for dirs\(\) and paths\(\) [\#294](https://github.com/kordamp/kordamp-gradle-plugins/issues/294)
+- \[Profiles\] Support multiple activations per profile [\#299](https://github.com/kordamp/kordamp-gradle-plugins/issues/299)
+- \[Settings\] support long project paths [\#298](https://github.com/kordamp/kordamp-gradle-plugins/issues/298)
 - \[Guide\] upgrade asciidoctorj-tabbed-code-extension to latest [\#292](https://github.com/kordamp/kordamp-gradle-plugins/issues/292)
-- \[Minpom\] Register minpom task and disable it by default [\#290](https://github.com/kordamp/kordamp-gradle-plugins/issues/290)
-- \[Jar\] Only update JAR metaInf/manifest if config.artifacts.jar is enabled [\#289](https://github.com/kordamp/kordamp-gradle-plugins/issues/289)
-- \[Profiles\] Support Maven like profiles [\#288](https://github.com/kordamp/kordamp-gradle-plugins/issues/288)
-- better sonar integration [\#287](https://github.com/kordamp/kordamp-gradle-plugins/issues/287)
-- \[Bom\] Add an includes list [\#286](https://github.com/kordamp/kordamp-gradle-plugins/issues/286)
-- \[Publishing\] Let packaging be configurable [\#285](https://github.com/kordamp/kordamp-gradle-plugins/issues/285)
-- kordamp.org via HTTPS [\#283](https://github.com/kordamp/kordamp-gradle-plugins/issues/283)
-- \[Settings\] Make subproject's folders more meaningful [\#237](https://github.com/kordamp/kordamp-gradle-plugins/issues/237)
 
 **Fixed bugs:**
 
@@ -29,6 +21,21 @@
 **Merged pull requests:**
 
 - disable fail-fast in github actions [\#300](https://github.com/kordamp/kordamp-gradle-plugins/pull/300) ([kortov](https://github.com/kortov))
+
+## [0.35.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/0.35.0) (2020-05-02)
+
+[Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/0.34.0...0.35.0)
+
+**Implemented enhancements:**
+
+- kordamp.org via HTTPS [\#283](https://github.com/kordamp/kordamp-gradle-plugins/issues/283)
+- \[Settings\] Make subproject's folders more meaningful [\#237](https://github.com/kordamp/kordamp-gradle-plugins/issues/237)
+- \[Minpom\] Register minpom task and disable it by default [\#290](https://github.com/kordamp/kordamp-gradle-plugins/issues/290)
+- \[Jar\] Only update JAR metaInf/manifest if config.artifacts.jar is enabled [\#289](https://github.com/kordamp/kordamp-gradle-plugins/issues/289)
+- \[Profiles\] Support Maven like profiles [\#288](https://github.com/kordamp/kordamp-gradle-plugins/issues/288)
+- better sonar integration [\#287](https://github.com/kordamp/kordamp-gradle-plugins/issues/287)
+- \[Bom\] Add an includes list [\#286](https://github.com/kordamp/kordamp-gradle-plugins/issues/286)
+- \[Publishing\] Let packaging be configurable [\#285](https://github.com/kordamp/kordamp-gradle-plugins/issues/285)
 
 ## [0.34.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/0.34.0) (2020-04-25)
 
@@ -111,6 +118,10 @@
 - Remove BuildScan plugin [\#249](https://github.com/kordamp/kordamp-gradle-plugins/issues/249)
 - Remove Apidoc plugin [\#248](https://github.com/kordamp/kordamp-gradle-plugins/issues/248)
 - Refactor duplication of aggregate configuration [\#247](https://github.com/kordamp/kordamp-gradle-plugins/issues/247)
+
+**Merged pull requests:**
+
+- \[Sonar\] Remove obsolete childProject configuration [\#259](https://github.com/kordamp/kordamp-gradle-plugins/pull/259) ([ursjoss](https://github.com/ursjoss))
 
 ## [0.31.2](https://github.com/kordamp/kordamp-gradle-plugins/tree/0.31.2) (2020-01-04)
 
@@ -353,6 +364,7 @@
 
 - Fixed a minor typo [\#138](https://github.com/kordamp/kordamp-gradle-plugins/pull/138) ([tlinkowski](https://github.com/tlinkowski))
 - \[base\] Fixed org.kordamp.gradle.plugin.base.plugins.Plugin.merge [\#133](https://github.com/kordamp/kordamp-gradle-plugins/pull/133) ([tlinkowski](https://github.com/tlinkowski))
+- Add lines setting root project name in sample settings.gradle\(.kts\) [\#89](https://github.com/kordamp/kordamp-gradle-plugins/pull/89) ([tlinkowski](https://github.com/tlinkowski))
 
 ## [0.22.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/0.22.0) (2019-06-15)
 
@@ -467,10 +479,6 @@
 **Closed issues:**
 
 - Feature request: support for creating Gradle SuperPOM [\#96](https://github.com/kordamp/kordamp-gradle-plugins/issues/96)
-
-**Merged pull requests:**
-
-- Add lines setting root project name in sample settings.gradle\(.kts\) [\#89](https://github.com/kordamp/kordamp-gradle-plugins/pull/89) ([tlinkowski](https://github.com/tlinkowski))
 
 ## [0.15.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/0.15.0) (2019-03-11)
 
