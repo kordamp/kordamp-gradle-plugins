@@ -54,8 +54,6 @@ class Groovydoc extends AbstractFeature {
         options.docTitle       = "${project.name} ${project.version}"
         options.header         = "${project.name} ${project.version}"
         options.includePrivate = false
-        options.link resolveJavadocLinks(project.findProperty('targetCompatibility')), 'java.', 'javax.', 'org.xml.', 'org.w3c.'
-        options.link 'https://docs.groovy-lang.org/latest/html/api/', 'groovy.', 'org.codehaus.groovy.', 'org.apache.groovy.'
     }
 
     private String resolveJavadocLinks(Object jv) {
@@ -185,6 +183,9 @@ class Groovydoc extends AbstractFeature {
 
     void postMerge() {
         if (replaceJavadoc) config.docs.javadoc.enabled = false
+        options.linkIfAbsent resolveJavadocLinks(project.findProperty('targetCompatibility')), 'java.', 'javax.', 'org.xml.', 'org.w3c.'
+        options.linkIfAbsent 'https://docs.groovy-lang.org/latest/html/api/', 'groovy.', 'org.codehaus.groovy.', 'org.apache.groovy.'
+        options.cleanupLinks()
     }
 
     @CompileStatic

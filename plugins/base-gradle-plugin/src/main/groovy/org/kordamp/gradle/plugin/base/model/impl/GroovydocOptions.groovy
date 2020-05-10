@@ -55,8 +55,8 @@ class GroovydocOptions {
         return noVersionStampSet
     }
 
-    boolean isInclusePrivateSet() {
-        return inclusePrivateSet
+    boolean isIncludePrivateSet() {
+        return includePrivateSet
     }
 
     boolean isUseSet() {
@@ -85,6 +85,25 @@ class GroovydocOptions {
 
     void link(String url, String... packages) {
         links.add(new Groovydoc.Link(url, packages))
+    }
+
+    void cleanupLinks() {
+        Collection<String> urls = links.collect { it.url }.unique()
+        List<Groovydoc.Link> copy = []
+        copy.addAll(links)
+        for (String url : urls) {
+            List<Groovydoc.Link> list = copy.findAll { it.url == url }
+            list.remove(0)
+            links.removeAll(list)
+        }
+    }
+
+    void linkIfAbsent(String url, String... packages) {
+        Groovydoc.Link link = new Groovydoc.Link(url, packages)
+        if (links.find { it.url == link.url }) {
+            return
+        }
+        links.add(link)
     }
 
     GroovydocOptions copyOf() {
