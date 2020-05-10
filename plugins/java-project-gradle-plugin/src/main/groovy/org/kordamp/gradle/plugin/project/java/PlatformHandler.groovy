@@ -22,29 +22,104 @@ import org.gradle.api.Action
 import org.gradle.api.artifacts.Dependency
 
 /**
+ * Configures platform dependencies on a given set of configurations.
+ *
+ * The following configurations will be used by default if no configurations are supplied:
+ *
+ * <ul>
+ *   <li>api</li>
+ *   <li>implementation</li>
+ *   <li>annotationProcessor</li>
+ *   <li>testImplementation</li>
+ *   <li>testAnnotationProcessor</li>
+ *   <li>compileOnly</li>
+ *   <li>testCompileOnly</li>
+ *   <li>runtimeOnly</li>
+ *   <li>testRuntimeOnly</li>
+ * </ul>
  *
  * @author Andres Almiray
  * @since 0.37.0
  */
 @CompileStatic
 interface PlatformHandler {
-    void platform(Object platformGav)
+    /**
+     * Declares a dependency on a platform.
+     *
+     * @param notation - the coordinates of the platform
+     */
+    void platform(Object notation)
 
-    void platform(Object platformGav, Action<? super Dependency> action)
+    /**
+     * Declares a dependency on a platform.
+     *
+     * @param notation - the coordinates of the platform
+     * @action - the dependency configuration block
+     */
+    void platform(Object notation, Action<? super Dependency> action)
 
-    void platform(Object platformGav, String... configurations)
+    /**
+     * Declares a dependency on a platform.
+     *
+     * @param notation - the coordinates of the platform
+     * @param configurations - the set of configurations to use
+     */
+    void platform(Object notation, String... configurations)
 
-    void platform(Object platformGav, List<String> configurations)
+    /**
+     * Declares a dependency on a platform.
+     *
+     * @param notation - the coordinates of the platform
+     * @param configurations - the set of configurations to use
+     */
+    void platform(Object notation, List<String> configurations)
 
-    void platform(Object platformGav, List<String> configurations, Action<? super Dependency> action)
+    /**
+     * Declares a dependency on a platform.
+     *
+     * @param notation - the coordinates of the platform
+     * @param configurations - the set of configurations to use
+     * @action - the dependency configuration block
+     */
+    void platform(Object notation, List<String> configurations, Action<? super Dependency> action)
 
-    void enforcedPlatform(Object platformGav)
+    /**
+     * Declares a dependency on an enforced platform.
+     *
+     * @param notation - the coordinates of the platform
+     */
+    void enforcedPlatform(Object notation)
 
-    void enforcedPlatform(Object platformGav, Action<? super Dependency> action)
+    /**
+     * Declares a dependency on an enforced platform.
+     *
+     * @param notation - the coordinates of the platform
+     * @action - the dependency configuration block
+     */
+    void enforcedPlatform(Object notation, Action<? super Dependency> action)
 
-    void enforcedPlatform(Object platformGav, String... configurations)
+    /**
+     * Declares a dependency on an enforced platform.
+     *
+     * @param notation - the coordinates of the platform
+     * @param configurations - the set of configurations to use
+     */
+    void enforcedPlatform(Object notation, String... configurations)
 
-    void enforcedPlatform(Object platformGav, List<String> configurations)
+    /**
+     * Declares a dependency on an enforced platform.
+     *
+     * @param notation - the coordinates of the platform
+     * @param configurations - the set of configurations to use
+     */
+    void enforcedPlatform(Object notation, List<String> configurations)
 
-    void enforcedPlatform(Object platformGav, List<String> configurations, Action<? super Dependency> action)
+    /**
+     * Declares a dependency on an enforced platform.
+     *
+     * @param notation - the coordinates of the platform
+     * @param configurations - the set of configurations to use
+     * @action - the dependency configuration block
+     */
+    void enforcedPlatform(Object notation, List<String> configurations, Action<? super Dependency> action)
 }

@@ -30,7 +30,7 @@ Type:: `org.kordamp.gradle.plugin.project.java.PlatformHandler`
 Applied to:: `org.gradle.api.artifacts.dsl.DependencyHandler`
 
 Since Gradle 6 platform dependencies must be applied per configuration, which results in verbose build files when a
-BOM/platform should  be applied in common configurations. This extension lets you apply a BOM/platform to multiple
+BOM/platform should be applied in common configurations. This extension lets you apply a BOM/platform to multiple
 configurations with a single method call.
 
 NOTE: The following configurations will be used if none are specified: `api`, `implementation`, `annotationProcessor`,
@@ -108,6 +108,65 @@ tasks:: The tasks to generate the report for.
 You may specify either of the two, be advised that `tasks` has precedence over `task`. All tasks will be displayed
 if neither of these options is specified.
 
+[[_task_platforms]]
+=== Platforms
+
+displays all configured platforms in the project. Requires the use of the <<_extension_cfg,cfg>> extension.
+
+[horizontal]
+Name:: platforms
+Type:: `org.kordamp.gradle.plugin.project.java.tasks.platformsTask`
+
+==== Example Output
+
+For a project with the following dependencies
+
+[source,groovy,subs="verbatim,attributes"]
+.build.gradle
+----
+dependencies {
+    cfg.enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion")
+
+    annotationProcessor 'io.micronaut:micronaut-inject-java'
+    annotationProcessor 'io.micronaut:micronaut-validation'
+
+    compileOnly 'io.micronaut:micronaut-inject-groovy'
+
+    api 'io.micronaut:micronaut-inject'
+    api 'io.micronaut:micronaut-validation'
+    api 'io.micronaut:micronaut-runtime-groovy'
+}
+----
+
+Invoking this command
+
+[source]
+----
+$ ./gradlew :platforms
+----
+
+Results in the following output
+
+[source]
+----
+> Task :platforms
+Total platforms: 1
+
+Platform 0:
+    platform: io.micronaut:micronaut-bom:2.0.0.M3
+    enforced: true
+    configurations:
+        api
+        implementation
+        annotationProcessor
+        testImplementation
+        testAnnotationProcessor
+        compileOnly
+        testCompileOnly
+        runtimeOnly
+        testRuntimeOnly
+----
+
 [[_task_sourceSets]]
 === SourceSets
 
@@ -136,7 +195,7 @@ config {
 }
 ----
 
-Invoking these command
+Invoking this command
 
 [source]
 ----

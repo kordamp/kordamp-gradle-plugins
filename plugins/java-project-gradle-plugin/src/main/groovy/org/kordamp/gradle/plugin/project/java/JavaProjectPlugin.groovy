@@ -29,6 +29,7 @@ import org.kordamp.gradle.plugin.project.java.internal.PlatformHandlerImpl
 import org.kordamp.gradle.plugin.project.java.tasks.JarSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.JavaCompilerSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.JavaExecSettingsTask
+import org.kordamp.gradle.plugin.project.java.tasks.PlatformsTask
 import org.kordamp.gradle.plugin.project.java.tasks.SourceSetSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.SourceSetsTask
 import org.kordamp.gradle.plugin.project.java.tasks.TestSettingsTask
@@ -71,6 +72,15 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
                 project.dependencies.extensions.create(PlatformHandler, 'cfg', PlatformHandlerImpl, project)
+
+                project.tasks.register('platforms', PlatformsTask,
+                    new Action<PlatformsTask>() {
+                        @Override
+                        void execute(PlatformsTask t) {
+                            t.group = 'Insight'
+                            t.description = "Displays all platforms available in project '$project.name'."
+                        }
+                    })
 
                 project.tasks.register('sourceSets', SourceSetsTask,
                     new Action<SourceSetsTask>() {

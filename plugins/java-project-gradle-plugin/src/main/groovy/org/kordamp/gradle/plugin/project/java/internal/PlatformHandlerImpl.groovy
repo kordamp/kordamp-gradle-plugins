@@ -49,87 +49,105 @@ class PlatformHandlerImpl implements PlatformHandler {
 
     private final Project project
 
+    final List<Map<String, Object>> platforms = []
+
     PlatformHandlerImpl(Project project) {
         this.project = project
     }
 
     @Override
-    void platform(Object platformGav) {
-        platform(platformGav, DEFAULT_CONFIGURATIONS, null)
+    void platform(Object notation) {
+        platform(notation, DEFAULT_CONFIGURATIONS, null)
     }
 
     @Override
-    void platform(Object platformGav, Action<? super Dependency> action) {
-        platform(platformGav, DEFAULT_CONFIGURATIONS, action)
+    void platform(Object notation, Action<? super Dependency> action) {
+        platform(notation, DEFAULT_CONFIGURATIONS, action)
     }
 
     @Override
-    void platform(Object platformGav, String... configurations) {
-        platform(platformGav, configurations ? asList(configurations) : DEFAULT_CONFIGURATIONS, null)
+    void platform(Object notation, String... configurations) {
+        platform(notation, configurations ? asList(configurations) : DEFAULT_CONFIGURATIONS, null)
     }
 
     @Override
-    void platform(Object platformGav, List<String> configurations) {
-        platform(platformGav, configurations, null)
-    }
-
-    @CompileDynamic
-    @Override
-    void platform(Object platformGav, List<String> configurations, Action<? super Dependency> action) {
-        List<String> confs = configurations ?: DEFAULT_CONFIGURATIONS
-        for (String configuration : confs) {
-            Configuration c = project.configurations.findByName(configuration)
-            if (c) {
-                project.logger.debug("Configuring platform '${platformGav}' in ${configuration}")
-                DependencyHandler dh = project.dependencies
-                project.dependencies {
-                    if (action) {
-                        "${configuration}"(dh.platform(platformGav), action)
-                    } else {
-                        "${configuration}"(dh.platform(platformGav))
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    void enforcedPlatform(Object platformGav) {
-        enforcedPlatform(platformGav, DEFAULT_CONFIGURATIONS, null)
-    }
-
-    @Override
-    void enforcedPlatform(Object platformGav, Action<? super Dependency> action) {
-        enforcedPlatform(platformGav, DEFAULT_CONFIGURATIONS, action)
-    }
-
-    @Override
-    void enforcedPlatform(Object platformGav, String... configurations) {
-        enforcedPlatform(platformGav, configurations ? asList(configurations) : DEFAULT_CONFIGURATIONS, null)
-    }
-
-    @Override
-    void enforcedPlatform(Object platformGav, List<String> configurations) {
-        enforcedPlatform(platformGav, configurations, null)
+    void platform(Object notation, List<String> configurations) {
+        platform(notation, configurations, null)
     }
 
     @CompileDynamic
     @Override
-    void enforcedPlatform(Object platformGav, List<String> configurations, Action<? super Dependency> action) {
+    void platform(Object notation, List<String> configurations, Action<? super Dependency> action) {
         List<String> confs = configurations ?: DEFAULT_CONFIGURATIONS
+        List<String> actualConfs = []
         for (String configuration : confs) {
             Configuration c = project.configurations.findByName(configuration)
             if (c) {
-                project.logger.debug("Configuring enforced platform '${platformGav}' in ${configuration}")
+                project.logger.debug("Configuring platform '${notation}' in ${configuration}")
                 DependencyHandler dh = project.dependencies
                 project.dependencies {
                     if (action) {
-                        "${configuration}"(dh.enforcedPlatform(platformGav), action)
+                        "${configuration}"(dh.platform(notation), action)
                     } else {
-                        "${configuration}"(dh.enforcedPlatform(platformGav))
+                        "${configuration}"(dh.platform(notation))
                     }
                 }
+                actualConfs << configuration
             }
         }
+
+        platforms << [
+            platform      : notation,
+            enforced      : false,
+            configurations: actualConfs
+        ]
+    }
+
+    @Override
+    void enforcedPlatform(Object notation) {
+        enforcedPlatform(notation, DEFAULT_CONFIGURATIONS, null)
+    }
+
+    @Override
+    void enforcedPlatform(Object notation, Action<? super Dependency> action) {
+        enforcedPlatform(notation, DEFAULT_CONFIGURATIONS, action)
+    }
+
+    @Override
+    void enforcedPlatform(Object notation, String... configurations) {
+        enforcedPlatform(notation, configurations ? asList(configurations) : DEFAULT_CONFIGURATIONS, null)
+    }
+
+    @Override
+    void enforcedPlatform(Object notation, List<String> configurations) {
+        enforcedPlatform(notation, configurations, null)
+    }
+
+    @CompileDynamic
+    @Override
+    void enforcedPlatform(Object notation, List<String> configurations, Action<? super Dependency> action) {
+        List<String> confs = configurations ?: DEFAULT_CONFIGURATIONS
+        List<String> actualConfs = []
+        for (String configuration : confs) {
+            Configuration c = project.configurations.findByName(configuration)
+            if (c) {
+                project.logger.debug("Configuring enforced platform '${notation}' in ${configuration}")
+                DependencyHandler dh = project.dependencies
+                project.dependencies {
+                    if (action) {
+                        "${configuration}"(dh.enforcedPlatform(notation), action)
+                    } else {
+                        "${configuration}"(dh.enforcedPlatform(notation))
+                    }
+                }
+                actualConfs << configuration
+            }
+        }
+
+        platforms << [
+            platform      : notation,
+            enforced      : true,
+            configurations: actualConfs
+        ]
     }
 }
