@@ -55,7 +55,7 @@ class Groovydoc extends AbstractFeature {
         options.header         = "${project.name} ${project.version}"
         options.includePrivate = false
         options.link resolveJavadocLinks(project.findProperty('targetCompatibility')), 'java.', 'javax.', 'org.xml.', 'org.w3c.'
-        options.link 'http://docs.groovy-lang.org/2.5.6/html/api/', 'groovy.', 'org.codehaus.groovy.', 'org.apache.groovy.'
+        options.link 'https://docs.groovy-lang.org/latest/html/api/', 'groovy.', 'org.codehaus.groovy.', 'org.apache.groovy.'
     }
 
     private String resolveJavadocLinks(Object jv) {
@@ -66,6 +66,7 @@ class Groovydoc extends AbstractFeature {
         } else if (jv != null) {
             javaVersion = JavaVersion.toVersion(jv)
         }
+        javaVersion = javaVersion ?: JavaVersion.current()
 
         if (javaVersion.isJava11Compatible()) {
             return "https://docs.oracle.com/en/java/javase/${javaVersion.majorVersion}/docs/api/".toString()

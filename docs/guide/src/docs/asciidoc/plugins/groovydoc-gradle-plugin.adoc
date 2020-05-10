@@ -73,7 +73,7 @@ void include(String):: Adds a source inclusion rule (Ant pattern).
 | header         | String       | no       | "${project.name} ${project.version}" |
 | footer         | String       | no       |                                      |
 | overviewText   | TextResource | no       |                                      |
-| links          | Set<Link>    | no       | []                                   |
+| links          | Set<Link>    | no       |                                      | The default value contains links to the target Java and latest Groovy javadocs.
 | noTimestamp    | boolean      | no       |                                      |
 | noVersionStamp | boolean      | no       |                                      |
 | includePrivate | boolean      | no       | true                                 |
