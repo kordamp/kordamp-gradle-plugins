@@ -16,6 +16,59 @@ This plugin adds the following plugins to the classpath without applying them:
  * `<<_org_kordamp_gradle_checkstyle,org.kordamp.gradle.checkstyle>>`
  * `<<_org_kordamp_gradle_pmd,org.kordamp.gradle.pmd>>`
 
+[[_org_kordamp_gradle_java_project_extensions]]
+== Extensions
+
+[[_extension_cfg]]
+=== cfg
+
+Configures platform dependencies on multiple configurations.
+
+[horizontal]
+Name:: cfg
+Type:: `org.kordamp.gradle.plugin.project.java.PlatformHandler`
+Applied to:: `org.gradle.api.artifacts.dsl.DependencyHandler`
+
+Since Gradle 6 platform dependencies must be applied per configuration, which results in verbose build files when a
+BOM/platform should  be applied in common configurations. This extension lets you apply a BOM/platform to multiple
+configurations with a single method call.
+
+NOTE: The following configurations will be used if none are specified: `api`, `implementation`, `annotationProcessor`,
+`testImplementation`, `testAnnotationProcessor`, `compileOnly`, `testCompileOnly`, `runtimeOnly`, `testRuntimeOnly`.
+
+.Methods
+
+* void platform(Object platformGav)
+* void platform(Object platformGav, Action<? super Dependency> action)
+* void platform(Object platformGav, String... configurations)
+* void platform(Object platformGav, List<String> configurations)
+* void platform(Object platformGav, List<String> configurations, Action<? super Dependency> action)
+* void enforcedPlatform(Object platformGav)
+* void enforcedPlatform(Object platformGav, Action<? super Dependency> action)
+* void enforcedPlatform(Object platformGav, String... configurations)
+* void enforcedPlatform(Object platformGav, List<String> configurations)
+* void enforcedPlatform(Object platformGav, List<String> configurations, Action<? super Dependency> action)
+
+.Example
+The following example shows how the Micronaut BOM can be used to configure all configurations
+
+[source,groovy]
+.build.gradle
+----
+dependencies {
+    cfg.enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion")
+
+    annotationProcessor 'io.micronaut:micronaut-inject-java'
+    annotationProcessor 'io.micronaut:micronaut-validation'
+
+    compileOnly 'io.micronaut:micronaut-inject-groovy'
+
+    api 'io.micronaut:micronaut-inject'
+    api 'io.micronaut:micronaut-validation'
+    api 'io.micronaut:micronaut-runtime-groovy'
+}
+----
+
 [[_org_kordamp_gradle_java_project_tasks]]
 == Tasks
 

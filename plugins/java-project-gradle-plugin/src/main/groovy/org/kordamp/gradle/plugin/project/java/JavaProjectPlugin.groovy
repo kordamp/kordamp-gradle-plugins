@@ -25,6 +25,7 @@ import org.gradle.api.tasks.JavaExec
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 import org.kordamp.gradle.plugin.project.ProjectPlugin
+import org.kordamp.gradle.plugin.project.java.internal.PlatformHandlerImpl
 import org.kordamp.gradle.plugin.project.java.tasks.JarSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.JavaCompilerSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.JavaExecSettingsTask
@@ -69,6 +70,8 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
         project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
+                project.dependencies.extensions.create(PlatformHandler, 'cfg', PlatformHandlerImpl, project)
+
                 project.tasks.register('sourceSets', SourceSetsTask,
                     new Action<SourceSetsTask>() {
                         @Override
