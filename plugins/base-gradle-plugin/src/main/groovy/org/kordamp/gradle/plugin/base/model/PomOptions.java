@@ -48,6 +48,8 @@ public interface PomOptions {
 
     boolean isOverwriteMailingLists();
 
+    Map<String,String> getProperties();
+
     void setParent(String parent);
 
     void setOverwriteInceptionYear(boolean value);
@@ -69,6 +71,8 @@ public interface PomOptions {
     void setOverwriteCiManagement(boolean value);
 
     void setOverwriteMailingLists(boolean value);
+
+    void setProperties(Map<String, String> props);
 
     Map<String, Object> toMap();
 }

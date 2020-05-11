@@ -146,6 +146,7 @@ config {
         import
         excludes
         includes
+        properties
         parent
         overwriteInceptionYear
         overwriteUrl
@@ -160,23 +161,24 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name                   | Type        | Required | Default Value | Description
-| enabled                | boolean     | no       | true          | Disables `org.kordamp.gradle.bom` plugin if `false`
-| autoIncludes           | boolean     | no       | true          | Disables default inclusion of all projects
-| compile                | Set<String> | no       | []            | Dependencies that should be added to the `compile` scope
-| runtime                | Set<String> | no       | []            | Dependencies that should be added to the `runtime` scope
-| test                   | Set<String> | no       | []            | Dependencies that should be added to the `test` scope
-| import                 | Set<String> | no       | []            | Dependencies that should be added to the `import` scope
-| excludes               | Set<String> | no       | []            | Names of subprojects that should not be included
-| includes               | Set<String> | no       | []            | Names of subprojects that should be included
-| parent                 | String      | no       |               | Defines the coordinates of the parent POM
-| overwriteInceptionYear | boolean     | no       | false         | Overwrite `<inceptionYear>` from parent POM
-| overwriteUrl           | boolean     | no       | false         | Overwrite `<url>` from parent POM
-| overwriteLicenses      | boolean     | no       | false         | Overwrite `<licenses>` from parent POM
-| overwriteScm           | boolean     | no       | false         | Overwrite `<scm>` from parent POM
-| overwriteOrganization  | boolean     | no       | false         | Overwrite `<organization>` from parent POM
-| overwriteDevelopers    | boolean     | no       | false         | Overwrite `<developers>` from parent POM
-| overwriteContributors  | boolean     | no       | false         | Overwrite `<contributors>` from parent POM
+| Name                   | Type                | Required | Default Value | Description
+| enabled                | boolean             | no       | true          | Disables `org.kordamp.gradle.bom` plugin if `false`
+| autoIncludes           | boolean             | no       | true          | Disables default inclusion of all projects
+| compile                | Set<String>         | no       | []            | Dependencies that should be added to the `compile` scope
+| runtime                | Set<String>         | no       | []            | Dependencies that should be added to the `runtime` scope
+| test                   | Set<String>         | no       | []            | Dependencies that should be added to the `test` scope
+| import                 | Set<String>         | no       | []            | Dependencies that should be added to the `import` scope
+| excludes               | Set<String>         | no       | []            | Names of subprojects that should not be included
+| includes               | Set<String>         | no       | []            | Names of subprojects that should be included
+| properties             | Map<String, String> | no       | [:]           | Maps to `<properties>` block.
+| parent                 | String              | no       |               | Defines the coordinates of the parent POM
+| overwriteInceptionYear | boolean             | no       | false         | Overwrite `<inceptionYear>` from parent POM
+| overwriteUrl           | boolean             | no       | false         | Overwrite `<url>` from parent POM
+| overwriteLicenses      | boolean             | no       | false         | Overwrite `<licenses>` from parent POM
+| overwriteScm           | boolean             | no       | false         | Overwrite `<scm>` from parent POM
+| overwriteOrganization  | boolean             | no       | false         | Overwrite `<organization>` from parent POM
+| overwriteDevelopers    | boolean             | no       | false         | Overwrite `<developers>` from parent POM
+| overwriteContributors  | boolean             | no       | false         | Overwrite `<contributors>` from parent POM
 |===
 
 The format for `parent` may be any of the following ones:

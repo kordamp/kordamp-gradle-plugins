@@ -279,6 +279,7 @@ class PublishingUtils {
         pom.packaging = pomOptions.packaging
         if (isOverwriteAllowed(pomOptions, pomOptions.overwriteUrl) && isNotBlank(config.info.url)) pom.url.set(config.info.url)
         if (isOverwriteAllowed(pomOptions, pomOptions.overwriteInceptionYear)) pom.inceptionYear.set(config.info.inceptionYear)
+        pom.properties.set(pomOptions.properties)
 
         if (isOverwriteAllowed(pomOptions, pomOptions.overwriteLicenses)) {
             pom.licenses(new Action<MavenPomLicenseSpec>() {
