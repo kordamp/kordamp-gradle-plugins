@@ -38,9 +38,16 @@ class Codenarc extends AbstractQualityFeature {
     int maxPriority2Violations
     int maxPriority3Violations
 
+    private boolean configFileSet
+
     Codenarc(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'codenarc')
         toolVersion = '1.5'
+    }
+
+    void setConfigFile(File configFile) {
+        this.configFile = configFile
+        this.configFileSet = true
     }
 
     @Override
@@ -55,11 +62,17 @@ class Codenarc extends AbstractQualityFeature {
     @Override
     void normalize() {
         if (null == configFile) {
-            File file = project.rootProject.file("config/codenarc/${project.name}.xml")
+            File file = project.rootProject.file("config/codenarc/${project.name}.groovy")
+            if (!file.exists()) {
+                file = project.rootProject.file("config/codenarc/${project.name}.xml")
+            }
+            if (!file.exists()) {
+                file = project.rootProject.file('config/codenarc/codenarc.groovy')
+            }
             if (!file.exists()) {
                 file = project.rootProject.file('config/codenarc/codenarc.xml')
             }
-            configFile = file
+            this.@configFile = file
         }
 
         super.normalize()
@@ -68,6 +81,7 @@ class Codenarc extends AbstractQualityFeature {
     void copyInto(Codenarc copy) {
         super.copyInto(copy)
         copy.configFile = configFile
+        copy.@configFileSet = configFileSet
         copy.maxPriority1Violations = maxPriority1Violations
         copy.maxPriority2Violations = maxPriority2Violations
         copy.maxPriority3Violations = maxPriority3Violations
@@ -77,7 +91,10 @@ class Codenarc extends AbstractQualityFeature {
 
     static void merge(Codenarc o1, Codenarc o2) {
         AbstractQualityFeature.merge(o1, o2)
-        o1.configFile = o1.configFile ?: o2.configFile
+        if (!o1.configFileSet) {
+            if (o2.configFileSet) o1.configFile = o2.configFile
+        }
+        o1.configFileSet = o1.configFileSet ?: o2.configFileSet
         o1.maxPriority1Violations = o1.maxPriority1Violations ?: o2.maxPriority1Violations
         o1.maxPriority2Violations = o1.maxPriority2Violations ?: o2.maxPriority2Violations
         o1.maxPriority3Violations = o1.maxPriority3Violations ?: o2.maxPriority3Violations
@@ -88,8 +105,10 @@ class Codenarc extends AbstractQualityFeature {
         String sourceSetName = (codenarcTask.name - 'codenarc').uncapitalize()
         sourceSetName = sourceSetName == 'allCodenarc' ? project.name : sourceSetName
         sourceSetName = sourceSetName == 'aggregateCodenarc' ? 'aggregate' : sourceSetName
-        codenarcTask.enabled = enabled && configFile.exists()
-        codenarcTask.configFile = configFile
+        // Check if there's a sourceSet specific config file first #304
+        File specificConfigFile = resolveConfigFile(configFile, configFileSet, sourceSetName)
+        codenarcTask.enabled = enabled && specificConfigFile.exists()
+        codenarcTask.configFile = specificConfigFile
         codenarcTask.maxPriority1Violations = maxPriority1Violations
         codenarcTask.maxPriority2Violations = maxPriority2Violations
         codenarcTask.maxPriority3Violations = maxPriority3Violations
@@ -98,5 +117,24 @@ class Codenarc extends AbstractQualityFeature {
         codenarcTask.reports.xml.enabled = true
         codenarcTask.reports.html.destination = project.layout.buildDirectory.file("reports/codenarc/${sourceSetName}.html").get().asFile
         codenarcTask.reports.xml.destination = project.layout.buildDirectory.file("reports/codenarc/${sourceSetName}.xml").get().asFile
+    }
+
+    private resolveConfigFile(File baseFile, boolean fileSet, String sourceSetName) {
+        if (fileSet) return baseFile
+
+        for (String path : [
+            "config/codenarc/${project.name}-${sourceSetName}.groovy",
+            "config/codenarc/${project.name}.groovy",
+            "config/codenarc/codenarc.groovy",
+            "config/codenarc/${project.name}-${sourceSetName}.xml",
+            "config/codenarc/${project.name}.xml",
+            "config/codenarc/codenarc.xml"]) {
+            File file = project.rootProject.file(path)
+            if (file.exists()) {
+                return file
+            }
+        }
+
+        baseFile
     }
 }
