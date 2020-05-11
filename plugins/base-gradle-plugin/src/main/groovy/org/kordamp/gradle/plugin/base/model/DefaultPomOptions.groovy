@@ -18,6 +18,7 @@
 package org.kordamp.gradle.plugin.base.model
 
 import groovy.transform.CompileStatic
+import org.kordamp.gradle.CollectionUtils
 
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
@@ -28,6 +29,7 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 class DefaultPomOptions implements PomOptions {
     String packaging
+    Map<String, String> properties = new LinkedHashMap<>()
 
     String parent
     boolean overwriteInceptionYear
@@ -95,7 +97,8 @@ class DefaultPomOptions implements PomOptions {
     @Override
     Map<String, Object> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(
-            packaging: packaging
+            packaging: packaging,
+            properties: properties
         )
         if (isNotBlank(parent)) {
             map.putAll([
@@ -118,6 +121,7 @@ class DefaultPomOptions implements PomOptions {
 
     void copyInto(DefaultPomOptions copy) {
         copy.packaging = this.packaging
+        copy.properties.putAll(properties)
         copy.parent = this.parent
         copy.@overwriteInceptionYear = this.overwriteInceptionYear
         copy.@overwriteInceptionYearSet = this.overwriteInceptionYearSet
@@ -143,6 +147,7 @@ class DefaultPomOptions implements PomOptions {
 
     static void merge(DefaultPomOptions o1, DefaultPomOptions o2) {
         o1.packaging = (o1.packaging ?: o2.packaging) ?: 'jar'
+        CollectionUtils.merge(o1.properties, o2.properties)
         o1.parent = o1.parent ?: o2.parent
         o1.setOverwriteInceptionYear((boolean) (o1.overwriteInceptionYearSet ? o1.overwriteInceptionYear : o2.overwriteInceptionYear))
         o1.setOverwriteUrl((boolean) (o1.overwriteUrlSet ? o1.overwriteUrl : o2.overwriteUrl))

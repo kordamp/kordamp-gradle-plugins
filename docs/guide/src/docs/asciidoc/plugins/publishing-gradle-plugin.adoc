@@ -38,6 +38,7 @@ config {
         scopes
         filterDependencies
         <<_publishing_pom,pom>>  {
+            properties
             parent
             overwriteInceptionYear
             overwriteUrl
@@ -70,16 +71,17 @@ This block is optional.
 
 [options="header", cols="5*"]
 |===
-| Name                   | Type        | Required | Default Value | Description
-| packaging              | String      | no       | jar           | Defines the value for `<packaging>`
-| parent                 | String      | no       |               | Defines the coordinates of the parent POM
-| overwriteInceptionYear | boolean     | no       | false         | Overwrite `<inceptionYear>` from parent POM
-| overwriteUrl           | boolean     | no       | false         | Overwrite `<url>` from parent POM
-| overwriteLicenses      | boolean     | no       | false         | Overwrite `<licenses>` from parent POM
-| overwriteScm           | boolean     | no       | false         | Overwrite `<scm>` from parent POM
-| overwriteOrganization  | boolean     | no       | false         | Overwrite `<organization>` from parent POM
-| overwriteDevelopers    | boolean     | no       | false         | Overwrite `<developers>` from parent POM
-| overwriteContributors  | boolean     | no       | false         | Overwrite `<contributors>` from parent POM
+| Name                   | Type                | Required | Default Value | Description
+| packaging              | String              | no       | jar           | Defines the value for `<packaging>`
+| properties             | Map<String, String> | no       | [:]           | Maps to `<properties>` block.
+| parent                 | String              | no       |               | Defines the coordinates of the parent POM
+| overwriteInceptionYear | boolean             | no       | false         | Overwrite `<inceptionYear>` from parent POM
+| overwriteUrl           | boolean             | no       | false         | Overwrite `<url>` from parent POM
+| overwriteLicenses      | boolean             | no       | false         | Overwrite `<licenses>` from parent POM
+| overwriteScm           | boolean             | no       | false         | Overwrite `<scm>` from parent POM
+| overwriteOrganization  | boolean             | no       | false         | Overwrite `<organization>` from parent POM
+| overwriteDevelopers    | boolean             | no       | false         | Overwrite `<developers>` from parent POM
+| overwriteContributors  | boolean             | no       | false         | Overwrite `<contributors>` from parent POM
 |===
 
 The format for `parent` may be any of the following ones:
