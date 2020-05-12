@@ -81,7 +81,7 @@ abstract class AbstractAggregateFeature extends AbstractFeature {
         action.execute(aggregate)
     }
 
-    void aggregate(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Aggregate) Closure action) {
+    void aggregate(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Aggregate) Closure<Void> action) {
         ConfigureUtil.configure(action, aggregate)
     }
 

@@ -58,7 +58,7 @@ class RepositorySet {
         repositories << repository
     }
 
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Repository) Closure action) {
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Repository) Closure<Void> action) {
         Repository repository = new Repository()
         ConfigureUtil.configure(action, repository)
         repositories << repository
@@ -80,7 +80,7 @@ class RepositorySet {
         o1.repositories.addAll(a.values())
     }
 
-    void forEach(Closure action) {
+    void forEach(Closure<Void> action) {
         repositories.each(action)
     }
 

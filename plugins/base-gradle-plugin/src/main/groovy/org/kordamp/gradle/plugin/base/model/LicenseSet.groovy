@@ -55,7 +55,7 @@ class LicenseSet {
         licenses << license
     }
 
-    void license(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = License) Closure action) {
+    void license(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = License) Closure<Void> action) {
         License license = new License()
         ConfigureUtil.configure(action, license)
         licenses << license

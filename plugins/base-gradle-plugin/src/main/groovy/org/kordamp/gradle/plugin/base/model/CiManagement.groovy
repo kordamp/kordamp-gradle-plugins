@@ -77,7 +77,7 @@ class CiManagement {
         action.execute(notifiers)
     }
 
-    void notifiers(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NotifierSet) Closure action) {
+    void notifiers(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NotifierSet) Closure<Void> action) {
         ConfigureUtil.configure(action, notifiers)
     }
 }

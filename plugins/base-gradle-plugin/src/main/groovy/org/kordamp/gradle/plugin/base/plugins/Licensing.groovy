@@ -75,7 +75,7 @@ class Licensing extends AbstractFeature {
         action.execute(licenses)
     }
 
-    void licenses(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = LicenseSet) Closure action) {
+    void licenses(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = LicenseSet) Closure<Void> action) {
         ConfigureUtil.configure(action, licenses)
     }
 

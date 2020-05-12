@@ -212,47 +212,47 @@ class Information {
         action.execute(impl)
     }
 
-    void people(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PersonSet) Closure action) {
+    void people(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PersonSet) Closure<Void> action) {
         ConfigureUtil.configure(action, people)
     }
 
-    void repositories(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = RepositorySet) Closure action) {
+    void repositories(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = RepositorySet) Closure<Void> action) {
         ConfigureUtil.configure(action, repositories)
     }
 
-    void organization(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Organization) Closure action) {
+    void organization(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Organization) Closure<Void> action) {
         ConfigureUtil.configure(action, organization)
     }
 
-    void links(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Links) Closure action) {
+    void links(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Links) Closure<Void> action) {
         ConfigureUtil.configure(action, links)
     }
 
-    void scm(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scm) Closure action) {
+    void scm(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scm) Closure<Void> action) {
         ConfigureUtil.configure(action, scm)
     }
 
-    void issueManagement(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = IssueManagement) Closure action) {
+    void issueManagement(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = IssueManagement) Closure<Void> action) {
         ConfigureUtil.configure(action, issueManagement)
     }
 
-    void ciManagement(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CiManagement) Closure action) {
+    void ciManagement(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CiManagement) Closure<Void> action) {
         ConfigureUtil.configure(action, ciManagement)
     }
 
-    void mailingLists(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MailingListSet) Closure action) {
+    void mailingLists(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MailingListSet) Closure<Void> action) {
         ConfigureUtil.configure(action, mailingLists)
     }
 
-    void credentials(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CredentialsSet) Closure action) {
+    void credentials(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CredentialsSet) Closure<Void> action) {
         ConfigureUtil.configure(action, credentials)
     }
 
-    void specification(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Specification) Closure action) {
+    void specification(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Specification) Closure<Void> action) {
         ConfigureUtil.configure(action, spec)
     }
 
-    void implementation(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Specification) Closure action) {
+    void implementation(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Specification) Closure<Void> action) {
         ConfigureUtil.configure(action, impl)
     }
 

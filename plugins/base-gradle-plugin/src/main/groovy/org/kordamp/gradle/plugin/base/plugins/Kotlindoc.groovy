@@ -213,7 +213,7 @@ class Kotlindoc extends AbstractFeature {
         action.execute(sourceLinks)
     }
 
-    void sourceLinks(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SourceLinkSet) Closure action) {
+    void sourceLinks(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SourceLinkSet) Closure<Void> action) {
         ConfigureUtil.configure(action, sourceLinks)
     }
 
@@ -221,7 +221,7 @@ class Kotlindoc extends AbstractFeature {
         action.execute(externalDocumentationLinks)
     }
 
-    void externalDocumentationLinks(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ExternalDocumentationLinkSet) Closure action) {
+    void externalDocumentationLinks(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ExternalDocumentationLinkSet) Closure<Void> action) {
         ConfigureUtil.configure(action, externalDocumentationLinks)
     }
 
@@ -229,7 +229,7 @@ class Kotlindoc extends AbstractFeature {
         action.execute(packageOptions)
     }
 
-    void packageOptions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PackageOptionSet) Closure action) {
+    void packageOptions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PackageOptionSet) Closure<Void> action) {
         ConfigureUtil.configure(action, packageOptions)
     }
 
@@ -237,7 +237,7 @@ class Kotlindoc extends AbstractFeature {
         action.execute(aggregate)
     }
 
-    void aggregate(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Aggregate) Closure action) {
+    void aggregate(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Aggregate) Closure<Void> action) {
         ConfigureUtil.configure(action, aggregate)
     }
 
@@ -335,7 +335,7 @@ class Kotlindoc extends AbstractFeature {
             sourceLinks << sourceLink
         }
 
-        void sourceLink(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SourceLink) Closure action) {
+        void sourceLink(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SourceLink) Closure<Void> action) {
             SourceLink sourceLink = new SourceLink()
             ConfigureUtil.configure(action, sourceLink)
             sourceLinks << sourceLink
@@ -405,7 +405,7 @@ class Kotlindoc extends AbstractFeature {
             externalDocumentationLinks << externalDocumentationLink
         }
 
-        void externalDocumentationLink(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ExternalDocumentationLink) Closure action) {
+        void externalDocumentationLink(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ExternalDocumentationLink) Closure<Void> action) {
             ExternalDocumentationLink externalDocumentationLink = new ExternalDocumentationLink()
             ConfigureUtil.configure(action, externalDocumentationLink)
             externalDocumentationLinks << externalDocumentationLink
@@ -478,7 +478,7 @@ class Kotlindoc extends AbstractFeature {
             packageOptions << packageOption
         }
 
-        void packageOption(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PackageOption) Closure action) {
+        void packageOption(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PackageOption) Closure<Void> action) {
             PackageOption packageOption = new PackageOption()
             ConfigureUtil.configure(action, packageOption)
             packageOptions << packageOption

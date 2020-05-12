@@ -93,7 +93,7 @@ class Testing extends AbstractFeature {
         action.execute(integration)
     }
 
-    void integration(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Integration) Closure action) {
+    void integration(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Integration) Closure<Void> action) {
         ConfigureUtil.configure(action, integration)
     }
 
@@ -101,7 +101,7 @@ class Testing extends AbstractFeature {
         action.execute(functional)
     }
 
-    void functional(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Functional) Closure action) {
+    void functional(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Functional) Closure<Void> action) {
         ConfigureUtil.configure(action, functional)
     }
 

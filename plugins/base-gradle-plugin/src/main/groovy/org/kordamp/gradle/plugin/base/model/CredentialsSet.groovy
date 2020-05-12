@@ -57,11 +57,11 @@ class CredentialsSet {
         action.execute(credentialsMap.computeIfAbsent(SONATYPE, { k -> new Credentials() }))
     }
 
-    void github(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Credentials) Closure action) {
+    void github(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Credentials) Closure<Void> action) {
         ConfigureUtil.configure(action, credentialsMap.computeIfAbsent(GITHUB, { k -> new Credentials() }))
     }
 
-    void sonatype(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Credentials) Closure action) {
+    void sonatype(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Credentials) Closure<Void> action) {
         ConfigureUtil.configure(action, credentialsMap.computeIfAbsent(SONATYPE, { k -> new Credentials() }))
     }
 
@@ -71,7 +71,7 @@ class CredentialsSet {
         credentialsMap.put(c.name, Credentials.merge(c, getCredentials(c.name)))
     }
 
-    void named(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Credentials) Closure action) {
+    void named(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Credentials) Closure<Void> action) {
         Credentials c = new Credentials()
         ConfigureUtil.configure(action, c)
         credentialsMap.put(c.name, Credentials.merge(c, getCredentials(c.name)))

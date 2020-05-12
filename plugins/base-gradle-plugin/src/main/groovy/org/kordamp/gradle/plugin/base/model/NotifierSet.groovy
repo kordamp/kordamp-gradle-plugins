@@ -54,7 +54,7 @@ class NotifierSet {
         notifiers << notifier
     }
 
-    void notifier(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Notifier) Closure action) {
+    void notifier(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Notifier) Closure<Void> action) {
         Notifier notifier = new Notifier()
         ConfigureUtil.configure(action, notifier)
         notifiers << notifier
@@ -76,7 +76,7 @@ class NotifierSet {
         o1.notifiers.addAll(a.values())
     }
 
-    void forEach(Closure action) {
+    void forEach(Closure<Void> action) {
         notifiers.each(action)
     }
 

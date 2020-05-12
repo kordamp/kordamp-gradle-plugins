@@ -54,7 +54,7 @@ class MailingListSet {
         mailingLists << mailingList
     }
 
-    void mailingList(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MailingList) Closure action) {
+    void mailingList(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MailingList) Closure<Void> action) {
         MailingList mailingList = new MailingList()
         ConfigureUtil.configure(action, mailingList)
         mailingLists << mailingList
@@ -76,7 +76,7 @@ class MailingListSet {
         o1.mailingLists.addAll(a.values())
     }
 
-    void forEach(Closure action) {
+    void forEach(Closure<Void> action) {
         mailingLists.each(action)
     }
 

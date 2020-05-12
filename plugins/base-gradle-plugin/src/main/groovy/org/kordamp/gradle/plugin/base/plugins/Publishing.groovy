@@ -84,7 +84,7 @@ class Publishing extends AbstractFeature {
         action.execute(pom)
     }
 
-    void pom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PomOptions) Closure action) {
+    void pom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PomOptions) Closure<Void> action) {
         ConfigureUtil.configure(action, pom)
     }
 
