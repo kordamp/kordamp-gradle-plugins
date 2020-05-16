@@ -50,6 +50,10 @@ class Codenarc extends AbstractQualityFeature {
         this.configFileSet = true
     }
 
+    boolean isConfigFileSet() {
+        return this.configFileSet
+    }
+
     @Override
     protected void populateMapDescription(Map<String, Object> map) {
         super.populateMapDescription(map)
@@ -94,7 +98,6 @@ class Codenarc extends AbstractQualityFeature {
         if (!o1.configFileSet) {
             if (o2.configFileSet) o1.configFile = o2.configFile
         }
-        o1.configFileSet = o1.configFileSet ?: o2.configFileSet
         o1.maxPriority1Violations = o1.maxPriority1Violations ?: o2.maxPriority1Violations
         o1.maxPriority2Violations = o1.maxPriority2Violations ?: o2.maxPriority2Violations
         o1.maxPriority3Violations = o1.maxPriority3Violations ?: o2.maxPriority3Violations
@@ -119,15 +122,36 @@ class Codenarc extends AbstractQualityFeature {
         codenarcTask.reports.xml.destination = project.layout.buildDirectory.file("reports/codenarc/${sourceSetName}.xml").get().asFile
     }
 
-    private resolveConfigFile(File baseFile, boolean fileSet, String sourceSetName) {
-        if (fileSet) return baseFile
+    private File resolveConfigFile(File baseFile, boolean fileSet, String sourceSetName) {
+        if (sourceSetName == project.name || sourceSetName == 'aggregate') {
+            return baseFile
+        }
+
+        if (fileSet) {
+            if (baseFile.name.endsWith('.groovy')) {
+                String filePath = baseFile.absolutePath[0..-8]
+                File configFile = new File("${filePath}-${sourceSetName}.groovy")
+                if (configFile.exists()) {
+                    return configFile
+                }
+            } else if (baseFile.name.endsWith('.xml')) {
+                String filePath = baseFile.absolutePath[0..-5]
+                File configFile = new File("${filePath}-${sourceSetName}.xml")
+                if (configFile.exists()) {
+                    return configFile
+                }
+            }
+            return baseFile
+        }
 
         for (String path : [
             "config/codenarc/${project.name}-${sourceSetName}.groovy",
             "config/codenarc/${project.name}.groovy",
+            "config/codenarc/codenarc-${sourceSetName}.groovy",
             "config/codenarc/codenarc.groovy",
             "config/codenarc/${project.name}-${sourceSetName}.xml",
             "config/codenarc/${project.name}.xml",
+            "config/codenarc/codenarc-${sourceSetName}.xml",
             "config/codenarc/codenarc.xml"]) {
             File file = project.rootProject.file(path)
             if (file.exists()) {
