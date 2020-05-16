@@ -12,6 +12,7 @@ The DSL is comprised of the following elements
 ----
 config {
     <<_org_kordamp_gradle_base,info>> { ... }
+    <<_base_dependencies,dependencies>> { ... }
     <<_org_kordamp_gradle_bintray,bintray>> { ... }
     <<_org_kordamp_gradle_bom,bom>> { ... }
     <<_org_kordamp_gradle_buildinfo,buildInfo>> { ... }

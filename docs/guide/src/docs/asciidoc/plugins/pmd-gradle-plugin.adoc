@@ -39,11 +39,20 @@ config {
 |===
 | Name                | Type           | Required | Default Value | Description
 | enabled             | boolean        | no       | true          | Disables `org.kordamp.gradle.pmd` plugin if `false`
-| ruleSetFiles        | FileCollection | no       |               | Either `config/pmd/${project.name}.xml` or `config/pmd/pmd.xml`
+| ruleSetFiles        | FileCollection | no       |               |
 | incrementalAnalysis | boolean        | no       | false         |
 | rulePriority        | int            | no       | 5             |
 | excludedSourceSets  | Set<String>    | no       | []            |
 |===
+
+The value of `ruleSetFiles` will be automatically calculated based on the following rules
+
+* Explicit value if set in the build file, with ${sourceSetName} as suffix.
+* Explicit value if set in the build file.
+* `config/pmd/${project.name}-${sourceSetName}.xml`
+* `config/pmd/${project.name}.xml`
+* `config/pmd/pmd-${sourceSetName}.xml`
+* `config/pmd/pmd.xml`
 
 .Methods
 

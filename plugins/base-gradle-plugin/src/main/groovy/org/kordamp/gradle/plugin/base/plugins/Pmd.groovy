@@ -37,6 +37,7 @@ class Pmd extends AbstractQualityFeature {
     int rulePriority = 5
 
     private boolean incrementalAnalysisSet
+    private boolean ruleSetFilesSet
 
     Pmd(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'pmd')
@@ -58,10 +59,19 @@ class Pmd extends AbstractQualityFeature {
             if (!files.empty) {
                 files = project.rootProject.files('config/pmd/pmd.xml')
             }
-            ruleSetFiles = files
+            this.@ruleSetFiles = files
         }
 
         super.normalize()
+    }
+
+    void setRuleSetFiles(FileCollection ruleSetFiles) {
+        this.ruleSetFiles = ruleSetFiles
+        this.ruleSetFilesSet = true
+    }
+
+    boolean isRuleSetFilesSet() {
+        return this.ruleSetFilesSet
     }
 
     void setIncrementalAnalysis(boolean incrementalAnalysis) {
@@ -75,7 +85,8 @@ class Pmd extends AbstractQualityFeature {
 
     void copyInto(Pmd copy) {
         super.copyInto(copy)
-        copy.ruleSetFiles = ruleSetFiles
+        copy.@ruleSetFiles = ruleSetFiles
+        copy.@ruleSetFilesSet = ruleSetFilesSet
         copy.@incrementalAnalysis = incrementalAnalysis
         copy.@incrementalAnalysisSet = incrementalAnalysisSet
         copy.rulePriority = rulePriority
@@ -84,8 +95,10 @@ class Pmd extends AbstractQualityFeature {
     static void merge(Pmd o1, Pmd o2) {
         AbstractQualityFeature.merge(o1, o2)
         o1.setIncrementalAnalysis((boolean) (o1.incrementalAnalysisSet ? o1.incrementalAnalysis : o2.incrementalAnalysis))
-        o1.ruleSetFiles = o1.ruleSetFiles ?: o2.ruleSetFiles
         o1.rulePriority = o1.rulePriority ?: o2.rulePriority
+        if (!o1.ruleSetFilesSet) {
+            if (o2.ruleSetFilesSet) o1.ruleSetFiles = o2.ruleSetFiles
+        }
     }
 
     @CompileDynamic
@@ -93,9 +106,10 @@ class Pmd extends AbstractQualityFeature {
         String sourceSetName = (pmdTask.name - 'pmd').uncapitalize()
         sourceSetName = sourceSetName == 'allPmd' ? project.name : sourceSetName
         sourceSetName = sourceSetName == 'aggregatePmd' ? 'aggregate' : sourceSetName
-        pmdTask.enabled = enabled && !ruleSetFiles.empty && ruleSetFiles.files.every { it.exists() }
+        FileCollection specificRuleSetFiles = resolveRuleSetFiles(ruleSetFiles, ruleSetFilesSet, sourceSetName)
+        pmdTask.enabled = enabled && !specificRuleSetFiles.empty && specificRuleSetFiles.files.every { it.exists() }
         pmdTask.targetJdk = TargetJdk.VERSION_1_7
-        pmdTask.ruleSetFiles = ruleSetFiles
+        pmdTask.ruleSetFiles = specificRuleSetFiles
         pmdTask.ignoreFailures = ignoreFailures
         pmdTask.getIncrementalAnalysis().set(incrementalAnalysisSet)
         pmdTask.rulePriority = rulePriority
@@ -103,5 +117,38 @@ class Pmd extends AbstractQualityFeature {
         pmdTask.reports.xml.enabled = true
         pmdTask.reports.html.destination = project.layout.buildDirectory.file("reports/pmd/${sourceSetName}.html").get().asFile
         pmdTask.reports.xml.destination = project.layout.buildDirectory.file("reports/pmd/${sourceSetName}.xml").get().asFile
+    }
+
+    private FileCollection resolveRuleSetFiles(FileCollection baseFiles, boolean fileSet, String sourceSetName) {
+        if (sourceSetName == project.name || sourceSetName == 'aggregate') {
+            return baseFiles
+        }
+
+        if (fileSet) {
+            List<File> files = []
+            for (File file : baseFiles.files) {
+                String filePath = file.absolutePath[0..-5]
+                File configFile = new File("${filePath}-${sourceSetName}.xml")
+                if (configFile.exists()) {
+                    files.add(configFile)
+                }
+            }
+            files.addAll(baseFiles.files)
+            return project.files(files)
+        }
+
+        List<File> files = []
+        for (String path : [
+            "config/pmd/${project.name}-${sourceSetName}.xml",
+            "config/pmd/${project.name}.xml",
+            "config/pmd/pmd-${sourceSetName}.xml",
+            "config/pmd/pmd.xml"]) {
+            File file = project.rootProject.file(path)
+            if (file.exists()) {
+                files << file
+            }
+        }
+
+        files ? project.files(files) : baseFiles
     }
 }
