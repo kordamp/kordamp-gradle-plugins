@@ -97,7 +97,7 @@ class GenerateTeamReportTask extends DefaultTask implements ReportGeneratingTask
 
     private String processPerson(Person person, Template template) {
         Map binding = [
-            person_image_url        : person.properties.twitter ? "image:https://avatars.io/twitter/${person.properties.twitter}/medium[]".toString() : '-',
+            person_image_url        : resolveImageUrl(person),
             person_id               : person.id ?: '-',
             person_name             : person.name,
             person_email            : person.email ?: '-',
@@ -111,5 +111,14 @@ class GenerateTeamReportTask extends DefaultTask implements ReportGeneratingTask
             binding[('person_' + k)] = v
         }
         template.make(binding).toString()
+    }
+
+    private String resolveImageUrl(Person person) {
+        if (person.properties.picUrl) {
+            return person.properties.picUrl
+        } else if (person.properties.twitter) {
+            return "image:https://avatars.io/twitter/${person.properties.twitter}/medium[]".toString()
+        }
+        '-'
     }
 }

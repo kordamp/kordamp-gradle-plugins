@@ -20,8 +20,8 @@ package org.kordamp.gradle.plugin.project.java.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
-import org.kordamp.gradle.plugin.project.java.PlatformHandler
-import org.kordamp.gradle.plugin.project.java.internal.PlatformHandlerImpl
+import org.kordamp.gradle.plugin.project.java.DependencyHandler
+import org.kordamp.gradle.plugin.project.java.internal.DependencyHandlerImpl
 
 /**
  * @author Andres Almiray
@@ -31,9 +31,9 @@ import org.kordamp.gradle.plugin.project.java.internal.PlatformHandlerImpl
 class PlatformsTask extends AbstractReportingTask {
     @TaskAction
     void report() {
-        PlatformHandler ph = project.dependencies.extensions.findByType(PlatformHandler)
-        if (ph) {
-            List<Map<String, Object>> platforms = ((PlatformHandlerImpl) ph).platforms
+        DependencyHandler dh = project.dependencies.extensions.findByType(DependencyHandler)
+        if (dh) {
+            List<Map<String, Object>> platforms = ((DependencyHandlerImpl) dh).platforms
             println('Total platforms: ' + console.cyan((platforms.size()).toString()) + '\n')
             platforms.eachWithIndex { Map<String, Object> platform, int index ->
                 doPrintMapEntry("Platform $index", platform, 0)

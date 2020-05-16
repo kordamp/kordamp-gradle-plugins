@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.bom
 
+
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
@@ -27,8 +28,9 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Credentials
-import org.kordamp.gradle.plugin.base.model.Dependency
 import org.kordamp.gradle.plugin.base.model.Repository
+import org.kordamp.gradle.plugin.base.model.artifact.Dependency
+import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencyImpl
 import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
@@ -78,6 +80,26 @@ class BomPlugin extends AbstractKordampPlugin {
         }
     }
 
+    private Dependency findOwnDependency(ProjectConfigurationExtension config) {
+        Dependency artifact = findOwnDependency(config.bom.dependencies.values())
+        if (!artifact) artifact = findOwnDependency(config.dependencies.dependencies.values())
+        if (artifact) {
+            artifact
+        } else {
+            String name = config.project.rootProject.name.toLowerCase().replace('-', '.').replace('_', '.')
+            DependencyImpl.of(name, config.project.group.toString(), name, config.project.version.toString())
+        }
+    }
+
+    private Dependency findOwnDependency(Collection<? extends Dependency> dependencies) {
+        for (Dependency dependency : dependencies) {
+            if (dependency.groupId == project.rootProject.group) {
+                return dependency
+            }
+        }
+        null
+    }
+
     @CompileDynamic
     private void updatePublications(Project project) {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
@@ -87,25 +109,27 @@ class BomPlugin extends AbstractKordampPlugin {
             return
         }
 
-        List<Dependency> compileDeps = config.bom.compile.collect { Dependency.parseDependency(project, it) }
-        List<Dependency> runtimeDeps = config.bom.runtime.collect { Dependency.parseDependency(project, it) }
-        List<Dependency> testDeps = config.bom.test.collect { Dependency.parseDependency(project, it) }
-        List<Dependency> importDeps = config.bom.import.collect { Dependency.parseDependency(project, it) }
+        Dependency ownDependency = findOwnDependency(config)
+        Set<Dependency> projectDependencies = [] as Set
 
-        List<String> excludedProjects = config.bom.excludes.collect { it.startsWith(':') ? it[1..-1] : it }
-        List<String> includedProjects = config.bom.includes.collect { it.startsWith(':') ? it[1..-1] : it }
+        Map<String, String> versions = [:]
+        if (ownDependency) {
+            versions.put(ownDependency.name + '.version', ownDependency.version)
+        }
+
+        Set<String> excludedProjects = config.bom.excludes.collect { it.startsWith(':') ? it[1..-1] : it }
+        Set<String> includedProjects = config.bom.includes.collect { it.startsWith(':') ? it[1..-1] : it }
         excludedProjects.removeAll(includedProjects)
 
         if (config.bom.autoIncludes) {
-            project.rootProject.subprojects.each { Project prj ->
-                if (prj == project) return
-
-                Closure<Boolean> predicate = { Dependency d ->
-                    d.artifactId == prj.name && (d.groupId == project.group || d.groupId == '${project.groupId}')
-                }
-                if ((!excludedProjects.contains(prj.name) && (includedProjects && includedProjects.contains(prj.name))) &&
-                    !compileDeps.find(predicate) && !runtimeDeps.find(predicate) && !testDeps.find(predicate)) {
-                    compileDeps << new Dependency('${project.groupId}', prj.name, '${project.version}')
+            for (Project p : project.rootProject.subprojects) {
+                if (p == project || excludedProjects.contains(p.name)) continue
+                if (includedProjects) {
+                    if (includedProjects.contains(p.name)) {
+                        projectDependencies << DependencyImpl.of(ownDependency.name, String.valueOf(p.group), p.name, '${' + ownDependency.name + '.version}')
+                    }
+                } else {
+                    projectDependencies << DependencyImpl.of(ownDependency.name, String.valueOf(p.group), p.name, '${' + ownDependency.name + '.version}')
                 }
             }
         }
@@ -115,43 +139,40 @@ class BomPlugin extends AbstractKordampPlugin {
                 main(MavenPublication) {
                     artifacts = []
 
-                    PublishingUtils.configurePom(pom, config, config.bom)
-
                     pom.withXml {
                         def dependencyManagementNode = asNode().appendNode('dependencyManagement').appendNode('dependencies')
-                        compileDeps.each { Dependency dep ->
+                        for (Dependency d : projectDependencies) {
                             dependencyManagementNode.appendNode('dependency').with {
-                                appendNode('groupId', dep.groupId)
-                                appendNode('artifactId', dep.artifactId)
-                                appendNode('version', dep.version)
+                                appendNode('groupId', d.groupId)
+                                appendNode('artifactId', d.artifactId)
+                                appendNode('version', d.version)
                             }
                         }
-                        runtimeDeps.each { Dependency dep ->
+                        for (Dependency d : config.bom.dependencies.values()) {
+                            String versionExp = '${' + d.name + '.version}'
+                            versions[(versionExp)] = d.version
                             dependencyManagementNode.appendNode('dependency').with {
-                                appendNode('groupId', dep.groupId)
-                                appendNode('artifactId', dep.artifactId)
-                                appendNode('version', dep.version)
-                                appendNode('scope', 'runtime')
+                                appendNode('groupId', d.groupId)
+                                appendNode('artifactId', d.artifactId)
+                                appendNode('version', versionExp)
                             }
                         }
-                        testDeps.each { Dependency dep ->
+                        for (Dependency d : config.bom.platforms.values()) {
+                            String versionKey = d.name + '.version'
+                            String versionExp = '${' + versionKey + '}'
+                            versions.put(versionKey, d.version)
                             dependencyManagementNode.appendNode('dependency').with {
-                                appendNode('groupId', dep.groupId)
-                                appendNode('artifactId', dep.artifactId)
-                                appendNode('version', dep.version)
-                                appendNode('scope', 'test')
-                            }
-                        }
-                        importDeps.each { Dependency dep ->
-                            dependencyManagementNode.appendNode('dependency').with {
-                                appendNode('groupId', dep.groupId)
-                                appendNode('artifactId', dep.artifactId)
-                                appendNode('version', dep.version)
+                                appendNode('groupId', d.groupId)
+                                appendNode('artifactId', d.artifactId)
+                                appendNode('version', versionExp)
                                 appendNode('scope', 'import')
                                 appendNode('type', 'pom')
                             }
                         }
                     }
+
+                    config.bom.properties.putAll(versions)
+                    PublishingUtils.configurePom(pom, config, config.bom)
                 }
             }
 
@@ -159,7 +180,7 @@ class BomPlugin extends AbstractKordampPlugin {
             if (isNotBlank(repositoryName)) {
                 Repository repo = config.info.repositories.getRepository(repositoryName)
                 if (repo == null) {
-                    throw new IllegalStateException("Repository '${repositoryName}' was not found")
+                    throw new IllegalStateException("Repository '${repositoryName}' was not found.")
                 }
 
                 repositories {

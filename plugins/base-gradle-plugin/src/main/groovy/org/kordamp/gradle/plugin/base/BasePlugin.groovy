@@ -306,7 +306,7 @@ class BasePlugin extends AbstractKordampPlugin {
 
             if (validate && errors) {
                 errors.each { project.logger.error(it) }
-                throw new GradleException("Project ${project.name} has not been properly configured")
+                throw new GradleException("Project ${project.name} has not been properly configured.")
             }
         }
     }

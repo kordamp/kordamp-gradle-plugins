@@ -68,7 +68,7 @@ class EffectiveSettingsTask extends AbstractReportingTask {
     private void printSection(Map<String, Object> map, String section) {
         if (map.containsKey(section)) {
             println "${section}:"
-            doPrint((Map<String, ?>) map[section], 1)
+            doPrint(map[section], 1)
         } else if (section in QUALITY) {
             printSection((Map<String, Object>) map.quality, section)
         } else if (section in DOCS) {

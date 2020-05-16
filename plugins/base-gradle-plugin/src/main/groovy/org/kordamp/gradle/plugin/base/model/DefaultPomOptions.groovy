@@ -98,8 +98,7 @@ class DefaultPomOptions implements PomOptions {
     Map<String, Object> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(
             packaging: packaging,
-            properties: properties
-        )
+            properties: properties)
         if (isNotBlank(parent)) {
             map.putAll([
                 parent                  : parent,

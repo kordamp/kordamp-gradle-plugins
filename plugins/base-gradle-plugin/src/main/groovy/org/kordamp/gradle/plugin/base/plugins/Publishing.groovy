@@ -27,6 +27,8 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.DefaultPomOptions
 import org.kordamp.gradle.plugin.base.model.PomOptions
 
+import static org.kordamp.gradle.StringUtils.isBlank
+
 /**
  * @author Andres Almiray
  * @since 0.8.0
@@ -42,10 +44,12 @@ class Publishing extends AbstractFeature {
     DefaultPomOptions pom = new DefaultPomOptions()
     List<String> publications = []
     List<String> scopes = []
-    boolean filterDependencies = false
+    boolean useVersionExpressions = true
+    boolean flattenPlatforms = false
 
     private boolean signingSet
-    private boolean filterDependenciesSet
+    private boolean useVersionExpressionsSet
+    private boolean flattenPlatformsSet
 
     Publishing(ProjectConfigurationExtension config, Project project) {
         super(config, project)
@@ -67,7 +71,8 @@ class Publishing extends AbstractFeature {
             map.snapshotsRepository = snapshotsRepository
             map.publications = publications
             map.scopes = scopes
-            map.filterDependencies = filterDependencies
+            map.useVersionExpressions = useVersionExpressions
+            map.flattenPlatforms = flattenPlatforms
             map.pom = pom.toMap()
         }
 
@@ -80,6 +85,16 @@ class Publishing extends AbstractFeature {
         }
     }
 
+    void postMerge() {
+        if (!scopes) {
+            scopes << 'compile'
+            scopes << 'runtime'
+        }
+        if (isBlank(pom.packaging)) {
+            pom.packaging = 'jar'
+        }
+    }
+
     void pom(Action<? super PomOptions> action) {
         action.execute(pom)
     }
@@ -88,8 +103,8 @@ class Publishing extends AbstractFeature {
         ConfigureUtil.configure(action, pom)
     }
 
-    void setSigning(boolean signing) {
-        this.signing = signing
+    void setSigning(boolean value) {
+        this.signing = value
         this.signingSet = true
     }
 
@@ -97,13 +112,22 @@ class Publishing extends AbstractFeature {
         this.signingSet
     }
 
-    void setFilterDependencies(boolean signing) {
-        this.filterDependencies = signing
-        this.filterDependenciesSet = true
+    void setUseVersionExpressions(boolean value) {
+        this.useVersionExpressions = value
+        this.useVersionExpressionsSet = true
     }
 
-    boolean isFilterDependenciesSet() {
-        this.filterDependenciesSet
+    boolean isUseVersionExpressionsSet() {
+        this.useVersionExpressionsSet
+    }
+
+    void setFlattenPlatforms(boolean value) {
+        this.flattenPlatforms = value
+        this.flattenPlatformsSet = true
+    }
+
+    boolean isFlattenPlatformsSet() {
+        this.flattenPlatformsSet
     }
 
     void copyInto(Publishing copy) {
@@ -115,8 +139,10 @@ class Publishing extends AbstractFeature {
         copy.@signingSet = this.signingSet
         copy.publications.addAll(publications)
         copy.scopes.addAll(scopes)
-        copy.@filterDependencies = this.filterDependencies
-        copy.@filterDependenciesSet = this.filterDependenciesSet
+        copy.@useVersionExpressions = this.useVersionExpressions
+        copy.@useVersionExpressionsSet = this.useVersionExpressionsSet
+        copy.@flattenPlatforms = this.flattenPlatforms
+        copy.@flattenPlatformsSet = this.flattenPlatformsSet
         this.@pom.copyInto(copy.@pom)
     }
 
@@ -126,8 +152,10 @@ class Publishing extends AbstractFeature {
         o1.snapshotsRepository = o1.@snapshotsRepository ?: o2.@snapshotsRepository
         o1.@signing = o1.signingSet ? o1.signing : o2.signing
         o1.@signingSet = o1.signingSet ?: o2.signingSet
-        o1.@filterDependencies = o1.filterDependenciesSet ? o1.filterDependencies : o2.filterDependencies
-        o1.@filterDependenciesSet = o1.filterDependenciesSet ?: o2.filterDependenciesSet
+        o1.@useVersionExpressions = o1.useVersionExpressionsSet ? o1.useVersionExpressions : o2.useVersionExpressions
+        o1.@useVersionExpressionsSet = o1.useVersionExpressionsSet ?: o2.useVersionExpressionsSet
+        o1.@flattenPlatforms = o1.flattenPlatformsSet ? o1.flattenPlatforms : o2.flattenPlatforms
+        o1.@flattenPlatformsSet = o1.flattenPlatformsSet ?: o2.flattenPlatformsSet
         CollectionUtils.merge(o1.publications, o2?.publications)
         CollectionUtils.merge(o1.scopes, o2?.scopes)
         DefaultPomOptions.merge(o1.pom, o2.pom)

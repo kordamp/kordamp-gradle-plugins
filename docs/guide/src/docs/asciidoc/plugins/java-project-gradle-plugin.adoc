@@ -19,14 +19,14 @@ This plugin adds the following plugins to the classpath without applying them:
 [[_org_kordamp_gradle_java_project_extensions]]
 == Extensions
 
-[[_extension_cfg]]
+[[_org_kordamp_gradle_java_project_extension_cfg]]
 === cfg
 
-Configures platform dependencies on multiple configurations.
+Configures dependencies based on settings available from `config.dependencies`.
 
 [horizontal]
 Name:: cfg
-Type:: `org.kordamp.gradle.plugin.project.java.PlatformHandler`
+Type:: `org.kordamp.gradle.plugin.project.java.DependencyHandler`
 Applied to:: `org.gradle.api.artifacts.dsl.DependencyHandler`
 
 Since Gradle 6 platform dependencies must be applied per configuration, which results in verbose build files when a
@@ -38,16 +38,20 @@ NOTE: The following configurations will be used if none are specified: `api`, `i
 
 .Methods
 
-* void platform(Object platformGav)
-* void platform(Object platformGav, Action<? super Dependency> action)
-* void platform(Object platformGav, String... configurations)
-* void platform(Object platformGav, List<String> configurations)
-* void platform(Object platformGav, List<String> configurations, Action<? super Dependency> action)
-* void enforcedPlatform(Object platformGav)
-* void enforcedPlatform(Object platformGav, Action<? super Dependency> action)
-* void enforcedPlatform(Object platformGav, String... configurations)
-* void enforcedPlatform(Object platformGav, List<String> configurations)
-* void enforcedPlatform(Object platformGav, List<String> configurations, Action<? super Dependency> action)
+* void platform(Object notation)
+* void platform(Object notation, Action<? super Dependency> action)
+* void platform(Object notation, String... configurations)
+* void platform(Object notation, List<String> configurations)
+* void platform(Object notation, List<String> configurations, Action<? super Dependency> action)
+* void enforcedPlatform(Object notation)
+* void enforcedPlatform(Object notation, Action<? super Dependency> action)
+* void enforcedPlatform(Object notation, String... configurations)
+* void enforcedPlatform(Object notation, List<String> configurations)
+* void enforcedPlatform(Object notation, List<String> configurations, Action<? super Dependency> action)
+* void dependency(String name, String configuration, String... configurations)
+* void dependency(String name, String configuration, Closure)
+* void module(String name, String configuration, String... configurations)
+* void module(String name, String configuration, Closure)
 
 .Example
 The following example shows how the Micronaut BOM can be used to configure all configurations
@@ -55,17 +59,37 @@ The following example shows how the Micronaut BOM can be used to configure all c
 [source,groovy]
 .build.gradle
 ----
+config {
+    dependencies {
+        dependency('micronaut') {
+            platform   = true
+            groupId    = 'io.micronaut'
+            artifactId = 'micronaut-bom'
+            version    = micronautVersion
+            modules    = ['micronaut-inject-java',
+                          'micronaut-inject-groovy',
+                          'micronaut-inject',
+                          'micronaut-validation',
+                          'micronaut-runtime-groovy']
+        }
+    }
+}
+
 dependencies {
-    cfg.enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion")
+    cfg {
+        enforcedPlatform('micronaut')
 
-    annotationProcessor 'io.micronaut:micronaut-inject-java'
-    annotationProcessor 'io.micronaut:micronaut-validation'
+        module('micronaut','micronaut-inject-java', 'annotationProcessor')
+        module('micronaut','micronaut-validation', 'annotationProcessor', 'api')
 
-    compileOnly 'io.micronaut:micronaut-inject-groovy'
+        module('micronaut','micronaut-inject-groovy', 'compileOnly')
+    }
 
-    api 'io.micronaut:micronaut-inject'
-    api 'io.micronaut:micronaut-validation'
-    api 'io.micronaut:micronaut-runtime-groovy'
+    // you can still use standard configuration methods
+    api('io.micronaut:micronaut-inject')
+
+    // you can mix them both
+    api(config.dependencies.ga('micronaut', 'micronaut-runtime-groovy'))
 }
 ----
 
@@ -111,7 +135,7 @@ if neither of these options is specified.
 [[_task_platforms]]
 === Platforms
 
-displays all configured platforms in the project. Requires the use of the <<_extension_cfg,cfg>> extension.
+Displays all configured platforms in the project. Requires the use of the <<_extension_cfg,cfg>> extension.
 
 [horizontal]
 Name:: platforms

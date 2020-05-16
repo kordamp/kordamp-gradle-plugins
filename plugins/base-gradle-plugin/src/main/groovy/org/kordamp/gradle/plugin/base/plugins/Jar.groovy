@@ -19,8 +19,11 @@ package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.model.PomOptions
 
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
@@ -83,6 +86,14 @@ class Jar extends AbstractFeature {
     static void merge(Jar o1, Jar o2) {
         AbstractQualityFeature.merge(o1, o2)
         o1.manifest.merge(o2.manifest)
+    }
+
+    void manifest(Action<? super Manifest> action) {
+        action.execute(manifest)
+    }
+
+    void manifest(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Manifest) Closure<Void> action) {
+        ConfigureUtil.configure(action, manifest)
     }
 
     @CompileStatic

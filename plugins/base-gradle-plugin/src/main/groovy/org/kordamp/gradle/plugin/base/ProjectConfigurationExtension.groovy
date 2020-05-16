@@ -29,6 +29,7 @@ import org.kordamp.gradle.plugin.base.plugins.Checkstyle
 import org.kordamp.gradle.plugin.base.plugins.Clirr
 import org.kordamp.gradle.plugin.base.plugins.Codenarc
 import org.kordamp.gradle.plugin.base.plugins.Coveralls
+import org.kordamp.gradle.plugin.base.plugins.Dependencies
 import org.kordamp.gradle.plugin.base.plugins.Detekt
 import org.kordamp.gradle.plugin.base.plugins.ErrorProne
 import org.kordamp.gradle.plugin.base.plugins.Groovydoc
@@ -64,6 +65,7 @@ class ProjectConfigurationExtension {
 
     final Project project
     final Information info
+    final Dependencies dependencies
     final Bom bom
     final Bintray bintray
     final BuildInfo buildInfo
@@ -83,6 +85,7 @@ class ProjectConfigurationExtension {
     ProjectConfigurationExtension(Project project) {
         this.project = project
         info = new Information(this, project)
+        dependencies = new Dependencies(this, project)
         bom = new Bom(this, project)
         bintray = new Bintray(this, project)
         buildInfo = new BuildInfo(this, project)
@@ -103,6 +106,7 @@ class ProjectConfigurationExtension {
         this(other.project)
         setRelease(other.release)
         other.info.copyInto(info)
+        other.dependencies.copyInto(dependencies)
         other.bom.copyInto(bom)
         other.bintray.copyInto(bintray)
         other.buildInfo.copyInto(buildInfo)
@@ -122,6 +126,7 @@ class ProjectConfigurationExtension {
         Map<String, Object> map = new LinkedHashMap<String, Object>(release: release)
 
         map.putAll(info.toMap())
+        map.putAll(dependencies.toMap())
         map.putAll(buildInfo.toMap())
         map.putAll(artifacts.toMap())
         map.putAll(bintray.toMap())
@@ -197,15 +202,23 @@ class ProjectConfigurationExtension {
         action.execute(info)
     }
 
-    void info(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Information) Closure action) {
+    void info(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Information) Closure<Void> action) {
         ConfigureUtil.configure(action, info)
+    }
+
+    void dependencies(Action<? super Dependencies> action) {
+        action.execute(dependencies)
+    }
+
+    void dependencies(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Dependencies) Closure<Void> action) {
+        ConfigureUtil.configure(action, dependencies)
     }
 
     void bom(Action<? super Bom> action) {
         action.execute(bom)
     }
 
-    void bom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Bom) Closure action) {
+    void bom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Bom) Closure<Void> action) {
         ConfigureUtil.configure(action, bom)
     }
 
@@ -428,6 +441,7 @@ class ProjectConfigurationExtension {
         copy.@release = this.@release
         copy.@releaseSet = this.@releaseSet
         this.@info.copyInto(copy.@info)
+        this.@dependencies.copyInto(copy.@dependencies)
         this.@bom.copyInto(copy.@bom)
         this.@bintray.copyInto(copy.@bintray)
         this.@buildInfo.copyInto(copy.@buildInfo)
@@ -449,6 +463,7 @@ class ProjectConfigurationExtension {
         ProjectConfigurationExtension copy = copyOf()
         copy.setRelease((boolean) (copy.@releaseSet ? copy.@release : other.@release))
         Information.merge(copy.@info, other.@info)
+        Dependencies.merge(copy.@dependencies, other.@dependencies)
         Bom.merge(copy.@bom, other.@bom)
         Bintray.merge(copy.@bintray, other.@bintray)
         BuildInfo.merge(copy.@buildInfo, other.@buildInfo)
@@ -494,6 +509,7 @@ class ProjectConfigurationExtension {
     }
 
     ProjectConfigurationExtension postMerge() {
+        publishing.postMerge()
         testing.postMerge()
         docs.postMerge()
         quality.postMerge()

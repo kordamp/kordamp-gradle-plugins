@@ -114,17 +114,20 @@ Results in the following BOM when invoking `gradle :sample-bom:publish`
   <scm>
     <url>https://github.com/joecool/sample.git</url>
   </scm>
+  <properties>
+    <sample.version>0.0.0</sample.version>
+  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>org.kordamp.sample.acme</groupId>
         <artifactId>project1</artifactId>
-        <version>${project.version}</version>
+        <version>${sample.version}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>org.kordamp.sample.acme</groupId>
         <artifactId>project2</artifactId>
-        <version>${project.version}</version>
+        <version>${sample.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -140,10 +143,7 @@ config {
     bom {
         autoIncludes
         enabled
-        compile
-        runtime
-        test
-        import
+        dependencies
         excludes
         includes
         properties
@@ -161,24 +161,21 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name                   | Type                | Required | Default Value | Description
-| enabled                | boolean             | no       | true          | Disables `org.kordamp.gradle.bom` plugin if `false`
-| autoIncludes           | boolean             | no       | true          | Disables default inclusion of all projects
-| compile                | Set<String>         | no       | []            | Dependencies that should be added to the `compile` scope
-| runtime                | Set<String>         | no       | []            | Dependencies that should be added to the `runtime` scope
-| test                   | Set<String>         | no       | []            | Dependencies that should be added to the `test` scope
-| import                 | Set<String>         | no       | []            | Dependencies that should be added to the `import` scope
-| excludes               | Set<String>         | no       | []            | Names of subprojects that should not be included
-| includes               | Set<String>         | no       | []            | Names of subprojects that should be included
-| properties             | Map<String, String> | no       | [:]           | Maps to `<properties>` block.
-| parent                 | String              | no       |               | Defines the coordinates of the parent POM
-| overwriteInceptionYear | boolean             | no       | false         | Overwrite `<inceptionYear>` from parent POM
-| overwriteUrl           | boolean             | no       | false         | Overwrite `<url>` from parent POM
-| overwriteLicenses      | boolean             | no       | false         | Overwrite `<licenses>` from parent POM
-| overwriteScm           | boolean             | no       | false         | Overwrite `<scm>` from parent POM
-| overwriteOrganization  | boolean             | no       | false         | Overwrite `<organization>` from parent POM
-| overwriteDevelopers    | boolean             | no       | false         | Overwrite `<developers>` from parent POM
-| overwriteContributors  | boolean             | no       | false         | Overwrite `<contributors>` from parent POM
+| Name                   | Type                    | Required | Default Value | Description
+| enabled                | boolean                 | no       | true          | Disables `org.kordamp.gradle.bom` plugin if `false`
+| autoIncludes           | boolean                 | no       | true          | Disables default inclusion of all projects
+| dependencies           | Map<String, Dependency> | no       | [:]           | Dependencies that should be added to the BOM
+| excludes               | Set<String>             | no       | []            | Names of subprojects that should not be included
+| includes               | Set<String>             | no       | []            | Names of subprojects that should be included
+| properties             | Map<String, String>     | no       | [:]           | Maps to `<properties>` block.
+| parent                 | String                  | no       |               | Defines the coordinates of the parent POM
+| overwriteInceptionYear | boolean                 | no       | false         | Overwrite `<inceptionYear>` from parent POM
+| overwriteUrl           | boolean                 | no       | false         | Overwrite `<url>` from parent POM
+| overwriteLicenses      | boolean                 | no       | false         | Overwrite `<licenses>` from parent POM
+| overwriteScm           | boolean                 | no       | false         | Overwrite `<scm>` from parent POM
+| overwriteOrganization  | boolean                 | no       | false         | Overwrite `<organization>` from parent POM
+| overwriteDevelopers    | boolean                 | no       | false         | Overwrite `<developers>` from parent POM
+| overwriteContributors  | boolean                 | no       | false         | Overwrite `<contributors>` from parent POM
 |===
 
 The format for `parent` may be any of the following ones:
@@ -192,11 +189,11 @@ This block is optional.
 [[_org_kordamp_gradle_bom_dsl_methods]]
 === Methods
 
-[horizontal]
-compile(String):: Add a dependency to the `compile` scope. Its value may be a project name or a dependency definition such as 'group:artifactId:version'.
-runtime(String):: Add a dependency to the `runtime` scope. Its value may be a project name or a dependency definition such as 'group:artifactId:version'.
-test(String):: Add a dependency to the `test` scope. Its value may be a project name or a dependency definition such as 'group:artifactId:version'.
-imports(String):: Add a dependency to the `import` scope. Its value may be a project name or a dependency definition such as 'group:artifactId:version'.
 exclude(String):: Skips the named project from being added to the BOM.
 include(String):: Adds the named project to the BOM.
+Dependency dependency(String, String):: Adds a dependency by name.
+Dependency dependency(String, Action<? super DependencySpec>):: Adds and configures a dependency by name.
+Dependency dependency(String, Closure<Void>):: Adds and configures a dependency by name.
+Dependency dependency(String):: Finds a dependency by name. Throws an exception if it can't be found.
+void dependency(Dependency):: Adds an existing dependency, usually declared in `<<_base_dependencies,config.dependencies>>`.
 

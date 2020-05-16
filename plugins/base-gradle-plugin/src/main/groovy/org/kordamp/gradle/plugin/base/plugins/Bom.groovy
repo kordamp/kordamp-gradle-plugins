@@ -17,13 +17,18 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.PomOptions
+import org.kordamp.gradle.plugin.base.model.artifact.Dependency
+import org.kordamp.gradle.plugin.base.model.artifact.DependencySpec
+import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencySpecImpl
 
+import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -31,18 +36,15 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  * @since 0.9.0
  */
 @CompileStatic
-@Canonical
 class Bom extends AbstractFeature implements PomOptions {
     static final String PLUGIN_ID = 'org.kordamp.gradle.bom'
 
     final String packaging = 'pom'
 
-    Set<String> compile = new LinkedHashSet<>()
-    Set<String> runtime = new LinkedHashSet<>()
-    Set<String> test = new LinkedHashSet<>()
-    private Set<String> _import = new LinkedHashSet<>()
+    private final Map<String, Dependency> dependencies = [:]
     Set<String> excludes = new LinkedHashSet<>()
     Set<String> includes = new LinkedHashSet<>()
+
     Map<String, String> properties = new LinkedHashMap<>()
 
     boolean autoIncludes = true
@@ -76,18 +78,14 @@ class Bom extends AbstractFeature implements PomOptions {
         doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
     }
 
-    void setImport(Set<String> set) {
-        _import = set
-    }
-
-    Set<String> getImport() {
-        _import
-    }
-
     void normalize() {
         if (!enabledSet) {
             setEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
         }
+    }
+
+    Map<String, Dependency> getDependencies() {
+        Collections.unmodifiableMap(dependencies)
     }
 
     @Override
@@ -101,10 +99,7 @@ class Bom extends AbstractFeature implements PomOptions {
 
         if (enabled) {
             map.autoIncludes = autoIncludes
-            map.compile = compile
-            map.runtime = runtime
-            map.test = test
-            map.import = _import
+            map.dependencies = dependencies
             map.excludes = excludes
             map.includes = includes
             if (isNotBlank(parent)) {
@@ -126,28 +121,12 @@ class Bom extends AbstractFeature implements PomOptions {
         new LinkedHashMap<>('bom': map)
     }
 
-    void compile(String str) {
-        compile << str
-    }
-
-    void runtime(String str) {
-        runtime << str
-    }
-
-    void test(String str) {
-        test << str
-    }
-
-    void imports(String str) {
-        _import << str
-    }
-
     void exclude(String str) {
-        excludes << str
+        if (isNotBlank(str)) excludes << str.toString()
     }
 
     void include(String str) {
-        includes << str
+        if (isNotBlank(str)) includes << str.toString()
     }
 
     void setAutoIncludes(boolean autoIncludes) {
@@ -201,10 +180,7 @@ class Bom extends AbstractFeature implements PomOptions {
 
     void copyInto(Bom copy) {
         super.copyInto(copy)
-        copy.compile.addAll(compile)
-        copy.runtime.addAll(runtime)
-        copy.test.addAll(test)
-        copy.import.addAll(_import)
+        copy.@dependencies.putAll(dependencies)
         copy.excludes.addAll(excludes)
         copy.includes.addAll(includes)
         copy.properties.putAll(properties)
@@ -236,10 +212,7 @@ class Bom extends AbstractFeature implements PomOptions {
 
     static void merge(Bom o1, Bom o2) {
         AbstractFeature.merge(o1, o2)
-        CollectionUtils.merge(o1.compile, o2.compile)
-        CollectionUtils.merge(o1.runtime, o2.runtime)
-        CollectionUtils.merge(o1.test, o2.test)
-        CollectionUtils.merge(o1.import, o2.import)
+        CollectionUtils.merge(o1.@dependencies, o2.@dependencies)
         CollectionUtils.merge(o1.excludes, o2.excludes)
         CollectionUtils.merge(o1.includes, o2.includes)
         CollectionUtils.merge(o1.properties, o2.properties)
@@ -264,5 +237,52 @@ class Bom extends AbstractFeature implements PomOptions {
         if (!enabled) return errors
 
         errors
+    }
+
+    void dependency(Dependency dependency) {
+        if(dependency) {
+            dependencies[dependency.name] = dependency
+        }
+    }
+
+    Dependency dependency(String name, String notation) {
+        if (isBlank(name)) {
+            throw new IllegalArgumentException('Dependency name cannot be blank.')
+        }
+        DependencySpecImpl d = new DependencySpecImpl(name.trim())
+        d.parse(project.rootProject, notation)
+        d.validate(project)
+        dependencies[d.name] = d.asDependency()
+    }
+
+    Dependency dependency(String name, Action<? super DependencySpec> action) {
+        if (isBlank(name)) {
+            throw new IllegalArgumentException('Dependency name cannot be blank.')
+        }
+        DependencySpecImpl d = new DependencySpecImpl(name.trim())
+        action.execute(d)
+        d.validate(project)
+        dependencies[d.name] = d.asDependency()
+    }
+
+    Dependency dependency(String name, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DependencySpec) Closure<Void> action) {
+        if (isBlank(name)) {
+            throw new IllegalArgumentException('Dependency name cannot be blank.')
+        }
+        DependencySpecImpl d = new DependencySpecImpl(name.trim())
+        ConfigureUtil.configure(action, d)
+        d.validate(project)
+        dependencies[d.name] = d.asDependency()
+    }
+
+    Dependency dependency(String name) {
+        if (isBlank(name)) {
+            throw new IllegalArgumentException('Dependency name cannot be blank.')
+        }
+
+        if (dependencies.containsKey(name)) {
+            return dependencies.get(name)
+        }
+        throw new IllegalArgumentException("Undeclared dependency ${name}.")
     }
 }

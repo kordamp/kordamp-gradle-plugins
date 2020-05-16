@@ -36,7 +36,8 @@ config {
         snapshotsRepository
         publications
         scopes
-        filterDependencies
+        flattenPlatforms
+        useVersionExpressions
         <<_publishing_pom,pom>>  {
             properties
             parent
@@ -54,14 +55,15 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name                | Type         | Required | Default Value | Description
-| enabled             | boolean      | no       | true          | Disables `org.kordamp.gradle.publishing` plugin if `false`
-| signing             | boolean      | no       | false         | Enables signing of all artifacts associated with `main`
-| releasesRepository  | String       | no       |               | Name of a Maven compatible repository for publishing releases
-| snapshotsRepository | String       | no       |               | Name of a Maven compatible repository for publishing snapshots
-| publications        | List<String> | no       | []            | Publication names to be included
-| scopes              | List<String> | no       | []            | Maven scopes to be added to generated POM. If no value then defaults to `['compile', 'runtime', 'test', 'provided']`
-| filterDependencies  | boolean      | no       | false         | Force dependency filtering by scope when generating POM files.
+| Name                  | Type         | Required | Default Value | Description
+| enabled               | boolean      | no       | true          | Disables `org.kordamp.gradle.publishing` plugin if `false`
+| signing               | boolean      | no       | false         | Enables signing of all artifacts associated with `main`
+| releasesRepository    | String       | no       |               | Name of a Maven compatible repository for publishing releases
+| snapshotsRepository   | String       | no       |               | Name of a Maven compatible repository for publishing snapshots
+| publications          | List<String> | no       | []            | Publication names to be included
+| scopes                | List<String> | no       | []            | Maven scopes to be added to generated POM. If no value then defaults to `['compile', 'runtime']`
+| flattenPlatforms      | boolean      | no       | false         | Expand dependencies imported from platforms and skip adding platforms to `<dependencyManagement>`
+| useVersionExpressions | boolean      | no       | true          | Substitute dependency version numbers with version expressions added to `<properties>`
 |===
 
 This block is optional.

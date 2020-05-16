@@ -18,6 +18,7 @@ Enables the configuration DSL. Settings made via this DSL are consumed by multip
 ----
 config {
     release
+
     <<_base_info,info>> {
         name
         description
@@ -122,6 +123,10 @@ config {
                 otherArchives
             }
         }
+    }
+
+    <<_base_dependencies,dependencies>> {
+        dependency(String)
     }
 }
 ----
@@ -321,6 +326,175 @@ This block defines a list of MailingList entries.
 |===
 
 At least `name` must be defined.
+
+[[_base_dependencies]]
+*dependencies*
+
+This block serves as a central point for declaring dependencies and platforms that can later be reused in other places
+such as the standard `dependencies` block. Dependency definitions require 4 elements:
+
+[horizontal]
+name:: short name of the dependency or platform.
+groupId:: the groupId part of the artifact's coordinates.
+artifactId:: the artifactId part of the artifact's coordinates.
+version:: the version part of the artifact's coordinates.
+platform:: `true` if this dependency constitutes a platform, `false` otherwise (default).
+
+Additionally a dependency may define a set of modules that go together, for example, for `groovy` you can have the
+`grovy-core`, `groovy-xml`, `groovy-json` modules. All modules and the owning dependency share the same `groupId` and `version`.
+
+WARNING: Dependencies defined in this way cannot have classifiers and must be resolvable from a Maven compatible repository.
+
+[[_org_kordamp_gradle_base_dependencies_methods]]
+=== Methods
+
+dependency(String):: Defines a dependency by name. This method takes an `Action`/`Closure` to define the dependency's
+properties. Returns the named dependency (if it exists) if no additional arguments are given, throws an exception otherwise.
+findDependencyByName(String):: Finds a dependency by name if it exists, `null` otherwise.
+findDependencyByGA(String, String):: Finds a dependency by groupId and artifactId if it exists, `null` otherwise.
+gav(String):: Returns the given dependency in GAV notation if it exists. Throws an exception otherwise.
+gav(String, String):: Returns the given module dependency in GAV notation if it exists. Throws an exception otherwise.
+ga(String, String):: Returns the given module dependency in GA (groupId/artifactId) notation if it exists. Throws an exception otherwise.
+
+==== Example
+
+[source,groovy]
+.build.gradle
+----
+config {
+    dependencies {
+        // a dependency with modules
+        dependency('groovy') {
+            groupId    = 'org.codehaus.groovy'
+            artifactId = 'groovy'
+            version    = '3.0.3'
+            modules    = [
+                'groovy-test',
+                'groovy-json',
+                'groovy-xml'
+            ]
+        }
+        // a dependency without modules
+        dependency('junit') {
+            groupId    = 'junit'
+            artifactId = 'junit'
+            version    = '4.13'
+        }
+        // a platform
+        dependency('micronaut') {
+            platform   = true
+            groupId    = 'io.micronaut'
+            artifactId = 'micronaut-bom'
+            version    = '2.0.0.M3'
+            modules    = [
+                'micronaut-core',
+                'micronaut-inject',
+                'micronaut-validation'
+            ]
+        }
+    }
+}
+----
+
+These dependencies can be used in combination with the <<org_kordamp_gradle_java_project_extension_cfg,cfg>> extension if
+the `<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>` plugin is applied, for example
+
+[source,groovy]
+.build.gradle
+----
+plugins {
+    id 'org.kordamp.gradle.java-project'
+}
+
+config {
+    dependencies {
+        // a dependency with modules
+        dependency('groovy') {
+            groupId    = 'org.codehaus.groovy'
+            artifactId = 'groovy'
+            version    = '3.0.3'
+            modules    = [
+                'groovy-test',
+                'groovy-json',
+                'groovy-xml'
+            ]
+        }
+        // a dependency without modules
+        dependency('junit') {
+            groupId    = 'junit'
+            artifactId = 'junit'
+            version    = '4.13'
+        }
+        // a platform
+        dependency('micronaut') {
+            platform   = true
+            groupId    = 'io.micronaut'
+            artifactId = 'micronaut-bom'
+            version    = '2.0.0.M3'
+            modules    = [
+                'micronaut-core',
+                'micronaut-inject',
+                'micronaut-validation'
+            ]
+        }
+    }
+}
+
+// consume dependencies
+dependencies {
+    // apply Micronaut platform to some configurations
+    cfg.platform('micronaut', 'api', 'annotationProcessor', 'compileOnly')
+    // configure a dependency in the standard way
+    api 'io.micronaut:micronaut-core'
+    // configure a platform module by groupId:argtifactId
+    annotationProcessor config.dependencies.ga('micronaut', 'micronaut-inject')
+    // pull in a module from Groovy
+    api config.dependencies.gav('groovy', 'groovy-json')
+    // configure a single dependency
+    testImplementation config.dependencies.gav('junit')
+}
+----
+
+Will generate the following entries in the POM if publishing is enabled
+
+[source,xml,subs="verbatim"]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <!--
+    coordinates and other elements omitted for brevity
+   -->
+  <properties>
+    <micronaut.version>2.0.0.M3</micronaut.version>
+    <groovy.version>3.0.3</groovy.version>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.micronaut</groupId>
+        <artifactId>micronaut-bom</artifactId>
+        <version>${micronaut.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-json</artifactId>
+      <version>${groovy.version}</version>
+    </dependency>
+  </dependencies>
+</project>
+----
 
 [[_org_kordamp_gradle_base_sysprops]]
 === System Properties

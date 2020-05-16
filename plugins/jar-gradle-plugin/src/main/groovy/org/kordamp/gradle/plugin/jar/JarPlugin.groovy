@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.jar
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.BuildAdapter
-import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
@@ -156,7 +155,8 @@ class JarPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private static void configureJarManifest(Project project, Jar jarTask) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project.rootProject) // ?: resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project.rootProject)
+        // ?: resolveEffectiveConfig(project)
 
         if (config.release) {
             Map<String, String> attributesMap = [:]
@@ -213,57 +213,57 @@ class JarPlugin extends AbstractKordampPlugin {
 
         if (config.artifacts.jar.manifest.addClasspath) {
             if (config.artifacts.jar.manifest.classpathLayoutType == 'simple') {
-                calculateSimpleClasspath(project, jarTask, config.artifacts.jar.manifest.classpathPrefix)
+                calculateSimpleClasspath(jarTask, config.artifacts.jar.manifest.classpathPrefix)
             } else if (config.artifacts.jar.manifest.classpathLayoutType == 'repository') {
-                calculateRepositoryClasspath(project, jarTask, config.artifacts.jar.manifest.classpathPrefix)
+                calculateRepositoryClasspath(jarTask, config.artifacts.jar.manifest.classpathPrefix)
             }
         }
     }
 
-    private static void calculateSimpleClasspath(Project project, Jar jarTask, String prefix) {
-        project.configurations.named('runtimeClasspath', new Action<Configuration>() {
-            @Override
-            @CompileDynamic
-            void execute(Configuration c) {
-                List<String> classpath = []
-                String p = isNotBlank(prefix) && !prefix.endsWith('/') ? prefix + '/' : prefix;
+    @CompileDynamic
+    private static void calculateSimpleClasspath(Jar jar, String prefix) {
+        jar.configure {
+            inputs.files(jar.project.configurations.runtimeClasspath)
 
-                c.resolvedConfiguration.resolvedArtifacts.each {
-                    classpath << "${p}${it.file.name}".toString()
+            doFirst {
+                Set<String> classpath = []
+                String p = isNotBlank(prefix) && !prefix.endsWith('/') ? prefix + '/' : prefix
+
+                jar.project.configurations.runtimeClasspath.files.each {
+                    classpath << "${p}${it.name}".toString()
                 }
                 if (classpath) {
-                    jarTask.configure {
-                        manifest {
-                            attributes('Class-Path': classpath.join(' '))
-                        }
+                    manifest {
+                        attributes('Class-Path': classpath.join(' '))
                     }
                 }
             }
-        })
+        }
     }
 
-    private static void calculateRepositoryClasspath(Project project, Jar jarTask, String prefix) {
-        project.configurations.named('runtimeClasspath', new Action<Configuration>() {
-            @Override
-            @CompileDynamic
-            void execute(Configuration c) {
-                List<String> classpath = []
-                String p = isNotBlank(prefix) && !prefix.endsWith('/') ? prefix + '/' : prefix;
+    @CompileDynamic
+    private static void calculateRepositoryClasspath(Jar jar, String prefix) {
+        jar.configure {
+            inputs.files(jar.project.configurations.runtimeClasspath)
 
-                c.resolvedConfiguration.resolvedArtifacts.each {
+            doFirst {
+                Set<String> classpath = []
+                String p = isNotBlank(prefix) && !prefix.endsWith('/') ? prefix + '/' : prefix
+
+                Configuration rc = jar.project.configurations.runtimeClasspath
+                rc.incoming.resolutionResult.allComponents.each {
                     String g = it.moduleVersion.id.group.replace('.', '/')
-                    String m = it.moduleVersion.id.name
-                    String v = it.moduleVersion.id.version
-                    classpath << "${p}${g}/${m}/${v}/${it.file.name}".toString()
+                    String a = it.moduleVersion.id.name
+                    String v = it.moduleVersion.version
+                    File f = rc.files.find { it.name.startsWith("${a}-${v}".toString()) }
+                    if (f) classpath << "${p}${g}/${a}/${v}/$f.name".toString()
                 }
                 if (classpath) {
-                    jarTask.configure {
-                        manifest {
-                            attributes('Class-Path': classpath.join(' '))
-                        }
+                    manifest {
+                        attributes('Class-Path': classpath.join(' '))
                     }
                 }
             }
-        })
+        }
     }
 }

@@ -30,6 +30,7 @@ import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Credentials
 import org.kordamp.gradle.plugin.base.model.Repository
+import org.kordamp.gradle.plugin.base.model.artifact.Dependency
 import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.jar.JarPlugin
@@ -135,7 +136,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
 
         project.publishing {
             publications {
-                for(String pub: config.publishing.publications) {
+                for (String pub : config.publishing.publications) {
                     if (pub.contains('PluginMarker')) continue
                     "${pub}"(MavenPublication) {
                         PublishingUtils.configurePom(pom, config, config.publishing.pom)
@@ -144,36 +145,54 @@ class PublishingPlugin extends AbstractKordampPlugin {
 
                 if (!config.publishing.publications.contains('main') && !config.publishing.publications) {
                     main(MavenPublication) {
+                        Map<String, String> versionExpressions = [:]
+
                         if (project.pluginManager.hasPlugin('java-platform')) {
                             from project.components.javaPlatform
+
+                            pom.withXml {
+                                asNode().dependencyManagement.dependencies.dependency.each { dep ->
+                                    String gid = dep.groupId.text()
+                                    String aid = dep.artifactId.text()
+
+                                    Dependency dependency = config.dependencies.findDependencyByGA(gid, aid)
+                                    if (dependency && dependency.version == dep.version.text()) {
+                                        String versionKey = dependency.name + '.version'
+                                        String versionExp = '${' + versionKey + '}'
+                                        versionExpressions.put(versionKey, dependency.version)
+                                        dep.remove(dep.version)
+                                        dep.appendNode('version', versionExp)
+                                    }
+                                }
+
+                                Node propertiesNode = asNode().children().find { it.name().localPart == 'properties' }
+                                if (!propertiesNode) {
+                                    propertiesNode = new Node(null, 'properties')
+                                    List nodes = asNode().children()
+                                        .find { it.name().localPart == 'dependencyManagement' }
+                                        .parent().children()
+                                    nodes.add(nodes.size() - 1, propertiesNode)
+                                }
+                                versionExpressions.each { versionKey, versionVal ->
+                                    if (!(propertiesNode.children().find { it.name() == versionKey })) {
+                                        propertiesNode.appendNode(versionKey, versionVal)
+                                    }
+                                }
+                            }
                         } else {
                             Task jar = project.tasks.findByName('jar')
                             Task sourcesJar = project.tasks.findByName('sourcesJar')
 
-                            if (config.publishing.filterDependencies) {
-                                groupId = project.group
-                                artifactId = project.name
-                                version = project.version
-                                if (jar?.enabled) artifact jar
-                                PublishingUtils.configureDependencies(pom, config, project)
-                            } else {
-                                try {
-                                    if (project.components.java) {
-                                        from project.components.java
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace()
-                                    groupId = project.group
-                                    artifactId = project.name
-                                    version = project.version
-                                    if (jar?.enabled) artifact jar
-                                    PublishingUtils.configureDependencies(pom, config, project)
-                                }
-                            }
+                            groupId = project.group
+                            artifactId = project.name
+                            version = project.version
+                            if (jar?.enabled) artifact jar
+                            PublishingUtils.configureDependencies(pom, config, project, versionExpressions)
 
                             if (sourcesJar?.enabled && !artifacts.find { it.classifier == 'sources' }) artifact sourcesJar
                         }
 
+                        config.publishing.pom.properties.putAll(versionExpressions)
                         PublishingUtils.configurePom(pom, config, config.publishing.pom)
                     }
                 }
@@ -183,7 +202,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
             if (isNotBlank(repositoryName)) {
                 Repository repo = config.info.repositories.getRepository(repositoryName)
                 if (repo == null) {
-                    throw new IllegalStateException("Repository '${repositoryName}' was not found")
+                    throw new IllegalStateException("Repository '${repositoryName}' was not found.")
                 }
 
                 repositories {

@@ -176,7 +176,6 @@ class ProjectPlugin extends AbstractKordampPlugin {
         })
     }
 
-
     private void configureAggregatingReportTasks(Project project) {
         Set<ReportGeneratingTask> tasks = []
         project.tasks.withType(ReportGeneratingTask, new Action<ReportGeneratingTask>() {

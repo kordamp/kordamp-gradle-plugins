@@ -42,11 +42,12 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.model.Dependency
 import org.kordamp.gradle.plugin.base.model.License
 import org.kordamp.gradle.plugin.base.model.MailingList
 import org.kordamp.gradle.plugin.base.model.Person
 import org.kordamp.gradle.plugin.base.model.PomOptions
+import org.kordamp.gradle.plugin.base.model.artifact.Dependency
+import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencySpecImpl
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.PluginUtils.supportsApiConfiguration
@@ -131,7 +132,7 @@ class PublishingUtils {
                 signingExtension.sign(publication)
             }
         } else {
-            for(String publicationName : publications) {
+            for (String publicationName : publications) {
                 if (publicationName.contains('PluginMarker')) continue
                 Publication publication = publishingExtension.publications.findByName(publicationName)
                 if (publication) {
@@ -154,7 +155,7 @@ class PublishingUtils {
         })
     }
 
-    static void configureDependencies(MavenPom pom, ProjectConfigurationExtension config, Project project) {
+    static void configureDependencies(MavenPom pom, ProjectConfigurationExtension config, Project project, Map<String, String> versionExpressions) {
         Closure<Boolean> filter = { org.gradle.api.artifacts.Dependency d ->
             d.name != 'unspecified'
         }
@@ -179,7 +180,7 @@ class PublishingUtils {
             compileDependencies.putAll(project.configurations.findByName('api')
                 ?.allDependencies.findAll(filter)
                 ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
-            compileDependencies.putAll(project.configurations.findByName('implementation')
+            runtimeDependencies.putAll(project.configurations.findByName('implementation')
                 ?.allDependencies.findAll(filter)
                 ?.collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
 
@@ -204,7 +205,7 @@ class PublishingUtils {
         }
 
         if (compileDependencies || runtimeDependencies || testDependencies || providedDependencies) {
-            injectDependencies(pom, config, compileDependencies, runtimeDependencies, testDependencies, providedDependencies)
+            injectDependencies(pom, config, compileDependencies, runtimeDependencies, testDependencies, providedDependencies, versionExpressions)
         }
     }
 
@@ -214,40 +215,155 @@ class PublishingUtils {
                                            Map<String, org.gradle.api.artifacts.Dependency> compileDependencies,
                                            Map<String, org.gradle.api.artifacts.Dependency> runtimeDependencies,
                                            Map<String, org.gradle.api.artifacts.Dependency> testDependencies,
-                                           Map<String, org.gradle.api.artifacts.Dependency> providedDependencies) {
+                                           Map<String, org.gradle.api.artifacts.Dependency> providedDependencies,
+                                           Map<String, String> versionExpressions) {
+        Set<Dependency> platforms = [] as Set
+
         pom.withXml {
             Node dependenciesNode = asNode().appendNode('dependencies')
             if ('compile' in config.publishing.scopes || !config.publishing.scopes) {
                 compileDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
-                    configureDependency(dependenciesNode.appendNode('dependency'), dep, config.project, 'compile')
+                    configureDependency(dependenciesNode, dep, config, versionExpressions, platforms, 'compile')
                 }
             }
-            if ('provided' in config.publishing.scopes || !config.publishing.scopes) {
+            if ('provided' in config.publishing.scopes) {
                 providedDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
-                    configureDependency(dependenciesNode.appendNode('dependency'), dep, config.project, 'provided')
+                    configureDependency(dependenciesNode, dep, config, versionExpressions, platforms, 'provided')
                 }
             }
             if ('runtime' in config.publishing.scopes || !config.publishing.scopes) {
                 runtimeDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
-                    configureDependency(dependenciesNode.appendNode('dependency'), dep, config.project, 'runtime')
+                    configureDependency(dependenciesNode, dep, config, versionExpressions, platforms, 'runtime')
                 }
             }
-            if ('test' in config.publishing.scopes || !config.publishing.scopes) {
+            if ('test' in config.publishing.scopes) {
                 testDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
-                    configureDependency(dependenciesNode.appendNode('dependency'), dep, config.project, 'test')
+                    configureDependency(dependenciesNode, dep, config, versionExpressions, platforms, 'test')
+                }
+            }
+
+            if (platforms && !config.publishing.flattenPlatforms) {
+                Node dependencyManagementNode = asNode().children().find { it.name() == 'dependencyManagement' }
+                if (!dependencyManagementNode) {
+                    dependencyManagementNode = new Node(null, 'dependencyManagement')
+                    List nodes = dependenciesNode.parent().children()
+                    nodes.add(nodes.size() - 1, dependencyManagementNode)
+                }
+
+                Node managedDependencies = dependencyManagementNode.children().find { it.name() == 'dependencies' }
+                if (!managedDependencies) {
+                    managedDependencies = new Node(dependencyManagementNode, 'dependencies')
+                }
+
+                for (Dependency dependency : platforms) {
+                    String versionKey = dependency.name + '.version'
+                    String versionExp = dependency.version
+                    if (config.publishing.useVersionExpressions) {
+                        versionExp = '${' + versionKey + '}'
+                        versionExpressions.put(versionKey, dependency.version)
+                    }
+
+                    managedDependencies.appendNode('dependency').with {
+                        appendNode('groupId', dependency.groupId)
+                        appendNode('artifactId', dependency.artifactId)
+                        appendNode('version', versionExp)
+                        appendNode('scope', 'import')
+                        appendNode('type', 'pom')
+                    }
+                }
+            }
+
+            if (config.publishing.useVersionExpressions) {
+                Node propertiesNode = asNode().children().find { it.name() == 'properties' }
+                if (!propertiesNode) {
+                    Node dependencyManagementNode = asNode().children().find { it.name() == 'dependencyManagement' }
+                    int offset = dependencyManagementNode ? 2 : 1
+                    propertiesNode = new Node(null, 'properties')
+                    List nodes = dependenciesNode.parent().children()
+                    nodes.add(nodes.size() - offset, propertiesNode)
+                }
+                versionExpressions.each { versionKey, versionVal ->
+                    if (!(propertiesNode.children().find { it.name() == versionKey })) {
+                        propertiesNode.appendNode(versionKey, versionVal)
+                    }
                 }
             }
         }
     }
 
     @CompileDynamic
-    private static void configureDependency(Node node, org.gradle.api.artifacts.Dependency dep, Project project, String scope) {
+    private static void configureDependency(Node node,
+                                            org.gradle.api.artifacts.Dependency dep,
+                                            ProjectConfigurationExtension config,
+                                            Map<String, String> versionExpressions,
+                                            Set<Dependency> platforms,
+                                            String scope) {
+        String versionExp = dep.version
+
+        if (config.publishing.useVersionExpressions) {
+            Dependency dependency = config.dependencies.findDependencyByGA(dep.group, dep.name)
+            if (dependency) {
+                if (config.publishing.flattenPlatforms) {
+                    if (dependency.platform) {
+                        if (dependency.artifactId == dep.name) {
+                            platforms << dependency
+                            return
+                        } else {
+                            String versionKey = dependency.name + '.version'
+                            versionExp = '${' + versionKey + '}'
+                            versionExpressions.put(versionKey, dependency.version)
+                        }
+                    } else if (versionExp == dependency.version || !versionExp) {
+                        String versionKey = dependency.name + '.version'
+                        versionExp = '${' + versionKey + '}'
+                        versionExpressions.put(versionKey, dependency.version)
+                    }
+                } else {
+                    if (dependency.platform) {
+                        if (dependency.artifactId == dep.name) {
+                            platforms << dependency
+                            return
+                        } else {
+                            versionExp = ''
+                        }
+                    } else if (versionExp == dependency.version || !versionExp) {
+                        String versionKey = dependency.name + '.version'
+                        versionExp = '${' + versionKey + '}'
+                        versionExpressions.put(versionKey, dependency.version)
+                    }
+                }
+            }
+        } else {
+            Dependency dependency = config.dependencies.findDependencyByGA(dep.group, dep.name)
+            if (dependency) {
+                if (config.publishing.flattenPlatforms) {
+                    versionExp = dependency.version
+                    if (dependency.platform && dependency.artifactId == dep.name) {
+                        platforms << dependency
+                        return
+                    }
+                } else {
+                    if (dependency.platform) {
+                        if (dependency.artifactId == dep.name) {
+                            platforms << dependency
+                            return
+                        } else {
+                            versionExp = ''
+                        }
+                    } else {
+                        versionExp = dependency.version
+                    }
+                }
+            }
+        }
+
+        node = node.appendNode('dependency')
         node.with {
             appendNode('groupId', dep.group)
             appendNode('artifactId', dep.name)
-            appendNode('version', dep.version)
-            appendNode('scope', scope)
-            if (isOptional(project, dep)) {
+            if (versionExp) appendNode('version', versionExp)
+            if (scope != 'compile') appendNode('scope', scope)
+            if (isOptional(config.project, dep)) {
                 appendNode('optional', true)
             }
         }
@@ -432,7 +548,10 @@ class PublishingUtils {
         }
 
         if (isNotBlank(pomOptions.parent)) {
-            Dependency parentPom = Dependency.parseDependency(config.project, pomOptions.parent, true)
+            DependencySpecImpl spec = new DependencySpecImpl('parent')
+            spec.parse(config.project.rootProject, pomOptions.parent)
+            Dependency parentPom = spec.asDependency()
+
             pom.withXml {
                 Node parentNode = new XmlParser().parseText("""
                     <parent>
