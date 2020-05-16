@@ -46,7 +46,7 @@ config {
 | enabled            | boolean             | no       | true              | Disables `org.kordamp.gradle.checkstyle` plugin if `false`
 | includes           | Set<String>         | no       | []                |
 | excludes           | Set<String>         | no       | []                |
-| configFile         | Set<String>         | no       |                   | Either `config/checkstyle/${project.name}.xml` or `config/checkstyle/checkstyle.xml`
+| configFile         | Set<String>         | no       |                   |
 | configProperties   | Map<String, Object> | no       | [:]               |
 | maxErrors          | int                 | no       | 0                 |
 | maxWarnings        | int                 | no       | Integer.MAX_VALUE |
@@ -54,6 +54,15 @@ config {
 | toolVersion        | String              | no       | 8.27              |
 | excludedSourceSets | Set<String>         | no       | []                |
 |===
+
+The value of `configFile` will be automatically calculated based on the following rules
+
+* Explicit value if set in the build file, with ${sourceSetName} as suffix.
+* Explicit value if set in the build file.
+* `config/checkstyle/${project.name}-${sourceSetName}.xml`
+* `config/checkstyle/${project.name}.xml`
+* `config/checkstyle/checkstyle-${sourceSetName}.xml`
+* `config/checkstyle/checkstyle.xml`
 
 .Methods
 

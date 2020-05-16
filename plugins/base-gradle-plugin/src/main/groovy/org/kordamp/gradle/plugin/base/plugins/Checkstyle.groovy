@@ -42,6 +42,7 @@ class Checkstyle extends AbstractQualityFeature {
     Set<String> includes = new LinkedHashSet<>()
 
     private boolean showViolationsSet
+    private boolean configFileSet
 
     Checkstyle(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'checkstyle')
@@ -67,10 +68,19 @@ class Checkstyle extends AbstractQualityFeature {
             if (!file.exists()) {
                 file = project.rootProject.file('config/checkstyle/checkstyle.xml')
             }
-            configFile = file
+            this.@configFile = file
         }
 
         super.normalize()
+    }
+
+    void setConfigFile(File configFile) {
+        this.configFile = configFile
+        this.configFileSet = true
+    }
+
+    boolean isConfigFileSet() {
+        return this.configFileSet
     }
 
     void setShowViolations(boolean showViolations) {
@@ -97,6 +107,7 @@ class Checkstyle extends AbstractQualityFeature {
         copy.excludes.addAll(excludes)
         copy.includes.addAll(includes)
         copy.configFile = configFile
+        copy.@configFileSet = configFileSet
         copy.maxErrors = maxErrors
         copy.maxWarnings = maxWarnings
         copy.configProperties.putAll(configProperties)
@@ -104,10 +115,12 @@ class Checkstyle extends AbstractQualityFeature {
 
     static void merge(Checkstyle o1, Checkstyle o2) {
         AbstractQualityFeature.merge(o1, o2)
+        if (!o1.configFileSet) {
+            if (o2.configFileSet) o1.configFile = o2.configFile
+        }
         o1.setShowViolations((boolean) (o1.showViolationsSet ? o1.showViolations : o2.showViolations))
         CollectionUtils.merge(o1.excludes, o2?.excludes)
         CollectionUtils.merge(o1.includes, o2?.includes)
-        o1.configFile = o1.configFile ?: o2.configFile
         o1.maxErrors = o1.maxErrors ?: o2.maxErrors
         o1.maxWarnings = o1.maxWarnings ?: o2.maxWarnings
         CollectionUtils.merge(o1.configProperties, o2?.configProperties)
@@ -118,10 +131,11 @@ class Checkstyle extends AbstractQualityFeature {
         String sourceSetName = (checkstyleTask.name - 'checkstyle').uncapitalize()
         sourceSetName = sourceSetName == 'allCheckstyle' ? project.name : sourceSetName
         sourceSetName = sourceSetName == 'aggregateCheckstyle' ? 'aggregate' : sourceSetName
-        checkstyleTask.enabled = enabled && configFile.exists()
+        File specificConfigFile = resolveConfigFile(configFile, configFileSet, sourceSetName)
+        checkstyleTask.enabled = enabled && specificConfigFile.exists()
         checkstyleTask.includes.addAll(includes)
         checkstyleTask.excludes.addAll(excludes)
-        checkstyleTask.configFile = configFile
+        checkstyleTask.configFile = specificConfigFile
         checkstyleTask.maxErrors = maxErrors
         checkstyleTask.maxWarnings = maxWarnings
         checkstyleTask.showViolations = showViolations
@@ -130,5 +144,35 @@ class Checkstyle extends AbstractQualityFeature {
         checkstyleTask.reports.xml.enabled = true
         checkstyleTask.reports.html.destination = project.layout.buildDirectory.file("reports/checkstyle/${sourceSetName}.html").get().asFile
         checkstyleTask.reports.xml.destination = project.layout.buildDirectory.file("reports/checkstyle/${sourceSetName}.xml").get().asFile
+    }
+
+    private File resolveConfigFile(File baseFile, boolean fileSet, String sourceSetName) {
+        if (sourceSetName == project.name || sourceSetName == 'aggregate') {
+            return baseFile
+        }
+
+        if (fileSet) {
+            if (baseFile.name.endsWith('.xml')) {
+                String filePath = baseFile.absolutePath[0..-5]
+                File configFile = new File("${filePath}-${sourceSetName}.xml")
+                if (configFile.exists()) {
+                    return configFile
+                }
+            }
+            return baseFile
+        }
+
+        for (String path : [
+            "config/checkstyle/${project.name}-${sourceSetName}.xml",
+            "config/checkstyle/${project.name}.xml",
+            "config/checkstyle/checkstyle-${sourceSetName}.xml",
+            "config/checkstyle/checkstyle.xml"]) {
+            File file = project.rootProject.file(path)
+            if (file.exists()) {
+                return file
+            }
+        }
+
+        baseFile
     }
 }
