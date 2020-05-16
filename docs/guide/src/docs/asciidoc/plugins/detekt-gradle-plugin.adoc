@@ -52,6 +52,15 @@ config {
 | excludedSourceSets     | Set<String> | no       | []            |
 |===
 
+The value of `configFile` will be automatically calculated based on the following rules
+
+* Explicit value if set in the build file, with ${sourceSetName} as suffix.
+* Explicit value if set in the build file.
+* `config/detekt/${project.name}-${sourceSetName}.yml`
+* `config/detekt/${project.name}.yml`
+* `config/detekt/detekt-${sourceSetName}.yml`
+* `config/detekt/detekt.yml`
+
 .Methods
 
 void excludeSourceSet(String):: Adds a sourceSet exclusion.

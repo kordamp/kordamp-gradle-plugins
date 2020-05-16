@@ -43,6 +43,7 @@ class Detekt extends AbstractQualityFeature {
     private boolean buildUponDefaultConfigSet
     private boolean disableDefaultRuleSetsSet
     private boolean failFastSet
+    private boolean configFileSet
 
     Detekt(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'detekt')
@@ -67,7 +68,7 @@ class Detekt extends AbstractQualityFeature {
             if (!file.exists()) {
                 file = project.rootProject.file('config/detekt/detekt.yml')
             }
-            configFile = file
+            this.@configFile = file
         }
 
         if (!enabledSet) {
@@ -81,6 +82,15 @@ class Detekt extends AbstractQualityFeature {
                 setEnabled(project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && isApplied())
             }
         }
+    }
+
+    void setConfigFile(File configFile) {
+        this.configFile = configFile
+        this.configFileSet = true
+    }
+
+    boolean isConfigFileSet() {
+        return this.configFileSet
     }
 
     void setParallel(boolean parallel) {
@@ -130,6 +140,7 @@ class Detekt extends AbstractQualityFeature {
         copy.@disableDefaultRuleSets = disableDefaultRuleSets
         copy.@disableDefaultRuleSetsSet = disableDefaultRuleSetsSet
         copy.configFile = configFile
+        copy.@configFileSet = configFileSet
         copy.baselineFile = baselineFile
     }
 
@@ -139,7 +150,9 @@ class Detekt extends AbstractQualityFeature {
         o1.setFailFast((boolean) (o1.failFastSet ? o1.failFast : o2.failFast))
         o1.setBuildUponDefaultConfig((boolean) (o1.buildUponDefaultConfigSet ? o1.buildUponDefaultConfig : o2.buildUponDefaultConfig))
         o1.setDisableDefaultRuleSets((boolean) (o1.disableDefaultRuleSetsSet ? o1.disableDefaultRuleSets : o2.disableDefaultRuleSets))
-        o1.configFile = o1.configFile ?: o2.configFile
+        if (!o1.configFileSet) {
+            if (o2.configFileSet) o1.configFile = o2.configFile
+        }
         o1.baselineFile = o1.baselineFile ?: o2.baselineFile
     }
 }

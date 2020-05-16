@@ -216,8 +216,9 @@ class DetektPlugin extends AbstractKordampPlugin {
         String sourceSetName = (detektTask.name - 'detekt').uncapitalize()
         sourceSetName = sourceSetName == 'allDetekt' ? config.project.name : sourceSetName
         sourceSetName = sourceSetName == 'aggregateDetekt' ? 'aggregate' : sourceSetName
-        detektTask.setEnabled(config.quality.detekt.enabled && config.quality.detekt.configFile.exists())
-        detektTask.config.setFrom(config.quality.detekt.configFile)
+        File specificConfigFile = resolveConfigFile(config.quality.detekt.configFile, config.quality.detekt.configFileSet, sourceSetName)
+        detektTask.setEnabled(config.quality.detekt.enabled && specificConfigFile.exists())
+        detektTask.config.setFrom(specificConfigFile)
         detektTask.baseline.set(config.quality.detekt.baselineFile)
         detektTask.parallel = config.quality.detekt.parallel
         detektTask.failFast = config.quality.detekt.failFast
@@ -228,5 +229,35 @@ class DetektPlugin extends AbstractKordampPlugin {
         detektTask.reports.xml.enabled = true
         detektTask.reports.html.destination = config.project.layout.buildDirectory.file("reports/detekt/${sourceSetName}.html").get().asFile
         detektTask.reports.xml.destination = config.project.layout.buildDirectory.file("reports/detekt/${sourceSetName}.xml").get().asFile
+    }
+
+    private File resolveConfigFile(File baseFile, boolean fileSet, String sourceSetName) {
+        if (sourceSetName == project.name || sourceSetName == 'aggregate') {
+            return baseFile
+        }
+
+        if (fileSet) {
+            if (baseFile.name.endsWith('.yml')) {
+                String filePath = baseFile.absolutePath[0..-5]
+                File configFile = new File("${filePath}-${sourceSetName}.yml")
+                if (configFile.exists()) {
+                    return configFile
+                }
+            }
+            return baseFile
+        }
+
+        for (String path : [
+            "config/detekt/${project.name}-${sourceSetName}.yml",
+            "config/detekt/${project.name}.yml",
+            "config/detekt/detekt-${sourceSetName}.yml",
+            "config/detekt/detekt.yml"]) {
+            File file = project.rootProject.file(path)
+            if (file.exists()) {
+                return file
+            }
+        }
+
+        baseFile
     }
 }
