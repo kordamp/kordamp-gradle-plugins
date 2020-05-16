@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -27,7 +26,6 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  * @since 0.31.0
  */
 @CompileStatic
-@Canonical
 class ErrorProne extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.errorprone'
 
@@ -45,11 +43,6 @@ class ErrorProne extends AbstractFeature {
     ErrorProne(ProjectConfigurationExtension config, Project project) {
         super(config, project)
         doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     @Override
@@ -75,7 +68,7 @@ class ErrorProne extends AbstractFeature {
                 if (project.childProjects.isEmpty()) {
                     setEnabled(project.pluginManager.hasPlugin('java') && isApplied())
                 } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java') && isApplied(p)})
+                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java') && isApplied(p) })
                 }
             } else {
                 setEnabled(project.pluginManager.hasPlugin('java') && isApplied())

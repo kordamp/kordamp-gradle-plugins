@@ -28,7 +28,6 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.PluginUtils.resolveSourceSets
 import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.StringUtils.isNotBlank
 

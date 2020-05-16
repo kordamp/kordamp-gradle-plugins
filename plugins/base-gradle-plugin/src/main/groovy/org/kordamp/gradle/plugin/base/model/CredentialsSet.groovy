@@ -17,34 +17,25 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.gradle.api.Action
-import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.ConfigureUtil
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
 class CredentialsSet {
     static final String GITHUB = 'github'
     static final String SONATYPE = 'sonatype'
 
     final Map<String, Credentials> credentialsMap = new LinkedHashMap<>()
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
-
     Map<String, Map<String, Object>> toMap() {
         if (isEmpty()) return [:]
 
-        (Map<String, Map<String, Object>> ) credentialsMap.collectEntries { k, v ->
+        (Map<String, Map<String, Object>>) credentialsMap.collectEntries { k, v ->
             [(k): v.toMap()]
         }
     }

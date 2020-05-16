@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.CollectionUtils
@@ -33,7 +32,6 @@ import static org.kordamp.gradle.StringUtils.getPropertyNameForLowerCaseHyphenSe
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
 class Stats extends AbstractAggregateFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.source-stats'
 

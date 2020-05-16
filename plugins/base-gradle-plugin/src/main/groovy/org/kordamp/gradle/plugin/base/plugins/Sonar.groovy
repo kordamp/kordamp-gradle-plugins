@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.CollectionUtils
@@ -30,7 +29,6 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.32.0
  */
 @CompileStatic
-@Canonical
 class Sonar extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.sonar'
 
@@ -45,11 +43,6 @@ class Sonar extends AbstractFeature {
     Sonar(ProjectConfigurationExtension config, Project project) {
         super(config, project)
         doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     @Override

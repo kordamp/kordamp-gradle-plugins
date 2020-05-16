@@ -17,9 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.testing.Test
@@ -31,8 +29,6 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-@EqualsAndHashCode(excludes = ['additionalSourceDirs', 'additionalClassDirs'])
 class Jacoco extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.jacoco'
 
@@ -93,11 +89,6 @@ class Jacoco extends AbstractFeature {
     void setMergeReportXmlFile(File f) {
         println("Property jacoco.mergeReportXmlFile is deprecated and will be removed in the future. Use jacoco.aggregateReportXmlFile instead")
         aggregateReportXmlFile = f
-    }
-
-    @Override
-    String toString() {
-        isRoot() ? toMap().toString() : ''
     }
 
     @Override

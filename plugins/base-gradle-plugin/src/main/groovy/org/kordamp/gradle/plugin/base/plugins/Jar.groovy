@@ -17,22 +17,17 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.model.PomOptions
-
-import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
  * @since 0.34.0
  */
 @CompileStatic
-@Canonical
 class Jar extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.jar'
 
@@ -42,11 +37,6 @@ class Jar extends AbstractFeature {
         super(config, project)
         doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
         manifest = new Manifest(config, project)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     @Override

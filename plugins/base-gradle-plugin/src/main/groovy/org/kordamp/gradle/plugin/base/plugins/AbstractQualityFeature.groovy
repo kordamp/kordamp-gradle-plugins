@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.CollectionUtils
@@ -30,7 +29,6 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  * @since 0.32.0
  */
 @CompileStatic
-@Canonical
 abstract class AbstractQualityFeature extends AbstractAggregateFeature {
     Boolean ignoreFailures
     String toolVersion

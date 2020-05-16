@@ -17,12 +17,11 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
-import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.test.tasks.FunctionalTest
 import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
@@ -32,7 +31,6 @@ import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
  * @since 0.14.0
  */
 @CompileStatic
-@Canonical
 class Testing extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.testing'
 
@@ -71,11 +69,6 @@ class Testing extends AbstractFeature {
 
     boolean isAggregateSet() {
         this.aggregateSet
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     @Override

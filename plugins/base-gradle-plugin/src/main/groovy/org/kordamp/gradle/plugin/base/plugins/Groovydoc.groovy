@@ -17,13 +17,12 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.impl.GroovydocOptions
 
@@ -32,7 +31,6 @@ import org.kordamp.gradle.plugin.base.model.impl.GroovydocOptions
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
 class Groovydoc extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.groovydoc'
 
@@ -70,11 +68,6 @@ class Groovydoc extends AbstractFeature {
             return "https://docs.oracle.com/en/java/javase/${javaVersion.majorVersion}/docs/api/".toString()
         }
         return "https://docs.oracle.com/javase/${javaVersion.majorVersion}/docs/api/"
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     @Override

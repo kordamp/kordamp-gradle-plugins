@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -27,7 +26,6 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  * @since 0.31.0
  */
 @CompileStatic
-@Canonical
 class Detekt extends AbstractQualityFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.detekt'
     static final String KOTLIN_JVM_PLUGIN_ID = 'org.jetbrains.kotlin.jvm'

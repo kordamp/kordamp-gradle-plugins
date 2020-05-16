@@ -17,11 +17,9 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.gradle.api.Action
-import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.ConfigureUtil
 
 import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.StringUtils.isNotBlank
@@ -31,17 +29,10 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
 class Repository {
     String name
     String url
     final Credentials credentials = new Credentials()
-
-    @Override
-    String toString() {
-        toMap().toString()
-    }
 
     Map<String, Object> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>([

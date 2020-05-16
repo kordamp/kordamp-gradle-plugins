@@ -17,12 +17,10 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.gradle.api.Action
-import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
@@ -30,15 +28,8 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
 class LicenseSet {
     final List<License> licenses = []
-
-    @Override
-    String toString() {
-        toMap().toString()
-    }
 
     @CompileDynamic
     Map<String, Map<String, Object>> toMap() {

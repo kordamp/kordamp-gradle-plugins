@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.model.impl
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.javadoc.Groovydoc
@@ -28,7 +27,6 @@ import org.kordamp.gradle.CollectionUtils
  * @since 0.4.0
  */
 @CompileStatic
-@Canonical
 class GroovydocOptions {
     String windowTitle
     String docTitle

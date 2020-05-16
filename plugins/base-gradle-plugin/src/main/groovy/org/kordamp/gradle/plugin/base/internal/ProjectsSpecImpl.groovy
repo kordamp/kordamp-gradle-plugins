@@ -20,7 +20,7 @@ package org.kordamp.gradle.plugin.base.internal
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectsSpec
 
 import java.util.function.Function

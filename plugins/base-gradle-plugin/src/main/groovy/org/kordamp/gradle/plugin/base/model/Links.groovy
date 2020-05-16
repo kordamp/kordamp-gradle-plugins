@@ -17,9 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.isBlank
@@ -29,18 +27,11 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
 class Links {
     Boolean enabled
     String website
     String issueTracker
     String scm
-
-    @Override
-    String toString() {
-        toMap().toString()
-    }
 
     Map<String, Object> toMap() {
         new LinkedHashMap<String, Object>([

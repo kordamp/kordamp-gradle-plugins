@@ -17,9 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.kordamp.gradle.CollectionUtils
 
 /**
@@ -27,8 +25,6 @@ import org.kordamp.gradle.CollectionUtils
  * @since 0.22.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
 class Notifier {
     String id
     String type
@@ -43,14 +39,9 @@ class Notifier {
     private boolean sendOnSuccessSet
     private boolean sendOnWarningSet
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
-
     Map<String, Object> toMap() {
         new LinkedHashMap<String, Object>([
-            id: id,
+            id           : id,
             type         : type,
             sendOnError  : sendOnError,
             sendOnFailure: sendOnFailure,

@@ -29,7 +29,6 @@ import java.util.function.Predicate
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
 class Clirr extends AbstractAggregateFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.clirr'
 

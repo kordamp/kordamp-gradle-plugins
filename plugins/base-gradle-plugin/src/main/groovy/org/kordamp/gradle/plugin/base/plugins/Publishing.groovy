@@ -17,12 +17,11 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.DefaultPomOptions
 import org.kordamp.gradle.plugin.base.model.PomOptions
@@ -34,7 +33,6 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
 class Publishing extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.publishing'
 
@@ -54,11 +52,6 @@ class Publishing extends AbstractFeature {
     Publishing(ProjectConfigurationExtension config, Project project) {
         super(config, project)
         doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     @Override

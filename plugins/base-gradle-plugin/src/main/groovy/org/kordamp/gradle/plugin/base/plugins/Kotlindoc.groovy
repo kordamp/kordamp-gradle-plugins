@@ -17,13 +17,11 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.isBlank
@@ -33,7 +31,6 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
 class Kotlindoc extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.kotlindoc'
     static final String KOTLIN_JVM_PLUGIN_ID = 'org.jetbrains.kotlin.jvm'
@@ -73,11 +70,6 @@ class Kotlindoc extends AbstractFeature {
     Kotlindoc(ProjectConfigurationExtension config, Project project) {
         super(config, project)
         aggregate = new Aggregate(config, project)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     @Override
@@ -147,7 +139,7 @@ class Kotlindoc extends AbstractFeature {
                 if (project.childProjects.isEmpty()) {
                     setEnabled(project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && isApplied())
                 } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && isApplied(p)})
+                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && isApplied(p) })
                 }
             } else {
                 setEnabled(project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && isApplied())
@@ -324,8 +316,6 @@ class Kotlindoc extends AbstractFeature {
     }
 
     @CompileStatic
-    @Canonical
-    @ToString(includeNames = true)
     static class SourceLinkSet {
         final List<SourceLink> sourceLinks = []
 
@@ -363,8 +353,6 @@ class Kotlindoc extends AbstractFeature {
     }
 
     @CompileStatic
-    @Canonical
-    @ToString(includeNames = true)
     static class SourceLink {
         String path
         String url
@@ -394,8 +382,6 @@ class Kotlindoc extends AbstractFeature {
     }
 
     @CompileStatic
-    @Canonical
-    @ToString(includeNames = true)
     static class ExternalDocumentationLinkSet {
         final List<ExternalDocumentationLink> externalDocumentationLinks = []
 
@@ -439,8 +425,6 @@ class Kotlindoc extends AbstractFeature {
     }
 
     @CompileStatic
-    @Canonical
-    @ToString(includeNames = true)
     static class ExternalDocumentationLink {
         String url
         String packageListUrl
@@ -467,8 +451,6 @@ class Kotlindoc extends AbstractFeature {
     }
 
     @CompileStatic
-    @Canonical
-    @ToString(includeNames = true)
     static class PackageOptionSet {
         final List<PackageOption> packageOptions = []
 
@@ -506,8 +488,6 @@ class Kotlindoc extends AbstractFeature {
     }
 
     @CompileStatic
-    @Canonical
-    @ToString(includeNames = true)
     static class PackageOption {
         String prefix
         boolean includeNonPublic = false

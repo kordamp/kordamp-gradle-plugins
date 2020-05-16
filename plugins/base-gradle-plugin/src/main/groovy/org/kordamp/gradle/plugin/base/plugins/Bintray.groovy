@@ -17,12 +17,11 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Credentials
 
@@ -33,7 +32,6 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
 class Bintray extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.bintray'
 
@@ -55,11 +53,6 @@ class Bintray extends AbstractFeature {
     Bintray(ProjectConfigurationExtension config, Project project) {
         super(config, project)
         doSetEnabled(false)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     @Override

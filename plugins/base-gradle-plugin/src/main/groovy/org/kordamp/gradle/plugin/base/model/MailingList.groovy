@@ -17,9 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.kordamp.gradle.CollectionUtils
 
 /**
@@ -27,8 +25,6 @@ import org.kordamp.gradle.CollectionUtils
  * @since 0.22.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
 class MailingList {
     String name
     String subscribe
@@ -36,11 +32,6 @@ class MailingList {
     String post
     String archive
     List<String> otherArchives = []
-
-    @Override
-    String toString() {
-        toMap().toString()
-    }
 
     Map<String, Object> toMap() {
         new LinkedHashMap<String, Object>([

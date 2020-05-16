@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.model.impl
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.scala.ScalaDoc
 import org.kordamp.gradle.CollectionUtils
@@ -27,7 +26,6 @@ import org.kordamp.gradle.CollectionUtils
  * @since 0.15.0
  */
 @CompileStatic
-@Canonical
 class ScaladocOptions {
     String bottom
     String top

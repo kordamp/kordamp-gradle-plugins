@@ -17,17 +17,13 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
 class Specification {
     boolean enabled = true
     String title
@@ -35,11 +31,6 @@ class Specification {
     String vendor
 
     private boolean enabledSet
-
-    @Override
-    String toString() {
-        toMap().toString()
-    }
 
     Map<String, Object> toMap() {
         new LinkedHashMap<String, Object>([

@@ -17,13 +17,11 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
@@ -31,7 +29,6 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
 class SourceHtml extends AbstractAggregateFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.source-html'
 
@@ -82,8 +79,6 @@ class SourceHtml extends AbstractAggregateFeature {
     }
 
     @CompileStatic
-    @Canonical
-    @ToString(includeNames = true)
     static class Conversion {
         FileCollection srcDirs
         File destDir
@@ -277,8 +272,6 @@ class SourceHtml extends AbstractAggregateFeature {
     }
 
     @CompileStatic
-    @Canonical
-    @ToString(includeNames = true)
     static class Overview {
         File destDir
         String pattern = '**/*.html'

@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 
 import static org.kordamp.gradle.StringUtils.isNotBlank
@@ -27,7 +26,6 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  * @since 0.14.0
  */
 @CompileStatic
-@Canonical
 class Integration {
     static final String PLUGIN_ID = 'org.kordamp.gradle.integration-test'
 
@@ -60,11 +58,6 @@ class Integration {
 
     boolean isAggregateSet() {
         this.aggregateSet
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     Map<String, Object> toMap() {

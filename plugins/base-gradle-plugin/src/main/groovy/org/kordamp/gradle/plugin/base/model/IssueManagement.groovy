@@ -17,9 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -28,21 +26,14 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.22.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
 class IssueManagement {
     String system
     String url
 
-    @Override
-    String toString() {
-        toMap().toString()
-    }
-
     Map<String, Object> toMap() {
         new LinkedHashMap<String, Object>([
             system: system,
-            url : url
+            url   : url
         ])
     }
 

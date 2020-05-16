@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.CollectionUtils
@@ -28,7 +27,6 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  * @since 0.31.0
  */
 @CompileStatic
-@Canonical
 class Spotbugs extends AbstractQualityFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.spotbugs'
 

@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
@@ -29,7 +28,6 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
 abstract class AbstractFeature implements Feature {
     boolean enabled = true
 
@@ -77,6 +75,6 @@ abstract class AbstractFeature implements Feature {
     @CompileDynamic
     protected boolean isApplied(Project project) {
         ExtraPropertiesExtension ext = project.extensions.findByType(ExtraPropertiesExtension)
-        ext.has('VISITED_' + getClass().PLUGIN_ID.replace('.', '_') + '_' + project.path.replace(':','#'))
+        ext.has('VISITED_' + getClass().PLUGIN_ID.replace('.', '_') + '_' + project.path.replace(':', '#'))
     }
 }

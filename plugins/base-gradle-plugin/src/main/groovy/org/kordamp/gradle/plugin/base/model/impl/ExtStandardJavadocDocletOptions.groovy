@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.model.impl
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.external.javadoc.CoreJavadocOptions
 import org.gradle.external.javadoc.JavadocOptionFileOption
@@ -29,7 +28,6 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions
  * @since 0.4.0
  */
 @CompileStatic
-@Canonical
 class ExtStandardJavadocDocletOptions extends StandardJavadocDocletOptions {
     private boolean authorSet
     private boolean breakIteratorSet

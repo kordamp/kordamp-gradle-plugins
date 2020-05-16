@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
@@ -33,7 +32,6 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.16.0
  */
 @CompileStatic
-@Canonical
 class Plugin extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.plugin'
 
@@ -75,11 +73,6 @@ class Plugin extends AbstractFeature {
     }
 
     @Override
-    String toString() {
-        toMap().toString()
-    }
-
-    @Override
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
@@ -88,7 +81,7 @@ class Plugin extends AbstractFeature {
             map.id = id
             map.implementationClass = implementationClass
             map.tags = tags
-            map.'gradle-plugin'= "${id}:${project.group}:${project.name}".toString()
+            map.'gradle-plugin' = "${id}:${project.group}:${project.name}".toString()
         }
 
         new LinkedHashMap<>('plugin': map)

@@ -17,14 +17,11 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.StringUtils.isBlank
@@ -35,9 +32,6 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
-@EqualsAndHashCode(includes = ['project', 'specification', 'implementation'])
-@ToString(excludes = ['project', 'specification', 'implementation'], includeNames = true)
 class Information {
     String name
     String description
@@ -67,11 +61,6 @@ class Information {
     Information(ProjectConfigurationExtension config, Project project) {
         this.config = config
         this.project = project
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     Map<String, Map<String, Object>> toMap() {

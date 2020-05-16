@@ -17,11 +17,10 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
@@ -29,7 +28,6 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
 class Guide extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.guide'
 
@@ -39,11 +37,6 @@ class Guide extends AbstractFeature {
         super(config, project)
         doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
         publish = new Publish(config)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     @Override
@@ -74,14 +67,13 @@ class Guide extends AbstractFeature {
     }
 
     void normalize() {
-        if(!enabledSet) {
+        if (!enabledSet) {
             doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
         }
         publish.normalize()
     }
 
     @CompileStatic
-    @Canonical
     static class Publish {
         String branch = 'gh-pages'
         String message

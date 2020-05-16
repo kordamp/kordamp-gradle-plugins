@@ -17,18 +17,15 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
 import org.kordamp.gradle.plugin.base.model.artifact.DependencySpec
-
 import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencySpecImpl
 
 import static org.kordamp.gradle.StringUtils.isBlank
@@ -38,7 +35,6 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.37.0
  */
 @CompileStatic
-@Canonical
 class Dependencies {
     final Project project
     protected final ProjectConfigurationExtension config
@@ -51,11 +47,6 @@ class Dependencies {
 
     Map<String, Dependency> getDependencies() {
         Collections.unmodifiableMap(dependencies)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     @CompileDynamic

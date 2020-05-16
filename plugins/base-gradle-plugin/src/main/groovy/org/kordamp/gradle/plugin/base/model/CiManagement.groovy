@@ -17,11 +17,9 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.gradle.api.Action
-import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.ConfigureUtil
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -30,18 +28,11 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.22.0
  */
 @CompileStatic
-@Canonical
-@ToString(includeNames = true)
 class CiManagement {
     String system
     String url
 
     final NotifierSet notifiers = new NotifierSet()
-
-    @Override
-    String toString() {
-        toMap().toString()
-    }
 
     Map<String, Object> toMap() {
         new LinkedHashMap<String, Object>([

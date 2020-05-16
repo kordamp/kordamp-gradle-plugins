@@ -17,12 +17,11 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.License
 import org.kordamp.gradle.plugin.base.model.LicenseSet
@@ -34,7 +33,6 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
 class Licensing extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.licensing'
 
@@ -46,11 +44,6 @@ class Licensing extends AbstractFeature {
     Licensing(ProjectConfigurationExtension config, Project project) {
         super(config, project)
         doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     Map<String, Map<String, Object>> toMap() {
@@ -94,7 +87,7 @@ class Licensing extends AbstractFeature {
 
     static void merge(Licensing o1, Licensing o2) {
         AbstractFeature.merge(o1, o2)
-        o1.mergeStrategy = o1.mergeStrategy? o1.mergeStrategy : o2?.mergeStrategy
+        o1.mergeStrategy = o1.mergeStrategy ? o1.mergeStrategy : o2?.mergeStrategy
         CollectionUtils.merge(o1.excludedSourceSets, o2?.excludedSourceSets)
         switch (o1.mergeStrategy) {
             case 'overwrite':

@@ -20,7 +20,7 @@ package org.kordamp.gradle.plugin.base
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.model.Information
 import org.kordamp.gradle.plugin.base.plugins.Bintray
 import org.kordamp.gradle.plugin.base.plugins.Bom

@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -27,7 +26,6 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
 class BuildInfo extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.build-info'
 
@@ -59,11 +57,6 @@ class BuildInfo extends AbstractFeature {
 
     BuildInfo(ProjectConfigurationExtension config, Project project) {
         super(config, project)
-    }
-
-    @Override
-    String toString() {
-        isRoot() ? toMap().toString() : ''
     }
 
     @Override

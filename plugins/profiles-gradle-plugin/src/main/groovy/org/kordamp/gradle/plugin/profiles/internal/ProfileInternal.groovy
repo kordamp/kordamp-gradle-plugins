@@ -24,7 +24,7 @@ import groovy.transform.PackageScope
 import groovy.transform.ToString
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.profiles.Activation
 import org.kordamp.gradle.plugin.profiles.Profile
 

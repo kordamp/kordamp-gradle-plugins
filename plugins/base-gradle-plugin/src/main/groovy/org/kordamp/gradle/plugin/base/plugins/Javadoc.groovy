@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
@@ -29,8 +28,8 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.external.javadoc.MinimalJavadocOptions
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
-import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.impl.ExtStandardJavadocDocletOptions
 
@@ -43,7 +42,6 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  * @since 0.8.0
  */
 @CompileStatic
-@Canonical
 class Javadoc extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.javadoc'
 
@@ -82,11 +80,6 @@ class Javadoc extends AbstractFeature {
             return "https://docs.oracle.com/en/java/javase/${javaVersion.majorVersion}/docs/api/".toString()
         }
         return "https://docs.oracle.com/javase/${javaVersion.majorVersion}/docs/api/"
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     @Override
@@ -186,7 +179,6 @@ class Javadoc extends AbstractFeature {
     }
 
     @CompileStatic
-    @Canonical
     static class AutoLinks {
         private static final List<String> DEFAULT_CONFIGURATIONS = [
             'api', 'implementation', 'compileOnly', 'annotationProcessor', 'runtimeOnly'

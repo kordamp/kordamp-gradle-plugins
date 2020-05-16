@@ -17,13 +17,12 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.scala.ScalaDoc
-import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.CollectionUtils
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.impl.ScaladocOptions
 
@@ -32,7 +31,6 @@ import org.kordamp.gradle.plugin.base.model.impl.ScaladocOptions
  * @since 0.15.0
  */
 @CompileStatic
-@Canonical
 class Scaladoc extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.scaladoc'
 
@@ -54,11 +52,6 @@ class Scaladoc extends AbstractFeature {
         options.windowTitle = "${project.name} ${project.version}"
         options.docTitle    = "${project.name} ${project.version}"
         options.header      = "${project.name} ${project.version}"
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     @Override
@@ -94,7 +87,7 @@ class Scaladoc extends AbstractFeature {
                 if (project.childProjects.isEmpty()) {
                     setEnabled(project.pluginManager.hasPlugin('scala') && isApplied())
                 } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('scala') && isApplied(p)})
+                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('scala') && isApplied(p) })
                 }
             } else {
                 setEnabled(project.pluginManager.hasPlugin('scala') && isApplied())

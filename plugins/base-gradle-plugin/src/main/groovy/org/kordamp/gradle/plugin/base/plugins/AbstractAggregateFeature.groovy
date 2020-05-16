@@ -17,11 +17,10 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
+import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
@@ -29,7 +28,6 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  * @since 0.32.0
  */
 @CompileStatic
-@Canonical
 abstract class AbstractAggregateFeature extends AbstractFeature {
     final Aggregate aggregate
 
@@ -40,11 +38,6 @@ abstract class AbstractAggregateFeature extends AbstractFeature {
         aggregate = new Aggregate(config, project)
         this.featureName = featureName
         doSetEnabled(project.plugins.findPlugin(pluginId) != null)
-    }
-
-    @Override
-    String toString() {
-        toMap().toString()
     }
 
     @Override

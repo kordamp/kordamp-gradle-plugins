@@ -30,7 +30,6 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.plugins.Stats
 import org.kordamp.gradle.plugin.stats.counter.CssCounter
 import org.kordamp.gradle.plugin.stats.counter.HashCounter
 import org.kordamp.gradle.plugin.stats.counter.JavaCounter
