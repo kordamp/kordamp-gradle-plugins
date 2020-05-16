@@ -99,12 +99,9 @@ class Dependencies {
     }
 
     Dependency dependency(String name) {
-        if (isBlank(name)) {
-            throw new IllegalArgumentException('Dependency name cannot be blank.')
-        }
-
-        if (dependencies.containsKey(name)) {
-            return dependencies.get(name)
+        Dependency dependency = findDependencyByName(name)
+        if (dependency) {
+            return dependency
         }
         throw new IllegalArgumentException("Undeclared dependency ${name}.")
     }
@@ -116,6 +113,12 @@ class Dependencies {
 
         if (dependencies.containsKey(name)) {
             return dependencies.get(name)
+        }
+        if (project != project.rootProject) {
+            return project.rootProject.extensions
+                .findByType(ProjectConfigurationExtension)
+                .dependencies
+                .findDependencyByName(name)
         }
         null
     }
@@ -134,18 +137,17 @@ class Dependencies {
                 return dependency
             }
         }
+        if (project != project.rootProject) {
+            return project.rootProject.extensions
+                .findByType(ProjectConfigurationExtension)
+                .dependencies
+                .findDependencyByGA(groupId, artifactId)
+        }
         null
     }
 
     String gav(String name) {
-        if (isBlank(name)) {
-            throw new IllegalArgumentException('Dependency name cannot be blank.')
-        }
-
-        if (dependencies.containsKey(name)) {
-            return dependencies.get(name).gav
-        }
-        throw new IllegalArgumentException("Undeclared dependency ${name}.")
+        dependency(name).gav
     }
 
     String gav(String name, String moduleName) {
@@ -162,6 +164,14 @@ class Dependencies {
             }
             return dependencies.get(name).gav(moduleName)
         }
+
+        if (project != project.rootProject) {
+            return project.rootProject.extensions
+                .findByType(ProjectConfigurationExtension)
+                .dependencies
+                .gav(name, moduleName)
+        }
+
         throw new IllegalArgumentException("Undeclared depedency ${name}.")
     }
 
@@ -179,6 +189,14 @@ class Dependencies {
             }
             return dependencies.get(name).ga(moduleName)
         }
+
+        if (project != project.rootProject) {
+            return project.rootProject.extensions
+                .findByType(ProjectConfigurationExtension)
+                .dependencies
+                .ga(name, moduleName)
+        }
+
         throw new IllegalArgumentException("Undeclared depedency ${name}.")
     }
 }
