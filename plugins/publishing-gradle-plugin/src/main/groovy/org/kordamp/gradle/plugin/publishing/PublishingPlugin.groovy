@@ -19,6 +19,7 @@ package org.kordamp.gradle.plugin.publishing
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import groovy.xml.QName
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -145,7 +146,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
 
                 if (!config.publishing.publications.contains('main') && !config.publishing.publications) {
                     main(MavenPublication) {
-                        Map<String, String> versionExpressions = [:]
+                        Map<String, String> expressions = [:]
 
                         if (project.pluginManager.hasPlugin('java-platform')) {
                             from project.components.javaPlatform
@@ -159,21 +160,25 @@ class PublishingPlugin extends AbstractKordampPlugin {
                                     if (dependency && dependency.version == dep.version.text()) {
                                         String versionKey = dependency.name + '.version'
                                         String versionExp = '${' + versionKey + '}'
-                                        versionExpressions.put(versionKey, dependency.version)
+                                        expressions.put(versionKey, dependency.version)
                                         dep.remove(dep.version)
                                         dep.appendNode('version', versionExp)
                                     }
                                 }
 
-                                Node propertiesNode = asNode().children().find { it.name().localPart == 'properties' }
+                                pom.properties.putAll(expressions)
+
+                                Node propertiesNode = asNode().children().find {
+                                    (it.name() instanceof QName ? it.name().localPart : it.name()) == 'properties'
+                                }
                                 if (!propertiesNode) {
                                     propertiesNode = new Node(null, 'properties')
                                     List nodes = asNode().children()
-                                        .find { it.name().localPart == 'dependencyManagement' }
+                                        .find { (it.name() instanceof QName ? it.name().localPart : it.name()) == 'dependencyManagement' }
                                         .parent().children()
                                     nodes.add(nodes.size() - 1, propertiesNode)
                                 }
-                                versionExpressions.each { versionKey, versionVal ->
+                                expressions.each { versionKey, versionVal ->
                                     if (!(propertiesNode.children().find { it.name() == versionKey })) {
                                         propertiesNode.appendNode(versionKey, versionVal)
                                     }
@@ -187,12 +192,13 @@ class PublishingPlugin extends AbstractKordampPlugin {
                             artifactId = project.name
                             version = project.version
                             if (jar?.enabled) artifact jar
-                            PublishingUtils.configureDependencies(pom, config, project, versionExpressions)
+
+                            PublishingUtils.configureDependencies(pom, config, project, expressions)
 
                             if (sourcesJar?.enabled && !artifacts.find { it.classifier == 'sources' }) artifact sourcesJar
                         }
 
-                        config.publishing.pom.properties.putAll(versionExpressions)
+                        config.publishing.pom.properties.putAll(expressions)
                         PublishingUtils.configurePom(pom, config, config.publishing.pom)
                     }
                 }

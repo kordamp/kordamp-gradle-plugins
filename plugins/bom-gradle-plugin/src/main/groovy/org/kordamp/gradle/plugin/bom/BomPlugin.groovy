@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.bom
 
-
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
@@ -149,15 +148,6 @@ class BomPlugin extends AbstractKordampPlugin {
                             }
                         }
                         for (Dependency d : config.bom.dependencies.values()) {
-                            String versionExp = '${' + d.name + '.version}'
-                            versions[(versionExp)] = d.version
-                            dependencyManagementNode.appendNode('dependency').with {
-                                appendNode('groupId', d.groupId)
-                                appendNode('artifactId', d.artifactId)
-                                appendNode('version', versionExp)
-                            }
-                        }
-                        for (Dependency d : config.bom.platforms.values()) {
                             String versionKey = d.name + '.version'
                             String versionExp = '${' + versionKey + '}'
                             versions.put(versionKey, d.version)
@@ -165,10 +155,14 @@ class BomPlugin extends AbstractKordampPlugin {
                                 appendNode('groupId', d.groupId)
                                 appendNode('artifactId', d.artifactId)
                                 appendNode('version', versionExp)
-                                appendNode('scope', 'import')
-                                appendNode('type', 'pom')
+                                if (d.platform) {
+                                    appendNode('scope', 'import')
+                                    appendNode('type', 'pom')
+                                }
                             }
                         }
+
+                        pom.properties.putAll(versions)
                     }
 
                     config.bom.properties.putAll(versions)
