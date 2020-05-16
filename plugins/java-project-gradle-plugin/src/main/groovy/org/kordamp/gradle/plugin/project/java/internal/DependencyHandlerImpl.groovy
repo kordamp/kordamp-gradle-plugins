@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.model.artifact.Dependency as KDependency
 import org.kordamp.gradle.plugin.project.java.DependencyHandler
 
 import static java.util.Arrays.asList
@@ -58,7 +59,22 @@ class DependencyHandlerImpl implements DependencyHandler {
     private Object maybeResolveGav(Object notation) {
         if (notation instanceof CharSequence) {
             String str = String.valueOf(notation)
-            return (resolveEffectiveConfig(project) ?: resolveConfig(project)).dependencies.findDependencyByName(str)?.gav ?: notation
+            Project prj = project.rootProject.findProject(str)
+            if (prj) return prj
+
+            KDependency dependency = (resolveEffectiveConfig(project) ?: resolveConfig(project)).dependencies.findDependencyByName(str)
+            if (dependency) {
+                prj = project.rootProject.findProject(dependency.artifactId)
+                if (prj) return prj
+                return dependency.gav
+            }
+        } else if (notation instanceof KDependency) {
+            KDependency dependency = (KDependency) notation
+            if (dependency) {
+                Project prj = project.rootProject.findProject(dependency.artifactId)
+                if (prj) return prj
+                return dependency.gav
+            }
         }
         notation
     }
@@ -81,23 +97,29 @@ class DependencyHandlerImpl implements DependencyHandler {
     @Override
     void platform(Object notation, List<String> configurations, Action<? super Dependency> action) {
         Object gavOrNotation = maybeResolveGav(notation)
+
         List<String> confs = configurations ?: DEFAULT_CONFIGURATIONS
         List<String> actualConfs = []
+
         for (String configuration : confs) {
             if (project.configurations.findByName(configuration)) {
                 project.logger.debug("Configuring platform '${gavOrNotation}' in ${configuration}")
                 org.gradle.api.artifacts.dsl.DependencyHandler dh = project.dependencies
                 if (action) {
-                    dh.add(configuration, dh.platform(gavOrNotation, action))
+                    Dependency d = dh.platform(gavOrNotation, action)
+                    dh.add(configuration, d)
+                    notation = "${d.group}:${d.name}:${d.version}".toString()
                 } else {
-                    dh.add(configuration, dh.platform(gavOrNotation))
+                    Dependency d = dh.platform(gavOrNotation)
+                    dh.add(configuration, d)
+                    notation = "${d.group}:${d.name}:${d.version}".toString()
                 }
                 actualConfs << configuration
             }
         }
 
         platforms << [
-            platform      : gavOrNotation,
+            platform      : notation,
             enforced      : false,
             configurations: actualConfs
         ]
@@ -137,7 +159,7 @@ class DependencyHandlerImpl implements DependencyHandler {
         }
 
         platforms << [
-            platform      : gavOrNotation,
+            platform      : notation,
             enforced      : true,
             configurations: actualConfs
         ]
