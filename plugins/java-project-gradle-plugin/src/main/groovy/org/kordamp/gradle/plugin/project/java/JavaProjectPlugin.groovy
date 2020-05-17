@@ -23,13 +23,15 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.tasks.JavaExec
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
+import org.kordamp.gradle.plugin.project.tasks.PlatformsTask
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 import org.kordamp.gradle.plugin.project.ProjectPlugin
-import org.kordamp.gradle.plugin.project.java.internal.DependencyHandlerImpl
+import org.kordamp.gradle.plugin.project.DependencyHandler
+import org.kordamp.gradle.plugin.project.internal.DependencyHandlerImpl
 import org.kordamp.gradle.plugin.project.java.tasks.JarSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.JavaCompilerSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.JavaExecSettingsTask
-import org.kordamp.gradle.plugin.project.java.tasks.PlatformsTask
+
 import org.kordamp.gradle.plugin.project.java.tasks.SourceSetSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.SourceSetsTask
 import org.kordamp.gradle.plugin.project.java.tasks.TestSettingsTask

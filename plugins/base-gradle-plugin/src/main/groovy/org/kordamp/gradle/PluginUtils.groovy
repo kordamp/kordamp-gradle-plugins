@@ -47,14 +47,15 @@ import static org.kordamp.gradle.StringUtils.isBlank
 @CompileStatic
 class PluginUtils {
     static boolean isAndroidProject(Project project) {
-        androidPlugins().any { project.pluginManager.hasPlugin(it) }
+        project.pluginManager.hasPlugin('com.android.library')
     }
 
-    static Task resolveClassesTask(Project project) {
-        if(isAndroidProject(project)) {
-            return project.tasks.findByName('compileReleaseJavaWithJavac')
+    @CompileDynamic
+    static TaskProvider<Task> resolveClassesTask(Project project) {
+        if (isAndroidProject(project)) {
+            return project.tasks.named('compileReleaseJavaWithJavac')
         }
-        project.tasks.findByName('classes')
+        project.tasks.named('classes')
     }
 
     @CompileDynamic
@@ -110,16 +111,6 @@ class PluginUtils {
 
     static resolveSourceDirs(Collection<Project> projects) {
         projects.collect { resolveSourceDirs(it) }.flatten()
-    }
-
-    private static List<String> androidPlugins() {
-        [
-            'com.android.library',
-            'com.android.feature',
-            'com.android.instantapp',
-            'com.android.application',
-            'com.android.test'
-        ]
     }
 
     static ProjectConfigurationExtension resolveConfig(Project project) {

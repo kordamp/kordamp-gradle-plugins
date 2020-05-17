@@ -36,7 +36,6 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import static org.kordamp.gradle.PluginUtils.hasSourceSets
 import static org.kordamp.gradle.PluginUtils.registerJarVariant
 import static org.kordamp.gradle.PluginUtils.resolveAllSource
-import static org.kordamp.gradle.PluginUtils.resolveClassesTask
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -127,8 +126,8 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                     t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
                     t.description = 'An archive of the source code.'
                     t.archiveClassifier.set('sources')
-                    t.dependsOn resolveClassesTask(project)
-                    t.setEnabled(resolveEffectiveConfig(t.project).artifacts.source.enabled)
+                    // t.dependsOn resolveClassesTask(project)
+                    t.setEnabled(config.artifacts.source.enabled)
                     t.from resolveAllSource(project)
                 }
             })

@@ -36,7 +36,9 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
+import static org.kordamp.gradle.PluginUtils.isAndroidProject
 import static org.kordamp.gradle.PluginUtils.registerJarVariant
+import static org.kordamp.gradle.PluginUtils.resolveAllSource
 import static org.kordamp.gradle.PluginUtils.resolveClassesTask
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
@@ -156,6 +158,29 @@ class JavadocPlugin extends AbstractKordampPlugin {
     }
 
     private TaskProvider<Javadoc> createJavadocTask(Project project) {
+        if (isAndroidProject(project)) {
+            return project.tasks.register(JAVADOC_TASK_NAME, Javadoc,
+                new Action<Javadoc>() {
+                    @Override
+                    @CompileDynamic
+                    void execute(Javadoc t) {
+                        ProjectConfigurationExtension config = resolveEffectiveConfig(t.project)
+                        t.enabled = config.docs.javadoc.enabled
+                        t.dependsOn resolveClassesTask(project)
+                        t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                        t.description = 'Generates Javadoc API documentation'
+                        t.destinationDir = project.file("${project.buildDir}/docs/javadoc")
+                        t.source = resolveAllSource(project)
+                        config.docs.javadoc.applyTo(t)
+                        t.options.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
+                        if (JavaVersion.current().isJava8Compatible()) {
+                            t.options.addBooleanOption('Xdoclint:none', true)
+                            t.options.quiet()
+                        }
+                    }
+                })
+        }
+
         project.tasks.named(JAVADOC_TASK_NAME, Javadoc,
             new Action<Javadoc>() {
                 @Override

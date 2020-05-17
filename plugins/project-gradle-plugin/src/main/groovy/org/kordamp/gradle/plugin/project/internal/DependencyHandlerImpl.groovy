@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.project.java.internal
+package org.kordamp.gradle.plugin.project.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
@@ -23,7 +23,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency as KDependency
-import org.kordamp.gradle.plugin.project.java.DependencyHandler
+import org.kordamp.gradle.plugin.project.DependencyHandler
 
 import static java.util.Arrays.asList
 import static org.kordamp.gradle.PluginUtils.resolveConfig

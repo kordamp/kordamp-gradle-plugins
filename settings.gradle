@@ -91,7 +91,8 @@ enforce {
             'commons-logging:commons-logging:1.2',
             'com.trilead:trilead-ssh2:1.0.0-build220',
             'net.java.dev.jna:jna:4.1.0',
-            'org.apache.httpcomponents:httpclient:4.5.6',
+            "org.apache.httpcomponents:httpclient:$httpclientVersion",
+            "org.apache.httpcomponents:httpmime:$httpclientVersion",
             'org.eclipse.jgit:org.eclipse.jgit:5.6.0.201912101111-r',
             'org.codehaus.groovy.modules.http-builder:http-builder:0.7.2',
             "org.eclipse.sisu:org.eclipse.sisu.plexus:$sisuVersion",
@@ -113,6 +114,17 @@ enforce {
             "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
             "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
             "org.slf4j:slf4j-api:$slf4jVersion",
-            "junit:junit:$junitVersion"
+            "junit:junit:$junitVersion",
+            "org.ow2.asm:asm:$asmVersion",
+            "org.ow2.asm:asm-commons:$asmVersion",
+            "org.ow2.asm:asm-util:$asmVersion",
+            "org.ow2.asm:asm-tree:$asmVersion",
+            "org.ow2.asm:asm-analysis:$asmVersion",
+            "com.google.guava:guava:$guavaVersion",
+            'com.google.code.gson:gson:2.8.5',
+            'com.google.code.findbugs:jsr305:3.0.2',
+            'org.bouncycastle:bcprov-jdk15on:1.64',
+            'org.bouncycastle:bcpkix-jdk15on:1.64',
+            "com.google.errorprone:error_prone_annotations:$errorproneVersion"
     }
 }

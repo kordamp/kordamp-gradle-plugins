@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.project.java.tasks
+package org.kordamp.gradle.plugin.project.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
-import org.kordamp.gradle.plugin.project.java.DependencyHandler
-import org.kordamp.gradle.plugin.project.java.internal.DependencyHandlerImpl
+import org.kordamp.gradle.plugin.project.DependencyHandler
+import org.kordamp.gradle.plugin.project.internal.DependencyHandlerImpl
 
 /**
  * @author Andres Almiray

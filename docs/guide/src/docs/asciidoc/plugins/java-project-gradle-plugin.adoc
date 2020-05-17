@@ -26,7 +26,7 @@ Configures dependencies based on settings available from `config.dependencies`.
 
 [horizontal]
 Name:: cfg
-Type:: `org.kordamp.gradle.plugin.project.java.DependencyHandler`
+Type:: `org.kordamp.gradle.plugin.project.DependencyHandler`
 Applied to:: `org.gradle.api.artifacts.dsl.DependencyHandler`
 
 Since Gradle 6 platform dependencies must be applied per configuration, which results in verbose build files when a
