@@ -446,7 +446,7 @@ dependencies {
     cfg.platform('micronaut', 'api', 'annotationProcessor', 'compileOnly')
     // configure a dependency in the standard way
     api 'io.micronaut:micronaut-core'
-    // configure a platform module by groupId:argtifactId
+    // configure a platform module by groupId:artifactId
     annotationProcessor config.dependencies.ga('micronaut', 'micronaut-inject')
     // pull in a module from Groovy
     api config.dependencies.gav('groovy', 'groovy-json')
