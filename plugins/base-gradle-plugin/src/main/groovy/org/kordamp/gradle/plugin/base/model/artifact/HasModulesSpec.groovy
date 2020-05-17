@@ -24,12 +24,8 @@ import groovy.transform.CompileStatic
  * @since 0.37.0
  */
 @CompileStatic
-interface DependencySpec extends HasModulesSpec {
-    void setGroupId(String getGroupId)
+interface HasModulesSpec {
+    void setModules(Set<String> modules)
 
-    void setArtifactId(String artifactId)
-
-    void setVersion(String version)
-
-    void setPlatform(boolean platform)
+    void module(String module)
 }

@@ -191,9 +191,18 @@ This block is optional.
 
 exclude(String):: Skips the named project from being added to the BOM.
 include(String):: Adds the named project to the BOM.
-Dependency dependency(String, String):: Adds a dependency by name.
-Dependency dependency(String, Action<? super DependencySpec>):: Adds and configures a dependency by name.
-Dependency dependency(String, Closure<Void>):: Adds and configures a dependency by name.
-Dependency dependency(String):: Finds a dependency by name. Throws an exception if it can't be found.
+dependency(String):: Defines a dependency. Argument must use the `groupId:artifactId:version` notation. Dependency name will be equal to `artifactId`.
+dependency(String, String):: Defines a dependency. Second argument must use the `groupId:artifactId:version` notation.
+dependency(String, String, Action):: Defines and configures a dependency. Second argument must use the `groupId:artifactId:version` notation.
+dependency(String, String, Closure):: Defines and configures a dependency. Second argument must use the `groupId:artifactId:version` notation.
+platform(String):: Defines a platform dependency. Argument must use the `groupId:artifactId:version` notation. Dependency name will be equal to `artifactId`.
+platform(String, String):: Defines a platform dependency. Second argument must use the `groupId:artifactId:version` notation.
+platform(String, String, Action):: Defines and configures a platform dependency. Second argument must use the `groupId:artifactId:version` notation.
+platform(String, String, Closure):: Defines and configures a platform dependency. Second argument must use the `groupId:artifactId:version` notation.
+dependency(String, Action):: Defines and configures a dependency by name.
+dependency(String, Closure):: Defines and configures a dependency by name.
+getDependency(String):: Returns the named dependency (if it exists). Throws an exception otherwise.
+findDependencyByName(String):: Finds a dependency by name if it exists, `null` otherwise.
+findDependencyByGA(String, String):: Finds a dependency by groupId and artifactId if it exists, `null` otherwise.
 void dependency(Dependency):: Adds an existing dependency, usually declared in `<<_base_dependencies,config.dependencies>>`.
 

@@ -26,6 +26,7 @@ import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
 import org.kordamp.gradle.plugin.base.model.artifact.DependencySpec
+import org.kordamp.gradle.plugin.base.model.artifact.HasModulesSpec
 import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencySpecImpl
 
 import static org.kordamp.gradle.StringUtils.isBlank
@@ -68,12 +69,82 @@ class Dependencies {
         CollectionUtils.merge(o1.@dependencies, o2.@dependencies)
     }
 
+    Dependency dependency(String notation) {
+        if (isBlank(notation)) {
+            throw new IllegalArgumentException('Dependency notation cannot be blank.')
+        }
+        DependencySpecImpl d = DependencySpecImpl.parsePartial(project.rootProject, notation)
+        d.validate(project)
+        dependencies[d.name] = d.asDependency()
+    }
+
     Dependency dependency(String name, String notation) {
         if (isBlank(name)) {
             throw new IllegalArgumentException('Dependency name cannot be blank.')
         }
-        DependencySpecImpl d = new DependencySpecImpl(name.trim())
-        d.parse(project.rootProject, notation)
+        DependencySpecImpl d = DependencySpecImpl.parse(project.rootProject, name.trim(), notation)
+        d.validate(project)
+        dependencies[d.name] = d.asDependency()
+    }
+
+    Dependency dependency(String name, String notation, Action<? super HasModulesSpec> action) {
+        if (isBlank(name)) {
+            throw new IllegalArgumentException('Dependency name cannot be blank.')
+        }
+        DependencySpecImpl d = DependencySpecImpl.parse(project.rootProject, name.trim(), notation)
+        action.execute(d)
+        d.validate(project)
+        dependencies[d.name] = d.asDependency()
+    }
+
+    Dependency dependency(String name, String notation, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DependencySpec) Closure<Void> action) {
+        if (isBlank(name)) {
+            throw new IllegalArgumentException('Dependency name cannot be blank.')
+        }
+        DependencySpecImpl d = DependencySpecImpl.parse(project.rootProject, name.trim(), notation)
+        ConfigureUtil.configure(action, d)
+        d.validate(project)
+        dependencies[d.name] = d.asDependency()
+    }
+
+    Dependency platform(String notation) {
+        if (isBlank(notation)) {
+            throw new IllegalArgumentException('Platform notation cannot be blank.')
+        }
+        DependencySpecImpl d = DependencySpecImpl.parsePartial(project.rootProject, notation)
+        d.platform = true
+        d.validate(project)
+        dependencies[d.name] = d.asDependency()
+    }
+
+    Dependency platform(String name, String notation) {
+        if (isBlank(name)) {
+            throw new IllegalArgumentException('Platform name cannot be blank.')
+        }
+        DependencySpecImpl d = DependencySpecImpl.parse(project.rootProject, name.trim(), notation)
+        d.platform = true
+        d.validate(project)
+        dependencies[d.name] = d.asDependency()
+    }
+
+    Dependency platform(String name, String notation, Action<? super HasModulesSpec> action) {
+        if (isBlank(name)) {
+            throw new IllegalArgumentException('Platform name cannot be blank.')
+        }
+        DependencySpecImpl d = DependencySpecImpl.parse(project.rootProject, name.trim(), notation)
+        d.platform = true
+        action.execute(d)
+        d.validate(project)
+        dependencies[d.name] = d.asDependency()
+    }
+
+    Dependency platform(String name, String notation, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DependencySpec) Closure<Void> action) {
+        if (isBlank(name)) {
+            throw new IllegalArgumentException('Platform name cannot be blank.')
+        }
+        DependencySpecImpl d = DependencySpecImpl.parse(project.rootProject, name.trim(), notation)
+        d.platform = true
+        ConfigureUtil.configure(action, d)
         d.validate(project)
         dependencies[d.name] = d.asDependency()
     }
@@ -82,7 +153,7 @@ class Dependencies {
         if (isBlank(name)) {
             throw new IllegalArgumentException('Dependency name cannot be blank.')
         }
-        DependencySpecImpl d = new DependencySpecImpl(name.trim())
+        DependencySpecImpl d = DependencySpecImpl.parsePartial(project.rootProject, name.trim())
         action.execute(d)
         d.validate(project)
         dependencies[d.name] = d.asDependency()
@@ -92,13 +163,13 @@ class Dependencies {
         if (isBlank(name)) {
             throw new IllegalArgumentException('Dependency name cannot be blank.')
         }
-        DependencySpecImpl d = new DependencySpecImpl(name.trim())
+        DependencySpecImpl d = DependencySpecImpl.parsePartial(project.rootProject, name.trim())
         ConfigureUtil.configure(action, d)
         d.validate(project)
         dependencies[d.name] = d.asDependency()
     }
 
-    Dependency dependency(String name) {
+    Dependency getDependency(String name) {
         Dependency dependency = findDependencyByName(name)
         if (dependency) {
             return dependency
@@ -147,7 +218,7 @@ class Dependencies {
     }
 
     String gav(String name) {
-        dependency(name).gav
+        getDependency(name).gav
     }
 
     String gav(String name, String moduleName) {

@@ -348,8 +348,17 @@ WARNING: Dependencies defined in this way cannot have classifiers and must be re
 [[_org_kordamp_gradle_base_dependencies_methods]]
 === Methods
 
-dependency(String):: Defines a dependency by name. This method takes an `Action`/`Closure` to define the dependency's
-properties. Returns the named dependency (if it exists) if no additional arguments are given, throws an exception otherwise.
+dependency(String):: Defines a dependency. Argument must use the `groupId:artifactId:version` notation. Dependency name will be equal to `artifactId`.
+dependency(String, String):: Defines a dependency. Second argument must use the `groupId:artifactId:version` notation.
+dependency(String, String, Action):: Defines and configures a dependency. Second argument must use the `groupId:artifactId:version` notation.
+dependency(String, String, Closure):: Defines and configures a dependency. Second argument must use the `groupId:artifactId:version` notation.
+platform(String):: Defines a platform dependency. Argument must use the `groupId:artifactId:version` notation. Dependency name will be equal to `artifactId`.
+platform(String, String):: Defines a platform dependency. Second argument must use the `groupId:artifactId:version` notation.
+platform(String, String, Action):: Defines and configures a platform dependency. Second argument must use the `groupId:artifactId:version` notation.
+platform(String, String, Closure):: Defines and configures a platform dependency. Second argument must use the `groupId:artifactId:version` notation.
+dependency(String, Action):: Defines and configures a dependency by name.
+dependency(String, Closure):: Defines and configures a dependency by name.
+getDependency(String):: Returns the named dependency (if it exists). Throws an exception otherwise.
 findDependencyByName(String):: Finds a dependency by name if it exists, `null` otherwise.
 findDependencyByGA(String, String):: Finds a dependency by groupId and artifactId if it exists, `null` otherwise.
 gav(String):: Returns the given dependency in GAV notation if it exists. Throws an exception otherwise.
@@ -375,18 +384,10 @@ config {
             ]
         }
         // a dependency without modules
-        dependency('junit') {
-            groupId    = 'junit'
-            artifactId = 'junit'
-            version    = '4.13'
-        }
+        dependency('junit:junit:4.13')
         // a platform
-        dependency('micronaut') {
-            platform   = true
-            groupId    = 'io.micronaut'
-            artifactId = 'micronaut-bom'
-            version    = '2.0.0.M3'
-            modules    = [
+        platform('micronaut', 'io.micronaut:micronaut-bom:2.0.0.M3') {
+            modules = [
                 'micronaut-core',
                 'micronaut-inject',
                 'micronaut-validation'
@@ -420,18 +421,10 @@ config {
             ]
         }
         // a dependency without modules
-        dependency('junit') {
-            groupId    = 'junit'
-            artifactId = 'junit'
-            version    = '4.13'
-        }
+        dependency('junit:junit:4.13')
         // a platform
-        dependency('micronaut') {
-            platform   = true
-            groupId    = 'io.micronaut'
-            artifactId = 'micronaut-bom'
-            version    = '2.0.0.M3'
-            modules    = [
+        platform('micronaut', 'io.micronaut:micronaut-bom:2.0.0.M3') {
+            modules = [
                 'micronaut-core',
                 'micronaut-inject',
                 'micronaut-validation'

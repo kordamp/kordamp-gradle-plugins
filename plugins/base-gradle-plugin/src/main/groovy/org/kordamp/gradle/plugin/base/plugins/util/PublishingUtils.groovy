@@ -580,8 +580,7 @@ class PublishingUtils {
         }
 
         if (isNotBlank(pomOptions.parent)) {
-            DependencySpecImpl spec = new DependencySpecImpl('parent')
-            spec.parse(config.project.rootProject, pomOptions.parent)
+            DependencySpecImpl spec = DependencySpecImpl.parse(config.project.rootProject, 'parent', pomOptions.parent)
             Dependency parentPom = spec.asDependency()
 
             pom.withXml {

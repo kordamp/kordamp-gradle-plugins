@@ -15,21 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.base.model.artifact
+package org.kordamp.gradle.plugin.base.model.artifact.internal
 
 import groovy.transform.CompileStatic
+import org.kordamp.gradle.plugin.base.model.artifact.HasModulesSpec
+
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
  * @since 0.37.0
  */
 @CompileStatic
-interface DependencySpec extends HasModulesSpec {
-    void setGroupId(String getGroupId)
+class HasModulesSpecImpl implements HasModulesSpec {
+    Set<String> modules = [] as Set
 
-    void setArtifactId(String artifactId)
-
-    void setVersion(String version)
-
-    void setPlatform(boolean platform)
+    void module(String module) {
+        if (isNotBlank(module)) {
+            modules << module.trim()
+        }
+    }
 }

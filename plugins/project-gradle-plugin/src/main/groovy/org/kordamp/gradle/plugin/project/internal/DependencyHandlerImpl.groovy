@@ -169,13 +169,13 @@ class DependencyHandlerImpl implements DependencyHandler {
     void dependency(String name, String configuration, String... configurations) {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
         if (project.configurations.findByName(configuration)) {
-            project.dependencies.add(configuration, config.dependencies.dependency(name).gav)
+            project.dependencies.add(configuration, config.dependencies.getDependency(name).gav)
         }
 
         if (configurations) {
             for (String conf : configurations) {
                 if (project.configurations.findByName(conf)) {
-                    project.dependencies.add(conf, config.dependencies.dependency(name).gav)
+                    project.dependencies.add(conf, config.dependencies.getDependency(name).gav)
                 }
             }
         }
@@ -186,9 +186,9 @@ class DependencyHandlerImpl implements DependencyHandler {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
         if (project.configurations.findByName(configuration)) {
             if (configurer) {
-                project.dependencies.add(configuration, config.dependencies.dependency(name).gav, configurer)
+                project.dependencies.add(configuration, config.dependencies.getDependency(name).gav, configurer)
             } else {
-                project.dependencies.add(configuration, config.dependencies.dependency(name).gav)
+                project.dependencies.add(configuration, config.dependencies.getDependency(name).gav)
             }
         }
     }
@@ -197,13 +197,13 @@ class DependencyHandlerImpl implements DependencyHandler {
     void module(String name, String moduleName, String configuration, String... configurations) {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
         if (project.configurations.findByName(configuration)) {
-            project.dependencies.add(configuration, config.dependencies.dependency(name).asGav(moduleName))
+            project.dependencies.add(configuration, config.dependencies.getDependency(name).asGav(moduleName))
         }
 
         if (configurations) {
             for (String conf : configurations) {
                 if (project.configurations.findByName(conf)) {
-                    project.dependencies.add(conf, config.dependencies.dependency(name).asGav(moduleName))
+                    project.dependencies.add(conf, config.dependencies.getDependency(name).asGav(moduleName))
                 }
             }
         }
@@ -214,9 +214,9 @@ class DependencyHandlerImpl implements DependencyHandler {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
         if (project.configurations.findByName(configuration)) {
             if (configurer) {
-                project.dependencies.add(configuration, config.dependencies.dependency(name).asGav(moduleName), configurer)
+                project.dependencies.add(configuration, config.dependencies.getDependency(name).asGav(moduleName), configurer)
             } else {
-                project.dependencies.add(configuration, config.dependencies.dependency(name).asGav(moduleName))
+                project.dependencies.add(configuration, config.dependencies.getDependency(name).asGav(moduleName))
             }
         }
     }

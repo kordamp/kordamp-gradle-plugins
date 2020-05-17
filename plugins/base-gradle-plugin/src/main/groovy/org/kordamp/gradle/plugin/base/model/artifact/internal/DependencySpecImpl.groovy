@@ -31,87 +31,227 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  * @since 0.37.0
  */
 @CompileStatic
-class DependencySpecImpl implements DependencySpec {
+class DependencySpecImpl extends HasModulesSpecImpl implements DependencySpec {
     final String name
     String groupId
     String artifactId
     String version
     boolean platform
-    Set<String> modules = []
 
     DependencySpecImpl(String name) {
         this.name = name
     }
 
-    void parse(Project rootProject, String str) {
-        if (isBlank(str)) {
+    static DependencySpecImpl parsePartial(Project rootProject, String notation) {
+        if (isBlank(notation)) {
             throw new IllegalArgumentException('Empty dependency notation.')
         }
-        String[] parts = str.trim().split(':')
+
+        DependencySpecImpl spec = null
+
+        String[] parts = notation.trim().split(':')
         switch (parts.length) {
             case 0:
-                throw new IllegalArgumentException("Project '${str}' does not exist.")
+                throw new IllegalArgumentException('Empty dependency notation.')
             case 1:
                 if (isNotBlank(parts[0])) {
                     if (rootProject.name == parts[0].trim()) {
-                        groupId = rootProject.group.toString()
-                        artifactId = parts[0]
-                        version = rootProject.version.toString()
+                        spec = new DependencySpecImpl(parts[0])
+                        spec.groupId = rootProject.group.toString()
+                        spec.artifactId = parts[0]
+                        spec.version = rootProject.version.toString()
                     } else {
                         Project p = rootProject.findProject(parts[0].trim())
                         if (p) {
-                            groupId = p.group.toString()
-                            artifactId = parts[0]
-                            version = p.version.toString()
+                            spec = new DependencySpecImpl(parts[0])
+                            spec.groupId = p.group.toString()
+                            spec.artifactId = parts[0]
+                            spec.version = p.version.toString()
                         } else {
-                            throw new IllegalArgumentException("Project '${str}' does not exist.")
+                            spec = new DependencySpecImpl(notation.trim())
                         }
                     }
                 } else {
-                    throw new IllegalArgumentException("Project '${str}' does not exist.")
+                    throw new IllegalArgumentException('Empty dependency notation.')
                 }
                 break
             case 2:
                 if (isBlank(parts[0]) && isNotBlank(parts[1])) {
                     if (rootProject.name == parts[1].trim()) {
-                        groupId = rootProject.group.toString()
-                        artifactId = parts[1]
-                        version = rootProject.version.toString()
+                        spec = new DependencySpecImpl(parts[1])
+                        spec.groupId = rootProject.group.toString()
+                        spec.artifactId = parts[1]
+                        spec.version = rootProject.version.toString()
                     } else {
                         Project p = rootProject.findProject(parts[1].trim())
                         if (p) {
-                            groupId = p.group.toString()
-                            artifactId = parts[1]
-                            version = p.version.toString()
+                            spec = new DependencySpecImpl(parts[1])
+                            spec.groupId = p.group.toString()
+                            spec.artifactId = parts[1]
+                            spec.version = p.version.toString()
                         } else {
-                            throw new IllegalArgumentException("Project '${str}' does not exist.")
+                            spec = new DependencySpecImpl(notation.trim())
                         }
                     }
                 } else {
-                    throw new IllegalArgumentException("Project '${str}' does not exist.")
+                    throw new IllegalArgumentException("Invalid dependency '${notation}'.")
                 }
                 break
             case 3:
                 if (isBlank(parts[0]) || isBlank(parts[1]) || isBlank(parts[2])) {
-                    throw new IllegalArgumentException("Invalid dependency '${str}'.")
+                    throw new IllegalArgumentException("Invalid dependency '${notation}'.")
                 }
-                groupId = parts[0]
-                artifactId = parts[1]
-                version = parts[2]
+                spec = new DependencySpecImpl(parts[1])
+                spec.groupId = parts[0]
+                spec.artifactId = parts[1]
+                spec.version = parts[2]
         }
+
+        spec
+    }
+
+    static DependencySpecImpl parse(Project rootProject, String notation) {
+        if (isBlank(notation)) {
+            throw new IllegalArgumentException('Empty dependency notation.')
+        }
+
+        DependencySpecImpl spec = null
+
+        String[] parts = notation.trim().split(':')
+        switch (parts.length) {
+            case 0:
+                throw new IllegalArgumentException("Project '${notation}' does not exist.")
+            case 1:
+                if (isNotBlank(parts[0])) {
+                    if (rootProject.name == parts[0].trim()) {
+                        spec = new DependencySpecImpl(parts[0])
+                        spec.groupId = rootProject.group.toString()
+                        spec.artifactId = parts[0]
+                        spec.version = rootProject.version.toString()
+                    } else {
+                        Project p = rootProject.findProject(parts[0].trim())
+                        if (p) {
+                            spec = new DependencySpecImpl(parts[0])
+                            spec.groupId = p.group.toString()
+                            spec.artifactId = parts[0]
+                            spec.version = p.version.toString()
+                        } else {
+                            throw new IllegalArgumentException("Project '${notation}' does not exist.")
+                        }
+                    }
+                } else {
+                    throw new IllegalArgumentException("Project '${notation}' does not exist.")
+                }
+                break
+            case 2:
+                if (isBlank(parts[0]) && isNotBlank(parts[1])) {
+                    if (rootProject.name == parts[1].trim()) {
+                        spec = new DependencySpecImpl(parts[1])
+                        spec.groupId = rootProject.group.toString()
+                        spec.artifactId = parts[1]
+                        spec.version = rootProject.version.toString()
+                    } else {
+                        Project p = rootProject.findProject(parts[1].trim())
+                        if (p) {
+                            spec = new DependencySpecImpl(parts[1])
+                            spec.groupId = p.group.toString()
+                            spec.artifactId = parts[1]
+                            spec.version = p.version.toString()
+                        } else {
+                            throw new IllegalArgumentException("Project '${notation}' does not exist.")
+                        }
+                    }
+                } else {
+                    throw new IllegalArgumentException("Project '${notation}' does not exist.")
+                }
+                break
+            case 3:
+                if (isBlank(parts[0]) || isBlank(parts[1]) || isBlank(parts[2])) {
+                    throw new IllegalArgumentException("Invalid dependency '${notation}'.")
+                }
+                spec = new DependencySpecImpl(parts[1])
+                spec.groupId = parts[0]
+                spec.artifactId = parts[1]
+                spec.version = parts[2]
+        }
+
+        spec
+    }
+
+    static DependencySpecImpl parse(Project rootProject, String name, String notation) {
+        if (isBlank(notation)) {
+            throw new IllegalArgumentException('Empty dependency notation.')
+        }
+
+        DependencySpecImpl spec = new DependencySpecImpl(name)
+
+        String[] parts = notation.trim().split(':')
+        switch (parts.length) {
+            case 0:
+                throw new IllegalArgumentException("Project '${notation}' does not exist.")
+            case 1:
+                if (isNotBlank(parts[0])) {
+                    if (rootProject.name == parts[0].trim()) {
+                        spec.groupId = rootProject.group.toString()
+                        spec.artifactId = parts[0]
+                        spec.version = rootProject.version.toString()
+                    } else {
+                        Project p = rootProject.findProject(parts[0].trim())
+                        if (p) {
+                            spec.groupId = p.group.toString()
+                            spec.artifactId = parts[0]
+                            spec.version = p.version.toString()
+                        } else {
+                            throw new IllegalArgumentException("Project '${notation}' does not exist.")
+                        }
+                    }
+                } else {
+                    throw new IllegalArgumentException("Project '${notation}' does not exist.")
+                }
+                break
+            case 2:
+                if (isBlank(parts[0]) && isNotBlank(parts[1])) {
+                    if (rootProject.name == parts[1].trim()) {
+                        spec.groupId = rootProject.group.toString()
+                        spec.artifactId = parts[1]
+                        spec.version = rootProject.version.toString()
+                    } else {
+                        Project p = rootProject.findProject(parts[1].trim())
+                        if (p) {
+                            spec.groupId = p.group.toString()
+                            spec.artifactId = parts[1]
+                            spec.version = p.version.toString()
+                        } else {
+                            throw new IllegalArgumentException("Project '${notation}' does not exist.")
+                        }
+                    }
+                } else {
+                    throw new IllegalArgumentException("Project '${notation}' does not exist.")
+                }
+                break
+            case 3:
+                if (isBlank(parts[0]) || isBlank(parts[1]) || isBlank(parts[2])) {
+                    throw new IllegalArgumentException("Invalid dependency '${notation}'.")
+                }
+                spec.groupId = parts[0]
+                spec.artifactId = parts[1]
+                spec.version = parts[2]
+        }
+
+        spec
     }
 
     void validate(Project project) {
         List<String> errors = []
 
         if (isBlank(groupId)) {
-            errors.add("Dependency'${name}' is missing groupId.".toString())
+            errors.add("Dependency '${name}' is missing groupId.".toString())
         }
         if (isBlank(artifactId)) {
-            errors.add("Dependency'${name}' is missing artifactId.".toString())
+            errors.add("Dependency '${name}' is missing artifactId.".toString())
         }
         if (isBlank(version)) {
-            errors.add("Dependency'${name}' is missing version.".toString())
+            errors.add("Dependency '${name}' is missing version.".toString())
         }
 
         if (errors) {
@@ -119,12 +259,6 @@ class DependencySpecImpl implements DependencySpec {
                 project.logger.error(error)
             }
             throw new GradleException("Project ${project.name} has not been properly configured.")
-        }
-    }
-
-    void module(String module) {
-        if (isNotBlank(module)) {
-            modules << module.trim()
         }
     }
 
