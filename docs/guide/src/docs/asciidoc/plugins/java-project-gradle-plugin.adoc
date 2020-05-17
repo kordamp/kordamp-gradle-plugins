@@ -135,7 +135,7 @@ if neither of these options is specified.
 [[_task_platforms]]
 === Platforms
 
-Displays all configured platforms in the project. Requires the use of the <<_extension_cfg,cfg>> extension.
+Displays all configured platforms in the project. Requires the use of the <<_org_kordamp_gradle_java_project_extension_cfg,cfg>> extension.
 
 [horizontal]
 Name:: platforms

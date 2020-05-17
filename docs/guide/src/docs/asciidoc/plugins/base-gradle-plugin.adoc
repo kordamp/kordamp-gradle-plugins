@@ -396,7 +396,7 @@ config {
 }
 ----
 
-These dependencies can be used in combination with the <<org_kordamp_gradle_java_project_extension_cfg,cfg>> extension if
+These dependencies can be used in combination with the <<_org_kordamp_gradle_java_project_extension_cfg,cfg>> extension if
 the `<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>` plugin is applied, for example
 
 [source,groovy]
