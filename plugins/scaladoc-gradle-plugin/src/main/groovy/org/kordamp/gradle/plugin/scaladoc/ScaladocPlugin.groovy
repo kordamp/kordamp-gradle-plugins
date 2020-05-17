@@ -36,6 +36,8 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 
 import static org.kordamp.gradle.PluginUtils.registerJarVariant
+import static org.kordamp.gradle.PluginUtils.resolveAllSource
+import static org.kordamp.gradle.PluginUtils.resolveClassesTask
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -156,10 +158,10 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                 void execute(ScalaDoc t) {
                     ProjectConfigurationExtension config = resolveEffectiveConfig(project)
                     t.enabled = config.docs.scaladoc.enabled
-                    t.dependsOn project.tasks.named('classes')
+                    t.dependsOn resolveClassesTask(project)
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Generates Scaladoc API documentation'
-                    t.source = project.sourceSets.main.allSource
+                    t.source = resolveAllSource(project)
                     t.destinationDir = project.file("${project.buildDir}/docs/scaladoc")
                     config.docs.scaladoc.applyTo(t)
                 }

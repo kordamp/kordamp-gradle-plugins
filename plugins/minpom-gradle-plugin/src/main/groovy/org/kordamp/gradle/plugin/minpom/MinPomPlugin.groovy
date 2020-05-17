@@ -25,6 +25,7 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
+import static org.kordamp.gradle.PluginUtils.resolveClassesTask
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 
 /**
@@ -99,7 +100,7 @@ class MinPomPlugin extends AbstractKordampPlugin {
             @Override
             void execute(MinpomTask t) {
                 t.enabled = config.artifacts.minpom.enabled
-                t.dependsOn project.tasks.findByName('classes')
+                t.dependsOn resolveClassesTask(project)
             }
         })
     }

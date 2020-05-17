@@ -36,6 +36,7 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
+import static org.kordamp.gradle.PluginUtils.resolveClassesTask
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -150,7 +151,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(ConvertCodeTask t) {
                     t.enabled = config.docs.sourceHtml.enabled && !config.docs.sourceHtml.srcDirs.isEmpty()
-                    t.dependsOn project.tasks.named('classes')
+                    t.dependsOn resolveClassesTask(project)
                     t.group = 'Documentation'
                     t.description = 'Converts source code into HTML.'
                     t.classpath = configuration.asFileTree

@@ -47,6 +47,10 @@ class Stats extends AbstractAggregateFeature {
         super(config, project, PLUGIN_ID, 'stats')
     }
 
+    protected boolean hasBasePlugin(Project project) {
+        project.pluginManager.hasPlugin('java') || project.pluginManager.hasPlugin('com.android.library')
+    }
+
     @Override
     protected void populateMapDescription(Map<String, Object> map) {
         map.formats = formats

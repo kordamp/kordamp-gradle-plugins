@@ -24,6 +24,8 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
+import static org.kordamp.gradle.PluginUtils.isAndroidProject
+
 /**
  * @author Andres Almiray
  * @since 0.8.0
@@ -128,7 +130,8 @@ class Jacoco extends AbstractFeature {
     boolean hasTestSourceSets() {
         hasTestsAt(project.file('src/test')) ||
             hasTestsAt(project.file(config.testing.integration.baseDir)) ||
-            hasTestsAt(project.file(config.testing.functional.baseDir))
+            hasTestsAt(project.file(config.testing.functional.baseDir)) ||
+            (isAndroidProject(project) && hasTestsAt(project.file('src/androidTest')))
     }
 
     private static boolean hasTestsAt(File testDir) {

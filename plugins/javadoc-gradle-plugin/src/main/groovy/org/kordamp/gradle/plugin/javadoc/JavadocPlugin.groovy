@@ -37,6 +37,7 @@ import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.PluginUtils.registerJarVariant
+import static org.kordamp.gradle.PluginUtils.resolveClassesTask
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -162,7 +163,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                 void execute(Javadoc t) {
                     ProjectConfigurationExtension config = resolveEffectiveConfig(t.project)
                     t.enabled = config.docs.javadoc.enabled
-                    t.dependsOn project.tasks.named('classes')
+                    t.dependsOn resolveClassesTask(project)
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Generates Javadoc API documentation'
                     t.destinationDir = project.file("${project.buildDir}/docs/javadoc")

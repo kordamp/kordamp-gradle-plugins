@@ -38,6 +38,8 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 
 import static org.kordamp.gradle.PluginUtils.registerJarVariant
+import static org.kordamp.gradle.PluginUtils.resolveAllSource
+import static org.kordamp.gradle.PluginUtils.resolveClassesTask
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -163,10 +165,10 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                 @CompileDynamic
                 void execute(Groovydoc t) {
                     ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-                    t.dependsOn project.tasks.named('classes')
+                    t.dependsOn resolveClassesTask(project)
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Generates Groovydoc API documentation'
-                    t.source = project.sourceSets.main.allSource
+                    t.source = resolveAllSource(project)
                     t.destinationDir = project.file("${project.buildDir}/docs/groovydoc")
                     t.classpath = project.tasks.named('javadoc', Javadoc).get().classpath
                     t.enabled = config.docs.groovydoc.enabled

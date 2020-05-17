@@ -29,12 +29,14 @@ import org.gradle.api.publish.maven.MavenArtifact
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
-import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
+import static org.kordamp.gradle.PluginUtils.hasSourceSets
 import static org.kordamp.gradle.PluginUtils.registerJarVariant
+import static org.kordamp.gradle.PluginUtils.resolveAllSource
+import static org.kordamp.gradle.PluginUtils.resolveClassesTask
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -125,9 +127,9 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                     t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
                     t.description = 'An archive of the source code.'
                     t.archiveClassifier.set('sources')
-                    t.dependsOn project.tasks.named('classes')
+                    t.dependsOn resolveClassesTask(project)
                     t.setEnabled(resolveEffectiveConfig(t.project).artifacts.source.enabled)
-                    t.from PluginUtils.resolveSourceSets(project).main.allSource
+                    t.from resolveAllSource(project)
                 }
             })
 
@@ -148,23 +150,23 @@ class SourceJarPlugin extends AbstractKordampPlugin {
 
     private void configureAggregateSourceJarTask(Project project,
                                                  TaskProvider<Jar> aggregateSourceJarTask) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-
-        Set<Project> projects = new LinkedHashSet<>()
-        if (!(project in config.artifacts.source.aggregate.excludedProjects) && config.artifacts.source.enabled) {
-            projects << project
-        }
-
-        project.childProjects.values().each { p ->
-            if (p in config.artifacts.source.aggregate.excludedProjects || !config.artifacts.source.enabled) return
-            projects << p
-        }
-
         aggregateSourceJarTask.configure(new Action<Jar>() {
             @Override
             @CompileDynamic
             void execute(Jar t) {
-                t.from PluginUtils.resolveSourceSets(projects).main.allSource
+                ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+
+                Set<Project> projects = new LinkedHashSet<>()
+                if (!(project in config.artifacts.source.aggregate.excludedProjects) && config.artifacts.source.enabled) {
+                    if (hasSourceSets(project)) projects << project
+                }
+
+                project.childProjects.values().each { p ->
+                    if (p in config.artifacts.source.aggregate.excludedProjects || !config.artifacts.source.enabled) return
+                    if (hasSourceSets(p)) projects << p
+                }
+
+                t.from projects.collect { resolveAllSource(it) }.flatten()
                 t.enabled = config.artifacts.source.aggregate.enabled
             }
         })

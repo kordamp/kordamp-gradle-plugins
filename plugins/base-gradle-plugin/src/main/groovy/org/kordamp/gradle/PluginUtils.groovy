@@ -20,6 +20,7 @@ package org.kordamp.gradle
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
@@ -28,6 +29,7 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.component.SoftwareComponentContainer
+import org.gradle.api.file.FileTree
 import org.gradle.api.internal.artifacts.dsl.LazyPublishArtifact
 import org.gradle.api.plugins.internal.JavaConfigurationVariantMapping
 import org.gradle.api.tasks.SourceSetContainer
@@ -46,6 +48,25 @@ import static org.kordamp.gradle.StringUtils.isBlank
 class PluginUtils {
     static boolean isAndroidProject(Project project) {
         androidPlugins().any { project.pluginManager.hasPlugin(it) }
+    }
+
+    static Task resolveClassesTask(Project project) {
+        if(isAndroidProject(project)) {
+            return project.tasks.findByName('compileReleaseJavaWithJavac')
+        }
+        project.tasks.findByName('classes')
+    }
+
+    @CompileDynamic
+    static FileTree resolveAllSource(Project project) {
+        if (isAndroidProject(project)) {
+            return project.android.sourceSets.main.java.sourceFiles
+        }
+        project.sourceSets.main.allSource
+    }
+
+    static boolean hasSourceSets(Project project) {
+        isAndroidProject(project) || project.extensions.findByType(SourceSetContainer) != null
     }
 
     /**

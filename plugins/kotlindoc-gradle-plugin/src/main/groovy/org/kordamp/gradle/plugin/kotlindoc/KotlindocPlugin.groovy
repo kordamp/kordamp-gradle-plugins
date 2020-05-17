@@ -45,6 +45,7 @@ import org.kordamp.gradle.plugin.base.plugins.Kotlindoc
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 
 import static org.kordamp.gradle.PluginUtils.registerJarVariant
+import static org.kordamp.gradle.PluginUtils.resolveClassesTask
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 
@@ -182,7 +183,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(DokkaTask t) {
                     t.enabled = config.docs.kotlindoc.enabled
-                    t.dependsOn project.tasks.named('classes')
+                    t.dependsOn resolveClassesTask(project)
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = "Generates Kotlindoc API documentation in $format format"
                     t.dokkaRuntime = project.configurations.findByName(DOKKA_RUNTIME_CONFIGURATION_NAME)

@@ -43,6 +43,10 @@ class SourceHtml extends AbstractAggregateFeature {
         srcDirs = project.objects.fileCollection()
     }
 
+    protected boolean hasBasePlugin(Project project) {
+        project.pluginManager.hasPlugin('java') || project.pluginManager.hasPlugin('com.android.library')
+    }
+
     @Override
     protected void populateMapDescription(Map<String, Object> map) {
         map.conversion = conversion.toMap()

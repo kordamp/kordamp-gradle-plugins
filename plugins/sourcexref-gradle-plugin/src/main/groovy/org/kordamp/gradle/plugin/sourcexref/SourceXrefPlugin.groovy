@@ -31,6 +31,7 @@ import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.SourceXref
 
+import static org.kordamp.gradle.PluginUtils.resolveClassesTask
 import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.StringUtils.isNotBlank
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
@@ -128,7 +129,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(JxrTask t) {
                     t.enabled = config.docs.sourceXref.enabled
-                    t.dependsOn project.tasks.named('classes')
+                    t.dependsOn resolveClassesTask(project)
                     t.group = 'Documentation'
                     t.description = 'Generates a JXR report of the source code.'
                     t.outputDirectory = project.file("${project.buildDir}/docs/source-xref")

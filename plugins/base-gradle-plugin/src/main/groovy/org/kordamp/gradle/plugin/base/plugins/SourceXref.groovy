@@ -50,6 +50,10 @@ class SourceXref extends AbstractAggregateFeature {
         docTitle = "${project.name} ${project.version}"
     }
 
+    protected boolean hasBasePlugin(Project project) {
+        project.pluginManager.hasPlugin('java') || project.pluginManager.hasPlugin('com.android.library')
+    }
+
     @Override
     protected void populateMapDescription(Map<String, Object> map) {
         map.templateDir = templateDir

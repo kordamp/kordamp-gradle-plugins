@@ -355,7 +355,7 @@ class Javadoc extends AbstractFeature {
 
             // Android projects don't have a 'javadoc' task
             if (taskDependency) {
-                dependentProject.tasks.findByName('javadoc').dependsOn(taskDependency)
+                dependentProject.tasks.findByName('javadoc')?.dependsOn(taskDependency)
                 taskDependency.destinationDir.absolutePath.replace('\\', '/')
             }
         }
