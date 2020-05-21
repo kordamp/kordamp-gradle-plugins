@@ -26,7 +26,7 @@ import org.gradle.jvm.tasks.Jar
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.tasks.reports.ReportGeneratingTask
 
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * @author Andres Almiray
@@ -40,7 +40,7 @@ class GenerateSummaryReportTask extends DefaultTask implements ReportGeneratingT
 
     @TaskAction
     void generateReport() {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project.rootProject)
+        ProjectConfigurationExtension config = resolveConfig(project.rootProject)
 
         StringBuilder document = new StringBuilder("""|
         |= Summary
@@ -92,7 +92,7 @@ class GenerateSummaryReportTask extends DefaultTask implements ReportGeneratingT
         |""".stripMargin('|'))
 
         if (jarTask) {
-            config = resolveEffectiveConfig(project)
+            config = resolveConfig(project)
             if (config.info.specification.enabled) {
                 document.append("""|
                 |a| *Specification-Title*

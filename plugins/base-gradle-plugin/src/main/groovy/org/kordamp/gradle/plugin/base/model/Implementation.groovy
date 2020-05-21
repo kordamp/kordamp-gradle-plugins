@@ -50,16 +50,6 @@ class Implementation {
         this.enabledSet
     }
 
-    Implementation copyOf() {
-        Implementation copy = new Implementation()
-        copy.@enabled = enabled
-        copy.@enabledSet = enabledSet
-        copy.title = title
-        copy.version = version
-        copy.vendor = vendor
-        copy
-    }
-
     static void merge(Implementation o1, Implementation o2) {
         o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
         o1.title = o1.title ?: o2.title

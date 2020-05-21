@@ -46,7 +46,7 @@ import static org.kordamp.gradle.util.PluginUtils.isAndroidProject
 import static org.kordamp.gradle.util.PluginUtils.registerJarVariant
 import static org.kordamp.gradle.util.PluginUtils.resolveAllSource
 import static org.kordamp.gradle.util.PluginUtils.resolveClassesTask
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * Configures {@code javadoc} and {@code javadocJar} tasks.
@@ -87,7 +87,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
     }
 
     private void doConfigureRootProject(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         setEnabled(config.docs.javadoc.aggregate.enabled)
 
         List<Javadoc> docTasks = []
@@ -157,7 +157,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
     private class JavadocProjectEvaluatedListener implements ProjectEvaluatedListener {
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.docs.javadoc.enabled)
 
             TaskProvider<Javadoc> javadoc = createJavadocTask(project)
@@ -182,7 +182,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     @Override
                     @CompileDynamic
                     void execute(Javadoc t) {
-                        ProjectConfigurationExtension config = resolveEffectiveConfig(t.project)
+                        ProjectConfigurationExtension config = resolveConfig(t.project)
                         t.enabled = config.docs.javadoc.enabled
                         t.dependsOn resolveClassesTask(project)
                         t.group = JavaBasePlugin.DOCUMENTATION_GROUP
@@ -204,7 +204,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                 @Override
                 @CompileDynamic
                 void execute(Javadoc t) {
-                    ProjectConfigurationExtension config = resolveEffectiveConfig(t.project)
+                    ProjectConfigurationExtension config = resolveConfig(t.project)
                     t.enabled = config.docs.javadoc.enabled
                     t.dependsOn resolveClassesTask(project)
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
@@ -222,7 +222,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
     }
 
     private TaskProvider<Jar> createJavadocJarTask(Project project, TaskProvider<Javadoc> javadoc) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         TaskProvider<Jar> javadocJar = project.tasks.register(JAVADOC_JAR_TASK_NAME, Jar,
             new Action<Jar>() {

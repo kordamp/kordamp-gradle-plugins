@@ -104,28 +104,6 @@ class GroovydocOptions {
         links.add(link)
     }
 
-    GroovydocOptions copyOf() {
-        copyInto(new GroovydocOptions())
-    }
-
-    GroovydocOptions copyInto(GroovydocOptions copy) {
-        copy.@noTimestamp = noTimestamp
-        copy.@noTimestampSet = noTimestampSet
-        copy.@noVersionStamp = noVersionStamp
-        copy.@noVersionStampSet = noVersionStampSet
-        copy.@includePrivate = includePrivate
-        copy.@includePrivateSet = includePrivateSet
-        copy.@use = use
-        copy.@useSet = useSet
-        copy.windowTitle = windowTitle
-        copy.docTitle = docTitle
-        copy.header = header
-        copy.footer = footer
-        copy.overviewText = overviewText
-        copy.links.addAll(links)
-        copy
-    }
-
     static void merge(GroovydocOptions o1, GroovydocOptions o2) {
         o1.setNoTimestamp((boolean) (o1.noTimestampSet ? o1.noTimestamp : o2.noTimestamp))
         o1.setNoVersionStamp((boolean) (o1.noVersionStampSet ? o1.noVersionStamp : o2.noVersionStamp))

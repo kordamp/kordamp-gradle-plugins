@@ -55,10 +55,6 @@ class RepositorySet {
         repositories << repository
     }
 
-    void copyInto(RepositorySet repositorySet) {
-        repositorySet.repositories.addAll(repositories.collect { it.copyOf() })
-    }
-
     static void merge(RepositorySet o1, RepositorySet o2) {
         Map<String, Repository> a = o1.repositories.collectEntries { [(it.name): it] }
         Map<String, Repository> b = o2.repositories.collectEntries { [(it.name): it] }

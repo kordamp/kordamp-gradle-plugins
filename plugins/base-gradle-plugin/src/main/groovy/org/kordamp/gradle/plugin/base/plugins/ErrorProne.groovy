@@ -104,20 +104,6 @@ class ErrorProne extends AbstractFeature {
         null != compilingTestOnlyCode && compilingTestOnlyCode
     }
 
-    void copyInto(ErrorProne copy) {
-        super.copyInto(copy)
-        copy.@disableAllChecks = this.@disableAllChecks
-        copy.@allErrorsAsWarnings = this.@allErrorsAsWarnings
-        copy.@allDisabledChecksAsWarnings = this.@allDisabledChecksAsWarnings
-        copy.@disableWarningsInGeneratedCode = this.@disableWarningsInGeneratedCode
-        copy.@ignoreUnknownCheckNames = this.@ignoreUnknownCheckNames
-        copy.@ignoreSuppressionAnnotations = this.@ignoreSuppressionAnnotations
-        copy.@compilingTestOnlyCode = this.@compilingTestOnlyCode
-        copy.@excludedPaths = this.@excludedPaths
-        copy.@errorProneVersion = this.@errorProneVersion
-        copy.@errorProneJavacVersion = this.@errorProneJavacVersion
-    }
-
     static void merge(ErrorProne o1, ErrorProne o2) {
         AbstractFeature.merge(o1, o2)
         o1.disableAllChecks = o1.@disableAllChecks != null ? o1.getDisableAllChecks() : o2.getDisableAllChecks()

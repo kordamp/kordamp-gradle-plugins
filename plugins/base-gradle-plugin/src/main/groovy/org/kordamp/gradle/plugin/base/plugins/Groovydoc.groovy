@@ -149,23 +149,13 @@ class Groovydoc extends AbstractFeature {
         ConfigureUtil.configure(action, aggregate)
     }
 
-    void copyInto(Groovydoc copy) {
-        super.copyInto(copy)
-        copy.@replaceJavadoc = replaceJavadoc
-        copy.@replaceJavadocSet = replaceJavadocSet
-        copy.excludes.addAll(excludes)
-        copy.includes.addAll(includes)
-        options.copyInto(copy.options)
-        aggregate.copyInto(copy.aggregate)
-    }
-
     static void merge(Groovydoc o1, Groovydoc o2) {
         AbstractFeature.merge(o1, o2)
         o1.setReplaceJavadoc((boolean) (o1.replaceJavadocSet ? o1.replaceJavadoc : o2.replaceJavadoc))
         CollectionUtils.merge(o1.excludes, o2?.excludes)
         CollectionUtils.merge(o1.includes, o2?.includes)
         GroovydocOptions.merge(o1.options, o2.options)
-        o1.aggregate.merge(o2.aggregate)
+        Aggregate.merge(o1.aggregate, o2.aggregate)
     }
 
     void applyTo(org.gradle.api.tasks.javadoc.Groovydoc groovydoc) {
@@ -219,25 +209,10 @@ class Groovydoc extends AbstractFeature {
             this.@replaceJavadoc != null && this.@replaceJavadoc
         }
 
-        void copyInto(Aggregate copy) {
-            copy.@enabled = this.@enabled
-            copy.@fast = this.@fast
-            copy.@replaceJavadoc = this.@replaceJavadoc
-            copy.excludedProjects.addAll(excludedProjects)
-        }
-
-        Aggregate copyOf() {
-            Aggregate copy = new Aggregate(config, project)
-            copyInto(copy)
-            copy
-        }
-
-        Aggregate merge(Aggregate other) {
-            Aggregate copy = copyOf()
-            copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
-            copy.fast = copy.@fast != null ? copy.getFast() : other.getFast()
-            copy.replaceJavadoc = copy.@replaceJavadoc != null ? copy.getReplaceJavadoc() : other.getReplaceJavadoc()
-            copy
+        static void merge(Aggregate o1, Aggregate o2) {
+            o1.enabled = o1.@enabled != null ? o1.getEnabled() : o2.getEnabled()
+            o1.fast = o1.@fast != null ? o1.getFast() : o2.getFast()
+            o1.replaceJavadoc = o1.@replaceJavadoc != null ? o1.getReplaceJavadoc() : o2.getReplaceJavadoc()
         }
     }
 }

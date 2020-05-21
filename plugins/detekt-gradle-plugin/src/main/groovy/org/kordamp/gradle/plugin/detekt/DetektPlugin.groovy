@@ -39,7 +39,7 @@ import javax.inject.Named
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * @author Andres Almiray
@@ -129,7 +129,7 @@ class DetektPlugin extends AbstractKordampPlugin {
 
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.quality.detekt.enabled)
 
             DetektExtension detektExt = project.extensions.findByType(DetektExtension)
@@ -185,7 +185,7 @@ class DetektPlugin extends AbstractKordampPlugin {
     }
 
     private void configureAggregateDetektTask(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         DetektExtension detektExt = project.extensions.findByType(DetektExtension)
         detektExt.toolVersion = config.quality.detekt.toolVersion

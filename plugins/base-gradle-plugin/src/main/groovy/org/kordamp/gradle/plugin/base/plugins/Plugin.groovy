@@ -87,13 +87,6 @@ class Plugin extends AbstractFeature {
         new LinkedHashMap<>('plugin': map)
     }
 
-    void copyInto(Plugin copy) {
-        super.copyInto(copy)
-        copy.@id = id
-        copy.@implementationClass = implementationClass
-        copy.@tags.addAll(tags)
-    }
-
     static void merge(Plugin o1, Plugin o2) {
         AbstractFeature.merge(o1, o2)
         if (!o1.id && o2?.id) {

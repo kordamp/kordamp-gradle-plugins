@@ -690,7 +690,7 @@ Results in the following output
 [source]
 ----
 > Task :extensions
-Total extensions: 10
+Total extensions: 9
 
 extension 0:
     name: ext
@@ -725,10 +725,6 @@ extension 7:
     type: org.gradle.plugins.signing.SigningExtension
 
 extension 8:
-    name: effectiveConfig
-    type: org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-
-extension 9:
     name: versioning
     type: net.nemerosa.versioning.VersioningExtension
 ----

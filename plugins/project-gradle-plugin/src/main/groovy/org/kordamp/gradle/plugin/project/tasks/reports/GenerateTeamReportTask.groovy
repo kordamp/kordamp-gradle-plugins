@@ -30,7 +30,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Person
 import org.kordamp.gradle.plugin.base.tasks.reports.ReportGeneratingTask
 
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * @author Andres Almiray
@@ -58,7 +58,7 @@ class GenerateTeamReportTask extends DefaultTask implements ReportGeneratingTask
 
     @TaskAction
     void generateReport() {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         if (config.info.people.empty) {
             project.logger.warn("There are no team members defined in project ${project.name}")
             setDidWork(false)

@@ -33,7 +33,7 @@ import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
 import javax.inject.Named
 
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.PluginUtils.resolveSourceSets
 import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
 
@@ -96,7 +96,7 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
     private void adjustSourceSets(Project project) {
         SourceSet sourceSet = resolveSourceSets(project).integrationTest
 
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         String sourceSetDir = config.testing.integration.baseDir
         project.pluginManager.withPlugin('java-base') {
             adjustSourceSet(project, sourceSetDir, 'java')

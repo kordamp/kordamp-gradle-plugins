@@ -53,13 +53,6 @@ class SourceHtml extends AbstractAggregateFeature {
         map.overview = overview.toMap()
     }
 
-    void copyInto(SourceHtml copy) {
-        super.copyInto(copy)
-        conversion.copyInto(copy.conversion)
-        overview.copyInto(overview)
-        copy.srcDirs = srcDirs
-    }
-
     static void merge(SourceHtml o1, SourceHtml o2) {
         AbstractAggregateFeature.merge(o1, o2)
         Conversion.merge(o1.conversion, o2.conversion)
@@ -222,37 +215,6 @@ class SourceHtml extends AbstractAggregateFeature {
             overwriteSet = true
         }
 
-        void copyInto(Conversion copy) {
-            copy.srcDirs = srcDirs ? project.files(srcDirs) : null
-            copy.destDir = destDir
-            copy.includes = includes
-            copy.outputFormat = outputFormat
-            copy.tabs = tabs
-            copy.style = style
-            copy.lineAnchorPrefix = lineAnchorPrefix
-            copy.horizontalAlignment = horizontalAlignment
-
-            copy.@showLineNumbers = showLineNumbers
-            copy.@showFileName = showFileName
-            copy.@showDefaultTitle = showDefaultTitle
-            copy.@showTableBorder = showTableBorder
-            copy.@includeDocumentHeader = includeDocumentHeader
-            copy.@includeDocumentFooter = includeDocumentFooter
-            copy.@addLineAnchors = addLineAnchors
-            copy.@useShortFileName = useShortFileName
-            copy.@overwrite = overwrite
-
-            copy.showLineNumbersSet = showLineNumbersSet
-            copy.showFileNameSet = showFileNameSet
-            copy.showDefaultTitleSet = showDefaultTitleSet
-            copy.showTableBorderSet = showTableBorderSet
-            copy.includeDocumentHeaderSet = includeDocumentHeaderSet
-            copy.includeDocumentFooterSet = includeDocumentFooterSet
-            copy.addLineAnchorsSet = addLineAnchorsSet
-            copy.useShortFileNameSet = useShortFileNameSet
-            copy.overwriteSet = overwriteSet
-        }
-
         static void merge(Conversion o1, Conversion o2) {
             o1.srcDirs = o1.project.files((o1.srcDirs ?: []), (o2.srcDirs ?: []))
             o1.destDir = o1.destDir ?: o2.destDir
@@ -304,16 +266,6 @@ class SourceHtml extends AbstractAggregateFeature {
                 icon          : icon,
                 stylesheet    : stylesheet
             ])
-        }
-
-        void copyInto(Overview copy) {
-            copy.destDir = destDir
-            copy.pattern = pattern
-            copy.windowTitle = windowTitle
-            copy.docTitle = docTitle
-            copy.docDescription = docDescription
-            copy.icon = icon
-            copy.stylesheet = stylesheet
         }
 
         static void merge(Overview o1, Overview o2) {

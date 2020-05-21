@@ -31,7 +31,7 @@ import org.kordamp.gradle.plugin.base.plugins.Clirr
 
 import java.util.function.Predicate
 
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  *
@@ -51,7 +51,7 @@ class AggregateClirrReportTask extends DefaultTask {
     void run() {
         reportFile.parentFile.mkdirs()
 
-        Predicate<? super Clirr.Difference> filter = resolveEffectiveConfig(project).clirr.filter
+        Predicate<? super Clirr.Difference> filter = resolveConfig(project).clirr.filter
 
         Map<String, Set<Clirr.Difference>> diffs = new TreeMap()
         XmlSlurper slurper = new XmlSlurper()

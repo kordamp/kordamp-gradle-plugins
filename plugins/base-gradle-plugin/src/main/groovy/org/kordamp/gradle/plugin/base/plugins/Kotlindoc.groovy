@@ -233,36 +233,6 @@ class Kotlindoc extends AbstractFeature {
         ConfigureUtil.configure(action, aggregate)
     }
 
-    void copyInto(Kotlindoc copy) {
-        super.copyInto(copy)
-        copy.@replaceJavadoc = replaceJavadoc
-        copy.@replaceJavadocSet = replaceJavadocSet
-        copy.@includeNonPublic = includeNonPublic
-        copy.@includeNonPublicSet = includeNonPublicSet
-        copy.@skipDeprecated = skipDeprecated
-        copy.@skipDeprecatedSet = skipDeprecatedSet
-        copy.@reportUndocumented = reportUndocumented
-        copy.@reportUndocumentedSet = reportUndocumentedSet
-        copy.@skipEmptyPackages = skipEmptyPackages
-        copy.@skipEmptyPackagesSet = skipEmptyPackagesSet
-        copy.@noStdlibLink = noStdlibLink
-        copy.@noStdlibLinkSet = noStdlibLinkSet
-        copy.moduleName = moduleName
-        copy.outputFormats = new ArrayList<>(outputFormats)
-        copy.outputDirectory = outputDirectory
-        copy.jdkVersion = jdkVersion
-        copy.cacheRoot = cacheRoot
-        copy.languageVersion = languageVersion
-        copy.apiVersion = apiVersion
-        copy.impliedPlatforms.addAll(impliedPlatforms)
-        copy.includes = new ArrayList<>(includes)
-        copy.samples = new ArrayList<>(samples)
-        sourceLinks.copyInto(copy.sourceLinks)
-        externalDocumentationLinks.copyInto(copy.externalDocumentationLinks)
-        packageOptions.copyInto(copy.packageOptions)
-        aggregate.copyInto(copy.aggregate)
-    }
-
     static void merge(Kotlindoc o1, Kotlindoc o2) {
         o2.normalize()
         AbstractFeature.merge(o1, o2)
@@ -285,7 +255,7 @@ class Kotlindoc extends AbstractFeature {
         SourceLinkSet.merge(o1.sourceLinks, o2.sourceLinks)
         ExternalDocumentationLinkSet.merge(o1.externalDocumentationLinks, o2.externalDocumentationLinks)
         PackageOptionSet.merge(o1.packageOptions, o2.packageOptions)
-        o1.aggregate.merge(o2.aggregate)
+        Aggregate.merge(o1.aggregate, o2.aggregate)
         o1.normalize()
     }
 
@@ -331,10 +301,6 @@ class Kotlindoc extends AbstractFeature {
             sourceLinks << sourceLink
         }
 
-        void copyInto(SourceLinkSet sourceLinkSet) {
-            sourceLinkSet.sourceLinks.addAll(sourceLinks.collect { it.copyOf() })
-        }
-
         static void merge(SourceLinkSet o1, SourceLinkSet o2) {
             Map<String, SourceLink> a = o1.sourceLinks.collectEntries { [(it.url): it] }
             Map<String, SourceLink> b = o2.sourceLinks.collectEntries { [(it.url): it] }
@@ -357,18 +323,6 @@ class Kotlindoc extends AbstractFeature {
         String path
         String url
         String suffix
-
-        SourceLink copyOf() {
-            SourceLink copy = new SourceLink()
-            copyInto(copy)
-            copy
-        }
-
-        void copyInto(SourceLink copy) {
-            copy.path = path
-            copy.url = url
-            copy.suffix = suffix
-        }
 
         static void merge(SourceLink o1, SourceLink o2) {
             o1.path = o1.path ?: o2?.path
@@ -397,12 +351,6 @@ class Kotlindoc extends AbstractFeature {
             externalDocumentationLinks << externalDocumentationLink
         }
 
-        void copyInto(ExternalDocumentationLinkSet externalDocumentationLinkSet) {
-            externalDocumentationLinkSet.externalDocumentationLinks.addAll(externalDocumentationLinks.collect {
-                it.copyOf()
-            })
-        }
-
         static void merge(ExternalDocumentationLinkSet o1, ExternalDocumentationLinkSet o2) {
             Map<String, ExternalDocumentationLink> a = o1.externalDocumentationLinks.collectEntries {
                 [(it.url): it]
@@ -429,17 +377,6 @@ class Kotlindoc extends AbstractFeature {
         String url
         String packageListUrl
 
-        ExternalDocumentationLink copyOf() {
-            ExternalDocumentationLink copy = new ExternalDocumentationLink()
-            copyInto(copy)
-            copy
-        }
-
-        void copyInto(ExternalDocumentationLink copy) {
-            copy.url = url
-            copy.packageListUrl = packageListUrl
-        }
-
         static void merge(ExternalDocumentationLink o1, ExternalDocumentationLink o2) {
             o1.url = o1.url ?: o2?.url
             o1.packageListUrl = o1.packageListUrl ?: o2?.packageListUrl
@@ -464,10 +401,6 @@ class Kotlindoc extends AbstractFeature {
             PackageOption packageOption = new PackageOption()
             ConfigureUtil.configure(action, packageOption)
             packageOptions << packageOption
-        }
-
-        void copyInto(PackageOptionSet packageOptionSet) {
-            packageOptionSet.packageOptions.addAll(packageOptions.collect { it.copyOf() })
         }
 
         static void merge(PackageOptionSet o1, PackageOptionSet o2) {
@@ -536,24 +469,6 @@ class Kotlindoc extends AbstractFeature {
             this.suppressSet
         }
 
-        PackageOption copyOf() {
-            PackageOption copy = new PackageOption()
-            copyInto(copy)
-            copy
-        }
-
-        void copyInto(PackageOption copy) {
-            copy.prefix = prefix
-            copy.@includeNonPublic = includeNonPublic
-            copy.@includeNonPublicSet = includeNonPublicSet
-            copy.@reportUndocumented = reportUndocumented
-            copy.@reportUndocumentedSet = reportUndocumentedSet
-            copy.@skipDeprecated = skipDeprecated
-            copy.@skipDeprecatedSet = skipDeprecatedSet
-            copy.@suppress = suppress
-            copy.@suppressSet = suppressSet
-        }
-
         static void merge(PackageOption o1, PackageOption o2) {
             o1.prefix = o1.prefix ?: o2?.prefix
             o1.setIncludeNonPublic((boolean) (o1.includeNonPublicSet ? o1.includeNonPublic : o2.includeNonPublic))
@@ -605,25 +520,11 @@ class Kotlindoc extends AbstractFeature {
             this.@replaceJavadoc != null && this.@replaceJavadoc
         }
 
-        void copyInto(Aggregate copy) {
-            copy.@enabled = this.@enabled
-            copy.@fast = this.@fast
-            copy.@replaceJavadoc = this.@replaceJavadoc
-            copy.excludedProjects.addAll(excludedProjects)
-        }
-
-        Aggregate copyOf() {
-            Aggregate copy = new Aggregate(config, project)
-            copyInto(copy)
-            copy
-        }
-
-        Aggregate merge(Aggregate other) {
-            Aggregate copy = copyOf()
-            copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
-            copy.fast = copy.@fast != null ? copy.getFast() : other.getFast()
-            copy.replaceJavadoc = copy.@replaceJavadoc != null ? copy.getReplaceJavadoc() : other.getReplaceJavadoc()
-            copy
+        static Aggregate merge(Aggregate o1, Aggregate o2) {
+            o1.enabled = o1.@enabled != null ? o1.getEnabled() : o2.getEnabled()
+            o1.fast = o1.@fast != null ? o1.getFast() : o2.getFast()
+            o1.replaceJavadoc = o1.@replaceJavadoc != null ? o1.getReplaceJavadoc() : o2.getReplaceJavadoc()
+            o1
         }
     }
 }

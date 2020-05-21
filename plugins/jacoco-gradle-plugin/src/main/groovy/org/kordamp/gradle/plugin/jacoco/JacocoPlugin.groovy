@@ -49,7 +49,7 @@ import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAl
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addTaskGraphReadyListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  *
@@ -155,7 +155,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.coverage.jacoco.enabled)
 
             JacocoPluginExtension jacocoExt = project.extensions.findByType(JacocoPluginExtension)
@@ -215,14 +215,14 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void configureAggregates(Project project, TaskExecutionGraph graph) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         Set<Test> tt = new LinkedHashSet<>(config.testing.testTasks())
         Set<Test> itt = new LinkedHashSet<>(config.testing.integrationTasks())
         Set<Test> ftt = new LinkedHashSet<>(config.testing.functionalTestTasks())
 
         project.childProjects.values().each {
-            Testing e = resolveEffectiveConfig(it).testing
+            Testing e = resolveConfig(it).testing
             if (e.enabled) {
                 tt.addAll(e.testTasks())
                 itt.addAll(e.integrationTasks())
@@ -239,7 +239,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private static JacocoReport configureJacocoReportTask(Project project, Test testTask) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         String taskName = resolveJacocoReportTaskName(testTask.name)
 
@@ -299,7 +299,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
     }
 
     private void applyJacocoMerge(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         if (!config.coverage.jacoco.enabled) {
             return
         }
@@ -313,7 +313,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
         Set<String> excludes = new LinkedHashSet<>()
 
         project.childProjects.values().each {
-            Jacoco e = resolveEffectiveConfig(it).coverage.jacoco
+            Jacoco e = resolveConfig(it).coverage.jacoco
             if (e.enabled) {
                 projects.addAll(e.projects())
                 testTasks.addAll(e.testTasks())

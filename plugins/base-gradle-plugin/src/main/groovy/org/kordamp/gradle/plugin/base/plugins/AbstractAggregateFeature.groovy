@@ -82,14 +82,8 @@ abstract class AbstractAggregateFeature extends AbstractFeature {
         ConfigureUtil.configure(action, aggregate)
     }
 
-    void copyInto(AbstractAggregateFeature copy) {
-        super.copyInto(copy)
-        aggregate.copyInto(copy.aggregate)
-    }
-
     static void merge(AbstractAggregateFeature o1, AbstractAggregateFeature o2) {
         AbstractFeature.merge(o1, o2)
-        o1.aggregate.merge(o2.aggregate)
     }
 
     @CompileStatic
@@ -116,23 +110,6 @@ abstract class AbstractAggregateFeature extends AbstractFeature {
 
         boolean getEnabled() {
             this.@enabled == null || this.@enabled
-        }
-
-        void copyInto(Aggregate copy) {
-            copy.@enabled = this.@enabled
-            copy.excludedProjects.addAll(excludedProjects)
-        }
-
-        Aggregate copyOf() {
-            Aggregate copy = new Aggregate(config, project)
-            copyInto(copy)
-            copy
-        }
-
-        Aggregate merge(Aggregate other) {
-            Aggregate copy = copyOf()
-            copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
-            copy
         }
 
         void excludeProject(Project p) {

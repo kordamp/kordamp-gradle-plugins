@@ -151,26 +151,6 @@ class BuildInfo extends AbstractFeature {
         this.skipBuildCreatedBySet
     }
 
-    void copyInto(BuildInfo copy) {
-        super.copyInto(copy)
-        copy.@clearTime = clearTime
-        copy.@clearTimeSet = clearTimeSet
-        copy.@skipBuildBy = skipBuildBy
-        copy.@skipBuildBySet = skipBuildBySet
-        copy.@skipBuildDate = skipBuildDate
-        copy.@skipBuildDateSet = skipBuildDateSet
-        copy.@skipBuildTime = skipBuildTime
-        copy.@skipBuildTimeSet = skipBuildTimeSet
-        copy.@skipBuildRevision = skipBuildRevision
-        copy.@skipBuildRevisionSet = skipBuildRevisionSet
-        copy.@skipBuildJdk = skipBuildJdk
-        copy.@skipBuildJdkSet = skipBuildJdkSet
-        copy.@skipBuildOs = skipBuildOs
-        copy.@skipBuildOsSet = skipBuildOsSet
-        copy.@skipBuildCreatedBy = skipBuildCreatedBy
-        copy.@skipBuildCreatedBySet = skipBuildCreatedBySet
-    }
-
     static void merge(BuildInfo o1, BuildInfo o2) {
         AbstractFeature.merge(o1, o2)
         o1.setClearTime((boolean) (o1.clearTimeSet ? o1.clearTime : o2.clearTime))

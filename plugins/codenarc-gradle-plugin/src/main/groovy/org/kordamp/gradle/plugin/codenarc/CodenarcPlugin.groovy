@@ -39,7 +39,7 @@ import javax.inject.Named
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * @author Andres Almiray
@@ -139,7 +139,7 @@ class CodenarcPlugin extends AbstractKordampPlugin {
 
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.quality.codenarc.enabled)
 
             CodeNarcExtension codenarcExt = project.extensions.findByType(CodeNarcExtension)
@@ -186,7 +186,7 @@ class CodenarcPlugin extends AbstractKordampPlugin {
     }
 
     private void configureAggregateCodenarcTask(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         CodeNarcExtension codenarcExt = project.extensions.findByType(CodeNarcExtension)
         codenarcExt.toolVersion = config.quality.codenarc.toolVersion

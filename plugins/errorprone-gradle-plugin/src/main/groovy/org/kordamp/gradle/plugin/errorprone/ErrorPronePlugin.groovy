@@ -32,7 +32,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import javax.inject.Named
 
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
@@ -86,7 +86,7 @@ class ErrorPronePlugin extends AbstractKordampPlugin {
         @Override
         @CompileDynamic
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.quality.errorprone.enabled)
 
             project.dependencies {

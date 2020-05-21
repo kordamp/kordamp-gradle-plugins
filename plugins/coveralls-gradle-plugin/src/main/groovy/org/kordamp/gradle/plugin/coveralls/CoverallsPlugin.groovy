@@ -37,7 +37,7 @@ import javax.inject.Named
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addTaskGraphReadyListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * @author Andres Almiray
@@ -81,7 +81,7 @@ class CoverallsPlugin extends AbstractKordampPlugin {
     private class CoverallsAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
         @Override
         void allProjectsEvaluated(Project rootProject) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(rootProject)
+            ProjectConfigurationExtension config = resolveConfig(rootProject)
             setEnabled(config.coverage.coveralls.enabled)
 
             project.tasks.named('coveralls').configure(new Action<Task>() {
@@ -108,7 +108,7 @@ class CoverallsPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void configureCoveralls(Project project, TaskExecutionGraph graph) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         Set<File> files = []
         project.tasks.withType(JacocoReport) { JacocoReport r ->

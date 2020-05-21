@@ -48,7 +48,7 @@ import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAl
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addTaskGraphReadyListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  *
@@ -174,7 +174,7 @@ class TestingPlugin extends AbstractKordampPlugin {
 
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.testing.enabled)
 
             if (!enabled) {
@@ -236,14 +236,14 @@ class TestingPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void configureAggregates(Project project, TaskExecutionGraph graph) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         Set<Test> tt = new LinkedHashSet<>(config.testing.testTasks())
         Set<Test> itt = new LinkedHashSet<>(config.testing.integrationTasks())
         Set<Test> ftt = new LinkedHashSet<>(config.testing.functionalTestTasks())
 
         project.childProjects.values().each {
-            Testing e = resolveEffectiveConfig(it).testing
+            Testing e = resolveConfig(it).testing
             if (e.enabled) {
                 tt.addAll(e.testTasks())
                 itt.addAll(e.integrationTasks())
@@ -289,7 +289,7 @@ class TestingPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void configureAggregateTestReportTasks(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         if (!config.testing.enabled) {
             return
         }
@@ -299,7 +299,7 @@ class TestingPlugin extends AbstractKordampPlugin {
         Set<Test> ftt = new LinkedHashSet<>(config.testing.functionalTestTasks())
 
         project.childProjects.values().each {
-            Testing e = resolveEffectiveConfig(it).testing
+            Testing e = resolveConfig(it).testing
             if (e.enabled) {
                 tt.addAll(e.testTasks())
                 itt.addAll(e.integrationTasks())

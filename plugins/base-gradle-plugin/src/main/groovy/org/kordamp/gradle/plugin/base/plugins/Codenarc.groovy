@@ -80,17 +80,6 @@ class Codenarc extends AbstractQualityFeature {
         super.normalize()
     }
 
-    void copyInto(Codenarc copy) {
-        super.copyInto(copy)
-        copy.configFile = configFile
-        copy.@configFileSet = configFileSet
-        copy.maxPriority1Violations = maxPriority1Violations
-        copy.maxPriority2Violations = maxPriority2Violations
-        copy.maxPriority3Violations = maxPriority3Violations
-        copy.toolVersion = toolVersion
-        aggregate.copyInto(copy.aggregate)
-    }
-
     static void merge(Codenarc o1, Codenarc o2) {
         AbstractQualityFeature.merge(o1, o2)
         if (!o1.configFileSet) {

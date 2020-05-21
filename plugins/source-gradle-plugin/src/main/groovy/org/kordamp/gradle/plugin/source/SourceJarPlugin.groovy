@@ -42,7 +42,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 import static org.kordamp.gradle.util.PluginUtils.hasSourceSets
 import static org.kordamp.gradle.util.PluginUtils.registerJarVariant
 import static org.kordamp.gradle.util.PluginUtils.resolveAllSource
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * Configures a {@code sourcesJar} task.
@@ -115,7 +115,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
     private class SourceProjectEvaluatedListener implements ProjectEvaluatedListener {
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.artifacts.source.enabled)
 
             TaskProvider<Jar> sourcesJar = createSourceJarTask(project)
@@ -133,7 +133,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
     }
 
     private TaskProvider<Jar> createSourceJarTask(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         TaskProvider<Jar> sourcesJar = project.tasks.register(SOURCES_JAR_TASK_NAME, Jar,
             new Action<Jar>() {
                 @Override
@@ -168,7 +168,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
             @Override
             @CompileDynamic
             void execute(Jar t) {
-                ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                ProjectConfigurationExtension config = resolveConfig(project)
 
                 Set<Project> projects = new LinkedHashSet<>()
                 if (!(project in config.artifacts.source.aggregate.excludedProjects) && config.artifacts.source.enabled) {

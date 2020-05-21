@@ -174,38 +174,6 @@ class Bom extends AbstractFeature implements PomOptions {
         return overwriteMailingListsSet
     }
 
-    void copyInto(Bom copy) {
-        super.copyInto(copy)
-        copy.@dependencies.putAll(dependencies)
-        copy.excludes.addAll(excludes)
-        copy.includes.addAll(includes)
-        copy.properties.putAll(properties)
-        copy.@autoIncludes = this.autoIncludes
-        copy.@autoIncludesSet = this.autoIncludesSet
-
-        copy.parent = this.parent
-        copy.@overwriteInceptionYear = this.overwriteInceptionYear
-        copy.@overwriteInceptionYearSet = this.overwriteInceptionYearSet
-        copy.@overwriteUrl = this.overwriteUrl
-        copy.@overwriteUrlSet = this.overwriteUrlSet
-        copy.@overwriteLicenses = this.overwriteLicenses
-        copy.@overwriteLicensesSet = this.overwriteLicensesSet
-        copy.@overwriteScm = this.overwriteScm
-        copy.@overwriteScmSet = this.overwriteScmSet
-        copy.@overwriteOrganization = this.overwriteOrganization
-        copy.@overwriteOrganizationSet = this.overwriteOrganizationSet
-        copy.@overwriteDevelopers = this.overwriteDevelopers
-        copy.@overwriteDevelopersSet = this.overwriteDevelopersSet
-        copy.@overwriteContributors = this.overwriteContributors
-        copy.@overwriteContributorsSet = this.overwriteContributorsSet
-        copy.@overwriteIssueManagement = this.overwriteIssueManagement
-        copy.@overwriteIssueManagementSet = this.overwriteIssueManagementSet
-        copy.@overwriteCiManagement = this.overwriteCiManagement
-        copy.@overwriteCiManagementSet = this.overwriteCiManagementSet
-        copy.@overwriteMailingLists = this.overwriteMailingLists
-        copy.@overwriteMailingListsSet = this.overwriteMailingListsSet
-    }
-
     static void merge(Bom o1, Bom o2) {
         AbstractFeature.merge(o1, o2)
         CollectionUtils.merge(o1.@dependencies, o2.@dependencies)

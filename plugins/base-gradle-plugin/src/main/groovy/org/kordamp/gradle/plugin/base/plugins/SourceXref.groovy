@@ -88,20 +88,6 @@ class SourceXref extends AbstractAggregateFeature {
         excludes << str
     }
 
-    void copyInto(SourceXref copy) {
-        super.copyInto(copy)
-        copy.templateDir = templateDir
-        copy.inputEncoding = inputEncoding
-        copy.outputEncoding = outputEncoding
-        copy.windowTitle = windowTitle
-        copy.docTitle = docTitle
-        copy.bottom = bottom
-        copy.stylesheet = stylesheet
-        copy.javaVersion = javaVersion
-        copy.excludes.addAll(excludes)
-        copy.includes.addAll(includes)
-    }
-
     static void merge(SourceXref o1, SourceXref o2) {
         AbstractAggregateFeature.merge(o1, o2)
         o1.templateDir = o1.templateDir ?: o2?.templateDir

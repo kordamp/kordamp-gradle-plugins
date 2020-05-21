@@ -32,7 +32,7 @@ import java.text.SimpleDateFormat
 
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * Calculates build properties and attaches them to the root {@code Project}.
@@ -78,7 +78,7 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
     private class BuildInfoAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
         @Override
         void allProjectsEvaluated(Project rootProject) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(rootProject)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.buildInfo.enabled)
 
             if (!enabled) {
@@ -110,8 +110,8 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
             }
 
             if (!config.buildInfo.skipBuildRevision) {
-                rootProject.pluginManager.apply(VersioningPlugin)
-                VersioningExtension versioning = rootProject.extensions.findByType(VersioningExtension)
+                project.pluginManager.apply(VersioningPlugin)
+                VersioningExtension versioning = project.extensions.findByType(VersioningExtension)
                 config.buildInfo.buildRevision = versioning.info.commit
             }
 
@@ -124,7 +124,7 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
             }
 
             if (!config.buildInfo.skipBuildCreatedBy) {
-                config.buildInfo.buildCreatedBy = "Gradle ${rootProject.gradle.gradleVersion}"
+                config.buildInfo.buildCreatedBy = "Gradle ${project.gradle.gradleVersion}"
             }
         }
     }

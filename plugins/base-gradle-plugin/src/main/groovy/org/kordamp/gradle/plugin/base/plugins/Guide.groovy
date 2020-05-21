@@ -48,11 +48,6 @@ class Guide extends AbstractFeature {
         new LinkedHashMap<>(['guide': map])
     }
 
-    void copyInto(Guide copy) {
-        super.copyInto(copy)
-        publish.copyInto(copy.publish)
-    }
-
     static void merge(Guide o1, Guide o2) {
         AbstractFeature.merge(o1, o2)
         Publish.merge(o1.publish, o2.publish)
@@ -86,7 +81,7 @@ class Guide extends AbstractFeature {
             message = "Publish guide for ${config.project.version}"
         }
 
-        boolean isEnabled() {
+        boolean getEnabled() {
             this.@enabled != null && this.@enabled
         }
 
@@ -96,20 +91,15 @@ class Guide extends AbstractFeature {
             }
         }
 
-        void copyInto(Publish copy) {
-            copy.@enabled = this.@enabled
-            copy.@branch = this.@branch
-            copy.@message = this.@message
-        }
-
         static void merge(Publish o1, Publish o2) {
+            o1.@enabled = o1.@enabled != null ? o1.getEnabled() : o2.getEnabled()
             o1.branch = o1.branch ?: o2.branch
             o1.message = o1.message ?: o2.message
         }
 
         Map<String, Object> toMap() {
             new LinkedHashMap<String, Object>(
-                enabled: isEnabled(),
+                enabled: getEnabled(),
                 branch: branch,
                 message: message)
         }

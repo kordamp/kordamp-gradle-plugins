@@ -50,16 +50,6 @@ class Specification {
         this.enabledSet
     }
 
-    Specification copyOf() {
-        Specification copy = new Specification()
-        copy.@enabled = enabled
-        copy.@enabledSet = enabledSet
-        copy.title = title
-        copy.version = version
-        copy.vendor = vendor
-        copy
-    }
-
     static void merge(Specification o1, Specification o2) {
         o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
         o1.title = o1.title ?: o2.title

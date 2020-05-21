@@ -38,7 +38,7 @@ import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAl
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 import static org.kordamp.gradle.util.PluginUtils.resolveClassesTask
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
@@ -121,7 +121,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
     private class SourceXrefProjectEvaluatedListener implements ProjectEvaluatedListener {
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.docs.sourceXref.enabled)
 
             configureSourceXrefTask(project)
@@ -138,7 +138,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
     }
 
     private TaskProvider<JxrTask> configureSourceXrefTask(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         TaskProvider<JxrTask> jxrTask = project.tasks.register(SOURCE_XREF_TASK_NAME, JxrTask,
             new Action<JxrTask>() {
@@ -172,7 +172,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
     }
 
     private void configureAggregateSourceXrefTask(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         FileCollection srcdirs = project.objects.fileCollection()
         project.tasks.withType(JxrTask) { JxrTask task ->

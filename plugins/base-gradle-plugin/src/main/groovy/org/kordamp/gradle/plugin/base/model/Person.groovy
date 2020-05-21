@@ -50,21 +50,6 @@ class Person {
         ])
     }
 
-    Person copyOf() {
-        Person copy = new Person()
-        copy.id = id
-        copy.name = name
-        copy.email = email
-        copy.url = url
-        copy.timezone = timezone
-        copy.organization = organization?.copyOf()
-        List<String> rls = new ArrayList<>(copy.roles)
-        copy.roles.clear()
-        copy.roles.addAll(rls + roles)
-        copy.properties.putAll(properties)
-        copy
-    }
-
     static Person merge(Person o1, Person o2) {
         o1.id = o1.id ?: o2?.id
         o1.name = o1.name ?: o2?.name
@@ -75,7 +60,7 @@ class Person {
         if (o1.organization) {
             Organization.merge(o1.organization, o2?.organization)
         } else {
-            o1.organization = o2?.organization?.copyOf()
+            o1.organization = o2?.organization
         }
         CollectionUtils.merge(o1.properties, o2?.properties)
 

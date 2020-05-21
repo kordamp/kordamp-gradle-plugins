@@ -56,15 +56,8 @@ abstract class AbstractQualityFeature extends AbstractAggregateFeature {
         }
     }
 
-    void copyInto(AbstractQualityFeature copy) {
-        super.copyInto(copy)
-        copy.@ignoreFailures = ignoreFailures
-        copy.toolVersion = toolVersion
-        copy.excludedSourceSets.addAll(excludedSourceSets)
-    }
-
     static void merge(AbstractQualityFeature o1, AbstractQualityFeature o2) {
-        AbstractFeature.merge(o1, o2)
+        AbstractAggregateFeature.merge(o1, o2)
         o1.ignoreFailures = o1.ignoreFailuresSet ? o1.getIgnoreFailures() : o2.getIgnoreFailures()
         o1.toolVersion = o1.toolVersion ?: o2.toolVersion
         CollectionUtils.merge(o1.@excludedSourceSets, o2?.excludedSourceSets)

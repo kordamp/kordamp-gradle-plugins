@@ -86,33 +86,6 @@ class Information {
         ])])
     }
 
-    Information copyOf() {
-        Information copy = new Information(config, project)
-        copyInto(copy)
-        copy
-    }
-
-    void copyInto(Information copy) {
-        copy.@name = this.@name
-        copy.description = description
-        copy.@inceptionYear = this.@inceptionYear
-        copy.@vendor = this.@vendor
-        copy.tags.addAll(tags)
-        copy.spec = spec.copyOf()
-        copy.impl = impl.copyOf()
-        organization.copyInto(copy.organization)
-        people.copyInto(copy.people)
-        repositories.copyInto(copy.repositories)
-        links.copyInto(copy.links)
-        scm.copyInto(copy.scm)
-        issueManagement.copyInto(copy.issueManagement)
-        ciManagement.copyInto(copy.ciManagement)
-        mailingLists.copyInto(copy.mailingLists)
-        credentials.copyInto(copy.credentials)
-
-        copy.normalize()
-    }
-
     static void merge(Information o1, Information o2) {
         o2.normalize()
         o1.name = o1.@name ?: o2.name

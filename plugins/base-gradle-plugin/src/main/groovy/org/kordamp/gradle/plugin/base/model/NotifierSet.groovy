@@ -51,10 +51,6 @@ class NotifierSet {
         notifiers << notifier
     }
 
-    void copyInto(NotifierSet notifierSet) {
-        notifierSet.notifiers.addAll(notifiers.collect { it.copyOf() })
-    }
-
     static void merge(NotifierSet o1, NotifierSet o2) {
         Map<String, Notifier> a = o1.notifiers.collectEntries { [(it.id): it] }
         Map<String, Notifier> b = o2.notifiers.collectEntries { [(it.id): it] }

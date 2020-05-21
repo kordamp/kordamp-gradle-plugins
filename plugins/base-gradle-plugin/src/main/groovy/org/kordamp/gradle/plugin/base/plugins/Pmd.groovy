@@ -83,15 +83,6 @@ class Pmd extends AbstractQualityFeature {
         this.incrementalAnalysisSet
     }
 
-    void copyInto(Pmd copy) {
-        super.copyInto(copy)
-        copy.@ruleSetFiles = ruleSetFiles
-        copy.@ruleSetFilesSet = ruleSetFilesSet
-        copy.@incrementalAnalysis = incrementalAnalysis
-        copy.@incrementalAnalysisSet = incrementalAnalysisSet
-        copy.rulePriority = rulePriority
-    }
-
     static void merge(Pmd o1, Pmd o2) {
         AbstractQualityFeature.merge(o1, o2)
         o1.setIncrementalAnalysis((boolean) (o1.incrementalAnalysisSet ? o1.incrementalAnalysis : o2.incrementalAnalysis))

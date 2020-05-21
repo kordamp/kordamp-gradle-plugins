@@ -38,7 +38,7 @@ import javax.inject.Named
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
@@ -108,7 +108,7 @@ class JarPlugin extends AbstractKordampPlugin {
         @Override
         void allProjectsEvaluated(Project rootProject) {
             rootProject.tasks.withType(Jar) { Jar t ->
-                if (t.name == 'jar' && resolveEffectiveConfig(rootProject).artifacts.jar.enabled) {
+                if (t.name == 'jar' && resolveConfig(rootProject).artifacts.jar.enabled) {
                     configureJarMetainf(rootProject, t)
                     configureClasspathManifest(rootProject, t)
                 }
@@ -116,7 +116,7 @@ class JarPlugin extends AbstractKordampPlugin {
             }
             rootProject.childProjects.values().each { Project p ->
                 p.tasks.withType(Jar) { Jar t ->
-                    if (t.name == 'jar' && resolveEffectiveConfig(p).artifacts.jar.enabled) {
+                    if (t.name == 'jar' && resolveConfig(p).artifacts.jar.enabled) {
                         configureJarMetainf(p, t)
                         configureClasspathManifest(p, t)
                     }
@@ -155,7 +155,7 @@ class JarPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private static void configureJarMetainf(Project project, Jar jarTask) {
-        ProjectConfigurationExtension config = /*resolveEffectiveConfig(project.rootProject) ?:*/ resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         if (config.artifacts.minpom.enabled) {
             jarTask.configure {
@@ -171,8 +171,7 @@ class JarPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private static void configureJarManifest(Project project, Jar jarTask) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project.rootProject)
-        // ?: resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project.rootProject)
 
         if (config.release) {
             Map<String, String> attributesMap = [:]
@@ -220,7 +219,7 @@ class JarPlugin extends AbstractKordampPlugin {
             return
         }
 
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         jarTask.setEnabled(config.artifacts.jar.enabled)
 
         if (!config.artifacts.jar.manifest.enabled) {

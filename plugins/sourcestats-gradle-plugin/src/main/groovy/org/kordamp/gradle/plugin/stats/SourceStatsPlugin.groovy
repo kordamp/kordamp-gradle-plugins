@@ -33,7 +33,7 @@ import javax.inject.Named
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * @author Andres Almiray
@@ -99,7 +99,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
     private class SourceStatsProjectEvaluatedListener implements ProjectEvaluatedListener {
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.stats.enabled)
 
             createSourceStatsTask(project)
@@ -120,7 +120,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
             new Action<SourceStatsTask>() {
                 @Override
                 void execute(SourceStatsTask t) {
-                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                    ProjectConfigurationExtension config = resolveConfig(project)
                     t.enabled = PluginUtils.resolveSourceSets(project) && config.stats.enabled
                     t.group = 'Reporting'
                     t.description = 'Generates a report on lines of code.'
@@ -132,7 +132,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
     }
 
     private void applyAggregateStats(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         Set<SourceStatsTask> tt = new LinkedHashSet<>()
         project.tasks.withType(SourceStatsTask) { SourceStatsTask task ->

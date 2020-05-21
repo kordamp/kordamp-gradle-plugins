@@ -106,16 +106,6 @@ class Stats extends AbstractAggregateFeature {
         basePaths
     }
 
-    void copyInto(Stats copy) {
-        super.copyInto(copy)
-        copy.counters.putAll(counters)
-        copy.paths.putAll(paths)
-        List<String> fmts = new ArrayList<>(copy.formats)
-        copy.formats.clear()
-        copy.formats.addAll((fmts + formats).unique())
-        copy.formats.addAll(formats)
-    }
-
     static void merge(Stats o1, Stats o2) {
         AbstractAggregateFeature.merge(o1, o2)
         o1.counters.putAll(o2.counters)

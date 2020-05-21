@@ -42,18 +42,6 @@ class CiManagement {
         ])
     }
 
-    CiManagement copyOf() {
-        CiManagement copy = new CiManagement()
-        copyInto(copy)
-        copy
-    }
-
-    void copyInto(CiManagement copy) {
-        copy.system = system
-        copy.url = url
-        notifiers.copyInto(copy.notifiers)
-    }
-
     static void merge(CiManagement o1, CiManagement o2) {
         o1.system = o1.system ?: o2?.system
         o1.url = o1.url ?: o2?.url

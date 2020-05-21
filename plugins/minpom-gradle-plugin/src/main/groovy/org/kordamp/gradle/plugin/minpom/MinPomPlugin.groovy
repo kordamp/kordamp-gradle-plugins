@@ -31,7 +31,7 @@ import javax.inject.Named
 
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.util.PluginUtils.resolveClassesTask
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * Configures a {@code minpom} task.
@@ -82,7 +82,7 @@ class MinPomPlugin extends AbstractKordampPlugin {
     private class MinpomProjectEvaluatedListener implements ProjectEvaluatedListener {
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.artifacts.minpom.enabled)
 
             if (!enabled) {
@@ -106,7 +106,7 @@ class MinPomPlugin extends AbstractKordampPlugin {
     }
 
     private void configureMinPomTask(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         project.tasks.named('minpom', MinpomTask, new Action<MinpomTask>() {
             @Override

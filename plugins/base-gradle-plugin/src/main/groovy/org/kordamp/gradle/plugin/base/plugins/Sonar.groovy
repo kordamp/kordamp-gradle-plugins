@@ -114,17 +114,6 @@ class Sonar extends AbstractFeature {
         }
     }
 
-    void copyInto(Sonar copy) {
-        super.copyInto(copy)
-        copy.@hostUrl = hostUrl
-        copy.@projectKey = projectKey
-        copy.@username = username
-        copy.@excludes.addAll(excludes)
-        copy.excludedProjects.addAll(excludedProjects)
-        copy.@configProperties.putAll(configProperties)
-        copy.@ignoreFailures = ignoreFailures
-    }
-
     static void merge(Sonar o1, Sonar o2) {
         AbstractQualityFeature.merge(o1, o2)
         o1.hostUrl = o1.hostUrl ?: o2.hostUrl

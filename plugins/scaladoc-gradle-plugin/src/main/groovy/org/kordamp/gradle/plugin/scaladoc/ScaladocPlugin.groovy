@@ -44,7 +44,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 import static org.kordamp.gradle.util.PluginUtils.registerJarVariant
 import static org.kordamp.gradle.util.PluginUtils.resolveAllSource
 import static org.kordamp.gradle.util.PluginUtils.resolveClassesTask
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * Configures {@code scaladoc} and {@code scaladocJar} tasks.
@@ -89,7 +89,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
     }
 
     private void doConfigureRootProject(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         setEnabled(config.docs.scaladoc.aggregate.enabled)
 
         List<ScalaDoc> docTasks = []
@@ -148,7 +148,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
     private class ScaladocProjectEvaluatedListener implements ProjectEvaluatedListener {
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.docs.scaladoc.enabled)
 
             TaskProvider<ScalaDoc> scaladoc = createScaladocTask(project)
@@ -172,7 +172,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                 @Override
                 @CompileDynamic
                 void execute(ScalaDoc t) {
-                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                    ProjectConfigurationExtension config = resolveConfig(project)
                     t.enabled = config.docs.scaladoc.enabled
                     t.dependsOn resolveClassesTask(project)
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
@@ -185,7 +185,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
     }
 
     private TaskProvider<Jar> createScaladocJarTask(Project project, TaskProvider<ScalaDoc> scaladoc) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         TaskProvider<Jar> scaladocJarTask = project.tasks.register(SCALADOC_JAR_TASK_NAME, Jar,
             new Action<Jar>() {

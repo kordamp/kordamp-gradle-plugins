@@ -126,23 +126,6 @@ class Bintray extends AbstractFeature {
         ConfigureUtil.configure(action, credentials)
     }
 
-    void copyInto(Bintray copy) {
-        super.copyInto(copy)
-
-        copy.@skipMavenSync = skipMavenSync
-        copy.@skipMavenSyncSet = skipMavenSyncSet
-        copy.@publish = publish
-        copy.@publishSet = publishSet
-        copy.@publicDownloadNumbers = publicDownloadNumbers
-        copy.@publicDownloadNumbersSet = publicDownloadNumbersSet
-        copy.@repo = this.@repo
-        copy.@name = this.@name
-        copy.userOrg = userOrg
-        copy.@githubRepo = this.@githubRepo
-        copy.publications.addAll(publications)
-        credentials.copyInto(copy.credentials)
-    }
-
     static void merge(Bintray o1, Bintray o2) {
         AbstractFeature.merge(o1, o2)
         o1.setSkipMavenSync((boolean) (o1.skipMavenSyncSet ? o1.skipMavenSync : o2.skipMavenSync))
@@ -153,7 +136,7 @@ class Bintray extends AbstractFeature {
         o1.userOrg = o1.userOrg ?: o2.userOrg
         o1.githubRepo = o1.@githubRepo ?: o2.githubRepo
         CollectionUtils.merge(o1.publications, o2.publications)
-        o1.credentials.merge(o1.credentials, o2.credentials)
+        Credentials.merge(o1.credentials, o2.credentials)
     }
 
     List<String> validate(ProjectConfigurationExtension extension) {

@@ -68,14 +68,6 @@ class Functional {
         ])
     }
 
-    void copyInto(Functional copy) {
-        copy.@logging = logging
-        copy.@loggingSet = loggingSet
-        copy.@aggregate = aggregate
-        copy.@aggregateSet = aggregateSet
-        copy.@baseDir = baseDir
-    }
-
     static void merge(Functional o1, Functional o2) {
         boolean thisLogging = (boolean) (o1.loggingSet ? o1.logging : o2.logging)
         boolean superLogging = (boolean) (o1.test.loggingSet) ? o1.test.logging : o2.logging

@@ -54,11 +54,6 @@ abstract class AbstractFeature implements Feature {
         this.enabledSet
     }
 
-    void copyInto(AbstractFeature copy) {
-        copy.@enabled = this.enabled
-        copy.@enabledSet = this.enabledSet
-    }
-
     final boolean isRoot() {
         project == project.rootProject
     }

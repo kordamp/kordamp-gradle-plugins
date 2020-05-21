@@ -38,7 +38,7 @@ import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 import javax.inject.Named
 
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
@@ -115,7 +115,7 @@ class BomPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void updatePublications(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         setEnabled(config.bom.enabled)
 
         if (!enabled) {

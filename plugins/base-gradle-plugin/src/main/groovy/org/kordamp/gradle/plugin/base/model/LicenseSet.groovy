@@ -52,10 +52,6 @@ class LicenseSet {
         licenses << license
     }
 
-    void copyInto(LicenseSet licenseSet) {
-        licenseSet.licenses.addAll(licenses.collect { it.copyOf() })
-    }
-
     static void merge(LicenseSet o1, LicenseSet o2) {
         Map<String, License> a = o1.licenses.collectEntries { [(it.name): it] }
         Map<String, License> b = o2.licenses.collectEntries { [(it.name): it] }

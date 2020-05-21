@@ -59,7 +59,6 @@ import org.kordamp.gradle.util.ConfigureUtil
 @CompileStatic
 class ProjectConfigurationExtension {
     static final String CONFIG_NAME = 'config'
-    static final String EFFECTIVE_CONFIG_NAME = 'effectiveConfig'
 
     boolean release = false
 
@@ -100,26 +99,6 @@ class ProjectConfigurationExtension {
         docs = new Docs(this, project)
         coverage = new Coverage(this, project)
         quality = new Quality(this, project)
-    }
-
-    ProjectConfigurationExtension(ProjectConfigurationExtension other) {
-        this(other.project)
-        setRelease(other.release)
-        other.info.copyInto(info)
-        other.dependencies.copyInto(dependencies)
-        other.bom.copyInto(bom)
-        other.bintray.copyInto(bintray)
-        other.buildInfo.copyInto(buildInfo)
-        other.clirr.copyInto(clirr)
-        other.licensing.copyInto(licensing)
-        other.plugin.copyInto(plugin)
-        other.publishing.copyInto(publishing)
-        other.stats.copyInto(stats)
-        other.testing.copyInto(testing)
-        other.artifacts.copyInto(artifacts)
-        other.docs.copyInto(docs)
-        other.coverage.copyInto(coverage)
-        other.quality.copyInto(quality)
     }
 
     Map<String, Object> toMap() {
@@ -435,50 +414,25 @@ class ProjectConfigurationExtension {
         return releaseSet
     }
 
-    ProjectConfigurationExtension copyOf() {
-        ProjectConfigurationExtension copy = new ProjectConfigurationExtension(project)
-
-        copy.@release = this.@release
-        copy.@releaseSet = this.@releaseSet
-        this.@info.copyInto(copy.@info)
-        this.@dependencies.copyInto(copy.@dependencies)
-        this.@bom.copyInto(copy.@bom)
-        this.@bintray.copyInto(copy.@bintray)
-        this.@buildInfo.copyInto(copy.@buildInfo)
-        this.@clirr.copyInto(copy.@clirr)
-        this.@licensing.copyInto(copy.@licensing)
-        this.@plugin.copyInto(copy.@plugin)
-        this.@publishing.copyInto(copy.@publishing)
-        this.@stats.copyInto(copy.@stats)
-        this.@testing.copyInto(copy.@testing)
-        this.@artifacts.copyInto(copy.@artifacts)
-        this.@docs.copyInto(copy.@docs)
-        this.@coverage.copyInto(copy.@coverage)
-        this.@quality.copyInto(copy.@quality)
-
-        copy
-    }
-
     ProjectConfigurationExtension merge(ProjectConfigurationExtension other) {
-        ProjectConfigurationExtension copy = copyOf()
-        copy.setRelease((boolean) (copy.@releaseSet ? copy.@release : other.@release))
-        Information.merge(copy.@info, other.@info)
-        Dependencies.merge(copy.@dependencies, other.@dependencies)
-        Bom.merge(copy.@bom, other.@bom)
-        Bintray.merge(copy.@bintray, other.@bintray)
-        BuildInfo.merge(copy.@buildInfo, other.@buildInfo)
-        Clirr.merge(copy.@clirr, other.@clirr)
-        Licensing.merge(copy.@licensing, other.@licensing)
-        Plugin.merge(copy.@plugin, other.@plugin)
-        Publishing.merge(copy.@publishing, other.@publishing)
-        Stats.merge(copy.@stats, other.@stats)
-        Testing.merge(copy.@testing, other.@testing)
-        Artifacts.merge(copy.@artifacts, other.@artifacts)
-        Docs.merge(copy.@docs, other.@docs)
-        Coverage.merge(copy.@coverage, other.@coverage)
-        Quality.merge(copy.@quality, other.@quality)
+        this.setRelease((boolean) (this.@releaseSet ? this.@release : other.@release))
+        Information.merge(this.@info, other.@info)
+        Dependencies.merge(this.@dependencies, other.@dependencies)
+        Bom.merge(this.@bom, other.@bom)
+        Bintray.merge(this.@bintray, other.@bintray)
+        BuildInfo.merge(this.@buildInfo, other.@buildInfo)
+        Clirr.merge(this.@clirr, other.@clirr)
+        Licensing.merge(this.@licensing, other.@licensing)
+        Plugin.merge(this.@plugin, other.@plugin)
+        Publishing.merge(this.@publishing, other.@publishing)
+        Stats.merge(this.@stats, other.@stats)
+        Testing.merge(this.@testing, other.@testing)
+        Artifacts.merge(this.@artifacts, other.@artifacts)
+        Docs.merge(this.@docs, other.@docs)
+        Coverage.merge(this.@coverage, other.@coverage)
+        Quality.merge(this.@quality, other.@quality)
 
-        copy.postMerge()
+        this.postMerge()
     }
 
     List<String> validate() {
@@ -557,16 +511,6 @@ class ProjectConfigurationExtension {
             new LinkedHashMap<>('quality': map)
         }
 
-        void copyInto(Quality copy) {
-            checkstyle.copyInto(copy.checkstyle)
-            codenarc.copyInto(copy.codenarc)
-            detekt.copyInto(copy.detekt)
-            errorprone.copyInto(copy.errorprone)
-            pmd.copyInto(copy.pmd)
-            sonar.copyInto(copy.sonar)
-            spotbugs.copyInto(copy.spotbugs)
-        }
-
         void checkstyle(Action<? super Checkstyle> action) {
             action.execute(checkstyle)
         }
@@ -623,18 +567,6 @@ class ProjectConfigurationExtension {
             ConfigureUtil.configure(action, spotbugs)
         }
 
-        Quality copyOf() {
-            Quality copy = new Quality(config, project)
-            this.checkstyle.copyInto(copy.@checkstyle)
-            this.codenarc.copyInto(copy.@codenarc)
-            this.detekt.copyInto(copy.@detekt)
-            this.errorprone.copyInto(copy.@detekt)
-            this.pmd.copyInto(copy.@pmd)
-            this.sonar.copyInto(copy.@sonar)
-            this.spotbugs.copyInto(copy.@spotbugs)
-            copy
-        }
-
         static Quality merge(Quality o1, Quality o2) {
             Checkstyle.merge(o1.@checkstyle, o2.@checkstyle)
             Codenarc.merge(o1.@codenarc, o2.@codenarc)
@@ -643,7 +575,6 @@ class ProjectConfigurationExtension {
             Pmd.merge(o1.@pmd, o2.@pmd)
             Sonar.merge(o1.@sonar, o2.@sonar)
             Spotbugs.merge(o1.@spotbugs, o2.@spotbugs)
-
             o1
         }
 
@@ -709,18 +640,6 @@ class ProjectConfigurationExtension {
 
         void jacoco(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jacoco) Closure<Void> action) {
             ConfigureUtil.configure(action, jacoco)
-        }
-
-        void copyInto(Coverage copy) {
-            coveralls.copyInto(copy.@coveralls)
-            jacoco.copyInto(copy.@jacoco)
-        }
-
-        Coverage copyOf() {
-            Coverage copy = new Coverage(config, project)
-            this.@coveralls.copyInto(copy.@coveralls)
-            this.@jacoco.copyInto(copy.@jacoco)
-            copy
         }
 
         static Coverage merge(Coverage o1, Coverage o2) {
@@ -830,28 +749,6 @@ class ProjectConfigurationExtension {
             ConfigureUtil.configure(action, sourceXref)
         }
 
-        void copyInto(Docs copy) {
-            guide.copyInto(copy.guide)
-            groovydoc.copyInto(copy.groovydoc)
-            kotlindoc.copyInto(copy.kotlindoc)
-            javadoc.copyInto(copy.javadoc)
-            scaladoc.copyInto(copy.scaladoc)
-            sourceHtml.copyInto(copy.sourceHtml)
-            sourceXref.copyInto(copy.sourceXref)
-        }
-
-        Docs copyOf() {
-            Docs copy = new Docs(config, project)
-            this.@guide.copyInto(copy.@guide)
-            this.@groovydoc.copyInto(groovydoc)
-            this.@kotlindoc.copyInto(kotlindoc)
-            this.@javadoc.copyInto(javadoc)
-            this.@scaladoc.copyInto(scaladoc)
-            this.@sourceHtml.copyInto(sourceHtml)
-            this.@sourceXref.copyInto(sourceXref)
-            copy
-        }
-
         static Docs merge(Docs o1, Docs o2) {
             Guide.merge(o1.@guide, o2.@guide)
             Groovydoc.merge(o1.@groovydoc, o2.@groovydoc)
@@ -937,20 +834,6 @@ class ProjectConfigurationExtension {
 
         void source(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Source) Closure<Void> action) {
             ConfigureUtil.configure(action, source)
-        }
-
-        void copyInto(Artifacts copy) {
-            jar.copyInto(copy.jar)
-            minpom.copyInto(copy.minpom)
-            source.copyInto(copy.source)
-        }
-
-        Artifacts copyOf() {
-            Artifacts copy = new Artifacts(config, project)
-            this.@jar.copyInto(jar)
-            this.@minpom.copyInto(minpom)
-            this.@source.copyInto(source)
-            copy
         }
 
         static Artifacts merge(Artifacts o1, Artifacts o2) {

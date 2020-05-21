@@ -68,14 +68,9 @@ class Jar extends AbstractFeature {
         }
     }
 
-    void copyInto(Jar copy) {
-        super.copyInto(copy)
-        manifest.copyInto(copy.manifest)
-    }
-
     static void merge(Jar o1, Jar o2) {
         AbstractQualityFeature.merge(o1, o2)
-        o1.manifest.merge(o2.manifest)
+        Manifest.merge(o1.manifest, o2.manifest)
     }
 
     void manifest(Action<? super Manifest> action) {
@@ -120,26 +115,12 @@ class Jar extends AbstractFeature {
             this.@addClasspath == null || this.@addClasspath
         }
 
-        void copyInto(Manifest copy) {
-            copy.enabled = this.@enabled
-            copy.addClasspath = this.@addClasspath
-            copy.classpathPrefix = this.classpathPrefix
-            copy.classpathLayoutType = this.classpathLayoutType
-        }
-
-        Manifest copyOf() {
-            Manifest copy = new Manifest(config, project)
-            copyInto(copy)
-            copy
-        }
-
-        Manifest merge(Manifest other) {
-            Manifest copy = copyOf()
-            copy.setEnabled(copy.@enabled != null ? copy.getEnabled() : other.getEnabled())
-            copy.setAddClasspath(copy.@addClasspath != null ? copy.getAddClasspath() : other.getAddClasspath())
-            copy.classpathPrefix = copy.classpathPrefix ?: other.classpathPrefix
-            copy.classpathLayoutType = copy.classpathLayoutType ?: other.classpathLayoutType
-            copy
+        static Manifest merge(Manifest o1, Manifest o2) {
+            o1.setEnabled(o1.@enabled != null ? o1.getEnabled() : o2.getEnabled())
+            o1.setAddClasspath(o1.@addClasspath != null ? o1.getAddClasspath() : o2.getAddClasspath())
+            o1.classpathPrefix = o1.classpathPrefix ?: o2.classpathPrefix
+            o1.classpathLayoutType = o1.classpathLayoutType ?: o2.classpathLayoutType
+            o1
         }
     }
 }

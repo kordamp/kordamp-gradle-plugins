@@ -71,19 +71,6 @@ class Clirr extends AbstractAggregateFeature {
         map.filter = this.filter != null
     }
 
-    void copyInto(Clirr copy) {
-        super.copyInto(copy)
-        copy.@failOnErrors = this.failOnErrors
-        copy.@failOnErrorsSet = this.failOnErrorsSet
-        copy.@failOnException = this.failOnException
-        copy.@failOnExceptionSet = this.failOnExceptionSet
-        copy.@semver = this.semver
-        copy.@semverSet = this.semverSet
-        copy.baseline = baseline
-        copy.filterFile = filterFile
-        copy.filter = filter
-    }
-
     static void merge(Clirr o1, Clirr o2) {
         AbstractAggregateFeature.merge(o1, o2)
         o1.setFailOnErrors((boolean) (o1.failOnErrorsSet ? o1.failOnErrors : o2.failOnErrors))

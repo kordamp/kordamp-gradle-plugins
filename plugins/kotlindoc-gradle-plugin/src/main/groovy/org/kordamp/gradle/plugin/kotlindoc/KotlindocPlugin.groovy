@@ -52,7 +52,7 @@ import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addPr
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 import static org.kordamp.gradle.util.PluginUtils.registerJarVariant
 import static org.kordamp.gradle.util.PluginUtils.resolveClassesTask
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * Configures {@code kotlindoc} and {@code kotlindocJar} tasks.
@@ -103,7 +103,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
     }
 
     private void doConfigureRootProject(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         setEnabled(config.docs.kotlindoc.aggregate.enabled)
 
         config.docs.kotlindoc.outputFormats.each { String format ->
@@ -166,7 +166,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
     private class KotlindocProjectEvaluatedListener implements ProjectEvaluatedListener {
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.docs.kotlindoc.enabled)
 
             config.docs.kotlindoc.outputFormats.each { String format ->
@@ -192,7 +192,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         String formatName = format == 'html-as-java' ? 'htmljava' : format
         String taskName = KOTLINDOC_BASENAME + StringUtils.capitalize(formatName)
 
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         project.tasks.register(taskName, DokkaTask,
             new Action<DokkaTask>() {
@@ -214,7 +214,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         String formatName = format == 'html-as-java' ? 'htmljava' : format
         String resolvedClassifier = 'kotlindoc'
         String taskName = KOTLINDOC_BASENAME + StringUtils.capitalize(formatName) + 'Jar'
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         if (config.docs.kotlindoc.outputFormats.size() > 1) {
             resolvedClassifier += '-' + formatName
@@ -262,7 +262,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
     }
 
     private void createAggregateTasks(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         config.docs.kotlindoc.outputFormats.each { String format ->
             String formatName = format == 'html-as-java' ? 'htmljava' : format

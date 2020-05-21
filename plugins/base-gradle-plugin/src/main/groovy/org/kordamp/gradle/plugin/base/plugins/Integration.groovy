@@ -68,14 +68,6 @@ class Integration {
         ])
     }
 
-    void copyInto(Integration copy) {
-        copy.@logging = logging
-        copy.@loggingSet = loggingSet
-        copy.@aggregate = aggregate
-        copy.@aggregateSet = aggregateSet
-        copy.@baseDir = baseDir
-    }
-
     static void merge(Integration o1, Integration o2) {
         o1.setLogging((boolean) (o1.loggingSet ? o1.logging : (o2.loggingSet ? o2.logging : (o1.test.loggingSet ? o1.test.logging : o2.test.logging))))
         o1.setAggregate((boolean) (o1.aggregateSet ? o1.aggregate : (o2.aggregateSet ? o2.aggregate : (o1.test.aggregateSet ? o1.test.aggregate : o2.test.aggregate))))

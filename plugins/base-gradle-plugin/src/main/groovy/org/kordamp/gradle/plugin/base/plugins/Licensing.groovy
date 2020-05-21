@@ -78,13 +78,6 @@ class Licensing extends AbstractFeature {
         }
     }
 
-    void copyInto(Licensing copy) {
-        super.copyInto(copy)
-        copy.mergeStrategy = this.mergeStrategy
-        copy.excludedSourceSets.addAll(this.excludedSourceSets)
-        licenses.copyInto(copy.licenses)
-    }
-
     static void merge(Licensing o1, Licensing o2) {
         AbstractFeature.merge(o1, o2)
         o1.mergeStrategy = o1.mergeStrategy ? o1.mergeStrategy : o2?.mergeStrategy

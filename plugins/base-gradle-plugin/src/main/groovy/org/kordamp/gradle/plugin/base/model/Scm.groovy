@@ -48,14 +48,6 @@ class Scm {
         this.@enabled == null || this.@enabled
     }
 
-    void copyInto(Scm copy) {
-        copy.enabled = this.@enabled
-        copy.url = url
-        copy.tag = tag
-        copy.connection = connection
-        copy.developerConnection = developerConnection
-    }
-
     static void merge(Scm o1, Scm o2) {
         o1.enabled = o1.@enabled != null ? o1.getEnabled() : o2.getEnabled()
         o1.url = o1.url ?: o2.url

@@ -117,10 +117,6 @@ class PluginUtils {
         (ProjectConfigurationExtension) project.extensions.findByName(ProjectConfigurationExtension.CONFIG_NAME)
     }
 
-    static ProjectConfigurationExtension resolveEffectiveConfig(Project project) {
-        (ProjectConfigurationExtension) project.extensions.findByName(ProjectConfigurationExtension.EFFECTIVE_CONFIG_NAME)
-    }
-
     static boolean checkFlag(String flag, boolean defaultValue) {
         if (isBlank(System.getProperty(flag))) {
             return defaultValue

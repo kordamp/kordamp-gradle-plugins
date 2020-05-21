@@ -41,7 +41,7 @@ import org.kordamp.gradle.util.PluginUtils
 import static org.kordamp.gradle.plugin.base.plugins.Stats.HTML
 import static org.kordamp.gradle.plugin.base.plugins.Stats.TXT
 import static org.kordamp.gradle.plugin.base.plugins.Stats.XML
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.StringUtils.getFilenameExtension
 
 /**
@@ -73,7 +73,7 @@ class SourceStatsTask extends DefaultTask {
 
         Map<String, Counter> counterInstances = resolveCounterInstances()
 
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         Map<String, Map<String, String>> merged = [:]
         merged.putAll(config.stats.paths)

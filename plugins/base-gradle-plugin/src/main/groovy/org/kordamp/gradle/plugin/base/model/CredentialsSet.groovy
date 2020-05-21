@@ -81,7 +81,7 @@ class CredentialsSet {
     }
 
     void copyInto(CredentialsSet credentialsSet) {
-        credentialsMap.each { k, v -> credentialsSet.credentialsMap.put(k, v.copyOf()) }
+        credentialsMap.each { k, v -> credentialsSet.credentialsMap.put(k, v) }
     }
 
     static void merge(CredentialsSet o1, CredentialsSet o2) {
@@ -96,7 +96,7 @@ class CredentialsSet {
             }
             o2?.credentialsMap.each { k, v ->
                 if (!o1.credentialsMap.containsKey(k)) {
-                    o1.credentialsMap.put(k, v.copyOf())
+                    o1.credentialsMap.put(k, v)
                 }
             }
         }

@@ -34,7 +34,6 @@ import org.kordamp.gradle.util.CollectionUtils
 import org.kordamp.gradle.util.ConfigureUtil
 
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
@@ -142,16 +141,6 @@ class Javadoc extends AbstractFeature {
         ConfigureUtil.configure(action, aggregate)
     }
 
-    void copyInto(Javadoc copy) {
-        super.copyInto(copy)
-        copy.excludes.addAll(excludes)
-        copy.includes.addAll(includes)
-        copy.title = title
-        options.copyInto(copy.options)
-        autoLinks.copyInto(copy.autoLinks)
-        aggregate.copyInto(copy.aggregate)
-    }
-
     static void merge(Javadoc o1, Javadoc o2) {
         AbstractFeature.merge(o1, o2)
         CollectionUtils.merge(o1.excludes, o2.excludes)
@@ -159,7 +148,7 @@ class Javadoc extends AbstractFeature {
         o1.title = o1.title ?: o2.title
         ExtStandardJavadocDocletOptions.merge(o1.options, o2.options)
         AutoLinks.merge(o1.autoLinks, o2.autoLinks)
-        o1.aggregate.merge(o2.aggregate)
+        Aggregate.merge(o1.aggregate, o2.aggregate)
     }
 
     void autoLinks(Action<? super AutoLinks> action) {
@@ -220,15 +209,6 @@ class Javadoc extends AbstractFeature {
 
         boolean getUseJavadocIo() {
             null == useJavadocIo || useJavadocIo
-        }
-
-        void copyInto(AutoLinks copy) {
-            copy.@enabled = this.enabled
-            copy.@enabledSet = this.enabledSet
-            copy.@useJavadocIo = this.useJavadocIo
-            copy.configurations.addAll(this.configurations)
-            copy.excludes.addAll(this.excludes)
-            copy.offlineLinks.putAll(offlineLinks)
         }
 
         static void merge(AutoLinks o1, AutoLinks o2) {
@@ -342,7 +322,7 @@ class Javadoc extends AbstractFeature {
 
         @CompileDynamic
         private String calculateLocalJavadocLink(Project dependentProject, Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project) ?: resolveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
 
             Task taskDependency = null
             if (config.docs.javadoc.enabled) {
@@ -393,23 +373,10 @@ class Javadoc extends AbstractFeature {
             this.@fast == null || this.@fast
         }
 
-        void copyInto(Aggregate copy) {
-            copy.@enabled = this.@enabled
-            copy.@fast = this.@fast
-            copy.excludedProjects.addAll(excludedProjects)
-        }
-
-        Aggregate copyOf() {
-            Aggregate copy = new Aggregate(config, project)
-            copyInto(copy)
-            copy
-        }
-
-        Aggregate merge(Aggregate other) {
-            Aggregate copy = copyOf()
-            copy.enabled = copy.@enabled != null ? copy.getEnabled() : other.getEnabled()
-            copy.fast = copy.@fast != null ? copy.getFast() : other.getFast()
-            copy
+        static Aggregate merge(Aggregate o1, Aggregate o2) {
+            o1.enabled = o1.@enabled != null ? o1.getEnabled() : o2.getEnabled()
+            o1.fast = o1.@fast != null ? o1.getFast() : o2.getFast()
+            o1
         }
     }
 }

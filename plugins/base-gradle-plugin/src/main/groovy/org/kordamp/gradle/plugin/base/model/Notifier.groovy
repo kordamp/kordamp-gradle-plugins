@@ -51,22 +51,6 @@ class Notifier {
         ])
     }
 
-    Notifier copyOf() {
-        Notifier copy = new Notifier()
-        copy.id = id
-        copy.type = type
-        copy.@sendOnError = this.sendOnError
-        copy.@sendOnErrorSet = this.sendOnErrorSet
-        copy.@sendOnFailure = this.sendOnFailure
-        copy.@sendOnFailureSet = this.sendOnFailureSet
-        copy.@sendOnSuccess = this.sendOnSuccess
-        copy.@sendOnSuccessSet = this.sendOnSuccessSet
-        copy.@sendOnWarning = this.sendOnWarning
-        copy.@sendOnWarningSet = this.sendOnWarningSet
-        copy.configuration.putAll(configuration)
-        copy
-    }
-
     static Notifier merge(Notifier o1, Notifier o2) {
         o1.id = o1.id ?: o2?.id
         o1.type = o1.type ?: o2?.type

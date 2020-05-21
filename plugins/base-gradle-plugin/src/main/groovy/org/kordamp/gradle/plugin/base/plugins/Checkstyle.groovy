@@ -98,19 +98,6 @@ class Checkstyle extends AbstractQualityFeature {
         excludes << str
     }
 
-    void copyInto(Checkstyle copy) {
-        super.copyInto(copy)
-        copy.@showViolations = showViolations
-        copy.@showViolationsSet = showViolationsSet
-        copy.excludes.addAll(excludes)
-        copy.includes.addAll(includes)
-        copy.configFile = configFile
-        copy.@configFileSet = configFileSet
-        copy.maxErrors = maxErrors
-        copy.maxWarnings = maxWarnings
-        copy.configProperties.putAll(configProperties)
-    }
-
     static void merge(Checkstyle o1, Checkstyle o2) {
         AbstractQualityFeature.merge(o1, o2)
         if (!o1.configFileSet) {

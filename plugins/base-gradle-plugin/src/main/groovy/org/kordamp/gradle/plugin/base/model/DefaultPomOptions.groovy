@@ -118,32 +118,6 @@ class DefaultPomOptions implements PomOptions {
         map
     }
 
-    void copyInto(DefaultPomOptions copy) {
-        copy.packaging = this.packaging
-        copy.properties.putAll(properties)
-        copy.parent = this.parent
-        copy.@overwriteInceptionYear = this.overwriteInceptionYear
-        copy.@overwriteInceptionYearSet = this.overwriteInceptionYearSet
-        copy.@overwriteUrl = this.overwriteUrl
-        copy.@overwriteUrlSet = this.overwriteUrlSet
-        copy.@overwriteLicenses = this.overwriteLicenses
-        copy.@overwriteLicensesSet = this.overwriteLicensesSet
-        copy.@overwriteScm = this.overwriteScm
-        copy.@overwriteScmSet = this.overwriteScmSet
-        copy.@overwriteOrganization = this.overwriteOrganization
-        copy.@overwriteOrganizationSet = this.overwriteOrganizationSet
-        copy.@overwriteDevelopers = this.overwriteDevelopers
-        copy.@overwriteDevelopersSet = this.overwriteDevelopersSet
-        copy.@overwriteContributors = this.overwriteContributors
-        copy.@overwriteContributorsSet = this.overwriteContributorsSet
-        copy.@overwriteIssueManagement = this.overwriteIssueManagement
-        copy.@overwriteIssueManagementSet = this.overwriteIssueManagementSet
-        copy.@overwriteCiManagement = this.overwriteCiManagement
-        copy.@overwriteCiManagementSet = this.overwriteCiManagementSet
-        copy.@overwriteMailingLists = this.overwriteMailingLists
-        copy.@overwriteMailingListsSet = this.overwriteMailingListsSet
-    }
-
     static void merge(DefaultPomOptions o1, DefaultPomOptions o2) {
         o1.packaging = (o1.packaging ?: o2.packaging) ?: 'jar'
         CollectionUtils.merge(o1.properties, o2.properties)

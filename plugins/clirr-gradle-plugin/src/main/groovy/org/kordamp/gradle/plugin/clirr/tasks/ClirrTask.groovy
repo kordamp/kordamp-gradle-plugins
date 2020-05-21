@@ -42,7 +42,7 @@ import org.yaml.snakeyaml.Yaml
 import uber.org.apache.bcel.classfile.JavaClass
 
 import static net.sf.clirr.core.internal.ClassLoaderUtil.createClassLoader
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  *
@@ -72,7 +72,7 @@ class ClirrTask extends DefaultTask {
 
     @TaskAction
     void clirr() {
-        Clirr clirr = resolveEffectiveConfig(project).clirr
+        Clirr clirr = resolveConfig(project).clirr
 
         if (!clirr.enabled) {
             logger.info('{}: clirr has been disabled ', project.name)

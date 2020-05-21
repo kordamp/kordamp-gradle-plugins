@@ -44,7 +44,7 @@ import javax.inject.Named
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * @author Andres Almiray
@@ -234,7 +234,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void configureLicenseExtension(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         setEnabled(config.licensing.enabled)
 
         if (!enabled || config.licensing.empty) {
@@ -299,7 +299,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void postConfigureDownloadLicensesExtension(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         Map<Object, List<Object>> defaultAliases = new LinkedHashMap<>(DEFAULT_ALIASES)
         config.licensing.licenses.licenses.each { license ->
@@ -330,7 +330,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
     }
 
     private void configureAggregateLicenseReportTask(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         if (!config.licensing.enabled) {
             return

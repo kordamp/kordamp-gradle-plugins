@@ -44,19 +44,6 @@ class MailingList {
         ])
     }
 
-    MailingList copyOf() {
-        MailingList copy = new MailingList()
-        copy.name = name
-        copy.subscribe = subscribe
-        copy.unsubscribe = unsubscribe
-        copy.post = post
-        copy.archive = archive
-        List<String> rls = new ArrayList<>(copy.otherArchives)
-        copy.otherArchives.clear()
-        copy.otherArchives.addAll(rls + otherArchives)
-        copy
-    }
-
     static MailingList merge(MailingList o1, MailingList o2) {
         o1.name = o1.name ?: o2?.name
         o1.subscribe = o1.subscribe ?: o2?.subscribe

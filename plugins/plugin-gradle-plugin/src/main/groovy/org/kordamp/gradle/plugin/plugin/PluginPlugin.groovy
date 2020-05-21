@@ -40,7 +40,7 @@ import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 import javax.inject.Named
 
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.StringUtils.isBlank
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
@@ -102,7 +102,7 @@ class PluginPlugin extends AbstractKordampPlugin {
     private class PublishingProjectEvaluatedListener implements ProjectEvaluatedListener {
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             String pluginName = config.plugin.pluginName
 
             PluginBundleExtension pbe = project.extensions.findByType(PluginBundleExtension)
@@ -150,7 +150,7 @@ class PluginPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void updatePublication(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         project.publishing {
             publications {

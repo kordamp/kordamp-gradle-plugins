@@ -98,17 +98,6 @@ class Testing extends AbstractFeature {
         ConfigureUtil.configure(action, functional)
     }
 
-    void copyInto(Testing copy) {
-        super.copyInto(copy)
-
-        copy.@logging = logging
-        copy.@loggingSet = loggingSet
-        copy.@aggregate = aggregate
-        copy.@aggregateSet = aggregateSet
-        integration.copyInto(copy.@integration)
-        functional.copyInto(copy.@functional)
-    }
-
     static void merge(Testing o1, Testing o2) {
         AbstractFeature.merge(o1, o2)
         o1.setLogging((boolean) (o1.loggingSet ? o1.logging : o2.logging))

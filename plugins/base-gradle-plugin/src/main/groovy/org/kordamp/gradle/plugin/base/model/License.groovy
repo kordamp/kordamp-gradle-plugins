@@ -70,18 +70,6 @@ class License {
         this.@id?.url() ?: url
     }
 
-    License copyOf() {
-        License copy = new License()
-        copy.@id = this.@id
-        copy.@name = this.@name
-        copy.@url = this.@url
-        copy.distribution = distribution
-        copy.comments = comments
-        copy.primary
-        copy.aliases.addAll(aliases)
-        copy
-    }
-
     static void merge(License o1, License o2) {
         o1.@id = o1.@id ?: o2?.@id
         o1.name = o1.@name ?: o2?.name

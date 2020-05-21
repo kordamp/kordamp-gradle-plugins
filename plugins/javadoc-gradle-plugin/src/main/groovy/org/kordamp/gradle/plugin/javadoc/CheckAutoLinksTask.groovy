@@ -23,7 +23,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
 import org.kordamp.gradle.util.AnsiConsole
 
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * @author Andres Almiray
@@ -38,7 +38,7 @@ class CheckAutoLinksTask extends AbstractReportingTask {
 
     @TaskAction
     void checkAutoLinks() {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         List<String> links = config.docs.javadoc.autoLinks.resolveLinks(project)
         if (!links) {

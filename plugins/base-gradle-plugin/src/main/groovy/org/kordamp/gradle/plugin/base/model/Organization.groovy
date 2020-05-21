@@ -37,17 +37,6 @@ class Organization {
         ])
     }
 
-    Organization copyOf() {
-        Organization copy = new Organization()
-        copyInto(copy)
-        copy
-    }
-
-    void copyInto(Organization copy) {
-        copy.name = name
-        copy.url = url
-    }
-
     static void merge(Organization o1, Organization o2) {
         o1.name = o1.name ?: o2?.name
         o1.url = o1.url ?: o2?.url

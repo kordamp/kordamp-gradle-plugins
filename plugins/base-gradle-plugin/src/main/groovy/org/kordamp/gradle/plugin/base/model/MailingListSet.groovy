@@ -51,10 +51,6 @@ class MailingListSet {
         mailingLists << mailingList
     }
 
-    void copyInto(MailingListSet mailingListSet) {
-        mailingListSet.mailingLists.addAll(mailingLists.collect { it.copyOf() })
-    }
-
     static void merge(MailingListSet o1, MailingListSet o2) {
         Map<String, MailingList> a = o1.mailingLists.collectEntries { [(it.name): it] }
         Map<String, MailingList> b = o2.mailingLists.collectEntries { [(it.name): it] }

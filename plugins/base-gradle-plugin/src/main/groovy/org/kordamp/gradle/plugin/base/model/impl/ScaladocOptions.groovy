@@ -60,25 +60,6 @@ class ScaladocOptions {
         deprecationSet = true
     }
 
-    ScaladocOptions copyOf() {
-        copyInto(new ScaladocOptions())
-    }
-
-    ScaladocOptions copyInto(ScaladocOptions copy) {
-        copy.@deprecation = deprecation
-        copy.@deprecationSet = deprecationSet
-        copy.@unchecked = unchecked
-        copy.@uncheckedSet = uncheckedSet
-        copy.bottom = bottom
-        copy.top = top
-        copy.windowTitle = windowTitle
-        copy.docTitle = docTitle
-        copy.header = header
-        copy.footer = footer
-        copy.additionalParameters.addAll(additionalParameters)
-        copy
-    }
-
     static void merge(ScaladocOptions o1, ScaladocOptions o2) {
         o1.setDeprecation((boolean) (o1.deprecationSet ? o1.deprecation : o2.deprecation))
         o1.setUnchecked((boolean) (o1.uncheckedSet ? o1.unchecked : o2.unchecked))

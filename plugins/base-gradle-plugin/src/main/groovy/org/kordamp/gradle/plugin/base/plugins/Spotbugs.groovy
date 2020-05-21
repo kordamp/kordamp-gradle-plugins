@@ -113,24 +113,6 @@ class Spotbugs extends AbstractQualityFeature {
         excludes << str
     }
 
-    void copyInto(Spotbugs copy) {
-        super.copyInto(copy)
-        copy.@showProgress = showProgress
-        copy.@showProgressSet = showProgressSet
-        copy.excludes.addAll(excludes)
-        copy.includes.addAll(includes)
-        copy.visitors.addAll(visitors)
-        copy.omitVisitors.addAll(omitVisitors)
-        copy.extraArgs.addAll(extraArgs)
-        copy.jvmArgs.addAll(jvmArgs)
-        copy.effort = effort
-        copy.reportLevel = reportLevel
-        copy.report = report
-        copy.includeFilterFile = includeFilterFile
-        copy.excludeFilterFile = excludeFilterFile
-        copy.excludeBugsFilterFile = excludeBugsFilterFile
-    }
-
     static void merge(Spotbugs o1, Spotbugs o2) {
         AbstractQualityFeature.merge(o1, o2)
         o1.setShowProgress((boolean) (o1.showProgressSet ? o1.showProgress : o2.showProgress))

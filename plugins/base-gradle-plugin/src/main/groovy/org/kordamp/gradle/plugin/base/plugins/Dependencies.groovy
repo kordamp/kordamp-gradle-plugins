@@ -55,16 +55,6 @@ class Dependencies {
         [dependencies: dependencies.values()*.toMap()]
     }
 
-    Dependencies copyOf() {
-        Dependencies copy = new Dependencies(config, project)
-        copyInto(copy)
-        copy
-    }
-
-    void copyInto(Dependencies copy) {
-        copy.@dependencies.putAll(dependencies)
-    }
-
     static void merge(Dependencies o1, Dependencies o2) {
         CollectionUtils.merge(o1.@dependencies, o2.@dependencies)
     }

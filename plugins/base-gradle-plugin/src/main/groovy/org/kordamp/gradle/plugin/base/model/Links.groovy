@@ -46,13 +46,6 @@ class Links {
         this.@enabled == null || this.@enabled
     }
 
-    void copyInto(Links copy) {
-        copy.enabled = this.@enabled
-        copy.website = website
-        copy.issueTracker = issueTracker
-        copy.scm = scm
-    }
-
     static void merge(Links o1, Links o2) {
         o1.enabled = o1.@enabled != null ? o1.getEnabled() : o2.getEnabled()
         o1.website = o1.website ?: o2.website

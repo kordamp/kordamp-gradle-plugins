@@ -127,21 +127,6 @@ class Detekt extends AbstractQualityFeature {
         this.disableDefaultRuleSetsSet
     }
 
-    void copyInto(Detekt copy) {
-        super.copyInto(copy)
-        copy.@parallel = parallel
-        copy.@parallelSet = parallelSet
-        copy.@failFast = failFast
-        copy.@failFastSet = failFastSet
-        copy.@buildUponDefaultConfig = buildUponDefaultConfig
-        copy.@buildUponDefaultConfigSet = buildUponDefaultConfigSet
-        copy.@disableDefaultRuleSets = disableDefaultRuleSets
-        copy.@disableDefaultRuleSetsSet = disableDefaultRuleSetsSet
-        copy.configFile = configFile
-        copy.@configFileSet = configFileSet
-        copy.baselineFile = baselineFile
-    }
-
     static void merge(Detekt o1, Detekt o2) {
         AbstractQualityFeature.merge(o1, o2)
         o1.setParallel((boolean) (o1.parallelSet ? o1.parallel : o2.parallel))

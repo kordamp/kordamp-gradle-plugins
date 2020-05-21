@@ -42,7 +42,7 @@ import javax.inject.Named
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
 
 /**
@@ -116,7 +116,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
     private class ClirrProjectEvaluatedListener implements ProjectEvaluatedListener {
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.clirr.enabled)
             configureClirrTask(project)
         }
@@ -132,7 +132,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
     }
 
     private TaskProvider<ClirrTask> configureClirrTask(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         FileCollection newfiles = null
         if (PluginUtils.isAndroidProject(project)) {
@@ -207,7 +207,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void configureAggregateClirrTask(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         List<ClirrTask> clirrTasks = []
         project.tasks.withType(ClirrTask) { ClirrTask t ->

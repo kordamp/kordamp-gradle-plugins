@@ -32,7 +32,7 @@ import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 import javax.inject.Named
 
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.StringUtils.isBlank
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
@@ -98,7 +98,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void updatePublications(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         setEnabled(config.bintray.enabled)
 
         if (!config.bintray.enabled) {

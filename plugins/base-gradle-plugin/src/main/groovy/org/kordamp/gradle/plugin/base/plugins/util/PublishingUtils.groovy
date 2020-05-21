@@ -50,7 +50,7 @@ import org.kordamp.gradle.plugin.base.model.PomOptions
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
 import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencySpecImpl
 
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.StringUtils.isBlank
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
@@ -63,7 +63,7 @@ class PublishingUtils {
     static Publication configurePublication(Project project, String publicationName) {
         if (!publicationName) return
 
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         PublishingExtension publishingExtension = project.extensions.findByType(PublishingExtension)
         Publication publication = publishingExtension.publications.findByName(publicationName)
         if (publication instanceof MavenPublication) {
@@ -77,7 +77,7 @@ class PublishingUtils {
     static void configurePublications(Project project, String... publications) {
         if (!publications) return
 
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         PublishingExtension publishingExtension = project.extensions.findByType(PublishingExtension)
         publications.each { String publicationName ->
             Publication publication = publishingExtension.publications.findByName(publicationName)
@@ -90,7 +90,7 @@ class PublishingUtils {
     }
 
     static void configureAllPublications(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         PublishingExtension publishingExtension = project.extensions.findByType(PublishingExtension)
         SigningExtension signingExtension = project.extensions.findByType(SigningExtension)
         List<String> publications = publishingExtension.publications*.name

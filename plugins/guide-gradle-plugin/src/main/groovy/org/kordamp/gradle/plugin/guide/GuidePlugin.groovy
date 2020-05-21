@@ -39,7 +39,7 @@ import javax.inject.Named
 
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * @author Andres Almiray
@@ -139,7 +139,7 @@ class GuidePlugin extends AbstractKordampPlugin {
         project.tasks.named(ASCIIDOCTOR).configure(new Action<AsciidoctorTask>() {
             @Override
             void execute(AsciidoctorTask t) {
-                ProjectConfigurationExtension config = resolveEffectiveConfig(project.rootProject) ?: resolveEffectiveConfig(project)
+                ProjectConfigurationExtension config = resolveConfig(project.rootProject) ?: resolveConfig(project)
 
                 Map attrs = [:]
                 attrs.putAll(t.attributes)
@@ -237,7 +237,7 @@ class GuidePlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void configurePublishing(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         if (!config.docs.guide.publish.enabled) {
             return
         }

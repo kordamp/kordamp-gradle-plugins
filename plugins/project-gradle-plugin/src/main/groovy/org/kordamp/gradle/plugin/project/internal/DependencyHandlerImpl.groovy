@@ -27,7 +27,6 @@ import org.kordamp.gradle.plugin.project.DependencyHandler
 
 import static java.util.Arrays.asList
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  *
@@ -62,7 +61,7 @@ class DependencyHandlerImpl implements DependencyHandler {
             Project prj = project.rootProject.findProject(str)
             if (prj) return prj
 
-            KDependency dependency = (resolveEffectiveConfig(project) ?: resolveConfig(project)).dependencies.findDependencyByName(str)
+            KDependency dependency = resolveConfig(project).dependencies.findDependencyByName(str)
             if (dependency) {
                 prj = project.rootProject.findProject(dependency.artifactId)
                 if (prj) return prj
@@ -167,7 +166,7 @@ class DependencyHandlerImpl implements DependencyHandler {
 
     @Override
     void dependency(String name, String configuration, String... configurations) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         if (project.configurations.findByName(configuration)) {
             project.dependencies.add(configuration, config.dependencies.getDependency(name).gav)
         }
@@ -183,7 +182,7 @@ class DependencyHandlerImpl implements DependencyHandler {
 
     @Override
     void dependency(String name, String configuration, Closure configurer) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         if (project.configurations.findByName(configuration)) {
             if (configurer) {
                 project.dependencies.add(configuration, config.dependencies.getDependency(name).gav, configurer)
@@ -195,7 +194,7 @@ class DependencyHandlerImpl implements DependencyHandler {
 
     @Override
     void module(String name, String moduleName, String configuration, String... configurations) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         if (project.configurations.findByName(configuration)) {
             project.dependencies.add(configuration, config.dependencies.getDependency(name).asGav(moduleName))
         }
@@ -211,7 +210,7 @@ class DependencyHandlerImpl implements DependencyHandler {
 
     @Override
     void module(String name, String moduleName, String configuration, Closure configurer) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         if (project.configurations.findByName(configuration)) {
             if (configurer) {
                 project.dependencies.add(configuration, config.dependencies.getDependency(name).asGav(moduleName), configurer)

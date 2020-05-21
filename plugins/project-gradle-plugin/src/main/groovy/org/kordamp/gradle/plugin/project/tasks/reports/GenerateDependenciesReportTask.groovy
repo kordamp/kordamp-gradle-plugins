@@ -24,10 +24,8 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.tasks.reports.ReportGeneratingTask
 
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
 
 /**
@@ -42,8 +40,6 @@ class GenerateDependenciesReportTask extends DefaultTask implements ReportGenera
 
     @TaskAction
     void generateReport() {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project.rootProject)
-
         StringBuilder document = new StringBuilder("""|
         |= Dependencies
         |""".stripMargin('|'))

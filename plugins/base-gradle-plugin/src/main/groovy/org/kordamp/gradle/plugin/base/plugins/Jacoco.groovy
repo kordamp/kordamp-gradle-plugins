@@ -138,19 +138,8 @@ class Jacoco extends AbstractFeature {
         testDir.exists() && testDir.listFiles().length
     }
 
-    void copyInto(Jacoco copy) {
-        super.copyInto(copy)
-        copy.aggregateExecFile = aggregateExecFile
-        copy.aggregateReportHtmlFile = aggregateReportHtmlFile
-        copy.aggregateReportXmlFile = aggregateReportXmlFile
-        copy.additionalSourceDirs.from(project.files(additionalSourceDirs))
-        copy.additionalClassDirs.from(project.files(additionalClassDirs))
-        copy.toolVersion = toolVersion
-        copy.excludes.addAll(excludes)
-    }
-
     static void merge(Jacoco o1, Jacoco o2) {
-        // AbstractFeature.merge(o1, o2)
+        AbstractFeature.merge(o1, o2)
         o1.aggregateExecFile = o1.aggregateExecFile ?: o2.aggregateExecFile
         o1.aggregateReportHtmlFile = o1.aggregateReportHtmlFile ?: o2.aggregateReportHtmlFile
         o1.aggregateReportXmlFile = o1.aggregateReportXmlFile ?: o2.aggregateReportXmlFile

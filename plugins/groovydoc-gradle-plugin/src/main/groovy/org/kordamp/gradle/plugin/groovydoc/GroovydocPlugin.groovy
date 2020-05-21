@@ -46,7 +46,7 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 import static org.kordamp.gradle.util.PluginUtils.registerJarVariant
 import static org.kordamp.gradle.util.PluginUtils.resolveAllSource
 import static org.kordamp.gradle.util.PluginUtils.resolveClassesTask
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * Configures {@code groovydoc} and {@code groovydocJar} tasks.
@@ -91,7 +91,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
     }
 
     private void doConfigureRootProject(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
         setEnabled(config.docs.groovydoc.aggregate.enabled)
 
         List<Groovydoc> docTasks = []
@@ -156,7 +156,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
     private class GroovydocProjectEvaluatedListener implements ProjectEvaluatedListener {
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.docs.groovydoc.enabled)
 
             TaskProvider<Groovydoc> groovydoc = createGroovydocTask(project)
@@ -180,7 +180,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                 @Override
                 @CompileDynamic
                 void execute(Groovydoc t) {
-                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+                    ProjectConfigurationExtension config = resolveConfig(project)
                     t.dependsOn resolveClassesTask(project)
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Generates Groovydoc API documentation'
@@ -195,7 +195,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
     }
 
     private TaskProvider<Jar> createGroovydocJarTask(Project project, TaskProvider<Groovydoc> groovydoc) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         TaskProvider<Jar> groovydocJar = project.tasks.register(GROOVYDOC_JAR_TASK_NAME, Jar,
             new Action<Jar>() {

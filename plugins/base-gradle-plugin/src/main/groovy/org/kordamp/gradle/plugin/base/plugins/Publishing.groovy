@@ -21,12 +21,12 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.model.DefaultPomOptions
 import org.kordamp.gradle.plugin.base.model.PomOptions
 import org.kordamp.gradle.util.CollectionUtils
 import org.kordamp.gradle.util.ConfigureUtil
 
 import static org.kordamp.gradle.util.StringUtils.isBlank
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -123,22 +123,6 @@ class Publishing extends AbstractFeature {
         this.flattenPlatformsSet
     }
 
-    void copyInto(Publishing copy) {
-        super.copyInto(copy)
-
-        copy.@releasesRepository = releasesRepository
-        copy.@snapshotsRepository = snapshotsRepository
-        copy.@signing = this.signing
-        copy.@signingSet = this.signingSet
-        copy.publications.addAll(publications)
-        copy.scopes.addAll(scopes)
-        copy.@useVersionExpressions = this.useVersionExpressions
-        copy.@useVersionExpressionsSet = this.useVersionExpressionsSet
-        copy.@flattenPlatforms = this.flattenPlatforms
-        copy.@flattenPlatformsSet = this.flattenPlatformsSet
-        this.@pom.copyInto(copy.@pom)
-    }
-
     static void merge(Publishing o1, Publishing o2) {
         AbstractFeature.merge(o1, o2)
         o1.releasesRepository = o1.@releasesRepository ?: o2.@releasesRepository
@@ -152,5 +136,114 @@ class Publishing extends AbstractFeature {
         CollectionUtils.merge(o1.publications, o2?.publications)
         CollectionUtils.merge(o1.scopes, o2?.scopes)
         DefaultPomOptions.merge(o1.pom, o2.pom)
+    }
+
+    @CompileStatic
+    private static class DefaultPomOptions implements PomOptions {
+        String packaging
+        Map<String, String> properties = new LinkedHashMap<>()
+
+        String parent
+        boolean overwriteInceptionYear
+        boolean overwriteUrl
+        boolean overwriteLicenses
+        boolean overwriteScm
+        boolean overwriteOrganization
+        boolean overwriteDevelopers
+        boolean overwriteContributors
+        boolean overwriteIssueManagement
+        boolean overwriteCiManagement
+        boolean overwriteMailingLists
+
+        private boolean overwriteInceptionYearSet
+        private boolean overwriteUrlSet
+        private boolean overwriteLicensesSet
+        private boolean overwriteScmSet
+        private boolean overwriteOrganizationSet
+        private boolean overwriteDevelopersSet
+        private boolean overwriteContributorsSet
+        private boolean overwriteIssueManagementSet
+        private boolean overwriteCiManagementSet
+        private boolean overwriteMailingListsSet
+
+        boolean isOverwriteInceptionYearSet() {
+            return overwriteInceptionYearSet
+        }
+
+        boolean isOverwriteUrlSet() {
+            return overwriteUrlSet
+        }
+
+        boolean isOverwriteLicensesSet() {
+            return overwriteLicensesSet
+        }
+
+        boolean isOverwriteScmSet() {
+            return overwriteScmSet
+        }
+
+        boolean isOverwriteOrganizationSet() {
+            return overwriteOrganizationSet
+        }
+
+        boolean isOverwriteDevelopersSet() {
+            return overwriteDevelopersSet
+        }
+
+        boolean isOverwriteContributorsSet() {
+            return overwriteContributorsSet
+        }
+
+        boolean isOverwriteIssueManagementSet() {
+            return overwriteIssueManagementSet
+        }
+
+        boolean isOverwriteCiManagementSet() {
+            return overwriteCiManagementSet
+        }
+
+        boolean isOverwriteMailingListsSet() {
+            return overwriteMailingListsSet
+        }
+
+        @Override
+        Map<String, Object> toMap() {
+            Map<String, Object> map = new LinkedHashMap<String, Object>(
+                packaging: packaging,
+                properties: properties)
+            if (isNotBlank(parent)) {
+                map.putAll([
+                    parent                  : parent,
+                    overwriteInceptionYear  : overwriteInceptionYear,
+                    overwriteUrl            : overwriteUrl,
+                    overwriteLicenses       : overwriteLicenses,
+                    overwriteScm            : overwriteScm,
+                    overwriteOrganization   : overwriteOrganization,
+                    overwriteDevelopers     : overwriteDevelopers,
+                    overwriteContributors   : overwriteContributors,
+                    overwriteIssueManagement: overwriteIssueManagementSet,
+                    overwriteCiManagement   : overwriteCiManagementSet,
+                    overwriteMailingLists   : overwriteMailingListsSet
+                ])
+            }
+
+            map
+        }
+
+        static void merge(DefaultPomOptions o1, DefaultPomOptions o2) {
+            o1.packaging = (o1.packaging ?: o2.packaging) ?: 'jar'
+            CollectionUtils.merge(o1.properties, o2.properties)
+            o1.parent = o1.parent ?: o2.parent
+            o1.setOverwriteInceptionYear((boolean) (o1.overwriteInceptionYearSet ? o1.overwriteInceptionYear : o2.overwriteInceptionYear))
+            o1.setOverwriteUrl((boolean) (o1.overwriteUrlSet ? o1.overwriteUrl : o2.overwriteUrl))
+            o1.setOverwriteLicenses((boolean) (o1.overwriteLicensesSet ? o1.overwriteLicenses : o2.overwriteLicenses))
+            o1.setOverwriteScm((boolean) (o1.overwriteScmSet ? o1.overwriteScm : o2.overwriteScm))
+            o1.setOverwriteOrganization((boolean) (o1.overwriteOrganizationSet ? o1.overwriteOrganization : o2.overwriteOrganization))
+            o1.setOverwriteDevelopers((boolean) (o1.overwriteDevelopersSet ? o1.overwriteDevelopers : o2.overwriteDevelopers))
+            o1.setOverwriteContributors((boolean) (o1.overwriteContributorsSet ? o1.overwriteContributors : o2.overwriteContributors))
+            o1.setOverwriteIssueManagement((boolean) (o1.overwriteIssueManagementSet ? o1.overwriteIssueManagement : o2.overwriteIssueManagement))
+            o1.setOverwriteCiManagement((boolean) (o1.overwriteCiManagementSet ? o1.overwriteCiManagement : o2.overwriteCiManagement))
+            o1.setOverwriteMailingLists((boolean) (o1.overwriteMailingListsSet ? o1.overwriteMailingLists : o2.overwriteMailingLists))
+        }
     }
 }

@@ -38,7 +38,6 @@ import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAl
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 import static org.kordamp.gradle.util.StringUtils.isBlank
 
 /**
@@ -97,12 +96,12 @@ class SonarPlugin extends AbstractKordampPlugin {
     private class SonarProjectEvaluatedListener implements ProjectEvaluatedListener {
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.quality.sonar.enabled)
-            config = resolveEffectiveConfig(project.rootProject)
+            ProjectConfigurationExtension rootConfig = resolveConfig(project.rootProject)
 
             SonarQubeExtension sonarExt = project.extensions.findByType(SonarQubeExtension)
-            sonarExt.skipProject = config.quality.sonar.excludedProjects.contains(project.name)
+            sonarExt.skipProject = rootConfig.quality.sonar.excludedProjects.contains(project.name)
         }
     }
 

@@ -38,7 +38,7 @@ import javax.inject.Named
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * @author Andres Almiray
@@ -128,7 +128,7 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
 
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.quality.spotbugs.enabled)
 
             SpotBugsExtension spotbugsExt = project.extensions.findByType(SpotBugsExtension)
@@ -176,7 +176,7 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
     }
 
     private void configureAggregateSpotBugsTask(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         SpotBugsExtension spotbugsExt = project.extensions.findByType(SpotBugsExtension)
         spotbugsExt.toolVersion = config.quality.spotbugs.toolVersion

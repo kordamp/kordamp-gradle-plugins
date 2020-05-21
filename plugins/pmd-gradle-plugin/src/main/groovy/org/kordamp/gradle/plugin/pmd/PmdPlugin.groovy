@@ -38,7 +38,7 @@ import javax.inject.Named
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
-import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
  * @author Andres Almiray
@@ -138,7 +138,7 @@ class PmdPlugin extends AbstractKordampPlugin {
 
         @Override
         void projectEvaluated(Project project) {
-            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.quality.pmd.enabled)
 
             PmdExtension pmdExt = project.extensions.findByType(PmdExtension)
@@ -185,7 +185,7 @@ class PmdPlugin extends AbstractKordampPlugin {
     }
 
     private void configureAggregatePmdTask(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveConfig(project)
 
         PmdExtension pmdExt = project.extensions.findByType(PmdExtension)
         pmdExt.toolVersion = config.quality.pmd.toolVersion

@@ -37,17 +37,6 @@ class IssueManagement {
         ])
     }
 
-    IssueManagement copyOf() {
-        IssueManagement copy = new IssueManagement()
-        copyInto(copy)
-        copy
-    }
-
-    void copyInto(IssueManagement copy) {
-        copy.system = system
-        copy.url = url
-    }
-
     static void merge(IssueManagement o1, IssueManagement o2) {
         o1.system = o1.system ?: o2?.system
         o1.url = o1.url ?: o2?.url
