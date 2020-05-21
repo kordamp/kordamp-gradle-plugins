@@ -15,7 +15,7 @@ Configures a Gradle plugin project with `java-gradle-plugin` and `publish-plugin
 in the `<<_org_kordamp_gradle_base,info>>` block of the `config` DSL. Artifacts will be automatically signed if the
 `uploadArchives` task is present.
 
-NOTE:: This plugin must be explicitly applied to Gradle plugin projects only.
+NOTE: This plugin must be explicitly applied to Gradle plugin projects only.
 
 [[_org_kordamp_gradle_plugin_dsl]]
 == DSL

@@ -1,0 +1,60 @@
+
+[[_org_kordamp_gradle_properties]]
+= Properties
+
+[horizontal]
+id:: `org.kordamp.gradle.properties`
+class:: `org.kordamp.gradle.plugin.properties.PropertiesPlugin`
+    (link:api/org/kordamp/gradle/plugin/properties/PropertiesPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/properties/PropertiesPlugin.html[source])
+
+NOTE: This plugin should be applied to `settings.gradle(.kts)` only!
+
+Enables additional property source files with link:https://bitbucket.org/asomov/snakeyaml/wiki/Documentation[YAML]
+and link:https://github.com/toml-lang/toml[TOML] formats.
+
+Property source files can be placed at any place where you would typically find the standard `gradle.properties` file,
+such as
+
+ * `$GRADLE_HOME/`
+ * `$USER_HOME/.gradle/`
+ * `$project.projectDir/`
+
+Following the convention set by the standard `gradle.properties` file, these are the only file names accepted for
+automatically processing additional property source files:
+
+ * `gradle.yml`
+ * `gradle.toml`
+
+[[_org_kordamp_gradle_properties_dsl]]
+== DSL
+
+The following DSL applies to properties on projects. Property files will be automatically read and applied to `settings.ext`
+once the plugin is applied to `settings.gradle`. If you'd like to skip the YAML or TOML files then define a System property
+`yaml.enabled` or `toml.enabled` with `false` as value.
+
+[source,groovy]
+[subs="+macros"]
+----
+properties {
+    yaml {
+        enabled
+        overwrite
+    }
+    toml {
+        enabled
+        overwrite
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name      | Type    | Required | Default Value | Description
+| enabled   | boolean | no       | true          | Enables or disables processing of the target format.
+| overwrite | boolean | no       | true          | Whether to overwrite existing properties or not.
+|===
+
+NOTE: You may use the `systemProp` prefix to declare a System property instead of a project property, just like it's
+done for properties defined in `gradle.properties`.
+

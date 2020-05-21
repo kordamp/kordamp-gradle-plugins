@@ -8,7 +8,7 @@ class:: `org.kordamp.gradle.plugin.settings.SettingsPlugin`
     (link:api/org/kordamp/gradle/plugin/settings/SettingsPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/settings/SettingsPlugin.html[source])
 
-Note:: This plugin should be applied to `settings.gradle(.kts)` only!
+NOTE: This plugin should be applied to `settings.gradle(.kts)` only!
 
 Configures the root project by automatically including subprojects. The root project must abide
 to one of the following layouts:
@@ -102,7 +102,7 @@ projects {
 [options="header", cols="5*"]
 |===
 | Name                    | Type         | Required | Default Value | Description
-| layout                  | boolean      | no       | two-level     | Defines the project layout. Valid values are [`two-level`, `multi-level`, `standard`, `explicit`].
+| layout                  | String       | no       | two-level     | Defines the project layout. Valid values are [`two-level`, `multi-level`, `standard`, `explicit`].
 | enforceNamingConvention | boolean      | no       | true          | If `true` then build file names must match their containing project directory name.
 | useLongPaths            | boolean      | no       | false         | If `true` then projects will use their long paths when layout != `standard`.
 | directories             | List<String> | no*      | []            | List of directories to include for `two-level` and `multi-level` layout.

@@ -128,6 +128,16 @@ file {
 exists:: The given file must exist.
 missing:: The given file must *not* exist.
 
+.custom
+[source,groovy]
+----
+custom {
+    activation { Project p ->
+        // custom condition against Project p
+    }
+}
+----
+
 .property
 [source,groovy]
 ----
@@ -141,13 +151,15 @@ property {
 key:: The name of the property (required).
 value:: The Value of the property (optional).
 
-This activation block can match environment variables, system properties, and/or project properties. +
-Environment variables are always uppercased and require `env.` as prefix in the key. +
-System properties require `systemProp.` as prefix in the key. +
-Project properties names are used as is in the key. +
-If the `value` is omitted then the activation only checks for the existence of the `key`. If the `key` is prefixed by a `!`
-then the condition is inverted, i.e, the activation checks that the `key` does not exist. +
-If the `value` is given then the property's value must match it. If the `value` is prefixed with a `!` then the given value
+Usage rules:
+
+* This activation block can match environment variables, system properties, and/or project properties.
+* Environment variables are always uppercased and require `env.` as prefix in the key.
+* System properties require `systemProp.` as prefix in the key.
+* Project properties names are used as is in the key.
+* If the `value` is omitted then the activation only checks for the existence of the `key`. If the `key` is prefixed by a `!`
+then the condition is inverted, i.e, the activation checks that the `key` does not exist.
+* If the `value` is given then the property's value must match it. If the `value` is prefixed with a `!` then the given value
 must not match.
 
 Examples:
@@ -183,16 +195,6 @@ property {
 property {
     key('release')
     value('!false')
-}
-----
-
-.custom
-[source,groovy]
-----
-custom {
-    activation { Project p ->
-        // custom condition against Project p
-    }
 }
 ----
 
