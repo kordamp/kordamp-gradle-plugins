@@ -33,10 +33,10 @@ import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.PluginUtils.supportsApiConfiguration
-import static org.kordamp.gradle.StringUtils.isBlank
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
+import static org.kordamp.gradle.util.StringUtils.isBlank
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray

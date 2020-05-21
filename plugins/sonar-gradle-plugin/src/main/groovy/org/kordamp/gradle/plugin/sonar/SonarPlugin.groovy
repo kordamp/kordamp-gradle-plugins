@@ -18,11 +18,12 @@
 package org.kordamp.gradle.plugin.sonar
 
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.AppliedPlugin
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -31,10 +32,14 @@ import org.sonarqube.gradle.SonarQubePlugin
 import org.sonarqube.gradle.SonarQubeProperties
 import org.sonarqube.gradle.SonarQubeTask
 
-import static org.kordamp.gradle.PluginUtils.resolveConfig
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.isBlank
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.StringUtils.isBlank
 
 /**
  * @author Andres Almiray
@@ -78,28 +83,40 @@ class SonarPlugin extends AbstractKordampPlugin {
         project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
-                project.afterEvaluate {
-                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-                    setEnabled(config.quality.sonar.enabled)
-                    config = resolveEffectiveConfig(project.rootProject)
-
-                    SonarQubeExtension sonarExt = project.extensions.findByType(SonarQubeExtension)
-                    sonarExt.skipProject = config.quality.sonar.excludedProjects.contains(project.name)
-                }
+                addProjectEvaluatedListener(project, new SonarProjectEvaluatedListener())
             }
         })
     }
 
     private void configureRootProject(Project project) {
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                applySonarToRoot(resolveConfig(project), project)
-            }
-        })
+        addAllProjectsEvaluatedListener(project, new SonarAllProjectsEvaluatedListener())
     }
 
-    private static void applySonarToRoot(ProjectConfigurationExtension config, Project project) {
+    @Named('sonar')
+    @DependsOn(['base'])
+    private class SonarProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.quality.sonar.enabled)
+            config = resolveEffectiveConfig(project.rootProject)
+
+            SonarQubeExtension sonarExt = project.extensions.findByType(SonarQubeExtension)
+            sonarExt.skipProject = config.quality.sonar.excludedProjects.contains(project.name)
+        }
+    }
+
+    @Named('sonar')
+    @DependsOn(['jacoco', 'detekt', 'codenarc', 'checkstyle'])
+    private class SonarAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            applySonarToRoot(rootProject)
+        }
+    }
+
+    private static void applySonarToRoot(Project project) {
+        ProjectConfigurationExtension config = resolveConfig(project)
         SonarQubeExtension sonarExt = project.extensions.findByType(SonarQubeExtension)
         sonarExt.properties(new Action<SonarQubeProperties>() {
             @Override

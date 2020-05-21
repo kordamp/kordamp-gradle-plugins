@@ -24,6 +24,8 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.tasks.reports.ReportGeneratingTask
@@ -46,6 +48,10 @@ import org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
 import org.kordamp.gradle.plugin.sourcexref.SourceXrefPlugin
 import org.kordamp.gradle.plugin.stats.SourceStatsPlugin
 import org.kordamp.gradle.plugin.testing.TestingPlugin
+
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 
 /**
  * Aggregator for all Kordamp plugins.
@@ -114,7 +120,7 @@ class ProjectPlugin extends AbstractKordampPlugin {
                 void execute(GenerateDependencyUpdatesReportTask t) {
                     t.dependsOn(dependencyUpdates)
                     t.group = 'Reports'
-                    t.description = "Generates a dependency updates report for '$project.name'."
+                    t.description = "Generates a dependency updates report for '${project.name}'."
                     t.dependencyUpdatesXmlReport.set(new File(
                         dependencyUpdates.get().outputDir +
                             File.separator +
@@ -128,7 +134,7 @@ class ProjectPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(GenerateDependenciesReportTask t) {
                     t.group = 'Reports'
-                    t.description = "Generates a dependencies report for '$project.name'."
+                    t.description = "Generates a dependencies report for '${project.name}'."
                 }
             })
 
@@ -137,7 +143,7 @@ class ProjectPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(GenerateTeamReportTask t) {
                     t.group = 'Reports'
-                    t.description = "Generates a team report for '$project.name'."
+                    t.description = "Generates a team report for '${project.name}'."
                 }
             })
 
@@ -146,7 +152,7 @@ class ProjectPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(GeneratePluginReportTask t) {
                     t.group = 'Reports'
-                    t.description = "Generates a plugin report for '$project.name'."
+                    t.description = "Generates a plugin report for '${project.name}'."
                 }
             })
 
@@ -155,7 +161,7 @@ class ProjectPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(GenerateSummaryReportTask t) {
                     t.group = 'Reports'
-                    t.description = "Generates a summary report for '$project.name'."
+                    t.description = "Generates a summary report for '${project.name}'."
                 }
             })
 
@@ -164,24 +170,28 @@ class ProjectPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(DefaultTask t) {
                     t.group = 'Reports'
-                    t.description = "Generates all reports for '$project.name'."
+                    t.description = "Generates all reports for '${project.name}'."
                 }
             })
 
-        project.afterEvaluate(new Action<Project>() {
-            @Override
-            void execute(Project p) {
-                configureAggregatingReportTasks(p)
-            }
-        })
+        addProjectEvaluatedListener(project, new ProjectProjectEvaluatedListener())
+    }
+
+    @Named('project')
+    @DependsOn(['base'])
+    private class ProjectProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            configureAggregatingReportTasks(project)
+        }
     }
 
     private void configureAggregatingReportTasks(Project project) {
         Set<ReportGeneratingTask> tasks = []
         project.tasks.withType(ReportGeneratingTask, new Action<ReportGeneratingTask>() {
             @Override
-            void execute(ReportGeneratingTask t) {
-                tasks << t
+            void execute(ReportGeneratingTask rgt) {
+                tasks << rgt
             }
         })
 
@@ -189,6 +199,7 @@ class ProjectPlugin extends AbstractKordampPlugin {
             new Action<DefaultTask>() {
                 @Override
                 void execute(DefaultTask t) {
+
                     t.dependsOn(tasks)
                 }
             })

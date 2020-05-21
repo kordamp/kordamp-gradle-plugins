@@ -28,7 +28,6 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
-import org.kordamp.gradle.PluginUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.stats.counter.CssCounter
 import org.kordamp.gradle.plugin.stats.counter.HashCounter
@@ -37,12 +36,13 @@ import org.kordamp.gradle.plugin.stats.counter.PropertiesCounter
 import org.kordamp.gradle.plugin.stats.counter.SemiColonCounter
 import org.kordamp.gradle.plugin.stats.counter.SqlCounter
 import org.kordamp.gradle.plugin.stats.counter.XmlCounter
+import org.kordamp.gradle.util.PluginUtils
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.getFilenameExtension
 import static org.kordamp.gradle.plugin.base.plugins.Stats.HTML
 import static org.kordamp.gradle.plugin.base.plugins.Stats.TXT
 import static org.kordamp.gradle.plugin.base.plugins.Stats.XML
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.StringUtils.getFilenameExtension
 
 /**
  * @author Andres Almiray

@@ -3,7 +3,7 @@ package org.example
 import griffon.core.artifact.GriffonView
 import griffon.metadata.ArtifactProviderFor
 
-import javax.swing.SwingConstants
+import javax.swing.*
 
 @ArtifactProviderFor(GriffonView)
 class SampleView {

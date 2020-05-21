@@ -19,14 +19,12 @@ package org.kordamp.gradle.plugin.kotlindoc
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenArtifact
@@ -37,17 +35,24 @@ import org.jetbrains.dokka.gradle.DokkaPlugin
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.DokkaVersion
 import org.jetbrains.dokka.gradle.GradlePassConfigurationImpl
-import org.kordamp.gradle.StringUtils
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.Kotlindoc
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
+import org.kordamp.gradle.util.StringUtils
 
-import static org.kordamp.gradle.PluginUtils.registerJarVariant
-import static org.kordamp.gradle.PluginUtils.resolveClassesTask
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.registerJarVariant
+import static org.kordamp.gradle.util.PluginUtils.resolveClassesTask
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * Configures {@code kotlindoc} and {@code kotlindocJar} tasks.
@@ -94,13 +99,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
     }
 
     private void configureRootProject(Project project) {
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                createAggregateTasks(project)
-                doConfigureRootProject(project)
-            }
-        })
+        addAllProjectsEvaluatedListener(project, new KotlindocAllProjectsEvaluatedListener())
     }
 
     private void doConfigureRootProject(Project project) {
@@ -158,16 +157,33 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
-            project.afterEvaluate {
-                ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-                setEnabled(config.docs.kotlindoc.enabled)
+            addProjectEvaluatedListener(project, new KotlindocProjectEvaluatedListener())
+        }
+    }
 
-                config.docs.kotlindoc.outputFormats.each { String format ->
-                    TaskProvider<DokkaTask> kotlindoc = createKotlindocTask(project, format)
-                    TaskProvider<Jar> kotlindocJar = createKotlindocJarTask(project, kotlindoc, format)
-                    project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(kotlindocJar)
-                }
+    @Named('kotlindoc')
+    @DependsOn(['javadoc'])
+    private class KotlindocProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.docs.kotlindoc.enabled)
+
+            config.docs.kotlindoc.outputFormats.each { String format ->
+                TaskProvider<DokkaTask> kotlindoc = createKotlindocTask(project, format)
+                TaskProvider<Jar> kotlindocJar = createKotlindocJarTask(project, kotlindoc, format)
+                project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(kotlindocJar)
             }
+        }
+    }
+
+    @Named('kotlindoc')
+    @DependsOn(['javadoc'])
+    private class KotlindocAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            createAggregateTasks(rootProject)
+            doConfigureRootProject(rootProject)
         }
     }
 

@@ -19,25 +19,30 @@ package org.kordamp.gradle.plugin.source
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenArtifact
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
-import static org.kordamp.gradle.PluginUtils.hasSourceSets
-import static org.kordamp.gradle.PluginUtils.registerJarVariant
-import static org.kordamp.gradle.PluginUtils.resolveAllSource
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.hasSourceSets
+import static org.kordamp.gradle.util.PluginUtils.registerJarVariant
+import static org.kordamp.gradle.util.PluginUtils.resolveAllSource
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * Configures a {@code sourcesJar} task.
@@ -85,19 +90,15 @@ class SourceJarPlugin extends AbstractKordampPlugin {
         project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
-                project.afterEvaluate {
-                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-                    setEnabled(config.artifacts.source.enabled)
-
-                    TaskProvider<Jar> sourcesJar = createSourceJarTask(project)
-                    project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(sourcesJar)
-                }
+                addProjectEvaluatedListener(project, new SourceProjectEvaluatedListener())
             }
         })
     }
 
     private void configureRootProject(Project project) {
-        TaskProvider<Jar> sourcesJarTask = project.tasks.register(AGGREGATE_SOURCES_JAR_TASK_NAME, Jar,
+        addAllProjectsEvaluatedListener(project, new SourceAllProjectsEvaluatedListener())
+
+        project.tasks.register(AGGREGATE_SOURCES_JAR_TASK_NAME, Jar,
             new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
@@ -107,13 +108,28 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                     t.enabled = false
                 }
             })
+    }
 
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                configureAggregateSourceJarTask(project, sourcesJarTask)
-            }
-        })
+    @Named('source')
+    @DependsOn(['base'])
+    private class SourceProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.artifacts.source.enabled)
+
+            TaskProvider<Jar> sourcesJar = createSourceJarTask(project)
+            project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(sourcesJar)
+        }
+    }
+
+    @Named('source')
+    @DependsOn(['base'])
+    private class SourceAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            configureAggregateSourceJarTask(rootProject)
+        }
     }
 
     private TaskProvider<Jar> createSourceJarTask(Project project) {
@@ -147,9 +163,8 @@ class SourceJarPlugin extends AbstractKordampPlugin {
         sourcesJar
     }
 
-    private void configureAggregateSourceJarTask(Project project,
-                                                 TaskProvider<Jar> aggregateSourceJarTask) {
-        aggregateSourceJarTask.configure(new Action<Jar>() {
+    private void configureAggregateSourceJarTask(Project project) {
+        project.tasks.named(AGGREGATE_SOURCES_JAR_TASK_NAME, Jar, new Action<Jar>() {
             @Override
             @CompileDynamic
             void execute(Jar t) {

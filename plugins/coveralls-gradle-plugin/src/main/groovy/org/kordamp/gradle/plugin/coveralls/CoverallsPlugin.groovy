@@ -24,13 +24,20 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.testing.jacoco.tasks.JacocoReport
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.TaskGraphReadyListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kt3k.gradle.plugin.CoverallsPluginExtension
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addTaskGraphReadyListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * @author Andres Almiray
@@ -65,33 +72,43 @@ class CoverallsPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
         project.pluginManager.apply(org.kt3k.gradle.plugin.CoverallsPlugin)
 
-        project.gradle.taskGraph.whenReady(new Action<TaskExecutionGraph>() {
-            @Override
-            void execute(TaskExecutionGraph graph) {
-                configureCoveralls(project, graph)
-            }
-        })
+        addAllProjectsEvaluatedListener(project, new CoverallsAllProjectsEvaluatedListener())
+        addTaskGraphReadyListener(project, new CoverallsTaskGraphReadyListener())
+    }
 
-        project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-            setEnabled(effectiveConfig.coverage.coveralls.enabled)
+    @Named('coveralls')
+    @DependsOn(['jacoco'])
+    private class CoverallsAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(rootProject)
+            setEnabled(config.coverage.coveralls.enabled)
 
             project.tasks.named('coveralls').configure(new Action<Task>() {
                 @Override
                 void execute(Task t) {
                     t.group = 'Coverage'
                     t.description = 'Uploads the aggregated coverage report to Coveralls'
-                    t.enabled = effectiveConfig.coverage.coveralls.enabled
-                    t.dependsOn(project.tasks.named('aggregateJacocoReport'))
+                    t.enabled = config.coverage.coveralls.enabled
+                    t.dependsOn(rootProject.tasks.named('aggregateJacocoReport'))
                     t.onlyIf { System.getenv().CI || System.getenv().GITHUB_ACTIONS }
                 }
             })
         }
     }
 
+    @Named('coveralls')
+    @DependsOn(['jacoco'])
+    private class CoverallsTaskGraphReadyListener implements TaskGraphReadyListener {
+        @Override
+        void taskGraphReady(Project rootProject, TaskExecutionGraph graph) {
+            configureCoveralls(rootProject, graph)
+        }
+    }
+
     @CompileDynamic
     private void configureCoveralls(Project project, TaskExecutionGraph graph) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         Set<File> files = []
         project.tasks.withType(JacocoReport) { JacocoReport r ->
@@ -104,7 +121,7 @@ class CoverallsPlugin extends AbstractKordampPlugin {
         }
 
         CoverallsPluginExtension coveralls = project.extensions.findByType(CoverallsPluginExtension)
-        coveralls.jacocoReportPath = effectiveConfig.coverage.jacoco.aggregateReportXmlFile
+        coveralls.jacocoReportPath = config.coverage.jacoco.aggregateReportXmlFile
         coveralls.sourceDirs.addAll(project.files(files))
     }
 }

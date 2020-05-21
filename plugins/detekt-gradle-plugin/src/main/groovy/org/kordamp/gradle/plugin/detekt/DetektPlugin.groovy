@@ -23,18 +23,23 @@ import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 import io.gitlab.arturbosch.detekt.DetektGenerateConfigTask
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.tasks.TaskProvider
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * @author Andres Almiray
@@ -81,7 +86,6 @@ class DetektPlugin extends AbstractKordampPlugin {
         project.pluginManager.withPlugin('kotlin-base', new Action<AppliedPlugin>() {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
-
                 TaskProvider<Detekt> allDetektTask = null
                 if (project.childProjects.isEmpty()) {
                     allDetektTask = project.tasks.register(ALL_DETEKT_TASK_NAME, Detekt,
@@ -95,40 +99,15 @@ class DetektPlugin extends AbstractKordampPlugin {
                         })
                 }
 
-                project.afterEvaluate {
-                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-                    setEnabled(config.quality.detekt.enabled)
-
-                    DetektExtension detektExt = project.extensions.findByType(DetektExtension)
-                    detektExt.toolVersion = config.quality.detekt.toolVersion
-
-                    project.tasks.withType(Detekt) { Detekt task ->
-                        task.setGroup('Quality')
-                        DetektPlugin.applyTo(config, task)
-                        String sourceSetName = task.name['detekt'.size()..-1].uncapitalize()
-                        if (sourceSetName in config.quality.detekt.excludedSourceSets) {
-                            task.enabled = false
-                        }
-                    }
-
-                    if (allDetektTask) {
-                        configureAllDetektTask(project, allDetektTask)
-                    }
-
-                    project.tasks.withType(DetektGenerateConfigTask) { DetektGenerateConfigTask t ->
-                        t.setGroup('Quality')
-                    }
-
-                    project.tasks.withType(DetektCreateBaselineTask) { DetektCreateBaselineTask t ->
-                        t.setGroup('Quality')
-                    }
-                }
+                addProjectEvaluatedListener(project, new DetektProjectEvaluatedListener(allDetektTask))
             }
         })
     }
 
     private void configureRootProject(Project project) {
-        TaskProvider<Detekt> aggregateDetektTask = project.tasks.register(AGGREGATE_DETEKT_TASK_NAME, Detekt,
+        addAllProjectsEvaluatedListener(project, new DetektAllProjectsEvaluatedListener())
+
+        project.tasks.register(AGGREGATE_DETEKT_TASK_NAME, Detekt,
             new Action<Detekt>() {
                 @Override
                 void execute(Detekt t) {
@@ -137,19 +116,75 @@ class DetektPlugin extends AbstractKordampPlugin {
                     t.description = 'Aggregate all detekt reports.'
                 }
             })
-
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                configureAggregateDetektTask(project,
-                    aggregateDetektTask)
-            }
-        })
     }
 
-    @CompileDynamic
-    private void configureAggregateDetektTask(Project project,
-                                              TaskProvider<Detekt> aggregateDetektTask) {
+    @Named('checkstyle')
+    @DependsOn(['base'])
+    private class DetektProjectEvaluatedListener implements ProjectEvaluatedListener {
+        private final TaskProvider<Detekt> allDetektTask
+
+        DetektProjectEvaluatedListener(TaskProvider<Detekt> allDetektTask) {
+            this.allDetektTask = allDetektTask
+        }
+
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.quality.detekt.enabled)
+
+            DetektExtension detektExt = project.extensions.findByType(DetektExtension)
+            detektExt.toolVersion = config.quality.detekt.toolVersion
+
+            project.tasks.withType(Detekt) { Detekt task ->
+                task.setGroup('Quality')
+                DetektPlugin.applyTo(config, task)
+                String sourceSetName = task.name['detekt'.size()..-1].uncapitalize()
+                if (sourceSetName in config.quality.detekt.excludedSourceSets) {
+                    task.enabled = false
+                }
+            }
+
+            project.tasks.withType(DetektGenerateConfigTask) { DetektGenerateConfigTask t ->
+                t.setGroup('Quality')
+            }
+
+            project.tasks.withType(DetektCreateBaselineTask) { DetektCreateBaselineTask t ->
+                t.setGroup('Quality')
+            }
+
+            if (allDetektTask) {
+                Set<Detekt> tt = new LinkedHashSet<>()
+                project.tasks.withType(Detekt) { Detekt task ->
+                    if (task.name != ALL_DETEKT_TASK_NAME &&
+                        task.enabled) tt << task
+                }
+
+                allDetektTask.configure(new Action<Detekt>() {
+                    @Override
+                    @CompileDynamic
+                    void execute(Detekt t) {
+                        applyTo(config, t)
+                        t.enabled &= tt.size() > 0
+                        t.source(*((tt*.source).unique()))
+                        t.classpath.from project.files(*((tt*.classpath).unique()))
+                        t.detektClasspath.from project.files(*((tt*.detektClasspath).unique()))
+                        t.pluginClasspath.from project.files(*((tt*.pluginClasspath).unique()))
+                    }
+                })
+            }
+        }
+    }
+
+    @Named('checkstyle')
+    @DependsOn(['base'])
+    private class DetektAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            configureAggregateDetektTask(rootProject)
+        }
+    }
+
+    private void configureAggregateDetektTask(Project project) {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         DetektExtension detektExt = project.extensions.findByType(DetektExtension)
@@ -171,38 +206,15 @@ class DetektPlugin extends AbstractKordampPlugin {
             }
         }
 
-        aggregateDetektTask.configure(new Action<Detekt>() {
+        project.tasks.named(AGGREGATE_DETEKT_TASK_NAME, Detekt, new Action<Detekt>() {
             @Override
+            @CompileDynamic
             void execute(Detekt t) {
                 applyTo(config, t)
                 t.enabled = config.quality.detekt.aggregate.enabled &&
                     config.quality.detekt.configFile.exists() &&
                     tt.size() > 0
                 t.ignoreFailures = false
-                t.source(*((tt*.source).unique()))
-                t.classpath.from project.files(*((tt*.classpath).unique()))
-                t.detektClasspath.from project.files(*((tt*.detektClasspath).unique()))
-                t.pluginClasspath.from project.files(*((tt*.pluginClasspath).unique()))
-            }
-        })
-    }
-
-    private void configureAllDetektTask(Project project,
-                                        TaskProvider<Detekt> allDetektTasks) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-
-        Set<Detekt> tt = new LinkedHashSet<>()
-        project.tasks.withType(Detekt) { Detekt task ->
-            if (task.name != ALL_DETEKT_TASK_NAME &&
-                task.enabled) tt << task
-        }
-
-        allDetektTasks.configure(new Action<Detekt>() {
-            @Override
-            @CompileDynamic
-            void execute(Detekt t) {
-                applyTo(config, t)
-                t.enabled &= tt.size() > 0
                 t.source(*((tt*.source).unique()))
                 t.classpath.from project.files(*((tt*.classpath).unique()))
                 t.detektClasspath.from project.files(*((tt*.detektClasspath).unique()))

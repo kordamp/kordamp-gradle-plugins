@@ -26,7 +26,7 @@ import org.gradle.jvm.tasks.Jar
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.tasks.reports.ReportGeneratingTask
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * @author Andres Almiray

@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-
 import spock.lang.Unroll
 
 /**

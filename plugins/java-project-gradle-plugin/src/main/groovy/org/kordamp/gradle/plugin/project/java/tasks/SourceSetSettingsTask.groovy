@@ -27,6 +27,8 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
+import org.kordamp.gradle.util.PluginUtils
+import org.kordamp.gradle.util.StringUtils
 
 /**
  * @author Andres Almiray
@@ -60,14 +62,14 @@ class SourceSetSettingsTask extends AbstractReportingTask {
 
     @Option(option = 'sourceSets', description = 'The sourceSets to generate the report for.')
     void setSourceSets(String sourceSets) {
-        if (org.kordamp.gradle.StringUtils.isNotBlank(sourceSets)) {
+        if (StringUtils.isNotBlank(sourceSets)) {
             this.sourceSets = (sourceSets.split(',').collect { it.trim() }) as Set
         }
     }
 
     @TaskAction
     void report() {
-        def ss = org.kordamp.gradle.PluginUtils.resolveSourceSets(project)
+        def ss = PluginUtils.resolveSourceSets(project)
         if (ss instanceof SourceSetContainer) {
             if (sourceSets) {
                 sourceSets.each { s ->

@@ -17,7 +17,7 @@
  */
 package org.kordamp.gradle.plugin.clirr
 
-import org.kordamp.gradle.Version
+import org.kordamp.gradle.util.Version
 import spock.lang.Specification
 import spock.lang.Unroll
 

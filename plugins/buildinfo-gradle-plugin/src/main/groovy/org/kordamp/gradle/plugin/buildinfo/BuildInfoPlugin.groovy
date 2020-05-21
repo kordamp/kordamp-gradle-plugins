@@ -21,14 +21,18 @@ import groovy.transform.CompileStatic
 import net.nemerosa.versioning.VersioningExtension
 import net.nemerosa.versioning.VersioningPlugin
 import org.gradle.api.Project
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
+import javax.inject.Named
 import java.text.SimpleDateFormat
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * Calculates build properties and attaches them to the root {@code Project}.
@@ -66,60 +70,62 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
-
-        project.afterEvaluate {
-            configureBuildProperties(project)
-        }
+        addAllProjectsEvaluatedListener(project, new BuildInfoAllProjectsEvaluatedListener())
     }
 
-    private void configureBuildProperties(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        setEnabled(effectiveConfig.buildInfo.enabled)
+    @Named('buildInfo')
+    @DependsOn(['base'])
+    private class BuildInfoAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(rootProject)
+            setEnabled(config.buildInfo.enabled)
 
-        if (!enabled) {
-            return
-        }
+            if (!enabled) {
+                return
+            }
 
-        Date date = new Date()
-        if (effectiveConfig.buildInfo.clearTime) {
-            Calendar calendar = Calendar.instance
-            calendar.time = date
-            calendar.clear(Calendar.HOUR)
-            calendar.clear(Calendar.MINUTE)
-            calendar.clear(Calendar.SECOND)
-            calendar.clear(Calendar.MILLISECOND)
-            calendar.clear(Calendar.ZONE_OFFSET)
-            date = calendar.time
-        }
+            Date date = new Date()
+            if (config.buildInfo.clearTime) {
+                Calendar calendar = Calendar.instance
+                calendar.time = date
+                calendar.clear(Calendar.HOUR)
+                calendar.clear(Calendar.MINUTE)
+                calendar.clear(Calendar.SECOND)
+                calendar.clear(Calendar.MILLISECOND)
+                calendar.clear(Calendar.ZONE_OFFSET)
+                date = calendar.time
+            }
 
-        if (!effectiveConfig.buildInfo.skipBuildBy) {
-            effectiveConfig.buildInfo.buildBy = System.properties['user.name']
-        }
+            if (!config.buildInfo.skipBuildBy) {
+                config.buildInfo.buildBy = System.properties['user.name']
+            }
 
-        if (!effectiveConfig.buildInfo.skipBuildDate) {
-            effectiveConfig.buildInfo.buildDate = new SimpleDateFormat('yyyy-MM-dd').format(date)
-        }
+            if (!config.buildInfo.skipBuildDate) {
+                config.buildInfo.buildDate = new SimpleDateFormat('yyyy-MM-dd').format(date)
+            }
 
-        if (!effectiveConfig.buildInfo.skipBuildTime) {
-            effectiveConfig.buildInfo.buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(date)
-        }
+            if (!config.buildInfo.skipBuildTime) {
+                config.buildInfo.buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(date)
+            }
 
-        if (!effectiveConfig.buildInfo.skipBuildRevision) {
-            project.pluginManager.apply(VersioningPlugin)
-            VersioningExtension versioning = project.extensions.findByType(VersioningExtension)
-            effectiveConfig.buildInfo.buildRevision = versioning.info.commit
-        }
+            if (!config.buildInfo.skipBuildRevision) {
+                rootProject.pluginManager.apply(VersioningPlugin)
+                VersioningExtension versioning = rootProject.extensions.findByType(VersioningExtension)
+                config.buildInfo.buildRevision = versioning.info.commit
+            }
 
-        if (!effectiveConfig.buildInfo.skipBuildJdk) {
-            effectiveConfig.buildInfo.buildJdk = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString()
-        }
+            if (!config.buildInfo.skipBuildJdk) {
+                config.buildInfo.buildJdk = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString()
+            }
 
-        if (!effectiveConfig.buildInfo.skipBuildOs) {
-            effectiveConfig.buildInfo.buildOs = "${System.properties['os.name']} (${System.properties['os.version']}; ${System.properties['os.arch']})".toString()
-        }
+            if (!config.buildInfo.skipBuildOs) {
+                config.buildInfo.buildOs = "${System.properties['os.name']} (${System.properties['os.version']}; ${System.properties['os.arch']})".toString()
+            }
 
-        if (!effectiveConfig.buildInfo.skipBuildCreatedBy) {
-            effectiveConfig.buildInfo.buildCreatedBy = "Gradle ${project.gradle.gradleVersion}"
+            if (!config.buildInfo.skipBuildCreatedBy) {
+                config.buildInfo.buildCreatedBy = "Gradle ${rootProject.gradle.gradleVersion}"
+            }
         }
     }
 

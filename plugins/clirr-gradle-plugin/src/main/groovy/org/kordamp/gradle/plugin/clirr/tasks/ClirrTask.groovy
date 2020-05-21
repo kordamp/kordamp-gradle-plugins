@@ -42,7 +42,7 @@ import org.yaml.snakeyaml.Yaml
 import uber.org.apache.bcel.classfile.JavaClass
 
 import static net.sf.clirr.core.internal.ClassLoaderUtil.createClassLoader
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  *

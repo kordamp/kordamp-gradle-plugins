@@ -26,8 +26,8 @@ import org.kordamp.gradle.plugin.base.model.artifact.Dependency as KDependency
 import org.kordamp.gradle.plugin.project.DependencyHandler
 
 import static java.util.Arrays.asList
-import static org.kordamp.gradle.PluginUtils.resolveConfig
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  *

@@ -27,8 +27,8 @@ import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.tasks.reports.ReportGeneratingTask
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.PluginUtils.supportsApiConfiguration
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
 
 /**
  * @author Andres Almiray

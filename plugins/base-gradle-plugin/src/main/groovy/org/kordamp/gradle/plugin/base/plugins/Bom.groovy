@@ -20,17 +20,17 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.kordamp.gradle.CollectionUtils
-import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.PomOptions
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
 import org.kordamp.gradle.plugin.base.model.artifact.DependencySpec
 import org.kordamp.gradle.plugin.base.model.artifact.HasModulesSpec
 import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencySpecImpl
+import org.kordamp.gradle.util.CollectionUtils
+import org.kordamp.gradle.util.ConfigureUtil
 
-import static org.kordamp.gradle.StringUtils.isBlank
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import static org.kordamp.gradle.util.StringUtils.isBlank
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray

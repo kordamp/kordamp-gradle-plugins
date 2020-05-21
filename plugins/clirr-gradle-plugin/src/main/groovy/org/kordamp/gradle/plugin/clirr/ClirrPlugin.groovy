@@ -19,26 +19,31 @@ package org.kordamp.gradle.plugin.clirr
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.ReportingBasePlugin
 import org.gradle.api.tasks.TaskProvider
-import org.kordamp.gradle.PluginUtils
-import org.kordamp.gradle.Version
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.clirr.tasks.AggregateClirrReportTask
 import org.kordamp.gradle.plugin.clirr.tasks.ClirrTask
+import org.kordamp.gradle.util.PluginUtils
+import org.kordamp.gradle.util.Version
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.PluginUtils.supportsApiConfiguration
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
 
 /**
  *
@@ -47,6 +52,8 @@ import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
  */
 @CompileStatic
 class ClirrPlugin extends AbstractKordampPlugin {
+    private static final String AGGREGATE_CLIRR_TASK_NAME = 'aggregateClirr'
+
     Project project
 
     ClirrPlugin() {
@@ -80,21 +87,18 @@ class ClirrPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
         project.pluginManager.apply(ReportingBasePlugin)
 
-        project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-            setEnabled(effectiveConfig.clirr.enabled)
-
-            project.pluginManager.withPlugin('java', new Action<AppliedPlugin>() {
-                @Override
-                void execute(AppliedPlugin appliedPlugin) {
-                    configureClirrTask(project)
-                }
-            })
-        }
+        project.pluginManager.withPlugin('java', new Action<AppliedPlugin>() {
+            @Override
+            void execute(AppliedPlugin appliedPlugin) {
+                addProjectEvaluatedListener(project, new ClirrProjectEvaluatedListener())
+            }
+        })
     }
 
     private void configureRootProject(Project project) {
-        TaskProvider<AggregateClirrReportTask> aggregateClirrReportTask = project.tasks.register('aggregateClirr', AggregateClirrReportTask,
+        addAllProjectsEvaluatedListener(project, new ClirrAllProjectsEvaluatedListener())
+
+        project.tasks.register(AGGREGATE_CLIRR_TASK_NAME, AggregateClirrReportTask,
             new Action<AggregateClirrReportTask>() {
                 @Override
                 @CompileDynamic
@@ -105,13 +109,26 @@ class ClirrPlugin extends AbstractKordampPlugin {
                     t.reportFile = project.file("${project.reporting.baseDir.path}/clirr/aggregate-compatibility-report.html")
                 }
             })
+    }
 
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                configureAggregateClirrTask(project, aggregateClirrReportTask)
-            }
-        })
+    @Named('clirr')
+    @DependsOn(['base'])
+    private class ClirrProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.clirr.enabled)
+            configureClirrTask(project)
+        }
+    }
+
+    @Named('clirr')
+    @DependsOn(['base'])
+    private class ClirrAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            configureAggregateClirrTask(rootProject)
+        }
     }
 
     private TaskProvider<ClirrTask> configureClirrTask(Project project) {
@@ -189,7 +206,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
     }
 
     @CompileDynamic
-    private void configureAggregateClirrTask(Project project, TaskProvider<AggregateClirrReportTask> aggregateClirrReportTask) {
+    private void configureAggregateClirrTask(Project project) {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         List<ClirrTask> clirrTasks = []
@@ -203,7 +220,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
         }
         clirrTasks = clirrTasks.unique()
 
-        aggregateClirrReportTask.configure(new Action<AggregateClirrReportTask>() {
+        project.tasks.named(AGGREGATE_CLIRR_TASK_NAME, AggregateClirrReportTask, new Action<AggregateClirrReportTask>() {
             @Override
             void execute(AggregateClirrReportTask t) {
                 t.dependsOn clirrTasks

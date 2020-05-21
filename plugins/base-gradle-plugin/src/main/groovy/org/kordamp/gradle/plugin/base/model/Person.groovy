@@ -19,8 +19,8 @@ package org.kordamp.gradle.plugin.base.model
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.kordamp.gradle.CollectionUtils
-import org.kordamp.gradle.ConfigureUtil
+import org.kordamp.gradle.util.CollectionUtils
+import org.kordamp.gradle.util.ConfigureUtil
 
 /**
  * @author Andres Almiray

@@ -22,6 +22,7 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
+import org.kordamp.gradle.util.PluginUtils
 
 /**
  * @author Andres Almiray
@@ -33,7 +34,7 @@ class SourceSetsTask extends AbstractReportingTask {
     void report() {
         Map<String, Map<String, ?>> map = [:]
 
-        def sourceSets = org.kordamp.gradle.PluginUtils.resolveSourceSets(project)
+        def sourceSets = PluginUtils.resolveSourceSets(project)
         if (sourceSets instanceof SourceSetContainer) {
             sourceSets.eachWithIndex { SourceSet sourceSet, int index ->
                 map.putAll(SourceSetsTask.doReport(sourceSet, index))

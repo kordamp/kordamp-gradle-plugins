@@ -31,7 +31,7 @@ import org.kordamp.gradle.plugin.base.plugins.Clirr
 
 import java.util.function.Predicate
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  *

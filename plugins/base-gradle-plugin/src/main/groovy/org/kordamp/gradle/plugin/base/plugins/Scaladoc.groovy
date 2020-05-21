@@ -21,10 +21,10 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.scala.ScalaDoc
-import org.kordamp.gradle.CollectionUtils
-import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.impl.ScaladocOptions
+import org.kordamp.gradle.util.CollectionUtils
+import org.kordamp.gradle.util.ConfigureUtil
 
 /**
  * @author Andres Almiray

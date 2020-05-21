@@ -15,16 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.base.plugins;
+package org.kordamp.gradle.annotations
 
-import java.util.Map;
+import groovy.transform.CompileStatic
+
+import java.lang.annotation.Documented
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
 
 /**
  * @author Andres Almiray
- * @since 0.8.0
+ * @since 0.37.0
  */
-public interface Feature {
-    boolean isEnabled();
-
-    Map<String, Map<String, Object>> toMap();
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@CompileStatic
+@interface Evicts {
+    String value()
 }

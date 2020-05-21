@@ -21,8 +21,8 @@ import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray

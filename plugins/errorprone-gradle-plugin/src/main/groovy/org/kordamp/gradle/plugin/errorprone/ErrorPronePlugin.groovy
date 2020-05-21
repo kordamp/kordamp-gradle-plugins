@@ -23,12 +23,17 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.tasks.compile.JavaCompile
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -66,34 +71,42 @@ class ErrorPronePlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
         project.pluginManager.apply(net.ltgt.gradle.errorprone.ErrorPronePlugin)
 
-        project.afterEvaluate {
-            project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {
-                @Override
-                @CompileDynamic
-                void execute(AppliedPlugin appliedPlugin) {
-                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-                    setEnabled(config.quality.errorprone.enabled)
+        project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {
+            @Override
+            @CompileDynamic
+            void execute(AppliedPlugin appliedPlugin) {
+                addProjectEvaluatedListener(project, new ErrorproneProjectEvaluatedListener())
+            }
+        })
+    }
 
-                    project.dependencies {
-                        errorprone("com.google.errorprone:error_prone_core:${config.quality.errorprone.errorProneVersion}")
-                        errorproneJavac("com.google.errorprone:javac:${config.quality.errorprone.errorProneJavacVersion}")
-                    }
+    @Named('errorprone')
+    @DependsOn(['base'])
+    private class ErrorproneProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        @CompileDynamic
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.quality.errorprone.enabled)
 
-                    project.tasks.withType(JavaCompile) { JavaCompile t ->
-                        t.options.errorprone.enabled = config.quality.errorprone.enabled
-                        t.options.errorprone.disableAllChecks = config.quality.errorprone.disableAllChecks
-                        t.options.errorprone.allErrorsAsWarnings = config.quality.errorprone.allErrorsAsWarnings
-                        t.options.errorprone.allDisabledChecksAsWarnings = config.quality.errorprone.allDisabledChecksAsWarnings
-                        t.options.errorprone.disableWarningsInGeneratedCode = config.quality.errorprone.disableWarningsInGeneratedCode
-                        t.options.errorprone.ignoreUnknownCheckNames = config.quality.errorprone.ignoreUnknownCheckNames
-                        t.options.errorprone.ignoreSuppressionAnnotations = config.quality.errorprone.ignoreSuppressionAnnotations
-                        t.options.errorprone.compilingTestOnlyCode = config.quality.errorprone.compilingTestOnlyCode
-                        if (isNotBlank(config.quality.errorprone.excludedPaths)) {
-                            t.options.errorprone.excludedPaths = config.quality.errorprone.excludedPaths
-                        }
-                    }
+            project.dependencies {
+                errorprone("com.google.errorprone:error_prone_core:${config.quality.errorprone.errorProneVersion}")
+                errorproneJavac("com.google.errorprone:javac:${config.quality.errorprone.errorProneJavacVersion}")
+            }
+
+            project.tasks.withType(JavaCompile) { JavaCompile t ->
+                t.options.errorprone.enabled = config.quality.errorprone.enabled
+                t.options.errorprone.disableAllChecks = config.quality.errorprone.disableAllChecks
+                t.options.errorprone.allErrorsAsWarnings = config.quality.errorprone.allErrorsAsWarnings
+                t.options.errorprone.allDisabledChecksAsWarnings = config.quality.errorprone.allDisabledChecksAsWarnings
+                t.options.errorprone.disableWarningsInGeneratedCode = config.quality.errorprone.disableWarningsInGeneratedCode
+                t.options.errorprone.ignoreUnknownCheckNames = config.quality.errorprone.ignoreUnknownCheckNames
+                t.options.errorprone.ignoreSuppressionAnnotations = config.quality.errorprone.ignoreSuppressionAnnotations
+                t.options.errorprone.compilingTestOnlyCode = config.quality.errorprone.compilingTestOnlyCode
+                if (isNotBlank(config.quality.errorprone.excludedPaths)) {
+                    t.options.errorprone.excludedPaths = config.quality.errorprone.excludedPaths
                 }
-            })
+            }
         }
     }
 }

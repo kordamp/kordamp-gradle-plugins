@@ -19,29 +19,36 @@ package org.kordamp.gradle.plugin.testing
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.execution.TaskExecutionGraph
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.api.tasks.testing.TestReport
 import org.gradle.api.tasks.testing.TestResult
-import org.kordamp.gradle.AnsiConsole
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
+import org.kordamp.gradle.listener.TaskGraphReadyListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.Testing
 import org.kordamp.gradle.plugin.test.tasks.FunctionalTest
 import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
+import org.kordamp.gradle.util.AnsiConsole
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addTaskGraphReadyListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  *
@@ -102,41 +109,13 @@ class TestingPlugin extends AbstractKordampPlugin {
                         })
                 }
 
-                project.afterEvaluate {
-                    ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-                    setEnabled(effectiveConfig.testing.enabled)
-
-                    if (!enabled) {
-                        return
-                    }
-
-                    project.tasks.withType(Test) { Test testTask ->
-                        if (!testTask.enabled) {
-                            return
-                        }
-
-                        if (testTask instanceof IntegrationTest) {
-                            configureLogging(testTask, effectiveConfig.testing.integration.logging)
-                            effectiveConfig.testing.integrationTasks() << (IntegrationTest) testTask
-                        } else if (testTask instanceof FunctionalTest) {
-                            configureLogging(testTask, effectiveConfig.testing.functional.logging)
-                            effectiveConfig.testing.functionalTestTasks() << (FunctionalTest) testTask
-                        } else {
-                            configureLogging(testTask, effectiveConfig.testing.logging)
-                            effectiveConfig.testing.testTasks() << testTask
-                        }
-                    }
-
-                    if (allTestsTask) {
-                        configureAllTestsTask(project, allTestsTask)
-                    }
-                }
+                addProjectEvaluatedListener(project, new TestingProjectEvaluatedListener(allTestsTask))
             }
         })
     }
 
     private void configureRootProject(Project project) {
-        TaskProvider<TestReport> aggregateTestReportTask = project.tasks.register(AGGREGATE_TEST_REPORTS_TASK_NAME, TestReport,
+        project.tasks.register(AGGREGATE_TEST_REPORTS_TASK_NAME, TestReport,
             new Action<TestReport>() {
                 @Override
                 void execute(TestReport t) {
@@ -147,7 +126,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                 }
             })
 
-        TaskProvider<TestReport> aggregateIntegrationTestReportTask = project.tasks.register(AGGREGATE_INTEGRATION_TEST_REPORTS_TASK_NAME, TestReport,
+        project.tasks.register(AGGREGATE_INTEGRATION_TEST_REPORTS_TASK_NAME, TestReport,
             new Action<TestReport>() {
                 @Override
                 void execute(TestReport t) {
@@ -158,7 +137,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                 }
             })
 
-        TaskProvider<TestReport> aggregateFunctionalTestReportTask = project.tasks.register(AGGREGATE_FUNCTIONAL_TEST_REPORTS_TASK_NAME, TestReport,
+        project.tasks.register(AGGREGATE_FUNCTIONAL_TEST_REPORTS_TASK_NAME, TestReport,
             new Action<TestReport>() {
                 @Override
                 void execute(TestReport t) {
@@ -169,7 +148,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                 }
             })
 
-        TaskProvider<TestReport> aggregateAllTestReportTask = project.tasks.register(AGGREGATE_ALL_TEST_REPORTS_TASK_NAME, TestReport,
+        project.tasks.register(AGGREGATE_ALL_TEST_REPORTS_TASK_NAME, TestReport,
             new Action<TestReport>() {
                 @Override
                 void execute(TestReport t) {
@@ -180,32 +159,88 @@ class TestingPlugin extends AbstractKordampPlugin {
                 }
             })
 
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                configureAggregateTestReportTasks(project,
-                    aggregateTestReportTask,
-                    aggregateIntegrationTestReportTask,
-                    aggregateFunctionalTestReportTask,
-                    aggregateAllTestReportTask)
-            }
-        })
+        addAllProjectsEvaluatedListener(project, new TestingAllProjectsEvaluatedListener())
+        addTaskGraphReadyListener(project, new TestingTaskGraphReadyListener())
+    }
 
-        project.gradle.taskGraph.whenReady(new Action<TaskExecutionGraph>() {
-            @Override
-            void execute(TaskExecutionGraph graph) {
-                configureAggregates(project, graph)
+    @Named('testing')
+    @DependsOn(['base'])
+    private class TestingProjectEvaluatedListener implements ProjectEvaluatedListener {
+        private final TaskProvider<DefaultTask> allTestsTask
+
+        TestingProjectEvaluatedListener(TaskProvider<DefaultTask> allTestsTask) {
+            this.allTestsTask = allTestsTask
+        }
+
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.testing.enabled)
+
+            if (!enabled) {
+                return
             }
-        })
+
+            project.tasks.withType(Test) { Test testTask ->
+                if (!testTask.enabled) {
+                    return
+                }
+
+                if (testTask instanceof IntegrationTest) {
+                    configureLogging(testTask, config.testing.integration.logging)
+                    config.testing.integrationTasks() << (IntegrationTest) testTask
+                } else if (testTask instanceof FunctionalTest) {
+                    configureLogging(testTask, config.testing.functional.logging)
+                    config.testing.functionalTestTasks() << (FunctionalTest) testTask
+                } else {
+                    configureLogging(testTask, config.testing.logging)
+                    config.testing.testTasks() << testTask
+                }
+            }
+
+            if (allTestsTask) {
+                if (!config.testing.enabled) {
+                    return
+                }
+
+                allTestsTask.configure(new Action<DefaultTask>() {
+                    @Override
+                    void execute(DefaultTask t) {
+                        Set<Test> tt = new LinkedHashSet<>(config.testing.testTasks())
+                        tt.addAll(config.testing.integrationTasks())
+                        tt.addAll(config.testing.functionalTestTasks())
+                        t.enabled = tt.size() > 0
+                        t.dependsOn(tt)
+                    }
+                })
+            }
+        }
+    }
+
+    @Named('testing')
+    private class TestingAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            configureAggregateTestReportTasks(rootProject)
+        }
+    }
+
+    @Named('testing')
+    @DependsOn(['base'])
+    private class TestingTaskGraphReadyListener implements TaskGraphReadyListener {
+        @Override
+        void taskGraphReady(Project rootProject, TaskExecutionGraph graph) {
+            configureAggregates(rootProject, graph)
+        }
     }
 
     @CompileDynamic
     private void configureAggregates(Project project, TaskExecutionGraph graph) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
-        Set<Test> tt = new LinkedHashSet<>(effectiveConfig.testing.testTasks())
-        Set<Test> itt = new LinkedHashSet<>(effectiveConfig.testing.integrationTasks())
-        Set<Test> ftt = new LinkedHashSet<>(effectiveConfig.testing.functionalTestTasks())
+        Set<Test> tt = new LinkedHashSet<>(config.testing.testTasks())
+        Set<Test> itt = new LinkedHashSet<>(config.testing.integrationTasks())
+        Set<Test> ftt = new LinkedHashSet<>(config.testing.functionalTestTasks())
 
         project.childProjects.values().each {
             Testing e = resolveEffectiveConfig(it).testing
@@ -252,40 +287,16 @@ class TestingPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private void configureAllTestsTask(Project project,
-                                       TaskProvider<DefaultTask> allTestsTask) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.testing.enabled) {
-            return
-        }
-
-        Set<Test> tt = new LinkedHashSet<>(effectiveConfig.testing.testTasks())
-        tt.addAll(effectiveConfig.testing.integrationTasks())
-        tt.addAll(effectiveConfig.testing.functionalTestTasks())
-
-        allTestsTask.configure(new Action<DefaultTask>() {
-            @Override
-            void execute(DefaultTask t) {
-                t.enabled = tt.size() > 0
-                t.dependsOn(tt)
-            }
-        })
-    }
-
     @CompileDynamic
-    private void configureAggregateTestReportTasks(Project project,
-                                                   TaskProvider<TestReport> aggregateTestReportTask,
-                                                   TaskProvider<TestReport> aggregateIntegrationTestReportTask,
-                                                   TaskProvider<TestReport> aggregateFunctionalTestReportTask,
-                                                   TaskProvider<TestReport> aggregateAllTestReportTask) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.testing.enabled) {
+    private void configureAggregateTestReportTasks(Project project) {
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        if (!config.testing.enabled) {
             return
         }
 
-        Set<Test> tt = new LinkedHashSet<>(effectiveConfig.testing.testTasks())
-        Set<Test> itt = new LinkedHashSet<>(effectiveConfig.testing.integrationTasks())
-        Set<Test> ftt = new LinkedHashSet<>(effectiveConfig.testing.functionalTestTasks())
+        Set<Test> tt = new LinkedHashSet<>(config.testing.testTasks())
+        Set<Test> itt = new LinkedHashSet<>(config.testing.integrationTasks())
+        Set<Test> ftt = new LinkedHashSet<>(config.testing.functionalTestTasks())
 
         project.childProjects.values().each {
             Testing e = resolveEffectiveConfig(it).testing
@@ -296,7 +307,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             }
         }
 
-        aggregateTestReportTask.configure(new Action<TestReport>() {
+        project.tasks.named(AGGREGATE_TEST_REPORTS_TASK_NAME, TestReport, new Action<TestReport>() {
             @Override
             void execute(TestReport t) {
                 t.enabled = tt.size() > 0
@@ -305,7 +316,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             }
         })
 
-        aggregateIntegrationTestReportTask.configure(new Action<TestReport>() {
+        project.tasks.named(AGGREGATE_INTEGRATION_TEST_REPORTS_TASK_NAME, TestReport, new Action<TestReport>() {
             @Override
             void execute(TestReport t) {
                 t.enabled = itt.size() > 0
@@ -314,7 +325,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             }
         })
 
-        aggregateFunctionalTestReportTask.configure(new Action<TestReport>() {
+        project.tasks.named(AGGREGATE_FUNCTIONAL_TEST_REPORTS_TASK_NAME, TestReport, new Action<TestReport>() {
             @Override
             void execute(TestReport t) {
                 t.enabled = ftt.size() > 0
@@ -323,7 +334,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             }
         })
 
-        aggregateAllTestReportTask.configure(new Action<TestReport>() {
+        project.tasks.named(AGGREGATE_ALL_TEST_REPORTS_TASK_NAME, TestReport, new Action<TestReport>() {
             @Override
             @CompileDynamic
             void execute(TestReport t) {

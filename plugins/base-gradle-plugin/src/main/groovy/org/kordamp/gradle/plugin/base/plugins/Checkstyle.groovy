@@ -20,8 +20,8 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.util.CollectionUtils
 
 /**
  * @author Andres Almiray

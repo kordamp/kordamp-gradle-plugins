@@ -18,53 +18,14 @@
 package org.kordamp.gradle
 
 import org.gradle.api.Project
-import org.gradle.api.logging.configuration.ConsoleOutput
 
 /**
  * @author Andres Almiray
  * @since 0.16.0
  */
-class AnsiConsole {
-    private boolean plain
-
+@Deprecated
+class AnsiConsole extends org.kordamp.gradle.util.AnsiConsole {
     AnsiConsole(Project project) {
-        plain = project.gradle.startParameter.consoleOutput == ConsoleOutput.Plain ||
-            'plain'.equalsIgnoreCase(System.getProperty('org.gradle.console'))
-    }
-
-    String black(CharSequence s) {
-        (plain ? s : "\u001B[30m${s}\u001b[0m").toString()
-    }
-
-    String red(CharSequence s) {
-        (plain ? s : "\u001B[31m${s}\u001b[0m").toString()
-    }
-
-    String green(CharSequence s) {
-        (plain ? s : "\u001B[32m${s}\u001b[0m").toString()
-    }
-
-    String yellow(CharSequence s) {
-        (plain ? s : "\u001B[33m${s}\u001b[0m").toString()
-    }
-
-    String blue(CharSequence s) {
-        (plain ? s : "\u001B[34m${s}\u001b[0m").toString()
-    }
-
-    String magenta(CharSequence s) {
-        (plain ? s : "\u001B[35m${s}\u001b[0m").toString()
-    }
-
-    String cyan(CharSequence s) {
-        (plain ? s : "\u001B[36m${s}\u001b[0m").toString()
-    }
-
-    String white(CharSequence s) {
-        (plain ? s : "\u001B[37m${s}\u001b[0m").toString()
-    }
-
-    String erase(CharSequence s) {
-        (plain ? s : "\u001b[2K${s}").toString()
+        super(project)
     }
 }

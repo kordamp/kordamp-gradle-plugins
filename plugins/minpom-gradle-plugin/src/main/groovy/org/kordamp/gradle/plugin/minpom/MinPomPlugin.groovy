@@ -21,12 +21,17 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
-import static org.kordamp.gradle.PluginUtils.resolveClassesTask
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
+import static org.kordamp.gradle.util.PluginUtils.resolveClassesTask
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * Configures a {@code minpom} task.
@@ -66,18 +71,25 @@ class MinPomPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('java-base') {
-            TaskProvider<MinpomTask> minpomTask = createMinPomTask(project)
+            createMinPomTask(project)
 
-            project.afterEvaluate {
-                ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-                setEnabled(config.artifacts.minpom.enabled)
+            addProjectEvaluatedListener(project, new MinpomProjectEvaluatedListener())
+        }
+    }
 
-                if (!enabled) {
-                    return
-                }
+    @Named('minpom')
+    @DependsOn(['base'])
+    private class MinpomProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.artifacts.minpom.enabled)
 
-                configureMinPomTask(project, minpomTask)
+            if (!enabled) {
+                return
             }
+
+            configureMinPomTask(project)
         }
     }
 
@@ -93,10 +105,10 @@ class MinPomPlugin extends AbstractKordampPlugin {
             })
     }
 
-    private void configureMinPomTask(Project project, TaskProvider<MinpomTask> minpomTask) {
+    private void configureMinPomTask(Project project) {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
-        minpomTask.configure(new Action<MinpomTask>() {
+        project.tasks.named('minpom', MinpomTask, new Action<MinpomTask>() {
             @Override
             void execute(MinpomTask t) {
                 t.enabled = config.artifacts.minpom.enabled

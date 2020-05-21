@@ -24,7 +24,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
-import static org.kordamp.gradle.PluginUtils.isAndroidProject
+import static org.kordamp.gradle.util.PluginUtils.isAndroidProject
 
 /**
  * @author Andres Almiray

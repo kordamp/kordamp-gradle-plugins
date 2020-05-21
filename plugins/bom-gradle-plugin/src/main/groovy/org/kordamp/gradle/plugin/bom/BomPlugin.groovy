@@ -23,6 +23,9 @@ import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.plugins.signing.SigningPlugin
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.annotations.Evicts
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -32,8 +35,11 @@ import org.kordamp.gradle.plugin.base.model.artifact.Dependency
 import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencyImpl
 import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * Generates a BOM file for the given inputs.
@@ -74,7 +80,15 @@ class BomPlugin extends AbstractKordampPlugin {
 
         project.extensions.findByType(ProjectConfigurationExtension).publishing.enabled = false
 
-        project.afterEvaluate {
+        addProjectEvaluatedListener(project, new BomProjectEvaluatedListener())
+    }
+
+    @Named('bom')
+    @DependsOn(['base'])
+    @Evicts('publishing')
+    private class BomProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
             updatePublications(project)
         }
     }

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle
+package org.kordamp.gradle.util
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
@@ -38,7 +38,7 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.GradleVersion
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
-import static org.kordamp.gradle.StringUtils.isBlank
+import static StringUtils.isBlank
 
 /**
  * @author Andres Almiray

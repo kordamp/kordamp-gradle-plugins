@@ -19,21 +19,26 @@ package org.kordamp.gradle.plugin.pmd
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.quality.Pmd
 import org.gradle.api.plugins.quality.PmdExtension
 import org.gradle.api.tasks.TaskProvider
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.pmd.tasks.InitPmdTask
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * @author Andres Almiray
@@ -90,7 +95,6 @@ class PmdPlugin extends AbstractKordampPlugin {
         project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
-
                 TaskProvider<Pmd> allPmdTask = null
                 if (project.childProjects.isEmpty()) {
                     allPmdTask = project.tasks.register(ALL_PMD_TASK_NAME, Pmd,
@@ -104,32 +108,15 @@ class PmdPlugin extends AbstractKordampPlugin {
                         })
                 }
 
-                project.afterEvaluate {
-                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-                    setEnabled(config.quality.pmd.enabled)
-
-                    PmdExtension pmdExt = project.extensions.findByType(PmdExtension)
-                    pmdExt.toolVersion = config.quality.pmd.toolVersion
-
-                    project.tasks.withType(Pmd) { Pmd task ->
-                        task.setGroup('Quality')
-                        config.quality.pmd.applyTo(task)
-                        String sourceSetName = task.name['pmd'.size()..-1].uncapitalize()
-                        if (sourceSetName in config.quality.pmd.excludedSourceSets) {
-                            task.enabled = false
-                        }
-                    }
-
-                    if (allPmdTask) {
-                        configureAllPmdTask(project, allPmdTask)
-                    }
-                }
+                addProjectEvaluatedListener(project, new PmdProjectEvaluatedListener(allPmdTask))
             }
         })
     }
 
     private void configureRootProject(Project project) {
-        TaskProvider<Pmd> aggregatePmdTask = project.tasks.register(AGGREGATE_PMD_TASK_NAME, Pmd,
+        addAllProjectsEvaluatedListener(project, new PmdAllProjectsEvaluatedListener())
+
+        project.tasks.register(AGGREGATE_PMD_TASK_NAME, Pmd,
             new Action<Pmd>() {
                 @Override
                 void execute(Pmd t) {
@@ -138,19 +125,66 @@ class PmdPlugin extends AbstractKordampPlugin {
                     t.description = 'Aggregate all pmd reports.'
                 }
             })
-
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                configureAggregatePmdTask(project,
-                    aggregatePmdTask)
-            }
-        })
     }
 
-    @CompileDynamic
-    private void configureAggregatePmdTask(Project project,
-                                           TaskProvider<Pmd> aggregatePmdTask) {
+    @Named('pmd')
+    @DependsOn(['base'])
+    private class PmdProjectEvaluatedListener implements ProjectEvaluatedListener {
+        private final TaskProvider<Pmd> allPmdTask
+
+        PmdProjectEvaluatedListener(TaskProvider<Pmd> allPmdTask) {
+            this.allPmdTask = allPmdTask
+        }
+
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.quality.pmd.enabled)
+
+            PmdExtension pmdExt = project.extensions.findByType(PmdExtension)
+            pmdExt.toolVersion = config.quality.pmd.toolVersion
+
+            project.tasks.withType(Pmd) { Pmd task ->
+                task.setGroup('Quality')
+                config.quality.pmd.applyTo(task)
+                String sourceSetName = task.name['pmd'.size()..-1].uncapitalize()
+                if (sourceSetName in config.quality.pmd.excludedSourceSets) {
+                    task.enabled = false
+                }
+            }
+
+            if (allPmdTask) {
+                Set<Pmd> tt = new LinkedHashSet<>()
+                project.tasks.withType(Pmd) { Pmd task ->
+                    if (task.name != ALL_PMD_TASK_NAME &&
+                        task.enabled) tt << task
+                }
+
+                allPmdTask.configure(new Action<Pmd>() {
+                    @Override
+                    @CompileDynamic
+                    void execute(Pmd t) {
+                        config.quality.pmd.applyTo(t)
+                        t.enabled &= tt.size() > 0
+                        t.source(*((tt*.source).unique()))
+                        t.classpath = project.files(*((tt*.classpath).unique()))
+                        t.pmdClasspath = project.files(*((tt*.pmdClasspath).unique()))
+                    }
+                })
+            }
+        }
+    }
+
+    @Named('pmd')
+    @DependsOn(['base'])
+    private class PmdAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            configureAggregatePmdTask(rootProject)
+        }
+    }
+
+    private void configureAggregatePmdTask(Project project) {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         PmdExtension pmdExt = project.extensions.findByType(PmdExtension)
@@ -172,8 +206,9 @@ class PmdPlugin extends AbstractKordampPlugin {
             }
         }
 
-        aggregatePmdTask.configure(new Action<Pmd>() {
+        project.tasks.named(AGGREGATE_PMD_TASK_NAME, Pmd, new Action<Pmd>() {
             @Override
+            @CompileDynamic
             void execute(Pmd t) {
                 config.quality.pmd.applyTo(t)
                 t.enabled = config.quality.pmd.aggregate.enabled &&
@@ -181,29 +216,6 @@ class PmdPlugin extends AbstractKordampPlugin {
                     config.quality.pmd.ruleSetFiles.files.every { it.exists() } &&
                     tt.size() > 0
                 t.ignoreFailures = false
-                t.source(*((tt*.source).unique()))
-                t.classpath = project.files(*((tt*.classpath).unique()))
-                t.pmdClasspath = project.files(*((tt*.pmdClasspath).unique()))
-            }
-        })
-    }
-
-    private void configureAllPmdTask(Project project,
-                                     TaskProvider<Pmd> allPmdTasks) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-
-        Set<Pmd> tt = new LinkedHashSet<>()
-        project.tasks.withType(Pmd) { Pmd task ->
-            if (task.name != ALL_PMD_TASK_NAME &&
-                task.enabled) tt << task
-        }
-
-        allPmdTasks.configure(new Action<Pmd>() {
-            @Override
-            @CompileDynamic
-            void execute(Pmd t) {
-                config.quality.pmd.applyTo(t)
-                t.enabled &= tt.size() > 0
                 t.source(*((tt*.source).unique()))
                 t.classpath = project.files(*((tt*.classpath).unique()))
                 t.pmdClasspath = project.files(*((tt*.pmdClasspath).unique()))

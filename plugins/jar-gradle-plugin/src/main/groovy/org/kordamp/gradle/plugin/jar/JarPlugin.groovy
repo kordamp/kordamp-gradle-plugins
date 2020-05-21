@@ -19,12 +19,13 @@ package org.kordamp.gradle.plugin.jar
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.bundling.Jar
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -32,9 +33,13 @@ import org.kordamp.gradle.plugin.base.plugins.BuildInfo
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.minpom.MinPomPlugin
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * Configures a {@code jar} task.
@@ -80,34 +85,45 @@ class JarPlugin extends AbstractKordampPlugin {
         MinPomPlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('java-base') {
-            project.afterEvaluate {
-                createJarTaskIfNeeded(project)
-            }
+            addProjectEvaluatedListener(project, new JarProjectEvaluatedListener())
         }
     }
 
     private void configureRootProject(Project project) {
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                project.tasks.withType(Jar) { Jar t ->
-                    if (t.name == 'jar' && resolveEffectiveConfig(project).artifacts.jar.enabled) {
-                        configureJarMetainf(project, t)
-                        configureClasspathManifest(project, t)
-                    }
-                    configureJarManifest(project, t)
+        addAllProjectsEvaluatedListener(project, new JarAllProjectsEvaluatedListener())
+    }
+
+    @Named('jar')
+    @DependsOn(['base'])
+    private class JarProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            createJarTaskIfNeeded(project)
+        }
+    }
+
+    @Named('jar')
+    @DependsOn(['buildInfo'])
+    private class JarAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            rootProject.tasks.withType(Jar) { Jar t ->
+                if (t.name == 'jar' && resolveEffectiveConfig(rootProject).artifacts.jar.enabled) {
+                    configureJarMetainf(rootProject, t)
+                    configureClasspathManifest(rootProject, t)
                 }
-                project.childProjects.values().each { Project p ->
-                    p.tasks.withType(Jar) { Jar t ->
-                        if (t.name == 'jar' && resolveEffectiveConfig(p).artifacts.jar.enabled) {
-                            configureJarMetainf(p, t)
-                            configureClasspathManifest(p, t)
-                        }
-                        configureJarManifest(p, t)
+                configureJarManifest(rootProject, t)
+            }
+            rootProject.childProjects.values().each { Project p ->
+                p.tasks.withType(Jar) { Jar t ->
+                    if (t.name == 'jar' && resolveEffectiveConfig(p).artifacts.jar.enabled) {
+                        configureJarMetainf(p, t)
+                        configureClasspathManifest(p, t)
                     }
+                    configureJarManifest(p, t)
                 }
             }
-        })
+        }
     }
 
     @CompileDynamic

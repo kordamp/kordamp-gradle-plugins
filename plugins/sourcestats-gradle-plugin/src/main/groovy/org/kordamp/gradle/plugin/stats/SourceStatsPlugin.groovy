@@ -18,18 +18,22 @@
 package org.kordamp.gradle.plugin.stats
 
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
-import org.gradle.api.tasks.TaskProvider
-import org.kordamp.gradle.PluginUtils
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.util.PluginUtils
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * @author Andres Almiray
@@ -71,16 +75,11 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
 
         BasePlugin.applyIfMissing(project)
 
-        project.afterEvaluate {
-            ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-            setEnabled(effectiveConfig.stats.enabled)
-
-            createSourceStatsTask(project)
-        }
+        addProjectEvaluatedListener(project, new SourceStatsProjectEvaluatedListener())
     }
 
     private void configureRootProject(Project project) {
-        TaskProvider<AggregateSourceStatsReportTask> task = project.tasks.register(
+        project.tasks.register(
             AGGREGATE_STATS_TASK_NAME,
             AggregateSourceStatsReportTask,
             new Action<AggregateSourceStatsReportTask>() {
@@ -92,21 +91,36 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
                 }
             })
 
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                applyAggregateStats(project, task)
-            }
-        })
+        addAllProjectsEvaluatedListener(project, new SourceStatsAllProjectsEvaluatedListener())
+    }
+
+    @Named('stats')
+    @DependsOn(['base'])
+    private class SourceStatsProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.stats.enabled)
+
+            createSourceStatsTask(project)
+        }
+    }
+
+    @Named('stats')
+    @DependsOn(['base'])
+    private class SourceStatsAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            applyAggregateStats(rootProject)
+        }
     }
 
     private void createSourceStatsTask(Project project) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-
         project.tasks.register('sourceStats', SourceStatsTask,
             new Action<SourceStatsTask>() {
                 @Override
                 void execute(SourceStatsTask t) {
+                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
                     t.enabled = PluginUtils.resolveSourceSets(project) && config.stats.enabled
                     t.group = 'Reporting'
                     t.description = 'Generates a report on lines of code.'
@@ -117,7 +131,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
             })
     }
 
-    private void applyAggregateStats(Project project, TaskProvider<AggregateSourceStatsReportTask> aggregateSourceStatsTask) {
+    private void applyAggregateStats(Project project) {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         Set<SourceStatsTask> tt = new LinkedHashSet<>()
@@ -135,13 +149,14 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
             }
         }
 
-        aggregateSourceStatsTask.configure(new Action<AggregateSourceStatsReportTask>() {
-            @Override
-            void execute(AggregateSourceStatsReportTask t) {
-                t.dependsOn tt
-                t.enabled = config.stats.aggregate.enabled
-                t.formats = config.stats.formats
-            }
-        })
+        project.tasks.named(AGGREGATE_STATS_TASK_NAME, AggregateSourceStatsReportTask,
+            new Action<AggregateSourceStatsReportTask>() {
+                @Override
+                void execute(AggregateSourceStatsReportTask t) {
+                    t.dependsOn tt
+                    t.enabled = config.stats.aggregate.enabled
+                    t.formats = config.stats.formats
+                }
+            })
     }
 }

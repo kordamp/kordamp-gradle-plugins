@@ -19,13 +19,13 @@ package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.kordamp.gradle.CollectionUtils
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.util.CollectionUtils
 
 import java.util.regex.Pattern
 
-import static org.kordamp.gradle.StringUtils.getNaturalName
-import static org.kordamp.gradle.StringUtils.getPropertyNameForLowerCaseHyphenSeparatedName
+import static org.kordamp.gradle.util.StringUtils.getNaturalName
+import static org.kordamp.gradle.util.StringUtils.getPropertyNameForLowerCaseHyphenSeparatedName
 
 /**
  * @author Andres Almiray

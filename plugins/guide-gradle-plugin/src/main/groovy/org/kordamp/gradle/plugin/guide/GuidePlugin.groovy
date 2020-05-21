@@ -20,21 +20,26 @@ package org.kordamp.gradle.plugin.guide
 import groovy.transform.CompileDynamic
 import org.asciidoctor.gradle.jvm.AsciidoctorJPlugin
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * @author Andres Almiray
@@ -65,12 +70,7 @@ class GuidePlugin extends AbstractKordampPlugin {
 
         project.extensions.create('guide', GuideExtension, project)
 
-        project.afterEvaluate {
-            configureAsciidoctorTask(project)
-            createGuideTask(project)
-            createInitGuideTask(project)
-            configurePublishing(project)
-        }
+        addProjectEvaluatedListener(project, new GuideProjectEvaluatedListener())
     }
 
     static void applyIfMissing(Project project) {
@@ -79,11 +79,67 @@ class GuidePlugin extends AbstractKordampPlugin {
         }
     }
 
+    @Named('guide')
+    @DependsOn(['base'])
+    private class GuideProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            configureAsciidoctorTask(project)
+            createGuideTask(project)
+            createInitGuideTask(project)
+            configurePublishing(project)
+        }
+    }
+
+    @Named('guide')
+    @DependsOn(['base', 'javadoc', 'groovydoc', 'kotlindoc', 'sourceHtml', 'sourceXref'])
+    private class GuideAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            GuideExtension extension = project.extensions.findByType(GuideExtension)
+
+            project.tasks.named(CREATE_GUIDE_TASK_NAME, Copy, new Action<Copy>() {
+                @Override
+                void execute(Copy t) {
+                    Task task = rootProject.tasks.findByName('aggregateJavadoc')
+                    if (task?.enabled) {
+                        t.dependsOn task
+                        t.from(task.destinationDir) { into extension.javadocApiDir }
+                    }
+
+                    task = rootProject.tasks.findByName('aggregateGroovydoc')
+                    if (task?.enabled) {
+                        t.dependsOn task
+                        t.from(task.destinationDir) { into extension.groovydocApiDir }
+                    }
+
+                    task = rootProject.tasks.findByName('aggregateKotlindocHtml')
+                    if (task?.enabled) {
+                        t.dependsOn task
+                        t.from(task.outputDirectory) { into extension.kotlindocApiDir }
+                    }
+
+                    task = rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)
+                    if (task?.enabled) {
+                        t.dependsOn task
+                        t.from(task.destinationDir) { into extension.sourceHtmlDir }
+                    }
+
+                    task = rootProject.tasks.findByName('aggregateSourceXref')
+                    if (task?.enabled) {
+                        t.dependsOn task
+                        t.from(task.outputDirectory) { into extension.sourceXrefDir }
+                    }
+                }
+            })
+        }
+    }
+
     private void configureAsciidoctorTask(Project project) {
         project.tasks.named(ASCIIDOCTOR).configure(new Action<AsciidoctorTask>() {
             @Override
             void execute(AsciidoctorTask t) {
-                ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project.rootProject) ?: resolveEffectiveConfig(project)
+                ProjectConfigurationExtension config = resolveEffectiveConfig(project.rootProject) ?: resolveEffectiveConfig(project)
 
                 Map attrs = [:]
                 attrs.putAll(t.attributes)
@@ -99,23 +155,23 @@ class GuidePlugin extends AbstractKordampPlugin {
                 checkAttribute(attrs, t.attributes, 'linkcss', true)
                 checkAttribute(attrs, t.attributes, 'source-highlighter', 'coderay')
                 checkAttribute(attrs, t.attributes, 'coderay-linenums-mode', 'table')
-                checkAttribute(attrs, t.attributes, 'project-title', effectiveConfig.info.description)
-                checkAttribute(attrs, t.attributes, 'project-inception-year', effectiveConfig.info.inceptionYear)
-                checkAttribute(attrs, t.attributes, 'project-copyright-year', effectiveConfig.info.copyrightYear)
-                checkAttribute(attrs, t.attributes, 'project-author', effectiveConfig.info.getAuthors().join(', '))
-                checkAttribute(attrs, t.attributes, 'project-url', effectiveConfig.info.url)
-                checkAttribute(attrs, t.attributes, 'project-scm', effectiveConfig.info.links.scm)
-                checkAttribute(attrs, t.attributes, 'project-issue-tracker', effectiveConfig.info.links.issueTracker)
+                checkAttribute(attrs, t.attributes, 'project-title', config.info.description)
+                checkAttribute(attrs, t.attributes, 'project-inception-year', config.info.inceptionYear)
+                checkAttribute(attrs, t.attributes, 'project-copyright-year', config.info.copyrightYear)
+                checkAttribute(attrs, t.attributes, 'project-author', config.info.getAuthors().join(', '))
+                checkAttribute(attrs, t.attributes, 'project-url', config.info.url)
+                checkAttribute(attrs, t.attributes, 'project-scm', config.info.links.scm)
+                checkAttribute(attrs, t.attributes, 'project-issue-tracker', config.info.links.issueTracker)
                 checkAttribute(attrs, t.attributes, 'project-group', project.group)
                 checkAttribute(attrs, t.attributes, 'project-version', project.version)
                 checkAttribute(attrs, t.attributes, 'project-name', project.rootProject.name)
 
-                checkAttribute(attrs, t.attributes, 'build-by', effectiveConfig.buildInfo.buildBy)
-                checkAttribute(attrs, t.attributes, 'build-date', effectiveConfig.buildInfo.buildDate)
-                checkAttribute(attrs, t.attributes, 'build-time', effectiveConfig.buildInfo.buildTime)
-                checkAttribute(attrs, t.attributes, 'build-revision', effectiveConfig.buildInfo.buildRevision)
-                checkAttribute(attrs, t.attributes, 'build-jdk', effectiveConfig.buildInfo.buildJdk)
-                checkAttribute(attrs, t.attributes, 'build-created-by', effectiveConfig.buildInfo.buildCreatedBy)
+                checkAttribute(attrs, t.attributes, 'build-by', config.buildInfo.buildBy)
+                checkAttribute(attrs, t.attributes, 'build-date', config.buildInfo.buildDate)
+                checkAttribute(attrs, t.attributes, 'build-time', config.buildInfo.buildTime)
+                checkAttribute(attrs, t.attributes, 'build-revision', config.buildInfo.buildRevision)
+                checkAttribute(attrs, t.attributes, 'build-jdk', config.buildInfo.buildJdk)
+                checkAttribute(attrs, t.attributes, 'build-created-by', config.buildInfo.buildCreatedBy)
 
                 t.attributes(attrs)
 
@@ -161,47 +217,7 @@ class GuidePlugin extends AbstractKordampPlugin {
                 }
             })
 
-        project.rootProject.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                GuideExtension extension = project.extensions.findByType(GuideExtension)
-
-                guideTask.configure(new Action<Copy>() {
-                    @Override
-                    void execute(Copy t) {
-                        Task task = project.rootProject.tasks.findByName('aggregateJavadoc')
-                        if (task?.enabled) {
-                            t.dependsOn task
-                            t.from(task.destinationDir) { into extension.javadocApiDir }
-                        }
-
-                        task = project.rootProject.tasks.findByName('aggregateGroovydoc')
-                        if (task?.enabled) {
-                            t.dependsOn task
-                            t.from(task.destinationDir) { into extension.groovydocApiDir }
-                        }
-
-                        task = project.rootProject.tasks.findByName('aggregateKotlindocHtml')
-                        if (task?.enabled) {
-                            t.dependsOn task
-                            t.from(task.outputDirectory) { into extension.kotlindocApiDir }
-                        }
-
-                        task = project.rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)
-                        if (task?.enabled) {
-                            t.dependsOn task
-                            t.from(task.destinationDir) { into extension.sourceHtmlDir }
-                        }
-
-                        task = project.rootProject.tasks.findByName('aggregateSourceXref')
-                        if (task?.enabled) {
-                            t.dependsOn task
-                            t.from(task.outputDirectory) { into extension.sourceXrefDir }
-                        }
-                    }
-                })
-            }
-        })
+        addAllProjectsEvaluatedListener(project.rootProject,new GuideAllProjectsEvaluatedListener())
     }
 
     private void createInitGuideTask(Project project) {
@@ -221,20 +237,20 @@ class GuidePlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void configurePublishing(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.docs.guide.publish.enabled) {
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+        if (!config.docs.guide.publish.enabled) {
             return
         }
 
         Task createGuideTask = project.tasks.findByName(CREATE_GUIDE_TASK_NAME)
 
         project.gitPublish {
-            repoUri = effectiveConfig.info.resolveScmLink()
-            branch = effectiveConfig.docs.guide.publish.branch
+            repoUri = config.info.resolveScmLink()
+            branch = config.docs.guide.publish.branch
             contents {
                 from createGuideTask.outputs.files
             }
-            commitMessage = effectiveConfig.docs.guide.publish.message
+            commitMessage = config.docs.guide.publish.message
         }
 
         project.gitPublishCommit.dependsOn(createGuideTask)

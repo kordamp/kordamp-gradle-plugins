@@ -20,7 +20,7 @@ package org.kordamp.gradle.plugin.base.model.artifact.internal
 import groovy.transform.CompileStatic
 import org.kordamp.gradle.plugin.base.model.artifact.HasModulesSpec
 
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray

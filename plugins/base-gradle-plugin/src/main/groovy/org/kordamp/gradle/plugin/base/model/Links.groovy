@@ -20,7 +20,7 @@ package org.kordamp.gradle.plugin.base.model
 import groovy.transform.CompileStatic
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.util.StringUtils.isBlank
 
 /**
  * @author Andres Almiray

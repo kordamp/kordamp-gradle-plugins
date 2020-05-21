@@ -19,10 +19,8 @@ package org.kordamp.gradle.plugin.scaladoc
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenArtifact
@@ -30,16 +28,23 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.scala.ScalaDoc
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 
-import static org.kordamp.gradle.PluginUtils.registerJarVariant
-import static org.kordamp.gradle.PluginUtils.resolveAllSource
-import static org.kordamp.gradle.PluginUtils.resolveClassesTask
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.registerJarVariant
+import static org.kordamp.gradle.util.PluginUtils.resolveAllSource
+import static org.kordamp.gradle.util.PluginUtils.resolveClassesTask
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * Configures {@code scaladoc} and {@code scaladocJar} tasks.
@@ -80,13 +85,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
 
     private void configureRootProject(Project project) {
         createAggregateTasks(project)
-
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                doConfigureRootProject(project)
-            }
-        })
+        addAllProjectsEvaluatedListener(project, new ScaladocAllProjectsEvaluatedListener())
     }
 
     private void doConfigureRootProject(Project project) {
@@ -114,6 +113,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                         if (!config.docs.scaladoc.aggregate.fast) t.dependsOn docTasks
                         t.source docTasks.source
                         t.classpath = project.files(docTasks.classpath)
+                        config.docs.scaladoc.applyTo(t)
                     }
                 })
 
@@ -139,14 +139,30 @@ class ScaladocPlugin extends AbstractKordampPlugin {
         BasePlugin.applyIfMissing(project)
 
         project.pluginManager.withPlugin('scala-base') {
-            project.afterEvaluate {
-                ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-                setEnabled(config.docs.scaladoc.enabled)
+            addProjectEvaluatedListener(project, new ScaladocProjectEvaluatedListener())
+        }
+    }
 
-                TaskProvider<ScalaDoc> scaladoc = createScaladocTask(project)
-                TaskProvider<Jar> scaladocJar = createScaladocJarTask(project, scaladoc)
-                project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(scaladocJar)
-            }
+    @Named('scaladoc')
+    @DependsOn(['javadoc'])
+    private class ScaladocProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.docs.scaladoc.enabled)
+
+            TaskProvider<ScalaDoc> scaladoc = createScaladocTask(project)
+            TaskProvider<Jar> scaladocJar = createScaladocJarTask(project, scaladoc)
+            project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(scaladocJar)
+        }
+    }
+
+    @Named('scaladoc')
+    @DependsOn(['javadoc'])
+    private class ScaladocAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            doConfigureRootProject(rootProject)
         }
     }
 
@@ -210,12 +226,10 @@ class ScaladocPlugin extends AbstractKordampPlugin {
             new Action<ScalaDoc>() {
                 @Override
                 void execute(ScalaDoc t) {
-                    ProjectConfigurationExtension config = resolveEffectiveConfig(t.project)
                     t.enabled = false
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Aggregates Scaladoc API docs for all projects.'
                     t.destinationDir = project.file("${project.buildDir}/docs/aggregate-scaladoc")
-                    config.docs.scaladoc.applyTo(t)
                 }
             })
 

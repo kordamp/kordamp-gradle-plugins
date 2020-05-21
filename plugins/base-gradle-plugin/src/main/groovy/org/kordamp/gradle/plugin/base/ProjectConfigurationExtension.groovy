@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.base
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.kordamp.gradle.ConfigureUtil
 import org.kordamp.gradle.plugin.base.model.Information
 import org.kordamp.gradle.plugin.base.plugins.Bintray
 import org.kordamp.gradle.plugin.base.plugins.Bom
@@ -51,6 +50,7 @@ import org.kordamp.gradle.plugin.base.plugins.SourceXref
 import org.kordamp.gradle.plugin.base.plugins.Spotbugs
 import org.kordamp.gradle.plugin.base.plugins.Stats
 import org.kordamp.gradle.plugin.base.plugins.Testing
+import org.kordamp.gradle.util.ConfigureUtil
 
 /**
  * @author Andres Almiray

@@ -18,7 +18,7 @@
 package org.kordamp.gradle.plugin.clirr
 
 import groovy.transform.CompileStatic
-import org.kordamp.gradle.Version
+import org.kordamp.gradle.util.Version
 
 /**
  *

@@ -27,19 +27,24 @@ import nl.javadude.gradle.plugins.license.DownloadLicensesExtension
 import nl.javadude.gradle.plugins.license.LicenseExtension
 import nl.javadude.gradle.plugins.license.LicenseMetadata
 import nl.javadude.gradle.plugins.license.LicensePlugin
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.TaskProvider
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.License
 import org.kordamp.gradle.plugin.base.model.LicenseId
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * @author Andres Almiray
@@ -150,6 +155,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
+        addProjectEvaluatedListener(project, new LicensingProjectEvaluatedListener())
 
         if (!project.plugins.findPlugin(LicenseReportingPlugin)) {
             project.pluginManager.apply(LicenseReportingPlugin)
@@ -191,15 +197,12 @@ class LicensingPlugin extends AbstractKordampPlugin {
             }
         })
         project.tasks.findByName('licenseFormat').dependsOn(licenseFormatGradle)
-
-        project.afterEvaluate {
-            configureLicenseExtension(project)
-            postConfigureDownloadLicensesExtension(project)
-        }
     }
 
     private void configureRootProject(Project project) {
-        TaskProvider<AggregateLicenseReportTask> task = project.tasks.register('aggregateLicenseReport', AggregateLicenseReportTask,
+        addAllProjectsEvaluatedListener(project, new LicensingAllProjectsEvaluatedListener())
+
+        project.tasks.register('aggregateLicenseReport', AggregateLicenseReportTask,
             new Action<AggregateLicenseReportTask>() {
                 @Override
                 void execute(AggregateLicenseReportTask t) {
@@ -208,13 +211,25 @@ class LicensingPlugin extends AbstractKordampPlugin {
                     t.description = 'Generates an aggregate license report.'
                 }
             })
+    }
 
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                configureAggregateLicenseReportTask(project, task)
-            }
-        })
+    @Named('licensing')
+    @DependsOn(['base'])
+    private class LicensingProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            configureLicenseExtension(project)
+            postConfigureDownloadLicensesExtension(project)
+        }
+    }
+
+    @Named('licensing')
+    @DependsOn(['base'])
+    private class LicensingAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            configureAggregateLicenseReportTask(rootProject)
+        }
     }
 
     @CompileDynamic
@@ -284,10 +299,10 @@ class LicensingPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void postConfigureDownloadLicensesExtension(Project project) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         Map<Object, List<Object>> defaultAliases = new LinkedHashMap<>(DEFAULT_ALIASES)
-        effectiveConfig.licensing.licenses.licenses.each { license ->
+        config.licensing.licenses.licenses.each { license ->
             if (license.licenseId && license.aliases) {
                 LicenseMetadata licenseMetadata = LICENSES_MAP.get(license.licenseId)
                 if (!licenseMetadata) {
@@ -314,9 +329,10 @@ class LicensingPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private void configureAggregateLicenseReportTask(Project project, TaskProvider<AggregateLicenseReportTask> task) {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
-        if (!effectiveConfig.licensing.enabled) {
+    private void configureAggregateLicenseReportTask(Project project) {
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+
+        if (!config.licensing.enabled) {
             return
         }
 
@@ -325,12 +341,13 @@ class LicensingPlugin extends AbstractKordampPlugin {
             tasks.addAll(prj.tasks.withType(DownloadLicenses))
         }
 
-        task.configure(new Action<AggregateLicenseReportTask>() {
-            @Override
-            void execute(AggregateLicenseReportTask t) {
-                t.dependsOn tasks
-                t.enabled = true
-            }
-        })
+        project.tasks.named('aggregateLicenseReport', AggregateLicenseReportTask,
+            new Action<AggregateLicenseReportTask>() {
+                @Override
+                void execute(AggregateLicenseReportTask t) {
+                    t.dependsOn tasks
+                    t.enabled = true
+                }
+            })
     }
 }

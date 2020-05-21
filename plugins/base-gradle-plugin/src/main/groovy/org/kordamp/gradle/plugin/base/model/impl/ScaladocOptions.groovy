@@ -19,7 +19,7 @@ package org.kordamp.gradle.plugin.base.model.impl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.scala.ScalaDoc
-import org.kordamp.gradle.CollectionUtils
+import org.kordamp.gradle.util.CollectionUtils
 
 /**
  * @author Andres Almiray

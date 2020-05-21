@@ -22,18 +22,23 @@ import com.github.spotbugs.SpotBugsPlugin
 import com.github.spotbugs.SpotBugsTask
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.tasks.TaskProvider
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * @author Andres Almiray
@@ -93,32 +98,15 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
                         })
                 }
 
-                project.afterEvaluate {
-                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-                    setEnabled(config.quality.spotbugs.enabled)
-
-                    SpotBugsExtension spotbugsExt = project.extensions.findByType(SpotBugsExtension)
-                    spotbugsExt.toolVersion = config.quality.spotbugs.toolVersion
-
-                    project.tasks.withType(SpotBugsTask) { SpotBugsTask task ->
-                        task.setGroup('Quality')
-                        applyTo(config, task)
-                        String sourceSetName = task.name['spotbugs'.size()..-1].uncapitalize()
-                        if (sourceSetName in config.quality.spotbugs.excludedSourceSets) {
-                            task.enabled = false
-                        }
-                    }
-
-                    if (allSpotBugsTask) {
-                        configureAllSpotBugsTask(project, allSpotBugsTask)
-                    }
-                }
+                addProjectEvaluatedListener(project, new SpotbugsProjectEvaluatedListener(allSpotBugsTask))
             }
         })
     }
 
     private void configureRootProject(Project project) {
-        TaskProvider<SpotBugsTask> aggregateSpotBugsTask = project.tasks.register(AGGREGATE_SPOTBUGS_TASK_NAME, SpotBugsTask,
+        addAllProjectsEvaluatedListener(project, new SpotbugsAllProjectsEvaluatedListener())
+
+        project.tasks.register(AGGREGATE_SPOTBUGS_TASK_NAME, SpotBugsTask,
             new Action<SpotBugsTask>() {
                 @Override
                 void execute(SpotBugsTask t) {
@@ -127,19 +115,67 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
                     t.description = 'Aggregate all spotbugs reports.'
                 }
             })
-
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                configureAggregateSpotBugsTask(project,
-                    aggregateSpotBugsTask)
-            }
-        })
     }
 
-    @CompileDynamic
-    private void configureAggregateSpotBugsTask(Project project,
-                                                TaskProvider<SpotBugsTask> aggregateSpotBugsTask) {
+    @Named('spotbugs')
+    @DependsOn(['base'])
+    private class SpotbugsProjectEvaluatedListener implements ProjectEvaluatedListener {
+        private final TaskProvider<SpotBugsTask> allSpotBugsTask
+
+        SpotbugsProjectEvaluatedListener(TaskProvider<SpotBugsTask> allSpotBugsTask) {
+            this.allSpotBugsTask = allSpotBugsTask
+        }
+
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.quality.spotbugs.enabled)
+
+            SpotBugsExtension spotbugsExt = project.extensions.findByType(SpotBugsExtension)
+            spotbugsExt.toolVersion = config.quality.spotbugs.toolVersion
+
+            project.tasks.withType(SpotBugsTask) { SpotBugsTask task ->
+                task.setGroup('Quality')
+                applyTo(config, task)
+                String sourceSetName = task.name['spotbugs'.size()..-1].uncapitalize()
+                if (sourceSetName in config.quality.spotbugs.excludedSourceSets) {
+                    task.enabled = false
+                }
+            }
+
+            if (allSpotBugsTask) {
+                Set<SpotBugsTask> tt = new LinkedHashSet<>()
+                project.tasks.withType(SpotBugsTask) { SpotBugsTask task ->
+                    if (task.name != ALL_SPOTBUGS_TASK_NAME) tt << task
+                }
+
+                allSpotBugsTask.configure(new Action<SpotBugsTask>() {
+                    @Override
+                    @CompileDynamic
+                    void execute(SpotBugsTask t) {
+                        applyTo(config, t)
+                        t.enabled &= tt.size() > 0
+                        t.source(*((tt*.source).unique()))
+                        t.classes = project.files(*((tt*.classes).flatten()))
+                        t.classpath = project.files(*((tt*.classpath).unique()))
+                        t.spotbugsClasspath = project.files(*((tt*.spotbugsClasspath).unique()))
+                        t.pluginClasspath = project.files(*((tt*.pluginClasspath).unique()))
+                    }
+                })
+            }
+        }
+    }
+
+    @Named('spotbugs')
+    @DependsOn(['base'])
+    private class SpotbugsAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            configureAggregateSpotBugsTask(rootProject)
+        }
+    }
+
+    private void configureAggregateSpotBugsTask(Project project) {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         SpotBugsExtension spotbugsExt = project.extensions.findByType(SpotBugsExtension)
@@ -161,36 +197,13 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
             }
         }
 
-        aggregateSpotBugsTask.configure(new Action<SpotBugsTask>() {
-            @Override
-            void execute(SpotBugsTask t) {
-                applyTo(config, t)
-                t.enabled = config.quality.spotbugs.aggregate.enabled && tt.size() > 0
-                t.ignoreFailures = false
-                t.source(*((tt*.source).unique()))
-                t.classes = project.files(*((tt*.classes).flatten()))
-                t.classpath = project.files(*((tt*.classpath).unique()))
-                t.spotbugsClasspath = project.files(*((tt*.spotbugsClasspath).unique()))
-                t.pluginClasspath = project.files(*((tt*.pluginClasspath).unique()))
-            }
-        })
-    }
-
-    private void configureAllSpotBugsTask(Project project,
-                                          TaskProvider<SpotBugsTask> allSpotBugsTasks) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-
-        Set<SpotBugsTask> tt = new LinkedHashSet<>()
-        project.tasks.withType(SpotBugsTask) { SpotBugsTask task ->
-            if (task.name != ALL_SPOTBUGS_TASK_NAME) tt << task
-        }
-
-        allSpotBugsTasks.configure(new Action<SpotBugsTask>() {
+        project.tasks.named(AGGREGATE_SPOTBUGS_TASK_NAME, SpotBugsTask, new Action<SpotBugsTask>() {
             @Override
             @CompileDynamic
             void execute(SpotBugsTask t) {
                 applyTo(config, t)
-                t.enabled &= tt.size() > 0
+                t.enabled = config.quality.spotbugs.aggregate.enabled && tt.size() > 0
+                t.ignoreFailures = false
                 t.source(*((tt*.source).unique()))
                 t.classes = project.files(*((tt*.classes).flatten()))
                 t.classpath = project.files(*((tt*.classpath).unique()))

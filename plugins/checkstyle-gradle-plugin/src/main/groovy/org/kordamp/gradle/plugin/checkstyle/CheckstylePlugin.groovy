@@ -19,21 +19,26 @@ package org.kordamp.gradle.plugin.checkstyle
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.quality.Checkstyle
 import org.gradle.api.plugins.quality.CheckstyleExtension
 import org.gradle.api.tasks.TaskProvider
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.checkstyle.tasks.InitCheckstyleTask
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * @author Andres Almiray
@@ -103,32 +108,15 @@ class CheckstylePlugin extends AbstractKordampPlugin {
                         })
                 }
 
-                project.afterEvaluate {
-                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-                    setEnabled(config.quality.checkstyle.enabled)
-
-                    CheckstyleExtension checkstyleExt = project.extensions.findByType(CheckstyleExtension)
-                    checkstyleExt.toolVersion = config.quality.checkstyle.toolVersion
-
-                    project.tasks.withType(Checkstyle) { Checkstyle task ->
-                        task.setGroup('Quality')
-                        config.quality.checkstyle.applyTo(task)
-                        String sourceSetName = task.name['checkstyle'.size()..-1].uncapitalize()
-                        if (sourceSetName in config.quality.checkstyle.excludedSourceSets) {
-                            task.enabled = false
-                        }
-                    }
-
-                    if (allCheckstyleTask) {
-                        configureAllCheckstyleTask(project, allCheckstyleTask)
-                    }
-                }
+                addProjectEvaluatedListener(project, new CheckstyleProjectEvaluatedListener(allCheckstyleTask))
             }
         })
     }
 
     private void configureRootProject(Project project) {
-        TaskProvider<Checkstyle> aggregateCheckstyleTask = project.tasks.register(AGGREGATE_CHECKSTYLE_TASK_NAME, Checkstyle,
+        addAllProjectsEvaluatedListener(project, new CheckstyleAllProjectsEvaluatedListener())
+
+        project.tasks.register(AGGREGATE_CHECKSTYLE_TASK_NAME, Checkstyle,
             new Action<Checkstyle>() {
                 @Override
                 void execute(Checkstyle t) {
@@ -138,18 +126,66 @@ class CheckstylePlugin extends AbstractKordampPlugin {
                 }
             })
 
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                configureAggregateCheckstyleTask(project,
-                    aggregateCheckstyleTask)
-            }
-        })
     }
 
-    @CompileDynamic
-    private void configureAggregateCheckstyleTask(Project project,
-                                                  TaskProvider<Checkstyle> aggregateCheckstyleTask) {
+    @Named('checkstyle')
+    @DependsOn(['base'])
+    private class CheckstyleProjectEvaluatedListener implements ProjectEvaluatedListener {
+        private final TaskProvider<Checkstyle> allCheckstyleTask
+
+        CheckstyleProjectEvaluatedListener(TaskProvider<Checkstyle> allCheckstyleTask) {
+            this.allCheckstyleTask = allCheckstyleTask
+        }
+
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.quality.checkstyle.enabled)
+
+            CheckstyleExtension checkstyleExt = project.extensions.findByType(CheckstyleExtension)
+            checkstyleExt.toolVersion = config.quality.checkstyle.toolVersion
+
+            project.tasks.withType(Checkstyle) { Checkstyle task ->
+                task.setGroup('Quality')
+                config.quality.checkstyle.applyTo(task)
+                String sourceSetName = task.name['checkstyle'.size()..-1].uncapitalize()
+                if (sourceSetName in config.quality.checkstyle.excludedSourceSets) {
+                    task.enabled = false
+                }
+            }
+
+            if (allCheckstyleTask) {
+                Set<Checkstyle> tt = new LinkedHashSet<>()
+                project.tasks.withType(Checkstyle) { Checkstyle task ->
+                    if (task.name != ALL_CHECKSTYLE_TASK_NAME &&
+                        task.enabled) tt << task
+                }
+
+                allCheckstyleTask.configure(new Action<Checkstyle>() {
+                    @Override
+                    @CompileDynamic
+                    void execute(Checkstyle t) {
+                        config.quality.checkstyle.applyTo(t)
+                        t.enabled &= tt.size() > 0
+                        t.source(*((tt*.source).unique()))
+                        t.classpath = project.files(*((tt*.classpath).unique()))
+                        t.checkstyleClasspath = project.files(*((tt*.checkstyleClasspath).unique()))
+                    }
+                })
+            }
+        }
+    }
+
+    @Named('checkstyle')
+    @DependsOn(['base'])
+    private class CheckstyleAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            configureAggregateCheckstyleTask(rootProject)
+        }
+    }
+
+    private void configureAggregateCheckstyleTask(Project project) {
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         CheckstyleExtension checkstyleExt = project.extensions.findByType(CheckstyleExtension)
@@ -172,35 +208,13 @@ class CheckstylePlugin extends AbstractKordampPlugin {
             }
         }
 
-        aggregateCheckstyleTask.configure(new Action<Checkstyle>() {
-            @Override
-            void execute(Checkstyle t) {
-                config.quality.checkstyle.applyTo(t)
-                t.enabled = config.quality.checkstyle.aggregate.enabled && config.quality.checkstyle.configFile.exists() && tt.size() > 0
-                t.ignoreFailures = false
-                t.source(*((tt*.source).unique()))
-                t.classpath = project.files(*((tt*.classpath).unique()))
-                t.checkstyleClasspath = project.files(*((tt*.checkstyleClasspath).unique()))
-            }
-        })
-    }
-
-    private void configureAllCheckstyleTask(Project project,
-                                            TaskProvider<Checkstyle> allCheckstyleTasks) {
-        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-
-        Set<Checkstyle> tt = new LinkedHashSet<>()
-        project.tasks.withType(Checkstyle) { Checkstyle task ->
-            if (task.name != ALL_CHECKSTYLE_TASK_NAME &&
-                task.enabled) tt << task
-        }
-
-        allCheckstyleTasks.configure(new Action<Checkstyle>() {
+        project.tasks.named(AGGREGATE_CHECKSTYLE_TASK_NAME, Checkstyle, new Action<Checkstyle>() {
             @Override
             @CompileDynamic
             void execute(Checkstyle t) {
                 config.quality.checkstyle.applyTo(t)
-                t.enabled &= tt.size() > 0
+                t.enabled = config.quality.checkstyle.aggregate.enabled && config.quality.checkstyle.configFile.exists() && tt.size() > 0
+                t.ignoreFailures = false
                 t.source(*((tt*.source).unique()))
                 t.classpath = project.files(*((tt*.classpath).unique()))
                 t.checkstyleClasspath = project.files(*((tt*.checkstyleClasspath).unique()))

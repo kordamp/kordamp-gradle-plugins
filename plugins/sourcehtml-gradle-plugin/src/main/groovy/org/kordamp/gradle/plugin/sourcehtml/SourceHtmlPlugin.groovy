@@ -21,7 +21,6 @@ import com.bmuschko.gradle.java2html.ConvertCodeTask
 import com.bmuschko.gradle.java2html.GenerateOverviewTask
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -29,16 +28,22 @@ import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.FileCollection
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
-import static org.kordamp.gradle.PluginUtils.resolveClassesTask
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.resolveClassesTask
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * @author Andres Almiray
@@ -98,12 +103,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             }
         })
         project.pluginManager.withPlugin('java-base') {
-            project.afterEvaluate {
-                ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-                setEnabled(config.docs.sourceHtml.enabled)
-
-                configureSourceHtmlTask(project, configuration)
-            }
+            addProjectEvaluatedListener(project, new SourceHtmlProjectEvaluatedListener())
         }
     }
 
@@ -119,7 +119,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                 }
             })
 
-        TaskProvider<Jar> sourceHtmlJarTask = project.tasks.register(AGGREGATE_SOURCE_HTML_TASK_NAME + 'Jar', Jar,
+        project.tasks.register(AGGREGATE_SOURCE_HTML_TASK_NAME + 'Jar', Jar,
             new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
@@ -132,16 +132,32 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                 }
             })
 
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                Configuration configuration = project.configurations.findByName(CONFIGURATION_NAME)
-                configureAggregateSourceHtmlTask(project, configuration, sourceHtmlTask, sourceHtmlJarTask)
-            }
-        })
+        addAllProjectsEvaluatedListener(project, new SourceHtmlAllProjectsEvaluatedListener())
     }
 
-    private boolean configureSourceHtmlTask(Project project, Configuration configuration) {
+    @Named('sourceHtml')
+    @DependsOn(['base'])
+    private class SourceHtmlProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.docs.sourceHtml.enabled)
+
+            configureSourceHtmlTask(project)
+        }
+    }
+
+    @Named('sourceHtml')
+    @DependsOn(['base'])
+    private class SourceHtmlAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            configureAggregateSourceHtmlTask(rootProject)
+        }
+    }
+
+    private boolean configureSourceHtmlTask(Project project) {
+        Configuration configuration = project.configurations.findByName(CONFIGURATION_NAME)
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         config.docs.sourceHtml.srcDirs = resolveSrcDirs(project, config.docs.sourceHtml.conversion.srcDirs)
@@ -227,10 +243,8 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
         return !config.docs.sourceHtml.srcDirs.isEmpty()
     }
 
-    private void configureAggregateSourceHtmlTask(Project project,
-                                                  Configuration configuration,
-                                                  TaskProvider<SourceHtmlTask> aggregateSourceHtmlTask,
-                                                  TaskProvider<Jar> aggregateSourceHtmlJarTask) {
+    private void configureAggregateSourceHtmlTask(Project project) {
+        Configuration configuration = project.configurations.findByName(CONFIGURATION_NAME)
         ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
         FileCollection srcdirs = project.objects.fileCollection()
@@ -252,6 +266,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             new Action<ConvertCodeTask>() {
                 @Override
                 void execute(ConvertCodeTask t) {
+
                     t.enabled = config.docs.sourceHtml.aggregate.enabled
                     t.group = 'Documentation'
                     t.description = 'Converts source code into HTML.'
@@ -295,17 +310,18 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                 }
             })
 
-        aggregateSourceHtmlTask.configure(new Action<SourceHtmlTask>() {
-            @Override
-            void execute(SourceHtmlTask t) {
-                t.dependsOn generateOverviewTask
-                t.from convertCodeTask.get().destDir
-                t.from generateOverviewTask.get().destDir
-                t.enabled = config.docs.sourceHtml.aggregate.enabled
-            }
-        })
+        TaskProvider<SourceHtmlTask> aggregateSourceHtmlTask = project.tasks.named(AGGREGATE_SOURCE_HTML_TASK_NAME, SourceHtmlTask,
+            new Action<SourceHtmlTask>() {
+                @Override
+                void execute(SourceHtmlTask t) {
+                    t.dependsOn generateOverviewTask
+                    t.from convertCodeTask.get().destDir
+                    t.from generateOverviewTask.get().destDir
+                    t.enabled = config.docs.sourceHtml.aggregate.enabled
+                }
+            })
 
-        aggregateSourceHtmlJarTask.configure(new Action<Jar>() {
+        project.tasks.named(AGGREGATE_SOURCE_HTML_TASK_NAME + 'Jar', Jar, new Action<Jar>() {
             @Override
             void execute(Jar t) {
                 t.enabled = config.docs.sourceHtml.aggregate.enabled
@@ -346,7 +362,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                         project.sourceSets.main.java.srcDirs).files.findAll { file ->
                         file.exists()
                     })
-                }  else if (hasKotlinPlugin(project)) {
+                } else if (hasKotlinPlugin(project)) {
                     return project.files(project.files(files,
                         project.sourceSets.main.kotlin.srcDirs,
                         project.sourceSets.main.java.srcDirs).files.findAll { file ->

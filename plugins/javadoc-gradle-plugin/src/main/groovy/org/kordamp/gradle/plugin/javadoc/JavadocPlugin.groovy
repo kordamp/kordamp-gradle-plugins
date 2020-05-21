@@ -19,11 +19,9 @@ package org.kordamp.gradle.plugin.javadoc
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
@@ -32,16 +30,23 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
-import static org.kordamp.gradle.PluginUtils.isAndroidProject
-import static org.kordamp.gradle.PluginUtils.registerJarVariant
-import static org.kordamp.gradle.PluginUtils.resolveAllSource
-import static org.kordamp.gradle.PluginUtils.resolveClassesTask
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.isAndroidProject
+import static org.kordamp.gradle.util.PluginUtils.registerJarVariant
+import static org.kordamp.gradle.util.PluginUtils.resolveAllSource
+import static org.kordamp.gradle.util.PluginUtils.resolveClassesTask
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * Configures {@code javadoc} and {@code javadocJar} tasks.
@@ -78,13 +83,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
 
     private void configureRootProject(Project project) {
         createAggregateTasks(project)
-
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void projectsEvaluated(Gradle gradle) {
-                doConfigureRootProject(project)
-            }
-        })
+        addAllProjectsEvaluatedListener(project, new JavadocAllProjectsEvaluatedListener())
     }
 
     private void doConfigureRootProject(Project project) {
@@ -106,11 +105,14 @@ class JavadocPlugin extends AbstractKordampPlugin {
             TaskProvider<Javadoc> aggregateJavadoc = project.tasks.named(AGGREGATE_JAVADOC_TASK_NAME, Javadoc,
                 new Action<Javadoc>() {
                     @Override
+                    @CompileDynamic
                     void execute(Javadoc t) {
                         t.enabled = config.docs.javadoc.aggregate.enabled
                         if (!config.docs.javadoc.aggregate.fast) t.dependsOn docTasks
                         t.source docTasks.source
                         t.classpath = project.files(docTasks.classpath)
+                        config.docs.javadoc.applyTo(t)
+                        t.options.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
                     }
                 })
 
@@ -145,16 +147,32 @@ class JavadocPlugin extends AbstractKordampPlugin {
                         }
                     })
 
-                project.afterEvaluate {
-                    ProjectConfigurationExtension config = resolveEffectiveConfig(project)
-                    setEnabled(config.docs.javadoc.enabled)
-
-                    TaskProvider<Javadoc> javadoc = createJavadocTask(project)
-                    TaskProvider<Jar> javadocJar = createJavadocJarTask(project, javadoc)
-                    project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(javadocJar)
-                }
+                addProjectEvaluatedListener(project, new JavadocProjectEvaluatedListener())
             }
         })
+    }
+
+    @Named('javadoc')
+    @DependsOn(['base'])
+    private class JavadocProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveEffectiveConfig(project)
+            setEnabled(config.docs.javadoc.enabled)
+
+            TaskProvider<Javadoc> javadoc = createJavadocTask(project)
+            TaskProvider<Jar> javadocJar = createJavadocJarTask(project, javadoc)
+            project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(javadocJar)
+        }
+    }
+
+    @Named('javadoc')
+    @DependsOn(['publishing'])
+    private class JavadocAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            doConfigureRootProject(rootProject)
+        }
     }
 
     private TaskProvider<Javadoc> createJavadocTask(Project project) {
@@ -241,13 +259,10 @@ class JavadocPlugin extends AbstractKordampPlugin {
                 @Override
                 @CompileDynamic
                 void execute(Javadoc t) {
-                    ProjectConfigurationExtension config = resolveEffectiveConfig(t.project)
                     t.enabled = false
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Aggregates Javadoc API docs for all projects.'
                     t.destinationDir = project.file("${project.buildDir}/docs/aggregate-javadoc")
-                    config.docs.javadoc.applyTo(t)
-                    t.options.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
                     if (JavaVersion.current().isJava8Compatible()) {
                         t.options.addBooleanOption('Xdoclint:none', true)
                         t.options.quiet()

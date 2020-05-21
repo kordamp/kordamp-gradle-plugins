@@ -19,11 +19,11 @@ package org.kordamp.gradle.plugin.javadoc
 
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
+import org.kordamp.gradle.util.AnsiConsole
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
 
 /**
  * @author Andres Almiray
@@ -38,9 +38,9 @@ class CheckAutoLinksTask extends AbstractReportingTask {
 
     @TaskAction
     void checkAutoLinks() {
-        ProjectConfigurationExtension effectiveConfig = resolveEffectiveConfig(project)
+        ProjectConfigurationExtension config = resolveEffectiveConfig(project)
 
-        List<String> links = effectiveConfig.docs.javadoc.autoLinks.resolveLinks(project)
+        List<String> links = config.docs.javadoc.autoLinks.resolveLinks(project)
         if (!links) {
             println "There are no links to be checked."
             return

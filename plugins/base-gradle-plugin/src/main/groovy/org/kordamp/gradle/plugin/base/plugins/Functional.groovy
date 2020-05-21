@@ -19,7 +19,7 @@ package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.CompileStatic
 
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray

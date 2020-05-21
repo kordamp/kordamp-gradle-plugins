@@ -23,14 +23,19 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.testing.TestReport
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.PluginUtils.resolveSourceSets
-import static org.kordamp.gradle.PluginUtils.supportsApiConfiguration
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveSourceSets
+import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
 
 /**
  * @author Andres Almiray
@@ -74,7 +79,14 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
             createTasksIfNeeded(project)
         }
 
-        project.afterEvaluate {
+        addProjectEvaluatedListener(project, new IntegrationProjectEvaluatedListener())
+    }
+
+    @Named('integration')
+    @DependsOn(['base'])
+    private class IntegrationProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
             adjustSourceSets(project)
             adjustConfigurations(project)
             adjustTaskDependencies(project)

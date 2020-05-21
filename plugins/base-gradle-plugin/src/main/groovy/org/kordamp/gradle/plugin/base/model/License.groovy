@@ -18,7 +18,7 @@
 package org.kordamp.gradle.plugin.base.model
 
 import groovy.transform.CompileStatic
-import org.kordamp.gradle.CollectionUtils
+import org.kordamp.gradle.util.CollectionUtils
 
 /**
  * @author Andres Almiray

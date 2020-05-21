@@ -26,6 +26,9 @@ import org.gradle.api.Task
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.plugins.signing.SigningPlugin
+import org.kordamp.gradle.annotations.DependsOn
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
@@ -37,8 +40,13 @@ import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.jar.JarPlugin
 import org.kordamp.gradle.plugin.source.SourceJarPlugin
 
-import static org.kordamp.gradle.PluginUtils.resolveEffectiveConfig
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import javax.inject.Named
+
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
+import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.resolveEffectiveConfig
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * Configures artifact publication.
@@ -56,6 +64,9 @@ class PublishingPlugin extends AbstractKordampPlugin {
         configureProject(project)
         project.childProjects.values().each {
             it.pluginManager.apply(PublishingPlugin)
+        }
+        if (isRootProject(project)) {
+            addAllProjectsEvaluatedListener(project, new PublishingAllProjectsEvaluatedListener())
         }
     }
 
@@ -93,9 +104,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
         }
 
         project.pluginManager.withPlugin('maven-publish') {
-            project.afterEvaluate {
-                updatePublications(project)
-            }
+            addProjectEvaluatedListener(project, new PublishingProjectEvaluatedListener())
         }
 
         project.tasks.register('publicationSettings', PublicationSettingsTask,
@@ -124,6 +133,24 @@ class PublishingPlugin extends AbstractKordampPlugin {
                 }
             }
         })
+    }
+
+    @Named('publishing')
+    @DependsOn(['jar', 'source'])
+    private class PublishingProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            updatePublications(project)
+        }
+    }
+
+    @Named('publishing')
+    @DependsOn(['jar', 'source'])
+    private class PublishingAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            // noop
+        }
     }
 
     @CompileDynamic
