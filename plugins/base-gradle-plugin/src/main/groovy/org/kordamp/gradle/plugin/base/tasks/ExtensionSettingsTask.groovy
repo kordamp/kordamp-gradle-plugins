@@ -31,12 +31,8 @@ import static org.kordamp.gradle.util.StringUtils.isNotBlank
  */
 @CompileStatic
 class ExtensionSettingsTask extends AbstractReportingTask {
-    @Input
-    @Optional
-    String ext
-    @Input
-    @Optional
-    Set<String> exts
+    @Input @Optional String ext
+    @Input @Optional Set<String> exts
 
     @Option(option = 'extension', description = 'The extension to generate the report for.')
     void setExtension(String extension) {

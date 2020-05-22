@@ -912,6 +912,15 @@ project2:
     buildDir: subprojects/project2/build
 ----
 
+[[_task_package]]
+=== Package
+
+Assembles the outputs of the project. This is an alias for `assemble`.
+
+[horizontal]
+Name:: assemble
+Type:: `org.gradle.api.DefaultTask`
+
 [[_task_plugins]]
 === Plugins
 
@@ -1260,6 +1269,15 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.TaskSettingsTask`
 .Options
 [horizontal]
 task:: The task to generate the report for.
+
+[[_task_verify]]
+=== Verify
+
+Assembles and tests the project. This is an alias for `build`.
+
+[horizontal]
+Name:: verify
+Type:: `org.gradle.api.DefaultTask`
 
 [[_task_zip_settings]]
 === ZipSettings

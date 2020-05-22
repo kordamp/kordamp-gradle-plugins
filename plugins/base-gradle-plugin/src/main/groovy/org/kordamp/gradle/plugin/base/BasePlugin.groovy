@@ -19,6 +19,7 @@ package org.kordamp.gradle.plugin.base
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.execution.TaskExecutionGraph
@@ -82,6 +83,26 @@ class BasePlugin extends AbstractKordampPlugin {
         if (!project.extensions.findByType(ProjectConfigurationExtension)) {
             project.extensions.create(ProjectConfigurationExtension.CONFIG_NAME, ProjectConfigurationExtension, project)
         }
+
+        project.tasks.register('verify', DefaultTask,
+            new Action<DefaultTask>() {
+                @Override
+                void execute(DefaultTask t) {
+                    t.dependsOn(project.tasks.named('build'))
+                    t.group = 'Build'
+                    t.description = 'Assembles and tests this project.'
+                }
+            })
+
+        project.tasks.register('package', DefaultTask,
+            new Action<DefaultTask>() {
+                @Override
+                void execute(DefaultTask t) {
+                    t.dependsOn(project.tasks.named('assemble'))
+                    t.group = 'Build'
+                    t.description = 'Assembles the outputs of this project.'
+                }
+            })
 
         project.tasks.register('effectiveSettings', EffectiveSettingsTask,
             new Action<EffectiveSettingsTask>() {

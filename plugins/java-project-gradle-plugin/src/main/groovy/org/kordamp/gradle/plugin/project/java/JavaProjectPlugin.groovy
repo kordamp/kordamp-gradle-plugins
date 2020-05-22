@@ -19,6 +19,7 @@ package org.kordamp.gradle.plugin.project.java
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.tasks.JavaExec
@@ -95,6 +96,16 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
                 project.dependencies.extensions.create(DependencyHandler, 'cfg', DependencyHandlerImpl, project)
+
+                project.tasks.register('compile', DefaultTask,
+                    new Action<DefaultTask>() {
+                        @Override
+                        void execute(DefaultTask t) {
+                            t.dependsOn(project.tasks.named('classes'))
+                            t.group = 'Build'
+                            t.description = 'Assembles main classes.'
+                        }
+                    })
 
                 project.tasks.register('platforms', PlatformsTask,
                     new Action<PlatformsTask>() {

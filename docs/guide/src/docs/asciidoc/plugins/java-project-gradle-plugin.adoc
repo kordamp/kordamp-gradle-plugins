@@ -96,6 +96,15 @@ dependencies {
 [[_org_kordamp_gradle_java_project_tasks]]
 == Tasks
 
+[[_task_compile]]
+=== Compile
+
+Assembles main classes. This is an alias for `classes`.
+
+[horizontal]
+Name:: classes
+Type:: `org.gradle.api.DefaultTask`
+
 [[_task_jar_settings]]
 === JarSettings
 
