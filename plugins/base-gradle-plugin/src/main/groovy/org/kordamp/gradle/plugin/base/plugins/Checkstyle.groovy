@@ -21,6 +21,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.internal.DefaultVersions
 import org.kordamp.gradle.util.CollectionUtils
 
 /**
@@ -44,7 +45,7 @@ class Checkstyle extends AbstractQualityFeature {
 
     Checkstyle(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'checkstyle')
-        toolVersion = '8.32'
+        toolVersion = DefaultVersions.INSTANCE.checkstyleVersion
     }
 
     @Override

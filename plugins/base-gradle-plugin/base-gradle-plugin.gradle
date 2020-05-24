@@ -15,13 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+dependencies {
+    // added here so that dependencyUpdates can tell if there are newer versions
+    compileOnly "net.sourceforge.pmd:pmd:$pmdVersion"
+    compileOnly "com.github.spotbugs:spotbugs:$spotbugsVersion"
+    compileOnly "org.jacoco:org.jacoco.core:$jacocoVersion"
+    compileOnly "org.codenarc:CodeNarc:$codenarcVersion"
+    compileOnly "com.puppycrawl.tools:checkstyle:$checkstyleVersion"
+}
+
 processResources {
     inputs.property('version', project.version)
     filesMatching(['**/*.properties']) {
         expand(
-            'version': project.version,
-            'id': 'base',
-            'name': 'Kordamp Gradle plugins'
+            version: project.version,
+            id: 'base',
+            name: 'Kordamp Gradle plugins',
+            detektVersion: detektVersion,
+            errorproneVersion: errorproneVersion,
+            checkstyleVersion: checkstyleVersion,
+            codenarcVersion: codenarcVersion,
+            jacocoVersion: jacocoVersion,
+            pmdVersion: pmdVersion,
+            spotbugsVersion: spotbugsVersion
         )
     }
 }

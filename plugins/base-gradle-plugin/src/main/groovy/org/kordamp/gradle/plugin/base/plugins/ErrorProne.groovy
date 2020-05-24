@@ -20,6 +20,7 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.internal.DefaultVersions
 
 /**
  * @author Andres Almiray
@@ -37,7 +38,7 @@ class ErrorProne extends AbstractFeature {
     Boolean ignoreSuppressionAnnotations
     Boolean compilingTestOnlyCode
     String excludedPaths
-    String errorProneVersion = '2.3.4'
+    String errorProneVersion = DefaultVersions.INSTANCE.errorproneVersion
     String errorProneJavacVersion = '9+181-r4173-1'
 
     ErrorProne(ProjectConfigurationExtension config, Project project) {

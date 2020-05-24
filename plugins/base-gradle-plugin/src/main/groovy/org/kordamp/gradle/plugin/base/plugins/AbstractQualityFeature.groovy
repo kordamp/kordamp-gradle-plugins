@@ -39,6 +39,8 @@ abstract class AbstractQualityFeature extends AbstractAggregateFeature {
     }
 
     protected void populateMapDescription(Map<String, Object> map) {
+        map.ignoreFailures = getIgnoreFailures()
+        map.toolVersion = toolVersion
         map.excludedSourceSets = excludedSourceSets
     }
 

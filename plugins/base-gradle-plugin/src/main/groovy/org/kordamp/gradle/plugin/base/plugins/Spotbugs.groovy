@@ -20,6 +20,7 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.internal.DefaultVersions
 import org.kordamp.gradle.util.CollectionUtils
 
 /**
@@ -48,7 +49,7 @@ class Spotbugs extends AbstractQualityFeature {
 
     Spotbugs(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'spotbugs')
-        toolVersion = '4.0.2'
+        toolVersion = DefaultVersions.INSTANCE.spotbugsVersion
     }
 
     @Override

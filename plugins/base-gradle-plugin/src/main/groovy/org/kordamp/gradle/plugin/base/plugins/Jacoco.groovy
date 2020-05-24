@@ -23,6 +23,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.internal.DefaultVersions
 
 import static org.kordamp.gradle.util.PluginUtils.isAndroidProject
 
@@ -37,7 +38,7 @@ class Jacoco extends AbstractFeature {
     File aggregateExecFile
     File aggregateReportHtmlFile
     File aggregateReportXmlFile
-    String toolVersion = '0.8.5'
+    String toolVersion = DefaultVersions.INSTANCE.jacocoVersion
     Set<String> excludes = new LinkedHashSet<>()
 
     private final Set<Project> projects = new LinkedHashSet<>()

@@ -23,6 +23,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.quality.TargetJdk
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.internal.DefaultVersions
 
 /**
  * @author Andres Almiray
@@ -41,7 +42,7 @@ class Pmd extends AbstractQualityFeature {
 
     Pmd(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'pmd')
-        toolVersion = '6.23.0'
+        toolVersion = DefaultVersions.INSTANCE.pmdVersion
     }
 
     @Override

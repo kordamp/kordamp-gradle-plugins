@@ -20,6 +20,7 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.internal.DefaultVersions
 
 /**
  * @author Andres Almiray
@@ -45,7 +46,7 @@ class Detekt extends AbstractQualityFeature {
 
     Detekt(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'detekt')
-        toolVersion = '1.9.1'
+        toolVersion = DefaultVersions.INSTANCE.detektVersion
     }
 
     @Override

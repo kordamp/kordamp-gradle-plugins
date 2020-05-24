@@ -22,6 +22,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.plugins.quality.CodeNarc
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.internal.DefaultVersions
 
 /**
  * @author Andres Almiray
@@ -40,7 +41,7 @@ class Codenarc extends AbstractQualityFeature {
 
     Codenarc(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID, 'codenarc')
-        toolVersion = '1.5'
+        toolVersion = DefaultVersions.INSTANCE.codenarcVersion
     }
 
     void setConfigFile(File configFile) {
