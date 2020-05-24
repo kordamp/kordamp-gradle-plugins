@@ -18,6 +18,7 @@
 package org.kordamp.gradle.plugin.cpd
 
 import groovy.transform.CompileStatic
+import groovy.transform.Internal
 import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
@@ -27,6 +28,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.reporting.Reporting
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Classpath
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -50,11 +52,17 @@ class Cpd extends SourceTask implements VerificationTask, Reporting<CpdReports> 
     private final CpdReports reports
     private boolean ignoreFailures
 
+    @Input
     final Property<Integer> minimumTokenCount
+    @Input
     final Property<String> encoding
+    @Input
     final Property<String> language
+    @Input
     final Property<Boolean> ignoreLiterals
+    @Input
     final Property<Boolean> ignoreIdentifiers
+    @Input
     final Property<Boolean> ignoreAnnotations
 
     Cpd() {
@@ -74,6 +82,7 @@ class Cpd extends SourceTask implements VerificationTask, Reporting<CpdReports> 
     }
 
     @Inject
+    @Internal
     IsolatedAntBuilder getAntBuilder() {
         throw new UnsupportedOperationException()
     }
@@ -126,6 +135,7 @@ class Cpd extends SourceTask implements VerificationTask, Reporting<CpdReports> 
     }
 
     @Override
+    @Input
     boolean getIgnoreFailures() {
         ignoreFailures
     }
