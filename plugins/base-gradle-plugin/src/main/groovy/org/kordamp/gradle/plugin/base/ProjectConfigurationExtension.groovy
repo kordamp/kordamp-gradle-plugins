@@ -28,6 +28,7 @@ import org.kordamp.gradle.plugin.base.plugins.Checkstyle
 import org.kordamp.gradle.plugin.base.plugins.Clirr
 import org.kordamp.gradle.plugin.base.plugins.Codenarc
 import org.kordamp.gradle.plugin.base.plugins.Coveralls
+import org.kordamp.gradle.plugin.base.plugins.Cpd
 import org.kordamp.gradle.plugin.base.plugins.Dependencies
 import org.kordamp.gradle.plugin.base.plugins.Detekt
 import org.kordamp.gradle.plugin.base.plugins.ErrorProne
@@ -479,6 +480,7 @@ class ProjectConfigurationExtension {
         final Detekt detekt
         final ErrorProne errorprone
         final Pmd pmd
+        final Cpd cpd
         final Spotbugs spotbugs
         final Sonar sonar
 
@@ -493,6 +495,7 @@ class ProjectConfigurationExtension {
             detekt = new Detekt(config, project)
             errorprone = new ErrorProne(config, project)
             pmd = new Pmd(config, project)
+            cpd = new Cpd(config, project)
             sonar = new Sonar(config, project)
             spotbugs = new Spotbugs(config, project)
         }
@@ -505,6 +508,7 @@ class ProjectConfigurationExtension {
             map.putAll(detekt.toMap())
             map.putAll(errorprone.toMap())
             map.putAll(pmd.toMap())
+            map.putAll(cpd.toMap())
             map.putAll(sonar.toMap())
             map.putAll(spotbugs.toMap())
 
@@ -551,6 +555,14 @@ class ProjectConfigurationExtension {
             ConfigureUtil.configure(action, pmd)
         }
 
+        void cpd(Action<? super Cpd> action) {
+            action.execute(cpd)
+        }
+
+        void cpd(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Cpd) Closure<Void> action) {
+            ConfigureUtil.configure(action, cpd)
+        }
+
         void sonar(Action<? super Sonar> action) {
             action.execute(sonar)
         }
@@ -573,12 +585,14 @@ class ProjectConfigurationExtension {
             Detekt.merge(o1.@detekt, o2.@detekt)
             ErrorProne.merge(o1.@errorprone, o2.@errorprone)
             Pmd.merge(o1.@pmd, o2.@pmd)
+            Cpd.merge(o1.@cpd, o2.@cpd)
             Sonar.merge(o1.@sonar, o2.@sonar)
             Spotbugs.merge(o1.@spotbugs, o2.@spotbugs)
             o1
         }
 
         Quality postMerge() {
+            cpd.postMerge()
             this
         }
 
@@ -596,6 +610,7 @@ class ProjectConfigurationExtension {
             detekt.normalize()
             errorprone.normalize()
             pmd.normalize()
+            cpd.normalize()
             sonar.normalize()
             spotbugs.normalize()
             this

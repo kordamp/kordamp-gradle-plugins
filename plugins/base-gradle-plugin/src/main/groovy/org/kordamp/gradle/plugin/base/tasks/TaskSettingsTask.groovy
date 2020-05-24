@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.base.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
@@ -55,12 +54,13 @@ class TaskSettingsTask extends AbstractReportingTask {
     private void printTask(Task task) {
         print(task.name + ':', 0)
         task.properties.sort().each { name, value ->
-            if (value instanceof Property ||
-                    value instanceof Provider ||
-                    name in ['name']) {
-                return
-            }
-            if (value instanceof FileCollection) {
+            if (value instanceof Provider) {
+                try {
+                    doPrintMapEntry(name.toString(), ((Provider) value).get(), 1)
+                } catch (Exception ignored) {
+                    // ignored
+                }
+            } else if (value instanceof FileCollection) {
                 doPrintCollection(name.toString(), value, 1)
             } else if (value instanceof Collection) {
                 doPrintCollection(name.toString(), (Collection) value, 1)

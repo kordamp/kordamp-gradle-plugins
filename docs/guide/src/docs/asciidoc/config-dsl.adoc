@@ -43,6 +43,7 @@ config {
     quality {
         <<_org_kordamp_gradle_checkstyle,checkstyle>> { ... }
         <<_org_kordamp_gradle_codenarc,codenarc>> { ... }
+        <<_org_kordamp_gradle_cpd,cpd>> { ... }
         <<_org_kordamp_gradle_detekt,detekt>> { ... }
         <<_org_kordamp_gradle_errorprone,errorprone>> { ... }
         <<_org_kordamp_gradle_pmd,pmd>> { ... }

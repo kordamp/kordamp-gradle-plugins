@@ -58,7 +58,7 @@ config {
 | omitVisitors          | List<String> | no       | []            |
 | extraArgs             | List<String> | no       | []            |
 | jvmArgs               | List<String> | no       | []            |
-| ignoreFailures        | boolean      | no       | true          |
+| ignoreFailures        | boolean      | no       | true          | Fails the build if set to `false`.
 | showProgress          | boolean      | no       | true          |
 | toolVersion           | String       | no       | 3.1.12        |
 | excludedSourceSets    | Set<String>  | no       | []            |

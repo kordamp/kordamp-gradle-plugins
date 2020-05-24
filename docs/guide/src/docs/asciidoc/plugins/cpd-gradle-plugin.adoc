@@ -1,0 +1,104 @@
+
+[[_org_kordamp_gradle_cpd]]
+= Cpd
+
+[horizontal]
+id:: `org.kordamp.gradle.cpd`
+class:: `org.kordamp.gradle.plugin.cpd.CpdPlugin`
+    (link:api/org/kordamp/gradle/plugin/cpd/CpdPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/cpd/CpdPlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+
+Configures link:https://pmd.github.io/pmd-6.24.0/pmd_userdocs_cpd.html[CPD] on Java projects and aggregate reports on
+the root project. Each `sourceSet` gets a `org.kordamp.gradle.plugin.cpd.Cpd`.
+
+[[_org_kordamp_gradle_cpd_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    quality {
+        cpd {
+            enabled
+            ignoreFailures
+            minimumTokenCount
+            encoding
+            language
+            ignoreLiterals
+            ignoreIdentifiers
+            ignoreAnnotations
+            toolVersion
+            <<_cpd_aggregate,aggregate>> {
+                enabled
+                excludedProjects
+            }
+        }
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name              | Type    | Required | Default Value | Description
+| enabled           | boolean | no       | true          | Disables `org.kordamp.gradle.cpd` plugin if `false`
+| ignoreFailures    | boolean | no       | true          | Fails the build if set to `false`.
+| minimumTokenCount | int     | no       | 50            |
+| encoding          | String  | no       | UTF-8         |
+| language          | String  | no       | java          |
+| ignoreLiterals    | boolean | no       | false         | Ignore number values and string contents when comparing text.
+| ignoreIdentifiers | boolean | no       | false         | Ignore constant and variable names when comparing text.
+| ignoreAnnotations | boolean | no       | false         | Ignore language annotations when comparing text.
+|===
+
+.Methods
+
+void excludeSourceSet(String):: Adds a sourceSet exclusion.
+
+[[_cpd_aggregate]]
+*aggregate*
+
+[options="header", cols="5*"]
+|===
+| Name             | Type         | Required | Default Value | Description
+| enabled          | boolean      | no       | true          | Enables or disables aggregation
+| excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
+|===
+
+This block should be configured on the root project.
+
+[[_org_kordamp_gradle_cpd_tasks]]
+== Tasks
+
+[[_task_aggregate_cpd]]
+=== AggregateCpd
+
+Aggregates all cpd reports for all projects. +
+Consumes settings from `config.quality.<<_org_kordamp_gradle_cpd_dsl,cpd>>`. +
+This task is added to the root project.
+
+[horizontal]
+Name:: aggregateCpd
+Type:: `org.kordamp.gradle.plugin.cpd.Cpd`
+
+.Properties
+[horizontal]
+reports.html.destination:: `${project.buildDir}/reports/cpd/aggregate.html`
+reports.xml.destination:: `${project.buildDir}/reports/cpd/aggregate.xml`
+
+[[_task_all_cpd]]
+=== AllCpd
+
+Aggregates all cpd reports for a single project. +
+Consumes settings from `config.quality.<<_org_kordamp_gradle_cpd_dsl,cpd>>`.
+
+[horizontal]
+Name:: allCpd
+Type:: `org.kordamp.gradle.plugin.cpd.Cpd`
+
+.Properties
+[horizontal]
+reports.html.destination:: `${project.buildDir}/reports/cpd/${project.name}.html`
+reports.xml.destination:: `${project.buildDir}/reports/cpd/${project.name}.xml`
+

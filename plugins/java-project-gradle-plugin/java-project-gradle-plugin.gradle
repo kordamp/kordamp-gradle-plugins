@@ -20,5 +20,6 @@ dependencies {
     api project(':javadoc-gradle-plugin')
     api project(':checkstyle-gradle-plugin')
     api project(':pmd-gradle-plugin')
+    api project(':cpd-gradle-plugin')
     api project(':spotbugs-gradle-plugin')
 }

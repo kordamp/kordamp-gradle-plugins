@@ -22,6 +22,7 @@ config {
     quality {
         checkstyle {
             enabled
+            ignoreFailures
             includes
             excludes
             configFile
@@ -44,6 +45,7 @@ config {
 |===
 | Name               | Type                | Required | Default Value     | Description
 | enabled            | boolean             | no       | true              | Disables `org.kordamp.gradle.checkstyle` plugin if `false`
+| ignoreFailures     | boolean             | no       | true              | Fails the build if set to `false`.
 | includes           | Set<String>         | no       | []                |
 | excludes           | Set<String>         | no       | []                |
 | configFile         | Set<String>         | no       |                   |
