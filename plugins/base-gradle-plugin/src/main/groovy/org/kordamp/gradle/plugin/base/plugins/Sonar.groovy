@@ -41,8 +41,12 @@ class Sonar extends AbstractFeature {
     final Set<Project> excludedProjects = new LinkedHashSet<>()
 
     Sonar(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        super(config, project, PLUGIN_ID)
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).quality.sonar
     }
 
     @Override
@@ -81,17 +85,11 @@ class Sonar extends AbstractFeature {
             projectKey = username + '_' + project.rootProject.name
         }
 
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    setEnabled(project.pluginManager.hasPlugin('java-base') && isApplied())
-                } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java-base') && isApplied(p) })
-                }
-            } else {
-                setEnabled(project.pluginManager.hasPlugin('java-base') && isApplied())
-            }
-        }
+        super.normalize()
+    }
+
+    protected boolean hasBasePlugin(Project project) {
+        project.pluginManager.hasPlugin('java-base')
     }
 
     List<String> validate(ProjectConfigurationExtension extension) {

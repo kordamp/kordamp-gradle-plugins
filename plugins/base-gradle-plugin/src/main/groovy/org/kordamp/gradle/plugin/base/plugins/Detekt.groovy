@@ -50,6 +50,11 @@ class Detekt extends AbstractQualityFeature {
     }
 
     @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).quality.detekt
+    }
+
+    @Override
     protected void populateMapDescription(Map<String, Object> map) {
         super.populateMapDescription(map)
         map.configFile = this.configFile
@@ -70,17 +75,11 @@ class Detekt extends AbstractQualityFeature {
             this.@configFile = file
         }
 
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    setEnabled(project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && isApplied())
-                } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && isApplied(p) })
-                }
-            } else {
-                setEnabled(project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && isApplied())
-            }
-        }
+        super.normalize()
+    }
+
+    protected boolean hasBasePlugin(Project project) {
+        project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID)
     }
 
     void setConfigFile(File configFile) {

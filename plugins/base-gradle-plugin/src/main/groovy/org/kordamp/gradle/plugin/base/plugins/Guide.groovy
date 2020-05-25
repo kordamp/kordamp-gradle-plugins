@@ -34,9 +34,13 @@ class Guide extends AbstractFeature {
     final Publish publish
 
     Guide(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        super(config, project, PLUGIN_ID)
         publish = new Publish(config)
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).docs.guide
     }
 
     @Override
@@ -63,9 +67,10 @@ class Guide extends AbstractFeature {
 
     void normalize() {
         if (!enabledSet) {
-            doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+            doSetEnabled(isApplied())
         }
         publish.normalize()
+        setVisible(isApplied())
     }
 
     @CompileStatic

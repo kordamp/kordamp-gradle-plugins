@@ -42,6 +42,11 @@ class Cpd extends AbstractQualityFeature {
         toolVersion = DefaultVersions.INSTANCE.pmdVersion
     }
 
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).quality.cpd
+    }
+
     void postMerge() {
         minimumTokenCount = minimumTokenCount <= 0 ? 50 : minimumTokenCount
         encoding = encoding ?: 'UTF-8'

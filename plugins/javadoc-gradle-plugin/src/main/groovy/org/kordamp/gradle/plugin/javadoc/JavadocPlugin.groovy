@@ -63,6 +63,10 @@ class JavadocPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    JavadocPlugin() {
+        super(org.kordamp.gradle.plugin.base.plugins.Javadoc.PLUGIN_ID)
+    }
+
     void apply(Project project) {
         this.project = project
 

@@ -47,6 +47,11 @@ class Stats extends AbstractAggregateFeature {
         super(config, project, PLUGIN_ID, 'stats')
     }
 
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).stats
+    }
+
     protected boolean hasBasePlugin(Project project) {
         project.pluginManager.hasPlugin('java') || project.pluginManager.hasPlugin('com.android.library')
     }

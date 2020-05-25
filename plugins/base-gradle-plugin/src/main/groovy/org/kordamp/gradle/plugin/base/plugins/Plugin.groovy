@@ -42,10 +42,14 @@ class Plugin extends AbstractFeature {
     private final String pluginName
 
     Plugin(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        super(config, project, PLUGIN_ID)
 
         pluginName = getPropertyNameForLowerCaseHyphenSeparatedName(project.name - '-gradle' - 'gradle-' - '-plugin')
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).plugin
     }
 
     String getPluginName() {
@@ -76,13 +80,11 @@ class Plugin extends AbstractFeature {
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
-        if (enabled) {
-            map.pluginName = pluginName
-            map.id = id
-            map.implementationClass = implementationClass
-            map.tags = tags
-            map.'gradle-plugin' = "${id}:${project.group}:${project.name}".toString()
-        }
+        map.pluginName = pluginName
+        map.id = id
+        map.implementationClass = implementationClass
+        map.tags = tags
+        map.'gradle-plugin' = "${id}:${project.group}:${project.name}".toString()
 
         new LinkedHashMap<>('plugin': map)
     }
@@ -100,8 +102,9 @@ class Plugin extends AbstractFeature {
 
     void normalize() {
         if (!enabledSet) {
-            setEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+            setEnabled(isApplied())
         }
+        setVisible(isApplied())
     }
 
     List<String> validate(ProjectConfigurationExtension extension) {

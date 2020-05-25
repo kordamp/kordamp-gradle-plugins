@@ -51,29 +51,37 @@ class Bintray extends AbstractFeature {
     private boolean publicDownloadNumbersSet
 
     Bintray(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
+        super(config, project, PLUGIN_ID)
         doSetEnabled(false)
+    }
+
+    @Override
+    void normalize() {
+        normalizeVisible()
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).bintray
     }
 
     @Override
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
-        if (enabled) {
-            map.name = getName()
-            map.userOrg = userOrg
-            map.repo = getRepo()
-            map.githubRepo = getGithubRepo()
-            map.publish = publish
-            map.publicDownloadNumbers = publicDownloadNumbers
-            map.skipMavenSync = skipMavenSync
-            map.publications = resolvePublications()
-            if (!credentials.empty) {
-                map.credentials = new LinkedHashMap<String, Object>([
-                    username: credentials.username,
-                    password: ('*' * 12)
-                ])
-            }
+        map.name = getName()
+        map.userOrg = userOrg
+        map.repo = getRepo()
+        map.githubRepo = getGithubRepo()
+        map.publish = publish
+        map.publicDownloadNumbers = publicDownloadNumbers
+        map.skipMavenSync = skipMavenSync
+        map.publications = resolvePublications()
+        if (!credentials.empty) {
+            map.credentials = new LinkedHashMap<String, Object>([
+                username: credentials.username,
+                password: ('*' * 12)
+            ])
         }
 
         new LinkedHashMap<>('bintray': map)

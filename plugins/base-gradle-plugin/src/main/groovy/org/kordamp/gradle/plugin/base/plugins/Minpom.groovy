@@ -30,7 +30,12 @@ class Minpom extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.minpom'
 
     Minpom(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
+        super(config, project, PLUGIN_ID)
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).artifacts.minpom
     }
 
     @Override

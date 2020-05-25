@@ -53,7 +53,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
     Project project
 
     SourceXrefPlugin() {
-        super(org.kordamp.gradle.plugin.base.plugins.SourceXref.PLUGIN_ID)
+        super(SourceXref.PLUGIN_ID)
     }
 
     void apply(Project project) {

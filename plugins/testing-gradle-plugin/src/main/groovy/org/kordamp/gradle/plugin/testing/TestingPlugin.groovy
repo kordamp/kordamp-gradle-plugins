@@ -67,6 +67,10 @@ class TestingPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    TestingPlugin() {
+        super(Testing.PLUGIN_ID)
+    }
+
     void apply(Project project) {
         this.project = project
 

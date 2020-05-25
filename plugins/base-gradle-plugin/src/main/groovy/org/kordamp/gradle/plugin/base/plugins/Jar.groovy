@@ -34,9 +34,13 @@ class Jar extends AbstractFeature {
     final Manifest manifest
 
     Jar(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        super(config, project, PLUGIN_ID)
         manifest = new Manifest(config, project)
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).artifacts.jar
     }
 
     @Override
@@ -50,17 +54,7 @@ class Jar extends AbstractFeature {
     }
 
     void normalize() {
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    setEnabled(isApplied())
-                } else {
-                    setEnabled(project.childProjects.values().any { p -> isApplied(p) })
-                }
-            } else {
-                setEnabled(isApplied())
-            }
-        }
+        super.normalize()
 
         if (!(manifest.classpathLayoutType in ['simple', 'repository'])) {
             project.logger.warn("The value 'custom' for jar.manifest.classpathLayoutType is not supported. Using 'simple' instead.")
@@ -108,11 +102,11 @@ class Jar extends AbstractFeature {
         }
 
         boolean getEnabled() {
-            this.@enabled == null || this.@enabled
+            this.@enabled != null && this.@enabled
         }
 
         boolean getAddClasspath() {
-            this.@addClasspath == null || this.@addClasspath
+            this.@addClasspath != null && this.@addClasspath
         }
 
         static Manifest merge(Manifest o1, Manifest o2) {

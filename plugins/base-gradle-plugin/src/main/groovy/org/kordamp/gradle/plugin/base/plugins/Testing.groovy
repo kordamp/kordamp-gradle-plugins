@@ -48,9 +48,14 @@ class Testing extends AbstractFeature {
     private final Set<FunctionalTest> functionalTestTasks = new LinkedHashSet<>()
 
     Testing(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
+        super(config, project, PLUGIN_ID)
         integration = new Integration(this)
         functional = new Functional(this)
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).testing
     }
 
     void setLogging(boolean logging) {

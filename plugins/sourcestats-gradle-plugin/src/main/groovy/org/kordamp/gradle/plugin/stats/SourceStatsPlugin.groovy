@@ -26,6 +26,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Stats
 import org.kordamp.gradle.util.PluginUtils
 
 import javax.inject.Named
@@ -46,7 +47,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
     Project project
 
     SourceStatsPlugin() {
-        super(org.kordamp.gradle.plugin.base.plugins.Stats.PLUGIN_ID)
+        super(Stats.PLUGIN_ID)
     }
 
     void apply(Project project) {

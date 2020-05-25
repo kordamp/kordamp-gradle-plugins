@@ -27,5 +27,7 @@ import groovy.transform.CompileStatic
 public interface Feature {
     boolean isEnabled()
 
+    boolean isVisible()
+
     Map<String, Map<String, Object>> toMap()
 }

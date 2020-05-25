@@ -27,6 +27,7 @@ import org.kordamp.gradle.annotations.DependsOn
 import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Bintray
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 
 import javax.inject.Named
@@ -45,6 +46,10 @@ import static org.kordamp.gradle.util.StringUtils.isNotBlank
 @CompileStatic
 class BintrayPlugin extends AbstractKordampPlugin {
     Project project
+
+    BintrayPlugin() {
+        super(Bintray.PLUGIN_ID)
+    }
 
     void apply(Project project) {
         this.project = project

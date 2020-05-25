@@ -46,6 +46,11 @@ class Pmd extends AbstractQualityFeature {
     }
 
     @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).quality.pmd
+    }
+
+    @Override
     protected void populateMapDescription(Map<String, Object> map) {
         super.populateMapDescription(map)
         map.ruleSetFiles = this.ruleSetFiles

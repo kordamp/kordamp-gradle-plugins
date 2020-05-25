@@ -50,32 +50,39 @@ class Publishing extends AbstractFeature {
     private boolean flattenPlatformsSet
 
     Publishing(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        super(config, project, PLUGIN_ID)
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).publishing
     }
 
     @Override
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
-        if (enabled) {
-            map.signing = signing
-            map.releasesRepository = releasesRepository
-            map.snapshotsRepository = snapshotsRepository
-            map.publications = publications
-            map.scopes = scopes
-            map.useVersionExpressions = useVersionExpressions
-            map.flattenPlatforms = flattenPlatforms
-            map.pom = pom.toMap()
-        }
+        map.signing = signing
+        map.releasesRepository = releasesRepository
+        map.snapshotsRepository = snapshotsRepository
+        map.publications = publications
+        map.scopes = scopes
+        map.useVersionExpressions = useVersionExpressions
+        map.flattenPlatforms = flattenPlatforms
+        map.pom = pom.toMap()
 
         new LinkedHashMap<>('publishing': map)
     }
 
     void normalize() {
-        if (!enabledSet && isRoot()) {
-            setEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        if (!enabledSet) {
+            if (isRoot()) {
+                setEnabled(project.childProjects.isEmpty() && isApplied())
+            } else {
+                setEnabled(isApplied())
+            }
         }
+        normalizeVisible()
     }
 
     void postMerge() {

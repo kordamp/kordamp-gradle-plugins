@@ -43,8 +43,7 @@ class Groovydoc extends AbstractFeature {
     private boolean replaceJavadocSet
 
     Groovydoc(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        super(config, project, PLUGIN_ID)
 
         aggregate              = new Aggregate(config, project)
         options.use            = true
@@ -52,6 +51,11 @@ class Groovydoc extends AbstractFeature {
         options.docTitle       = "${project.name} ${project.version}"
         options.header         = "${project.name} ${project.version}"
         options.includePrivate = false
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).docs.groovydoc
     }
 
     private String resolveJavadocLinks(Object jv) {
@@ -102,18 +106,8 @@ class Groovydoc extends AbstractFeature {
         new LinkedHashMap<>('groovydoc': map)
     }
 
-    void normalize() {
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    setEnabled(project.pluginManager.hasPlugin('groovy') && isApplied())
-                } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('groovy') && isApplied(p) })
-                }
-            } else {
-                setEnabled(project.pluginManager.hasPlugin('groovy') && isApplied())
-            }
-        }
+    protected boolean hasBasePlugin(Project project) {
+        project.pluginManager.hasPlugin('groovy')
     }
 
     void setReplaceJavadoc(boolean replaceJavadoc) {

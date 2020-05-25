@@ -68,8 +68,13 @@ class Kotlindoc extends AbstractFeature {
     private boolean noStdlibLinkSet
 
     Kotlindoc(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
+        super(config, project, PLUGIN_ID)
         aggregate = new Aggregate(config, project)
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).docs.kotlindoc
     }
 
     @Override
@@ -130,21 +135,15 @@ class Kotlindoc extends AbstractFeature {
     }
 
     void normalize() {
+        super.normalize()
+
         if (!impliedPlatforms) {
             impliedPlatforms << 'JVM'
         }
+    }
 
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    setEnabled(project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && isApplied())
-                } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && isApplied(p) })
-                }
-            } else {
-                setEnabled(project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID) && isApplied())
-            }
-        }
+    protected boolean hasBasePlugin(Project project) {
+        project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID)
     }
 
     void setReplaceJavadoc(boolean replaceJavadoc) {

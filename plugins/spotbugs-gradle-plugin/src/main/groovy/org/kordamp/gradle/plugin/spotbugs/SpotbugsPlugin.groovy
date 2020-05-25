@@ -32,6 +32,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Spotbugs
 
 import javax.inject.Named
 
@@ -52,7 +53,7 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
     Project project
 
     SpotbugsPlugin() {
-        super(org.kordamp.gradle.plugin.base.plugins.Spotbugs.PLUGIN_ID)
+        super(Spotbugs.PLUGIN_ID)
     }
 
     void apply(Project project) {

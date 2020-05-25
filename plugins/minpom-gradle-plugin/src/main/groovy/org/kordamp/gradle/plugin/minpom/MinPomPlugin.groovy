@@ -26,6 +26,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Minpom
 
 import javax.inject.Named
 
@@ -46,6 +47,10 @@ class MinPomPlugin extends AbstractKordampPlugin {
     static final String MINPOM_TASK_NAME = 'minpom'
 
     Project project
+
+    MinPomPlugin() {
+        super(Minpom.PLUGIN_ID)
+    }
 
     void apply(Project project) {
         this.project = project

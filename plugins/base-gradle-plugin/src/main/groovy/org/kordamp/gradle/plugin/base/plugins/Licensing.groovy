@@ -42,8 +42,12 @@ class Licensing extends AbstractFeature {
     final Set<String> excludedSourceSets = new LinkedHashSet<>()
 
     Licensing(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        super(config, project, PLUGIN_ID)
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).licensing
     }
 
     Map<String, Map<String, Object>> toMap() {
@@ -56,12 +60,6 @@ class Licensing extends AbstractFeature {
         }
 
         new LinkedHashMap<>('licensing': map)
-    }
-
-    void normalize() {
-        if (!enabledSet && isRoot()) {
-            setEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
-        }
     }
 
     void licenses(Action<? super LicenseSet> action) {

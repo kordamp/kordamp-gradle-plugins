@@ -34,10 +34,9 @@ abstract class AbstractAggregateFeature extends AbstractFeature {
     private final String featureName
 
     AbstractAggregateFeature(ProjectConfigurationExtension config, Project project, String pluginId, String featureName) {
-        super(config, project)
+        super(config, project, pluginId)
         aggregate = new Aggregate(config, project)
         this.featureName = featureName
-        doSetEnabled(project.plugins.findPlugin(pluginId) != null)
     }
 
     @Override
@@ -46,29 +45,17 @@ abstract class AbstractAggregateFeature extends AbstractFeature {
             enabled: enabled
         )
 
-        populateMapDescription(map)
+        if (isVisible()) {
+            populateMapDescription(map)
+        }
 
-        if (isRoot()) {
+        if (isRoot() && isVisible()) {
             map.putAll(aggregate.toMap())
         }
         new LinkedHashMap<>((featureName): map)
     }
 
     protected abstract void populateMapDescription(Map<String, Object> map)
-
-    void normalize() {
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    setEnabled(hasBasePlugin(project) && isApplied())
-                } else {
-                    setEnabled(project.childProjects.values().any { p -> hasBasePlugin(p) && isApplied(p) })
-                }
-            } else {
-                setEnabled(hasBasePlugin(project) && isApplied())
-            }
-        }
-    }
 
     protected boolean hasBasePlugin(Project project) {
         project.pluginManager.hasPlugin('java')

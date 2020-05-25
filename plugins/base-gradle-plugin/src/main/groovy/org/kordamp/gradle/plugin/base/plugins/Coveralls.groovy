@@ -30,14 +30,32 @@ class Coveralls extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.coveralls'
 
     Coveralls(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
+        super(config, project, PLUGIN_ID)
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).coverage.coveralls
     }
 
     @Override
     Map<String, Map<String, Object>> toMap() {
+        if (!isRoot()) return [:]
+
         new LinkedHashMap<>('coveralls': new LinkedHashMap<>(
             enabled: enabled
         ))
+    }
+
+    @Override
+    void normalize() {
+        normalizeVisible()
+    }
+
+    void postMerge() {
+        if (!enabledSet) {
+            enabled = project.extensions.getByType(ProjectConfigurationExtension).coverage.jacoco.enabled
+        }
     }
 
     static void merge(Coveralls o1, Coveralls o2) {

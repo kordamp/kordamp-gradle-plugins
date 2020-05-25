@@ -63,6 +63,10 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
     Project project
 
+    JacocoPlugin() {
+        super(Jacoco.PLUGIN_ID)
+    }
+
     void apply(Project project) {
         this.project = project
 

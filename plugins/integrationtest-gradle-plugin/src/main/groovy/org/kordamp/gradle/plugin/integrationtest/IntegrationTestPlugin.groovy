@@ -28,6 +28,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Integration
 import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
 
 import javax.inject.Named
@@ -43,6 +44,10 @@ import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
  */
 class IntegrationTestPlugin extends AbstractKordampPlugin {
     Project project
+
+    IntegrationTestPlugin() {
+        super(Integration.PLUGIN_ID)
+    }
 
     @CompileStatic
     void apply(Project project) {

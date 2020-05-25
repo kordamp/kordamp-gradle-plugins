@@ -30,15 +30,17 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 @CompileStatic
 abstract class AbstractFeature implements Feature {
     boolean enabled = true
+    boolean visible
 
     private boolean enabledSet
 
     protected final ProjectConfigurationExtension config
     protected final Project project
 
-    AbstractFeature(ProjectConfigurationExtension config, Project project) {
+    AbstractFeature(ProjectConfigurationExtension config, Project project, String pluginId) {
         this.config = config
         this.project = project
+        doSetEnabled(project.plugins.findPlugin(pluginId) != null)
     }
 
     protected void doSetEnabled(boolean enabled) {
@@ -71,5 +73,43 @@ abstract class AbstractFeature implements Feature {
     protected boolean isApplied(Project project) {
         ExtraPropertiesExtension ext = project.extensions.findByType(ExtraPropertiesExtension)
         ext.has('VISITED_' + getClass().PLUGIN_ID.replace('.', '_') + '_' + project.path.replace(':', '#'))
+    }
+
+    void normalize() {
+        normalizeEnabled()
+        normalizeVisible()
+    }
+
+    protected void normalizeEnabled() {
+        if (!enabledSet) {
+            if (isRoot()) {
+                if (project.childProjects.isEmpty()) {
+                    setEnabled(hasBasePlugin(project) && isApplied())
+                }
+            } else {
+                setEnabled(hasBasePlugin(project) && isApplied())
+                if (isEnabled()) {
+                    getParentFeature().setEnabled(true)
+                }
+            }
+        }
+    }
+
+    protected boolean hasBasePlugin(Project project) {
+        true
+    }
+
+    protected abstract AbstractFeature getParentFeature()
+
+    protected void normalizeVisible() {
+        if (isRoot()) {
+            if (project.childProjects.isEmpty()) {
+                setVisible(isApplied())
+            } else {
+                setVisible(project.childProjects.values().any { p -> isApplied(p) })
+            }
+        } else {
+            setVisible(isApplied())
+        }
     }
 }

@@ -44,14 +44,18 @@ class Scaladoc extends AbstractFeature {
     private boolean replaceJavadocSet
 
     Scaladoc(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        super(config, project, PLUGIN_ID)
 
         aggregate           = new Aggregate(config, project)
         title               = "${project.name} ${project.version}"
         options.windowTitle = "${project.name} ${project.version}"
         options.docTitle    = "${project.name} ${project.version}"
         options.header      = "${project.name} ${project.version}"
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).docs.scaladoc
     }
 
     @Override
@@ -81,18 +85,8 @@ class Scaladoc extends AbstractFeature {
         new LinkedHashMap<>('scaladoc': map)
     }
 
-    void normalize() {
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    setEnabled(project.pluginManager.hasPlugin('scala') && isApplied())
-                } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('scala') && isApplied(p) })
-                }
-            } else {
-                setEnabled(project.pluginManager.hasPlugin('scala') && isApplied())
-            }
-        }
+    protected boolean hasBasePlugin(Project project) {
+        project.pluginManager.hasPlugin('scala')
     }
 
     void setReplaceJavadoc(boolean replaceJavadoc) {

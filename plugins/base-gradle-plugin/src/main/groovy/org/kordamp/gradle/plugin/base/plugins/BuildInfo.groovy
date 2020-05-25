@@ -56,7 +56,19 @@ class BuildInfo extends AbstractFeature {
     private boolean skipBuildCreatedBySet
 
     BuildInfo(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
+        super(config, project, PLUGIN_ID)
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).buildInfo
+    }
+
+    void normalize() {
+        if (!enabledSet && isRoot()) {
+            setEnabled(isApplied())
+        }
+        setVisible(isApplied())
     }
 
     @Override
@@ -65,7 +77,7 @@ class BuildInfo extends AbstractFeature {
 
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
-        if (enabled) {
+        if (isVisible()) {
             map.clearTime = clearTime
             if (!skipBuildBy) map.buildBy = buildBy
             if (!skipBuildDate) map.buildDate = buildDate

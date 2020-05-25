@@ -43,6 +43,11 @@ class SourceHtml extends AbstractAggregateFeature {
         srcDirs = project.objects.fileCollection()
     }
 
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).docs.sourceHtml
+    }
+
     protected boolean hasBasePlugin(Project project) {
         project.pluginManager.hasPlugin('java') || project.pluginManager.hasPlugin('com.android.library')
     }

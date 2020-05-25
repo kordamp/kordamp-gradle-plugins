@@ -38,6 +38,7 @@ import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.License
 import org.kordamp.gradle.plugin.base.model.LicenseId
+import org.kordamp.gradle.plugin.base.plugins.Licensing
 
 import javax.inject.Named
 
@@ -129,6 +130,10 @@ class LicensingPlugin extends AbstractKordampPlugin {
     ]
 
     Project project
+
+    LicensingPlugin() {
+        super(Licensing.PLUGIN_ID)
+    }
 
     void apply(Project project) {
         this.project = project

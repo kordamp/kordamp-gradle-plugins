@@ -47,18 +47,13 @@ class Clirr extends AbstractAggregateFeature {
         super(config, project, PLUGIN_ID, 'clirr')
     }
 
-    void normalize() {
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    setEnabled(project.pluginManager.hasPlugin('java') && isApplied())
-                } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java') && isApplied(p) })
-                }
-            } else {
-                setEnabled(project.pluginManager.hasPlugin('java') && isApplied())
-            }
-        }
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).clirr
+    }
+
+    protected boolean hasBasePlugin(Project project) {
+        project.pluginManager.hasPlugin('java')
     }
 
     @Override

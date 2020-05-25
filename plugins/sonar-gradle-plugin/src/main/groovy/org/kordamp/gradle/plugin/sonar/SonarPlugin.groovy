@@ -27,6 +27,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Sonar
 import org.sonarqube.gradle.SonarQubeExtension
 import org.sonarqube.gradle.SonarQubePlugin
 import org.sonarqube.gradle.SonarQubeProperties
@@ -49,7 +50,7 @@ class SonarPlugin extends AbstractKordampPlugin {
     Project project
 
     SonarPlugin() {
-        super(org.kordamp.gradle.plugin.base.plugins.Sonar.PLUGIN_ID)
+        super(Sonar.PLUGIN_ID)
     }
 
     void apply(Project project) {

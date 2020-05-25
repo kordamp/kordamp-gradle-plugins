@@ -60,6 +60,10 @@ class BasePlugin extends AbstractKordampPlugin {
 
     Project project
 
+    BasePlugin() {
+        super('org.kordamp.gradle.base')
+    }
+
     void apply(Project project) {
         Banner.display(project)
         this.project = project

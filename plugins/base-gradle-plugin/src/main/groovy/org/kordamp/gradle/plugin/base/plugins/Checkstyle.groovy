@@ -49,6 +49,11 @@ class Checkstyle extends AbstractQualityFeature {
     }
 
     @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).quality.checkstyle
+    }
+
+    @Override
     protected void populateMapDescription(Map<String, Object> map) {
         super.populateMapDescription(map)
         map.configFile = this.configFile

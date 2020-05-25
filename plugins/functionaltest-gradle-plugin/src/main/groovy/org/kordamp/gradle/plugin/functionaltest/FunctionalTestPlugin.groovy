@@ -28,6 +28,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Functional
 import org.kordamp.gradle.plugin.test.tasks.FunctionalTest
 
 import javax.inject.Named
@@ -43,6 +44,10 @@ import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
  */
 class FunctionalTestPlugin extends AbstractKordampPlugin {
     Project project
+
+    FunctionalTestPlugin() {
+        super(Functional.PLUGIN_ID)
+    }
 
     @CompileStatic
     void apply(Project project) {

@@ -42,8 +42,16 @@ class ErrorProne extends AbstractFeature {
     String errorProneJavacVersion = '9+181-r4173-1'
 
     ErrorProne(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        super(config, project, PLUGIN_ID)
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).quality.errorprone
+    }
+
+    protected boolean hasBasePlugin(Project project) {
+        project.pluginManager.hasPlugin('java')
     }
 
     @Override
@@ -61,20 +69,6 @@ class ErrorProne extends AbstractFeature {
             erroProneVersion: errorProneVersion,
             erroProneJavacVersion: errorProneJavacVersion
         ))
-    }
-
-    void normalize() {
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    setEnabled(project.pluginManager.hasPlugin('java') && isApplied())
-                } else {
-                    setEnabled(project.childProjects.values().any { p -> p.pluginManager.hasPlugin('java') && isApplied(p) })
-                }
-            } else {
-                setEnabled(project.pluginManager.hasPlugin('java') && isApplied())
-            }
-        }
     }
 
     boolean getDisableAllChecks() {

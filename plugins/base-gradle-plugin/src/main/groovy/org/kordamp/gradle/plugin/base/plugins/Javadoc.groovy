@@ -52,7 +52,7 @@ class Javadoc extends AbstractFeature {
     final AutoLinks autoLinks
 
     Javadoc(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
+        super(config, project, PLUGIN_ID)
         options.setVersion(true)
         aggregate           = new Aggregate(config, project)
         autoLinks           = new AutoLinks(config)
@@ -64,6 +64,11 @@ class Javadoc extends AbstractFeature {
         options.docTitle    = "${project.name} ${project.version}"
         options.header      = "${project.name} ${project.version}"
         options.links(resolveJavadocLinks(project.findProperty('targetCompatibility')))
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).docs.javadoc
     }
 
     private String resolveJavadocLinks(Object jv) {
@@ -111,6 +116,10 @@ class Javadoc extends AbstractFeature {
         }
 
         new LinkedHashMap<>(['javadoc': map])
+    }
+
+    protected boolean hasBasePlugin(Project project) {
+        project.pluginManager.hasPlugin('java')
     }
 
     void postMerge() {

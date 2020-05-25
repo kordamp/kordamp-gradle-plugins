@@ -34,20 +34,11 @@ class Source extends AbstractAggregateFeature {
     }
 
     @Override
-    protected void populateMapDescription(Map<String, Object> map) {
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).artifacts.source
     }
 
-    void normalize() {
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    setEnabled(isApplied())
-                } else {
-                    setEnabled(project.childProjects.values().any { p -> isApplied(p) })
-                }
-            } else {
-                setEnabled(isApplied())
-            }
-        }
+    @Override
+    protected void populateMapDescription(Map<String, Object> map) {
     }
 }

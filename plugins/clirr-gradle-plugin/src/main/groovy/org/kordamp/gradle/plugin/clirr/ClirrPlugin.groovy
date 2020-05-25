@@ -32,6 +32,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Clirr
 import org.kordamp.gradle.plugin.clirr.tasks.AggregateClirrReportTask
 import org.kordamp.gradle.plugin.clirr.tasks.ClirrTask
 import org.kordamp.gradle.util.PluginUtils
@@ -57,7 +58,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
     Project project
 
     ClirrPlugin() {
-        super(org.kordamp.gradle.plugin.base.plugins.Clirr.PLUGIN_ID)
+        super(Clirr.PLUGIN_ID)
     }
 
     void apply(Project project) {

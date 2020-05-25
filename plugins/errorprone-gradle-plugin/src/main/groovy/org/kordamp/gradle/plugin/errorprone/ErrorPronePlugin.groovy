@@ -28,6 +28,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.ErrorProne
 
 import javax.inject.Named
 
@@ -44,7 +45,7 @@ class ErrorPronePlugin extends AbstractKordampPlugin {
     Project project
 
     ErrorPronePlugin() {
-        super(org.kordamp.gradle.plugin.base.plugins.ErrorProne.PLUGIN_ID)
+        super(ErrorProne.PLUGIN_ID)
     }
 
     void apply(Project project) {

@@ -75,7 +75,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
     Project project
 
     KotlindocPlugin() {
-        super(org.kordamp.gradle.plugin.base.plugins.Kotlindoc.PLUGIN_ID)
+        super(Kotlindoc.PLUGIN_ID)
     }
 
     void apply(Project project) {

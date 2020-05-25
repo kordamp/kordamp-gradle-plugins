@@ -30,6 +30,7 @@ import org.kordamp.gradle.listener.TaskGraphReadyListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Coveralls
 import org.kt3k.gradle.plugin.CoverallsPluginExtension
 
 import javax.inject.Named
@@ -46,6 +47,10 @@ import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 @CompileStatic
 class CoverallsPlugin extends AbstractKordampPlugin {
     Project project
+
+    CoverallsPlugin() {
+        super(Coveralls.PLUGIN_ID)
+    }
 
     void apply(Project project) {
         this.project = project

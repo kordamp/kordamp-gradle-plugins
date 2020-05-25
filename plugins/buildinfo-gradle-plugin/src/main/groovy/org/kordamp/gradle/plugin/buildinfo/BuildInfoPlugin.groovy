@@ -26,6 +26,7 @@ import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.BuildInfo
 
 import javax.inject.Named
 import java.text.SimpleDateFormat
@@ -52,6 +53,10 @@ import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 @CompileStatic
 class BuildInfoPlugin extends AbstractKordampPlugin {
     Project project
+
+    BuildInfoPlugin() {
+        super(BuildInfo.PLUGIN_ID)
+    }
 
     void apply(Project project) {
         this.project = project

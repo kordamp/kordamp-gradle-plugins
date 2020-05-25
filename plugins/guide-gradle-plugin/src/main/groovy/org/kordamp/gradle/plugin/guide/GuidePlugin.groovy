@@ -33,6 +33,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Guide
 import org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
 
 import javax.inject.Named
@@ -55,6 +56,10 @@ class GuidePlugin extends AbstractKordampPlugin {
     static final String IMAGES_DIR = 'images'
 
     Project project
+
+    GuidePlugin() {
+        super(Guide.PLUGIN_ID)
+    }
 
     void apply(Project project) {
         this.project = project

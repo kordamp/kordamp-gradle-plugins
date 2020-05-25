@@ -49,13 +49,18 @@ class Jacoco extends AbstractFeature {
     final ConfigurableFileCollection additionalClassDirs
 
     Jacoco(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
+        super(config, project, PLUGIN_ID)
         File destinationDir = project.layout.buildDirectory.file('reports/jacoco/aggregate').get().asFile
         aggregateExecFile = project.layout.buildDirectory.file('jacoco/aggregate.exec').get().asFile
         aggregateReportHtmlFile = project.file("${destinationDir}/html")
         aggregateReportXmlFile = project.file("${destinationDir}/jacocoTestReport.xml")
         additionalSourceDirs = project.objects.fileCollection()
         additionalClassDirs = project.objects.fileCollection()
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).coverage.jacoco
     }
 
     @Deprecated
@@ -112,6 +117,11 @@ class Jacoco extends AbstractFeature {
         new LinkedHashMap<>('jacoco': map)
     }
 
+    @Override
+    void normalize() {
+        normalizeVisible()
+    }
+
     void postMerge() {
         if (!enabledSet) {
             if (isRoot()) {
@@ -120,8 +130,15 @@ class Jacoco extends AbstractFeature {
                 }
             } else {
                 enabled = hasTestSourceSets()
+                if (enabled) {
+                    getParentFeature().enabled = enabled
+                }
             }
         }
+    }
+
+    protected boolean hasBasePlugin(Project project) {
+        project.pluginManager.hasPlugin('java-base')
     }
 
     void exclude(String str) {
@@ -129,6 +146,12 @@ class Jacoco extends AbstractFeature {
     }
 
     boolean hasTestSourceSets() {
+        hasTestSourceSets(project)
+    }
+
+    boolean hasTestSourceSets(Project project) {
+        ProjectConfigurationExtension config = project.extensions.getByType(ProjectConfigurationExtension)
+
         hasTestsAt(project.file('src/test')) ||
             hasTestsAt(project.file(config.testing.integration.baseDir)) ||
             hasTestsAt(project.file(config.testing.functional.baseDir)) ||
@@ -140,7 +163,7 @@ class Jacoco extends AbstractFeature {
     }
 
     static void merge(Jacoco o1, Jacoco o2) {
-        AbstractFeature.merge(o1, o2)
+        o1.doSetEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
         o1.aggregateExecFile = o1.aggregateExecFile ?: o2.aggregateExecFile
         o1.aggregateReportHtmlFile = o1.aggregateReportHtmlFile ?: o2.aggregateReportHtmlFile
         o1.aggregateReportXmlFile = o1.aggregateReportXmlFile ?: o2.aggregateReportXmlFile

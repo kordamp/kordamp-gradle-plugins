@@ -44,6 +44,11 @@ class Codenarc extends AbstractQualityFeature {
         toolVersion = DefaultVersions.INSTANCE.codenarcVersion
     }
 
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).quality.codenarc
+    }
+
     void setConfigFile(File configFile) {
         this.configFile = configFile
         this.configFileSet = true

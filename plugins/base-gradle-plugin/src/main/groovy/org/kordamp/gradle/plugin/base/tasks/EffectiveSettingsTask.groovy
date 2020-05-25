@@ -34,6 +34,21 @@ class EffectiveSettingsTask extends AbstractReportingTask {
     private final List<String> ARTIFACTS = ['jar', 'source', 'minpom'].asImmutable()
     private final List<String> DOCS = ['guide', 'groovydoc', 'javadoc', 'kotlindoc', 'scaladoc', 'sourceHtml', 'sourceXref'].asImmutable()
     private final List<String> QUALITY = ['checkstyle', 'codenarc', 'detekt', 'errorprone', 'pmd', 'cpd', 'sonar', 'spotbugs'].asImmutable()
+    private final List<String> SECTIONS = [
+        'buildInfo',
+        'bintray',
+        'publishing',
+        'bom',
+        'licensing',
+        'testing',
+        'clirr',
+        'plugin',
+        'stats',
+        'coverage',
+        'artifacts',
+        'docs',
+        'quality'
+    ] + COVERAGE + ARTIFACTS + DOCS + QUALITY
 
     private String section
     private Set<String> sections
@@ -77,6 +92,8 @@ class EffectiveSettingsTask extends AbstractReportingTask {
             printSection((Map<String, Object>) map.artifacts, section)
         } else if (section in COVERAGE) {
             printSection((Map<String, Object>) map.coverage, section)
+        } else if (section in SECTIONS) {
+            println("The plugin that enables section '${section}' has not been applied.")
         } else {
             throw new IllegalStateException("Unknown section '$section'")
         }

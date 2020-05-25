@@ -75,14 +75,19 @@ class Bom extends AbstractFeature implements PomOptions {
     private boolean overwriteMailingListsSet
 
     Bom(ProjectConfigurationExtension config, Project project) {
-        super(config, project)
-        doSetEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+        super(config, project, PLUGIN_ID)
+    }
+
+    @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).bom
     }
 
     void normalize() {
         if (!enabledSet) {
-            setEnabled(project.plugins.findPlugin(PLUGIN_ID) != null)
+            setEnabled(isApplied())
         }
+        setVisible(isApplied())
     }
 
     Map<String, Dependency> getDependencies() {
@@ -93,26 +98,24 @@ class Bom extends AbstractFeature implements PomOptions {
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
-        if (enabled) {
-            map.autoIncludes = autoIncludes
-            map.dependencies = dependencies
-            map.excludes = excludes
-            map.includes = includes
-            if (isNotBlank(parent)) {
-                map.parent = parent
-                map.overwriteInceptionYear = overwriteInceptionYear
-                map.overwriteUrl = overwriteUrl
-                map.overwriteLicenses = overwriteLicenses
-                map.overwriteScm = overwriteScm
-                map.overwriteOrganization = overwriteOrganization
-                map.overwriteDevelopers = overwriteDevelopers
-                map.overwriteContributors = overwriteContributors
-                map.overwriteIssueManagement = overwriteIssueManagementSet
-                map.overwriteCiManagement = overwriteCiManagementSet
-                map.overwriteMailingLists = overwriteMailingListsSet
-            }
-            map.properties = properties
+        map.autoIncludes = autoIncludes
+        map.dependencies = dependencies
+        map.excludes = excludes
+        map.includes = includes
+        if (isNotBlank(parent)) {
+            map.parent = parent
+            map.overwriteInceptionYear = overwriteInceptionYear
+            map.overwriteUrl = overwriteUrl
+            map.overwriteLicenses = overwriteLicenses
+            map.overwriteScm = overwriteScm
+            map.overwriteOrganization = overwriteOrganization
+            map.overwriteDevelopers = overwriteDevelopers
+            map.overwriteContributors = overwriteContributors
+            map.overwriteIssueManagement = overwriteIssueManagementSet
+            map.overwriteCiManagement = overwriteCiManagementSet
+            map.overwriteMailingLists = overwriteMailingListsSet
         }
+        map.properties = properties
 
         new LinkedHashMap<>('bom': map)
     }

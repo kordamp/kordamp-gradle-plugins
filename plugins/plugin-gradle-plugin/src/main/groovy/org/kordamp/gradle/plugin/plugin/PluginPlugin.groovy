@@ -35,6 +35,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Plugin
 import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 
 import javax.inject.Named
@@ -51,6 +52,10 @@ import static org.kordamp.gradle.util.StringUtils.isNotBlank
 @CompileStatic
 class PluginPlugin extends AbstractKordampPlugin {
     Project project
+
+    PluginPlugin() {
+        super(Plugin.PLUGIN_ID)
+    }
 
     void apply(Project project) {
         this.project = project

@@ -35,6 +35,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Credentials
 import org.kordamp.gradle.plugin.base.model.Repository
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
+import org.kordamp.gradle.plugin.base.plugins.Publishing
 import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.jar.JarPlugin
@@ -57,6 +58,10 @@ import static org.kordamp.gradle.util.StringUtils.isNotBlank
 @CompileStatic
 class PublishingPlugin extends AbstractKordampPlugin {
     Project project
+
+    PublishingPlugin() {
+        super(Publishing.PLUGIN_ID)
+    }
 
     void apply(Project project) {
         this.project = project

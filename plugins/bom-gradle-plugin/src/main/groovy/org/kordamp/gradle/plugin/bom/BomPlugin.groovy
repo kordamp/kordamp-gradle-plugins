@@ -33,6 +33,7 @@ import org.kordamp.gradle.plugin.base.model.Credentials
 import org.kordamp.gradle.plugin.base.model.Repository
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
 import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencyImpl
+import org.kordamp.gradle.plugin.base.plugins.Bom
 import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 
 import javax.inject.Named
@@ -50,6 +51,10 @@ import static org.kordamp.gradle.util.StringUtils.isNotBlank
 @CompileStatic
 class BomPlugin extends AbstractKordampPlugin {
     Project project
+
+    BomPlugin() {
+        super(Bom.PLUGIN_ID)
+    }
 
     void apply(Project project) {
         this.project = project

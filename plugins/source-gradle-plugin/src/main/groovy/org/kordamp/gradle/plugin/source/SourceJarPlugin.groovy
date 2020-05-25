@@ -33,6 +33,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Source
 
 import javax.inject.Named
 
@@ -58,7 +59,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
     Project project
 
     SourceJarPlugin() {
-        super(org.kordamp.gradle.plugin.base.plugins.Source.PLUGIN_ID)
+        super(Source.PLUGIN_ID)
     }
 
     void apply(Project project) {

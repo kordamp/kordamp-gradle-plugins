@@ -32,6 +32,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Codenarc
 import org.kordamp.gradle.plugin.codenarc.tasks.InitCodenarcTask
 
 import javax.inject.Named
@@ -54,7 +55,7 @@ class CodenarcPlugin extends AbstractKordampPlugin {
     Project project
 
     CodenarcPlugin() {
-        super(org.kordamp.gradle.plugin.base.plugins.Codenarc.PLUGIN_ID)
+        super(Codenarc.PLUGIN_ID)
     }
 
     void apply(Project project) {

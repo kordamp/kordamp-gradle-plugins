@@ -36,6 +36,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.SourceHtml
 
 import javax.inject.Named
 
@@ -60,7 +61,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
     Project project
 
     SourceHtmlPlugin() {
-        super(org.kordamp.gradle.plugin.base.plugins.SourceHtml.PLUGIN_ID)
+        super(SourceHtml.PLUGIN_ID)
     }
 
     void apply(Project project) {

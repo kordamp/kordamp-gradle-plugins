@@ -53,6 +53,11 @@ class Spotbugs extends AbstractQualityFeature {
     }
 
     @Override
+    protected AbstractFeature getParentFeature() {
+        return project.rootProject.extensions.getByType(ProjectConfigurationExtension).quality.spotbugs
+    }
+
+    @Override
     protected void populateMapDescription(Map<String, Object> map) {
         super.populateMapDescription(map)
         map.includeFilterFile = this.includeFilterFile

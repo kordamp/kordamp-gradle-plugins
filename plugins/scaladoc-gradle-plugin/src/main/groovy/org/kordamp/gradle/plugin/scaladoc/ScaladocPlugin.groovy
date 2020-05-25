@@ -34,6 +34,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.plugins.Scaladoc
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 
 import javax.inject.Named
@@ -62,7 +63,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
     Project project
 
     ScaladocPlugin() {
-        super(org.kordamp.gradle.plugin.base.plugins.Scaladoc.PLUGIN_ID)
+        super(Scaladoc.PLUGIN_ID)
     }
 
     void apply(Project project) {

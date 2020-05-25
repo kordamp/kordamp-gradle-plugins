@@ -107,19 +107,19 @@ class ProjectConfigurationExtension {
 
         map.putAll(info.toMap())
         map.putAll(dependencies.toMap())
-        map.putAll(buildInfo.toMap())
+        if (buildInfo.visible) map.putAll(buildInfo.toMap())
         map.putAll(artifacts.toMap())
-        map.putAll(bintray.toMap())
-        map.putAll(publishing.toMap())
-        map.putAll(bom.toMap())
-        map.putAll(licensing.toMap())
+        if (bintray.visible) map.putAll(bintray.toMap())
+        if (publishing.visible) map.putAll(publishing.toMap())
+        if (bom.visible) map.putAll(bom.toMap())
+        if (licensing.visible) map.putAll(licensing.toMap())
         map.putAll(docs.toMap())
         map.putAll(coverage.toMap())
         map.putAll(quality.toMap())
-        map.putAll(testing.toMap())
-        map.putAll(clirr.toMap())
-        map.putAll(plugin.toMap())
-        map.putAll(stats.toMap())
+        if (testing.visible) map.putAll(testing.toMap())
+        if (clirr.visible) map.putAll(clirr.toMap())
+        if (plugin.visible) map.putAll(plugin.toMap())
+        if (stats.visible) map.putAll(stats.toMap())
 
         map
     }
@@ -451,15 +451,19 @@ class ProjectConfigurationExtension {
 
     ProjectConfigurationExtension normalize() {
         info.normalize()
-        bom.normalize()
-        clirr.normalize()
-        stats.normalize()
-        licensing.normalize()
-        plugin.normalize()
-        publishing.normalize()
+        buildInfo.normalize()
         artifacts.normalize()
+        bintray.normalize()
+        publishing.normalize()
+        bom.normalize()
+        licensing.normalize()
         docs.normalize()
+        coverage.normalize()
         quality.normalize()
+        testing.normalize()
+        clirr.normalize()
+        plugin.normalize()
+        stats.normalize()
         this
     }
 
@@ -503,16 +507,16 @@ class ProjectConfigurationExtension {
         Map<String, Object> toMap() {
             Map<String, Object> map = new LinkedHashMap<String, Object>()
 
-            map.putAll(checkstyle.toMap())
-            map.putAll(codenarc.toMap())
-            map.putAll(detekt.toMap())
-            map.putAll(errorprone.toMap())
-            map.putAll(pmd.toMap())
-            map.putAll(cpd.toMap())
-            map.putAll(sonar.toMap())
-            map.putAll(spotbugs.toMap())
+            if (checkstyle.visible) map.putAll(checkstyle.toMap())
+            if (codenarc.visible) map.putAll(codenarc.toMap())
+            if (detekt.visible) map.putAll(detekt.toMap())
+            if (errorprone.visible) map.putAll(errorprone.toMap())
+            if (pmd.visible) map.putAll(pmd.toMap())
+            if (cpd.visible) map.putAll(cpd.toMap())
+            if (sonar.visible) map.putAll(sonar.toMap())
+            if (spotbugs.visible) map.putAll(spotbugs.toMap())
 
-            new LinkedHashMap<>('quality': map)
+            map ? new LinkedHashMap<>('quality': map) : [:]
         }
 
         void checkstyle(Action<? super Checkstyle> action) {
@@ -635,10 +639,10 @@ class ProjectConfigurationExtension {
         Map<String, Object> toMap() {
             Map<String, Object> map = new LinkedHashMap<String, Object>()
 
-            map.putAll(jacoco.toMap())
-            map.putAll(coveralls.toMap())
+            if (jacoco.visible) map.putAll(jacoco.toMap())
+            if (coveralls.visible) map.putAll(coveralls.toMap())
 
-            new LinkedHashMap<>('coverage': map)
+            map ? new LinkedHashMap<>('coverage': map) : [:]
         }
 
         void coveralls(Action<? super Coveralls> action) {
@@ -663,8 +667,15 @@ class ProjectConfigurationExtension {
             o1
         }
 
+        Coverage normalize() {
+            jacoco.normalize()
+            coveralls.normalize()
+            this
+        }
+
         Coverage postMerge() {
             jacoco.postMerge()
+            coveralls.postMerge()
             this
         }
     }
@@ -697,15 +708,15 @@ class ProjectConfigurationExtension {
         Map<String, Object> toMap() {
             Map<String, Object> map = new LinkedHashMap<String, Object>()
 
-            map.putAll(javadoc.toMap())
-            map.putAll(groovydoc.toMap())
-            map.putAll(kotlindoc.toMap())
-            map.putAll(scaladoc.toMap())
-            map.putAll(sourceHtml.toMap())
-            map.putAll(sourceXref.toMap())
-            map.putAll(guide.toMap())
+            if (javadoc.visible) map.putAll(javadoc.toMap())
+            if (groovydoc.visible) map.putAll(groovydoc.toMap())
+            if (kotlindoc.visible) map.putAll(kotlindoc.toMap())
+            if (scaladoc.visible) map.putAll(scaladoc.toMap())
+            if (sourceHtml.visible) map.putAll(sourceHtml.toMap())
+            if (sourceXref.visible) map.putAll(sourceXref.toMap())
+            if (guide.visible) map.putAll(guide.toMap())
 
-            new LinkedHashMap<>('docs': map)
+            map ? new LinkedHashMap<>('docs': map) : [:]
         }
 
         void guide(Action<? super Guide> action) {
@@ -784,10 +795,11 @@ class ProjectConfigurationExtension {
         }
 
         Docs normalize() {
+            guide.normalize()
             groovydoc.normalize()
             kotlindoc.normalize()
+            javadoc.normalize()
             scaladoc.normalize()
-            guide.normalize()
             sourceHtml.normalize()
             sourceXref.normalize()
             this
@@ -820,11 +832,11 @@ class ProjectConfigurationExtension {
         Map<String, Object> toMap() {
             Map<String, Object> map = new LinkedHashMap<String, Object>()
 
-            map.putAll(jar.toMap())
-            map.putAll(minpom.toMap())
-            map.putAll(source.toMap())
+            if (jar.visible) map.putAll(jar.toMap())
+            if (minpom.visible) map.putAll(minpom.toMap())
+            if (source.visible) map.putAll(source.toMap())
 
-            new LinkedHashMap<>('artifacts': map)
+            map ? new LinkedHashMap<>('artifacts': map) : [:]
         }
 
         void jar(Action<? super Jar> action) {
@@ -860,6 +872,7 @@ class ProjectConfigurationExtension {
 
         Artifacts normalize() {
             jar.normalize()
+            minpom.normalize()
             source.normalize()
             this
         }
