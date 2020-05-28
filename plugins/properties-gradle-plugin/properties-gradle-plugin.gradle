@@ -18,5 +18,5 @@
 dependencies {
     api project(':base-gradle-plugin')
     api 'org.yaml:snakeyaml:1.26'
-    api 'com.moandjiezana.toml:toml4j:0.7.2'
+    api 'com.github.jezza:toml:1.1-java-8'
 }

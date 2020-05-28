@@ -17,7 +17,8 @@
  */
 package org.kordamp.gradle.plugin.properties
 
-import com.moandjiezana.toml.Toml
+import com.github.jezza.Toml
+import com.github.jezza.TomlTable
 import groovy.transform.CompileStatic
 import org.gradle.api.plugins.ExtraPropertiesExtension
 
@@ -34,7 +35,7 @@ class TomlPropertiesReader extends AbstractPropertiesReader {
 
         TomlPropertiesReader reader = new TomlPropertiesReader()
 
-        Toml toml = new Toml().read(file)
+        TomlTable toml = Toml.from(new FileInputStream(file))
         toml.entrySet().each { entry ->
             if (entry.key == 'systemProp') {
                 reader.handleAsSystemProperty('', entry.value, overwrite)
@@ -46,12 +47,12 @@ class TomlPropertiesReader extends AbstractPropertiesReader {
 
     @Override
     protected boolean isKeyValueHolder(Object value) {
-        value instanceof Toml
+        value instanceof TomlTable
     }
 
     @Override
     protected void handleKeyValues(Object value, BiConsumer<String, Object> handler) {
-        ((Toml) value).entrySet().each { entry ->
+        ((TomlTable) value).entrySet().each { entry ->
             handler.accept(entry.key, entry.value)
         }
     }
