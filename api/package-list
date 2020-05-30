@@ -1,8 +1,12 @@
 org.kordamp.gradle
+org.kordamp.gradle.annotations
+org.kordamp.gradle.listener
 org.kordamp.gradle.plugin
 org.kordamp.gradle.plugin.base
 org.kordamp.gradle.plugin.base.internal
 org.kordamp.gradle.plugin.base.model
+org.kordamp.gradle.plugin.base.model.artifact
+org.kordamp.gradle.plugin.base.model.artifact.internal
 org.kordamp.gradle.plugin.base.model.impl
 org.kordamp.gradle.plugin.base.plugins
 org.kordamp.gradle.plugin.base.plugins.util
@@ -19,6 +23,8 @@ org.kordamp.gradle.plugin.clirr.tasks
 org.kordamp.gradle.plugin.codenarc
 org.kordamp.gradle.plugin.codenarc.tasks
 org.kordamp.gradle.plugin.coveralls
+org.kordamp.gradle.plugin.cpd
+org.kordamp.gradle.plugin.cpd.internal
 org.kordamp.gradle.plugin.detekt
 org.kordamp.gradle.plugin.errorprone
 org.kordamp.gradle.plugin.functionaltest
@@ -40,13 +46,17 @@ org.kordamp.gradle.plugin.profiles.tasks
 org.kordamp.gradle.plugin.project
 org.kordamp.gradle.plugin.project.groovy
 org.kordamp.gradle.plugin.project.groovy.tasks
+org.kordamp.gradle.plugin.project.internal
 org.kordamp.gradle.plugin.project.java
 org.kordamp.gradle.plugin.project.java.tasks
 org.kordamp.gradle.plugin.project.kotlin
 org.kordamp.gradle.plugin.project.kotlin.tasks
 org.kordamp.gradle.plugin.project.scala
 org.kordamp.gradle.plugin.project.scala.tasks
+org.kordamp.gradle.plugin.project.tasks
 org.kordamp.gradle.plugin.project.tasks.reports
+org.kordamp.gradle.plugin.properties
+org.kordamp.gradle.plugin.properties.internal
 org.kordamp.gradle.plugin.publishing
 org.kordamp.gradle.plugin.scaladoc
 org.kordamp.gradle.plugin.settings
@@ -60,3 +70,5 @@ org.kordamp.gradle.plugin.stats
 org.kordamp.gradle.plugin.stats.counter
 org.kordamp.gradle.plugin.test.tasks
 org.kordamp.gradle.plugin.testing
+org.kordamp.gradle.property
+org.kordamp.gradle.util

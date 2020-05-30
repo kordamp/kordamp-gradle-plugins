@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>A collection of opinionated Gradle plugins</h1>
 <div class="details">
 <span id="author" class="author">Andres Almiray</span><br>
-<span id="revnumber">version 0.36.0</span>
+<span id="revnumber">version 0.37.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -171,102 +171,108 @@ $(addBlockSwitches);
 <li><a href="#_org_kordamp_gradle_coveralls_dsl">7.8.1. DSL</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_detekt">7.9. Detekt</a>
+<li><a href="#_org_kordamp_gradle_cpd">7.9. Cpd</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_detekt_dsl">7.9.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_detekt_tasks">7.9.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_cpd_dsl">7.9.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_cpd_tasks">7.9.2. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_errorprone">7.10. Error Prone</a>
+<li><a href="#_org_kordamp_gradle_detekt">7.10. Detekt</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_errorprone_dsl">7.10.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_detekt_dsl">7.10.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_detekt_tasks">7.10.2. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_functionaltest">7.11. FunctionalTest</a></li>
-<li><a href="#_org_kordamp_gradle_groovy_project">7.12. GroovyProject</a>
+<li><a href="#_org_kordamp_gradle_errorprone">7.11. Error Prone</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_groovy_project_tasks">7.12.1. Tasks</a></li>
-<li><a href="#_org_kordamp_gradle_groovy_project_rules">7.12.2. Rules</a></li>
+<li><a href="#_org_kordamp_gradle_errorprone_dsl">7.11.1. DSL</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_groovydoc">7.13. Groovydoc</a>
+<li><a href="#_org_kordamp_gradle_functionaltest">7.12. FunctionalTest</a></li>
+<li><a href="#_org_kordamp_gradle_groovy_project">7.13. GroovyProject</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_groovydoc_dsl">7.13.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_groovydoc_tasks">7.13.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_groovy_project_tasks">7.13.1. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_groovy_project_rules">7.13.2. Rules</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_guide">7.14. Guide</a>
+<li><a href="#_org_kordamp_gradle_groovydoc">7.14. Groovydoc</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_guide_dsl">7.14.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_guide_extension">7.14.2. Extension</a></li>
-<li><a href="#_org_kordamp_gradle_guide_tasks">7.14.3. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_groovydoc_dsl">7.14.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_groovydoc_tasks">7.14.2. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_integrationtest">7.15. IntegrationTest</a></li>
-<li><a href="#_org_kordamp_gradle_jacoco">7.16. JaCoCo</a>
+<li><a href="#_org_kordamp_gradle_guide">7.15. Guide</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_jacoco_dsl">7.16.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_jacoco_tasks">7.16.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_guide_dsl">7.15.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_guide_extension">7.15.2. Extension</a></li>
+<li><a href="#_org_kordamp_gradle_guide_tasks">7.15.3. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_jar">7.17. Jar</a>
+<li><a href="#_org_kordamp_gradle_integrationtest">7.16. IntegrationTest</a></li>
+<li><a href="#_org_kordamp_gradle_jacoco">7.17. JaCoCo</a>
 <ul class="sectlevel3">
-<li><a href="#_reproducible_builds">7.17.1. Reproducible Builds</a></li>
-<li><a href="#_org_kordamp_gradle_jar_dsl">7.17.2. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_jacoco_dsl">7.17.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_jacoco_tasks">7.17.2. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_java_project">7.18. JavaProject</a>
+<li><a href="#_org_kordamp_gradle_jar">7.18. Jar</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_java_project_tasks">7.18.1. Tasks</a></li>
-<li><a href="#_org_kordamp_gradle_java_project_rules">7.18.2. Rules</a></li>
+<li><a href="#_reproducible_builds">7.18.1. Reproducible Builds</a></li>
+<li><a href="#_org_kordamp_gradle_jar_dsl">7.18.2. DSL</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_javadoc">7.19. Javadoc</a>
+<li><a href="#_org_kordamp_gradle_java_project">7.19. JavaProject</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_javadoc_dsl">7.19.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_javadoc_tasks">7.19.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_java_project_extensions">7.19.1. Extensions</a></li>
+<li><a href="#_org_kordamp_gradle_java_project_tasks">7.19.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_java_project_rules">7.19.3. Rules</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_kotlin_project">7.20. KotlinProject</a>
+<li><a href="#_org_kordamp_gradle_javadoc">7.20. Javadoc</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_kotlin_project_tasks">7.20.1. Tasks</a></li>
-<li><a href="#_org_kordamp_gradle_kotlin_project_rules">7.20.2. Rules</a></li>
+<li><a href="#_org_kordamp_gradle_javadoc_dsl">7.20.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_javadoc_tasks">7.20.2. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_kotlindoc">7.21. Kotlindoc</a>
+<li><a href="#_org_kordamp_gradle_kotlin_project">7.21. KotlinProject</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_kotlindoc_dsl">7.21.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_kotlindoc_tasks">7.21.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_kotlin_project_tasks">7.21.1. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_kotlin_project_rules">7.21.2. Rules</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_licensing">7.22. Licensing</a>
+<li><a href="#_org_kordamp_gradle_kotlindoc">7.22. Kotlindoc</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_licensing_dsl">7.22.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_license_example">7.22.2. Example</a></li>
-<li><a href="#_org_kordamp_gradle_licensing_extensions">7.22.3. Extensions</a></li>
-<li><a href="#_org_kordamp_gradle_licensing_tasks">7.22.4. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_kotlindoc_dsl">7.22.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_kotlindoc_tasks">7.22.2. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_minpom">7.23. Minpom</a>
+<li><a href="#_org_kordamp_gradle_licensing">7.23. Licensing</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_minpom_example">7.23.1. Example</a></li>
-<li><a href="#_org_kordamp_gradle_minpom_dsl">7.23.2. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_minpom_tasks">7.23.3. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_licensing_dsl">7.23.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_license_example">7.23.2. Example</a></li>
+<li><a href="#_org_kordamp_gradle_licensing_extensions">7.23.3. Extensions</a></li>
+<li><a href="#_org_kordamp_gradle_licensing_tasks">7.23.4. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_plugin">7.24. Plugin</a>
+<li><a href="#_org_kordamp_gradle_minpom">7.24. Minpom</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_plugin_dsl">7.24.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_plugin_tasks">7.24.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_minpom_example">7.24.1. Example</a></li>
+<li><a href="#_org_kordamp_gradle_minpom_dsl">7.24.2. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_minpom_tasks">7.24.3. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_pmd">7.25. Pmd</a>
+<li><a href="#_org_kordamp_gradle_plugin">7.25. Plugin</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_pmd_dsl">7.25.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_pmd_tasks">7.25.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_plugin_dsl">7.25.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_plugin_tasks">7.25.2. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_project">7.26. Project</a></li>
+<li><a href="#_org_kordamp_gradle_pmd">7.26. Pmd</a>
+<ul class="sectlevel3">
+<li><a href="#_org_kordamp_gradle_pmd_dsl">7.26.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_pmd_tasks">7.26.2. Tasks</a></li>
+</ul>
+</li>
 <li><a href="#_org_kordamp_gradle_profiles">7.27. Profiles</a>
 <ul class="sectlevel3">
 <li><a href="#_org_kordamp_gradle_profiles_dsl">7.27.1. DSL</a></li>
@@ -276,73 +282,79 @@ $(addBlockSwitches);
 <li><a href="#_org_kordamp_gradle_profiles_tasks">7.27.5. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_publishing">7.28. Publishing</a>
+<li><a href="#_org_kordamp_gradle_project">7.28. Project</a></li>
+<li><a href="#_org_kordamp_gradle_properties">7.29. Properties</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_publishing_dsl">7.28.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_publishing_example">7.28.2. Example</a></li>
-<li><a href="#_org_kordamp_gradle_publishing_tasks">7.28.3. Tasks</a></li>
-<li><a href="#_org_kordamp_gradle_publishing_rules">7.28.4. Rules</a></li>
+<li><a href="#_org_kordamp_gradle_properties_dsl">7.29.1. DSL</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_scala_project">7.29. ScalaProject</a>
+<li><a href="#_org_kordamp_gradle_publishing">7.30. Publishing</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_scala_project_tasks">7.29.1. Tasks</a></li>
-<li><a href="#_org_kordamp_gradle_scala_project_rules">7.29.2. Rules</a></li>
+<li><a href="#_org_kordamp_gradle_publishing_dsl">7.30.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_publishing_example">7.30.2. Example</a></li>
+<li><a href="#_org_kordamp_gradle_publishing_tasks">7.30.3. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_publishing_rules">7.30.4. Rules</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_scaladoc">7.30. Scaladoc</a>
+<li><a href="#_org_kordamp_gradle_scala_project">7.31. ScalaProject</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_scaladoc_dsl">7.30.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_scaladoc_tasks">7.30.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_scala_project_tasks">7.31.1. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_scala_project_rules">7.31.2. Rules</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_settings">7.31. Settings</a>
+<li><a href="#_org_kordamp_gradle_scaladoc">7.32. Scaladoc</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_settings_dsl">7.31.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_settings_example">7.31.2. Example</a></li>
+<li><a href="#_org_kordamp_gradle_scaladoc_dsl">7.32.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_scaladoc_tasks">7.32.2. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_source">7.32. SourceJar</a>
+<li><a href="#_org_kordamp_gradle_settings">7.33. Settings</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_source_dsl">7.32.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_source_tasks">7.32.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_settings_dsl">7.33.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_settings_example">7.33.2. Example</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_sourcehtml">7.33. SourceHtml</a>
+<li><a href="#_org_kordamp_gradle_source">7.34. SourceJar</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_sourcehtml_dsl">7.33.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_sourcehtml_tasks">7.33.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_source_dsl">7.34.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_source_tasks">7.34.2. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_sourcestats">7.34. SourceStats</a>
+<li><a href="#_org_kordamp_gradle_sourcehtml">7.35. SourceHtml</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_sourcestats_example">7.34.1. Example</a></li>
-<li><a href="#_org_kordamp_gradle_sourcestats_dsl">7.34.2. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_sourcestats_tasks">7.34.3. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_sourcehtml_dsl">7.35.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_sourcehtml_tasks">7.35.2. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_sourcexref">7.35. SourceXref</a>
+<li><a href="#_org_kordamp_gradle_sourcestats">7.36. SourceStats</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_sourcexref_dsl">7.35.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_sourcexref_tasks">7.35.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_sourcestats_example">7.36.1. Example</a></li>
+<li><a href="#_org_kordamp_gradle_sourcestats_dsl">7.36.2. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_sourcestats_tasks">7.36.3. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_spotbugs">7.36. SpotBugs</a>
+<li><a href="#_org_kordamp_gradle_sourcexref">7.37. SourceXref</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_spotbugs_dsl">7.36.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_spotbugs_tasks">7.36.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_sourcexref_dsl">7.37.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_sourcexref_tasks">7.37.2. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_sonar">7.37. SonarQube</a>
+<li><a href="#_org_kordamp_gradle_spotbugs">7.38. SpotBugs</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_sonar_dsl">7.37.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_sonar_tasks">7.37.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_spotbugs_dsl">7.38.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_spotbugs_tasks">7.38.2. Tasks</a></li>
 </ul>
 </li>
-<li><a href="#_org_kordamp_gradle_testing">7.38. Testing</a>
+<li><a href="#_org_kordamp_gradle_sonar">7.39. SonarQube</a>
 <ul class="sectlevel3">
-<li><a href="#_org_kordamp_gradle_testing_dsl">7.38.1. DSL</a></li>
-<li><a href="#_org_kordamp_gradle_testing_tasks">7.38.2. Tasks</a></li>
+<li><a href="#_org_kordamp_gradle_sonar_dsl">7.39.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_sonar_tasks">7.39.2. Tasks</a></li>
+</ul>
+</li>
+<li><a href="#_org_kordamp_gradle_testing">7.40. Testing</a>
+<ul class="sectlevel3">
+<li><a href="#_org_kordamp_gradle_testing_dsl">7.40.1. DSL</a></li>
+<li><a href="#_org_kordamp_gradle_testing_tasks">7.40.2. Tasks</a></li>
 </ul>
 </li>
 </ul>
@@ -400,7 +412,7 @@ still be bent to a certain degree. The plugins found in this project provide suc
         jcenter()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:{plugin-id}:0.36.0'
+        classpath 'org.kordamp.gradle:{plugin-id}:0.37.0'
     }
 }
 apply plugin: '{plugin-id}'</code></pre>
@@ -417,7 +429,7 @@ apply plugin: '{plugin-id}'</code></pre>
         jcenter()
     }
     dependencies {
-        classpath("org.kordamp.gradle:{plugin-id}:0.36.0")
+        classpath("org.kordamp.gradle:{plugin-id}:0.37.0")
     }
 }
 apply(plugin = "{plugin-id}")</code></pre>
@@ -430,7 +442,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id '{plugin-id}' version '0.36.0'
+    id '{plugin-id}' version '0.37.0'
 }</code></pre>
 </div>
 </div>
@@ -438,7 +450,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="kotlin">plugins {
-    id("{plugin-id}") version "0.36.0"
+    id("{plugin-id}") version "0.37.0"
 }</code></pre>
 </div>
 </div>
@@ -595,7 +607,7 @@ listOf("docs", "subprojects").forEach { dirName -&gt;
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.36.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.37.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -615,7 +627,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.36.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.37.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -634,8 +646,8 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.java-project' version '0.36.0'      <i class="conum" data-value="1"></i><b>(1)</b>
-    id 'org.kordamp.gradle.bintray'      version '0.36.0'      <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.java-project' version '0.37.0'      <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.bintray'      version '0.37.0'      <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 config {
@@ -715,8 +727,8 @@ allprojects {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.java-project") version "0.36.0"     <i class="conum" data-value="1"></i><b>(1)</b>
-    id("org.kordamp.gradle.bintray")      version "0.36.0"     <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.java-project") version "0.37.0"     <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.bintray")      version "0.37.0"     <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 val bintrayUsername: String by project
@@ -941,6 +953,7 @@ dependencies {
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
     <a href="#_org_kordamp_gradle_base">info</a> { ... }
+    <a href="#_base_dependencies">dependencies</a> { ... }
     <a href="#_org_kordamp_gradle_bintray">bintray</a> { ... }
     <a href="#_org_kordamp_gradle_bom">bom</a> { ... }
     <a href="#_org_kordamp_gradle_buildinfo">buildInfo</a> { ... }
@@ -971,6 +984,7 @@ dependencies {
     quality {
         <a href="#_org_kordamp_gradle_checkstyle">checkstyle</a> { ... }
         <a href="#_org_kordamp_gradle_codenarc">codenarc</a> { ... }
+        <a href="#_org_kordamp_gradle_cpd">cpd</a> { ... }
         <a href="#_org_kordamp_gradle_detekt">detekt</a> { ... }
         <a href="#_org_kordamp_gradle_errorprone">errorprone</a> { ... }
         <a href="#_org_kordamp_gradle_pmd">pmd</a> { ... }
@@ -994,7 +1008,7 @@ publications completely:</p>
 <div class="title">build.gradle (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.36.0'
+    id 'org.kordamp.gradle.project' version '0.37.0'
 }
 
 config {
@@ -1013,7 +1027,7 @@ allprojects {
 <div class="title">build.gradle.kts (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.36.0"
+    id("org.kordamp.gradle.project") version "0.37.0"
 }
 
 config {
@@ -1231,11 +1245,11 @@ exclude
         gradlePluginPortal()
     }
     dependencies {
-        classpath "org.kordamp.gradle:settings-gradle-plugin:0.36.0"
-        classpath "org.kordamp.gradle:java-project-gradle-plugin:0.36.0"
-        classpath "org.kordamp.gradle:guide-gradle-plugin:0.36.0"
-        classpath "org.kordamp.gradle:integrationtest-gradle-plugin:0.36.0"
-        classpath "org.kordamp.gradle:functionaltest-gradle-plugin:0.36.0"
+        classpath "org.kordamp.gradle:settings-gradle-plugin:0.37.0"
+        classpath "org.kordamp.gradle:java-project-gradle-plugin:0.37.0"
+        classpath "org.kordamp.gradle:guide-gradle-plugin:0.37.0"
+        classpath "org.kordamp.gradle:integrationtest-gradle-plugin:0.37.0"
+        classpath "org.kordamp.gradle:functionaltest-gradle-plugin:0.37.0"
     }
 }
 
@@ -1278,11 +1292,11 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.36.0")
-        classpath("org.kordamp.gradle:java-project-gradle-plugin:0.36.0")
-        classpath("org.kordamp.gradle:guide-gradle-plugin:0.36.0")
-        classpath("org.kordamp.gradle:integrationtest-gradle-plugin:0.36.0")
-        classpath("org.kordamp.gradle:functionaltest-gradle-plugin:0.36.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.37.0")
+        classpath("org.kordamp.gradle:java-project-gradle-plugin:0.37.0")
+        classpath("org.kordamp.gradle:guide-gradle-plugin:0.37.0")
+        classpath("org.kordamp.gradle:integrationtest-gradle-plugin:0.37.0")
+        classpath("org.kordamp.gradle:functionaltest-gradle-plugin:0.37.0")
     }
 }
 
@@ -1613,6 +1627,7 @@ class
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
     release
+
     <a href="#_base_info">info</a> {
         name
         description
@@ -1717,6 +1732,10 @@ class
                 otherArchives
             }
         }
+    }
+
+    <a href="#_base_dependencies">dependencies</a> {
+        dependency(String)
     }
 }</code></pre>
 </div>
@@ -2395,6 +2414,271 @@ block in the POM. If a <code>contributor</code> role exists then the person inst
 <div class="paragraph">
 <p>At least <code>name</code> must be defined.</p>
 </div>
+<div id="_base_dependencies" class="paragraph">
+<p><strong>dependencies</strong></p>
+</div>
+<div class="paragraph">
+<p>This block serves as a central point for declaring dependencies and platforms that can later be reused in other places
+such as the standard <code>dependencies</code> block. Dependency definitions require 4 elements:</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+name
+</td>
+<td class="hdlist2">
+<p>short name of the dependency or platform.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+groupId
+</td>
+<td class="hdlist2">
+<p>the groupId part of the artifact&#8217;s coordinates.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+artifactId
+</td>
+<td class="hdlist2">
+<p>the artifactId part of the artifact&#8217;s coordinates.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+version
+</td>
+<td class="hdlist2">
+<p>the version part of the artifact&#8217;s coordinates.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+platform
+</td>
+<td class="hdlist2">
+<p><code>true</code> if this dependency constitutes a platform, <code>false</code> otherwise (default).</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Additionally a dependency may define a set of modules that go together, for example, for <code>groovy</code> you can have the
+<code>grovy-core</code>, <code>groovy-xml</code>, <code>groovy-json</code> modules. All modules and the owning dependency share the same <code>groupId</code> and <code>version</code>.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Dependencies defined in this way cannot have classifiers and must be resolvable from a Maven compatible repository.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_org_kordamp_gradle_base_dependencies_methods"><a class="anchor" href="#_org_kordamp_gradle_base_dependencies_methods"></a>Methods</h5>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">dependency(String)</dt>
+<dd>
+<p>Defines a dependency. Argument must use the <code>groupId:artifactId:version</code> notation. Dependency name will be equal to <code>artifactId</code>.</p>
+</dd>
+<dt class="hdlist1">dependency(String, String)</dt>
+<dd>
+<p>Defines a dependency. Second argument must use the <code>groupId:artifactId:version</code> notation.</p>
+</dd>
+<dt class="hdlist1">dependency(String, String, Action)</dt>
+<dd>
+<p>Defines and configures a dependency. Second argument must use the <code>groupId:artifactId:version</code> notation.</p>
+</dd>
+<dt class="hdlist1">dependency(String, String, Closure)</dt>
+<dd>
+<p>Defines and configures a dependency. Second argument must use the <code>groupId:artifactId:version</code> notation.</p>
+</dd>
+<dt class="hdlist1">platform(String)</dt>
+<dd>
+<p>Defines a platform dependency. Argument must use the <code>groupId:artifactId:version</code> notation. Dependency name will be equal to <code>artifactId</code>.</p>
+</dd>
+<dt class="hdlist1">platform(String, String)</dt>
+<dd>
+<p>Defines a platform dependency. Second argument must use the <code>groupId:artifactId:version</code> notation.</p>
+</dd>
+<dt class="hdlist1">platform(String, String, Action)</dt>
+<dd>
+<p>Defines and configures a platform dependency. Second argument must use the <code>groupId:artifactId:version</code> notation.</p>
+</dd>
+<dt class="hdlist1">platform(String, String, Closure)</dt>
+<dd>
+<p>Defines and configures a platform dependency. Second argument must use the <code>groupId:artifactId:version</code> notation.</p>
+</dd>
+<dt class="hdlist1">dependency(String, Action)</dt>
+<dd>
+<p>Defines and configures a dependency by name.</p>
+</dd>
+<dt class="hdlist1">dependency(String, Closure)</dt>
+<dd>
+<p>Defines and configures a dependency by name.</p>
+</dd>
+<dt class="hdlist1">getDependency(String)</dt>
+<dd>
+<p>Returns the named dependency (if it exists). Throws an exception otherwise.</p>
+</dd>
+<dt class="hdlist1">findDependencyByName(String)</dt>
+<dd>
+<p>Finds a dependency by name if it exists, <code>null</code> otherwise.</p>
+</dd>
+<dt class="hdlist1">findDependencyByGA(String, String)</dt>
+<dd>
+<p>Finds a dependency by groupId and artifactId if it exists, <code>null</code> otherwise.</p>
+</dd>
+<dt class="hdlist1">gav(String)</dt>
+<dd>
+<p>Returns the given dependency in GAV notation if it exists. Throws an exception otherwise.</p>
+</dd>
+<dt class="hdlist1">gav(String, String)</dt>
+<dd>
+<p>Returns the given module dependency in GAV notation if it exists. Throws an exception otherwise.</p>
+</dd>
+<dt class="hdlist1">ga(String, String)</dt>
+<dd>
+<p>Returns the given module dependency in GA (groupId/artifactId) notation if it exists. Throws an exception otherwise.</p>
+</dd>
+</dl>
+</div>
+<div class="sect5">
+<h6 id="_example_3"><a class="anchor" href="#_example_3"></a>Example</h6>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">config {
+    dependencies {
+        // a dependency with modules
+        dependency('groovy') {
+            groupId    = 'org.codehaus.groovy'
+            artifactId = 'groovy'
+            version    = '3.0.3'
+            modules    = [
+                'groovy-test',
+                'groovy-json',
+                'groovy-xml'
+            ]
+        }
+        // a dependency without modules
+        dependency('junit:junit:4.13')
+        // a platform
+        platform('micronaut', 'io.micronaut:micronaut-bom:2.0.0.M3') {
+            modules = [
+                'micronaut-core',
+                'micronaut-inject',
+                'micronaut-validation'
+            ]
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These dependencies can be used in combination with the <a href="#_org_kordamp_gradle_java_project_extension_cfg">cfg</a> extension if
+the <code><a href="#_org_kordamp_gradle_java_project">org.kordamp.gradle.java-project</a></code> plugin is applied, for example</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">plugins {
+    id 'org.kordamp.gradle.java-project'
+}
+
+config {
+    dependencies {
+        // a dependency with modules
+        dependency('groovy') {
+            groupId    = 'org.codehaus.groovy'
+            artifactId = 'groovy'
+            version    = '3.0.3'
+            modules    = [
+                'groovy-test',
+                'groovy-json',
+                'groovy-xml'
+            ]
+        }
+        // a dependency without modules
+        dependency('junit:junit:4.13')
+        // a platform
+        platform('micronaut', 'io.micronaut:micronaut-bom:2.0.0.M3') {
+            modules = [
+                'micronaut-core',
+                'micronaut-inject',
+                'micronaut-validation'
+            ]
+        }
+    }
+}
+
+// consume dependencies
+dependencies {
+    // apply Micronaut platform to some configurations
+    cfg.platform('micronaut', 'api', 'annotationProcessor', 'compileOnly')
+    // configure a dependency in the standard way
+    api 'io.micronaut:micronaut-core'
+    // configure a platform module by groupId:artifactId
+    annotationProcessor config.dependencies.ga('micronaut', 'micronaut-inject')
+    // pull in a module from Groovy
+    api config.dependencies.gav('groovy', 'groovy-json')
+    // configure a single dependency
+    testImplementation config.dependencies.gav('junit')
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Will generate the following entries in the POM if publishing is enabled</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;!--
+    coordinates and other elements omitted for brevity
+   --&gt;
+  &lt;properties&gt;
+    &lt;micronaut.version&gt;2.0.0.M3&lt;/micronaut.version&gt;
+    &lt;groovy.version&gt;3.0.3&lt;/groovy.version&gt;
+  &lt;/properties&gt;
+  &lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+      &lt;dependency&gt;
+        &lt;groupId&gt;io.micronaut&lt;/groupId&gt;
+        &lt;artifactId&gt;micronaut-bom&lt;/artifactId&gt;
+        &lt;version&gt;${micronaut.version}&lt;/version&gt;
+        &lt;scope&gt;import&lt;/scope&gt;
+        &lt;type&gt;pom&lt;/type&gt;
+      &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+  &lt;/dependencyManagement&gt;
+  &lt;dependencies&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;io.micronaut&lt;/groupId&gt;
+      &lt;artifactId&gt;micronaut-core&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.codehaus.groovy&lt;/groupId&gt;
+      &lt;artifactId&gt;groovy-json&lt;/artifactId&gt;
+      &lt;version&gt;${groovy.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+&lt;/project&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
 <div class="sect4">
 <h5 id="_org_kordamp_gradle_base_sysprops"><a class="anchor" href="#_org_kordamp_gradle_base_sysprops"></a>System Properties</h5>
 <div class="dlist">
@@ -2444,7 +2728,7 @@ Type
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
     id 'java'
-    id 'org.kordamp.gradle.project' version '0.36.0'
+    id 'org.kordamp.gradle.project' version '0.37.0'
 }
 
 config {
@@ -2699,7 +2983,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.36.0'
+    id 'org.kordamp.gradle.project' version '0.37.0'
 }
 
 config {
@@ -2723,7 +3007,7 @@ config {
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code>&gt; Task :extensions
-Total extensions: 10
+Total extensions: 9
 
 extension 0:
     name: ext
@@ -2758,10 +3042,6 @@ extension 7:
     type: org.gradle.plugins.signing.SigningExtension
 
 extension 8:
-    name: effectiveConfig
-    type: org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-
-extension 9:
     name: versioning
     type: net.nemerosa.versioning.VersioningExtension</code></pre>
 </div>
@@ -2875,7 +3155,7 @@ includeBuild '../build2'</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.36.0'
+    id 'org.kordamp.gradle.project' version '0.37.0'
 }
 
 config {
@@ -2973,7 +3253,7 @@ absolute
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.36.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.37.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'</code></pre>
@@ -2983,7 +3263,7 @@ apply plugin: 'org.kordamp.gradle.settings'</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.36.0'
+    id 'org.kordamp.gradle.project' version '0.37.0'
 }
 
 config {
@@ -3044,6 +3324,32 @@ project2:
 </div>
 </div>
 <div class="sect4">
+<h5 id="_task_package"><a class="anchor" href="#_task_package"></a>Package</h5>
+<div class="paragraph">
+<p>Assembles the outputs of the project. This is an alias for <code>assemble</code>.</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>assemble</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.gradle.api.DefaultTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_task_plugins"><a class="anchor" href="#_task_plugins"></a>Plugins</h5>
 <div class="paragraph">
 <p>Displays all plugins applied to a project</p>
@@ -3077,7 +3383,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.36.0'
+    id 'org.kordamp.gradle.project' version '0.37.0'
 }
 
 config {
@@ -3311,7 +3617,7 @@ local_property = local</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.36.0'
+    id 'org.kordamp.gradle.project' version '0.37.0'
 }
 
 ext.build_property = 'build'
@@ -3390,7 +3696,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.36.0'
+    id 'org.kordamp.gradle.project' version '0.37.0'
 }
 
 config {
@@ -3534,6 +3840,32 @@ task
 </td>
 <td class="hdlist2">
 <p>The task to generate the report for.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_task_verify"><a class="anchor" href="#_task_verify"></a>Verify</h5>
+<div class="paragraph">
+<p>Assembles and tests the project. This is an alias for <code>build</code>.</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>verify</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.gradle.api.DefaultTask</code></p>
 </td>
 </tr>
 </table>
@@ -4032,17 +4364,20 @@ config {
   &lt;scm&gt;
     &lt;url&gt;https://github.com/joecool/sample.git&lt;/url&gt;
   &lt;/scm&gt;
+  &lt;properties&gt;
+    &lt;sample.version&gt;0.0.0&lt;/sample.version&gt;
+  &lt;/properties&gt;
   &lt;dependencyManagement&gt;
     &lt;dependencies&gt;
       &lt;dependency&gt;
-        &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+        &lt;groupId&gt;org.kordamp.sample.acme&lt;/groupId&gt;
         &lt;artifactId&gt;project1&lt;/artifactId&gt;
-        &lt;version&gt;${project.version}&lt;/version&gt;
+        &lt;version&gt;${sample.version}&lt;/version&gt;
       &lt;/dependency&gt;
       &lt;dependency&gt;
-        &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+        &lt;groupId&gt;org.kordamp.sample.acme&lt;/groupId&gt;
         &lt;artifactId&gt;project2&lt;/artifactId&gt;
-        &lt;version&gt;${project.version}&lt;/version&gt;
+        &lt;version&gt;${sample.version}&lt;/version&gt;
       &lt;/dependency&gt;
     &lt;/dependencies&gt;
   &lt;/dependencyManagement&gt;
@@ -4058,12 +4393,10 @@ config {
     bom {
         autoIncludes
         enabled
-        compile
-        runtime
-        test
-        import
+        dependencies
         excludes
         includes
+        properties
         parent
         overwriteInceptionYear
         overwriteUrl
@@ -4109,32 +4442,11 @@ config {
 <td class="tableblock halign-left valign-top"><p class="tableblock">Disables default inclusion of all projects</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">compile</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Set&lt;String&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dependencies</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Map&lt;String, Dependency&gt;</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[]</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Dependencies that should be added to the <code>compile</code> scope</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">runtime</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Set&lt;String&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[]</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Dependencies that should be added to the <code>runtime</code> scope</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">test</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Set&lt;String&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[]</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Dependencies that should be added to the <code>test</code> scope</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">import</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Set&lt;String&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[]</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Dependencies that should be added to the <code>import</code> scope</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[:]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dependencies that should be added to the BOM</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">excludes</p></td>
@@ -4149,6 +4461,13 @@ config {
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">[]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Names of subprojects that should be included</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">properties</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Map&lt;String, String&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[:]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maps to <code>&lt;properties&gt;</code> block.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">parent</p></td>
@@ -4229,57 +4548,73 @@ config {
 </div>
 <div class="sect4">
 <h5 id="_org_kordamp_gradle_bom_dsl_methods"><a class="anchor" href="#_org_kordamp_gradle_bom_dsl_methods"></a>Methods</h5>
-<div class="hdlist">
-<table>
-<tr>
-<td class="hdlist1">
-compile(String)
-</td>
-<td class="hdlist2">
-<p>Add a dependency to the <code>compile</code> scope. Its value may be a project name or a dependency definition such as 'group:artifactId:version'.</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-runtime(String)
-</td>
-<td class="hdlist2">
-<p>Add a dependency to the <code>runtime</code> scope. Its value may be a project name or a dependency definition such as 'group:artifactId:version'.</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-test(String)
-</td>
-<td class="hdlist2">
-<p>Add a dependency to the <code>test</code> scope. Its value may be a project name or a dependency definition such as 'group:artifactId:version'.</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-imports(String)
-</td>
-<td class="hdlist2">
-<p>Add a dependency to the <code>import</code> scope. Its value may be a project name or a dependency definition such as 'group:artifactId:version'.</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-exclude(String)
-</td>
-<td class="hdlist2">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">exclude(String)</dt>
+<dd>
 <p>Skips the named project from being added to the BOM.</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-include(String)
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">include(String)</dt>
+<dd>
 <p>Adds the named project to the BOM.</p>
-</td>
-</tr>
-</table>
+</dd>
+<dt class="hdlist1">dependency(String)</dt>
+<dd>
+<p>Defines a dependency. Argument must use the <code>groupId:artifactId:version</code> notation. Dependency name will be equal to <code>artifactId</code>.</p>
+</dd>
+<dt class="hdlist1">dependency(String, String)</dt>
+<dd>
+<p>Defines a dependency. Second argument must use the <code>groupId:artifactId:version</code> notation.</p>
+</dd>
+<dt class="hdlist1">dependency(String, String, Action)</dt>
+<dd>
+<p>Defines and configures a dependency. Second argument must use the <code>groupId:artifactId:version</code> notation.</p>
+</dd>
+<dt class="hdlist1">dependency(String, String, Closure)</dt>
+<dd>
+<p>Defines and configures a dependency. Second argument must use the <code>groupId:artifactId:version</code> notation.</p>
+</dd>
+<dt class="hdlist1">platform(String)</dt>
+<dd>
+<p>Defines a platform dependency. Argument must use the <code>groupId:artifactId:version</code> notation. Dependency name will be equal to <code>artifactId</code>.</p>
+</dd>
+<dt class="hdlist1">platform(String, String)</dt>
+<dd>
+<p>Defines a platform dependency. Second argument must use the <code>groupId:artifactId:version</code> notation.</p>
+</dd>
+<dt class="hdlist1">platform(String, String, Action)</dt>
+<dd>
+<p>Defines and configures a platform dependency. Second argument must use the <code>groupId:artifactId:version</code> notation.</p>
+</dd>
+<dt class="hdlist1">platform(String, String, Closure)</dt>
+<dd>
+<p>Defines and configures a platform dependency. Second argument must use the <code>groupId:artifactId:version</code> notation.</p>
+</dd>
+<dt class="hdlist1">dependency(String, Action)</dt>
+<dd>
+<p>Defines and configures a dependency by name.</p>
+</dd>
+<dt class="hdlist1">dependency(String, Closure)</dt>
+<dd>
+<p>Defines and configures a dependency by name.</p>
+</dd>
+<dt class="hdlist1">getDependency(String)</dt>
+<dd>
+<p>Returns the named dependency (if it exists). Throws an exception otherwise.</p>
+</dd>
+<dt class="hdlist1">findDependencyByName(String)</dt>
+<dd>
+<p>Finds a dependency by name if it exists, <code>null</code> otherwise.</p>
+</dd>
+<dt class="hdlist1">findDependencyByGA(String, String)</dt>
+<dd>
+<p>Finds a dependency by groupId and artifactId if it exists, <code>null</code> otherwise.</p>
+</dd>
+<dt class="hdlist1">void dependency(Dependency)</dt>
+<dd>
+<p>Adds an existing dependency, usually declared in <code><a href="#_base_dependencies">config.dependencies</a></code>.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
@@ -4523,6 +4858,7 @@ applies
     quality {
         checkstyle {
             enabled
+            ignoreFailures
             includes
             excludes
             configFile
@@ -4567,6 +4903,13 @@ applies
 <td class="tableblock halign-left valign-top"><p class="tableblock">Disables <code>org.kordamp.gradle.checkstyle</code> plugin if <code>false</code></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ignoreFailures</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fails the build if set to <code>false</code>.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">includes</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Set&lt;String&gt;</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
@@ -4585,7 +4928,7 @@ applies
 <td class="tableblock halign-left valign-top"><p class="tableblock">Set&lt;String&gt;</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Either <code>config/checkstyle/${project.name}.xml</code> or <code>config/checkstyle/checkstyle.xml</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">configProperties</p></td>
@@ -4631,6 +4974,31 @@ applies
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>The value of <code>configFile</code> will be automatically calculated based on the following rules</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Explicit value if set in the build file, with ${sourceSetName} as suffix.</p>
+</li>
+<li>
+<p>Explicit value if set in the build file.</p>
+</li>
+<li>
+<p><code>config/checkstyle/${project.name}-${sourceSetName}.xml</code></p>
+</li>
+<li>
+<p><code>config/checkstyle/${project.name}.xml</code></p>
+</li>
+<li>
+<p><code>config/checkstyle/checkstyle-${sourceSetName}.xml</code></p>
+</li>
+<li>
+<p><code>config/checkstyle/checkstyle.xml</code></p>
+</li>
+</ul>
+</div>
 <div class="dlist">
 <div class="title">Methods</div>
 <dl>
@@ -5261,6 +5629,7 @@ applies
     quality {
         codenarc {
             enabled
+            ignoreFailures
             configFile
             maxPriority1Violations
             maxPriority2Violations
@@ -5301,11 +5670,18 @@ applies
 <td class="tableblock halign-left valign-top"><p class="tableblock">Disables <code>org.kordamp.gradle.codenarc</code> plugin if <code>false</code></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ignoreFailures</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fails the build if set to <code>false</code>.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">configFile</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Set&lt;String&gt;</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Either <code>config/codenarc/${project.name}.xml</code> or <code>config/codenarc/codenarc.xml</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">maxPriority1Violations</p></td>
@@ -5344,6 +5720,43 @@ applies
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>The value of <code>configFile</code> will be automatically calculated based on the following rules</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Explicit value if set in the build file, with ${sourceSetName} as suffix.</p>
+</li>
+<li>
+<p>Explicit value if set in the build file.</p>
+</li>
+<li>
+<p><code>config/codenarc/${project.name}-${sourceSetName}.groovy</code></p>
+</li>
+<li>
+<p><code>config/codenarc/${project.name}.groovy</code></p>
+</li>
+<li>
+<p><code>config/codenarc/codenarc-${sourceSetName}.groovy</code></p>
+</li>
+<li>
+<p><code>config/codenarc/codenarc.groovy</code></p>
+</li>
+<li>
+<p><code>config/codenarc/${project.name}-${sourceSetName}.xml</code></p>
+</li>
+<li>
+<p><code>config/codenarc/${project.name}.xml</code></p>
+</li>
+<li>
+<p><code>config/codenarc/codenarc-${sourceSetName}.xml</code></p>
+</li>
+<li>
+<p><code>config/codenarc/codenarc.xml</code></p>
+</li>
+</ul>
+</div>
 <div class="dlist">
 <div class="title">Methods</div>
 <dl>
@@ -5626,7 +6039,295 @@ as input for the <code>coveralls</code> task. The <code>coveralls</code> task wi
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_detekt"><a class="anchor" href="#_org_kordamp_gradle_detekt"></a>7.9. Detekt</h3>
+<h3 id="_org_kordamp_gradle_cpd"><a class="anchor" href="#_org_kordamp_gradle_cpd"></a>7.9. Cpd</h3>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+id
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.cpd</code></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+class
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.cpd.CpdPlugin</code>
+(<a href="api/org/kordamp/gradle/plugin/cpd/CpdPlugin.html">groovydoc</a>,
+ <a href="api-html/org/kordamp/gradle/plugin/cpd/CpdPlugin.html">source</a>)</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+applies
+</td>
+<td class="hdlist2">
+<p><code><a href="#_org_kordamp_gradle_base">org.kordamp.gradle.base</a></code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Configures <a href="https://pmd.github.io/pmd-6.24.0/pmd_userdocs_cpd.html">CPD</a> on Java projects and aggregate reports on
+the root project. Each <code>sourceSet</code> gets a <code>org.kordamp.gradle.plugin.cpd.Cpd</code>.</p>
+</div>
+<div class="sect3">
+<h4 id="_org_kordamp_gradle_cpd_dsl"><a class="anchor" href="#_org_kordamp_gradle_cpd_dsl"></a>7.9.1. DSL</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">config {
+    quality {
+        cpd {
+            enabled
+            ignoreFailures
+            minimumTokenCount
+            encoding
+            language
+            ignoreLiterals
+            ignoreIdentifiers
+            ignoreAnnotations
+            toolVersion
+            <a href="#_cpd_aggregate">aggregate</a> {
+                enabled
+                excludedProjects
+            }
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Default Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Disables <code>org.kordamp.gradle.cpd</code> plugin if <code>false</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ignoreFailures</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fails the build if set to <code>false</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">minimumTokenCount</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">encoding</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UTF-8</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">language</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ignoreLiterals</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ignore number values and string contents when comparing text.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ignoreIdentifiers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ignore constant and variable names when comparing text.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ignoreAnnotations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ignore language annotations when comparing text.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="dlist">
+<div class="title">Methods</div>
+<dl>
+<dt class="hdlist1">void excludeSourceSet(String)</dt>
+<dd>
+<p>Adds a sourceSet exclusion.</p>
+</dd>
+</dl>
+</div>
+<div id="_cpd_aggregate" class="paragraph">
+<p><strong>aggregate</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Default Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables or disables aggregation</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">excludedProjects</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set&lt;Project&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Projects in the set are excluded from aggregation</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>This block should be configured on the root project.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_org_kordamp_gradle_cpd_tasks"><a class="anchor" href="#_org_kordamp_gradle_cpd_tasks"></a>7.9.2. Tasks</h4>
+<div class="sect4">
+<h5 id="_task_aggregate_cpd"><a class="anchor" href="#_task_aggregate_cpd"></a>AggregateCpd</h5>
+<div class="paragraph">
+<p>Aggregates all cpd reports for all projects.<br>
+Consumes settings from <code>config.quality.<a href="#_org_kordamp_gradle_cpd_dsl">cpd</a></code>.<br>
+This task is added to the root project.</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>aggregateCpd</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.cpd.Cpd</code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="hdlist">
+<div class="title">Properties</div>
+<table>
+<tr>
+<td class="hdlist1">
+reports.html.destination
+</td>
+<td class="hdlist2">
+<p><code>${project.buildDir}/reports/cpd/aggregate.html</code></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+reports.xml.destination
+</td>
+<td class="hdlist2">
+<p><code>${project.buildDir}/reports/cpd/aggregate.xml</code></p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_task_all_cpd"><a class="anchor" href="#_task_all_cpd"></a>AllCpd</h5>
+<div class="paragraph">
+<p>Aggregates all cpd reports for a single project.<br>
+Consumes settings from <code>config.quality.<a href="#_org_kordamp_gradle_cpd_dsl">cpd</a></code>.</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>allCpd</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.cpd.Cpd</code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="hdlist">
+<div class="title">Properties</div>
+<table>
+<tr>
+<td class="hdlist1">
+reports.html.destination
+</td>
+<td class="hdlist2">
+<p><code>${project.buildDir}/reports/cpd/${project.name}.html</code></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+reports.xml.destination
+</td>
+<td class="hdlist2">
+<p><code>${project.buildDir}/reports/cpd/${project.name}.xml</code></p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_org_kordamp_gradle_detekt"><a class="anchor" href="#_org_kordamp_gradle_detekt"></a>7.10. Detekt</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -5662,13 +6363,14 @@ applies
 <p>Configures Detekt on Kotlin projects and aggregate reports on the root project.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_detekt_dsl"><a class="anchor" href="#_org_kordamp_gradle_detekt_dsl"></a>7.9.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_detekt_dsl"><a class="anchor" href="#_org_kordamp_gradle_detekt_dsl"></a>7.10.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
     quality {
         detekt {
             enabled
+            ignoreFailures
             configFile
             baselineFile
             parallel
@@ -5709,6 +6411,13 @@ applies
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Disables <code>org.kordamp.gradle.detekt</code> plugin if <code>false</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ignoreFailures</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fails the build if set to <code>false</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">configFile</p></td>
@@ -5768,6 +6477,31 @@ applies
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>The value of <code>configFile</code> will be automatically calculated based on the following rules</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Explicit value if set in the build file, with ${sourceSetName} as suffix.</p>
+</li>
+<li>
+<p>Explicit value if set in the build file.</p>
+</li>
+<li>
+<p><code>config/detekt/${project.name}-${sourceSetName}.yml</code></p>
+</li>
+<li>
+<p><code>config/detekt/${project.name}.yml</code></p>
+</li>
+<li>
+<p><code>config/detekt/detekt-${sourceSetName}.yml</code></p>
+</li>
+<li>
+<p><code>config/detekt/detekt.yml</code></p>
+</li>
+</ul>
+</div>
 <div class="dlist">
 <div class="title">Methods</div>
 <dl>
@@ -5819,7 +6553,7 @@ applies
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_detekt_tasks"><a class="anchor" href="#_org_kordamp_gradle_detekt_tasks"></a>7.9.2. Tasks</h4>
+<h4 id="_org_kordamp_gradle_detekt_tasks"><a class="anchor" href="#_org_kordamp_gradle_detekt_tasks"></a>7.10.2. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_aggregate_detekt"><a class="anchor" href="#_task_aggregate_detekt"></a>AggregateDetekt</h5>
 <div class="paragraph">
@@ -5920,7 +6654,7 @@ reports.xml.destination
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_errorprone"><a class="anchor" href="#_org_kordamp_gradle_errorprone"></a>7.10. Error Prone</h3>
+<h3 id="_org_kordamp_gradle_errorprone"><a class="anchor" href="#_org_kordamp_gradle_errorprone"></a>7.11. Error Prone</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -5956,7 +6690,7 @@ applies
 <p>Configures ErrorProne on Java projects (applies all settings to tasks of type <code>JavaCompile</code>.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_errorprone_dsl"><a class="anchor" href="#_org_kordamp_gradle_errorprone_dsl"></a>7.10.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_errorprone_dsl"><a class="anchor" href="#_org_kordamp_gradle_errorprone_dsl"></a>7.11.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -6078,7 +6812,7 @@ applies
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_functionaltest"><a class="anchor" href="#_org_kordamp_gradle_functionaltest"></a>7.11. FunctionalTest</h3>
+<h3 id="_org_kordamp_gradle_functionaltest"><a class="anchor" href="#_org_kordamp_gradle_functionaltest"></a>7.12. FunctionalTest</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -6143,7 +6877,7 @@ You must add testing dependencies to <code>functionalTestImplementation</code> a
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_groovy_project"><a class="anchor" href="#_org_kordamp_gradle_groovy_project"></a>7.12. GroovyProject</h3>
+<h3 id="_org_kordamp_gradle_groovy_project"><a class="anchor" href="#_org_kordamp_gradle_groovy_project"></a>7.13. GroovyProject</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -6188,7 +6922,7 @@ applies
 </ul>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_groovy_project_tasks"><a class="anchor" href="#_org_kordamp_gradle_groovy_project_tasks"></a>7.12.1. Tasks</h4>
+<h4 id="_org_kordamp_gradle_groovy_project_tasks"><a class="anchor" href="#_org_kordamp_gradle_groovy_project_tasks"></a>7.13.1. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_groovy_compiler_settings"><a class="anchor" href="#_task_groovy_compiler_settings"></a>GroovyCompilerSettings</h5>
 <div class="paragraph">
@@ -6250,7 +6984,7 @@ if neither of these options is specified.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_groovy_project_rules"><a class="anchor" href="#_org_kordamp_gradle_groovy_project_rules"></a>7.12.2. Rules</h4>
+<h4 id="_org_kordamp_gradle_groovy_project_rules"><a class="anchor" href="#_org_kordamp_gradle_groovy_project_rules"></a>7.13.2. Rules</h4>
 <div class="sect4">
 <h5 id="_compilegroovy"><a class="anchor" href="#_compilegroovy"></a>CompileGroovy</h5>
 <div class="hdlist">
@@ -6277,7 +7011,7 @@ Type
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_groovydoc"><a class="anchor" href="#_org_kordamp_gradle_groovydoc"></a>7.13. Groovydoc</h3>
+<h3 id="_org_kordamp_gradle_groovydoc"><a class="anchor" href="#_org_kordamp_gradle_groovydoc"></a>7.14. Groovydoc</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -6313,7 +7047,7 @@ applies
 <p>Generates and packages Groovydoc documentation.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_groovydoc_dsl"><a class="anchor" href="#_org_kordamp_gradle_groovydoc_dsl"></a>7.13.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_groovydoc_dsl"><a class="anchor" href="#_org_kordamp_gradle_groovydoc_dsl"></a>7.14.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -6467,8 +7201,8 @@ applies
 <td class="tableblock halign-left valign-top"><p class="tableblock">links</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Set&lt;Link&gt;</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[]</p></td>
 <td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The default value contains links to the target Java and latest Groovy javadocs.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">noTimestamp</p></td>
@@ -6559,7 +7293,7 @@ applies
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_groovydoc_tasks"><a class="anchor" href="#_org_kordamp_gradle_groovydoc_tasks"></a>7.13.2. Tasks</h4>
+<h4 id="_org_kordamp_gradle_groovydoc_tasks"><a class="anchor" href="#_org_kordamp_gradle_groovydoc_tasks"></a>7.14.2. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_aggregate_groovydoc"><a class="anchor" href="#_task_aggregate_groovydoc"></a>AggregateGroovydoc</h5>
 <div class="paragraph">
@@ -6747,7 +7481,7 @@ from
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_guide"><a class="anchor" href="#_org_kordamp_gradle_guide"></a>7.14. Guide</h3>
+<h3 id="_org_kordamp_gradle_guide"><a class="anchor" href="#_org_kordamp_gradle_guide"></a>7.15. Guide</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -6914,7 +7648,7 @@ applies
 </tbody>
 </table>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_guide_dsl"><a class="anchor" href="#_org_kordamp_gradle_guide_dsl"></a>7.14.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_guide_dsl"><a class="anchor" href="#_org_kordamp_gradle_guide_dsl"></a>7.15.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -7004,7 +7738,7 @@ applies
 </table>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_guide_extension"><a class="anchor" href="#_org_kordamp_gradle_guide_extension"></a>7.14.2. Extension</h4>
+<h4 id="_org_kordamp_gradle_guide_extension"><a class="anchor" href="#_org_kordamp_gradle_guide_extension"></a>7.15.2. Extension</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">guide {
@@ -7073,7 +7807,7 @@ applies
 </table>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_guide_tasks"><a class="anchor" href="#_org_kordamp_gradle_guide_tasks"></a>7.14.3. Tasks</h4>
+<h4 id="_org_kordamp_gradle_guide_tasks"><a class="anchor" href="#_org_kordamp_gradle_guide_tasks"></a>7.15.3. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_init_guide"><a class="anchor" href="#_task_init_guide"></a>InitGuide</h5>
 <div class="paragraph">
@@ -7232,7 +7966,7 @@ from
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_integrationtest"><a class="anchor" href="#_org_kordamp_gradle_integrationtest"></a>7.15. IntegrationTest</h3>
+<h3 id="_org_kordamp_gradle_integrationtest"><a class="anchor" href="#_org_kordamp_gradle_integrationtest"></a>7.16. IntegrationTest</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -7285,7 +8019,7 @@ extend from <code>testImplementation</code> and <code>testRuntimeOnly</code> res
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_jacoco"><a class="anchor" href="#_org_kordamp_gradle_jacoco"></a>7.16. JaCoCo</h3>
+<h3 id="_org_kordamp_gradle_jacoco"><a class="anchor" href="#_org_kordamp_gradle_jacoco"></a>7.17. JaCoCo</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -7322,7 +8056,7 @@ applies
 Configures aggregate reports on the root project.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_jacoco_dsl"><a class="anchor" href="#_org_kordamp_gradle_jacoco_dsl"></a>7.16.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_jacoco_dsl"><a class="anchor" href="#_org_kordamp_gradle_jacoco_dsl"></a>7.17.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -7434,7 +8168,7 @@ Configures aggregate reports on the root project.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_jacoco_tasks"><a class="anchor" href="#_org_kordamp_gradle_jacoco_tasks"></a>7.16.2. Tasks</h4>
+<h4 id="_org_kordamp_gradle_jacoco_tasks"><a class="anchor" href="#_org_kordamp_gradle_jacoco_tasks"></a>7.17.2. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_aggregate_jacoco_merge"><a class="anchor" href="#_task_aggregate_jacoco_merge"></a>AggregateJacocoMerge</h5>
 <div class="paragraph">
@@ -7673,7 +8407,7 @@ reports.xml.enabled
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_jar"><a class="anchor" href="#_org_kordamp_gradle_jar"></a>7.17. Jar</h3>
+<h3 id="_org_kordamp_gradle_jar"><a class="anchor" href="#_org_kordamp_gradle_jar"></a>7.18. Jar</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -7727,7 +8461,7 @@ all generated JAR files:</p>
 Created-By    
 </td>
 <td class="hdlist2">
-<p>rootProject.extensions.effectiveConfig.buildInfo.buildCreatedBy</p>
+<p>rootProject.extensions.config.buildInfo.buildCreatedBy</p>
 </td>
 </tr>
 <tr>
@@ -7735,7 +8469,7 @@ Created-By
 Built-By      
 </td>
 <td class="hdlist2">
-<p>rootProject.extensions.effectiveConfig.buildInfo.buildBy</p>
+<p>rootProject.extensions.config.buildInfo.buildBy</p>
 </td>
 </tr>
 <tr>
@@ -7743,7 +8477,7 @@ Built-By
 Build-Jdk     
 </td>
 <td class="hdlist2">
-<p>rootProject.extensions.effectiveConfig.buildInfo.buildJdk</p>
+<p>rootProject.extensions.config.buildInfo.buildJdk</p>
 </td>
 </tr>
 <tr>
@@ -7751,7 +8485,7 @@ Build-Jdk
 Build-Date    
 </td>
 <td class="hdlist2">
-<p>rootProject.extensions.effectiveConfig.buildInfo.buildDate</p>
+<p>rootProject.extensions.config.buildInfo.buildDate</p>
 </td>
 </tr>
 <tr>
@@ -7759,7 +8493,7 @@ Build-Date
 Build-Time    
 </td>
 <td class="hdlist2">
-<p>rootProject.extensions.effectiveConfig.buildInfo.buildTime</p>
+<p>rootProject.extensions.config.buildInfo.buildTime</p>
 </td>
 </tr>
 <tr>
@@ -7767,7 +8501,7 @@ Build-Time
 Build-Revision
 </td>
 <td class="hdlist2">
-<p>rootProject.extensions.effectiveConfig.buildInfo.buildRevision</p>
+<p>rootProject.extensions.config.buildInfo.buildRevision</p>
 </td>
 </tr>
 </table>
@@ -7837,7 +8571,7 @@ Implementation-Vendor
 </table>
 </div>
 <div class="sect3">
-<h4 id="_reproducible_builds"><a class="anchor" href="#_reproducible_builds"></a>7.17.1. Reproducible Builds</h4>
+<h4 id="_reproducible_builds"><a class="anchor" href="#_reproducible_builds"></a>7.18.1. Reproducible Builds</h4>
 <div class="paragraph">
 <p>It&#8217;s worth noting that enriching JAR manifests with environment and/or temporary related data will result in non-reproducible
 builds. All elements calculated by the <code><a href="#_org_kordamp_gradle_buildinfo">buildInfo</a></code> plugin will affect build reproducibility
@@ -7869,7 +8603,7 @@ the particular value to be skipped.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_jar_dsl"><a class="anchor" href="#_org_kordamp_gradle_jar_dsl"></a>7.17.2. DSL</h4>
+<h4 id="_org_kordamp_gradle_jar_dsl"><a class="anchor" href="#_org_kordamp_gradle_jar_dsl"></a>7.18.2. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre>config {
@@ -7942,7 +8676,7 @@ the particular value to be skipped.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">enabled</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Enables or disables manifest customizations</p></td>
 </tr>
 <tr>
@@ -7971,7 +8705,7 @@ the particular value to be skipped.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_java_project"><a class="anchor" href="#_org_kordamp_gradle_java_project"></a>7.18. JavaProject</h3>
+<h3 id="_org_kordamp_gradle_java_project"><a class="anchor" href="#_org_kordamp_gradle_java_project"></a>7.19. JavaProject</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -8014,12 +8748,187 @@ applies
 <p><code><a href="#_org_kordamp_gradle_checkstyle">org.kordamp.gradle.checkstyle</a></code></p>
 </li>
 <li>
+<p><code><a href="#_org_kordamp_gradle_cpd">org.kordamp.gradle.cpd</a></code></p>
+</li>
+<li>
 <p><code><a href="#_org_kordamp_gradle_pmd">org.kordamp.gradle.pmd</a></code></p>
+</li>
+<li>
+<p><code><a href="#_org_kordamp_gradle_spotbugs">org.kordamp.gradle.spotbugs</a></code></p>
 </li>
 </ul>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_java_project_tasks"><a class="anchor" href="#_org_kordamp_gradle_java_project_tasks"></a>7.18.1. Tasks</h4>
+<h4 id="_org_kordamp_gradle_java_project_extensions"><a class="anchor" href="#_org_kordamp_gradle_java_project_extensions"></a>7.19.1. Extensions</h4>
+<div class="sect4">
+<h5 id="_org_kordamp_gradle_java_project_extension_cfg"><a class="anchor" href="#_org_kordamp_gradle_java_project_extension_cfg"></a>cfg</h5>
+<div class="paragraph">
+<p>Configures dependencies based on settings available from <code>config.dependencies</code>.</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>cfg</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.project.DependencyHandler</code></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Applied to
+</td>
+<td class="hdlist2">
+<p><code>org.gradle.api.artifacts.dsl.DependencyHandler</code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Since Gradle 6 platform dependencies must be applied per configuration, which results in verbose build files when a
+BOM/platform should be applied in common configurations. This extension lets you apply a BOM/platform to multiple
+configurations with a single method call.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The following configurations will be used if none are specified: <code>api</code>, <code>implementation</code>, <code>annotationProcessor</code>,
+<code>testImplementation</code>, <code>testAnnotationProcessor</code>, <code>compileOnly</code>, <code>testCompileOnly</code>, <code>runtimeOnly</code>, <code>testRuntimeOnly</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<div class="title">Methods</div>
+<ul>
+<li>
+<p>void platform(Object notation)</p>
+</li>
+<li>
+<p>void platform(Object notation, Action&lt;? super Dependency&gt; action)</p>
+</li>
+<li>
+<p>void platform(Object notation, String&#8230;&#8203; configurations)</p>
+</li>
+<li>
+<p>void platform(Object notation, List&lt;String&gt; configurations)</p>
+</li>
+<li>
+<p>void platform(Object notation, List&lt;String&gt; configurations, Action&lt;? super Dependency&gt; action)</p>
+</li>
+<li>
+<p>void enforcedPlatform(Object notation)</p>
+</li>
+<li>
+<p>void enforcedPlatform(Object notation, Action&lt;? super Dependency&gt; action)</p>
+</li>
+<li>
+<p>void enforcedPlatform(Object notation, String&#8230;&#8203; configurations)</p>
+</li>
+<li>
+<p>void enforcedPlatform(Object notation, List&lt;String&gt; configurations)</p>
+</li>
+<li>
+<p>void enforcedPlatform(Object notation, List&lt;String&gt; configurations, Action&lt;? super Dependency&gt; action)</p>
+</li>
+<li>
+<p>void dependency(String name, String configuration, String&#8230;&#8203; configurations)</p>
+</li>
+<li>
+<p>void dependency(String name, String configuration, Closure)</p>
+</li>
+<li>
+<p>void module(String name, String configuration, String&#8230;&#8203; configurations)</p>
+</li>
+<li>
+<p>void module(String name, String configuration, Closure)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">Example</div>
+<p>The following example shows how the Micronaut BOM can be used to configure all configurations</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">config {
+    dependencies {
+        dependency('micronaut') {
+            platform   = true
+            groupId    = 'io.micronaut'
+            artifactId = 'micronaut-bom'
+            version    = micronautVersion
+            modules    = ['micronaut-inject-java',
+                          'micronaut-inject-groovy',
+                          'micronaut-inject',
+                          'micronaut-validation',
+                          'micronaut-runtime-groovy']
+        }
+    }
+}
+
+dependencies {
+    cfg {
+        enforcedPlatform('micronaut')
+
+        module('micronaut','micronaut-inject-java', 'annotationProcessor')
+        module('micronaut','micronaut-validation', 'annotationProcessor', 'api')
+
+        module('micronaut','micronaut-inject-groovy', 'compileOnly')
+    }
+
+    // you can still use standard configuration methods
+    api('io.micronaut:micronaut-inject')
+
+    // you can mix them both
+    api(config.dependencies.ga('micronaut', 'micronaut-runtime-groovy'))
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_org_kordamp_gradle_java_project_tasks"><a class="anchor" href="#_org_kordamp_gradle_java_project_tasks"></a>7.19.2. Tasks</h4>
+<div class="sect4">
+<h5 id="_task_compile"><a class="anchor" href="#_task_compile"></a>Compile</h5>
+<div class="paragraph">
+<p>Assembles main classes. This is an alias for <code>classes</code>.</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>classes</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.gradle.api.DefaultTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+</div>
 <div class="sect4">
 <h5 id="_task_jar_settings"><a class="anchor" href="#_task_jar_settings"></a>JarSettings</h5>
 <div class="paragraph">
@@ -8139,6 +9048,86 @@ if neither of these options is specified.</p>
 </div>
 </div>
 <div class="sect4">
+<h5 id="_task_platforms"><a class="anchor" href="#_task_platforms"></a>Platforms</h5>
+<div class="paragraph">
+<p>Displays all configured platforms in the project. Requires the use of the <a href="#_org_kordamp_gradle_java_project_extension_cfg">cfg</a> extension.</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+Name
+</td>
+<td class="hdlist2">
+<p>platforms</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.project.java.tasks.platformsTask</code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_example_output_8"><a class="anchor" href="#_example_output_8"></a>Example Output</h6>
+<div class="paragraph">
+<p>For a project with the following dependencies</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">dependencies {
+    cfg.enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion")
+
+    annotationProcessor 'io.micronaut:micronaut-inject-java'
+    annotationProcessor 'io.micronaut:micronaut-validation'
+
+    compileOnly 'io.micronaut:micronaut-inject-groovy'
+
+    api 'io.micronaut:micronaut-inject'
+    api 'io.micronaut:micronaut-validation'
+    api 'io.micronaut:micronaut-runtime-groovy'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Invoking this command</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>$ ./gradlew :platforms</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Results in the following output</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>&gt; Task :platforms
+Total platforms: 1
+
+Platform 0:
+    platform: io.micronaut:micronaut-bom:2.0.0.M3
+    enforced: true
+    configurations:
+        api
+        implementation
+        annotationProcessor
+        testImplementation
+        testAnnotationProcessor
+        compileOnly
+        testCompileOnly
+        runtimeOnly
+        testRuntimeOnly</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_task_sourceSets"><a class="anchor" href="#_task_sourceSets"></a>SourceSets</h5>
 <div class="paragraph">
 <p>Displays all sourceSets available in a project.</p>
@@ -8164,7 +9153,7 @@ Type
 </table>
 </div>
 <div class="sect5">
-<h6 id="_example_output_8"><a class="anchor" href="#_example_output_8"></a>Example Output</h6>
+<h6 id="_example_output_9"><a class="anchor" href="#_example_output_9"></a>Example Output</h6>
 <div class="paragraph">
 <p>For a project defined as follows</p>
 </div>
@@ -8173,7 +9162,7 @@ Type
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
     id 'java'
-    id 'org.kordamp.gradle.project' version '0.36.0'
+    id 'org.kordamp.gradle.project' version '0.37.0'
 }
 
 config {
@@ -8184,7 +9173,7 @@ config {
 </div>
 </div>
 <div class="paragraph">
-<p>Invoking these command</p>
+<p>Invoking this command</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -8387,7 +9376,7 @@ if neither of these options is specified.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_java_project_rules"><a class="anchor" href="#_org_kordamp_gradle_java_project_rules"></a>7.18.2. Rules</h4>
+<h4 id="_org_kordamp_gradle_java_project_rules"><a class="anchor" href="#_org_kordamp_gradle_java_project_rules"></a>7.19.3. Rules</h4>
 <div class="sect4">
 <h5 id="_compilejava"><a class="anchor" href="#_compilejava"></a>CompileJava</h5>
 <div class="hdlist">
@@ -8529,7 +9518,7 @@ Type
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_javadoc"><a class="anchor" href="#_org_kordamp_gradle_javadoc"></a>7.19. Javadoc</h3>
+<h3 id="_org_kordamp_gradle_javadoc"><a class="anchor" href="#_org_kordamp_gradle_javadoc"></a>7.20. Javadoc</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -8564,7 +9553,7 @@ applies
 <p>Generates and packages Javadoc documentation.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_javadoc_dsl"><a class="anchor" href="#_org_kordamp_gradle_javadoc_dsl"></a>7.19.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_javadoc_dsl"><a class="anchor" href="#_org_kordamp_gradle_javadoc_dsl"></a>7.20.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -8781,7 +9770,7 @@ applies
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_javadoc_tasks"><a class="anchor" href="#_org_kordamp_gradle_javadoc_tasks"></a>7.19.2. Tasks</h4>
+<h4 id="_org_kordamp_gradle_javadoc_tasks"><a class="anchor" href="#_org_kordamp_gradle_javadoc_tasks"></a>7.20.2. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_aggregate_javadoc"><a class="anchor" href="#_task_aggregate_javadoc"></a>AggregateJavadoc</h5>
 <div class="paragraph">
@@ -8995,7 +9984,7 @@ from
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_kotlin_project"><a class="anchor" href="#_org_kordamp_gradle_kotlin_project"></a>7.20. KotlinProject</h3>
+<h3 id="_org_kordamp_gradle_kotlin_project"><a class="anchor" href="#_org_kordamp_gradle_kotlin_project"></a>7.21. KotlinProject</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -9040,7 +10029,7 @@ applies
 </ul>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_kotlin_project_tasks"><a class="anchor" href="#_org_kordamp_gradle_kotlin_project_tasks"></a>7.20.1. Tasks</h4>
+<h4 id="_org_kordamp_gradle_kotlin_project_tasks"><a class="anchor" href="#_org_kordamp_gradle_kotlin_project_tasks"></a>7.21.1. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_kotlin_compiler_settings"><a class="anchor" href="#_task_kotlin_compiler_settings"></a>KotlinCompilerSettings</h5>
 <div class="paragraph">
@@ -9102,7 +10091,7 @@ if neither of these options is specified.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_kotlin_project_rules"><a class="anchor" href="#_org_kordamp_gradle_kotlin_project_rules"></a>7.20.2. Rules</h4>
+<h4 id="_org_kordamp_gradle_kotlin_project_rules"><a class="anchor" href="#_org_kordamp_gradle_kotlin_project_rules"></a>7.21.2. Rules</h4>
 <div class="sect4">
 <h5 id="_compilekotlin"><a class="anchor" href="#_compilekotlin"></a>CompileKotlin</h5>
 <div class="hdlist">
@@ -9129,7 +10118,7 @@ Type
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_kotlindoc"><a class="anchor" href="#_org_kordamp_gradle_kotlindoc"></a>7.21. Kotlindoc</h3>
+<h3 id="_org_kordamp_gradle_kotlindoc"><a class="anchor" href="#_org_kordamp_gradle_kotlindoc"></a>7.22. Kotlindoc</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -9176,7 +10165,7 @@ This plugin relies on the <code>org.jetbrains.dokka</code> plugin but does not a
 </table>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_kotlindoc_dsl"><a class="anchor" href="#_org_kordamp_gradle_kotlindoc_dsl"></a>7.21.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_kotlindoc_dsl"><a class="anchor" href="#_org_kordamp_gradle_kotlindoc_dsl"></a>7.22.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="kotlin">config {
@@ -9597,7 +10586,7 @@ Allows to customize documentation generation options on a per-package basis.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_kotlindoc_tasks"><a class="anchor" href="#_org_kordamp_gradle_kotlindoc_tasks"></a>7.21.2. Tasks</h4>
+<h4 id="_org_kordamp_gradle_kotlindoc_tasks"><a class="anchor" href="#_org_kordamp_gradle_kotlindoc_tasks"></a>7.22.2. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_aggregate_kotlindoc"><a class="anchor" href="#_task_aggregate_kotlindoc"></a>AggregateKotlindoc</h5>
 <div class="paragraph">
@@ -9873,7 +10862,7 @@ from
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_licensing"><a class="anchor" href="#_org_kordamp_gradle_licensing"></a>7.22. Licensing</h3>
+<h3 id="_org_kordamp_gradle_licensing"><a class="anchor" href="#_org_kordamp_gradle_licensing"></a>7.23. Licensing</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -9910,7 +10899,7 @@ applies
 Configures aggregate license reports on the root project.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_licensing_dsl"><a class="anchor" href="#_org_kordamp_gradle_licensing_dsl"></a>7.22.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_licensing_dsl"><a class="anchor" href="#_org_kordamp_gradle_licensing_dsl"></a>7.23.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -10076,7 +11065,7 @@ be treated as the primary license.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_license_example"><a class="anchor" href="#_org_kordamp_gradle_license_example"></a>7.22.2. Example</h4>
+<h4 id="_org_kordamp_gradle_license_example"><a class="anchor" href="#_org_kordamp_gradle_license_example"></a>7.23.2. Example</h4>
 <div class="paragraph">
 <p>Configuring the Apache Software License 2.0 can be done in the following way</p>
 </div>
@@ -10143,7 +11132,7 @@ be treated as the primary license.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_licensing_extensions"><a class="anchor" href="#_org_kordamp_gradle_licensing_extensions"></a>7.22.3. Extensions</h4>
+<h4 id="_org_kordamp_gradle_licensing_extensions"><a class="anchor" href="#_org_kordamp_gradle_licensing_extensions"></a>7.23.3. Extensions</h4>
 <div class="sect4">
 <h5 id="_extension_license"><a class="anchor" href="#_extension_license"></a>LicenseExtension</h5>
 <div class="paragraph">
@@ -10294,7 +11283,7 @@ BSD New License, BSD New license, BSD 3-Clause, BSD 3-clause</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_licensing_tasks"><a class="anchor" href="#_org_kordamp_gradle_licensing_tasks"></a>7.22.4. Tasks</h4>
+<h4 id="_org_kordamp_gradle_licensing_tasks"><a class="anchor" href="#_org_kordamp_gradle_licensing_tasks"></a>7.23.4. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_aggregate_license_report"><a class="anchor" href="#_task_aggregate_license_report"></a>AggregateLicenseReport</h5>
 <div class="paragraph">
@@ -10390,7 +11379,7 @@ Type
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_minpom"><a class="anchor" href="#_org_kordamp_gradle_minpom"></a>7.23. Minpom</h3>
+<h3 id="_org_kordamp_gradle_minpom"><a class="anchor" href="#_org_kordamp_gradle_minpom"></a>7.24. Minpom</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -10426,7 +11415,7 @@ applies
 the project.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_minpom_example"><a class="anchor" href="#_org_kordamp_gradle_minpom_example"></a>7.23.1. Example</h4>
+<h4 id="_org_kordamp_gradle_minpom_example"><a class="anchor" href="#_org_kordamp_gradle_minpom_example"></a>7.24.1. Example</h4>
 <div class="paragraph">
 <p>For a project defined as follows</p>
 </div>
@@ -10435,7 +11424,7 @@ the project.</p>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
     id 'groovy'
-    id 'org.kordamp.gradle.minpom' version '0.36.0'
+    id 'org.kordamp.gradle.minpom' version '0.37.0'
 }
 
 group   = 'com.acme'
@@ -10451,7 +11440,7 @@ dependencies {
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="kotlin">plugins {
     `groovy`
-    id("org.kordamp.gradle.minpom") version "0.36.0"
+    id("org.kordamp.gradle.minpom") version "0.37.0"
 }
 
 group   = "com.acme"
@@ -10498,7 +11487,7 @@ artifactId=sample</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_minpom_dsl"><a class="anchor" href="#_org_kordamp_gradle_minpom_dsl"></a>7.23.2. DSL</h4>
+<h4 id="_org_kordamp_gradle_minpom_dsl"><a class="anchor" href="#_org_kordamp_gradle_minpom_dsl"></a>7.24.2. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -10542,7 +11531,7 @@ artifactId=sample</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_minpom_tasks"><a class="anchor" href="#_org_kordamp_gradle_minpom_tasks"></a>7.23.3. Tasks</h4>
+<h4 id="_org_kordamp_gradle_minpom_tasks"><a class="anchor" href="#_org_kordamp_gradle_minpom_tasks"></a>7.24.3. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_minpom"><a class="anchor" href="#_task_minpom"></a>Minpom</h5>
 <div class="paragraph">
@@ -10609,7 +11598,7 @@ destinationDir
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_plugin"><a class="anchor" href="#_org_kordamp_gradle_plugin"></a>7.24. Plugin</h3>
+<h3 id="_org_kordamp_gradle_plugin"><a class="anchor" href="#_org_kordamp_gradle_plugin"></a>7.25. Plugin</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -10647,16 +11636,20 @@ applies
 in the <code><a href="#_org_kordamp_gradle_base">info</a></code> block of the <code>config</code> DSL. Artifacts will be automatically signed if the
 <code>uploadArchives</code> task is present.</p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">NOTE</dt>
-<dd>
-<p>This plugin must be explicitly applied to Gradle plugin projects only.</p>
-</dd>
-</dl>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This plugin must be explicitly applied to Gradle plugin projects only.
+</td>
+</tr>
+</table>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_plugin_dsl"><a class="anchor" href="#_org_kordamp_gradle_plugin_dsl"></a>7.24.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_plugin_dsl"><a class="anchor" href="#_org_kordamp_gradle_plugin_dsl"></a>7.25.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -10711,7 +11704,7 @@ in the <code><a href="#_org_kordamp_gradle_base">info</a></code> block of the <c
 </table>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_plugin_tasks"><a class="anchor" href="#_org_kordamp_gradle_plugin_tasks"></a>7.24.2. Tasks</h4>
+<h4 id="_org_kordamp_gradle_plugin_tasks"><a class="anchor" href="#_org_kordamp_gradle_plugin_tasks"></a>7.25.2. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_list_plugin_descriptors"><a class="anchor" href="#_task_list_plugin_descriptors"></a>ListPluginDescriptors</h5>
 <div class="paragraph">
@@ -10741,7 +11734,7 @@ Type
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_pmd"><a class="anchor" href="#_org_kordamp_gradle_pmd"></a>7.25. Pmd</h3>
+<h3 id="_org_kordamp_gradle_pmd"><a class="anchor" href="#_org_kordamp_gradle_pmd"></a>7.26. Pmd</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -10777,13 +11770,14 @@ applies
 <p>Configures Pmd on Java projects and aggregate reports on the root project.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_pmd_dsl"><a class="anchor" href="#_org_kordamp_gradle_pmd_dsl"></a>7.25.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_pmd_dsl"><a class="anchor" href="#_org_kordamp_gradle_pmd_dsl"></a>7.26.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
     quality {
         pmd {
             enabled
+            ignoreFailures
             ruleSetFiles
             incrementalAnalysis
             rulePriority
@@ -10823,11 +11817,18 @@ applies
 <td class="tableblock halign-left valign-top"><p class="tableblock">Disables <code>org.kordamp.gradle.pmd</code> plugin if <code>false</code></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ignoreFailures</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fails the build if set to <code>false</code>.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ruleSetFiles</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">FileCollection</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Either <code>config/pmd/${project.name}.xml</code> or <code>config/pmd/pmd.xml</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">incrementalAnalysis</p></td>
@@ -10852,6 +11853,31 @@ applies
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>The value of <code>ruleSetFiles</code> will be automatically calculated based on the following rules</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Explicit value if set in the build file, with ${sourceSetName} as suffix.</p>
+</li>
+<li>
+<p>Explicit value if set in the build file.</p>
+</li>
+<li>
+<p><code>config/pmd/${project.name}-${sourceSetName}.xml</code></p>
+</li>
+<li>
+<p><code>config/pmd/${project.name}.xml</code></p>
+</li>
+<li>
+<p><code>config/pmd/pmd-${sourceSetName}.xml</code></p>
+</li>
+<li>
+<p><code>config/pmd/pmd.xml</code></p>
+</li>
+</ul>
+</div>
 <div class="dlist">
 <div class="title">Methods</div>
 <dl>
@@ -10903,7 +11929,7 @@ applies
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_pmd_tasks"><a class="anchor" href="#_org_kordamp_gradle_pmd_tasks"></a>7.25.2. Tasks</h4>
+<h4 id="_org_kordamp_gradle_pmd_tasks"><a class="anchor" href="#_org_kordamp_gradle_pmd_tasks"></a>7.26.2. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_aggregate_pmd"><a class="anchor" href="#_task_aggregate_pmd"></a>AggregatePmd</h5>
 <div class="paragraph">
@@ -11048,82 +12074,6 @@ overwrite
 </table>
 </div>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_org_kordamp_gradle_project"><a class="anchor" href="#_org_kordamp_gradle_project"></a>7.26. Project</h3>
-<div class="hdlist">
-<table>
-<tr>
-<td class="hdlist1">
-id
-</td>
-<td class="hdlist2">
-<p><code>org.kordamp.gradle.project</code></p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-class
-</td>
-<td class="hdlist2">
-<p><code>org.kordamp.gradle.plugin.project.ProjectPlugin</code>
-(<a href="api/org/kordamp/gradle/plugin/project/ProjectPlugin.html">groovydoc</a>,
- <a href="api-html/org/kordamp/gradle/plugin/project/ProjectPlugin.html">source</a>)</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-applies
-</td>
-<td class="hdlist2">
-<p><code><a href="#_org_kordamp_gradle_base">org.kordamp.gradle.base</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_profiles">org.kordamp.gradle.profiles</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_buildinfo">org.kordamp.gradle.build-info</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_jacoco">org.kordamp.gradle.jacoco</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_coveralls">org.kordamp.gradle.coveralls</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_jar">org.kordamp.gradle.jar</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_javadoc">org.kordamp.gradle.javadoc</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_licensing">org.kordamp.gradle.licensing</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_minpom">org.kordamp.gradle.minpom</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_publishing">org.kordamp.gradle.publishing</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_source">org.kordamp.gradle.source-jar</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_sourcehtml">org.kordamp.gradle.source-html</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_sourcestats">org.kordamp.gradle.source-stats</a></code>,<br>
-<code><a href="#_org_kordamp_gradle_testing">org.kordamp.gradle.testing</a></code>,<br>
-<code><a href="https://github.com/ben-manes/gradle-versions-plugin">com.github.ben-manes.versions</a></code></p>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Serves as central point of configuration for a project as it applies all dependent plugins. You may skip this plugin
-and apply plugins individually as needed.</p>
-</div>
-<div class="paragraph">
-<p>This plugin adds the following plugins to the classpath without applying them:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code><a href="#_org_kordamp_gradle_bintray">org.kordamp.gradle.bintray</a></code></p>
-</li>
-<li>
-<p><code><a href="#_org_kordamp_gradle_bom">org.kordamp.gradle.bom</a></code></p>
-</li>
-<li>
-<p><code><a href="#_org_kordamp_gradle_clirr">org.kordamp.gradle.clirr</a></code></p>
-</li>
-<li>
-<p><code><a href="#_org_kordamp_gradle_sourcexref">org.kordamp.gradle.source-xref</a></code></p>
-</li>
-<li>
-<p><code><a href="#_org_kordamp_gradle_integrationtest">org.kordamp.gradle.integration-test</a></code></p>
-</li>
-<li>
-<p><code><a href="#_org_kordamp_gradle_functionaltest">org.kordamp.gradle.functional-test</a></code></p>
-</li>
-</ul>
 </div>
 </div>
 <div class="sect2">
@@ -11373,6 +12323,16 @@ missing
 </table>
 </div>
 <div class="listingblock">
+<div class="title">custom</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">custom {
+    activation { Project p -&gt;
+        // custom condition against Project p
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
 <div class="title">property</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">property {
@@ -11402,14 +12362,31 @@ value
 </table>
 </div>
 <div class="paragraph">
-<p>This activation block can match environment variables, system properties, and/or project properties.<br>
-Environment variables are always uppercased and require <code>env.</code> as prefix in the key.<br>
-System properties require <code>systemProp.</code> as prefix in the key.<br>
-Project properties names are used as is in the key.<br>
-If the <code>value</code> is omitted then the activation only checks for the existence of the <code>key</code>. If the <code>key</code> is prefixed by a <code>!</code>
-then the condition is inverted, i.e, the activation checks that the <code>key</code> does not exist.<br>
-If the <code>value</code> is given then the property&#8217;s value must match it. If the <code>value</code> is prefixed with a <code>!</code> then the given value
+<p>Usage rules:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>This activation block can match environment variables, system properties, and/or project properties.</p>
+</li>
+<li>
+<p>Environment variables are always uppercased and require <code>env.</code> as prefix in the key.</p>
+</li>
+<li>
+<p>System properties require <code>systemProp.</code> as prefix in the key.</p>
+</li>
+<li>
+<p>Project properties names are used as is in the key.</p>
+</li>
+<li>
+<p>If the <code>value</code> is omitted then the activation only checks for the existence of the <code>key</code>. If the <code>key</code> is prefixed by a <code>!</code>
+then the condition is inverted, i.e, the activation checks that the <code>key</code> does not exist.</p>
+</li>
+<li>
+<p>If the <code>value</code> is given then the property&#8217;s value must match it. If the <code>value</code> is prefixed with a <code>!</code> then the given value
 must not match.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>Examples:</p>
@@ -11445,16 +12422,6 @@ must not match.</p>
 <pre class="prettyprint highlight"><code data-lang="groovy">property {
     key('release')
     value('!false')
-}</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">custom</div>
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="groovy">custom {
-    activation { Project p -&gt;
-        // custom condition against Project p
-    }
 }</code></pre>
 </div>
 </div>
@@ -11579,7 +12546,7 @@ Type
 </table>
 </div>
 <div class="sect5">
-<h6 id="_example_output_9"><a class="anchor" href="#_example_output_9"></a>Example Output</h6>
+<h6 id="_example_output_10"><a class="anchor" href="#_example_output_10"></a>Example Output</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code>$ ./gradlew :displayActivationInfo
@@ -11608,7 +12575,224 @@ OS:
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_publishing"><a class="anchor" href="#_org_kordamp_gradle_publishing"></a>7.28. Publishing</h3>
+<h3 id="_org_kordamp_gradle_project"><a class="anchor" href="#_org_kordamp_gradle_project"></a>7.28. Project</h3>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+id
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.project</code></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+class
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.project.ProjectPlugin</code>
+(<a href="api/org/kordamp/gradle/plugin/project/ProjectPlugin.html">groovydoc</a>,
+ <a href="api-html/org/kordamp/gradle/plugin/project/ProjectPlugin.html">source</a>)</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+applies
+</td>
+<td class="hdlist2">
+<p><code><a href="#_org_kordamp_gradle_base">org.kordamp.gradle.base</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_profiles">org.kordamp.gradle.profiles</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_buildinfo">org.kordamp.gradle.build-info</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_jacoco">org.kordamp.gradle.jacoco</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_coveralls">org.kordamp.gradle.coveralls</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_jar">org.kordamp.gradle.jar</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_javadoc">org.kordamp.gradle.javadoc</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_licensing">org.kordamp.gradle.licensing</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_minpom">org.kordamp.gradle.minpom</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_publishing">org.kordamp.gradle.publishing</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_source">org.kordamp.gradle.source-jar</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_sourcehtml">org.kordamp.gradle.source-html</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_sourcestats">org.kordamp.gradle.source-stats</a></code>,<br>
+<code><a href="#_org_kordamp_gradle_testing">org.kordamp.gradle.testing</a></code>,<br>
+<code><a href="https://github.com/ben-manes/gradle-versions-plugin">com.github.ben-manes.versions</a></code></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Serves as central point of configuration for a project as it applies all dependent plugins. You may skip this plugin
+and apply plugins individually as needed.</p>
+</div>
+<div class="paragraph">
+<p>This plugin adds the following plugins to the classpath without applying them:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><a href="#_org_kordamp_gradle_bintray">org.kordamp.gradle.bintray</a></code></p>
+</li>
+<li>
+<p><code><a href="#_org_kordamp_gradle_bom">org.kordamp.gradle.bom</a></code></p>
+</li>
+<li>
+<p><code><a href="#_org_kordamp_gradle_clirr">org.kordamp.gradle.clirr</a></code></p>
+</li>
+<li>
+<p><code><a href="#_org_kordamp_gradle_sourcexref">org.kordamp.gradle.source-xref</a></code></p>
+</li>
+<li>
+<p><code><a href="#_org_kordamp_gradle_integrationtest">org.kordamp.gradle.integration-test</a></code></p>
+</li>
+<li>
+<p><code><a href="#_org_kordamp_gradle_functionaltest">org.kordamp.gradle.functional-test</a></code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_org_kordamp_gradle_properties"><a class="anchor" href="#_org_kordamp_gradle_properties"></a>7.29. Properties</h3>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+id
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.properties</code></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+class
+</td>
+<td class="hdlist2">
+<p><code>org.kordamp.gradle.plugin.properties.PropertiesPlugin</code>
+(<a href="api/org/kordamp/gradle/plugin/properties/PropertiesPlugin.html">groovydoc</a>,
+ <a href="api-html/org/kordamp/gradle/plugin/properties/PropertiesPlugin.html">source</a>)</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This plugin should be applied to <code>settings.gradle(.kts)</code> only!
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Enables additional property source files with <a href="https://bitbucket.org/asomov/snakeyaml/wiki/Documentation">YAML</a>
+and <a href="https://github.com/toml-lang/toml">TOML</a> formats.</p>
+</div>
+<div class="paragraph">
+<p>Property source files can be placed at any place where you would typically find the standard <code>gradle.properties</code> file,
+such as</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>$GRADLE_HOME/</code></p>
+</li>
+<li>
+<p><code>$USER_HOME/.gradle/</code></p>
+</li>
+<li>
+<p><code>$project.projectDir/</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Following the convention set by the standard <code>gradle.properties</code> file, these are the only file names accepted for
+automatically processing additional property source files:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>gradle.yml</code></p>
+</li>
+<li>
+<p><code>gradle.toml</code></p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="_org_kordamp_gradle_properties_dsl"><a class="anchor" href="#_org_kordamp_gradle_properties_dsl"></a>7.29.1. DSL</h4>
+<div class="paragraph">
+<p>The following DSL applies to properties on projects. Property files will be automatically read and applied to <code>settings.ext</code>
+once the plugin is applied to <code>settings.gradle</code>. If you&#8217;d like to skip the YAML or TOML files then define a System property
+<code>yaml.enabled</code> or <code>toml.enabled</code> with <code>false</code> as value.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">properties {
+    yaml {
+        enabled
+        overwrite
+    }
+    toml {
+        enabled
+        overwrite
+    }
+}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Default Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables or disables processing of the target format.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"> overwrite</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to overwrite existing properties or not.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You may use the <code>systemProp</code> prefix to declare a System property instead of a project property, just like it&#8217;s
+done for properties defined in <code>gradle.properties</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_org_kordamp_gradle_publishing"><a class="anchor" href="#_org_kordamp_gradle_publishing"></a>7.30. Publishing</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -11655,7 +12839,7 @@ javadoc/groovydoc/kotlindoc/scaladoc JARs.  Artifacts will be automatically sign
 generated POM file.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_publishing_dsl"><a class="anchor" href="#_org_kordamp_gradle_publishing_dsl"></a>7.28.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_publishing_dsl"><a class="anchor" href="#_org_kordamp_gradle_publishing_dsl"></a>7.30.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -11666,8 +12850,10 @@ generated POM file.</p>
         snapshotsRepository
         publications
         scopes
-        filterDependencies
+        flattenPlatforms
+        useVersionExpressions
         <a href="#_publishing_pom">pom</a>  {
+            properties
             parent
             overwriteInceptionYear
             overwriteUrl
@@ -11739,14 +12925,21 @@ generated POM file.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List&lt;String&gt;</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">[]</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Maven scopes to be added to generated POM. If no value then defaults to <code>['compile', 'runtime', 'test', 'provided']</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maven scopes to be added to generated POM. If no value then defaults to <code>['compile', 'runtime']</code></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">filterDependencies</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">flattenPlatforms</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Force dependency filtering by scope when generating POM files.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Expand dependencies imported from platforms and skip adding platforms to <code>&lt;dependencyManagement&gt;</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">useVersionExpressions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Substitute dependency version numbers with version expressions added to <code>&lt;properties&gt;</code></p></td>
 </tr>
 </tbody>
 </table>
@@ -11780,6 +12973,13 @@ generated POM file.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">jar</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Defines the value for <code>&lt;packaging&gt;</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">properties</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Map&lt;String, String&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[:]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maps to <code>&lt;properties&gt;</code> block.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">parent</p></td>
@@ -11860,7 +13060,7 @@ generated POM file.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_publishing_example"><a class="anchor" href="#_org_kordamp_gradle_publishing_example"></a>7.28.2. Example</h4>
+<h4 id="_org_kordamp_gradle_publishing_example"><a class="anchor" href="#_org_kordamp_gradle_publishing_example"></a>7.30.2. Example</h4>
 <div class="paragraph">
 <p>Publishing signed artifacts to Maven Central.</p>
 </div>
@@ -11899,7 +13099,7 @@ generated POM file.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_publishing_tasks"><a class="anchor" href="#_org_kordamp_gradle_publishing_tasks"></a>7.28.3. Tasks</h4>
+<h4 id="_org_kordamp_gradle_publishing_tasks"><a class="anchor" href="#_org_kordamp_gradle_publishing_tasks"></a>7.30.3. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_publication_settings"><a class="anchor" href="#_task_publication_settings"></a>PublicationSettings</h5>
 <div class="paragraph">
@@ -11961,7 +13161,7 @@ if neither of these options is specified.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_publishing_rules"><a class="anchor" href="#_org_kordamp_gradle_publishing_rules"></a>7.28.4. Rules</h4>
+<h4 id="_org_kordamp_gradle_publishing_rules"><a class="anchor" href="#_org_kordamp_gradle_publishing_rules"></a>7.30.4. Rules</h4>
 <div class="sect4">
 <h5 id="_publications"><a class="anchor" href="#_publications"></a>Publications</h5>
 <div class="hdlist">
@@ -11988,7 +13188,7 @@ Type
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_scala_project"><a class="anchor" href="#_org_kordamp_gradle_scala_project"></a>7.29. ScalaProject</h3>
+<h3 id="_org_kordamp_gradle_scala_project"><a class="anchor" href="#_org_kordamp_gradle_scala_project"></a>7.31. ScalaProject</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -12023,7 +13223,7 @@ applies
 <p>Configures a project with Scala conventions.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_scala_project_tasks"><a class="anchor" href="#_org_kordamp_gradle_scala_project_tasks"></a>7.29.1. Tasks</h4>
+<h4 id="_org_kordamp_gradle_scala_project_tasks"><a class="anchor" href="#_org_kordamp_gradle_scala_project_tasks"></a>7.31.1. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_scala_compiler_settings"><a class="anchor" href="#_task_scala_compiler_settings"></a>ScalaCompilerSettings</h5>
 <div class="paragraph">
@@ -12085,7 +13285,7 @@ if neither of these options is specified.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_scala_project_rules"><a class="anchor" href="#_org_kordamp_gradle_scala_project_rules"></a>7.29.2. Rules</h4>
+<h4 id="_org_kordamp_gradle_scala_project_rules"><a class="anchor" href="#_org_kordamp_gradle_scala_project_rules"></a>7.31.2. Rules</h4>
 <div class="sect4">
 <h5 id="_compilescala"><a class="anchor" href="#_compilescala"></a>CompileScala</h5>
 <div class="hdlist">
@@ -12112,7 +13312,7 @@ Type
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_scaladoc"><a class="anchor" href="#_org_kordamp_gradle_scaladoc"></a>7.30. Scaladoc</h3>
+<h3 id="_org_kordamp_gradle_scaladoc"><a class="anchor" href="#_org_kordamp_gradle_scaladoc"></a>7.32. Scaladoc</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -12147,7 +13347,7 @@ applies
 <p>Generates and packages Scaladoc documentation.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_scaladoc_dsl"><a class="anchor" href="#_org_kordamp_gradle_scaladoc_dsl"></a>7.30.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_scaladoc_dsl"><a class="anchor" href="#_org_kordamp_gradle_scaladoc_dsl"></a>7.32.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="scala">config {
@@ -12369,7 +13569,7 @@ applies
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_scaladoc_tasks"><a class="anchor" href="#_org_kordamp_gradle_scaladoc_tasks"></a>7.30.2. Tasks</h4>
+<h4 id="_org_kordamp_gradle_scaladoc_tasks"><a class="anchor" href="#_org_kordamp_gradle_scaladoc_tasks"></a>7.32.2. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_aggregate_scaladoc"><a class="anchor" href="#_task_aggregate_scaladoc"></a>AggregateScaladoc</h5>
 <div class="paragraph">
@@ -12557,7 +13757,7 @@ from
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_settings"><a class="anchor" href="#_org_kordamp_gradle_settings"></a>7.31. Settings</h3>
+<h3 id="_org_kordamp_gradle_settings"><a class="anchor" href="#_org_kordamp_gradle_settings"></a>7.33. Settings</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -12578,12 +13778,16 @@ class
  <a href="api-html/org/kordamp/gradle/plugin/settings/SettingsPlugin.html">source</a>)</p>
 </td>
 </tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
 <tr>
-<td class="hdlist1">
-Note
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
 </td>
-<td class="hdlist2">
-<p>This plugin should be applied to <code>settings.gradle(.kts)</code> only!</p>
+<td class="content">
+This plugin should be applied to <code>settings.gradle(.kts)</code> only!
 </td>
 </tr>
 </table>
@@ -12664,7 +13868,7 @@ for example</p>
 to <code>false</code>, in which case the default build file name (<code>build.gradle</code>, <code>build.gradle.kts</code>) applies.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_settings_dsl"><a class="anchor" href="#_org_kordamp_gradle_settings_dsl"></a>7.31.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_settings_dsl"><a class="anchor" href="#_org_kordamp_gradle_settings_dsl"></a>7.33.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">projects {
@@ -12712,7 +13916,7 @@ to <code>false</code>, in which case the default build file name (<code>build.gr
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">layout</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">two-level</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Defines the project layout. Valid values are [<code>two-level</code>, <code>multi-level</code>, <code>standard</code>, <code>explicit</code>].</p></td>
@@ -12793,7 +13997,7 @@ Includes projects found under the given path unless the given condition (<code>w
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_settings_example"><a class="anchor" href="#_org_kordamp_gradle_settings_example"></a>7.31.2. Example</h4>
+<h4 id="_org_kordamp_gradle_settings_example"><a class="anchor" href="#_org_kordamp_gradle_settings_example"></a>7.33.2. Example</h4>
 <div class="paragraph">
 <div class="title">Two-Level</div>
 <p>A project with the following structure</p>
@@ -12824,7 +14028,7 @@ Includes projects found under the given path unless the given condition (<code>w
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.36.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.37.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -12842,7 +14046,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.36.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.37.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -12881,7 +14085,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.36.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.37.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -12904,7 +14108,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.36.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.37.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -12944,7 +14148,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.36.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.37.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -12962,7 +14166,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.36.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.37.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -13001,7 +14205,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.36.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.37.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -13021,7 +14225,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.36.0")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.37.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -13036,7 +14240,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_source"><a class="anchor" href="#_org_kordamp_gradle_source"></a>7.32. SourceJar</h3>
+<h3 id="_org_kordamp_gradle_source"><a class="anchor" href="#_org_kordamp_gradle_source"></a>7.34. SourceJar</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -13071,7 +14275,7 @@ applies
 <p>Packages the project&#8217;s source code into a single JAR file.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_source_dsl"><a class="anchor" href="#_org_kordamp_gradle_source_dsl"></a>7.32.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_source_dsl"><a class="anchor" href="#_org_kordamp_gradle_source_dsl"></a>7.34.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -13159,7 +14363,7 @@ applies
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_source_tasks"><a class="anchor" href="#_org_kordamp_gradle_source_tasks"></a>7.32.2. Tasks</h4>
+<h4 id="_org_kordamp_gradle_source_tasks"><a class="anchor" href="#_org_kordamp_gradle_source_tasks"></a>7.34.2. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_aggregate_sources_jar"><a class="anchor" href="#_task_aggregate_sources_jar"></a>AggregateSourcesJar</h5>
 <div class="paragraph">
@@ -13258,7 +14462,7 @@ from
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_sourcehtml"><a class="anchor" href="#_org_kordamp_gradle_sourcehtml"></a>7.33. SourceHtml</h3>
+<h3 id="_org_kordamp_gradle_sourcehtml"><a class="anchor" href="#_org_kordamp_gradle_sourcehtml"></a>7.35. SourceHtml</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -13305,7 +14509,7 @@ This plugin relies on the <code>com.bmuschko.java2html</code> plugin but does no
 </table>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_sourcehtml_dsl"><a class="anchor" href="#_org_kordamp_gradle_sourcehtml_dsl"></a>7.33.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_sourcehtml_dsl"><a class="anchor" href="#_org_kordamp_gradle_sourcehtml_dsl"></a>7.35.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -13635,7 +14839,7 @@ This plugin relies on the <code>com.bmuschko.java2html</code> plugin but does no
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_sourcehtml_tasks"><a class="anchor" href="#_org_kordamp_gradle_sourcehtml_tasks"></a>7.33.2. Tasks</h4>
+<h4 id="_org_kordamp_gradle_sourcehtml_tasks"><a class="anchor" href="#_org_kordamp_gradle_sourcehtml_tasks"></a>7.35.2. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_aggregate_convert_code_to_html"><a class="anchor" href="#_task_aggregate_convert_code_to_html"></a>AggregateConvertCodeToHtml</h5>
 <div class="paragraph">
@@ -13880,7 +15084,7 @@ destinationDir
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_sourcestats"><a class="anchor" href="#_org_kordamp_gradle_sourcestats"></a>7.34. SourceStats</h3>
+<h3 id="_org_kordamp_gradle_sourcestats"><a class="anchor" href="#_org_kordamp_gradle_sourcestats"></a>7.36. SourceStats</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -13915,7 +15119,7 @@ applies
 <p>Generates reports on source code statistics both at individual and aggregate levels.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_sourcestats_example"><a class="anchor" href="#_org_kordamp_gradle_sourcestats_example"></a>7.34.1. Example</h4>
+<h4 id="_org_kordamp_gradle_sourcestats_example"><a class="anchor" href="#_org_kordamp_gradle_sourcestats_example"></a>7.36.1. Example</h4>
 <div class="paragraph">
 <p>The following configuration may be used in a Griffon project for example</p>
 </div>
@@ -13957,7 +15161,7 @@ applies
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_sourcestats_dsl"><a class="anchor" href="#_org_kordamp_gradle_sourcestats_dsl"></a>7.34.2. DSL</h4>
+<h4 id="_org_kordamp_gradle_sourcestats_dsl"><a class="anchor" href="#_org_kordamp_gradle_sourcestats_dsl"></a>7.36.2. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -14067,7 +15271,7 @@ applies
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_sourcestats_tasks"><a class="anchor" href="#_org_kordamp_gradle_sourcestats_tasks"></a>7.34.3. Tasks</h4>
+<h4 id="_org_kordamp_gradle_sourcestats_tasks"><a class="anchor" href="#_org_kordamp_gradle_sourcestats_tasks"></a>7.36.3. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_aggregate_source_stats"><a class="anchor" href="#_task_aggregate_source_stats"></a>AggregateSourceStats</h5>
 <div class="paragraph">
@@ -14175,7 +15379,7 @@ paths
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_sourcexref"><a class="anchor" href="#_org_kordamp_gradle_sourcexref"></a>7.35. SourceXref</h3>
+<h3 id="_org_kordamp_gradle_sourcexref"><a class="anchor" href="#_org_kordamp_gradle_sourcexref"></a>7.37. SourceXref</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -14211,7 +15415,7 @@ applies
 <a href="https://maven.apache.org/jxr/index.html">Maven JXR</a> project.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_sourcexref_dsl"><a class="anchor" href="#_org_kordamp_gradle_sourcexref_dsl"></a>7.35.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_sourcexref_dsl"><a class="anchor" href="#_org_kordamp_gradle_sourcexref_dsl"></a>7.37.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -14389,7 +15593,7 @@ applies
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_sourcexref_tasks"><a class="anchor" href="#_org_kordamp_gradle_sourcexref_tasks"></a>7.35.2. Tasks</h4>
+<h4 id="_org_kordamp_gradle_sourcexref_tasks"><a class="anchor" href="#_org_kordamp_gradle_sourcexref_tasks"></a>7.37.2. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_aggregate_source_xref"><a class="anchor" href="#_task_aggregate_source_xref"></a>AggregateSourceXref</h5>
 <div class="paragraph">
@@ -14518,7 +15722,7 @@ outputDir
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_spotbugs"><a class="anchor" href="#_org_kordamp_gradle_spotbugs"></a>7.36. SpotBugs</h3>
+<h3 id="_org_kordamp_gradle_spotbugs"><a class="anchor" href="#_org_kordamp_gradle_spotbugs"></a>7.38. SpotBugs</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -14554,7 +15758,7 @@ applies
 <p>Configures SpotBugs on Java projects and aggregate reports on the root project.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_spotbugs_dsl"><a class="anchor" href="#_org_kordamp_gradle_spotbugs_dsl"></a>7.36.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_spotbugs_dsl"><a class="anchor" href="#_org_kordamp_gradle_spotbugs_dsl"></a>7.38.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -14683,7 +15887,7 @@ applies
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fails the build if set to <code>false</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">showProgress</p></td>
@@ -14767,7 +15971,7 @@ applies
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_spotbugs_tasks"><a class="anchor" href="#_org_kordamp_gradle_spotbugs_tasks"></a>7.36.2. Tasks</h4>
+<h4 id="_org_kordamp_gradle_spotbugs_tasks"><a class="anchor" href="#_org_kordamp_gradle_spotbugs_tasks"></a>7.38.2. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_aggregate_spotbugs"><a class="anchor" href="#_task_aggregate_spotbugs"></a>AggregateSpotbugs</h5>
 <div class="paragraph">
@@ -14868,7 +16072,7 @@ reports.xml.destination
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_sonar"><a class="anchor" href="#_org_kordamp_gradle_sonar"></a>7.37. SonarQube</h3>
+<h3 id="_org_kordamp_gradle_sonar"><a class="anchor" href="#_org_kordamp_gradle_sonar"></a>7.39. SonarQube</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -14911,7 +16115,7 @@ For kotlin projects, if <a href="#_org_kordamp_gradle_detekt">org.kordamp.gradle
 <p>Data defined in the DSL’s <code>config.info</code> block will be used to provide additional information to SonarQube.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_sonar_dsl"><a class="anchor" href="#_org_kordamp_gradle_sonar_dsl"></a>7.37.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_sonar_dsl"><a class="anchor" href="#_org_kordamp_gradle_sonar_dsl"></a>7.39.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -15083,7 +16287,7 @@ For kotlin projects, if <a href="#_org_kordamp_gradle_detekt">org.kordamp.gradle
 </div>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_sonar_tasks"><a class="anchor" href="#_org_kordamp_gradle_sonar_tasks"></a>7.37.2. Tasks</h4>
+<h4 id="_org_kordamp_gradle_sonar_tasks"><a class="anchor" href="#_org_kordamp_gradle_sonar_tasks"></a>7.39.2. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_sonarqube"><a class="anchor" href="#_task_sonarqube"></a>Sonarqube</h5>
 <div class="paragraph">
@@ -15115,7 +16319,7 @@ Type
 </div>
 </div>
 <div class="sect2">
-<h3 id="_org_kordamp_gradle_testing"><a class="anchor" href="#_org_kordamp_gradle_testing"></a>7.38. Testing</h3>
+<h3 id="_org_kordamp_gradle_testing"><a class="anchor" href="#_org_kordamp_gradle_testing"></a>7.40. Testing</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -15150,7 +16354,7 @@ applies
 <p>Configures test reports.</p>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_testing_dsl"><a class="anchor" href="#_org_kordamp_gradle_testing_dsl"></a>7.38.1. DSL</h4>
+<h4 id="_org_kordamp_gradle_testing_dsl"><a class="anchor" href="#_org_kordamp_gradle_testing_dsl"></a>7.40.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">config {
@@ -15303,7 +16507,7 @@ applies
 </table>
 </div>
 <div class="sect3">
-<h4 id="_org_kordamp_gradle_testing_tasks"><a class="anchor" href="#_org_kordamp_gradle_testing_tasks"></a>7.38.2. Tasks</h4>
+<h4 id="_org_kordamp_gradle_testing_tasks"><a class="anchor" href="#_org_kordamp_gradle_testing_tasks"></a>7.40.2. Tasks</h4>
 <div class="sect4">
 <h5 id="_task_aggregate_testing_reports"><a class="anchor" href="#_task_aggregate_testing_reports"></a>AggregateTestReports</h5>
 <div class="paragraph">
@@ -15508,8 +16712,8 @@ Type
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.36.0<br>
-Last updated 2020-05-02 21:49:48 +0200
+Version 0.37.0<br>
+Last updated 2020-05-09 12:32:37 +0200
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

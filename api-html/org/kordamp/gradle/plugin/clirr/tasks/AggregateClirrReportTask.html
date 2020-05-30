@@ -62,7 +62,7 @@ AggregateClirrReportTask.groovy
 <a name="31"><font color="#808080">031</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="32"><font color="#808080">032</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">java.util.function.Predicate</font><br />
 <a name="33"><font color="#808080">033</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="34"><font color="#808080">034</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.PluginUtils.resolveEffectiveConfig</font><br />
+<a name="34"><font color="#808080">034</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.util.PluginUtils.resolveConfig</font><br />
 <a name="35"><font color="#808080">035</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="36"><font color="#808080">036</font>&nbsp;</a><font color="#008000">/**</font><br />
 <a name="37"><font color="#808080">037</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*</font><br />
@@ -82,7 +82,7 @@ AggregateClirrReportTask.groovy
 <a name="51"><font color="#808080">051</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">run</font><font color="#000000">()&nbsp;{</font><br />
 <a name="52"><font color="#808080">052</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">reportFile.parentFile.mkdirs</font><font color="#000000">()</font><br />
 <a name="53"><font color="#808080">053</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="54"><font color="#808080">054</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Predicate&lt;?&nbsp;</font><font color="#0000c0"><b>super&nbsp;</b></font><font color="#000000">Clirr.Difference&gt;&nbsp;filter&nbsp;=&nbsp;resolveEffectiveConfig</font><font color="#000000">(</font><font color="#000000">project</font><font color="#000000">)</font><font color="#000000">.clirr.filter</font><br />
+<a name="54"><font color="#808080">054</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Predicate&lt;?&nbsp;</font><font color="#0000c0"><b>super&nbsp;</b></font><font color="#000000">Clirr.Difference&gt;&nbsp;filter&nbsp;=&nbsp;resolveConfig</font><font color="#000000">(</font><font color="#000000">project</font><font color="#000000">)</font><font color="#000000">.clirr.filter</font><br />
 <a name="55"><font color="#808080">055</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="56"><font color="#808080">056</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Map&lt;String,&nbsp;Set&lt;Clirr.Difference&gt;&gt;&nbsp;diffs&nbsp;=&nbsp;</font><font color="#0000c0"><b>new&nbsp;</b></font><font color="#000000">TreeMap</font><font color="#000000">()</font><br />
 <a name="57"><font color="#808080">057</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">XmlSlurper&nbsp;slurper&nbsp;=&nbsp;</font><font color="#0000c0"><b>new&nbsp;</b></font><font color="#000000">XmlSlurper</font><font color="#000000">()</font><br />
