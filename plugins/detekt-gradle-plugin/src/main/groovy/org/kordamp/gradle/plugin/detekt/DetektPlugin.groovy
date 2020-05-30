@@ -228,7 +228,7 @@ class DetektPlugin extends AbstractKordampPlugin {
         String sourceSetName = (detektTask.name - 'detekt').uncapitalize()
         sourceSetName = sourceSetName == 'allDetekt' ? config.project.name : sourceSetName
         sourceSetName = sourceSetName == 'aggregateDetekt' ? 'aggregate' : sourceSetName
-        File specificConfigFile = resolveConfigFile(config.quality.detekt.configFile, config.quality.detekt.configFileSet, sourceSetName)
+        File specificConfigFile = resolveConfigFile(config.quality.detekt.configFile, config.quality.detekt.configFileSet, sourceSetName, config.project)
         detektTask.setEnabled(config.quality.detekt.enabled && specificConfigFile.exists())
         detektTask.config.setFrom(specificConfigFile)
         detektTask.baseline.set(config.quality.detekt.baselineFile)
@@ -243,7 +243,7 @@ class DetektPlugin extends AbstractKordampPlugin {
         detektTask.reports.xml.destination = config.project.layout.buildDirectory.file("reports/detekt/${sourceSetName}.xml").get().asFile
     }
 
-    private File resolveConfigFile(File baseFile, boolean fileSet, String sourceSetName) {
+    private static File resolveConfigFile(File baseFile, boolean fileSet, String sourceSetName, Project project) {
         if (sourceSetName == project.name || sourceSetName == 'aggregate') {
             return baseFile
         }
