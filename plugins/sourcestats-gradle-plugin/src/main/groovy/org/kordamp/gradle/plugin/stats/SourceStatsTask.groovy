@@ -154,6 +154,7 @@ class SourceStatsTask extends DefaultTask {
         if (!instances.fxml) instances.fxml = new XmlCounter()
         if (!instances.sql) instances.sql = new SqlCounter()
         if (!instances.yaml) instances.yaml = new HashCounter()
+        if (!instances.toml) instances.toml = new HashCounter()
         if (!instances.clj) instances.clj = new SemiColonCounter()
         if (!instances.get('properties')) instances.put('properties', new PropertiesCounter())
 

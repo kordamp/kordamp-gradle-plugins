@@ -81,6 +81,7 @@ class Stats extends AbstractAggregateFeature {
             properties: 'Properties',
             sql       : 'SQL',
             yaml      : 'YAML',
+            toml      : 'TOML',
             clojure   : 'Clojure'
         ].each { extension, name ->
             ['src' + File.separator + 'test',
@@ -105,7 +106,8 @@ class Stats extends AbstractAggregateFeature {
         basePaths.fxml = [name: 'FXML Sources', path: '.*', extension: 'fxml']
         basePaths.properties = [name: 'Properties', path: '.*', extension: 'properties']
         basePaths.sql = [name: 'SQL', path: '.*', extension: 'sql']
-        basePaths.yaml = [name: 'Yaml', path: '.*', extension: 'yaml']
+        basePaths.yaml = [name: 'Yaml', path: '.*', extension: 'yml']
+        basePaths.toml = [name: 'Toml', path: '.*', extension: 'toml']
         basePaths.clj = [name: 'Clojure', path: '.*', extension: 'clj']
 
         basePaths
