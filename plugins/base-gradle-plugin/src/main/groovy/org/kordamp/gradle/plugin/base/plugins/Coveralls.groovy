@@ -48,7 +48,7 @@ class Coveralls extends AbstractFeature {
     }
 
     @Override
-    void normalizeEnabled() {
+    protected void normalizeEnabled() {
         if (!enabledSet) {
             enabled = project.extensions.getByType(ProjectConfigurationExtension).coverage.jacoco.enabled
         }

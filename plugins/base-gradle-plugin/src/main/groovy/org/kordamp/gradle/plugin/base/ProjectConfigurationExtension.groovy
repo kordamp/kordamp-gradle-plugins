@@ -457,13 +457,13 @@ class ProjectConfigurationExtension {
         publishing.normalize()
         bom.normalize()
         licensing.normalize()
-        docs.normalize()
-        coverage.normalize()
-        quality.normalize()
         testing.normalize()
         clirr.normalize()
         plugin.normalize()
         stats.normalize()
+        docs.normalize()
+        coverage.normalize()
+        quality.normalize()
         this
     }
 
@@ -474,13 +474,13 @@ class ProjectConfigurationExtension {
         publishing.postMerge()
         bom.postMerge()
         licensing.postMerge()
-        docs.postMerge()
-        coverage.postMerge()
-        quality.postMerge()
         testing.postMerge()
         clirr.postMerge()
         plugin.postMerge()
         stats.postMerge()
+        docs.postMerge()
+        coverage.postMerge()
+        quality.postMerge()
         this
     }
 

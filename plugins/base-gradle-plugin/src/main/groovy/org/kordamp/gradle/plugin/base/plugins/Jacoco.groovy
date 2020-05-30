@@ -118,7 +118,7 @@ class Jacoco extends AbstractFeature {
     }
 
     @Override
-    void normalizeEnabled() {
+    protected void normalizeEnabled() {
         if (!enabledSet) {
             if (isRoot()) {
                 if (project.childProjects.isEmpty()) {
