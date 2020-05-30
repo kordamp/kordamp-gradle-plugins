@@ -266,6 +266,8 @@ class LicensingPlugin extends AbstractKordampPlugin {
             scala = 'SLASHSTAR_STYLE'
             gradle = 'SLASHSTAR_STYLE'
             kts = 'SLASHSTAR_STYLE'
+            yml = 'SCRIPT_STYLE'
+            toml = 'SCRIPT_STYLE'
         }
         licenseExtension.ext.project = project.name
         licenseExtension.ext {
@@ -278,6 +280,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
         licenseExtension.exclude '**/*.gif'
         licenseExtension.exclude '**/*.jpg'
         licenseExtension.exclude '**/*.jpeg'
+        licenseExtension.exclude '**/*.json'
         licenseExtension.exclude 'META-INF/services/*'
 
         project.tasks.withType(LicenseCheck, new Action<LicenseCheck>() {
