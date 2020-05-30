@@ -46,10 +46,19 @@ class Licensing extends AbstractFeature {
     }
 
     @Override
+    void normalize() {
+        if (!enabledSet) {
+            setEnabled(isApplied())
+        }
+        setVisible(isApplied())
+    }
+
+    @Override
     protected AbstractFeature getParentFeature() {
         return project.rootProject.extensions.getByType(ProjectConfigurationExtension).licensing
     }
 
+    @Override
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 

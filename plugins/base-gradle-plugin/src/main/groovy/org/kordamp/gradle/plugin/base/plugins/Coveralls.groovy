@@ -49,7 +49,10 @@ class Coveralls extends AbstractFeature {
 
     @Override
     void normalize() {
-        normalizeVisible()
+        if (!enabledSet) {
+            setEnabled(isApplied())
+        }
+        setVisible(isApplied())
     }
 
     void postMerge() {

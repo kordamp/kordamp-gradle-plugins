@@ -160,6 +160,7 @@ class GuidePlugin extends AbstractKordampPlugin {
                 checkAttribute(attrs, t.attributes, 'linkcss', true)
                 checkAttribute(attrs, t.attributes, 'source-highlighter', 'coderay')
                 checkAttribute(attrs, t.attributes, 'coderay-linenums-mode', 'table')
+                checkAttribute(attrs, t.attributes, 'rootdir', project.rootProject.projectDir.absolutePath)
                 checkAttribute(attrs, t.attributes, 'project-title', config.info.description)
                 checkAttribute(attrs, t.attributes, 'project-inception-year', config.info.inceptionYear)
                 checkAttribute(attrs, t.attributes, 'project-copyright-year', config.info.copyrightYear)
