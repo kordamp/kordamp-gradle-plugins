@@ -134,6 +134,7 @@ class Kotlindoc extends AbstractFeature {
         new LinkedHashMap<>('kotlindoc': map)
     }
 
+    @Override
     void normalize() {
         super.normalize()
 
@@ -142,6 +143,7 @@ class Kotlindoc extends AbstractFeature {
         }
     }
 
+    @Override
     protected boolean hasBasePlugin(Project project) {
         project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID)
     }
@@ -259,6 +261,7 @@ class Kotlindoc extends AbstractFeature {
     }
 
     void postMerge() {
+        super.postMerge()
         outputDirectory = outputDirectory ?: project.file("${project.buildDir}/docs/kotlindoc")
         jdkVersion = jdkVersion ?: 6
         if (replaceJavadoc) config.docs.javadoc.enabled = false

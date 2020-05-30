@@ -74,7 +74,8 @@ class Publishing extends AbstractFeature {
         new LinkedHashMap<>('publishing': map)
     }
 
-    void normalize() {
+    @Override
+    protected void normalizeEnabled() {
         if (!enabledSet) {
             if (isRoot()) {
                 setEnabled(project.childProjects.isEmpty() && isApplied())
@@ -82,7 +83,6 @@ class Publishing extends AbstractFeature {
                 setEnabled(isApplied())
             }
         }
-        normalizeVisible()
     }
 
     void postMerge() {
@@ -93,6 +93,7 @@ class Publishing extends AbstractFeature {
         if (isBlank(pom.packaging)) {
             pom.packaging = 'jar'
         }
+        super.postMerge()
     }
 
     void pom(Action<? super PomOptions> action) {

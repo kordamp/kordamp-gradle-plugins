@@ -53,6 +53,7 @@ class Jar extends AbstractFeature {
         new LinkedHashMap<>(jar: map)
     }
 
+    @Override
     void normalize() {
         super.normalize()
 

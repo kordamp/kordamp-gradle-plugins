@@ -50,6 +50,7 @@ class ErrorProne extends AbstractFeature {
         return project.rootProject.extensions.getByType(ProjectConfigurationExtension).quality.errorprone
     }
 
+    @Override
     protected boolean hasBasePlugin(Project project) {
         project.pluginManager.hasPlugin('java')
     }

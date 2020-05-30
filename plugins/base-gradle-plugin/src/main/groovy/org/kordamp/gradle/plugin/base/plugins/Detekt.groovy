@@ -78,6 +78,7 @@ class Detekt extends AbstractQualityFeature {
         super.normalize()
     }
 
+    @Override
     protected boolean hasBasePlugin(Project project) {
         project.pluginManager.hasPlugin(KOTLIN_JVM_PLUGIN_ID)
     }

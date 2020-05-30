@@ -100,11 +100,16 @@ class Plugin extends AbstractFeature {
         CollectionUtils.merge(o1.tags, o2?.tags)
     }
 
+    @Override
     void normalize() {
+        setVisible(isApplied())
+    }
+
+    @Override
+    protected void normalizeEnabled() {
         if (!enabledSet) {
             setEnabled(isApplied())
         }
-        setVisible(isApplied())
     }
 
     List<String> validate(ProjectConfigurationExtension extension) {

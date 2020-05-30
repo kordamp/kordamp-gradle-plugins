@@ -56,20 +56,16 @@ class Sonar extends AbstractFeature {
         )
 
         if (isRoot()) {
-            populateRootMapDescription(map)
+            map.hostUrl = this.hostUrl
+            map.username = this.username
+            map.projectKey = this.projectKey
+            map.ignoreFailures = getIgnoreFailures()
+            map.configProperties = this.configProperties
+            map.excludes = this.excludes
+            map.excludedProjects = excludedProjects
         }
 
         new LinkedHashMap<>(sonar: map)
-    }
-
-    protected void populateRootMapDescription(Map<String, Object> map) {
-        map.hostUrl = this.hostUrl
-        map.username = this.username
-        map.projectKey = this.projectKey
-        map.ignoreFailures = getIgnoreFailures()
-        map.configProperties = this.configProperties
-        map.excludes = this.excludes
-        map.excludedProjects = excludedProjects
     }
 
     boolean getIgnoreFailures() {

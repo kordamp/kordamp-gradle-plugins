@@ -118,11 +118,14 @@ class Javadoc extends AbstractFeature {
         new LinkedHashMap<>(['javadoc': map])
     }
 
+    @Override
     protected boolean hasBasePlugin(Project project) {
         project.pluginManager.hasPlugin('java')
     }
 
+    @Override
     void postMerge() {
+        super.postMerge()
         autoLinks.resolveLinks(project).each { options.links(it) }
     }
 

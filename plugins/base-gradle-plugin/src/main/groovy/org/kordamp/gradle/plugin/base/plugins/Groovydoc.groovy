@@ -106,6 +106,7 @@ class Groovydoc extends AbstractFeature {
         new LinkedHashMap<>('groovydoc': map)
     }
 
+    @Override
     protected boolean hasBasePlugin(Project project) {
         project.pluginManager.hasPlugin('groovy')
     }
@@ -163,6 +164,7 @@ class Groovydoc extends AbstractFeature {
         options.linkIfAbsent resolveJavadocLinks(project.findProperty('targetCompatibility')), 'java.', 'javax.', 'org.xml.', 'org.w3c.'
         options.linkIfAbsent 'https://docs.groovy-lang.org/latest/html/api/', 'groovy.', 'org.codehaus.groovy.', 'org.apache.groovy.'
         options.cleanupLinks()
+        super.postMerge()
     }
 
     @CompileStatic

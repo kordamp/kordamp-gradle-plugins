@@ -85,6 +85,7 @@ class Scaladoc extends AbstractFeature {
         new LinkedHashMap<>('scaladoc': map)
     }
 
+    @Override
     protected boolean hasBasePlugin(Project project) {
         project.pluginManager.hasPlugin('scala')
     }
@@ -141,6 +142,7 @@ class Scaladoc extends AbstractFeature {
 
     void postMerge() {
         if (replaceJavadoc) config.docs.javadoc.enabled = false
+        super.postMerge()
     }
 
     @CompileStatic

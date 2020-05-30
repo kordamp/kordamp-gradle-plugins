@@ -118,11 +118,7 @@ class Jacoco extends AbstractFeature {
     }
 
     @Override
-    void normalize() {
-        normalizeVisible()
-    }
-
-    void postMerge() {
+    void normalizeEnabled() {
         if (!enabledSet) {
             if (isRoot()) {
                 if (project.childProjects.isEmpty()) {
@@ -137,6 +133,7 @@ class Jacoco extends AbstractFeature {
         }
     }
 
+    @Override
     protected boolean hasBasePlugin(Project project) {
         project.pluginManager.hasPlugin('java-base')
     }

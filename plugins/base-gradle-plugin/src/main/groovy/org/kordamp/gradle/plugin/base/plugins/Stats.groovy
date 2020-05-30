@@ -48,21 +48,20 @@ class Stats extends AbstractAggregateFeature {
     }
 
     @Override
-    void normalize() {
-        if (!enabledSet) {
-            setEnabled(isApplied())
-        }
-        setVisible(isApplied())
-    }
-
-    @Override
     protected AbstractFeature getParentFeature() {
         return project.rootProject.extensions.getByType(ProjectConfigurationExtension).stats
     }
 
     @Override
     protected boolean hasBasePlugin(Project project) {
-        project.pluginManager.hasPlugin('java') || project.pluginManager.hasPlugin('com.android.library')
+        true
+    }
+
+    @Override
+    protected void normalizeEnabled() {
+        if (!enabledSet) {
+            setEnabled(isApplied())
+        }
     }
 
     @Override
@@ -134,5 +133,6 @@ class Stats extends AbstractAggregateFeature {
         mergedPaths.putAll(defaultPaths())
         mergedPaths.putAll(paths)
         paths.putAll(mergedPaths)
+        super.postMerge()
     }
 }

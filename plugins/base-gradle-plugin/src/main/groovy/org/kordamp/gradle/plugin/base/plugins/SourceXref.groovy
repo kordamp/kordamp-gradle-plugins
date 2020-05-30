@@ -55,6 +55,7 @@ class SourceXref extends AbstractAggregateFeature {
         return project.rootProject.extensions.getByType(ProjectConfigurationExtension).docs.sourceXref
     }
 
+    @Override
     protected boolean hasBasePlugin(Project project) {
         project.pluginManager.hasPlugin('java') || project.pluginManager.hasPlugin('com.android.library')
     }

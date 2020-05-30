@@ -468,11 +468,18 @@ class ProjectConfigurationExtension {
     }
 
     ProjectConfigurationExtension postMerge() {
+        buildInfo.postMerge()
+        artifacts.postMerge()
+        bintray.postMerge()
         publishing.postMerge()
-        testing.postMerge()
+        bom.postMerge()
+        licensing.postMerge()
         docs.postMerge()
-        quality.postMerge()
         coverage.postMerge()
+        quality.postMerge()
+        testing.postMerge()
+        clirr.postMerge()
+        plugin.postMerge()
         stats.postMerge()
         this
     }
@@ -596,7 +603,14 @@ class ProjectConfigurationExtension {
         }
 
         Quality postMerge() {
+            checkstyle.postMerge()
+            codenarc.postMerge()
+            detekt.postMerge()
+            errorprone.postMerge()
+            pmd.postMerge()
             cpd.postMerge()
+            sonar.postMerge()
+            spotbugs.postMerge()
             this
         }
 
@@ -787,10 +801,13 @@ class ProjectConfigurationExtension {
         }
 
         Docs postMerge() {
-            javadoc.postMerge()
+            guide.postMerge()
             groovydoc.postMerge()
             kotlindoc.postMerge()
+            javadoc.postMerge()
             scaladoc.postMerge()
+            sourceHtml.postMerge()
+            sourceXref.postMerge()
             this
         }
 
@@ -874,6 +891,13 @@ class ProjectConfigurationExtension {
             jar.normalize()
             minpom.normalize()
             source.normalize()
+            this
+        }
+
+        Artifacts postMerge() {
+            jar.postMerge()
+            minpom.postMerge()
+            source.postMerge()
             this
         }
     }

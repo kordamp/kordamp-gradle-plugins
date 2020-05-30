@@ -114,6 +114,7 @@ class Testing extends AbstractFeature {
     void postMerge() {
         integration.postMerge()
         functional.postMerge()
+        super.postMerge()
     }
 
     Set<Test> testTasks() {

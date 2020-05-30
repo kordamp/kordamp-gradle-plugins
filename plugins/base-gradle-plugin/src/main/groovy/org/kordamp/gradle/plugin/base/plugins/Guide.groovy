@@ -66,11 +66,15 @@ class Guide extends AbstractFeature {
     }
 
     void normalize() {
-        if (!enabledSet) {
-            doSetEnabled(isApplied())
-        }
         publish.normalize()
         setVisible(isApplied())
+    }
+
+    @Override
+    protected void normalizeEnabled() {
+        if (!enabledSet) {
+            setEnabled(isApplied())
+        }
     }
 
     @CompileStatic

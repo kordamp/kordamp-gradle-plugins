@@ -48,6 +48,7 @@ class SourceHtml extends AbstractAggregateFeature {
         return project.rootProject.extensions.getByType(ProjectConfigurationExtension).docs.sourceHtml
     }
 
+    @Override
     protected boolean hasBasePlugin(Project project) {
         project.pluginManager.hasPlugin('java') || project.pluginManager.hasPlugin('com.android.library')
     }

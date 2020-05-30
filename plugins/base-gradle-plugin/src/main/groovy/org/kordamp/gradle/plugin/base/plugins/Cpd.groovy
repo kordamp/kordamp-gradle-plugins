@@ -47,10 +47,12 @@ class Cpd extends AbstractQualityFeature {
         return project.rootProject.extensions.getByType(ProjectConfigurationExtension).quality.cpd
     }
 
+    @Override
     void postMerge() {
         minimumTokenCount = minimumTokenCount <= 0 ? 50 : minimumTokenCount
         encoding = encoding ?: 'UTF-8'
         language = language ?: 'java'
+        super.postMerge()
     }
 
     @Override
@@ -64,6 +66,7 @@ class Cpd extends AbstractQualityFeature {
         map.ignoreAnnotations = this.language
     }
 
+    @Override
     protected boolean hasBasePlugin(Project project) {
         project.pluginManager.hasPlugin('java-base')
     }

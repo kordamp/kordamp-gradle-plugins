@@ -64,11 +64,11 @@ class BuildInfo extends AbstractFeature {
         return project.rootProject.extensions.getByType(ProjectConfigurationExtension).buildInfo
     }
 
-    void normalize() {
-        if (!enabledSet && isRoot()) {
+    @Override
+    protected void normalizeEnabled() {
+        if (!enabledSet) {
             setEnabled(isApplied())
         }
-        setVisible(isApplied())
     }
 
     @Override

@@ -61,7 +61,7 @@ abstract class AbstractFeature implements Feature {
     }
 
     static void merge(AbstractFeature o1, AbstractFeature o2) {
-        o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
+        o1.enabled = (boolean) (o1.enabledSet ? o1.enabled : o2.enabled)
     }
 
     @CompileDynamic
@@ -76,8 +76,11 @@ abstract class AbstractFeature implements Feature {
     }
 
     void normalize() {
-        normalizeEnabled()
         normalizeVisible()
+    }
+
+    void postMerge() {
+        normalizeEnabled()
     }
 
     protected void normalizeEnabled() {

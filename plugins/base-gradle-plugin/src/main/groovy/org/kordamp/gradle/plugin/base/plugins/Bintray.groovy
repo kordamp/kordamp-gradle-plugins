@@ -56,11 +56,6 @@ class Bintray extends AbstractFeature {
     }
 
     @Override
-    void normalize() {
-        normalizeVisible()
-    }
-
-    @Override
     protected AbstractFeature getParentFeature() {
         return project.rootProject.extensions.getByType(ProjectConfigurationExtension).bintray
     }

@@ -83,11 +83,11 @@ class Bom extends AbstractFeature implements PomOptions {
         return project.rootProject.extensions.getByType(ProjectConfigurationExtension).bom
     }
 
-    void normalize() {
+    @Override
+    protected void normalizeEnabled() {
         if (!enabledSet) {
             setEnabled(isApplied())
         }
-        setVisible(isApplied())
     }
 
     Map<String, Dependency> getDependencies() {
