@@ -134,8 +134,8 @@ class SonarPlugin extends AbstractKordampPlugin {
                     p.property('sonar.groovy.codenarc.reportPaths', resolveBuiltFile(project, 'reports/codenarc/aggregate.xml'))
                 }
                 if (config.coverage.jacoco.enabled) {
-                    p.property('sonar.coverage.jacoco.xmlReportPaths', config.coverage.jacoco.aggregateReportXmlFile)
-                    p.property('sonar.groovy.jacoco.reportPath', config.coverage.jacoco.aggregateExecFile)
+                    p.property('sonar.coverage.jacoco.xmlReportPaths', config.coverage.jacoco.aggregateReportXmlFile.absolutePath)
+                    p.property('sonar.groovy.jacoco.reportPath', config.coverage.jacoco.aggregateExecFile.absolutePath)
                 }
                 if (config.quality.detekt.enabled) {
                     p.property('sonar.kotlin.detekt.reportPaths', resolveBuiltFile(project, 'reports/detekt/aggregate.xml'))
