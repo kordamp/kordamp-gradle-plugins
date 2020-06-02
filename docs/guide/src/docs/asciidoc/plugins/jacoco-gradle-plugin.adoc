@@ -29,6 +29,7 @@ config {
             additionalClassDirs
             toolVersion
             excludes
+            includeProjectDependencies
         }
     }
 }
@@ -36,18 +37,23 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name                    | Type           | Required | Default Value                                                     | Description
-| enabled                 | boolean        | no       | true                                                              | Disables `org.kordamp.gradle.jacoco` plugin if `false`
-| aggregateExecFile       | File           | no       | ${project.buildDir}/jacoco/aggregate.exec                         | Location for the aggregate merge execution data file
-| aggregateReportHtmlFile | File           | no       | ${project.buildDir}/reports/jacoco/aggregate/html                 | Location for aggregate HTML reports
-| aggregateReportXmlFile  | File           | no       | ${project.buildDir}/reports/jacoco/aggregate/jacocoTestReport.xml | Location for the aggregate XML report
-| additionalSourceDirs    | FileCollection | no       | []                                                                | Additional source directories
-| additionalClassDirs     | FileCollection | no       | []                                                                | Additional class directories
-| toolVersion             | String         | no       | 0.8.5                                                             |
-| excludes                | Set<String>    | no       | []                                                                |
+| Name                       | Type           | Required | Default Value                                                     | Description
+| enabled                    | boolean        | no       | true                                                              | Disables `org.kordamp.gradle.jacoco` plugin if `false`
+| aggregateExecFile          | File           | no       | ${project.buildDir}/jacoco/aggregate.exec                         | Location for the aggregate merge execution data file
+| aggregateReportHtmlFile    | File           | no       | ${project.buildDir}/reports/jacoco/aggregate/html                 | Location for aggregate HTML reports
+| aggregateReportXmlFile     | File           | no       | ${project.buildDir}/reports/jacoco/aggregate/jacocoTestReport.xml | Location for the aggregate XML report
+| additionalSourceDirs       | FileCollection | no       | []                                                                | Additional source directories
+| additionalClassDirs        | FileCollection | no       | []                                                                | Additional class directories
+| toolVersion                | String         | no       | 0.8.5                                                             |
+| excludes                   | Set<String>    | no       | []                                                                |
+| includeProjectDependencies | boolean        | no       | false                                                             |
 |===
 
 The value for `enabled` will automatically be set to `false` if no tests (`unit`, `integration`, or `functional`) are found.
+
+If `includeProjectDependencies` is set to `true` then class files from all projects that have been set as dependencies will
+also be included  in the generated report. This setting applies for individual projects and is ignored on aggregate root
+reports as all project sources are already taken into account.
 
 This block is optional.
 

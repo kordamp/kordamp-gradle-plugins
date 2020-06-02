@@ -39,6 +39,8 @@ class Jacoco extends AbstractTestingFeature {
     String toolVersion = DefaultVersions.INSTANCE.jacocoVersion
     Set<String> excludes = new LinkedHashSet<>()
 
+    Boolean includeProjectDependencies
+
     private final Set<Project> projects = new LinkedHashSet<>()
     private final Set<Test> testTasks = new LinkedHashSet<>()
     private final Set<JacocoReport> reportTasks = new LinkedHashSet<>()
@@ -111,6 +113,7 @@ class Jacoco extends AbstractTestingFeature {
         }
         map.toolVersion = toolVersion
         map.excludes = excludes
+        map.includeProjectDependencies = getIncludeProjectDependencies()
 
         new LinkedHashMap<>('jacoco': map)
     }
@@ -119,8 +122,12 @@ class Jacoco extends AbstractTestingFeature {
         excludes << str
     }
 
+    boolean getIncludeProjectDependencies() {
+        this.@includeProjectDependencies != null && this.@includeProjectDependencies
+    }
+
     static void merge(Jacoco o1, Jacoco o2) {
-        o1.doSetEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
+        AbstractFeature.merge(o1, o2)
         o1.aggregateExecFile = o1.aggregateExecFile ?: o2.aggregateExecFile
         o1.aggregateReportHtmlFile = o1.aggregateReportHtmlFile ?: o2.aggregateReportHtmlFile
         o1.aggregateReportXmlFile = o1.aggregateReportXmlFile ?: o2.aggregateReportXmlFile
@@ -130,6 +137,7 @@ class Jacoco extends AbstractTestingFeature {
         o1.additionalSourceDirs.from(o2.additionalSourceDirs)
         o1.additionalClassDirs.from(o2.additionalClassDirs)
         o1.toolVersion = o1.toolVersion ?: o2.toolVersion
+        o1.includeProjectDependencies = o1.@includeProjectDependencies != null ? o1.getIncludeProjectDependencies() : o2.getIncludeProjectDependencies()
     }
 
     Set<Project> projects() {

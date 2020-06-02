@@ -23,6 +23,7 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.AppliedPlugin
@@ -256,24 +257,34 @@ class JacocoPlugin extends AbstractKordampPlugin {
                 t.description = "Generates code coverage report for the ${testTask.name} task."
 
                 t.jacocoClasspath = project.configurations.jacocoAnt
-
-                t.additionalSourceDirs.from project.files(resolveSourceDirs(config, project))
-                t.sourceDirectories.from project.files(resolveSourceDirs(config, project))
-                t.classDirectories.from project.files(resolveClassDirs(config, project))
                 t.executionData testTask
 
                 t.reports {
                     html.destination = project.file("${project.reporting.baseDir.path}/jacoco/${testTask.name}/html")
                     xml.destination = project.file("${project.reporting.baseDir.path}/jacoco/${testTask.name}/jacocoTestReport.xml")
                 }
-
-                adjustClassDirectories(t, config.coverage.jacoco.excludes)
             }
         }
 
-        jacocoReportTask.configure {
-            enabled = config.coverage.jacoco.enabled
-            reports {
+        jacocoReportTask.configure { t ->
+            Set<Project> projects = [project] as Set
+
+            if (config.coverage.jacoco.includeProjectDependencies) {
+                project.configurations.findByName(testTask.name + 'Implementation').allDependencies.each { d ->
+                    if (d instanceof ProjectDependency) projects << d.dependencyProject
+                }
+                project.configurations.findByName(testTask.name + 'RuntimeOnly').allDependencies.each { d ->
+                    if (d instanceof ProjectDependency) projects << d.dependencyProject
+                }
+            }
+
+            t.additionalSourceDirs.from project.files(resolveSourceDirs(config, projects))
+            t.sourceDirectories.from project.files(resolveSourceDirs(config, projects))
+            t.classDirectories.from project.files(resolveClassDirs(config, projects))
+            adjustClassDirectories(t, config.coverage.jacoco.excludes)
+
+            t.enabled = config.coverage.jacoco.enabled
+            t.reports {
                 xml.enabled = true
                 csv.enabled = false
                 html.enabled = true
@@ -294,12 +305,12 @@ class JacocoPlugin extends AbstractKordampPlugin {
             .from(config.coverage.jacoco.additionalClassDirs.files.flatten().unique())
     }
 
-    private FileCollection resolveSourceDirs(ProjectConfigurationExtension config, Collection<Project> projects) {
-        project.files(projects.collect { resolveSourceDirs(config, it) }.flatten().unique())
+    private static FileCollection resolveSourceDirs(ProjectConfigurationExtension config, Collection<Project> projects) {
+        config.project.files(projects.collect { resolveSourceDirs(config, it) }.flatten().unique())
     }
 
-    private FileCollection resolveClassDirs(ProjectConfigurationExtension config, Collection<Project> projects) {
-        project.files(projects.collect { resolveClassDirs(config, it) }.flatten().unique())
+    private static FileCollection resolveClassDirs(ProjectConfigurationExtension config, Collection<Project> projects) {
+        config.project.files(projects.collect { resolveClassDirs(config, it) }.flatten().unique())
     }
 
     private void applyJacocoMerge(Project project) {
