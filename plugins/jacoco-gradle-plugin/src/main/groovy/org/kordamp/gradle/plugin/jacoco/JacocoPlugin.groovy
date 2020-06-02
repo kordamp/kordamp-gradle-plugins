@@ -259,7 +259,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
                 t.additionalSourceDirs.from project.files(resolveSourceDirs(config, project))
                 t.sourceDirectories.from project.files(resolveSourceDirs(config, project))
-                // t.classDirectories.from project.files(resolveClassDirs(config, project))
+                t.classDirectories.from project.files(resolveClassDirs(config, project))
                 t.executionData testTask
 
                 t.reports {
@@ -344,7 +344,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
                 t.additionalSourceDirs.from project.files(resolveSourceDirs(config, projects))
                 t.sourceDirectories.from project.files(resolveSourceDirs(config, projects))
-                // t.classDirectories.from project.files(resolveClassDirs(config, projects))
+                t.classDirectories.from project.files(resolveClassDirs(config, projects))
                 t.executionData project.files(aggregateJacocoMerge.get().destinationFile)
 
                 t.reports(new Action<JacocoReportsContainer>() {
