@@ -36,6 +36,8 @@ class Sonar extends AbstractFeature {
     String hostUrl = 'https://sonarcloud.io'
     String username
     String projectKey
+    String organization
+    String login
     Map<String, Object> configProperties = [:]
     Set<String> excludes = new LinkedHashSet<>()
     final Set<Project> excludedProjects = new LinkedHashSet<>()
@@ -50,6 +52,13 @@ class Sonar extends AbstractFeature {
     }
 
     @Override
+    protected void normalizeEnabled() {
+        if (!enabledSet) {
+            setEnabled(isApplied())
+        }
+    }
+
+    @Override
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(
             enabled: enabled
@@ -59,6 +68,8 @@ class Sonar extends AbstractFeature {
             map.hostUrl = this.hostUrl
             map.username = this.username
             map.projectKey = this.projectKey
+            map.organization = this.organization
+            map.login = this.login
             map.ignoreFailures = getIgnoreFailures()
             map.configProperties = this.configProperties
             map.excludes = this.excludes
@@ -91,8 +102,17 @@ class Sonar extends AbstractFeature {
     List<String> validate(ProjectConfigurationExtension extension) {
         List<String> errors = []
 
-        if (enabled && isBlank(username)) {
-            errors << "[${project.name}] Sonar username is blank".toString()
+        if (enabled) {
+            if (isBlank(username)) {
+                if (isBlank(organization) || isBlank(login)) {
+                    errors << "[${project.name}] Sonar username is blank".toString()
+                }
+            }
+            if (isBlank(organization) || isBlank(login)) {
+                if (isBlank(username)) {
+                    errors << "[${project.name}] Sonar organization or login is blank".toString()
+                }
+            }
         }
 
         errors
@@ -113,6 +133,8 @@ class Sonar extends AbstractFeature {
         o1.hostUrl = o1.hostUrl ?: o2.hostUrl
         o1.projectKey = o1.projectKey ?: o2.projectKey
         o1.username = o1.username ?: o2.username
+        o1.organization = o1.organization ?: o2.organization
+        o1.login = o1.login ?: o2.login
         CollectionUtils.merge(o1.configProperties, o2?.configProperties)
         CollectionUtils.merge(o1.excludes, o2?.excludes)
     }

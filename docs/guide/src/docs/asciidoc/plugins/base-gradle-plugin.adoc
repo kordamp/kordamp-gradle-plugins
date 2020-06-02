@@ -647,7 +647,7 @@ Type:: `org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask`
 section:: The section to generate the report for.
 sections:: The sections to generate the report for.
 show-secrets:: Show secret values instead of masked values. Value masking is applied to properties that contain any
-of the following words: `secret`, `password`, `credential`, `token`, `apikey`. The list of words can be overriden by
+of the following words: `secret`, `password`, `credential`, `token`, `apikey`, `login`. The list of words can be overridden by
 setting a System property named `kordamp.secret.keywords` to a comma delimited String, such as `password,secret`.
 
 You may specify either of the two, be advised that `sections` has precedence over `section`. All sections will be displayed

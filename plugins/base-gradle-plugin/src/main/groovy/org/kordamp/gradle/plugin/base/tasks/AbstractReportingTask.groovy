@@ -33,7 +33,7 @@ import static org.kordamp.gradle.util.StringUtils.isNotBlank
  */
 @CompileStatic
 abstract class AbstractReportingTask extends DefaultTask {
-    private static final String SECRET_KEYWORDS = 'password,secret,credential,token,apikey'
+    private static final String SECRET_KEYWORDS = 'password,secret,credential,token,apikey,login'
     private static final String KEY_SECRET_KEYWORDS = 'kordamp.secret.keywords'
 
     private boolean showSecrets
@@ -94,7 +94,7 @@ abstract class AbstractReportingTask extends DefaultTask {
         String lower = key.toLowerCase()
 
         for (String keyword : System.getProperty(KEY_SECRET_KEYWORDS, SECRET_KEYWORDS).split(',')) {
-            if (lower.contains(keyword.trim())) return true
+            if (lower.contains(keyword.trim().toLowerCase())) return true
         }
 
         return false
@@ -197,7 +197,7 @@ abstract class AbstractReportingTask extends DefaultTask {
         formatValue(unwrapValue(value), false, offset)
     }
 
-    protected String formatValue(value, boolean secret, int offset) {
+    protected String formatValue(Object value, boolean secret, int offset) {
         if (value instanceof Boolean) {
             Boolean b = (Boolean) value
             return b ? console.green(String.valueOf(b)) : console.red(String.valueOf(b))

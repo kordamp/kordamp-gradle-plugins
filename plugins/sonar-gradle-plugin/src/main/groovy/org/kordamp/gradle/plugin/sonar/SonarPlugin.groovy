@@ -146,6 +146,8 @@ class SonarPlugin extends AbstractKordampPlugin {
                 addIfUndefined('sonar.links.scm', config.info.scm.url, p)
                 addIfUndefined('sonar.links.issue', config.info.issueManagement.url, p)
                 addIfUndefined('sonar.links.ci', config.info.ciManagement.url, p)
+                addIfUndefined('sonar.organization', config.quality.sonar.organization, p)
+                addIfUndefined('sonar.login', config.quality.sonar.login, p)
             }
 
             private String resolveBuiltFile(Project p, String path) {

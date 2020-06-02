@@ -49,6 +49,11 @@ class Codenarc extends AbstractQualityFeature {
         return project.rootProject.extensions.getByType(ProjectConfigurationExtension).quality.codenarc
     }
 
+    @Override
+    protected boolean hasBasePlugin(Project project) {
+        project.pluginManager.hasPlugin('groovy-base')
+    }
+
     void setConfigFile(File configFile) {
         this.configFile = configFile
         this.configFileSet = true

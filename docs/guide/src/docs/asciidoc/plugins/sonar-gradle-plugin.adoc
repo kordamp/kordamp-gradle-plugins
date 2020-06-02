@@ -30,6 +30,8 @@ config {
             enabled
             hostUrl
             username
+            organization
+            login
             projectKey
             ignoreFailures
             configProperties
@@ -44,12 +46,16 @@ config {
 | Name             | Type                | Required | Default Value                                 | Description
 | enabled          | boolean             | no       | true                                          | Disables `org.kordamp.gradle.sonar` plugin if `false`
 | hostUrl          | String              | no       | 'https://sonarcloud.io'                       | The server URL to publish the sonar analysis to
-| username         | String              | yes      |                                               | The login or authentication token of a SonarQube user with Execute Analysis permission on the project.
+| username         | String              | yes*     |                                               | The login or authentication token of a SonarQube user with Execute Analysis permission on the project.
 | projectKey       | String              | no       | $username + '_' + ${project.rootProject.name} | The project's unique key.
+| organization     | String              | yes*     |                                               | The name of the organization.
+| login            | String              | yes*     |                                               | The login or authentication token of a SonarQube user with Execute Analysis permission on the project.
 | ignoreFailures   | boolean             | no       | true                                          |
 | excludedProjects | Set<Project>        | no       | []                                            | Projects in the set are excluded from aggregation
 | configProperties | Map<String, Object> | no       | [:]                                           | Additional sonar properties that are passed to sonar as such
 |===
+
+Either `username` is defined or both `organization` and `login` are defined.
 
 This block should be configured on the root project.
 
