@@ -70,10 +70,10 @@ class EffectiveSettingsTask extends AbstractReportingTask {
         Map<String, Object> map = resolveConfig(project).toMap()
 
         if (sections) {
-            sections.each { s ->
-                printSection(map, s)
+            for (String s : sections) {
+                if (s in SECTIONS) printSection(map, s)
             }
-        } else if (section) {
+        } else if (section && section in SECTIONS) {
             printSection(map, section)
         } else {
             doPrint(map, 0)
@@ -81,6 +81,12 @@ class EffectiveSettingsTask extends AbstractReportingTask {
     }
 
     private void printSection(Map<String, Object> map, String section) {
+        if (!map) {
+            // the section is invisible
+            println("The plugin that enables section '${section}' has not been applied.")
+            return
+        }
+
         if (map.containsKey(section)) {
             println "${section}:"
             doPrint(map[section], 1)
