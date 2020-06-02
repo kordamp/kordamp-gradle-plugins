@@ -31,7 +31,7 @@ import org.kordamp.gradle.util.ConfigureUtil
  * @since 0.14.0
  */
 @CompileStatic
-class Testing extends AbstractFeature {
+class Testing extends AbstractTestingFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.testing'
 
     boolean logging = true

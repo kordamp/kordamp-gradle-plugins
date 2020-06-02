@@ -25,14 +25,12 @@ import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.internal.DefaultVersions
 
-import static org.kordamp.gradle.util.PluginUtils.isAndroidProject
-
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 @CompileStatic
-class Jacoco extends AbstractFeature {
+class Jacoco extends AbstractTestingFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.jacoco'
 
     File aggregateExecFile
@@ -117,46 +115,8 @@ class Jacoco extends AbstractFeature {
         new LinkedHashMap<>('jacoco': map)
     }
 
-    @Override
-    protected void normalizeEnabled() {
-        if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    enabled = hasTestSourceSets()
-                }
-            } else {
-                enabled = hasTestSourceSets()
-                if (enabled) {
-                    getParentFeature().enabled = enabled
-                }
-            }
-        }
-    }
-
-    @Override
-    protected boolean hasBasePlugin(Project project) {
-        project.pluginManager.hasPlugin('java-base')
-    }
-
     void exclude(String str) {
         excludes << str
-    }
-
-    boolean hasTestSourceSets() {
-        hasTestSourceSets(project)
-    }
-
-    boolean hasTestSourceSets(Project project) {
-        ProjectConfigurationExtension config = project.extensions.getByType(ProjectConfigurationExtension)
-
-        hasTestsAt(project.file('src/test')) ||
-            hasTestsAt(project.file(config.testing.integration.baseDir)) ||
-            hasTestsAt(project.file(config.testing.functional.baseDir)) ||
-            (isAndroidProject(project) && hasTestsAt(project.file('src/androidTest')))
-    }
-
-    private static boolean hasTestsAt(File testDir) {
-        testDir.exists() && testDir.listFiles().length
     }
 
     static void merge(Jacoco o1, Jacoco o2) {

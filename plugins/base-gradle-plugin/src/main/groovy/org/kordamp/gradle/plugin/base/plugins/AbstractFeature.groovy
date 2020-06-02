@@ -44,11 +44,11 @@ abstract class AbstractFeature implements Feature {
     }
 
     protected void doSetEnabled(boolean enabled) {
-        this.enabled = enabled
+        this.@enabled = enabled
     }
 
     void setEnabled(boolean enabled) {
-        this.enabled = enabled
+        this.@enabled = enabled
         this.enabledSet = true
     }
 
@@ -61,7 +61,7 @@ abstract class AbstractFeature implements Feature {
     }
 
     static void merge(AbstractFeature o1, AbstractFeature o2) {
-        o1.enabled = (boolean) (o1.enabledSet ? o1.enabled : o2.enabled)
+        o1.@enabled = (boolean) (o1.enabledSet ? o1.enabled : o2.enabled)
     }
 
     @CompileDynamic
