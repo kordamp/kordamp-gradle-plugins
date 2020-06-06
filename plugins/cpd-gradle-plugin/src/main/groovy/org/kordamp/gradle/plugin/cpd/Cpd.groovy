@@ -65,8 +65,11 @@ class Cpd extends SourceTask implements VerificationTask, Reporting<CpdReports> 
     @Input
     final Property<Boolean> ignoreAnnotations
 
-    Cpd() {
-        ObjectFactory objects = getObjectFactory()
+    @Internal
+    final IsolatedAntBuilder antBuilder
+
+    @Inject
+    Cpd(ObjectFactory objects, IsolatedAntBuilder antBuilder) {
         reports = objects.newInstance(CpdReportsImpl, this)
         minimumTokenCount = project.objects.property(Integer).convention(50)
         encoding = project.objects.property(String).convention('UTF-8')
@@ -74,17 +77,7 @@ class Cpd extends SourceTask implements VerificationTask, Reporting<CpdReports> 
         ignoreLiterals = project.objects.property(Boolean).convention(false)
         ignoreIdentifiers = project.objects.property(Boolean).convention(false)
         ignoreAnnotations = project.objects.property(Boolean).convention(false)
-    }
-
-    @Inject
-    protected ObjectFactory getObjectFactory() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Inject
-    @Internal
-    IsolatedAntBuilder getAntBuilder() {
-        throw new UnsupportedOperationException()
+        this.antBuilder = antBuilder
     }
 
     @TaskAction
