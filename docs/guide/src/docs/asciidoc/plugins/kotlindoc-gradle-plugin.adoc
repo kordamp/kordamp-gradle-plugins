@@ -16,7 +16,7 @@ NOTE: This plugin relies on the `org.jetbrains.dokka` plugin but does not apply 
 [[_org_kordamp_gradle_kotlindoc_dsl]]
 == DSL
 
-[source,kotlin]
+[source,groovy]
 [subs="+macros"]
 ----
 config {

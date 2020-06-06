@@ -11,8 +11,7 @@ Option #1
 ----
 buildscript {
     repositories {
-        // Gradle Plugin Portal
-        maven {  url 'https://plugins.gradle.org/m2/' }
+        gradlePluginPortal()
         // required for additional dependencies, may use mavenCentral() instead
         jcenter()
     }
@@ -28,8 +27,7 @@ apply plugin: '{plugin-id}'
 ----
 buildscript {
     repositories {
-        // Gradle Plugin Portal
-        maven(url = "https://plugins.gradle.org/m2/")
+        gradlePluginPortal()
         // required for additional dependencies, may use mavenCentral() instead
         jcenter()
     }

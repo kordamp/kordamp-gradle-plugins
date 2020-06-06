@@ -163,7 +163,7 @@ apply(plugin = "org.kordamp.gradle.settings")
 rootProject.name = "root"
 
 configure<org.kordamp.gradle.plugin.settings.ProjectsExtension> {
-    directories = listOf("docs", "subprojects")
+    directories.addAll(listOf("docs", "subprojects"))
 }
 ----
 
