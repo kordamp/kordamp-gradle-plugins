@@ -14,6 +14,7 @@ include::{includedir}/config-dsl.adoc[]
 include::{includedir}/plugins-dsl.adoc[]
 include::{includedir}/projects-dsl.adoc[]
 include::{includedir}/plugins.adoc[]
+include::{includedir}/authoring.adoc[]
 
 = Links
 
