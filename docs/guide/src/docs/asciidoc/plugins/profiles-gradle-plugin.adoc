@@ -234,13 +234,13 @@ The following command invocations have these results:
 [source]
 .Builds with jdk9 and prod profiles
 ----
-./gradlew -Pprofile=jdk9,prod build
+gm -Pprofile=jdk9,prod build
 ----
 
 [source]
 .Builds with jdk11 profile only
 ----
-./gradlew -Pprofile=jdk11 build
+gm -Pprofile=jdk11 build
 ----
 
 In both cases the `test` profile remains inactive.
@@ -275,7 +275,7 @@ Type:: `org.kordamp.gradle.plugin.profiles.tasks.DisplayActivationInfoTask`
 
 [source]
 ----
-$ ./gradlew :displayActivationInfo
+$ gm :displayActivationInfo
 
 > Task :displayActivationInfo
 JDK:

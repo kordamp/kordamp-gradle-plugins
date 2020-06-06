@@ -19,6 +19,7 @@ package org.kordamp.gradle.property
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.PropertyUtils.Order
@@ -33,6 +34,9 @@ import static org.kordamp.gradle.property.PropertyUtils.listProvider
  */
 @CompileStatic
 final class SimpleListState implements ListState {
+    private static final String ERROR_TASK_NULL = "Argument 'task' must not be null."
+    private static final String ERROR_PROJECT_NULL = "Argument 'project' must not be null."
+
     final ListProperty<String> property
     final Provider<List<String>> provider
 
@@ -44,55 +48,85 @@ final class SimpleListState implements ListState {
     }
 
     SimpleListState(Project project, ListProperty<String> property, Provider<List<String>> provider) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+        this.project = requireNonNull(project, ERROR_PROJECT_NULL)
         this.property = requireNonNull(property, "Argument 'property' must not be null.")
         this.provider = requireNonNull(provider, "Argument 'provider' must not be null.")
     }
 
-    SimpleListState(Project project, Object owner, String key) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleListState of(Task task, String key) {
+        of(task, key, Collections.<String> emptyList())
+    }
 
-        property = project.objects.listProperty(String)
+    static SimpleListState of(Task task, String key, List<String> defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, defaultValue)
+    }
 
-        provider = listProvider(
+    static SimpleListState of(Task task, String key, Order order) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, order)
+    }
+
+    static SimpleListState of(Task task, String key, Order order, Path path, List<String> defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, order, path, defaultValue)
+    }
+
+    static SimpleListState of(Task task, String envKey, String propertyKey, Order order, Path path, List<String> defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, envKey, propertyKey, order, path, defaultValue)
+    }
+
+    static SimpleListState of(Project project, Object owner, String key) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
+
+        ListProperty<String> property = project.objects.listProperty(String)
+
+        Provider<List<String>> provider = listProvider(
             key,
             property,
             project,
             owner)
+
+        new SimpleListState(project, property, provider)
     }
 
-    SimpleListState(Project project, Object owner, String key, Order order) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleListState of(Project project, Object owner, String key, List<String> defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.listProperty(String)
+        ListProperty<String> property = project.objects.listProperty(String)
 
-        provider = listProvider(
+        Provider<List<String>> provider = listProvider(
+            key,
+            property,
+            project,
+            owner,
+            defaultValue)
+
+        new SimpleListState(project, property, provider)
+    }
+
+    static SimpleListState of(Project project, Object owner, String key, Order order) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
+
+        ListProperty<String> property = project.objects.listProperty(String)
+
+        Provider<List<String>> provider = listProvider(
             key,
             property,
             order,
             project,
             owner)
+
+        new SimpleListState(project, property, provider)
     }
 
-    SimpleListState(Project project, Object owner, String envKey, String propertyKey) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleListState of(Project project, Object owner, String key, Order order, Path path, List<String> defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.listProperty(String)
+        ListProperty<String> property = project.objects.listProperty(String)
 
-        provider = listProvider(
-            envKey,
-            propertyKey,
-            property,
-            project,
-            owner)
-    }
-
-    SimpleListState(Project project, Object owner, String key, Order order, Path path, List<String> defaultValue) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
-
-        property = project.objects.listProperty(String)
-
-        provider = listProvider(
+        Provider<List<String>> provider = listProvider(
             key,
             property,
             order,
@@ -100,14 +134,16 @@ final class SimpleListState implements ListState {
             project,
             owner,
             defaultValue)
+
+        new SimpleListState(project, property, provider)
     }
 
-    SimpleListState(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, List<String> defaultValue) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleListState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, List<String> defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.listProperty(String)
+        ListProperty<String> property = project.objects.listProperty(String)
 
-        provider = listProvider(
+        Provider<List<String>> provider = listProvider(
             envKey,
             propertyKey,
             property,
@@ -116,5 +152,7 @@ final class SimpleListState implements ListState {
             project,
             owner,
             defaultValue)
+
+        new SimpleListState(project, property, provider)
     }
 }

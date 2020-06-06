@@ -529,7 +529,7 @@ Invoking these command
 
 [source]
 ----
-$ ./gradlew :configurations
+$ gm :configurations
 ----
 
 Results in the following output
@@ -684,7 +684,7 @@ Invoking these command
 
 [source]
 ----
-$ ./gradlew :extensions
+$ gm :extensions
 ----
 
 Results in the following output
@@ -806,7 +806,7 @@ Invoking these command
 
 [source]
 ----
-$ ./gradlew :listIncludedBuilds
+$ gm :listIncludedBuilds
 ----
 
 Results in the following output
@@ -896,7 +896,7 @@ Invoking these command
 
 [source]
 ----
-$ ./gradlew :listProjects
+$ gm :listProjects
 ----
 
 Results in the following output
@@ -966,7 +966,7 @@ Invoking these command
 
 [source]
 ----
-$ ./gradlew :plugins
+$ gm :plugins
 ----
 
 Results in the following output
@@ -1169,7 +1169,7 @@ Invoking these command
 
 [source]
 ----
-$ ./gradlew :projectProperties -Pproject_property=project
+$ gm :projectProperties -Pproject_property=project
 ----
 
 Results in the following output
@@ -1231,7 +1231,7 @@ Invoking these command
 
 [source]
 ----
-$ ./gradlew :repositories
+$ gm :repositories
 ----
 
 Results in the following output

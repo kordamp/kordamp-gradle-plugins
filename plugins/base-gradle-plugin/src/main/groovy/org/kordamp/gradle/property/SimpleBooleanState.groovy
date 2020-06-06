@@ -19,6 +19,7 @@ package org.kordamp.gradle.property
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.PropertyUtils.Order
@@ -33,6 +34,9 @@ import static org.kordamp.gradle.property.PropertyUtils.booleanProvider
  */
 @CompileStatic
 final class SimpleBooleanState implements BooleanState {
+    private static final String ERROR_TASK_NULL = "Argument 'task' must not be null."
+    private static final String ERROR_PROJECT_NULL = "Argument 'project' must not be null."
+
     final Property<Boolean> property
     final Provider<Boolean> provider
 
@@ -44,55 +48,85 @@ final class SimpleBooleanState implements BooleanState {
     }
 
     SimpleBooleanState(Project project, Property<Boolean> property, Provider<Boolean> provider) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+        this.project = requireNonNull(project, ERROR_PROJECT_NULL)
         this.property = requireNonNull(property, "Argument 'property' must not be null.")
         this.provider = requireNonNull(provider, "Argument 'provider' must not be null.")
     }
 
-    SimpleBooleanState(Project project, Object owner, String key) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleBooleanState of(Task task, String key) {
+        of(task, key, false)
+    }
 
-        property = project.objects.property(Boolean)
+    static SimpleBooleanState of(Task task, String key, boolean defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, defaultValue)
+    }
 
-        provider = booleanProvider(
+    static SimpleBooleanState of(Task task, String key, Order order) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, order)
+    }
+
+    static SimpleBooleanState of(Task task, String key, Order order, Path path, boolean defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, order, path, defaultValue)
+    }
+
+    static SimpleBooleanState of(Task task, String envKey, String propertyKey, Order order, Path path, boolean defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, envKey, propertyKey, order, path, defaultValue)
+    }
+
+    static SimpleBooleanState of(Project project, Object owner, String key) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
+
+        Property<Boolean> property = project.objects.property(Boolean)
+
+        Provider<Boolean> provider = booleanProvider(
             key,
             property,
             project,
             owner)
+
+        new SimpleBooleanState(project, property, provider)
     }
 
-    SimpleBooleanState(Project project, Object owner, String key, Order order) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleBooleanState of(Project project, Object owner, String key, boolean defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.property(Boolean)
+        Property<Boolean> property = project.objects.property(Boolean)
 
-        provider = booleanProvider(
+        Provider<Boolean> provider = booleanProvider(
+            key,
+            property,
+            project,
+            owner,
+            defaultValue)
+
+        new SimpleBooleanState(project, property, provider)
+    }
+
+    static SimpleBooleanState of(Project project, Object owner, String key, Order order) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
+
+        Property<Boolean> property = project.objects.property(Boolean)
+
+        Provider<Boolean> provider = booleanProvider(
             key,
             property,
             order,
             project,
             owner)
+
+        new SimpleBooleanState(project, property, provider)
     }
 
-    SimpleBooleanState(Project project, Object owner, String envKey, String propertyKey) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleBooleanState of(Project project, Object owner, String key, Order order, Path path, boolean defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.property(Boolean)
+        Property<Boolean> property = project.objects.property(Boolean)
 
-        provider = booleanProvider(
-            envKey,
-            propertyKey,
-            property,
-            project,
-            owner)
-    }
-
-    SimpleBooleanState(Project project, Object owner, String key, Order order, Path path, boolean defaultValue) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
-
-        property = project.objects.property(Boolean)
-
-        provider = booleanProvider(
+        Provider<Boolean> provider = booleanProvider(
             key,
             property,
             order,
@@ -100,14 +134,16 @@ final class SimpleBooleanState implements BooleanState {
             project,
             owner,
             defaultValue)
+
+        new SimpleBooleanState(project, property, provider)
     }
 
-    SimpleBooleanState(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, boolean defaultValue) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleBooleanState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, boolean defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.property(Boolean)
+        Property<Boolean> property = project.objects.property(Boolean)
 
-        provider = booleanProvider(
+        Provider<Boolean> provider = booleanProvider(
             envKey,
             propertyKey,
             property,
@@ -116,5 +152,7 @@ final class SimpleBooleanState implements BooleanState {
             project,
             owner,
             defaultValue)
+
+        new SimpleBooleanState(project, property, provider)
     }
 }

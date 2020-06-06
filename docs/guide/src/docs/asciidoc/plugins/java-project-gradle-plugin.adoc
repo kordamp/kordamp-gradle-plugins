@@ -177,7 +177,7 @@ Invoking this command
 
 [source]
 ----
-$ ./gradlew :platforms
+$ gm :platforms
 ----
 
 Results in the following output
@@ -234,7 +234,7 @@ Invoking this command
 
 [source]
 ----
-$ ./gradlew :sourceSets
+$ gm :sourceSets
 ----
 
 Results in the following output

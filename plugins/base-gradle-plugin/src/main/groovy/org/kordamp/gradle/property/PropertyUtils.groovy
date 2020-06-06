@@ -428,6 +428,29 @@ final class PropertyUtils {
 
     /**
      * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
+     * property. Defaults to {@code ENV_SYS_PROP}.
+     * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
+     * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
+     * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
+     * The value of key will be converted to lowercase and '_' replaced with '.' for constructing the property key.
+     *
+     * @param key the environment variable, system and project property to check.
+     * @param property the property to check value from.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on project wide {@code order} setting.
+     */
+    static Provider<String> stringProvider(String key,
+                                           Property<String> property,
+                                           Project project,
+                                           Object owner,
+                                           String defaultValue) {
+        stringProvider(toEnv(key), toProperty(key), property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, defaultValue)
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
      *
      * @param envKey the environment variable to check.
      * @param propertyKey the system and project property to check.
@@ -517,6 +540,27 @@ final class PropertyUtils {
                                              Project project,
                                              Object owner) {
         booleanProvider(toEnv(key), toProperty(key), property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, false)
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
+     * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
+     * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
+     * The value of key will be converted to lowercase and '_' replaced with '.' for constructing the property key.
+     *
+     * @param key the environment variable, system and project property to check.
+     * @param property the property to check value from.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on project wide {@code order} setting.
+     */
+    static Provider<Boolean> booleanProvider(String key,
+                                             Property<Boolean> property,
+                                             Project project,
+                                             Object owner,
+                                             boolean defaultValue) {
+        booleanProvider(toEnv(key), toProperty(key), property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, defaultValue)
     }
 
     /**
@@ -639,6 +683,27 @@ final class PropertyUtils {
 
     /**
      * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
+     * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
+     * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
+     * The value of key will be converted to lowercase and '_' replaced with '.' for constructing the property key.
+     *
+     * @param key the environment variable, system and project property to check.
+     * @param property the property to check value from.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on project wide {@code order} setting.
+     */
+    static Provider<Integer> integerProvider(String key,
+                                             Property<Integer> property,
+                                             Project project,
+                                             Object owner,
+                                             int defaultValue) {
+        integerProvider(toEnv(key), toProperty(key), property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, defaultValue)
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -751,6 +816,27 @@ final class PropertyUtils {
                                        Project project,
                                        Object owner) {
         longProvider(toEnv(key), toProperty(key), property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, 0L)
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
+     * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
+     * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
+     * The value of key will be converted to lowercase and '_' replaced with '.' for constructing the property key.
+     *
+     * @param key the environment variable, system and project property to check.
+     * @param property the property to check value from.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on project wide {@code order} setting.
+     */
+    static Provider<Long> longProvider(String key,
+                                       Property<Long> property,
+                                       Project project,
+                                       Object owner,
+                                       long defaultValue) {
+        longProvider(toEnv(key), toProperty(key), property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, defaultValue)
     }
 
     /**
@@ -873,6 +959,27 @@ final class PropertyUtils {
 
     /**
      * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
+     * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
+     * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
+     * The value of key will be converted to lowercase and '_' replaced with '.' for constructing the property key.
+     *
+     * @param key the environment variable, system and project property to check.
+     * @param property the property to check value from.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on project wide {@code order} setting.
+     */
+    static Provider<RegularFile> fileProvider(String key,
+                                              RegularFileProperty property,
+                                              Project project,
+                                              Object owner,
+                                              RegularFile defaultValue) {
+        fileProvider(toEnv(key), toProperty(key), property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, defaultValue)
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -987,6 +1094,27 @@ final class PropertyUtils {
                                                  Project project,
                                                  Object owner) {
         directoryProvider(toEnv(key), toProperty(key), property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, null)
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
+     * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
+     * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
+     * The value of key will be converted to lowercase and '_' replaced with '.' for constructing the property key.
+     *
+     * @param key the environment variable, system and project property to check.
+     * @param property the property to check value from.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on project wide {@code order} setting.
+     */
+    static Provider<Directory> directoryProvider(String key,
+                                                 DirectoryProperty property,
+                                                 Project project,
+                                                 Object owner,
+                                                 Directory defaultValue) {
+        directoryProvider(toEnv(key), toProperty(key), property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, defaultValue)
     }
 
     /**
@@ -1112,6 +1240,27 @@ final class PropertyUtils {
 
     /**
      * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
+     * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
+     * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
+     * The value of key will be converted to lowercase and '_' replaced with '.' for constructing the property key.
+     *
+     * @param key the environment variable, system and project property to check.
+     * @param property the property to check value from.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on project wide {@code order} setting.
+     */
+    static Provider<Set<String>> setProvider(String key,
+                                             SetProperty<String> property,
+                                             Project project,
+                                             Object owner,
+                                             Set<String> defaultValue) {
+        setProvider(toEnv(key), toProperty(key), property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, defaultValue)
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1229,6 +1378,27 @@ final class PropertyUtils {
                                                Project project,
                                                Object owner) {
         listProvider(toEnv(key), toProperty(key), property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, Collections.<String> emptyList())
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
+     * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
+     * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
+     * The value of key will be converted to lowercase and '_' replaced with '.' for constructing the property key.
+     *
+     * @param key the environment variable, system and project property to check.
+     * @param property the property to check value from.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on project wide {@code order} setting.
+     */
+    static Provider<List<String>> listProvider(String key,
+                                               ListProperty<String> property,
+                                               Project project,
+                                               Object owner,
+                                               List<String> defaultValue) {
+        listProvider(toEnv(key), toProperty(key), property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, defaultValue)
     }
 
     /**
@@ -1353,6 +1523,27 @@ final class PropertyUtils {
                                                      Project project,
                                                      Object owner) {
         mapProvider(toEnv(key), toProperty(key), property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, Collections.<String, String> emptyMap())
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
+     * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
+     * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
+     * The value of key will be converted to lowercase and '_' replaced with '.' for constructing the property key.
+     *
+     * @param key the environment variable, system and project property to check.
+     * @param property the property to check value from.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on project wide {@code order} setting.
+     */
+    static Provider<Map<String, String>> mapProvider(String key,
+                                                     MapProperty<String, String> property,
+                                                     Project project,
+                                                     Object owner,
+                                                     Map<String, String> defaultValue) {
+        mapProvider(toEnv(key), toProperty(key), property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, defaultValue)
     }
 
     /**

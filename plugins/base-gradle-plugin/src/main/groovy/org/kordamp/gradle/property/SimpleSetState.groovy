@@ -19,6 +19,7 @@ package org.kordamp.gradle.property
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.kordamp.gradle.property.PropertyUtils.Order
@@ -33,6 +34,9 @@ import static org.kordamp.gradle.property.PropertyUtils.setProvider
  */
 @CompileStatic
 final class SimpleSetState implements SetState {
+    private static final String ERROR_TASK_NULL = "Argument 'task' must not be null."
+    private static final String ERROR_PROJECT_NULL = "Argument 'project' must not be null."
+
     final SetProperty<String> property
     final Provider<Set<String>> provider
 
@@ -44,55 +48,85 @@ final class SimpleSetState implements SetState {
     }
 
     SimpleSetState(Project project, SetProperty<String> property, Provider<Set<String>> provider) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+        this.project = requireNonNull(project, ERROR_PROJECT_NULL)
         this.property = requireNonNull(property, "Argument 'property' must not be null.")
         this.provider = requireNonNull(provider, "Argument 'provider' must not be null.")
     }
 
-    SimpleSetState(Project project, Object owner, String key) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleSetState of(Task task, String key) {
+        of(task, key, Collections.<String> emptySet())
+    }
 
-        property = project.objects.setProperty(String)
+    static SimpleSetState of(Task task, String key, Set<String> defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, defaultValue)
+    }
 
-        provider = setProvider(
+    static SimpleSetState of(Task task, String key, Order order) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, order)
+    }
+
+    static SimpleSetState of(Task task, String key, Order order, Path path, Set<String> defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, order, path, defaultValue)
+    }
+
+    static SimpleSetState of(Task task, String envKey, String propertyKey, Order order, Path path, Set<String> defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, envKey, propertyKey, order, path, defaultValue)
+    }
+
+    static SimpleSetState of(Project project, Object owner, String key) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
+
+        SetProperty<String> property = project.objects.setProperty(String)
+
+        Provider<Set<String>> provider = setProvider(
             key,
             property,
             project,
             owner)
+
+        new SimpleSetState(project, property, provider)
     }
 
-    SimpleSetState(Project project, Object owner, String key, Order order) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleSetState of(Project project, Object owner, String key, Set<String> defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.setProperty(String)
+        SetProperty<String> property = project.objects.setProperty(String)
 
-        provider = setProvider(
+        Provider<Set<String>> provider = setProvider(
+            key,
+            property,
+            project,
+            owner,
+            defaultValue)
+
+        new SimpleSetState(project, property, provider)
+    }
+
+    static SimpleSetState of(Project project, Object owner, String key, Order order) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
+
+        SetProperty<String> property = project.objects.setProperty(String)
+
+        Provider<Set<String>> provider = setProvider(
             key,
             property,
             order,
             project,
             owner)
+
+        new SimpleSetState(project, property, provider)
     }
 
-    SimpleSetState(Project project, Object owner, String envKey, String propertyKey) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleSetState of(Project project, Object owner, String key, Order order, Path path, Set<String> defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.setProperty(String)
+        SetProperty<String> property = project.objects.setProperty(String)
 
-        provider = setProvider(
-            envKey,
-            propertyKey,
-            property,
-            project,
-            owner)
-    }
-
-    SimpleSetState(Project project, Object owner, String key, Order order, Path path, Set<String> defaultValue) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
-
-        property = project.objects.setProperty(String)
-
-        provider = setProvider(
+        Provider<Set<String>> provider = setProvider(
             key,
             property,
             order,
@@ -100,14 +134,16 @@ final class SimpleSetState implements SetState {
             project,
             owner,
             defaultValue)
+
+        new SimpleSetState(project, property, provider)
     }
 
-    SimpleSetState(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, Set<String> defaultValue) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleSetState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, Set<String> defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.setProperty(String)
+        SetProperty<String> property = project.objects.setProperty(String)
 
-        provider = setProvider(
+        Provider<Set<String>> provider = setProvider(
             envKey,
             propertyKey,
             property,
@@ -116,5 +152,7 @@ final class SimpleSetState implements SetState {
             project,
             owner,
             defaultValue)
+
+        new SimpleSetState(project, property, provider)
     }
 }

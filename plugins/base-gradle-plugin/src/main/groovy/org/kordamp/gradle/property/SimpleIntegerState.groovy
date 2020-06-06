@@ -19,6 +19,7 @@ package org.kordamp.gradle.property
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.PropertyUtils.Order
@@ -33,6 +34,9 @@ import static org.kordamp.gradle.property.PropertyUtils.integerProvider
  */
 @CompileStatic
 final class SimpleIntegerState implements IntegerState {
+    private static final String ERROR_TASK_NULL = "Argument 'task' must not be null."
+    private static final String ERROR_PROJECT_NULL = "Argument 'project' must not be null."
+
     final Property<Integer> property
     final Provider<Integer> provider
 
@@ -43,56 +47,86 @@ final class SimpleIntegerState implements IntegerState {
         integerProvider(project.providers, property, provider, 0).get()
     }
 
-    SimpleIntegerState(Property<Integer> property, Provider<Integer> provider) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    SimpleIntegerState(Project project, Property<Integer> property, Provider<Integer> provider) {
+        this.project = requireNonNull(project, ERROR_PROJECT_NULL)
         this.property = requireNonNull(property, "Argument 'property' must not be null.")
         this.provider = requireNonNull(provider, "Argument 'provider' must not be null.")
     }
 
-    SimpleIntegerState(Project project, Object owner, String key) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleIntegerState of(Task task, String key) {
+        of(task, key, 0)
+    }
 
-        property = project.objects.property(Integer)
+    static SimpleIntegerState of(Task task, String key, int defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, defaultValue)
+    }
 
-        provider = integerProvider(
+    static SimpleIntegerState of(Task task, String key, Order order) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, order)
+    }
+
+    static SimpleIntegerState of(Task task, String key, Order order, Path path, int defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, order, path, defaultValue)
+    }
+
+    static SimpleIntegerState of(Task task, String envKey, String propertyKey, Order order, Path path, int defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, envKey, propertyKey, order, path, defaultValue)
+    }
+
+    static SimpleIntegerState of(Project project, Object owner, String key) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
+
+        Property<Integer> property = project.objects.property(Integer)
+
+        Provider<Integer> provider = integerProvider(
             key,
             property,
             project,
             owner)
+
+        new SimpleIntegerState(project, property, provider)
     }
 
-    SimpleIntegerState(Project project, Object owner, String key, Order order) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleIntegerState of(Project project, Object owner, String key, int defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.property(Integer)
+        Property<Integer> property = project.objects.property(Integer)
 
-        provider = integerProvider(
+        Provider<Integer> provider = integerProvider(
+            key,
+            property,
+            project,
+            owner,
+            defaultValue)
+
+        new SimpleIntegerState(project, property, provider)
+    }
+
+    static SimpleIntegerState of(Project project, Object owner, String key, Order order) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
+
+        Property<Integer> property = project.objects.property(Integer)
+
+        Provider<Integer> provider = integerProvider(
             key,
             property,
             order,
             project,
             owner)
+
+        new SimpleIntegerState(project, property, provider)
     }
 
-    SimpleIntegerState(Project project, Object owner, String envKey, String propertyKey) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleIntegerState of(Project project, Object owner, String key, Order order, Path path, int defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.property(Integer)
+        Property<Integer> property = project.objects.property(Integer)
 
-        provider = integerProvider(
-            envKey,
-            propertyKey,
-            property,
-            project,
-            owner)
-    }
-
-    SimpleIntegerState(Project project, Object owner, String key, Order order, Path path, int defaultValue) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
-
-        property = project.objects.property(Integer)
-
-        provider = integerProvider(
+        Provider<Integer> provider = integerProvider(
             key,
             property,
             order,
@@ -100,14 +134,16 @@ final class SimpleIntegerState implements IntegerState {
             project,
             owner,
             defaultValue)
+
+        new SimpleIntegerState(project, property, provider)
     }
 
-    SimpleIntegerState(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, int defaultValue) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleIntegerState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, int defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.property(Integer)
+        Property<Integer> property = project.objects.property(Integer)
 
-        provider = integerProvider(
+        Provider<Integer> provider = integerProvider(
             envKey,
             propertyKey,
             property,
@@ -116,5 +152,7 @@ final class SimpleIntegerState implements IntegerState {
             project,
             owner,
             defaultValue)
+
+        new SimpleIntegerState(project, property, provider)
     }
 }

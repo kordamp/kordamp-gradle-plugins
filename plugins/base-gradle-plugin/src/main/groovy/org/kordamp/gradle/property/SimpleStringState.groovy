@@ -19,6 +19,7 @@ package org.kordamp.gradle.property
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.PropertyUtils.Order
@@ -33,6 +34,9 @@ import static org.kordamp.gradle.property.PropertyUtils.stringProvider
  */
 @CompileStatic
 final class SimpleStringState implements StringState {
+    private static final String ERROR_TASK_NULL = "Argument 'task' must not be null."
+    private static final String ERROR_PROJECT_NULL = "Argument 'project' must not be null."
+
     final Property<String> property
     final Provider<String> provider
 
@@ -44,55 +48,85 @@ final class SimpleStringState implements StringState {
     }
 
     SimpleStringState(Project project, Property<String> property, Provider<String> provider) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+        this.project = requireNonNull(project, ERROR_PROJECT_NULL)
         this.property = requireNonNull(property, "Argument 'property' must not be null.")
         this.provider = requireNonNull(provider, "Argument 'provider' must not be null.")
     }
 
-    SimpleStringState(Project project, Object owner, String key) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleStringState of(Task task, String key) {
+        of(task, key, '')
+    }
 
-        property = project.objects.property(String)
+    static SimpleStringState of(Task task, String key, String defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, defaultValue)
+    }
 
-        provider = stringProvider(
+    static SimpleStringState of(Task task, String key, Order order) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, order)
+    }
+
+    static SimpleStringState of(Task task, String key, Order order, Path path, String defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, order, path, defaultValue)
+    }
+
+    static SimpleStringState of(Task task, String envKey, String propertyKey, Order order, Path path, String defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, envKey, propertyKey, order, path, defaultValue)
+    }
+
+    static SimpleStringState of(Project project, Object owner, String key) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
+
+        Property<String> property = project.objects.property(String)
+
+        Provider<String> provider = stringProvider(
             key,
             property,
             project,
             owner)
+
+        new SimpleStringState(project, property, provider)
     }
 
-    SimpleStringState(Project project, Object owner, String key, Order order) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleStringState of(Project project, Object owner, String key, String defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.property(String)
+        Property<String> property = project.objects.property(String)
 
-        provider = stringProvider(
+        Provider<String> provider = stringProvider(
+            key,
+            property,
+            project,
+            owner,
+            defaultValue)
+
+        new SimpleStringState(project, property, provider)
+    }
+
+    static SimpleStringState of(Project project, Object owner, String key, Order order) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
+
+        Property<String> property = project.objects.property(String)
+
+        Provider<String> provider = stringProvider(
             key,
             property,
             order,
             project,
             owner)
+
+        new SimpleStringState(project, property, provider)
     }
 
-    SimpleStringState(Project project, Object owner, String envKey, String propertyKey) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleStringState of(Project project, Object owner, String key, Order order, Path path, String defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.property(String)
+        Property<String> property = project.objects.property(String)
 
-        provider = stringProvider(
-            envKey,
-            propertyKey,
-            property,
-            project,
-            owner)
-    }
-
-    SimpleStringState(Project project, Object owner, String key, Order order, Path path, String defaultValue) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
-
-        property = project.objects.property(String)
-
-        provider = stringProvider(
+        Provider<String> provider = stringProvider(
             key,
             property,
             order,
@@ -100,14 +134,16 @@ final class SimpleStringState implements StringState {
             project,
             owner,
             defaultValue)
+
+        new SimpleStringState(project, property, provider)
     }
 
-    SimpleStringState(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, String defaultValue) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleStringState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, String defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.property(String)
+        Property<String> property = project.objects.property(String)
 
-        provider = stringProvider(
+        Provider<String> provider = stringProvider(
             envKey,
             propertyKey,
             property,
@@ -116,5 +152,7 @@ final class SimpleStringState implements StringState {
             project,
             owner,
             defaultValue)
+
+        new SimpleStringState(project, property, provider)
     }
 }

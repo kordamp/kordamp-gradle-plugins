@@ -19,6 +19,7 @@ package org.kordamp.gradle.property
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.PropertyUtils.Order
@@ -33,6 +34,9 @@ import static org.kordamp.gradle.property.PropertyUtils.longProvider
  */
 @CompileStatic
 final class SimpleLongState implements LongState {
+    private static final String ERROR_TASK_NULL = "Argument 'task' must not be null."
+    private static final String ERROR_PROJECT_NULL = "Argument 'project' must not be null."
+
     final Property<Long> property
     final Provider<Long> provider
 
@@ -44,55 +48,85 @@ final class SimpleLongState implements LongState {
     }
 
     SimpleLongState(Project project, Property<Long> property, Provider<Long> provider) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+        this.project = requireNonNull(project, ERROR_PROJECT_NULL)
         this.property = requireNonNull(property, "Argument 'property' must not be null.")
         this.provider = requireNonNull(provider, "Argument 'provider' must not be null.")
     }
 
-    SimpleLongState(Project project, Object owner, String key) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleLongState of(Task task, String key) {
+        of(task, key, 0L)
+    }
 
-        property = project.objects.property(Long)
+    static SimpleLongState of(Task task, String key, long defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, defaultValue)
+    }
 
-        provider = longProvider(
+    static SimpleLongState of(Task task, String key, Order order) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, order)
+    }
+
+    static SimpleLongState of(Task task, String key, Order order, Path path, long defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, order, path, defaultValue)
+    }
+
+    static SimpleLongState of(Task task, String envKey, String propertyKey, Order order, Path path, long defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, envKey, propertyKey, order, path, defaultValue)
+    }
+
+    static SimpleLongState of(Project project, Object owner, String key) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
+
+        Property<Long> property = project.objects.property(Long)
+
+        Provider<Long> provider = longProvider(
             key,
             property,
             project,
             owner)
+
+        new SimpleLongState(project, property, provider)
     }
 
-    SimpleLongState(Project project, Object owner, String key, Order order) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleLongState of(Project project, Object owner, String key, long defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.property(Long)
+        Property<Long> property = project.objects.property(Long)
 
-        provider = longProvider(
+        Provider<Long> provider = longProvider(
+            key,
+            property,
+            project,
+            owner,
+            defaultValue)
+
+        new SimpleLongState(project, property, provider)
+    }
+
+    static SimpleLongState of(Project project, Object owner, String key, Order order) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
+
+        Property<Long> property = project.objects.property(Long)
+
+        Provider<Long> provider = longProvider(
             key,
             property,
             order,
             project,
             owner)
+
+        new SimpleLongState(project, property, provider)
     }
 
-    SimpleLongState(Project project, Object owner, String envKey, String propertyKey) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleLongState of(Project project, Object owner, String key, Order order, Path path, long defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.property(Long)
+        Property<Long> property = project.objects.property(Long)
 
-        provider = longProvider(
-            envKey,
-            propertyKey,
-            property,
-            project,
-            owner)
-    }
-
-    SimpleLongState(Project project, Object owner, String key, Order order, Path path, long defaultValue) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
-
-        property = project.objects.property(Long)
-
-        provider = longProvider(
+        Provider<Long> provider = longProvider(
             key,
             property,
             order,
@@ -100,14 +134,16 @@ final class SimpleLongState implements LongState {
             project,
             owner,
             defaultValue)
+
+        new SimpleLongState(project, property, provider)
     }
 
-    SimpleLongState(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, long defaultValue) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleLongState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, long defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.property(Long)
+        Property<Long> property = project.objects.property(Long)
 
-        provider = longProvider(
+        Provider<Long> provider = longProvider(
             envKey,
             propertyKey,
             property,
@@ -116,5 +152,7 @@ final class SimpleLongState implements LongState {
             project,
             owner,
             defaultValue)
+
+        new SimpleLongState(project, property, provider)
     }
 }

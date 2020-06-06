@@ -20,3 +20,7 @@ still be bent to a certain degree. The plugins found in this project provide suc
 
 The following sections describe the conventions and each of the plugins.
 
+NOTE: In this guide you'll see examples that run Gradle using the `gm` command. This command is provided by
+link:https://github.com/kordamp/gm[Gum], it let's you run a build with either the Gradle wrapper (`gradlew`) or the
+Gradle command (`gradle`). If you're unsure of the command to invoke then just use the wrapper or gradle directly.
+

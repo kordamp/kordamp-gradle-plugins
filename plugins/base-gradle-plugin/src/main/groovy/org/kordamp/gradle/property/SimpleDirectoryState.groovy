@@ -19,6 +19,7 @@ package org.kordamp.gradle.property
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Provider
@@ -34,6 +35,9 @@ import static org.kordamp.gradle.property.PropertyUtils.directoryProvider
  */
 @CompileStatic
 final class SimpleDirectoryState implements DirectoryState {
+    private static final String ERROR_TASK_NULL = "Argument 'task' must not be null."
+    private static final String ERROR_PROJECT_NULL = "Argument 'project' must not be null."
+
     final DirectoryProperty property
     final Provider<Directory> provider
 
@@ -45,55 +49,85 @@ final class SimpleDirectoryState implements DirectoryState {
     }
 
     SimpleDirectoryState(Project project, DirectoryProperty property, Provider<Directory> provider) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+        this.project = requireNonNull(project, ERROR_PROJECT_NULL)
         this.property = requireNonNull(property, "Argument 'property' must not be null.")
         this.provider = requireNonNull(provider, "Argument 'provider' must not be null.")
     }
 
-    SimpleDirectoryState(Project project, Object owner, String key) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleDirectoryState of(Task task, String key) {
+        of(task, key, (Directory) null)
+    }
 
-        property = project.objects.directoryProperty()
+    static SimpleDirectoryState of(Task task, String key, Directory defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, defaultValue)
+    }
 
-        provider = directoryProvider(
+    static SimpleDirectoryState of(Task task, String key, Order order) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, order)
+    }
+
+    static SimpleDirectoryState of(Task task, String key, Order order, Path path, Directory defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, key, order, path, defaultValue)
+    }
+
+    static SimpleDirectoryState of(Task task, String envKey, String propertyKey, Order order, Path path, Directory defaultValue) {
+        requireNonNull(task, ERROR_TASK_NULL)
+        of(task.project, task, envKey, propertyKey, order, path, defaultValue)
+    }
+
+    static SimpleDirectoryState of(Project project, Object owner, String key) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
+
+        DirectoryProperty property = project.objects.directoryProperty()
+
+        Provider<Directory> provider = directoryProvider(
             key,
             property,
             project,
             owner)
+
+        new SimpleDirectoryState(project, property, provider)
     }
 
-    SimpleDirectoryState(Project project, Object owner, String key, Order order) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleDirectoryState of(Project project, Object owner, String key, Directory defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.directoryProperty()
+        DirectoryProperty property = project.objects.directoryProperty()
 
-        provider = directoryProvider(
+        Provider<Directory> provider = directoryProvider(
+            key,
+            property,
+            project,
+            owner,
+            defaultValue)
+
+        new SimpleDirectoryState(project, property, provider)
+    }
+
+    static SimpleDirectoryState of(Project project, Object owner, String key, Order order) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
+
+        DirectoryProperty property = project.objects.directoryProperty()
+
+        Provider<Directory> provider = directoryProvider(
             key,
             property,
             order,
             project,
             owner)
+
+        new SimpleDirectoryState(project, property, provider)
     }
 
-    SimpleDirectoryState(Project project, Object owner, String envKey, String propertyKey) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleDirectoryState of(Project project, Object owner, String key, Order order, Path path, Directory defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.directoryProperty()
+        DirectoryProperty property = project.objects.directoryProperty()
 
-        provider = directoryProvider(
-            envKey,
-            propertyKey,
-            property,
-            project,
-            owner)
-    }
-
-    SimpleDirectoryState(Project project, Object owner, String key, Order order, Path path, Directory defaultValue) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
-
-        property = project.objects.directoryProperty()
-
-        provider = directoryProvider(
+        Provider<Directory> provider = directoryProvider(
             key,
             property,
             order,
@@ -101,14 +135,16 @@ final class SimpleDirectoryState implements DirectoryState {
             project,
             owner,
             defaultValue)
+
+        new SimpleDirectoryState(project, property, provider)
     }
 
-    SimpleDirectoryState(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, Directory defaultValue) {
-        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+    static SimpleDirectoryState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, Directory defaultValue) {
+        requireNonNull(project, ERROR_PROJECT_NULL)
 
-        property = project.objects.directoryProperty()
+        DirectoryProperty property = project.objects.directoryProperty()
 
-        provider = directoryProvider(
+        Provider<Directory> provider = directoryProvider(
             envKey,
             propertyKey,
             property,
@@ -117,5 +153,7 @@ final class SimpleDirectoryState implements DirectoryState {
             project,
             owner,
             defaultValue)
+
+        new SimpleDirectoryState(project, property, provider)
     }
 }

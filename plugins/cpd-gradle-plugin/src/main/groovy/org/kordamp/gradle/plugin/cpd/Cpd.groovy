@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.cpd
 
 import groovy.transform.CompileStatic
-import groovy.transform.Internal
 import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
@@ -29,6 +28,7 @@ import org.gradle.api.reporting.Reporting
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity

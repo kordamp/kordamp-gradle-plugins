@@ -20,7 +20,7 @@ dependencies {
     api("com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintrayVersion") {
         exclude group: 'org.apache.maven', module: 'maven-ant-tasks'
     }
-    api('org.apache.maven.resolver:maven-resolver-ant-tasks:1.2.0') { transitive = false }
+    api('org.apache.maven.resolver:maven-resolver-ant-tasks:1.2.1') { transitive = false }
     api "org.apache.httpcomponents:httpclient:$httpclientVersion"
     api "org.apache.httpcomponents:httpcore:$httpcoreVersion"
     api("org.eclipse.sisu:org.eclipse.sisu.plexus:$sisuVersion") {
