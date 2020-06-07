@@ -11,3 +11,5 @@ target/
 samples/
 userHome/
 tmp/
+.gen-changelog.sh
+.DS_Store
