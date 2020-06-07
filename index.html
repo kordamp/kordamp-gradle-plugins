@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>A collection of opinionated Gradle plugins</h1>
 <div class="details">
 <span id="author" class="author">Andres Almiray</span><br>
-<span id="revnumber">version 0.37.1</span>
+<span id="revnumber">version 0.38.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -359,7 +359,12 @@ $(addBlockSwitches);
 </li>
 </ul>
 </li>
-<li><a href="#_links">8. Links</a></li>
+<li><a href="#_authoring_">8. Authoring</a>
+<ul class="sectlevel2">
+<li><a href="#_properties">8.1. Properties</a></li>
+</ul>
+</li>
+<li><a href="#_links">9. Links</a></li>
 </ul>
 </div>
 </div>
@@ -389,6 +394,20 @@ still be bent to a certain degree. The plugins found in this project provide suc
 <div class="paragraph">
 <p>The following sections describe the conventions and each of the plugins.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In this guide you&#8217;ll see examples that run Gradle using the <code>gm</code> command. This command is provided by
+<a href="https://github.com/kordamp/gm">Gum</a>, it let&#8217;s you run a build with either the Gradle wrapper (<code>gradlew</code>) or the
+Gradle command (<code>gradle</code>). If you&#8217;re unsure of the command to invoke then just use the wrapper or gradle directly.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -406,13 +425,12 @@ still be bent to a certain degree. The plugins found in this project provide suc
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">buildscript {
     repositories {
-        // Gradle Plugin Portal
-        maven {  url 'https://plugins.gradle.org/m2/' }
+        gradlePluginPortal()
         // required for additional dependencies, may use mavenCentral() instead
         jcenter()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:{plugin-id}:0.37.1'
+        classpath 'org.kordamp.gradle:{plugin-id}:0.38.0'
     }
 }
 apply plugin: '{plugin-id}'</code></pre>
@@ -423,13 +441,12 @@ apply plugin: '{plugin-id}'</code></pre>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="kotlin">buildscript {
     repositories {
-        // Gradle Plugin Portal
-        maven(url = "https://plugins.gradle.org/m2/")
+        gradlePluginPortal()
         // required for additional dependencies, may use mavenCentral() instead
         jcenter()
     }
     dependencies {
-        classpath("org.kordamp.gradle:{plugin-id}:0.37.1")
+        classpath("org.kordamp.gradle:{plugin-id}:0.38.0")
     }
 }
 apply(plugin = "{plugin-id}")</code></pre>
@@ -442,7 +459,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id '{plugin-id}' version '0.37.1'
+    id '{plugin-id}' version '0.38.0'
 }</code></pre>
 </div>
 </div>
@@ -450,7 +467,7 @@ apply(plugin = "{plugin-id}")</code></pre>
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="kotlin">plugins {
-    id("{plugin-id}") version "0.37.1"
+    id("{plugin-id}") version "0.38.0"
 }</code></pre>
 </div>
 </div>
@@ -607,7 +624,7 @@ listOf("docs", "subprojects").forEach { dirName -&gt;
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.37.1'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.38.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -627,7 +644,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.37.1")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.38.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -635,7 +652,7 @@ apply(plugin = "org.kordamp.gradle.settings")
 rootProject.name = "root"
 
 configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
-    directories = listOf("docs", "subprojects")
+    directories.addAll(listOf("docs", "subprojects"))
 }</code></pre>
 </div>
 </div>
@@ -646,8 +663,8 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.java-project' version '0.37.1'      <i class="conum" data-value="1"></i><b>(1)</b>
-    id 'org.kordamp.gradle.bintray'      version '0.37.1'      <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.java-project' version '0.38.0'      <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'org.kordamp.gradle.bintray'      version '0.38.0'      <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 config {
@@ -727,8 +744,8 @@ allprojects {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.java-project") version "0.37.1"     <i class="conum" data-value="1"></i><b>(1)</b>
-    id("org.kordamp.gradle.bintray")      version "0.37.1"     <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.java-project") version "0.38.0"     <i class="conum" data-value="1"></i><b>(1)</b>
+    id("org.kordamp.gradle.bintray")      version "0.38.0"     <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
 val bintrayUsername: String by project
@@ -1008,7 +1025,7 @@ publications completely:</p>
 <div class="title">build.gradle (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.37.1'
+    id 'org.kordamp.gradle.project' version '0.38.0'
 }
 
 config {
@@ -1027,7 +1044,7 @@ allprojects {
 <div class="title">build.gradle.kts (root)</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="kotlin">plugins {
-    id("org.kordamp.gradle.project") version "0.37.1"
+    id("org.kordamp.gradle.project") version "0.38.0"
 }
 
 config {
@@ -1245,11 +1262,11 @@ exclude
         gradlePluginPortal()
     }
     dependencies {
-        classpath "org.kordamp.gradle:settings-gradle-plugin:0.37.1"
-        classpath "org.kordamp.gradle:java-project-gradle-plugin:0.37.1"
-        classpath "org.kordamp.gradle:guide-gradle-plugin:0.37.1"
-        classpath "org.kordamp.gradle:integrationtest-gradle-plugin:0.37.1"
-        classpath "org.kordamp.gradle:functionaltest-gradle-plugin:0.37.1"
+        classpath "org.kordamp.gradle:settings-gradle-plugin:0.38.0"
+        classpath "org.kordamp.gradle:java-project-gradle-plugin:0.38.0"
+        classpath "org.kordamp.gradle:guide-gradle-plugin:0.38.0"
+        classpath "org.kordamp.gradle:integrationtest-gradle-plugin:0.38.0"
+        classpath "org.kordamp.gradle:functionaltest-gradle-plugin:0.38.0"
     }
 }
 
@@ -1292,11 +1309,11 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.37.1")
-        classpath("org.kordamp.gradle:java-project-gradle-plugin:0.37.1")
-        classpath("org.kordamp.gradle:guide-gradle-plugin:0.37.1")
-        classpath("org.kordamp.gradle:integrationtest-gradle-plugin:0.37.1")
-        classpath("org.kordamp.gradle:functionaltest-gradle-plugin:0.37.1")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.38.0")
+        classpath("org.kordamp.gradle:java-project-gradle-plugin:0.38.0")
+        classpath("org.kordamp.gradle:guide-gradle-plugin:0.38.0")
+        classpath("org.kordamp.gradle:integrationtest-gradle-plugin:0.38.0")
+        classpath("org.kordamp.gradle:functionaltest-gradle-plugin:0.38.0")
     }
 }
 
@@ -2728,7 +2745,7 @@ Type
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
     id 'java'
-    id 'org.kordamp.gradle.project' version '0.37.1'
+    id 'org.kordamp.gradle.project' version '0.38.0'
 }
 
 config {
@@ -2743,7 +2760,7 @@ config {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code>$ ./gradlew :configurations</code></pre>
+<pre class="prettyprint highlight"><code>$ gm :configurations</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2941,7 +2958,7 @@ show-secrets
 </td>
 <td class="hdlist2">
 <p>Show secret values instead of masked values. Value masking is applied to properties that contain any
-of the following words: <code>secret</code>, <code>password</code>, <code>credential</code>, <code>token</code>, <code>apikey</code>. The list of words can be overriden by
+of the following words: <code>secret</code>, <code>password</code>, <code>credential</code>, <code>token</code>, <code>apikey</code>, <code>login</code>. The list of words can be overridden by
 setting a System property named <code>kordamp.secret.keywords</code> to a comma delimited String, such as <code>password,secret</code>.</p>
 </td>
 </tr>
@@ -2986,7 +3003,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.37.1'
+    id 'org.kordamp.gradle.project' version '0.38.0'
 }
 
 config {
@@ -3001,7 +3018,7 @@ config {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code>$ ./gradlew :extensions</code></pre>
+<pre class="prettyprint highlight"><code>$ gm :extensions</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3170,7 +3187,7 @@ includeBuild '../build2'</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.37.1'
+    id 'org.kordamp.gradle.project' version '0.38.0'
 }
 
 config {
@@ -3185,7 +3202,7 @@ config {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code>$ ./gradlew :listIncludedBuilds</code></pre>
+<pre class="prettyprint highlight"><code>$ gm :listIncludedBuilds</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3268,7 +3285,7 @@ absolute
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.37.1'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.38.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'</code></pre>
@@ -3278,7 +3295,7 @@ apply plugin: 'org.kordamp.gradle.settings'</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.37.1'
+    id 'org.kordamp.gradle.project' version '0.38.0'
 }
 
 config {
@@ -3305,7 +3322,7 @@ config {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code>$ ./gradlew :listProjects</code></pre>
+<pre class="prettyprint highlight"><code>$ gm :listProjects</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3398,7 +3415,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.37.1'
+    id 'org.kordamp.gradle.project' version '0.38.0'
 }
 
 config {
@@ -3413,7 +3430,7 @@ config {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code>$ ./gradlew :plugins</code></pre>
+<pre class="prettyprint highlight"><code>$ gm :plugins</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3637,7 +3654,7 @@ local_property = local</code></pre>
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.37.1'
+    id 'org.kordamp.gradle.project' version '0.38.0'
 }
 
 ext.build_property = 'build'
@@ -3654,7 +3671,7 @@ config {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code>$ ./gradlew :projectProperties -Pproject_property=project</code></pre>
+<pre class="prettyprint highlight"><code>$ gm :projectProperties -Pproject_property=project</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3716,7 +3733,7 @@ Type
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.project' version '0.37.1'
+    id 'org.kordamp.gradle.project' version '0.38.0'
 }
 
 config {
@@ -3737,7 +3754,7 @@ repositories {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code>$ ./gradlew :repositories</code></pre>
+<pre class="prettyprint highlight"><code>$ gm :repositories</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -8090,6 +8107,7 @@ Configures aggregate reports on the root project.</p>
             additionalClassDirs
             toolVersion
             excludes
+            includeProjectDependencies
         }
     }
 }</code></pre>
@@ -8169,10 +8187,22 @@ Configures aggregate reports on the root project.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">[]</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">includeProjectDependencies</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
 </tbody>
 </table>
 <div class="paragraph">
 <p>The value for <code>enabled</code> will automatically be set to <code>false</code> if no tests (<code>unit</code>, <code>integration</code>, or <code>functional</code>) are found.</p>
+</div>
+<div class="paragraph">
+<p>If <code>includeProjectDependencies</code> is set to <code>true</code> then class files from all projects that have been set as dependencies will
+also be included  in the generated report. This setting applies for individual projects and is ignored on aggregate root
+reports as all project sources are already taken into account.</p>
 </div>
 <div class="paragraph">
 <p>This block is optional.</p>
@@ -9119,7 +9149,7 @@ Type
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code>$ ./gradlew :platforms</code></pre>
+<pre class="prettyprint highlight"><code>$ gm :platforms</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -9182,7 +9212,7 @@ Type
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
     id 'java'
-    id 'org.kordamp.gradle.project' version '0.37.1'
+    id 'org.kordamp.gradle.project' version '0.38.0'
 }
 
 config {
@@ -9197,7 +9227,7 @@ config {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code>$ ./gradlew :sourceSets</code></pre>
+<pre class="prettyprint highlight"><code>$ gm :sourceSets</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -10188,7 +10218,7 @@ This plugin relies on the <code>org.jetbrains.dokka</code> plugin but does not a
 <h4 id="_org_kordamp_gradle_kotlindoc_dsl"><a class="anchor" href="#_org_kordamp_gradle_kotlindoc_dsl"></a>7.22.1. DSL</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="kotlin">config {
+<pre class="prettyprint highlight"><code data-lang="groovy">config {
     docs {
         kotlindoc {
             enabled
@@ -11444,7 +11474,7 @@ the project.</p>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
     id 'groovy'
-    id 'org.kordamp.gradle.minpom' version '0.37.1'
+    id 'org.kordamp.gradle.minpom' version '0.38.0'
 }
 
 group   = 'com.acme'
@@ -11460,7 +11490,7 @@ dependencies {
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="kotlin">plugins {
     `groovy`
-    id("org.kordamp.gradle.minpom") version "0.37.1"
+    id("org.kordamp.gradle.minpom") version "0.38.0"
 }
 
 group   = "com.acme"
@@ -11499,7 +11529,7 @@ dependencies {
 <div class="listingblock">
 <div class="title">sample/build/pom/maven/pom.properties</div>
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="java"># Generated by Gradle 6.4.1
+<pre class="prettyprint highlight"><code data-lang="java"># Generated by Gradle 6.5
 version=1.0.0
 groupId=com.acme
 artifactId=sample</code></pre>
@@ -12484,13 +12514,13 @@ named <code>profile</code> whose value is a comma separated list of profile ids.
 <div class="listingblock">
 <div class="title">Builds with jdk9 and prod profiles</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>./gradlew -Pprofile=jdk9,prod build</code></pre>
+<pre class="prettyprint highlight"><code>gm -Pprofile=jdk9,prod build</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Builds with jdk11 profile only</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>./gradlew -Pprofile=jdk11 build</code></pre>
+<pre class="prettyprint highlight"><code>gm -Pprofile=jdk11 build</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -12569,7 +12599,7 @@ Type
 <h6 id="_example_output_10"><a class="anchor" href="#_example_output_10"></a>Example Output</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code>$ ./gradlew :displayActivationInfo
+<pre class="prettyprint highlight"><code>$ gm :displayActivationInfo
 
 &gt; Task :displayActivationInfo
 JDK:
@@ -14048,7 +14078,7 @@ Includes projects found under the given path unless the given condition (<code>w
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.37.1'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.38.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -14066,7 +14096,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.37.1")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.38.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -14105,7 +14135,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.37.1'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.38.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -14128,7 +14158,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.37.1")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.38.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -14168,7 +14198,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.37.1'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.38.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -14186,7 +14216,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.37.1")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.38.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -14225,7 +14255,7 @@ configure&lt;org.kordamp.gradle.plugin.settings.ProjectsExtension&gt; {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.37.1'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.38.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
@@ -14245,7 +14275,7 @@ projects {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.kordamp.gradle:settings-gradle-plugin:0.37.1")
+        classpath("org.kordamp.gradle:settings-gradle-plugin:0.38.0")
     }
 }
 apply(plugin = "org.kordamp.gradle.settings")
@@ -16144,6 +16174,8 @@ For kotlin projects, if <a href="#_org_kordamp_gradle_detekt">org.kordamp.gradle
             enabled
             hostUrl
             username
+            organization
+            login
             projectKey
             ignoreFailures
             configProperties
@@ -16188,7 +16220,7 @@ For kotlin projects, if <a href="#_org_kordamp_gradle_detekt">org.kordamp.gradle
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">username</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes*</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The login or authentication token of a SonarQube user with Execute Analysis permission on the project.</p></td>
 </tr>
@@ -16198,6 +16230,20 @@ For kotlin projects, if <a href="#_org_kordamp_gradle_detekt">org.kordamp.gradle
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">$username + '_' + ${project.rootProject.name}</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The project&#8217;s unique key.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">organization</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes*</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the organization.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">login</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes*</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The login or authentication token of a SonarQube user with Execute Analysis permission on the project.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ignoreFailures</p></td>
@@ -16222,6 +16268,9 @@ For kotlin projects, if <a href="#_org_kordamp_gradle_detekt">org.kordamp.gradle
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>Either <code>username</code> is defined or both <code>organization</code> and <code>login</code> are defined.</p>
+</div>
 <div class="paragraph">
 <p>This block should be configured on the root project.</p>
 </div>
@@ -16719,7 +16768,321 @@ Type
 </div>
 </div>
 <div class="sect1">
-<h2 id="_links"><a class="anchor" href="#_links"></a>8. Links</h2>
+<h2 id="_authoring_"><a class="anchor" href="#_authoring_"></a>8. Authoring</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kordamp offers a set of additional features for plugin and build authors.</p>
+</div>
+<div class="sect2">
+<h3 id="_properties"><a class="anchor" href="#_properties"></a>8.1. Properties</h3>
+<div class="paragraph">
+<p>In the Maven world, plugins define parameters for their inputs using a <code>@Parameter</code> annotation that exposes the annotated
+element (typically a field) in such a way that its value can be defined using project or System properties. This allows
+consumer to define and override values as needed. For example the <code>EchoMojo</code> from the
+<a href="https://github.com/Ekryd/echo-maven-plugin/">echo-maven-plugin</a></p>
+</div>
+<div class="listingblock">
+<div class="title">EchoMojo.java</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">class EchoMojo extends AbstractMojo {
+    /**
+     * The message text that should be echoed
+     */
+    @Parameter(property = "echo.message")
+    private String message;
+
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The value of the <code>message</code> parameter can be defined inside a pom.xml like so</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="xml">&lt;project ...&gt;
+    &lt;groupId&gt;com.acme&lt;/groupId&gt;
+    &lt;artifactId&gt;sample&lt;/artifactId&gt;
+    &lt;version&gt;0.0.0-SNAPSHOT&lt;/version&gt;
+
+    &lt;properties&gt;
+        &lt;echo.message&gt;Hello World&lt;/echo.message&gt;
+    &lt;/properties&gt;
+&lt;/project&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or it could be passed in the command line like so</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>$ gm com.github.ekryd.echo-maven-plugin:echo-maven-plugin:1.2.0:echo -Decho.message="Hello from command"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>org.kordamp.gradle.property</code> package provides classes that deliver similar functionality, following a pattern of
+using a <code>org.gradle.api.provider.Property</code> for write and a <code>org.gradle.api.provider.Provider</code> for read. For example, the
+<a href="api/org/kordamp/gradle/property/SimpleStringState.html"><code>SimpleStringState</code></a> can be used to replicate the behavior of
+the <code>EchoMojo</code> but using a Gradle task</p>
+</div>
+<div class="listingblock">
+<div class="title">EchoTask.groovy</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">package com.acme
+
+import groovy.transform.CompileStatic
+import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.TaskAction
+import org.kordamp.gradle.property.SimpleStringState
+import org.kordamp.gradle.property.StringState
+
+@CompileStatic
+class EchoTask extends DefaultTask {
+    private final StringState message
+
+    EchoTask() {
+        message = SimpleStringState.of(this, 'echo.message', 'default message')
+    }
+
+    @Internal
+    Property&lt;String&gt; getMessage() {
+        message.property
+    }
+
+    @Input
+    Provider&lt;String&gt; getResolvedMessage() {
+        message.provider
+    }
+
+    @TaskAction
+    void echo() {
+        println getResolvedMessage().get()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Take note that the task action reads the value using the <code>Provider</code> field. you&#8217;re free to mutate (write) the value as
+much as needed using the <code>Property</code> field but make sue to always use the <code>Provider</code> for reading. This task can be applied
+to a build as you normally would</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">task echo(type: com.acme.EchoTask) {
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Invoking the <code>echo</code> task with no parameters nor explicit value for the <code>message</code> property in the build yields the following</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>$ gm echo
+
+&gt; Task :echo
+default message</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Defining a project property, whether it&#8217;s inline with <code>-P</code> at the command line, in a <code>gradle.properties</code> file located at
+the project directory or your home directory, or using a gradle init script, would result in that value being picked up
+instead</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>$ gm echo -Pecho.message="from project"
+
+&gt; Task :echo
+from project</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Passing a System property, in any way a System property can be defined, results in that value being chosen this time around</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>$ gm echo -Pecho.message="from project" -Decho.message="from System"
+
+&gt; Task :echo
+from System</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If there&#8217;s an environment variable whose key name follows a naming convention (all caps, substitute <code>.</code> for <code>_</code>) then its
+value will be the selected one</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>$ export ECHO_MESSAGE="from environment"
+$ gm echo -Pecho.message="from project" -Decho.message="from System"
+
+&gt; Task :echo
+from environment</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>But if a specific value is set in the task&#8217;s <code>message</code> property then and only then it will be picked up</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">task echo(type: com.acme.EchoTask) {
+    message = 'from build'
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>$ gm echo -Pecho.message="from project" -Decho.message="from System"
+
+&gt; Task :echo
+from build</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The resolution order shown here is ENV_SYS_PROP, but it can be changed to any of these values</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ENV_SYS_PROP</code></p>
+</li>
+<li>
+<p><code>ENV_PROP_SYS</code></p>
+</li>
+<li>
+<p><code>SYS_ENV_PROP</code></p>
+</li>
+<li>
+<p><code>SYS_PROP_ENV</code></p>
+</li>
+<li>
+<p><code>PROP_ENV_SYS</code></p>
+</li>
+<li>
+<p><code>PROP_SYS_ENV</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Also, when running in a multi-project build you may want to provide default values depending on context, such as the
+path of the owning task (typically of the format <code>:project:taskname</code>), or the owning project (<code>:project</code>) or global to
+the whole build. These previous elements will be prefixed to the property/variable name with the default setting being
+<code>GLOBAL_PROJECT_OWNER</code> which means all prefixes will be checked, from more specific (<code>OWNER</code>) to least (<code>GLOBAL</code>). These
+are the values you can choose from</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>GLOBAL_PROJECT_OWNER</code></p>
+</li>
+<li>
+<p><code>GLOBAL_PROJECT</code></p>
+</li>
+<li>
+<p><code>GLOBAL_OWNER</code></p>
+</li>
+<li>
+<p><code>GLOBAL</code></p>
+</li>
+<li>
+<p><code>PROJECT_OWNER</code></p>
+</li>
+<li>
+<p><code>PROJECT</code></p>
+</li>
+<li>
+<p><code>OWNER</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Any <code>:</code> found in the owner&#8217;s or project&#8217;s path will be turned into a <code>.</code>, except for the first which will be removed
+altogether, thus if the <code>echo</code> task is defined on a project  whose path is <code>:project</code> the following property names will
+be checked in turn</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>project1.echo.echo.message</code></p>
+</li>
+<li>
+<p><code>project1.echo.message</code></p>
+</li>
+<li>
+<p><code>echo.message</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You may fix these values when authoring your own tasks or you may leave it to the consumer to define the order. Kordamp
+will check the following System properties</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+property.order
+</td>
+<td class="hdlist2">
+<p>Determines the order between ENV, SYS, and PROP. Defaults to <code>ENV_SYS_PROP</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+property.access
+</td>
+<td class="hdlist2">
+<p>Determines the access level for calculating a prefix. Defaults to <code>GLOBAL_PROJECT_OWNER</code>.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>There are base states for the following types:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><a href="api/org/kordamp/gradle/property/SimpleBooleanState.html">BooleanState</a></code></p>
+</li>
+<li>
+<p><code><a href="api/org/kordamp/gradle/property/SimpleBooleanState.html">DirectoryState</a></code></p>
+</li>
+<li>
+<p><code><a href="api/org/kordamp/gradle/property/SimpleBooleanState.html">IntegerState</a></code></p>
+</li>
+<li>
+<p><code><a href="api/org/kordamp/gradle/property/SimpleBooleanState.html">ListState</a></code></p>
+</li>
+<li>
+<p><code><a href="api/org/kordamp/gradle/property/SimpleBooleanState.html">LongState</a></code></p>
+</li>
+<li>
+<p><code><a href="api/org/kordamp/gradle/property/SimpleBooleanState.html">MapState</a></code></p>
+</li>
+<li>
+<p><code><a href="api/org/kordamp/gradle/property/SimpleBooleanState.html">RegularFileState</a></code></p>
+</li>
+<li>
+<p><code><a href="api/org/kordamp/gradle/property/SimpleBooleanState.html">SetState</a></code></p>
+</li>
+<li>
+<p><code><a href="api/org/kordamp/gradle/property/SimpleBooleanState.html">StringState</a></code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_links"><a class="anchor" href="#_links"></a>9. Links</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><a href="api/index.html" target="_blank" rel="noopener">Javadoc</a></p>
@@ -16732,8 +17095,8 @@ Type
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.37.1<br>
-Last updated 2020-05-30 21:33:00 +0200
+Version 0.38.0<br>
+Last updated 2020-06-06 21:59:24 +0200
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
