@@ -1,6 +1,6 @@
 
-[[_org_kordamp_gradle_plugin]]
-= Plugin
+[[_org_kordamp_gradle_plugins]]
+= Plugins
 
 [horizontal]
 id:: `org.kordamp.gradle.plugin`
@@ -23,26 +23,45 @@ NOTE: This plugin must be explicitly applied to Gradle plugin projects only.
 [source,groovy]
 ----
 config {
-    plugin {
+    plugins {
         enabled
-        id
-        implementationClass
+        plugin {
+            id
+            name
+            description
+            displayName
+            implementationClass
+            tags
+        }
     }
 }
 ----
 
 [options="header", cols="5*"]
 |===
-| Name                | Type    | Required | Default Value | Description
-| enabled             | boolean | no       | true          | Disables `org.kordamp.gradle.plugin` plugin if `false`
-| id                  | String  | yes      |               | Defines the plugin's id
-| implementationClass | String  | yes      |               | Defines the plugin's implementation Class
+| Name    | Type    | Required | Default Value | Description
+| enabled | boolean | no       | true          | Disables `org.kordamp.gradle.plugin` plugin if `false`
 |===
 
-[[_org_kordamp_gradle_plugin_tasks]]
+[[_plugins_plugin]]
+*plugin*
+
+|===
+| Name                | Type         | Required | Default Value | Description
+| id                  | String       | yes      |               | Defines the plugin's id
+| name                | String       | yes      |               | Defines the plugin's name
+| description         | String       | no       |               | Defines the plugin's description
+| displayName         | String       | no       |               | Defines the plugin's display name
+| implementationClass | String       | yes      |               | Defines the plugin's implementation Class
+| tags                | List<String> | no       | []            |
+|===
+
+This block defines a single plugin entry. You may define as many plugins as needed.
+
+[[_org_kordamp_gradle_plugins_tasks]]
 == Tasks
 
-[[_task_list_plugin_descriptors]]
+[[_task_list_plugins_descriptors]]
 === ListPluginDescriptors
 
 Lists plugin descriptors from plugin declarations.

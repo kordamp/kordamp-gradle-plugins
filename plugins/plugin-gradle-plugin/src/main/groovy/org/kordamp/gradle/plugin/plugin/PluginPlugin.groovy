@@ -20,7 +20,6 @@ package org.kordamp.gradle.plugin.plugin
 import com.gradle.publish.PluginBundleExtension
 import com.gradle.publish.PluginConfig
 import com.gradle.publish.PublishPlugin
-import com.jfrog.bintray.gradle.BintrayExtension
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
@@ -29,13 +28,13 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
+import org.gradle.plugin.devel.PluginDeclaration
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
-import org.kordamp.gradle.annotations.DependsOn
 import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
-import org.kordamp.gradle.plugin.base.plugins.Plugin
+import org.kordamp.gradle.plugin.base.plugins.Plugins
 import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 
 import javax.inject.Named
@@ -54,7 +53,7 @@ class PluginPlugin extends AbstractKordampPlugin {
     Project project
 
     PluginPlugin() {
-        super(Plugin.PLUGIN_ID)
+        super(Plugins.PLUGIN_ID)
     }
 
     void apply(Project project) {
@@ -73,8 +72,6 @@ class PluginPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
-        project.pluginManager.apply(JavaGradlePluginPlugin)
-        project.pluginManager.apply(PublishPlugin)
 
         project.tasks.register('listPluginDescriptors', ListPluginDescriptorsTask.class,
             new Action<ListPluginDescriptorsTask>() {
@@ -100,63 +97,90 @@ class PluginPlugin extends AbstractKordampPlugin {
             })
 
         addProjectEvaluatedListener(project, new PublishingProjectEvaluatedListener())
+
+        project.pluginManager.apply(JavaGradlePluginPlugin)
+        project.pluginManager.apply(PublishPlugin)
+
+        // Must execute after JavaGradlePluginPlugin|PublishPlugin
+        // because ${plugin.name}PluginMarkerMaven is created explicitly and not with `maybeCreate`.
+        project.afterEvaluate {
+            ProjectConfigurationExtension config = resolveConfig(project)
+            config.plugins.plugins.values().each { plugin ->
+                String pluginName = plugin.name
+                updatePluginPublication(project, config, pluginName)
+            }
+            updatePublications(project, config)
+        }
     }
 
     @Named('plugin')
-    @DependsOn(['publishing'])
+    //@DependsOn(['publishing'])
     private class PublishingProjectEvaluatedListener implements ProjectEvaluatedListener {
         @Override
         void projectEvaluated(Project project) {
             ProjectConfigurationExtension config = resolveConfig(project)
-            String pluginName = config.plugin.pluginName
 
-            PluginBundleExtension pbe = project.extensions.findByType(PluginBundleExtension)
-            PluginConfig pc = pbe.plugins.maybeCreate(pluginName)
+            GradlePluginDevelopmentExtension gpdExt = project.extensions.findByType(GradlePluginDevelopmentExtension)
+            PluginBundleExtension pbExt = project.extensions.findByType(PluginBundleExtension)
 
-            if (isBlank(pbe.website) && isNotBlank(config.info.url)) {
-                pbe.website = config.info.url
+            if (isBlank(pbExt.website) && isNotBlank(config.info.url)) {
+                pbExt.website = config.info.url
             }
-            if (isBlank(pbe.vcsUrl)) {
-                pbe.vcsUrl = config.info.resolveScmLink()
+            if (isBlank(pbExt.vcsUrl)) {
+                pbExt.vcsUrl = config.info.resolveScmLink()
             }
-            if (isBlank(pbe.description)) {
-                pbe.description = config.info.description
+            if (isBlank(pbExt.description)) {
+                pbExt.description = config.info.description
             }
-            if (!pbe.tags) {
-                pbe.tags = config.plugin.resolveTags(config)
-            }
-
-            if (isBlank(pbe.mavenCoordinates.groupId)) {
-                pbe.mavenCoordinates.groupId = project.group
-            }
-            if (isBlank(pbe.mavenCoordinates.artifactId)) {
-                pbe.mavenCoordinates.artifactId = project.name
+            if (!pbExt.tags) {
+                pbExt.tags = config.info.tags
             }
 
-            if (isBlank(pbe.mavenCoordinates.version)) {
-                pbe.mavenCoordinates.version = project.version
+            if (isBlank(pbExt.mavenCoordinates.groupId)) {
+                pbExt.mavenCoordinates.groupId = project.group
+            }
+            if (isBlank(pbExt.mavenCoordinates.artifactId)) {
+                pbExt.mavenCoordinates.artifactId = project.name
             }
 
-            if (isBlank(pc.id)) {
-                pc.id = config.plugin.id
-            }
-            if (isBlank(pc.displayName)) {
-                pc.displayName = config.info.name
+            if (isBlank(pbExt.mavenCoordinates.version)) {
+                pbExt.mavenCoordinates.version = project.version
             }
 
-            BintrayExtension bintray = project.extensions.findByType(BintrayExtension)
-            if (bintray) {
-                bintray.pkg.version.attributes = ['gradle-plugin': "${config.plugin.id}:${project.group}:${project.name}".toString()]
-            }
+            config.plugins.plugins.values().each { plugin ->
+                String pluginName = plugin.name
 
-            updatePublication(project)
+                PluginDeclaration pd = gpdExt.plugins.maybeCreate(pluginName)
+                pd.id = plugin.id
+                pd.displayName = plugin.displayName ?: config.info.description
+                pd.description = plugin.description ?: config.info.description
+                pd.implementationClass = plugin.implementationClass
+
+                PluginConfig pc = pbExt.plugins.maybeCreate(pluginName)
+                pc.id = plugin.id
+                pc.displayName = plugin.displayName ?: config.info.description
+                pc.description = plugin.description ?: config.info.description
+                pc.tags = plugin.resolveTags(config)
+                pc.version = project.version
+            }
         }
     }
 
     @CompileDynamic
-    private void updatePublication(Project project) {
-        ProjectConfigurationExtension config = resolveConfig(project)
+    private void updatePluginPublication(Project project, ProjectConfigurationExtension config, String pluginName) {
+        project.publishing {
+            publications {
+                "${pluginName}PluginMarkerMaven"(MavenPublication) {
+                    PublishingUtils.configurePom(pom, config, config.publishing.pom)
+                }
+            }
+        }
 
+        PublishingUtils.configureSigning(config, project, pluginName + 'PluginMarkerMaven')
+    }
+
+    @CompileDynamic
+    private void updatePublications(Project project, ProjectConfigurationExtension config) {
         project.publishing {
             publications {
                 pluginMaven(MavenPublication) {

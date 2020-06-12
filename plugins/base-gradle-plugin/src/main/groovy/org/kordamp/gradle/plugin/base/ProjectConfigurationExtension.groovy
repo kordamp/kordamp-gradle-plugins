@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.model.Information
+import org.kordamp.gradle.plugin.base.model.Plugin
 import org.kordamp.gradle.plugin.base.plugins.Bintray
 import org.kordamp.gradle.plugin.base.plugins.Bom
 import org.kordamp.gradle.plugin.base.plugins.BuildInfo
@@ -40,7 +41,7 @@ import org.kordamp.gradle.plugin.base.plugins.Javadoc
 import org.kordamp.gradle.plugin.base.plugins.Kotlindoc
 import org.kordamp.gradle.plugin.base.plugins.Licensing
 import org.kordamp.gradle.plugin.base.plugins.Minpom
-import org.kordamp.gradle.plugin.base.plugins.Plugin
+import org.kordamp.gradle.plugin.base.plugins.Plugins
 import org.kordamp.gradle.plugin.base.plugins.Pmd
 import org.kordamp.gradle.plugin.base.plugins.Publishing
 import org.kordamp.gradle.plugin.base.plugins.Scaladoc
@@ -52,6 +53,8 @@ import org.kordamp.gradle.plugin.base.plugins.Spotbugs
 import org.kordamp.gradle.plugin.base.plugins.Stats
 import org.kordamp.gradle.plugin.base.plugins.Testing
 import org.kordamp.gradle.util.ConfigureUtil
+
+import static org.kordamp.gradle.util.StringUtils.getPropertyNameForLowerCaseHyphenSeparatedName
 
 /**
  * @author Andres Almiray
@@ -71,7 +74,7 @@ class ProjectConfigurationExtension {
     final BuildInfo buildInfo
     final Clirr clirr
     final Licensing licensing
-    final Plugin plugin
+    final Plugins plugins
     final Publishing publishing
     final Stats stats
     final Testing testing
@@ -91,7 +94,7 @@ class ProjectConfigurationExtension {
         buildInfo = new BuildInfo(this, project)
         clirr = new Clirr(this, project)
         licensing = new Licensing(this, project)
-        plugin = new Plugin(this, project)
+        plugins = new Plugins(this, project)
         publishing = new Publishing(this, project)
         stats = new Stats(this, project)
         testing = new Testing(this, project)
@@ -118,7 +121,8 @@ class ProjectConfigurationExtension {
         map.putAll(quality.toMap())
         if (testing.visible) map.putAll(testing.toMap())
         if (clirr.visible) map.putAll(clirr.toMap())
-        if (plugin.visible) map.putAll(plugin.toMap())
+        if (plugins.visible) map.putAll(plugins.toMap())
+        if (plugins.visible) map.putAll(plugins.toMap())
         if (stats.visible) map.putAll(stats.toMap())
 
         map
@@ -294,12 +298,40 @@ class ProjectConfigurationExtension {
         artifacts.minpom(action)
     }
 
+    @Deprecated
     void plugin(Action<? super Plugin> action) {
+        println("The method config.plugin() is deprecated and will be removed in the future. Use config.plugins() instead")
+        String pluginName = getPropertyNameForLowerCaseHyphenSeparatedName(project.name - '-gradle' - 'gradle-' - '-plugin')
+        Plugin plugin = new Plugin()
+        if (plugins.plugins[pluginName]) {
+            plugin = plugins.plugins[pluginName]
+        } else {
+            plugin.name = pluginName
+        }
         action.execute(plugin)
+        plugins.plugins[plugin.name] = plugin
     }
 
-    void plugin(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Plugin) Closure<Void> action) {
-        ConfigureUtil.configure(action, plugin)
+    @Deprecated
+    void plugin(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Plugin) Closure action) {
+        println("The method config.plugin() is deprecated and will be removed in the future. Use config.plugins() instead")
+        String pluginName = getPropertyNameForLowerCaseHyphenSeparatedName(project.name - '-gradle' - 'gradle-' - '-plugin')
+        Plugin plugin = new Plugin()
+        if (plugins.plugins[pluginName]) {
+            plugin = plugins.plugins[pluginName]
+        } else {
+            plugin.name = pluginName
+        }
+        org.gradle.util.ConfigureUtil.configure(action, plugin)
+        plugins.plugins[plugin.name] = plugin
+    }
+
+    void plugins(Action<? super Plugins> action) {
+        action.execute(plugins)
+    }
+
+    void plugins(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Plugins) Closure<Void> action) {
+        ConfigureUtil.configure(action, plugins)
     }
 
     void publishing(Action<? super Publishing> action) {
@@ -424,7 +456,7 @@ class ProjectConfigurationExtension {
         BuildInfo.merge(this.@buildInfo, other.@buildInfo)
         Clirr.merge(this.@clirr, other.@clirr)
         Licensing.merge(this.@licensing, other.@licensing)
-        Plugin.merge(this.@plugin, other.@plugin)
+        Plugins.merge(this.@plugins, other.@plugins)
         Publishing.merge(this.@publishing, other.@publishing)
         Stats.merge(this.@stats, other.@stats)
         Testing.merge(this.@testing, other.@testing)
@@ -443,7 +475,7 @@ class ProjectConfigurationExtension {
         errors.addAll(this.@bom.validate(this))
         errors.addAll(this.@bintray.validate(this))
         errors.addAll(this.@licensing.validate(this))
-        errors.addAll(this.@plugin.validate(this))
+        errors.addAll(this.@plugins.validate(this))
         errors.addAll(this.@quality.validate(this))
 
         errors
@@ -459,7 +491,7 @@ class ProjectConfigurationExtension {
         licensing.normalize()
         testing.normalize()
         clirr.normalize()
-        plugin.normalize()
+        plugins.normalize()
         stats.normalize()
         docs.normalize()
         coverage.normalize()
@@ -476,7 +508,7 @@ class ProjectConfigurationExtension {
         licensing.postMerge()
         testing.postMerge()
         clirr.postMerge()
-        plugin.postMerge()
+        plugins.postMerge()
         stats.postMerge()
         docs.postMerge()
         coverage.postMerge()

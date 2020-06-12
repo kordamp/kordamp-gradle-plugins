@@ -18,7 +18,7 @@ config {
     <<_org_kordamp_gradle_buildinfo,buildInfo>> { ... }
     <<_org_kordamp_gradle_clirr,clirr>> { ... }
     <<_org_kordamp_gradle_licensing,licensing>> { ... }
-    <<_org_kordamp_gradle_plugin,plugin>> { ... }
+    <<_org_kordamp_gradle_plugins,plugins>> { ... }
     <<_org_kordamp_gradle_publishing,publishing>> { ... }
     <<_org_kordamp_gradle_sourcestats,stats>> { ... }
     <<_org_kordamp_gradle_testing,testing>> { ... }

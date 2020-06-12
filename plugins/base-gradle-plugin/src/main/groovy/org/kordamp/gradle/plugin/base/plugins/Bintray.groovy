@@ -171,8 +171,10 @@ class Bintray extends AbstractFeature {
     List<String> resolvePublications() {
         List<String> pubs = new ArrayList<>(publications)
         if (!pubs) pubs << 'main'
-        if (config.plugin.enabled) {
-            pubs << config.plugin.pluginName + 'PluginMarkerMaven'
+        if (config.plugins.enabled) {
+            config.plugins.plugins.keySet().each {
+                pubs << (it + 'PluginMarkerMaven')
+            }
         }
         pubs.unique()
     }
