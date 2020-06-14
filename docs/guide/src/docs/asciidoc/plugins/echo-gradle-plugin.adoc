@@ -1,0 +1,29 @@
+
+[[_org_kordamp_gradle_echo]]
+= Echo
+
+[horizontal]
+id:: `org.kordamp.gradle.echo`
+class:: `org.kordamp.gradle.plugin.echo.EchoPlugin`
+    (link:api/org/kordamp/gradle/plugin/echo/EchoPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/echo/EchoPlugin.html[source])
+
+Outputs content during a build.
+
+[[_org_kordamp_gradle_echo_tasks]]
+== Tasks
+
+[[_task_echo]]
+=== Echo
+
+Outputs content during a build.
+
+[horizontal]
+Name:: echo
+Type:: `org.kordamp.gradle.plugin.echo.tasks.EchoTask`
+
+.Properties
+[horizontal]
+message:: The message to write. Value can be provided with project/System property or environment variable.
+Project/System property: `echo.message`. Environment Variable: `ECHO_MESSAGE`.
+
