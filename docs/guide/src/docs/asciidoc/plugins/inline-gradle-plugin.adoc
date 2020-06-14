@@ -1,0 +1,36 @@
+
+[[_org_kordamp_gradle_inline]]
+= Inline
+
+[horizontal]
+id:: `org.kordamp.gradle.inline`
+class:: `org.kordamp.gradle.plugin.inline.InlinePlugin`
+    (link:api/org/kordamp/gradle/plugin/inline/InlinePlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/inline/InlinePlugin.html[source])
+
+NOTE: This plugin should be applied to `settings.gradle(.kts)` only!
+
+Enables invocation of any Gradle plugin by providing GAV coordinates plus a given task name.
+
+The `inline` plugin chooses the target `Project` on which plugins will be applied based on the following rules:
+
+ * If the `inline.target` System property is set:
+ ** All projects if the value is `all`.
+ ** All projects except root if value is `subprojects`.
+ ** Project(s) whose path matches the value (exactly or as regex). Value may be command separated.
+ * The project whose `projectDir` matches the start parameter `-p` or `--project-dir` when given.
+ * The project whose `buildFile` matches the start parameter `-b` or `--build-file` when given.
+ * The project whose `projectDir` matches the current directory.
+ * The root project.
+
+[[_org_kordamp_gradle_inline_example]]
+== Example
+
+Invoking the `<<_org_kordamp_gradle_echo,echo>>` plugin
+
+[source,subs="attributes"]
+----
+$ gm {project-group}:echo-gradle-plugin:{project-version}:echo -Decho.message="Hello World"
+----
+
+

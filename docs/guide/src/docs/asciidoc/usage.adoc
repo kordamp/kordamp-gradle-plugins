@@ -16,7 +16,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:{plugin-id}:{project-version}'
+        classpath '{project-group}:{plugin-id}:{project-version}'
     }
 }
 apply plugin: '{plugin-id}'
@@ -32,7 +32,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("org.kordamp.gradle:{plugin-id}:{project-version}")
+        classpath("{project-group}:{plugin-id}:{project-version}")
     }
 }
 apply(plugin = "{plugin-id}")
