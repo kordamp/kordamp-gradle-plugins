@@ -124,9 +124,15 @@ class PluginUtils {
         return Boolean.getBoolean(flag)
     }
 
-    static boolean isGradleCompatible(Project project, int majorVersion) {
+    static boolean isGradleCompatible(int majorVersion) {
         Version version = Version.of(GradleVersion.current().baseVersion.version)
         version.major >= majorVersion
+    }
+
+    static boolean isGradleCompatible(String targetVersion) {
+        Version current = Version.of(GradleVersion.current().baseVersion.version)
+        Version target = Version.of(targetVersion)
+        current.major >= target.major && current.minor >= target.minor
     }
 
     static boolean supportsApiConfiguration(Project project) {

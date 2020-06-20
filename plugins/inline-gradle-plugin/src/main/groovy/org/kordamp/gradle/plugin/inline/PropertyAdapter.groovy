@@ -15,8 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kordamp.gradle.plugin.inline
 
-dependencies {
-    api project(':base-gradle-plugin')
-    compileOnly "org.kordamp.gipsy:gipsy:$jipsyVersion"
+import groovy.transform.CompileStatic
+import org.gradle.api.Project
+
+/**
+ * @author Andres Almiray
+ * @since 0.39.0
+ */
+@CompileStatic
+interface PropertyAdapter {
+    void adapt(Project project)
 }

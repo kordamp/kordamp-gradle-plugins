@@ -32,14 +32,20 @@ import java.util.jar.JarFile
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
+
 /**
  * @author Andres Almiray
  * @since 0.39.0
  */
 @CompileStatic
 class InlinePlugin implements Plugin<Settings> {
+    private Settings settings
+
     @Override
     void apply(Settings settings) {
+        this.settings = settings
+
         Configuration configuration = settings.buildscript.configurations.maybeCreate('inlinePlugins')
         configuration.extendsFrom(settings.buildscript.configurations.findByName('classpath'))
         configuration.canBeResolved = true
@@ -49,8 +55,12 @@ class InlinePlugin implements Plugin<Settings> {
         Set<IncludedPlugin> plugins = []
 
         for (String task : settings.gradle.startParameter.taskNames) {
-            if (IncludedPlugin.isPluginDefinition(task)) {
-                IncludedPlugin plugin = IncludedPlugin.parse(task)
+            if (IncludedCorePlugin.isPluginDefinition(task)) {
+                IncludedCorePlugin plugin = IncludedCorePlugin.parse(task)
+                plugins << plugin
+                taskNames << plugin.taskName
+            } else if (IncludedExternalPlugin.isPluginDefinition(task)) {
+                IncludedExternalPlugin plugin = IncludedExternalPlugin.parse(task)
                 plugins << plugin
                 taskNames << plugin.taskName
                 settings.buildscript.dependencies.add('inlinePlugins', plugin.coordinates)
@@ -60,13 +70,16 @@ class InlinePlugin implements Plugin<Settings> {
         }
         settings.gradle.startParameter.taskNames = taskNames
 
-        if (!plugins) return
-
-        Set<File> files = configuration.resolve()
-        for (File file : files) {
-            for (IncludedPlugin plugin : plugins) {
-                if (file.name == plugin.fileName) {
-                    findPluginDescriptors(file, plugin.pluginIds)
+        Set<File> files = []
+        if (plugins) {
+            files = configuration.resolve()
+            for (File file : files) {
+                for (IncludedPlugin plugin : plugins) {
+                    if (plugin instanceof IncludedExternalPlugin) {
+                        if (file.name == ((IncludedExternalPlugin) plugin).fileName) {
+                            findPluginDescriptors(file, plugin.pluginIds)
+                        }
+                    }
                 }
             }
         }
@@ -74,17 +87,46 @@ class InlinePlugin implements Plugin<Settings> {
         settings.gradle.addBuildListener(new BuildAdapter() {
             @Override
             void projectsLoaded(Gradle gradle) {
-                ClassLoader classLoader = settings.plugins.findPlugin('org.kordamp.gradle.inline').class.classLoader
-                for (File file : files) {
-                    addToClassloader(classLoader, file)
-                }
-
-                PluginTargets targets = new PluginTargets()
-                for (IncludedPlugin plugin : plugins) {
-                    plugin.apply(gradle, targets)
+                if (plugins) {
+                    includePlugins(plugins, files)
                 }
             }
+
+            @Override
+            void projectsEvaluated(Gradle gradle) {
+                adaptProperties(gradle.rootProject)
+            }
         })
+    }
+
+    private ClassLoader resolveClassLoader() {
+        settings.plugins.findPlugin('org.kordamp.gradle.inline').class.classLoader
+    }
+
+    private void includePlugins(Set<IncludedPlugin> plugins, Set<File> files) {
+        ClassLoader classLoader = resolveClassLoader()
+        for (File file : files) {
+            addToClassloader(classLoader, file)
+        }
+
+        PluginTargets targets = new PluginTargets()
+        for (IncludedPlugin plugin : plugins) {
+            plugin.apply(settings.gradle, targets)
+        }
+    }
+
+    private void adaptProperties(Project project) {
+        for (PropertyAdapter adapter : ServiceLoader.load(PropertyAdapter, resolveClassLoader())) {
+            adaptProperties(adapter, project)
+        }
+    }
+
+    private void adaptProperties(PropertyAdapter adapter, Project project) {
+        project.logger.debug('Adapting {} with {}', project, adapter.class.name)
+        adapter.adapt(project)
+        for (Project p : project.childProjects.values()) {
+            adaptProperties(adapter, p)
+        }
     }
 
     @CompileDynamic
@@ -195,35 +237,12 @@ class InlinePlugin implements Plugin<Settings> {
 
     @Canonical
     @CompileStatic
-    private static class IncludedPlugin {
-        final String groupId
-        final String artifactId
-        final String version
+    private static abstract class IncludedPlugin {
         final String taskName
         final Set<String> pluginIds = new LinkedHashSet<>()
 
-        static boolean isPluginDefinition(String str) {
-            str.split(':').size() == 4
-        }
-
-        static IncludedPlugin parse(String str) {
-            String[] parts = str.split(':')
-            new IncludedPlugin(parts[0], parts[1], parts[2], parts[3])
-        }
-
-        private IncludedPlugin(String groupId, String artifactId, String version, String taskName) {
-            this.groupId = groupId
-            this.artifactId = artifactId
-            this.version = version
+        protected IncludedPlugin(String taskName) {
             this.taskName = taskName
-        }
-
-        String getCoordinates() {
-            "${groupId}:${artifactId}:${version}".toString()
-        }
-
-        String getFileName() {
-            "${artifactId}-${version}.jar".toString()
         }
 
         void apply(Gradle gradle, PluginTargets targets) {
@@ -319,6 +338,58 @@ class InlinePlugin implements Plugin<Settings> {
             }
 
             return null
+        }
+    }
+
+    @Canonical
+    @CompileStatic
+    private static class IncludedCorePlugin extends IncludedPlugin {
+        static boolean isPluginDefinition(String str) {
+            String[] parts = str.split(':')
+            parts.size() == 2 && isNotBlank(parts[0]) && isNotBlank(parts[1])
+        }
+
+        static IncludedCorePlugin parse(String str) {
+            String[] parts = str.split(':')
+            new IncludedCorePlugin(parts[0], parts[1])
+        }
+
+        private IncludedCorePlugin(String pluginId, String taskName) {
+            super(taskName)
+            this.pluginIds << pluginId
+        }
+    }
+
+    @Canonical
+    @CompileStatic
+    private static class IncludedExternalPlugin extends IncludedPlugin {
+        final String groupId
+        final String artifactId
+        final String version
+
+        static boolean isPluginDefinition(String str) {
+            String[] parts = str.split(':')
+            parts.size() == 4 && isNotBlank(parts[0]) && isNotBlank(parts[1]) && isNotBlank(parts[2]) && isNotBlank(parts[3])
+        }
+
+        static IncludedExternalPlugin parse(String str) {
+            String[] parts = str.split(':')
+            new IncludedExternalPlugin(parts[0], parts[1], parts[2], parts[3])
+        }
+
+        private IncludedExternalPlugin(String groupId, String artifactId, String version, String taskName) {
+            super(taskName)
+            this.groupId = groupId
+            this.artifactId = artifactId
+            this.version = version
+        }
+
+        String getCoordinates() {
+            "${groupId}:${artifactId}:${version}".toString()
+        }
+
+        String getFileName() {
+            "${artifactId}-${version}.jar".toString()
         }
     }
 }

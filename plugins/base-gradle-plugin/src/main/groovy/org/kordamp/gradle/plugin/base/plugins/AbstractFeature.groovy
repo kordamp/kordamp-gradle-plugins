@@ -61,7 +61,13 @@ abstract class AbstractFeature implements Feature {
     }
 
     static void merge(AbstractFeature o1, AbstractFeature o2) {
-        o1.@enabled = (boolean) (o1.enabledSet ? o1.enabled : o2.enabled)
+        if (!o1.enabledSet) {
+            if (o2.enabledSet) {
+                o1.setEnabled(o2.enabled)
+            } else {
+                o1.@enabled = o2.enabled
+            }
+        }
     }
 
     @CompileDynamic

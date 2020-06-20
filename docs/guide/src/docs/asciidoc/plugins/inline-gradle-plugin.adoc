@@ -10,7 +10,8 @@ class:: `org.kordamp.gradle.plugin.inline.InlinePlugin`
 
 NOTE: This plugin should be applied to `settings.gradle(.kts)` only!
 
-Enables invocation of any Gradle plugin by providing GAV coordinates plus a given task name.
+Enables invocation of any Gradle plugin by providing GAV coordinates plus a given task name. Core Gradle plugins are also
+supported in which case you only have to specify their plugin id, not their GAV coordinates.
 
 The `inline` plugin chooses the target `Project` on which plugins will be applied based on the following rules:
 
@@ -23,6 +24,22 @@ The `inline` plugin chooses the target `Project` on which plugins will be applie
  * The project whose `projectDir` matches the current directory.
  * The root project.
 
+Plugin properties, such as those exposed by extensions added by plugins, may be adapted so that their values may
+be supplied using System and/or project properties. These are the default property adapters provided by the `org.kordamp.gradle.inline`
+plugin:
+
+link:api/org/kordamp/gradle/plugin/inline/adapters/ApplicationPluginPropertyAdapter.html[ApplicationPluginPropertyAdapter]
+Adapts the `link:https://docs.gradle.org/current/userguide/application_plugin.html[application]` plugin. Supported properties are:
+
+ * application.mainClass - requires Gradle 6.4+
+ * application.mainModule - requires Gradle 6.4+
+ * application.mainClassName
+ * application.applicationDefaultJvmArgs
+
+Custom property adapters may be added to the classpath. Such adapters must implement
+link:api/org/kordamp/gradle/plugin/inline/PropertyAdapter.html[PropertyAdapter] and be registered as a service in
+`META-INF/services/org.kordamp.gradle.plugin.inline.PropertyAdapter`.
+
 [[_org_kordamp_gradle_inline_example]]
 == Example
 
@@ -33,4 +50,10 @@ Invoking the `<<_org_kordamp_gradle_echo,echo>>` plugin
 $ gm {project-group}:echo-gradle-plugin:{project-version}:echo -Decho.message="Hello World"
 ----
 
+Invoking the `application` plugin
+
+[source,subs="attributes"]
+----
+$ gm application:run -Dapplication.mainClass=com.acme.Main
+----
 
