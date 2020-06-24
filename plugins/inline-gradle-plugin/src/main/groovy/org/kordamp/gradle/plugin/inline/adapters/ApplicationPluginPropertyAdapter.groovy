@@ -42,14 +42,14 @@ import static org.kordamp.gradle.util.StringUtils.isNotBlank
  */
 @CompileStatic
 @ServiceProviderFor(PropertyAdapter)
-class ApplicationPluginPropertyAdapter implements PropertyAdapter {
+class ApplicationPluginPropertyAdapter extends AbstractPropertyAdapter {
     @Override
     void adapt(Project project) {
         if (!project.pluginManager.hasPlugin('application')) return
 
         JavaApplication application = project.extensions.getByType(JavaApplication)
 
-        String mainClass = System.getProperty('application.mainClass')
+        String mainClass = resolveProperty(project, 'application.mainClass') ?: resolveProperty(project, 'exec.mainClass')
         if (isNotBlank(mainClass)) {
             if (PluginUtils.isGradleCompatible('6.4')) {
                 project.logger.debug("Setting application.mainClass to '{}'", mainClass)
@@ -60,13 +60,13 @@ class ApplicationPluginPropertyAdapter implements PropertyAdapter {
             }
         }
 
-        String mainClassName = System.getProperty('application.mainClassName')
+        String mainClassName = resolveProperty(project, 'application.mainClassName')
         if (isNotBlank(mainClassName)) {
             project.logger.warn("Setting application.mainClassName to '{}'", mainClassName)
             application.mainClassName = mainClassName
         }
 
-        String mainModule = System.getProperty('application.mainModule')
+        String mainModule = resolveProperty(project, 'application.mainModule')
         if (isNotBlank(mainModule)) {
             if (PluginUtils.isGradleCompatible('6.4')) {
                 project.logger.debug("Setting application.mainModule to '{}'", mainClass)
@@ -74,7 +74,7 @@ class ApplicationPluginPropertyAdapter implements PropertyAdapter {
             }
         }
 
-        String applicationDefaultJvmArgs = System.getProperty('application.applicationDefaultJvmArgs')
+        String applicationDefaultJvmArgs = resolveProperty(project, 'application.applicationDefaultJvmArgs') ?: resolveProperty(project, 'exec.args')
         if (isNotBlank(applicationDefaultJvmArgs)) {
             project.logger.debug("Setting application.applicationDefaultJvmArgs to '{}'", applicationDefaultJvmArgs)
             application.applicationDefaultJvmArgs = Arrays.asList(applicationDefaultJvmArgs.split(','))
