@@ -46,7 +46,7 @@ abstract class AbstractReportingTask extends DefaultTask {
     protected final AnsiConsole console = new AnsiConsole(project)
 
     protected void print(String value, int offset) {
-        println(('    ' * offset) + value)
+        doPrintElement(value, offset)
     }
 
     protected void doPrint(value, int offset) {
@@ -108,8 +108,8 @@ abstract class AbstractReportingTask extends DefaultTask {
         } else if (value?.class?.array) {
             doPrintArray(key, (Object[]) value, offset)
         } else {
-            String result = formatValue(unwrapValue(value), isSecret(key), offset)
-            if (isNotBlank(result)) println(('    ' * offset) + key + ': ' + result)
+            String result = formatValue(unwrapValue(value), isSecret(key))
+            if (isNotNullNorBlank(result)) println(('    ' * offset) + key + ': ' + result)
         }
     }
 
@@ -186,18 +186,22 @@ abstract class AbstractReportingTask extends DefaultTask {
     }
 
     protected void doPrintElement(value, int offset) {
-        println(('    ' * offset) + formatValue(value, offset))
+        String result = formatValue(value)
+        isNotNullNorBlank(result) println(('    ' * offset) + result)
     }
 
     protected boolean isNotNullNorBlank(value) {
-        value != null || (value instanceof CharSequence && isNotBlank(String.valueOf(value)))
+        if (value instanceof CharSequence) {
+            return isNotBlank(String.valueOf(value))
+        }
+        value != null
     }
 
-    protected String formatValue(value, int offset) {
-        formatValue(unwrapValue(value), false, offset)
+    protected String formatValue(value) {
+        formatValue(unwrapValue(value), false)
     }
 
-    protected String formatValue(Object value, boolean secret, int offset) {
+    protected String formatValue(Object value, boolean secret) {
         if (value instanceof Boolean) {
             Boolean b = (Boolean) value
             return b ? console.green(String.valueOf(b)) : console.red(String.valueOf(b))
