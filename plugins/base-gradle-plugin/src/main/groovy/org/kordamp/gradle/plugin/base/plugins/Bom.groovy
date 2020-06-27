@@ -111,9 +111,9 @@ class Bom extends AbstractFeature implements PomOptions {
             map.overwriteOrganization = overwriteOrganization
             map.overwriteDevelopers = overwriteDevelopers
             map.overwriteContributors = overwriteContributors
-            map.overwriteIssueManagement = overwriteIssueManagementSet
-            map.overwriteCiManagement = overwriteCiManagementSet
-            map.overwriteMailingLists = overwriteMailingListsSet
+            map.overwriteIssueManagement = overwriteIssueManagement
+            map.overwriteCiManagement = overwriteCiManagement
+            map.overwriteMailingLists = overwriteMailingLists
         }
         map.properties = properties
 
