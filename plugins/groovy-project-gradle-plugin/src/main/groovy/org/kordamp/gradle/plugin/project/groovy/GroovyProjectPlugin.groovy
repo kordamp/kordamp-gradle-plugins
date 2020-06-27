@@ -34,6 +34,10 @@ import org.kordamp.gradle.plugin.project.java.JavaProjectPlugin
 class GroovyProjectPlugin extends AbstractKordampPlugin {
     Project project
 
+    GroovyProjectPlugin() {
+        super('org.kordamp.gradle.groovy-project')
+    }
+
     void apply(Project project) {
         this.project = project
 

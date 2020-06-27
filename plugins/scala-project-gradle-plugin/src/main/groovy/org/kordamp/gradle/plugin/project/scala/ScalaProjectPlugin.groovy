@@ -34,6 +34,10 @@ import org.kordamp.gradle.plugin.scaladoc.ScaladocPlugin
 class ScalaProjectPlugin extends AbstractKordampPlugin {
     Project project
 
+    ScalaProjectPlugin() {
+        super('org.kordamp.gradle.scala-project')
+    }
+
     void apply(Project project) {
         this.project = project
 

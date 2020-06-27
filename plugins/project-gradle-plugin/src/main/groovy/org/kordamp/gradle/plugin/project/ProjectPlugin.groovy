@@ -63,6 +63,10 @@ import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addPr
 class ProjectPlugin extends AbstractKordampPlugin {
     Project project
 
+    ProjectPlugin() {
+        super('org.kordamp.gradle.project')
+    }
+
     void apply(Project project) {
         this.project = project
 

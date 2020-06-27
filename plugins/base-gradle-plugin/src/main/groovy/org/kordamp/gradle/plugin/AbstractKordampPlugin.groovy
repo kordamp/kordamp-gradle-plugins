@@ -31,10 +31,6 @@ abstract class AbstractKordampPlugin implements KordampPlugin {
 
     private final String visitedKey
 
-    AbstractKordampPlugin() {
-        visitedKey = 'VISITED_' + this.class.name.replace('.', '_')
-    }
-
     AbstractKordampPlugin(String pluginId) {
         visitedKey = 'VISITED_' + pluginId.replace('.', '_')
     }

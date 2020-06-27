@@ -34,6 +34,10 @@ import org.kordamp.gradle.plugin.project.kotlin.tasks.KotlinCompilerSettingsTask
 class KotlinProjectPlugin extends AbstractKordampPlugin {
     Project project
 
+    KotlinProjectPlugin() {
+        super('org.kordamp.gradle.kotlin-project')
+    }
+
     void apply(Project project) {
         this.project = project
 

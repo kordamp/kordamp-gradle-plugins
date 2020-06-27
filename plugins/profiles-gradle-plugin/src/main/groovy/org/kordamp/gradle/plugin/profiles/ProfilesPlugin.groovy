@@ -32,6 +32,10 @@ import org.kordamp.gradle.plugin.profiles.tasks.DisplayActivationInfoTask
  */
 @CompileStatic
 class ProfilesPlugin extends AbstractKordampPlugin {
+    ProfilesPlugin() {
+        super('org.kordamp.gradle.profiles')
+    }
+
     void apply(Project project) {
         configureProject(project)
         project.childProjects.values().each {
