@@ -1762,7 +1762,7 @@ final class PropertyUtils {
             return ((PathAware) object).path
         } else if (object instanceof Task) {
             return ((Task) object).path
-        } else if (object.metaClass.respondsTo('getPath')) {
+        } else if (object?.metaClass?.respondsTo('getPath')) {
             return object.getPath()
         }
         return object ? object.class.name.replaceAll('.', ':') : ''
