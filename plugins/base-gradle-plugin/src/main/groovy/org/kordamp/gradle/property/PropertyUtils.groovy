@@ -1780,7 +1780,7 @@ final class PropertyUtils {
     }
 
     private static String toProperty(String key) {
-        key.toLowerCase().replace('_', '.')
+        key.uncapitalize().replace('_', '.')
     }
 
     // == Kordamp specific providers ==

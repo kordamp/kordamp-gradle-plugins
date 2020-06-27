@@ -27,9 +27,9 @@ import org.gradle.api.provider.Provider
  */
 @CompileStatic
 interface MapState {
-    MapProperty<String,String> getProperty()
+    MapProperty<String, String> getProperty()
 
-    Provider<Map<String,String>> getProvider()
+    Provider<Map<String, String>> getProvider()
 
-    Map<String,String> getValue()
+    Map<String, String> getValue()
 }
