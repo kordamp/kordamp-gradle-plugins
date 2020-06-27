@@ -61,9 +61,9 @@ class Cpd extends AbstractQualityFeature {
         map.language = this.language
         map.encoding = this.encoding
         map.minimumTokenCount = this.minimumTokenCount
-        map.ignoreLiterals = this.language
-        map.ignoreIdentifiers = this.language
-        map.ignoreAnnotations = this.language
+        map.ignoreLiterals = this.ignoreLiterals
+        map.ignoreIdentifiers = this.ignoreIdentifiers
+        map.ignoreAnnotations = this.ignoreAnnotations
     }
 
     @Override
