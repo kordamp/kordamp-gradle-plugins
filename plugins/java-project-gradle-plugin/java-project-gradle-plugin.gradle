@@ -22,4 +22,5 @@ dependencies {
     api project(':pmd-gradle-plugin')
     api project(':cpd-gradle-plugin')
     api project(':spotbugs-gradle-plugin')
+    api project(':errorprone-gradle-plugin')
 }

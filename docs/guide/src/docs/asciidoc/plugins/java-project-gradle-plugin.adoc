@@ -16,6 +16,7 @@ This plugin adds the following plugins to the classpath without applying them:
  * `<<_org_kordamp_gradle_checkstyle,org.kordamp.gradle.checkstyle>>`
  * `<<_org_kordamp_gradle_cpd,org.kordamp.gradle.cpd>>`
  * `<<_org_kordamp_gradle_pmd,org.kordamp.gradle.pmd>>`
+ * `<<_org_kordamp_gradle_errorprone,org.kordamp.gradle.errorprone>>`
  * `<<_org_kordamp_gradle_spotbugs,org.kordamp.gradle.spotbugs>>`
 
 [[_org_kordamp_gradle_java_project_extensions]]
