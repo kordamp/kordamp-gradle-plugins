@@ -15,40 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.property
+package org.kordamp.gradle.property.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.PropertyUtils.Order
 import org.kordamp.gradle.property.PropertyUtils.Path
+import org.kordamp.gradle.property.StringState
 
 import static java.util.Objects.requireNonNull
-import static org.kordamp.gradle.property.PropertyUtils.mapProvider
+import static org.kordamp.gradle.property.PropertyUtils.stringProvider
 
 /**
  * @author Andres Almiray
  * @since 0.37.0
  */
 @CompileStatic
-final class KordampMapState implements MapState {
-    final MapProperty<String, String> property
-    final Provider<Map<String, String>> provider
+final class KordampStringState implements StringState {
+    final Property<String> property
+    final Provider<String> provider
 
     private final Project project
 
     @Override
-    Map<String, String> getValue() {
-        mapProvider(project.providers, property, provider, Collections.<String, String> emptyMap()).get()
+    String getValue() {
+        stringProvider(project.providers, property, provider, '').get()
     }
 
-    KordampMapState(Project project, String key, Provider<Map> parent, Map<String, String> defaultValue) {
+    KordampStringState(Project project, String key, Provider<String> parent, String defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.mapProperty(String, String)
+        property = project.objects.property(String)
 
-        provider = mapProvider(
+        provider = stringProvider(
             key,
             property,
             parent,

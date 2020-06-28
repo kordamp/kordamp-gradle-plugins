@@ -15,40 +15,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.property
+package org.kordamp.gradle.property.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.gradle.api.provider.Property
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Provider
+import org.kordamp.gradle.property.DirectoryState
 import org.kordamp.gradle.property.PropertyUtils.Order
 import org.kordamp.gradle.property.PropertyUtils.Path
 
 import static java.util.Objects.requireNonNull
-import static org.kordamp.gradle.property.PropertyUtils.booleanProvider
+import static org.kordamp.gradle.property.PropertyUtils.directoryProvider
 
 /**
  * @author Andres Almiray
  * @since 0.37.0
  */
 @CompileStatic
-final class KordampBooleanState implements BooleanState {
-    final Property<Boolean> property
-    final Provider<Boolean> provider
+final class KordampDirectoryState implements DirectoryState {
+    final DirectoryProperty property
+    final Provider<Directory> provider
 
     private final Project project
 
     @Override
-    boolean getValue() {
-        booleanProvider(project.providers, property, provider, false).get()
+    Directory getValue() {
+        directoryProvider(project.providers, property, provider, null).get()
     }
 
-    KordampBooleanState(Project project, String key, Provider<Boolean> parent, boolean defaultValue) {
+    KordampDirectoryState(Project project, String key, Provider<Directory> parent, Directory defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.property(Boolean)
+        property = project.objects.directoryProperty()
 
-        provider = booleanProvider(
+        provider = directoryProvider(
             key,
             property,
             parent,

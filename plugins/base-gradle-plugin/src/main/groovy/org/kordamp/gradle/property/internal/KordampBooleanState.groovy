@@ -15,40 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.property
+package org.kordamp.gradle.property.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.SetProperty
+import org.kordamp.gradle.property.BooleanState
 import org.kordamp.gradle.property.PropertyUtils.Order
 import org.kordamp.gradle.property.PropertyUtils.Path
 
 import static java.util.Objects.requireNonNull
-import static org.kordamp.gradle.property.PropertyUtils.setProvider
+import static org.kordamp.gradle.property.PropertyUtils.booleanProvider
 
 /**
  * @author Andres Almiray
  * @since 0.37.0
  */
 @CompileStatic
-final class KordampSetState implements SetState {
-    final SetProperty<String> property
-    final Provider<Set<String>> provider
+final class KordampBooleanState implements BooleanState {
+    final Property<Boolean> property
+    final Provider<Boolean> provider
 
     private final Project project
 
     @Override
-    Set<String> getValue() {
-        setProvider(project.providers, property, provider, Collections.<String> emptySet()).get()
+    boolean getValue() {
+        booleanProvider(project.providers, property, provider, false).get()
     }
 
-    KordampSetState(Project project, String key, Provider<Set> parent, Set<String> defaultValue) {
+    KordampBooleanState(Project project, String key, Provider<Boolean> parent, boolean defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.setProperty(String)
+        property = project.objects.property(Boolean)
 
-        provider = setProvider(
+        provider = booleanProvider(
             key,
             property,
             parent,

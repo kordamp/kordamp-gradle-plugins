@@ -15,41 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.property
+package org.kordamp.gradle.property.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.kordamp.gradle.property.IntegerState
 import org.kordamp.gradle.property.PropertyUtils.Order
 import org.kordamp.gradle.property.PropertyUtils.Path
 
 import static java.util.Objects.requireNonNull
-import static org.kordamp.gradle.property.PropertyUtils.directoryProvider
+import static org.kordamp.gradle.property.PropertyUtils.integerProvider
 
 /**
  * @author Andres Almiray
  * @since 0.37.0
  */
 @CompileStatic
-final class KordampDirectoryState implements DirectoryState {
-    final DirectoryProperty property
-    final Provider<Directory> provider
+final class KordampIntegerState implements IntegerState {
+    final Property<Integer> property
+    final Provider<Integer> provider
 
     private final Project project
 
     @Override
-    Directory getValue() {
-        directoryProvider(project.providers, property, provider, null).get()
+    int getValue() {
+        integerProvider(project.providers, property, provider, 0).get()
     }
 
-    KordampDirectoryState(Project project, String key, Provider<Directory> parent, Directory defaultValue) {
+    KordampIntegerState(Project project, String key, Provider<Integer> parent, int defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.directoryProperty()
+        property = project.objects.property(Integer)
 
-        provider = directoryProvider(
+        provider = integerProvider(
             key,
             property,
             parent,

@@ -15,40 +15,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.property
+package org.kordamp.gradle.property.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.gradle.api.provider.Property
+import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.PropertyUtils.Order
 import org.kordamp.gradle.property.PropertyUtils.Path
+import org.kordamp.gradle.property.RegularFileState
 
 import static java.util.Objects.requireNonNull
-import static org.kordamp.gradle.property.PropertyUtils.integerProvider
+import static org.kordamp.gradle.property.PropertyUtils.fileProvider
 
 /**
  * @author Andres Almiray
  * @since 0.37.0
  */
 @CompileStatic
-final class KordampIntegerState implements IntegerState {
-    final Property<Integer> property
-    final Provider<Integer> provider
+final class KordampRegularFileState implements RegularFileState {
+    final RegularFileProperty property
+    final Provider<RegularFile> provider
 
     private final Project project
 
     @Override
-    int getValue() {
-        integerProvider(project.providers, property, provider, 0).get()
+    RegularFile getValue() {
+        fileProvider(project.providers, property, provider, null).get()
     }
 
-    KordampIntegerState(Project project, String key, Provider<Integer> parent, int defaultValue) {
+    KordampRegularFileState(Project project, String key, Provider<RegularFile> parent, RegularFile defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.property(Integer)
+        property = project.objects.fileProperty()
 
-        provider = integerProvider(
+        provider = fileProvider(
             key,
             property,
             parent,

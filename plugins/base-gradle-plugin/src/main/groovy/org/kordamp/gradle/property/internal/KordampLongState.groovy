@@ -15,41 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.property
+package org.kordamp.gradle.property.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.gradle.api.file.RegularFile
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.kordamp.gradle.property.LongState
 import org.kordamp.gradle.property.PropertyUtils.Order
 import org.kordamp.gradle.property.PropertyUtils.Path
 
 import static java.util.Objects.requireNonNull
-import static org.kordamp.gradle.property.PropertyUtils.fileProvider
+import static org.kordamp.gradle.property.PropertyUtils.longProvider
 
 /**
  * @author Andres Almiray
  * @since 0.37.0
  */
 @CompileStatic
-final class KordampRegularFileState implements RegularFileState {
-    final RegularFileProperty property
-    final Provider<RegularFile> provider
+final class KordampLongState implements LongState {
+    final Property<Long> property
+    final Provider<Long> provider
 
     private final Project project
 
     @Override
-    RegularFile getValue() {
-        fileProvider(project.providers, property, provider, null).get()
+    long getValue() {
+        longProvider(project.providers, property, provider, 0L).get()
     }
 
-    KordampRegularFileState(Project project, String key, Provider<RegularFile> parent, RegularFile defaultValue) {
+    KordampLongState(Project project, String key, Provider<Long> parent, long defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.fileProperty()
+        property = project.objects.property(Long)
 
-        provider = fileProvider(
+        provider = longProvider(
             key,
             property,
             parent,

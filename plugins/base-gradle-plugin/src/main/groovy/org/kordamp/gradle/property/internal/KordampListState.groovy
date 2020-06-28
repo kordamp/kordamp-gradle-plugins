@@ -15,40 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.property
+package org.kordamp.gradle.property.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.gradle.api.provider.Property
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
+import org.kordamp.gradle.property.ListState
 import org.kordamp.gradle.property.PropertyUtils.Order
 import org.kordamp.gradle.property.PropertyUtils.Path
 
 import static java.util.Objects.requireNonNull
-import static org.kordamp.gradle.property.PropertyUtils.stringProvider
+import static org.kordamp.gradle.property.PropertyUtils.listProvider
 
 /**
  * @author Andres Almiray
  * @since 0.37.0
  */
 @CompileStatic
-final class KordampStringState implements StringState {
-    final Property<String> property
-    final Provider<String> provider
+final class KordampListState implements ListState {
+    final ListProperty<String> property
+    final Provider<List<String>> provider
 
     private final Project project
 
     @Override
-    String getValue() {
-        stringProvider(project.providers, property, provider, '').get()
+    List<String> getValue() {
+        listProvider(project.providers, property, provider, Collections.<String> emptyList()).get()
     }
 
-    KordampStringState(Project project, String key, Provider<String> parent, String defaultValue) {
+    KordampListState(Project project, String key, Provider<List> parent, List<String> defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.property(String)
+        property = project.objects.listProperty(String)
 
-        provider = stringProvider(
+        provider = listProvider(
             key,
             property,
             parent,
