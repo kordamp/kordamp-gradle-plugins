@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.39.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/0.39.0) (2020-06-28)
+
+[Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/0.38.0...0.39.0)
+
+**Implemented enhancements:**
+
+- \[Plugin\] Conditionally disable plugin-marker publication [\#117](https://github.com/kordamp/kordamp-gradle-plugins/issues/117)
+- \[Inline\] Support adapting plugin properties [\#346](https://github.com/kordamp/kordamp-gradle-plugins/issues/346)
+- \[Inline\] Support invocation of inline plugins [\#344](https://github.com/kordamp/kordamp-gradle-plugins/issues/344)
+
+**Fixed bugs:**
+
+- \[Plugin\] Do not enhance pluginMarker publication [\#355](https://github.com/kordamp/kordamp-gradle-plugins/issues/355)
+- \[Javadoc\] JavadocJar is not published with main publication [\#354](https://github.com/kordamp/kordamp-gradle-plugins/issues/354)
+- \[Bom\] Publication should not include -sources nor -javadoc artifacts [\#353](https://github.com/kordamp/kordamp-gradle-plugins/issues/353)
+- \[Base\] buildInfo section is not visible [\#352](https://github.com/kordamp/kordamp-gradle-plugins/issues/352)
+- \[Bom\] Typos found in map output [\#351](https://github.com/kordamp/kordamp-gradle-plugins/issues/351)
+- \[Cpd\] Typos found in map output [\#350](https://github.com/kordamp/kordamp-gradle-plugins/issues/350)
+- \[Base\] NPE in PropertyUtils.resolvePath when argument is null [\#349](https://github.com/kordamp/kordamp-gradle-plugins/issues/349)
+- \[Base\] AbstactReportingTask prints out empty values when it shouldn't [\#348](https://github.com/kordamp/kordamp-gradle-plugins/issues/348)
+- \[Base\] PropertyUtils.toProperty does not honor case [\#347](https://github.com/kordamp/kordamp-gradle-plugins/issues/347)
+- \[Plugin\] Cannot handle multiple plugin identifiers [\#151](https://github.com/kordamp/kordamp-gradle-plugins/issues/151)
+
+**Closed issues:**
+
+- \[Plugin\] Unclear gradle-plugin attribute settings for Bintray [\#164](https://github.com/kordamp/kordamp-gradle-plugins/issues/164)
+
 ## [0.38.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/0.38.0) (2020-06-07)
 
 [Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/0.37.1...0.38.0)
@@ -12,7 +39,7 @@
 
 - \[Base\] NPE in EffectiveSettingsTask when querying for an invisible section [\#339](https://github.com/kordamp/kordamp-gradle-plugins/issues/339)
 - \[Jacoco\] Integration, Functional, and aggregate reports don't have any classes [\#337](https://github.com/kordamp/kordamp-gradle-plugins/issues/337)
-- \[Base\] Testing plugin shows as disable even if there are tests [\#336](https://github.com/kordamp/kordamp-gradle-plugins/issues/336)
+- \[Base\] Testing plugin shows as disabled even if there are tests [\#336](https://github.com/kordamp/kordamp-gradle-plugins/issues/336)
 - \[Sonar\] Sonarcloud reports 0% coverage even though local reports have coverage [\#335](https://github.com/kordamp/kordamp-gradle-plugins/issues/335)
 
 **Closed issues:**
@@ -432,7 +459,6 @@
 
 - Fixed a minor typo [\#138](https://github.com/kordamp/kordamp-gradle-plugins/pull/138) ([tlinkowski](https://github.com/tlinkowski))
 - \[base\] Fixed org.kordamp.gradle.plugin.base.plugins.Plugin.merge [\#133](https://github.com/kordamp/kordamp-gradle-plugins/pull/133) ([tlinkowski](https://github.com/tlinkowski))
-- Add lines setting root project name in sample settings.gradle\(.kts\) [\#89](https://github.com/kordamp/kordamp-gradle-plugins/pull/89) ([tlinkowski](https://github.com/tlinkowski))
 
 ## [0.22.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/0.22.0) (2019-06-15)
 
@@ -547,6 +573,10 @@
 **Closed issues:**
 
 - Feature request: support for creating Gradle SuperPOM [\#96](https://github.com/kordamp/kordamp-gradle-plugins/issues/96)
+
+**Merged pull requests:**
+
+- Add lines setting root project name in sample settings.gradle\(.kts\) [\#89](https://github.com/kordamp/kordamp-gradle-plugins/pull/89) ([tlinkowski](https://github.com/tlinkowski))
 
 ## [0.15.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/0.15.0) (2019-03-11)
 
