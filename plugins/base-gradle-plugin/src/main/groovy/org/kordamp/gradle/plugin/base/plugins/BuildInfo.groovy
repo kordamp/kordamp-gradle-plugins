@@ -72,6 +72,13 @@ class BuildInfo extends AbstractFeature {
     }
 
     @Override
+    protected void normalizeVisible() {
+        if (isRoot()) {
+            setVisible(isApplied())
+        }
+    }
+
+    @Override
     Map<String, Map<String, Object>> toMap() {
         if (!isRoot()) return [:]
 

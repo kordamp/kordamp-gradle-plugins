@@ -36,10 +36,12 @@ abstract class AbstractFeature implements Feature {
 
     protected final ProjectConfigurationExtension config
     protected final Project project
+    protected final String pluginId
 
     AbstractFeature(ProjectConfigurationExtension config, Project project, String pluginId) {
         this.config = config
         this.project = project
+        this.pluginId = pluginId
         doSetEnabled(project.plugins.findPlugin(pluginId) != null)
     }
 
@@ -61,13 +63,7 @@ abstract class AbstractFeature implements Feature {
     }
 
     static void merge(AbstractFeature o1, AbstractFeature o2) {
-        if (!o1.enabledSet) {
-            if (o2.enabledSet) {
-                o1.setEnabled(o2.enabled)
-            } else {
-                o1.@enabled = o2.enabled
-            }
-        }
+        o1.@enabled = (boolean) (o1.enabledSet ? o1.enabled : o2.enabled)
     }
 
     @CompileDynamic
@@ -78,7 +74,7 @@ abstract class AbstractFeature implements Feature {
     @CompileDynamic
     protected boolean isApplied(Project project) {
         ExtraPropertiesExtension ext = project.extensions.findByType(ExtraPropertiesExtension)
-        ext.has('VISITED_' + getClass().PLUGIN_ID.replace('.', '_') + '_' + project.path.replace(':', '#'))
+        return ext.has('VISITED_' + pluginId.replace('.', '_') + '_' + project.path.replace(':', '#'))
     }
 
     void normalize() {
