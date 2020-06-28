@@ -146,6 +146,8 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                     })
             }
         }
+
+        updatePublications(project)
     }
 
     private void configureProject(Project project) {
@@ -220,7 +222,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
             resolvedClassifier += '-' + formatName
         }
 
-        TaskProvider<Jar> kotlindocJar = project.tasks.register(taskName, Jar,
+        project.tasks.register(taskName, Jar,
             new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
@@ -233,32 +235,47 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                     t.onlyIf { kotlindoc.get().enabled }
                 }
             })
+    }
 
-        if (config.docs.kotlindoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
-            PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
-            MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (mainPublication) {
-                if (config.docs.kotlindoc.replaceJavadoc) {
-                    MavenArtifact javadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
-                    if (javadocJar) mainPublication.artifacts.remove(javadocJar)
-                    if (config.docs.kotlindoc.outputFormats.indexOf(format) == 0) {
-                        kotlindocJar.configure(new Action<Jar>() {
-                            @Override
-                            void execute(Jar t) {
-                                t.archiveClassifier.set('javadoc')
+    private void updatePublications(Project project) {
+        updatePublication(project)
+        for (Project p : project.childProjects.values()) {
+            updatePublications(p)
+        }
+    }
+
+    private void updatePublication(Project project) {
+        ProjectConfigurationExtension config = resolveConfig(project)
+        for (String format : config.docs.kotlindoc.outputFormats) {
+            String formatName = format == 'html-as-java' ? 'htmljava' : format
+            String taskName = KOTLINDOC_BASENAME + StringUtils.capitalize(formatName) + 'Jar'
+            if (project.tasks.findByName(taskName)) {
+                TaskProvider<Jar> kotlindocJar = project.tasks.named(taskName, Jar)
+                if (config.docs.kotlindoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
+                    PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
+                    MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
+                    if (mainPublication) {
+                        if (config.docs.kotlindoc.replaceJavadoc) {
+                            MavenArtifact javadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
+                            if (javadocJar) mainPublication.artifacts.remove(javadocJar)
+                            if (config.docs.kotlindoc.outputFormats.indexOf(format) == 0) {
+                                kotlindocJar.configure(new Action<Jar>() {
+                                    @Override
+                                    void execute(Jar t) {
+                                        t.archiveClassifier.set('javadoc')
+                                    }
+                                })
+                                project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
+                                project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
                             }
-                        })
-                        project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
-                        project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
+                            mainPublication.artifact(kotlindocJar.get())
+                        }
                     }
-                    mainPublication.artifact(kotlindocJar.get())
+
+                    registerJarVariant('Kotlindoc (' + format + ')', ' kotlindoc ', kotlindocJar, project)
                 }
             }
-
-            registerJarVariant('Kotlindoc (' + format + ')', ' kotlindoc ', kotlindocJar, project)
         }
-
-        kotlindocJar
     }
 
     private void createAggregateTasks(Project project) {

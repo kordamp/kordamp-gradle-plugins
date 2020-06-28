@@ -634,18 +634,6 @@ class ProjectConfigurationExtension {
             o1
         }
 
-        Quality postMerge() {
-            checkstyle.postMerge()
-            codenarc.postMerge()
-            detekt.postMerge()
-            errorprone.postMerge()
-            pmd.postMerge()
-            cpd.postMerge()
-            sonar.postMerge()
-            spotbugs.postMerge()
-            this
-        }
-
         List<String> validate(ProjectConfigurationExtension extension) {
             List<String> errors = []
 
@@ -663,6 +651,18 @@ class ProjectConfigurationExtension {
             cpd.normalize()
             sonar.normalize()
             spotbugs.normalize()
+            this
+        }
+
+        Quality postMerge() {
+            checkstyle.postMerge()
+            codenarc.postMerge()
+            detekt.postMerge()
+            errorprone.postMerge()
+            pmd.postMerge()
+            cpd.postMerge()
+            sonar.postMerge()
+            spotbugs.postMerge()
             this
         }
     }
@@ -832,17 +832,6 @@ class ProjectConfigurationExtension {
             o1
         }
 
-        Docs postMerge() {
-            guide.postMerge()
-            groovydoc.postMerge()
-            kotlindoc.postMerge()
-            javadoc.postMerge()
-            scaladoc.postMerge()
-            sourceHtml.postMerge()
-            sourceXref.postMerge()
-            this
-        }
-
         Docs normalize() {
             guide.normalize()
             groovydoc.normalize()
@@ -851,6 +840,17 @@ class ProjectConfigurationExtension {
             scaladoc.normalize()
             sourceHtml.normalize()
             sourceXref.normalize()
+            this
+        }
+
+        Docs postMerge() {
+            guide.postMerge()
+            groovydoc.postMerge()
+            kotlindoc.postMerge()
+            javadoc.postMerge()
+            scaladoc.postMerge()
+            sourceHtml.postMerge()
+            sourceXref.postMerge()
             this
         }
 

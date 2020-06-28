@@ -131,6 +131,8 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                     }
                 })
         }
+
+        updatePublications(project)
     }
 
     private void configureProject(Project project) {
@@ -197,7 +199,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
     private TaskProvider<Jar> createGroovydocJarTask(Project project, TaskProvider<Groovydoc> groovydoc) {
         ProjectConfigurationExtension config = resolveConfig(project)
 
-        TaskProvider<Jar> groovydocJar = project.tasks.register(GROOVYDOC_JAR_TASK_NAME, Jar,
+        project.tasks.register(GROOVYDOC_JAR_TASK_NAME, Jar,
             new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
@@ -210,25 +212,36 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                     t.onlyIf { groovydoc.get().enabled }
                 }
             })
+    }
 
-        if (config.docs.groovydoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
-            PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
-            MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (mainPublication) {
-                if (config.docs.groovydoc.replaceJavadoc) {
-                    MavenArtifact javadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
-                    if (javadocJar) mainPublication.artifacts.remove(javadocJar)
-
-                    project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
-                    project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
-                }
-                mainPublication.artifact(groovydocJar.get())
-            }
-
-            registerJarVariant('Groovydoc', config.docs.groovydoc.replaceJavadoc ? 'javadoc' : 'groovydoc', groovydocJar, project)
+    private void updatePublications(Project project) {
+        updatePublication(project)
+        for (Project p : project.childProjects.values()) {
+            updatePublications(p)
         }
+    }
 
-        groovydocJar
+    private void updatePublication(Project project) {
+        if (project.tasks.findByName(GROOVYDOC_JAR_TASK_NAME)) {
+            TaskProvider<Jar> groovydocJar = project.tasks.named(GROOVYDOC_JAR_TASK_NAME, Jar)
+            ProjectConfigurationExtension config = resolveConfig(project)
+            if (config.docs.groovydoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
+                PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
+                MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
+                if (mainPublication) {
+                    if (config.docs.groovydoc.replaceJavadoc) {
+                        MavenArtifact javadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
+                        if (javadocJar) mainPublication.artifacts.remove(javadocJar)
+
+                        project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
+                        project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
+                    }
+                    mainPublication.artifact(groovydocJar.get())
+                }
+
+                registerJarVariant('Groovydoc', config.docs.groovydoc.replaceJavadoc ? 'javadoc' : 'groovydoc', groovydocJar, project)
+            }
+        }
     }
 
     private void createAggregateTasks(Project project) {

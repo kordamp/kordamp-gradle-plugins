@@ -130,6 +130,8 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     }
                 })
         }
+
+        updatePublications(project)
     }
 
     private void configureProject(Project project) {
@@ -228,7 +230,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
     private TaskProvider<Jar> createJavadocJarTask(Project project, TaskProvider<Javadoc> javadoc) {
         ProjectConfigurationExtension config = resolveConfig(project)
 
-        TaskProvider<Jar> javadocJar = project.tasks.register(JAVADOC_JAR_TASK_NAME, Jar,
+        project.tasks.register(JAVADOC_JAR_TASK_NAME, Jar,
             new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
@@ -241,20 +243,31 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     t.onlyIf { javadoc.get().enabled }
                 }
             })
+    }
 
-        if (config.docs.javadoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
-            PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
-            MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (mainPublication) {
-                MavenArtifact oldJavadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
-                if (oldJavadocJar) mainPublication.artifacts.remove(oldJavadocJar)
-                mainPublication.artifact(javadocJar.get())
-            }
-
-            registerJarVariant('Javadoc', 'javadoc', javadocJar, project)
+    private void updatePublications(Project project) {
+        updatePublication(project)
+        for (Project p : project.childProjects.values()) {
+            updatePublications(p)
         }
+    }
 
-        javadocJar
+    private void updatePublication(Project project) {
+        if (project.tasks.findByName(JAVADOC_JAR_TASK_NAME)) {
+            TaskProvider<Jar> javadocJar = project.tasks.named(JAVADOC_JAR_TASK_NAME, Jar)
+            ProjectConfigurationExtension config = resolveConfig(project)
+            if (config.docs.javadoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
+                PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
+                MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
+                if (mainPublication) {
+                    MavenArtifact oldJavadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
+                    if (oldJavadocJar) mainPublication.artifacts.remove(oldJavadocJar)
+                    mainPublication.artifact(javadocJar.get())
+                }
+
+                registerJarVariant('Javadoc', 'javadoc', javadocJar, project)
+            }
+        }
     }
 
     private void createAggregateTasks(Project project) {

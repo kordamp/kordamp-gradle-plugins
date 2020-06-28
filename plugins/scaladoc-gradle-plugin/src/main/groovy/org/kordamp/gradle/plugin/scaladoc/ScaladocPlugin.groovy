@@ -129,6 +129,8 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                     }
                 })
         }
+
+        updatePublications(project)
     }
 
     private void configureProject(Project project) {
@@ -188,7 +190,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
     private TaskProvider<Jar> createScaladocJarTask(Project project, TaskProvider<ScalaDoc> scaladoc) {
         ProjectConfigurationExtension config = resolveConfig(project)
 
-        TaskProvider<Jar> scaladocJarTask = project.tasks.register(SCALADOC_JAR_TASK_NAME, Jar,
+        project.tasks.register(SCALADOC_JAR_TASK_NAME, Jar,
             new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
@@ -201,25 +203,36 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                     t.onlyIf { scaladoc.get().enabled }
                 }
             })
+    }
 
-        if (config.docs.scaladoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
-            PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
-            MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-            if (mainPublication) {
-                if (config.docs.scaladoc.replaceJavadoc) {
-                    MavenArtifact javadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
-                    if (javadocJar) mainPublication.artifacts.remove(javadocJar)
-
-                    project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
-                    project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
-                }
-                mainPublication.artifact(scaladocJarTask.get())
-            }
-
-            registerJarVariant('Scaladoc', config.docs.scaladoc.replaceJavadoc ? 'javadoc' : 'scaladoc', scaladocJarTask, project)
+    private void updatePublications(Project project) {
+        updatePublication(project)
+        for (Project p : project.childProjects.values()) {
+            updatePublications(p)
         }
+    }
 
-        scaladocJarTask
+    private void updatePublication(Project project) {
+        if (project.tasks.findByName(SCALADOC_JAR_TASK_NAME)) {
+            TaskProvider<Jar> scaladocJarTask = project.tasks.named(SCALADOC_JAR_TASK_NAME, Jar)
+            ProjectConfigurationExtension config = resolveConfig(project)
+            if (config.docs.scaladoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
+                PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
+                MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
+                if (mainPublication) {
+                    if (config.docs.scaladoc.replaceJavadoc) {
+                        MavenArtifact javadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
+                        if (javadocJar) mainPublication.artifacts.remove(javadocJar)
+
+                        project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
+                        project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
+                    }
+                    mainPublication.artifact(scaladocJarTask.get())
+                }
+
+                registerJarVariant('Scaladoc', config.docs.scaladoc.replaceJavadoc ? 'javadoc' : 'scaladoc', scaladocJarTask, project)
+            }
+        }
     }
 
     private void createAggregateTasks(Project project) {
