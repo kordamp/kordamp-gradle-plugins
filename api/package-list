@@ -26,10 +26,14 @@ org.kordamp.gradle.plugin.coveralls
 org.kordamp.gradle.plugin.cpd
 org.kordamp.gradle.plugin.cpd.internal
 org.kordamp.gradle.plugin.detekt
+org.kordamp.gradle.plugin.echo
+org.kordamp.gradle.plugin.echo.tasks
 org.kordamp.gradle.plugin.errorprone
 org.kordamp.gradle.plugin.functionaltest
 org.kordamp.gradle.plugin.groovydoc
 org.kordamp.gradle.plugin.guide
+org.kordamp.gradle.plugin.inline
+org.kordamp.gradle.plugin.inline.adapters
 org.kordamp.gradle.plugin.integrationtest
 org.kordamp.gradle.plugin.jacoco
 org.kordamp.gradle.plugin.jar
@@ -71,4 +75,5 @@ org.kordamp.gradle.plugin.stats.counter
 org.kordamp.gradle.plugin.test.tasks
 org.kordamp.gradle.plugin.testing
 org.kordamp.gradle.property
+org.kordamp.gradle.property.internal
 org.kordamp.gradle.util
