@@ -168,14 +168,6 @@ class PluginPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void updatePluginPublication(Project project, ProjectConfigurationExtension config, String pluginName) {
-        project.publishing {
-            publications {
-                "${pluginName}PluginMarkerMaven"(MavenPublication) {
-                    PublishingUtils.configurePom(pom, config, config.publishing.pom)
-                }
-            }
-        }
-
         PublishingUtils.configureSigning(config, project, pluginName + 'PluginMarkerMaven')
     }
 
