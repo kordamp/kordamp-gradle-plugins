@@ -47,9 +47,7 @@ class Licensing extends AbstractFeature {
 
     @Override
     protected void normalizeEnabled() {
-        if (!enabledSet) {
-            setEnabled(isApplied())
-        }
+        // empty. Must be explicitly enabled
     }
 
     @Override
