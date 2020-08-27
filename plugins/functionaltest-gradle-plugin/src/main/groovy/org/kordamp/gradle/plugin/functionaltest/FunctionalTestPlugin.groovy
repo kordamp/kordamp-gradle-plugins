@@ -99,8 +99,6 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
     }
 
     private void adjustSourceSets(Project project) {
-        SourceSet sourceSet = resolveSourceSets(project).functionalTest
-
         ProjectConfigurationExtension config = resolveConfig(project)
         String sourceSetDir = config.testing.functional.baseDir
         project.pluginManager.withPlugin('java-base') {
@@ -119,6 +117,7 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
             adjustSourceSet(project, sourceSetDir, 'scala')
         }
 
+        SourceSet sourceSet = resolveSourceSets(project).functionalTest
         sourceSet.compileClasspath += resolveSourceSets(project).main.output
         sourceSet.compileClasspath += project.configurations.compileClasspath
         sourceSet.runtimeClasspath += sourceSet.compileClasspath
@@ -154,7 +153,6 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
         functionalTest.mustRunAfter project.tasks.findByName('test')
         functionalTest.finalizedBy functionalTestReport
         functionalTestReport.reportOn functionalTest.binResultsDir
-        functionalTestReport.dependsOn functionalTest
         project.tasks.findByName('check').dependsOn functionalTestReport
     }
 

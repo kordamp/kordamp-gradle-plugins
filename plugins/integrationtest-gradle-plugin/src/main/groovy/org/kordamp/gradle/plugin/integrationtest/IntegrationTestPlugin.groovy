@@ -99,8 +99,6 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
     }
 
     private void adjustSourceSets(Project project) {
-        SourceSet sourceSet = resolveSourceSets(project).integrationTest
-
         ProjectConfigurationExtension config = resolveConfig(project)
         String sourceSetDir = config.testing.integration.baseDir
         project.pluginManager.withPlugin('java-base') {
@@ -119,6 +117,7 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
             adjustSourceSet(project, sourceSetDir, 'scala')
         }
 
+        SourceSet sourceSet = resolveSourceSets(project).integrationTest
         sourceSet.compileClasspath += resolveSourceSets(project).main.output
         sourceSet.compileClasspath += project.configurations.compileClasspath
         sourceSet.compileClasspath += project.configurations.testCompileClasspath
@@ -156,7 +155,6 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
         integrationTest.mustRunAfter project.tasks.findByName('test')
         integrationTest.finalizedBy integrationTestReport
         integrationTestReport.reportOn integrationTest.binResultsDir
-        integrationTestReport.dependsOn integrationTest
         project.tasks.findByName('check').dependsOn integrationTestReport
     }
 
