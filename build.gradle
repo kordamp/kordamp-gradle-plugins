@@ -68,10 +68,12 @@ projects.subprojects {
 
             bintray { enabled = true }
 
-            plugin {
-                enabled             = true
-                id                  = pluginId
-                implementationClass = pluginImplementationClass
+            plugins {
+                plugin {
+                    name                = project.name - '-gradle-plugin'
+                    id                  = project.pluginId
+                    implementationClass = project.pluginImplementationClass
+                }
             }
         }
 
