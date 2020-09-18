@@ -26,7 +26,7 @@ configurations {
 dependencies {
     api project(':base-gradle-plugin')
     uberjar 'net.sf.clirr:clirr-core:0.6.2-uber'
-    api 'org.yaml:snakeyaml:1.26'
+    api "org.yaml:snakeyaml:$snakeYamlVersion"
 }
 
 sourceSets {

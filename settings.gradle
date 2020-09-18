@@ -123,6 +123,7 @@ enforce {
             "org.ow2.asm:asm-tree:$asmVersion",
             "org.ow2.asm:asm-analysis:$asmVersion",
             "com.google.guava:guava:$guavaVersion",
+            "org.yaml:snakeyaml:$snakeYamlVersion",
             'com.google.code.gson:gson:2.8.5',
             'com.google.code.findbugs:jsr305:3.0.2',
             'org.bouncycastle:bcprov-jdk15on:1.64',
