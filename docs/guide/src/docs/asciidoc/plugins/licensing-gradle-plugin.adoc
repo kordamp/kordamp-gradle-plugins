@@ -225,3 +225,22 @@ Checks the license header of all Gradle build files (Groovy/Kotlin).
 Name:: licenseFormatGradle
 Type:: `com.hierynomus.gradle.license.tasks.LicenseFormat`
 
+[[task_license_format_maven]]
+=== LicenseFormatMaven
+
+Formats all Maven build files (`pom.xml`).
+
+[horizontal]
+Name:: licenseFormatMaven
+Type:: `com.hierynomus.gradle.license.tasks.LicenseCheck`
+
+[[task_license_maven]]
+=== LicenseMaven
+
+Checks the license header of all Maven build files (`pom.xml`).
+
+[horizontal]
+Name:: licenseFormatMaven
+Type:: `com.hierynomus.gradle.license.tasks.LicenseFormat`
+
+

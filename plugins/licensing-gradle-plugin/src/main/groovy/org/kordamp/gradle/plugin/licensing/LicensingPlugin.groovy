@@ -180,6 +180,8 @@ class LicensingPlugin extends AbstractKordampPlugin {
                     include('**/*.gradle')
                     include('**/*.gradle.kts')
                     include('gradle.properties')
+                    include('gradle.yml')
+                    include('gradle.toml')
                     exclude('build/**/*.gradle')
                     exclude('build/**/*.gradle.kts')
                 }
@@ -196,12 +198,38 @@ class LicensingPlugin extends AbstractKordampPlugin {
                     include('**/*.gradle')
                     include('**/*.gradle.kts')
                     include('gradle.properties')
+                    include('gradle.yml')
+                    include('gradle.toml')
                     exclude('build/**/*.gradle')
                     exclude('build/**/*.gradle.kts')
                 }
             }
         })
         project.tasks.findByName('licenseFormat').dependsOn(licenseFormatGradle)
+
+        TaskProvider<LicenseCheck> licenseMaven = project.tasks.register('licenseMaven', LicenseCheck, new Action<LicenseCheck>() {
+            @Override
+            @CompileDynamic
+            void execute(LicenseCheck t) {
+                t.description = 'Scanning license on Maven files'
+                t.source = project.fileTree(project.projectDir) {
+                    include('**/pom.xml')
+                }
+            }
+        })
+        project.tasks.findByName('license').dependsOn(licenseMaven)
+
+        TaskProvider<LicenseFormat> licenseFormatMaven = project.tasks.register('licenseFormatMaven', LicenseFormat, new Action<LicenseFormat>() {
+            @Override
+            @CompileDynamic
+            void execute(LicenseFormat t) {
+                t.description = 'Scanning license on Maven files'
+                t.source = project.fileTree(project.projectDir) {
+                    include('**/pom.xml')
+                }
+            }
+        })
+        project.tasks.findByName('licenseFormat').dependsOn(licenseFormatMaven)
     }
 
     private void configureRootProject(Project project) {
