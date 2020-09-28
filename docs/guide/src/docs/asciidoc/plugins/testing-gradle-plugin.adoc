@@ -8,6 +8,7 @@ class:: `org.kordamp.gradle.plugin.testing.TestingPlugin`
     (link:api/org/kordamp/gradle/plugin/testing/TestingPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/testing/TestingPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+applied by:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
 
 Configures test reports.
 

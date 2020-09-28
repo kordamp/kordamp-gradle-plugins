@@ -9,6 +9,7 @@ class:: `org.kordamp.gradle.plugin.coveralls.CoverallsPlugin`
      link:api-html/org/kordamp/gradle/plugin/coveralls/CoverallsPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `link:https://github.com/kt3k/coveralls-gradle-plugin[com.github.kt3k.coveralls]`
+applied by:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
 
 Configures Coveralls on the root project.
 

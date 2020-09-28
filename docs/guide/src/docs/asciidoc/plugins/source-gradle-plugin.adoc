@@ -8,6 +8,8 @@ class:: `org.kordamp.gradle.plugin.source.SourceJarPlugin`
     (link:api/org/kordamp/gradle/plugin/source/SourceJarPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/source/SourceJarPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+applied by:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>` +
+`<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>`
 
 Packages the project's source code into a single JAR file.
 

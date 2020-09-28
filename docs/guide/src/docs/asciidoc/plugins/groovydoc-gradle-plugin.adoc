@@ -9,6 +9,7 @@ class:: `org.kordamp.gradle.plugin.groovydoc.GroovydocPlugin`
      link:api-html/org/kordamp/gradle/plugin/groovydoc/GroovydocPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `link:https://docs.gradle.org/current/userguide/groovy_plugin.html[groovy]`
+applied by:: `<<_org_kordamp_gradle_groovy_project,org.kordamp.gradle.groovy-project>>`
 
 Generates and packages Groovydoc documentation.
 

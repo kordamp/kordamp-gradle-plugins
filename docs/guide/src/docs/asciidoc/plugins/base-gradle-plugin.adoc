@@ -7,6 +7,38 @@ id:: `org.kordamp.gradle.base`
 class:: `org.kordamp.gradle.plugin.base.BasePlugin`
     (link:api/org/kordamp/gradle/plugin/base/BasePlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/base/BasePlugin.html[source])
+applied by:: `<<_org_kordamp_gradle_bintray,org.kordamp.gradle.bintray>>`, +
+`<<_org_kordamp_gradle_bom,org.kordamp.gradle.bom>>`, +
+`<<_org_kordamp_gradle_buildinfo,org.kordamp.gradle.build-info>>`, +
+`<<_org_kordamp_gradle_checkstyle,org.kordamp.gradle.chekcstyle>>`, +
+`<<_org_kordamp_gradle_clirr,org.kordamp.gradle.clirr>>`, +
+`<<_org_kordamp_gradle_codenarc,org.kordamp.gradle.codenarc>>`, +
+`<<_org_kordamp_gradle_coveralls,org.kordamp.gradle.coveralls>>`, +
+`<<_org_kordamp_gradle_cpd,org.kordamp.gradle.cpd>>`, +
+`<<_org_kordamp_gradle_detekt,org.kordamp.gradle.detekt>>`, +
+`<<_org_kordamp_gradle_errorprone,org.kordamp.gradle.errorprone>>`, +
+`<<_org_kordamp_gradle_functionaltest,org.kordamp.gradle.functional-test>>`, +
+`<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>`, +
+`<<_org_kordamp_gradle_guide,org.kordamp.gradle.guide>>`, +
+`<<_org_kordamp_gradle_integrationtest,org.kordamp.gradle.integration-test>>`, +
+`<<_org_kordamp_gradle_jacoco,org.kordamp.gradle.jacoco>>`, +
+`<<_org_kordamp_gradle_jar,org.kordamp.gradle.jar>>`, +
+`<<_org_kordamp_gradle_javadoc,org.kordamp.gradle.javadoc>>`, +
+`<<_org_kordamp_gradle_kotlindoc,org.kordamp.gradle.kotlindoc>>`, +
+`<<_org_kordamp_gradle_licensing,org.kordamp.gradle.licensing>>`, +
+`<<_org_kordamp_gradle_minpom,org.kordamp.gradle.minpom>>`, +
+`<<_org_kordamp_gradle_plugins,org.kordamp.gradle.plugin>>`, +
+`<<_org_kordamp_gradle_pmd,org.kordamp.gradle.pmd>>`, +
+`<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`, +
+`<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>`, +
+`<<_org_kordamp_gradle_scaladoc,org.kordamp.gradle.scaladoc>>`, +
+`<<_org_kordamp_gradle_sonar,org.kordamp.gradle.sonar>>`, +
+`<<_org_kordamp_gradle_source,org.kordamp.gradle.source-jar>>`, +
+`<<_org_kordamp_gradle_sourcehtml,org.kordamp.gradle.source-html>>`, +
+`<<_org_kordamp_gradle_sourcexref,org.kordamp.gradle.source-xref>>`, +
+`<<_org_kordamp_gradle_sourcestats,org.kordamp.gradle.source-stats>>`, +
+`<<_org_kordamp_gradle_spotbugs,org.kordamp.gradle.spotbugs>>`, +
+`<<_org_kordamp_gradle_testing,org.kordamp.gradle.testing>>`
 
 Enables the configuration DSL. Settings made via this DSL are consumed by multiple plugins.
 

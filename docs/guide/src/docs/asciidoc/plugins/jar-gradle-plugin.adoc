@@ -10,6 +10,8 @@ class:: `org.kordamp.gradle.plugin.jar.JarPlugin`
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `<<_org_kordamp_gradle_buildinfo,org.kordamp.gradle.build-info>>`, +
 `<<_org_kordamp_gradle_minpom,org.kordamp.gradle.minpom>>`
+applied by:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>` +
+`<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>`
 
 Configures additional Manifest entries and files in the `META-INF` directory.
 

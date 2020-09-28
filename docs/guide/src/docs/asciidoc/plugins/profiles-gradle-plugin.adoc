@@ -7,6 +7,7 @@ id:: `org.kordamp.gradle.profiles`
 class:: `org.kordamp.gradle.plugin.profiles.ProfilesPlugin`
     (link:api/org/kordamp/gradle/plugin/profiles/ProfilesPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/profiles/ProfilesPlugin.html[source])
+applied by:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
 
 Provides conditional configuration blocks, similar to Apache Maven's {link_maven_profiles}. Configuration
 blocks are applied immediately when their activation condition is met.

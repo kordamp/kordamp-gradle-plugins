@@ -8,6 +8,7 @@ class:: `org.kordamp.gradle.plugin.sourcexref.SourceXrefPlugin`
     (link:api/org/kordamp/gradle/plugin/sourcexref/SourceXrefPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/sourcexref/SourceXrefPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+applied by:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
 
 Converts source code into HTML with syntax highlighting using the
 link:https://maven.apache.org/jxr/index.html[Maven JXR] project.

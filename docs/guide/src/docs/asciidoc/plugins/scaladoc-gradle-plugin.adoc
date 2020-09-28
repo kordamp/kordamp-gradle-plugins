@@ -8,6 +8,7 @@ class:: `org.kordamp.gradle.plugin.scaladoc.ScaladocPlugin`
     (link:api/org/kordamp/gradle/plugin/scaladoc/ScaladocPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/scaladoc/ScaladocPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+applied by:: `<<_org_kordamp_gradle_scala_project,org.kordamp.gradle.scala-project>>`
 
 Generates and packages Scaladoc documentation.
 

@@ -16,6 +16,7 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>`, +
 `<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>`, +
 `link:https://github.com/bintray/gradle-bintray-plugin[com.jfrog.bintray]`
+applied by:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
 
 Configures artifact publications using Bintray. Relies on the publication configured by the
 `<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>` plugin. The name of the publication

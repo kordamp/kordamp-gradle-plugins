@@ -9,6 +9,7 @@ class:: `org.kordamp.gradle.plugin.licensing.LicensingPlugin`
      link:api-html/org/kordamp/gradle/plugin/licensing/LicensingPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `link:https://github.com/hierynomus/license-gradle-plugin[com.github.hierynomus.license]`
+applied by:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
 
 Configures license checks and reports on the target project. +
 Configures aggregate license reports on the root project.

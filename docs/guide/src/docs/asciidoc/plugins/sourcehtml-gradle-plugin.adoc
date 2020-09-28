@@ -8,6 +8,8 @@ class:: `org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin`
     (link:api/org/kordamp/gradle/plugin/sourcehtml/SourceHtmlPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/sourcehtml/SourceHtmlPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+applied by:: `<<_org_kordamp_gradle_guide,org.kordamp.gradle.guide>>` +
+`<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
 
 Converts source code into HTML with syntax highlighting.
 

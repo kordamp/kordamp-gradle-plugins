@@ -14,6 +14,8 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `<<_org_kordamp_gradle_source,org.kordamp.gradle.source-jar>>` +
 `link:https://docs.gradle.org/current/userguide/publishing_maven.html[maven-publish]`, +
 `link:https://docs.gradle.org/current/userguide/signing_plugin.html[signing]`
+applied by:: `<<_org_kordamp_gradle_bintray,org.kordamp.gradle.bintray>>` +
+`<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
 
 Configures a MavenPublication for the project's artifacts using the core `maven-publish` plugin.
 The name of the publication matches `"main"`. Published artifacts include the main JAR, sources,

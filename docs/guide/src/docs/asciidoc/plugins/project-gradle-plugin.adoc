@@ -22,6 +22,7 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `<<_org_kordamp_gradle_sourcestats,org.kordamp.gradle.source-stats>>`, +
 `<<_org_kordamp_gradle_testing,org.kordamp.gradle.testing>>`, +
 `https://github.com/ben-manes/gradle-versions-plugin[com.github.ben-manes.versions]`
+applied by:: `<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>`
 
 Serves as central point of configuration for a project as it applies all dependent plugins. You may skip this plugin
 and apply plugins individually as needed.

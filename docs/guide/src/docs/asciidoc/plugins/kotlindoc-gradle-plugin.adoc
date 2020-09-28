@@ -8,6 +8,7 @@ class:: `org.kordamp.gradle.plugin.kotlindoc.KotlindocPlugin`
     (link:api/org/kordamp/gradle/plugin/kotlindoc/KotlindocPlugin.html[kotlindoc],
      link:api-html/org/kordamp/gradle/plugin/kotlindoc/KotlindocPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+applied by:: `<<_org_kordamp_gradle_kotlin_project,org.kordamp.gradle.kotlin-project>>`
 
 Generates and packages Kotlin documentation via link:https://github.com/Kotlin/dokka[Dokka].
 
