@@ -96,6 +96,170 @@ final class PropertyUtils {
      * @param defaultValue the default value in case neither property nor provider has one
      * @return property's value, provider's value, or the defaultValue, in that order.
      */
+    static <E extends Enum<E>> Provider<E> enumProvider(ProviderFactory providers,
+                                                        Property<E> property,
+                                                        Provider<E> provider,
+                                                        E defaultValue) {
+        providers.provider {
+            property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+        }
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     *
+     * @param envKey the environment variable to check.
+     * @param propertyKey the system and project property to check.
+     * @param property the property to check value from.
+     * @param order resolving order to use.
+     * @param path resolving path to use.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on the {@code order} argument.
+     */
+    @CompileDynamic
+    static <E extends Enum<E>> Provider<E> enumProvider(String envKey,
+                                                        String propertyKey,
+                                                        Class<E> enumType,
+                                                        Property<E> property,
+                                                        Order order,
+                                                        Path path,
+                                                        Project project,
+                                                        Object owner,
+                                                        E defaultValue) {
+        project.providers.provider {
+            if (property.present) return property.get()
+            String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+            if (isNotBlank(value)) {
+                return enumType.valueOf(value.toUpperCase())
+            }
+            defaultValue
+        }
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     *
+     * @param key the environment variable, system and project property to check.
+     * @param property the property to check value from.
+     * @param order resolving order to use.
+     * @param path resolving path to use.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on the {@code order} argument.
+     */
+    static <E extends Enum<E>> Provider<E> enumProvider(String key,
+                                                        Class<E> enumType,
+                                                        Property<E> property,
+                                                        Order order,
+                                                        Path path,
+                                                        Project project,
+                                                        Object owner,
+                                                        E defaultValue) {
+        enumProvider(toEnv(key), toProperty(key), enumType, property, order, path, project, owner, defaultValue)
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
+     * property. Defaults to {@code ENV_SYS_PROP}.
+     * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
+     * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
+     *
+     * @param envKey the environment variable to check.
+     * @param propertyKey the system and project property to check.
+     * @param property the property to check value from.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on project wide {@code order} setting.
+     */
+    static <E extends Enum<E>> Provider<E> enumProvider(String envKey,
+                                                        String propertyKey,
+                                                        Class<E> enumType,
+                                                        Property<E> property,
+                                                        Project project,
+                                                        Object owner) {
+        enumProvider(envKey, propertyKey, enumType, property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, null)
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
+     * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
+     * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
+     * The value of key will be converted to lowercase and '_' replaced with '.' for constructing the property key.
+     *
+     * @param key the environment variable, system and project property to check.
+     * @param property the property to check value from.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on project wide {@code order} setting.
+     */
+    static <E extends Enum<E>> Provider<E> enumProvider(String key,
+                                                        Class<E> enumType,
+                                                        Property<E> property,
+                                                        Project project,
+                                                        Object owner) {
+        enumProvider(toEnv(key), toProperty(key), enumType, property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, null)
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
+     * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
+     * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
+     * The value of key will be converted to lowercase and '_' replaced with '.' for constructing the property key.
+     *
+     * @param key the environment variable, system and project property to check.
+     * @param property the property to check value from.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on project wide {@code order} setting.
+     */
+    static <E extends Enum<E>> Provider<E> enumProvider(String key,
+                                                        Class<E> enumType,
+                                                        Property<E> property,
+                                                        Project project,
+                                                        Object owner,
+                                                        E defaultValue) {
+        enumProvider(toEnv(key), toProperty(key), enumType, property, resolvePropertyOrder(), resolvePropertyPath(), project, owner, defaultValue)
+    }
+
+    /**
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
+     * property. Defaults to {@code ENV_SYS_PROP}.
+     * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
+     * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
+     * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
+     * The value of key will be converted to lowercase and '_' replaced with '.' for constructing the property key.
+     *
+     * @param key the environment variable, system and project property to check.
+     * @param property the property to check value from.
+     * @param project a project.
+     * @param owner the Object that owns the property.
+     * @return the property's value if set or a value resolved based on project wide {@code order} setting.
+     */
+    static <E extends Enum<E>> Provider<E> enumProvider(String key,
+                                                        Class<E> enumType,
+                                                        Property<E> property,
+                                                        Order order,
+                                                        Project project,
+                                                        Object owner) {
+        enumProvider(toEnv(key), toProperty(key), enumType, property, order, resolvePropertyPath(), project, owner, null)
+    }
+
+    /**
+     * Creates a hierarchical boolean property.
+     * Returns the {@code property}'s value if present, otherwise check's if the supplied
+     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.
+     *
+     * @param providers the {@code Provider} factory used to create a {@code Provider}.
+     * @param property the property to use
+     * @param provider the provider to use
+     * @param defaultValue the default value in case neither property nor provider has one
+     * @return property's value, provider's value, or the defaultValue, in that order.
+     */
     static Provider<Boolean> booleanProvider(ProviderFactory providers,
                                              Property<Boolean> property,
                                              Provider<Boolean> provider,
@@ -1784,6 +1948,26 @@ final class PropertyUtils {
     }
 
     // == Kordamp specific providers ==
+
+    @CompileDynamic
+    static <E extends Enum<E>> Provider<E> enumProvider(String key,
+                                                        Class<E> enumType,
+                                                        Property<E> property,
+                                                        Provider<E> provider,
+                                                        Order order,
+                                                        Path path,
+                                                        boolean projectAccess,
+                                                        Project project,
+                                                        E defaultValue) {
+        project.providers.provider {
+            if (property.present) return property.get()
+            String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+            if (isNotBlank(value)) {
+                return enumType.valueOf(value.toUpperCase())
+            }
+            provider.getOrElse(defaultValue)
+        }
+    }
 
     static Provider<Boolean> booleanProvider(String key,
                                              Property<Boolean> property,
