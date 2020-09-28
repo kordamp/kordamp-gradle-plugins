@@ -33,6 +33,11 @@ config {
             aggregate
             baseDir
         }
+        colors {
+            success
+            failure
+            ignored
+        }
     }
 }
 ----
@@ -65,6 +70,17 @@ config {
 | logging   | boolean | no       | true                | Enables verbose output
 | aggregate | boolean | no       | true                | Enables test report aggregation
 | baseDir   | String  | no       | src/functional-test |
+|===
+
+[[_testing_colors]]
+*colors*
+
+[options="header", cols="5*"]
+|===
+| Name    | Type    | Required | Default Value | Description
+| success | String  | no       | green         |
+| failure | String  | no       | red           |
+| ignored | String  | no       | yellow        |
 |===
 
 [[_org_kordamp_gradle_testing_tasks]]

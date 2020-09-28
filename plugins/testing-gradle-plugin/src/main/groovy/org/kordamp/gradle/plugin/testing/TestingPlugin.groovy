@@ -277,16 +277,17 @@ class TestingPlugin extends AbstractKordampPlugin {
         testTask.afterSuite { TestDescriptor descriptor, TestResult result ->
             if (descriptor.name.contains('Gradle Test Executor')) return
 
+            ProjectConfigurationExtension config = resolveConfig(testTask.project)
             AnsiConsole console = new AnsiConsole(testTask.project)
-            String indicator = console.green(WINDOWS ? '√' : '✔')
+            String indicator = config.testing.colors.success(console, WINDOWS ? '√' : '✔')
             if (result.failedTestCount > 0) {
-                indicator = console.red(WINDOWS ? 'X' : '✘')
+                indicator = config.testing.colors.failure(console, WINDOWS ? 'X' : '✘')
             }
 
             String str = console.erase("${indicator} Test ${descriptor.name} ")
-            str += "Executed: ${result.testCount}/${console.green(String.valueOf(result.successfulTestCount))}/"
-            str += "${console.red(String.valueOf(result.failedTestCount))}/"
-            str += "${console.yellow(String.valueOf(result.skippedTestCount))} "
+            str += "Executed: ${result.testCount}/${config.testing.colors.success(console, String.valueOf(result.successfulTestCount))}/"
+            str += "${config.testing.colors.failure(console, String.valueOf(result.failedTestCount))}/"
+            str += "${config.testing.colors.ignored(console, String.valueOf(result.skippedTestCount))} "
             testTask.project.logger.lifecycle(str.toString())
         }
     }
@@ -355,16 +356,17 @@ class TestingPlugin extends AbstractKordampPlugin {
         t.doLast(new Action<Task>() {
             @Override
             void execute(Task task) {
+                ProjectConfigurationExtension config = resolveConfig(project)
                 AnsiConsole console = new AnsiConsole(project)
-                String indicator = console.green(WINDOWS ? '√' : '✔')
+                String indicator = config.testing.colors.success(console, WINDOWS ? '√' : '✔')
                 if (results.failure > 0) {
-                    indicator = console.red(WINDOWS ? 'X' : '✘')
+                    indicator = config.testing.colors.failure(console, WINDOWS ? 'X' : '✘')
                 }
 
                 String str = console.erase("${indicator} ${category} Tests ")
-                str += "Executed: ${results.total}/${console.green(String.valueOf(results.success))}/"
-                str += "${console.red(String.valueOf(results.failure))}/"
-                str += "${console.yellow(String.valueOf(results.skipped))} "
+                str += "Executed: ${results.total}/${config.testing.colors.success(console, String.valueOf(results.success))}/"
+                str += "${config.testing.colors.failure(console, String.valueOf(results.failure))}/"
+                str += "${config.testing.colors.ignored(console, String.valueOf(results.skipped))} "
                 t.project.logger.lifecycle(str.toString())
 
                 if (results.failure > 0) {

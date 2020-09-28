@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -24,7 +25,10 @@ import org.gradle.api.tasks.testing.Test
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.test.tasks.FunctionalTest
 import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
+import org.kordamp.gradle.util.AnsiConsole
 import org.kordamp.gradle.util.ConfigureUtil
+
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -42,6 +46,7 @@ class Testing extends AbstractTestingFeature {
 
     final Integration integration
     final Functional functional
+    final Colors colors
 
     private final Set<Test> testTasks = new LinkedHashSet<>()
     private final Set<IntegrationTest> integrationTasks = new LinkedHashSet<>()
@@ -51,6 +56,7 @@ class Testing extends AbstractTestingFeature {
         super(config, project, PLUGIN_ID)
         integration = new Integration(this)
         functional = new Functional(this)
+        colors = new Colors()
     }
 
     @Override
@@ -83,7 +89,8 @@ class Testing extends AbstractTestingFeature {
             logging    : logging,
             aggregate  : aggregate,
             integration: integration.toMap(),
-            functional : functional.toMap()
+            functional : functional.toMap(),
+            colors     : colors.toMap()
         ]))
     }
 
@@ -103,17 +110,27 @@ class Testing extends AbstractTestingFeature {
         ConfigureUtil.configure(action, functional)
     }
 
+    void colors(Action<? super Colors> action) {
+        action.execute(colors)
+    }
+
+    void colors(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Colors) Closure<Void> action) {
+        ConfigureUtil.configure(action, colors)
+    }
+
     static void merge(Testing o1, Testing o2) {
         AbstractFeature.merge(o1, o2)
         o1.setLogging((boolean) (o1.loggingSet ? o1.logging : o2.logging))
         o1.setAggregate((boolean) (o1.aggregateSet ? o1.aggregate : o2.aggregate))
         Integration.merge(o1.integration, o2.integration)
         Functional.merge(o1.functional, o2.functional)
+        Colors.merge(o1.colors, o2.colors)
     }
 
     void postMerge() {
         integration.postMerge()
         functional.postMerge()
+        colors.postMerge()
         super.postMerge()
     }
 
@@ -127,5 +144,51 @@ class Testing extends AbstractTestingFeature {
 
     Set<FunctionalTest> functionalTestTasks() {
         functionalTestTasks
+    }
+
+    @CompileStatic
+    static class Colors {
+        String success
+        String failure
+        String ignored
+
+        static final List<String> VALID_COLORS = [
+            'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'
+        ]
+
+        Map<String, Object> toMap() {
+            new LinkedHashMap<String, Object>([
+                success: success,
+                failure: failure,
+                ignored: ignored
+            ])
+        }
+
+        static void merge(Colors o1, Colors o2) {
+            o1.setSuccess((isNotBlank(o1.success) ? o1.success : (o2.success ?: 'green')).trim().toLowerCase())
+            o1.setFailure((isNotBlank(o1.failure) ? o1.failure : (o2.failure ?: 'red')).trim().toLowerCase())
+            o1.setIgnored((isNotBlank(o1.ignored) ? o1.ignored : (o2.ignored ?: 'yellow')).trim().toLowerCase())
+        }
+
+        void postMerge() {
+            if (!(success in VALID_COLORS)) success = 'green'
+            if (!(failure in VALID_COLORS)) failure = 'red'
+            if (!(ignored in VALID_COLORS)) ignored = 'yellow'
+        }
+
+        @CompileDynamic
+        String success(AnsiConsole console, CharSequence s) {
+            console."${success}"(s)
+        }
+
+        @CompileDynamic
+        String failure(AnsiConsole console, CharSequence s) {
+            console."${failure}"(s)
+        }
+
+        @CompileDynamic
+        String ignored(AnsiConsole console, CharSequence s) {
+            console."${ignored}"(s)
+        }
     }
 }
