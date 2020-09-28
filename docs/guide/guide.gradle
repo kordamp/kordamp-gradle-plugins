@@ -32,6 +32,13 @@ asciidoctor {
     configurations 'asciidoctorExtensions'
     attributes = [
         'gradle-version': project.gradle.gradleVersion,
-        'source-highlighter': 'prettify'
+        'source-highlighter': 'prettify',
+        detektVersion: detektVersion,
+        errorproneVersion: errorproneVersion,
+        checkstyleVersion: checkstyleVersion,
+        codenarcVersion: codenarcVersion,
+        jacocoVersion: jacocoVersion,
+        pmdVersion: pmdVersion,
+        spotbugsVersion: spotbugsVersion
     ]
 }

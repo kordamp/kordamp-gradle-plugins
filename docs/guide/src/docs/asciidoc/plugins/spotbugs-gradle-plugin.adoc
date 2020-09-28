@@ -46,22 +46,22 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name                  | Type         | Required | Default Value | Description
-| enabled               | boolean      | no       | true          | Disables `org.kordamp.gradle.spotbugs` plugin if `false`
-| includeFilterFile     | File         | no       |               | Either `config/spotbugs/${project.name}-includeFilter.xml` or `config/spotbugs/includeFilter.xml`
-| excludeFilterFile     | File         | no       |               | Either `config/spotbugs/${project.name}-excludeFilter.xml` or `config/spotbugs/excludeFilter.xml`
-| excludeBugsFilterFile | File         | no       |               | Either `config/spotbugs/${project.name}-excludeBugsFilterFile.xml` or `config/spotbugs/excludeBugsFilterFile.xml`
-| effort                | String       | no       | max           |
-| reportLevel           | String       | no       | high          |
-| report                | String       | no       | html          | Either `html` or `xml`
-| visitors              | List<String> | no       | []            |
-| omitVisitors          | List<String> | no       | []            |
-| extraArgs             | List<String> | no       | []            |
-| jvmArgs               | List<String> | no       | []            |
-| ignoreFailures        | boolean      | no       | true          | Fails the build if set to `false`.
-| showProgress          | boolean      | no       | true          |
-| toolVersion           | String       | no       | 3.1.12        |
-| excludedSourceSets    | Set<String>  | no       | []            |
+| Name                  | Type         | Required | Default Value     | Description
+| enabled               | boolean      | no       | true              | Disables `org.kordamp.gradle.spotbugs` plugin if `false`
+| includeFilterFile     | File         | no       |                   | Either `config/spotbugs/${project.name}-includeFilter.xml` or `config/spotbugs/includeFilter.xml`
+| excludeFilterFile     | File         | no       |                   | Either `config/spotbugs/${project.name}-excludeFilter.xml` or `config/spotbugs/excludeFilter.xml`
+| excludeBugsFilterFile | File         | no       |                   | Either `config/spotbugs/${project.name}-excludeBugsFilterFile.xml` or `config/spotbugs/excludeBugsFilterFile.xml`
+| effort                | String       | no       | max               |
+| reportLevel           | String       | no       | high              |
+| report                | String       | no       | html              | Either `html` or `xml`
+| visitors              | List<String> | no       | []                |
+| omitVisitors          | List<String> | no       | []                |
+| extraArgs             | List<String> | no       | []                |
+| jvmArgs               | List<String> | no       | []                |
+| ignoreFailures        | boolean      | no       | true              | Fails the build if set to `false`.
+| showProgress          | boolean      | no       | true              |
+| toolVersion           | String       | no       | {spotbugsVersion} |
+| excludedSourceSets    | Set<String>  | no       | []                |
 |===
 
 .Methods

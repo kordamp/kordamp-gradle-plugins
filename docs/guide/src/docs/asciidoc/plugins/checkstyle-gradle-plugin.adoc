@@ -43,18 +43,18 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name               | Type                | Required | Default Value     | Description
-| enabled            | boolean             | no       | true              | Disables `org.kordamp.gradle.checkstyle` plugin if `false`
-| ignoreFailures     | boolean             | no       | true              | Fails the build if set to `false`.
-| includes           | Set<String>         | no       | []                |
-| excludes           | Set<String>         | no       | []                |
-| configFile         | Set<String>         | no       |                   |
-| configProperties   | Map<String, Object> | no       | [:]               |
-| maxErrors          | int                 | no       | 0                 |
-| maxWarnings        | int                 | no       | Integer.MAX_VALUE |
-| showViolations     | boolean             | no       | yes               |
-| toolVersion        | String              | no       | 8.27              |
-| excludedSourceSets | Set<String>         | no       | []                |
+| Name               | Type                | Required | Default Value       | Description
+| enabled            | boolean             | no       | true                | Disables `org.kordamp.gradle.checkstyle` plugin if `false`
+| ignoreFailures     | boolean             | no       | true                | Fails the build if set to `false`.
+| includes           | Set<String>         | no       | []                  |
+| excludes           | Set<String>         | no       | []                  |
+| configFile         | Set<String>         | no       |                     |
+| configProperties   | Map<String, Object> | no       | [:]                 |
+| maxErrors          | int                 | no       | 0                   |
+| maxWarnings        | int                 | no       | Integer.MAX_VALUE   |
+| showViolations     | boolean             | no       | yes                 |
+| toolVersion        | String              | no       | {checkstyleVersion} |
+| excludedSourceSets | Set<String>         | no       | []                  |
 |===
 
 The value of `configFile` will be automatically calculated based on the following rules

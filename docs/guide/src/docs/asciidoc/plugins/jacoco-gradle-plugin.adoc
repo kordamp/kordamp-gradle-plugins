@@ -44,7 +44,7 @@ config {
 | aggregateReportXmlFile     | File           | no       | ${project.buildDir}/reports/jacoco/aggregate/jacocoTestReport.xml | Location for the aggregate XML report
 | additionalSourceDirs       | FileCollection | no       | []                                                                | Additional source directories
 | additionalClassDirs        | FileCollection | no       | []                                                                | Additional class directories
-| toolVersion                | String         | no       | 0.8.5                                                             |
+| toolVersion                | String         | no       | {jacocoVersion}                                                   |
 | excludes                   | Set<String>    | no       | []                                                                |
 | includeProjectDependencies | boolean        | no       | false                                                             |
 |===

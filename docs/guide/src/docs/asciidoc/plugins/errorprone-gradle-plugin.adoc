@@ -39,17 +39,17 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name                           | Type         | Required | Default Value | Description
-| enabled                        | boolean      | no       | true          | Disables `org.kordamp.gradle.errorprone` plugin if `false`
-| disableAllChecks               | boolean      | no       | false         |
-| allErrorsAsWarnings            | boolean      | no       | false         |
-| allDisabledChecksAsWarnings    | boolean      | no       | false         |
-| disableWarningsInGeneratedCode | boolean      | no       | true          |
-| ignoreUnknownCheckNames        | boolean      | no       | false         |
-| ignoreSuppressionAnnotations   | boolean      | no       | false         |
-| compilingTestOnlyCode          | boolean      | no       | false         |
-| excludedPaths                  | String       | no       |               |
-| errorProneVersion              | String       | no       | 2.3.4         |
-| errorProneJavacVersion         | String       | no       | 9+181-r4173-1 |
+| Name                           | Type         | Required | Default Value       | Description
+| enabled                        | boolean      | no       | true                | Disables `org.kordamp.gradle.errorprone` plugin if `false`
+| disableAllChecks               | boolean      | no       | false               |
+| allErrorsAsWarnings            | boolean      | no       | false               |
+| allDisabledChecksAsWarnings    | boolean      | no       | false               |
+| disableWarningsInGeneratedCode | boolean      | no       | true                |
+| ignoreUnknownCheckNames        | boolean      | no       | false               |
+| ignoreSuppressionAnnotations   | boolean      | no       | false               |
+| compilingTestOnlyCode          | boolean      | no       | false               |
+| excludedPaths                  | String       | no       |                     |
+| errorProneVersion              | String       | no       | {errorproneVersion} |
+| errorProneJavacVersion         | String       | no       | 9+181-r4173-1       |
 |===
 

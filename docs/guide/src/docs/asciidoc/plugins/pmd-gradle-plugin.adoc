@@ -45,6 +45,7 @@ config {
 | incrementalAnalysis | boolean        | no       | false         |
 | rulePriority        | int            | no       | 5             |
 | excludedSourceSets  | Set<String>    | no       | []            |
+| toolVersion         | String         | no       | {pmdVersion}  |
 |===
 
 The value of `ruleSetFiles` will be automatically calculated based on the following rules

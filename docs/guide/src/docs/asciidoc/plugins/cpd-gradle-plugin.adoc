@@ -50,6 +50,7 @@ config {
 | ignoreLiterals    | boolean | no       | false         | Ignore number values and string contents when comparing text.
 | ignoreIdentifiers | boolean | no       | false         | Ignore constant and variable names when comparing text.
 | ignoreAnnotations | boolean | no       | false         | Ignore language annotations when comparing text.
+| toolVersion       | String  | no       | {pmdVersion}  |
 |===
 
 .Methods
