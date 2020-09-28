@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.PropertyUtils.Order
 import org.kordamp.gradle.property.PropertyUtils.Path
@@ -48,7 +49,7 @@ final class KordampRegularFileState implements RegularFileState {
     KordampRegularFileState(Project project, String key, Provider<RegularFile> parent, RegularFile defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.fileProperty()
+        property = project.objects.fileProperty().convention(Providers.notDefined())
 
         provider = fileProvider(
             key,

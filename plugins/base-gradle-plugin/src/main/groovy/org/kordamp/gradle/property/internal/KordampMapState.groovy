@@ -19,6 +19,7 @@ package org.kordamp.gradle.property.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.MapState
@@ -47,7 +48,7 @@ final class KordampMapState implements MapState {
     KordampMapState(Project project, String key, Provider<Map> parent, Map<String, String> defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.mapProperty(String, String)
+        property = project.objects.mapProperty(String, String).convention(Providers.notDefined())
 
         provider = mapProvider(
             key,

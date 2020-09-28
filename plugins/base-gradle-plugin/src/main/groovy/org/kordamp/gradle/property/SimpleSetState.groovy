@@ -20,6 +20,7 @@ package org.kordamp.gradle.property
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.kordamp.gradle.property.PropertyUtils.Order
@@ -80,7 +81,7 @@ final class SimpleSetState implements SetState {
     static SimpleSetState of(Project project, Object owner, String key) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        SetProperty<String> property = project.objects.setProperty(String)
+        SetProperty<String> property = project.objects.setProperty(String).convention(Providers.notDefined())
 
         Provider<Set<String>> provider = setProvider(
             key,
@@ -94,7 +95,7 @@ final class SimpleSetState implements SetState {
     static SimpleSetState of(Project project, Object owner, String key, Set<String> defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        SetProperty<String> property = project.objects.setProperty(String)
+        SetProperty<String> property = project.objects.setProperty(String).convention(Providers.notDefined())
 
         Provider<Set<String>> provider = setProvider(
             key,
@@ -109,7 +110,7 @@ final class SimpleSetState implements SetState {
     static SimpleSetState of(Project project, Object owner, String key, Order order) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        SetProperty<String> property = project.objects.setProperty(String)
+        SetProperty<String> property = project.objects.setProperty(String).convention(Providers.notDefined())
 
         Provider<Set<String>> provider = setProvider(
             key,
@@ -124,7 +125,7 @@ final class SimpleSetState implements SetState {
     static SimpleSetState of(Project project, Object owner, String key, Order order, Path path, Set<String> defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        SetProperty<String> property = project.objects.setProperty(String)
+        SetProperty<String> property = project.objects.setProperty(String).convention(Providers.notDefined())
 
         Provider<Set<String>> provider = setProvider(
             key,
@@ -141,7 +142,7 @@ final class SimpleSetState implements SetState {
     static SimpleSetState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, Set<String> defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        SetProperty<String> property = project.objects.setProperty(String)
+        SetProperty<String> property = project.objects.setProperty(String).convention(Providers.notDefined())
 
         Provider<Set<String>> provider = setProvider(
             envKey,

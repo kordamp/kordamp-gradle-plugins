@@ -20,6 +20,7 @@ package org.kordamp.gradle.property
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.PropertyUtils.Order
@@ -80,7 +81,7 @@ final class SimpleListState implements ListState {
     static SimpleListState of(Project project, Object owner, String key) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        ListProperty<String> property = project.objects.listProperty(String)
+        ListProperty<String> property = project.objects.listProperty(String).convention(Providers.notDefined())
 
         Provider<List<String>> provider = listProvider(
             key,
@@ -94,7 +95,7 @@ final class SimpleListState implements ListState {
     static SimpleListState of(Project project, Object owner, String key, List<String> defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        ListProperty<String> property = project.objects.listProperty(String)
+        ListProperty<String> property = project.objects.listProperty(String).convention(Providers.notDefined())
 
         Provider<List<String>> provider = listProvider(
             key,
@@ -109,7 +110,7 @@ final class SimpleListState implements ListState {
     static SimpleListState of(Project project, Object owner, String key, Order order) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        ListProperty<String> property = project.objects.listProperty(String)
+        ListProperty<String> property = project.objects.listProperty(String).convention(Providers.notDefined())
 
         Provider<List<String>> provider = listProvider(
             key,
@@ -124,7 +125,7 @@ final class SimpleListState implements ListState {
     static SimpleListState of(Project project, Object owner, String key, Order order, Path path, List<String> defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        ListProperty<String> property = project.objects.listProperty(String)
+        ListProperty<String> property = project.objects.listProperty(String).convention(Providers.notDefined())
 
         Provider<List<String>> provider = listProvider(
             key,
@@ -141,7 +142,7 @@ final class SimpleListState implements ListState {
     static SimpleListState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, List<String> defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        ListProperty<String> property = project.objects.listProperty(String)
+        ListProperty<String> property = project.objects.listProperty(String).convention(Providers.notDefined())
 
         Provider<List<String>> provider = listProvider(
             envKey,

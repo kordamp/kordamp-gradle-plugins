@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.DirectoryState
 import org.kordamp.gradle.property.PropertyUtils.Order
@@ -48,7 +49,7 @@ final class KordampDirectoryState implements DirectoryState {
     KordampDirectoryState(Project project, String key, Provider<Directory> parent, Directory defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.directoryProperty()
+        property = project.objects.directoryProperty().convention(Providers.notDefined())
 
         provider = directoryProvider(
             key,

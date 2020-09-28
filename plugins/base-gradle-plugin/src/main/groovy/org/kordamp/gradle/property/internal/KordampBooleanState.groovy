@@ -19,6 +19,7 @@ package org.kordamp.gradle.property.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.BooleanState
@@ -47,7 +48,7 @@ final class KordampBooleanState implements BooleanState {
     KordampBooleanState(Project project, String key, Provider<Boolean> parent, boolean defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.property(Boolean)
+        property = project.objects.property(Boolean).convention(Providers.notDefined())
 
         provider = booleanProvider(
             key,

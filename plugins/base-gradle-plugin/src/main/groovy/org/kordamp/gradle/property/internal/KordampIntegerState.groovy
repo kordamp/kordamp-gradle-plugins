@@ -19,6 +19,7 @@ package org.kordamp.gradle.property.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.IntegerState
@@ -47,7 +48,7 @@ final class KordampIntegerState implements IntegerState {
     KordampIntegerState(Project project, String key, Provider<Integer> parent, int defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.property(Integer)
+        property = project.objects.property(Integer).convention(Providers.notDefined())
 
         provider = integerProvider(
             key,

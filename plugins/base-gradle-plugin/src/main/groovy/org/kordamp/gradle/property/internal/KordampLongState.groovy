@@ -19,6 +19,7 @@ package org.kordamp.gradle.property.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.LongState
@@ -47,7 +48,7 @@ final class KordampLongState implements LongState {
     KordampLongState(Project project, String key, Provider<Long> parent, long defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.property(Long)
+        property = project.objects.property(Long).convention(Providers.notDefined())
 
         provider = longProvider(
             key,

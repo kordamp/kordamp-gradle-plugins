@@ -20,6 +20,7 @@ package org.kordamp.gradle.property
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.PropertyUtils.Order
@@ -80,7 +81,7 @@ final class SimpleIntegerState implements IntegerState {
     static SimpleIntegerState of(Project project, Object owner, String key) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Integer> property = project.objects.property(Integer)
+        Property<Integer> property = project.objects.property(Integer).convention(Providers.notDefined())
 
         Provider<Integer> provider = integerProvider(
             key,
@@ -94,7 +95,7 @@ final class SimpleIntegerState implements IntegerState {
     static SimpleIntegerState of(Project project, Object owner, String key, int defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Integer> property = project.objects.property(Integer)
+        Property<Integer> property = project.objects.property(Integer).convention(Providers.notDefined())
 
         Provider<Integer> provider = integerProvider(
             key,
@@ -109,7 +110,7 @@ final class SimpleIntegerState implements IntegerState {
     static SimpleIntegerState of(Project project, Object owner, String key, Order order) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Integer> property = project.objects.property(Integer)
+        Property<Integer> property = project.objects.property(Integer).convention(Providers.notDefined())
 
         Provider<Integer> provider = integerProvider(
             key,
@@ -124,7 +125,7 @@ final class SimpleIntegerState implements IntegerState {
     static SimpleIntegerState of(Project project, Object owner, String key, Order order, Path path, int defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Integer> property = project.objects.property(Integer)
+        Property<Integer> property = project.objects.property(Integer).convention(Providers.notDefined())
 
         Provider<Integer> provider = integerProvider(
             key,
@@ -141,7 +142,7 @@ final class SimpleIntegerState implements IntegerState {
     static SimpleIntegerState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, int defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Integer> property = project.objects.property(Integer)
+        Property<Integer> property = project.objects.property(Integer).convention(Providers.notDefined())
 
         Provider<Integer> provider = integerProvider(
             envKey,

@@ -19,6 +19,7 @@ package org.kordamp.gradle.property.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.PropertyUtils.Order
@@ -47,7 +48,7 @@ final class KordampStringState implements StringState {
     KordampStringState(Project project, String key, Provider<String> parent, String defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.property(String)
+        property = project.objects.property(String).convention(Providers.notDefined())
 
         provider = stringProvider(
             key,

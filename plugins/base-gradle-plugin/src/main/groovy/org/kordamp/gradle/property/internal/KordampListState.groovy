@@ -19,6 +19,7 @@ package org.kordamp.gradle.property.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.kordamp.gradle.property.ListState
@@ -47,7 +48,7 @@ final class KordampListState implements ListState {
     KordampListState(Project project, String key, Provider<List> parent, List<String> defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.listProperty(String)
+        property = project.objects.listProperty(String).convention(Providers.notDefined())
 
         provider = listProvider(
             key,

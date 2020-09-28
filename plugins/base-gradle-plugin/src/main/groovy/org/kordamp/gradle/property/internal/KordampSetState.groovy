@@ -19,6 +19,7 @@ package org.kordamp.gradle.property.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.kordamp.gradle.property.PropertyUtils.Order
@@ -47,7 +48,7 @@ final class KordampSetState implements SetState {
     KordampSetState(Project project, String key, Provider<Set> parent, Set<String> defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.setProperty(String)
+        property = project.objects.setProperty(String).convention(Providers.notDefined())
 
         provider = setProvider(
             key,
