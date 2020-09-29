@@ -348,7 +348,8 @@ class BasePlugin extends AbstractKordampPlugin {
 
             if (validate && errors) {
                 errors.each { project.logger.error(it) }
-                throw new GradleException("Project ${project.name} has not been properly configured.")
+                boolean ideaSync = (System.getProperty('idea.sync.active') ?: 'false').toBoolean()
+                if (!ideaSync) throw new GradleException("Project ${project.name} has not been properly configured.")
             }
         }
     }
