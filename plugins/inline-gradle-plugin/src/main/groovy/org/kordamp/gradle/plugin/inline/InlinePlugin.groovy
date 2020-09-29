@@ -32,6 +32,7 @@ import java.util.jar.JarFile
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+import static org.kordamp.gradle.util.StringUtils.isBlank
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
@@ -53,9 +54,13 @@ class InlinePlugin implements Plugin<Settings> {
 
         List<String> taskNames = []
         Set<IncludedPlugin> plugins = []
+        Set<ProjectRegex> regexes = []
 
         for (String task : settings.gradle.startParameter.taskNames) {
-            if (IncludedCorePlugin.isPluginDefinition(task)) {
+            if (ProjectRegex.isProjectRegex(task)) {
+                ProjectRegex regex = ProjectRegex.parse(task)
+                regexes << regex
+            } else if (IncludedCorePlugin.isPluginDefinition(task)) {
                 IncludedCorePlugin plugin = IncludedCorePlugin.parse(task)
                 plugins << plugin
                 taskNames << plugin.taskName
@@ -90,6 +95,14 @@ class InlinePlugin implements Plugin<Settings> {
                 if (plugins) {
                     includePlugins(plugins, files)
                 }
+
+                List<String> tasks = []
+                tasks.addAll(settings.gradle.startParameter.taskNames)
+                for (ProjectRegex regex : regexes) {
+                    tasks.addAll(regex.expand(gradle.rootProject))
+                }
+
+                settings.gradle.startParameter.taskNames = tasks
             }
 
             @Override
@@ -390,6 +403,80 @@ class InlinePlugin implements Plugin<Settings> {
 
         String getFileName() {
             "${artifactId}-${version}.jar".toString()
+        }
+    }
+
+    @Canonical
+    @CompileStatic
+    private static class ProjectRegex {
+        final String regex
+        final String taskName
+
+        static boolean isProjectRegex(String str) {
+            String[] parts = str.split(':')
+            parts.size() == 3 && isBlank(parts[0]) && isNotBlank(parts[1]) && isNotBlank(parts[2])
+        }
+
+        static ProjectRegex parse(String str) {
+            String[] parts = str.split(':')
+            new ProjectRegex(':' + parts[1], parts[2])
+        }
+
+        private ProjectRegex(String regex, String taskName) {
+            this.regex = regex
+            this.taskName = taskName
+        }
+
+        Set<String> expand(Project rootProject) {
+            Set<String> taskNames = []
+
+            if (matches(rootProject)) {
+                taskNames << rootProject.path + ':' + taskName
+            }
+            for (Project p : rootProject.childProjects.values()) {
+                if (matches(p)) {
+                    taskNames << p.path + ':' + taskName
+                }
+            }
+
+            taskNames
+        }
+
+        boolean matches(Project project) {
+            return regex == project.path || Pattern.compile(asRegex(regex)).matcher(project.path).matches()
+        }
+
+        private String asRegex(String wildcard) {
+            StringBuilder result = new StringBuilder(wildcard.length())
+            result.append('^')
+            for (int index = 0; index < wildcard.length(); index++) {
+                char character = wildcard.charAt(index)
+                switch (character) {
+                    case '*':
+                        result.append('.*')
+                        break;
+                    case '?':
+                        result.append('.')
+                        break;
+                    case '$':
+                    case '(':
+                    case ')':
+                    case '.':
+                    case '[':
+                    case '\\':
+                    case ']':
+                    case '^':
+                    case '{':
+                    case '|':
+                    case '}':
+                        result.append('\\')
+                    default:
+                        result.append(character)
+                        break;
+                }
+            }
+            result.append('$')
+            return result.toString()
         }
     }
 }

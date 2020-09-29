@@ -40,6 +40,9 @@ Custom property adapters may be added to the classpath. Such adapters must imple
 link:api/org/kordamp/gradle/plugin/inline/PropertyAdapter.html[PropertyAdapter] and be registered as a service in
 `META-INF/services/org.kordamp.gradle.plugin.inline.PropertyAdapter`.
 
+This plugin also lets you invoke tasks prefixed by a project path regex, in which case all projects whose paths match
+the given regex will be affected by the given goal.
+
 [[_org_kordamp_gradle_inline_example]]
 == Example
 
@@ -55,5 +58,12 @@ Invoking the `application` plugin
 [source,subs="attributes"]
 ----
 $ gm application:run -Dapplication.mainClass=com.acme.Main
+----
+
+Invoking the `distZip` goal on all projects that have `-app` in their paths
+
+[source,subs="attributes"]
+----
+$ gm :*-app:distZip
 ----
 
