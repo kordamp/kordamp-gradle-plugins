@@ -63,42 +63,6 @@ class Jacoco extends AbstractTestingFeature {
         return project.rootProject.extensions.getByType(ProjectConfigurationExtension).coverage.jacoco
     }
 
-    @Deprecated
-    File getMergeExecFile() {
-        println("Property jacoco.mergeExecFile is deprecated and will be removed in the future. Use jacoco.aggregateExecFile instead")
-        aggregateExecFile
-    }
-
-    @Deprecated
-    File getMergeReportHtmlFile() {
-        println("Property jacoco.mergeReportHtmlFile is deprecated and will be removed in the future. Use jacoco.aggregateReportHtmlFile instead")
-        aggregateReportHtmlFile
-    }
-
-    @Deprecated
-    File getMergeReportXmlFile() {
-        println("Property jacoco.mergeReportXmlFile is deprecated and will be removed in the future. Use jacoco.aggregateReportXmlFile instead")
-        aggregateReportXmlFile
-    }
-
-    @Deprecated
-    void setMergeExecFile(File f) {
-        println("Property jacoco.mergeExecFile is deprecated and will be removed in the future. Use jacoco.aggregateExecFile instead")
-        aggregateExecFile = f
-    }
-
-    @Deprecated
-    void setMergeReportHtmlFile(File f) {
-        println("Property jacoco.mergeReportHtmlFile is deprecated and will be removed in the future. Use jacoco.aggregateReportHtmlFile instead")
-        aggregateReportHtmlFile = f
-    }
-
-    @Deprecated
-    void setMergeReportXmlFile(File f) {
-        println("Property jacoco.mergeReportXmlFile is deprecated and will be removed in the future. Use jacoco.aggregateReportXmlFile instead")
-        aggregateReportXmlFile = f
-    }
-
     @Override
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)

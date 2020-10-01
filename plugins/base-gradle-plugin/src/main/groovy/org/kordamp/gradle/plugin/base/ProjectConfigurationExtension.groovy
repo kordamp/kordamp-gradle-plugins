@@ -21,7 +21,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.model.Information
-import org.kordamp.gradle.plugin.base.model.Plugin
 import org.kordamp.gradle.plugin.base.plugins.Bintray
 import org.kordamp.gradle.plugin.base.plugins.Bom
 import org.kordamp.gradle.plugin.base.plugins.BuildInfo
@@ -53,8 +52,6 @@ import org.kordamp.gradle.plugin.base.plugins.Spotbugs
 import org.kordamp.gradle.plugin.base.plugins.Stats
 import org.kordamp.gradle.plugin.base.plugins.Testing
 import org.kordamp.gradle.util.ConfigureUtil
-
-import static org.kordamp.gradle.util.StringUtils.getPropertyNameForLowerCaseHyphenSeparatedName
 
 /**
  * @author Andres Almiray
@@ -128,60 +125,6 @@ class ProjectConfigurationExtension {
         map
     }
 
-    @Deprecated
-    Groovydoc getGroovydoc() {
-        println("The method config.groovydoc is deprecated and will be removed in the future. Use config.docs.groovydoc instead")
-        docs.groovydoc
-    }
-
-    @Deprecated
-    Kotlindoc getKotlindoc() {
-        println("The method config.kotlindoc is deprecated and will be removed in the future. Use config.docs.kotlindoc instead")
-        docs.kotlindoc
-    }
-
-    @Deprecated
-    Jacoco getJacoco() {
-        println("The method config.jacoco is deprecated and will be removed in the future. Use config.coverage.jacoco instead")
-        coverage.jacoco
-    }
-
-    @Deprecated
-    Javadoc getJavadoc() {
-        println("The method config.javadoc is deprecated and will be removed in the future. Use config.docs.javadoc instead")
-        docs.javadoc
-    }
-
-    @Deprecated
-    Scaladoc getScaladoc() {
-        println("The method config.scaladoc is deprecated and will be removed in the future. Use config.docs.scaladoc instead")
-        docs.scaladoc
-    }
-
-    @Deprecated
-    SourceHtml getSourceHtml() {
-        println("The method config.sourceHtml is deprecated and will be removed in the future. Use config.docs.sourceHtml instead")
-        docs.sourceHtml
-    }
-
-    @Deprecated
-    SourceXref getSourceXref() {
-        println("The method config.sourceXref is deprecated and will be removed in the future. Use config.docs.sourceXref instead")
-        docs.sourceXref
-    }
-
-    @Deprecated
-    Source getSource() {
-        println("The method config.source is deprecated and will be removed in the future. Use config.artifacts.source instead")
-        artifacts.source
-    }
-
-    @Deprecated
-    Minpom getMinpom() {
-        println("The method config.minpom is deprecated and will be removed in the future. Use config.artifacts.minpom instead")
-        artifacts.minpom
-    }
-
     void info(Action<? super Information> action) {
         action.execute(info)
     }
@@ -230,100 +173,12 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, clirr)
     }
 
-    @Deprecated
-    void groovydoc(Action<? super Groovydoc> action) {
-        println("The method config.groovydoc() is deprecated and will be removed in the future. Use config.docs.groovydoc() instead")
-        docs.groovydoc(action)
-    }
-
-    @Deprecated
-    void groovydoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Groovydoc) Closure<Void> action) {
-        println("The method config.groovydoc() is deprecated and will be removed in the future. Use config.docs.groovydoc() instead")
-        docs.groovydoc(action)
-    }
-
-    @Deprecated
-    void kotlindoc(Action<? super Kotlindoc> action) {
-        println("The method config.kotlindoc() is deprecated and will be removed in the future. Use config.docs.kotlindoc() instead")
-        docs.kotlindoc(action)
-    }
-
-    @Deprecated
-    void kotlindoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Kotlindoc) Closure<Void> action) {
-        println("The method config.kotlindoc() is deprecated and will be removed in the future. Use config.docs.kotlindoc() instead")
-        docs.kotlindoc(action)
-    }
-
-    @Deprecated
-    void jacoco(Action<? super Jacoco> action) {
-        println("The method config.jacoco() is deprecated and will be removed in the future. Use config.coverage.jacoco() instead")
-        coverage.jacoco(action)
-    }
-
-    @Deprecated
-    void jacoco(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jacoco) Closure<Void> action) {
-        println("The method config.jacoco() is deprecated and will be removed in the future. Use config.coverage.jacoco() instead")
-        coverage.jacoco(action)
-    }
-
-    @Deprecated
-    void javadoc(Action<? super Javadoc> action) {
-        println("The method config.javadoc() is deprecated and will be removed in the future. Use config.docs.javadoc() instead")
-        docs.javadoc(action)
-    }
-
-    @Deprecated
-    void javadoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Javadoc) Closure<Void> action) {
-        println("The method config.javadoc() is deprecated and will be removed in the future. Use config.docs.javadoc() instead")
-        docs.javadoc(action)
-    }
-
     void licensing(Action<? super Licensing> action) {
         action.execute(licensing)
     }
 
     void licensing(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Licensing) Closure<Void> action) {
         ConfigureUtil.configure(action, licensing)
-    }
-
-    @Deprecated
-    void minpom(Action<? super Minpom> action) {
-        println("The method config.minpom() is deprecated and will be removed in the future. Use config.artifacts.minpom() instead")
-        artifacts.minpom(action)
-    }
-
-    @Deprecated
-    void minpom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Minpom) Closure<Void> action) {
-        println("The method config.minpom() is deprecated and will be removed in the future. Use config.artifacts.minpom() instead")
-        artifacts.minpom(action)
-    }
-
-    @Deprecated
-    void plugin(Action<? super Plugin> action) {
-        println("The method config.plugin() is deprecated and will be removed in the future. Use config.plugins() instead")
-        String pluginName = getPropertyNameForLowerCaseHyphenSeparatedName(project.name - '-gradle' - 'gradle-' - '-plugin')
-        Plugin plugin = new Plugin()
-        if (plugins.plugins[pluginName]) {
-            plugin = plugins.plugins[pluginName]
-        } else {
-            plugin.name = pluginName
-        }
-        action.execute(plugin)
-        plugins.plugins[plugin.name] = plugin
-    }
-
-    @Deprecated
-    void plugin(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Plugin) Closure action) {
-        println("The method config.plugin() is deprecated and will be removed in the future. Use config.plugins() instead")
-        String pluginName = getPropertyNameForLowerCaseHyphenSeparatedName(project.name - '-gradle' - 'gradle-' - '-plugin')
-        Plugin plugin = new Plugin()
-        if (plugins.plugins[pluginName]) {
-            plugin = plugins.plugins[pluginName]
-        } else {
-            plugin.name = pluginName
-        }
-        org.gradle.util.ConfigureUtil.configure(action, plugin)
-        plugins.plugins[plugin.name] = plugin
     }
 
     void plugins(Action<? super Plugins> action) {
@@ -342,60 +197,12 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, publishing)
     }
 
-    @Deprecated
-    void scaladoc(Action<? super Scaladoc> action) {
-        println("The method config.scaladoc() is deprecated and will be removed in the future. Use config.docs.scaladoc() instead")
-        docs.scaladoc(action)
-    }
-
-    @Deprecated
-    void scaladoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scaladoc) Closure<Void> action) {
-        println("The method config.scaladoc() is deprecated and will be removed in the future. Use config.docs.scaladoc() instead")
-        docs.scaladoc(action)
-    }
-
-    @Deprecated
-    void source(Action<? super Source> action) {
-        println("The method config.source() is deprecated and will be removed in the future. Use config.artifacts.source() instead")
-        artifacts.source(action)
-    }
-
-    @Deprecated
-    void source(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Source) Closure<Void> action) {
-        println("The method config.source() is deprecated and will be removed in the future. Use config.artifacts.source() instead")
-        artifacts.source(action)
-    }
-
     void stats(Action<? super Stats> action) {
         action.execute(stats)
     }
 
     void stats(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Stats) Closure<Void> action) {
         ConfigureUtil.configure(action, stats)
-    }
-
-    @Deprecated
-    void sourceHtml(Action<? super SourceHtml> action) {
-        println("The method config.sourceHtml() is deprecated and will be removed in the future. Use config.docs.sourceHtml() instead")
-        docs.sourceHtml(action)
-    }
-
-    @Deprecated
-    void sourceHtml(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SourceHtml) Closure<Void> action) {
-        println("The method config.sourceHtml() is deprecated and will be removed in the future. Use config.docs.sourceHtml() instead")
-        docs.sourceHtml(action)
-    }
-
-    @Deprecated
-    void sourceXref(Action<? super SourceXref> action) {
-        println("The method config.sourceXref() is deprecated and will be removed in the future. Use config.docs.sourceXref() instead")
-        docs.sourceXref(action)
-    }
-
-    @Deprecated
-    void sourceXref(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SourceXref) Closure<Void> action) {
-        println("The method config.sourceXref() is deprecated and will be removed in the future. Use config.docs.sourceXref() instead")
-        docs.sourceXref(action)
     }
 
     void testing(Action<? super Testing> action) {
