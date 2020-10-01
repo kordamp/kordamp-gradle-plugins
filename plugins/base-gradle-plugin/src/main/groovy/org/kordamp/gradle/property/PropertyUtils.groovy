@@ -249,6 +249,324 @@ final class PropertyUtils {
         enumProvider(toEnv(key), toProperty(key), enumType, property, order, resolvePropertyPath(), project, owner, null)
     }
 
+    static <E extends Enum<E>> Provider<E> enumProvider(ProviderFactory providers,
+                                                        String key,
+                                                        Class<E> enumType,
+                                                        Provider<E> property,
+                                                        E defaultValue) {
+        enumProvider(providers, toEnv(key), toProperty(key), enumType, property, resolvePropertyOrder(), defaultValue)
+    }
+
+    static <E extends Enum<E>> Provider<E> enumProvider(ProviderFactory providers,
+                                                        String key,
+                                                        Class<E> enumType,
+                                                        Provider<E> property,
+                                                        Order order,
+                                                        E defaultValue) {
+        enumProvider(providers, toEnv(key), toProperty(key), enumType, property, order, defaultValue)
+    }
+
+    static <E extends Enum<E>> Provider<E> enumProvider(ProviderFactory providers,
+                                                        String envKey,
+                                                        String propertyKey,
+                                                        Class<E> enumType,
+                                                        Provider<E> property,
+                                                        E defaultValue) {
+
+        enumProvider(providers, envKey, propertyKey, enumType, property, resolvePropertyOrder(), defaultValue)
+    }
+
+    @CompileDynamic
+    static <E extends Enum<E>> Provider<E> enumProvider(ProviderFactory providers,
+                                                        String envKey,
+                                                        String propertyKey,
+                                                        Class<E> enumType,
+                                                        Provider<E> property,
+                                                        Order order,
+                                                        E defaultValue) {
+        providers.provider {
+            if (property.present) return property.get()
+            String value = resolveValue(envKey, propertyKey, order)
+            if (isNotBlank(value)) {
+                return enumType.valueOf(value.toUpperCase())
+            }
+            defaultValue
+        }
+    }
+
+    static Provider<Boolean> booleanProvider(ProviderFactory providers,
+                                             String key,
+                                             Provider<Boolean> property,
+                                             boolean defaultValue) {
+        booleanProvider(providers, toEnv(key), toProperty(key), resolvePropertyOrder(), property, defaultValue)
+    }
+
+    static Provider<Boolean> booleanProvider(ProviderFactory providers,
+                                             String key,
+                                             Provider<Boolean> property,
+                                             Order order,
+                                             boolean defaultValue) {
+        booleanProvider(providers, toEnv(key), toProperty(key), order, property, defaultValue)
+    }
+
+    static Provider<Boolean> booleanProvider(ProviderFactory providers,
+                                             String envKey,
+                                             String propertyKey,
+                                             Provider<Boolean> property,
+                                             boolean defaultValue) {
+        booleanProvider(providers, envKey, propertyKey, resolvePropertyOrder(), property, defaultValue)
+    }
+
+    static Provider<Boolean> booleanProvider(ProviderFactory providers,
+                                             String envKey,
+                                             String propertyKey,
+                                             Order order,
+                                             Provider<Boolean> property,
+                                             boolean defaultValue) {
+        providers.provider {
+            if (property.present) return property.get()
+            String value = resolveValue(envKey, propertyKey, order)
+            if (isNotBlank(value)) {
+                return Boolean.parseBoolean(value)
+            }
+            defaultValue
+        }
+    }
+
+    static Provider<Integer> integerProvider(ProviderFactory providers,
+                                             String key,
+                                             Provider<Integer> property,
+                                             int defaultValue) {
+        integerProvider(providers, toEnv(key), toProperty(key), property, resolvePropertyOrder(), defaultValue)
+    }
+
+    static Provider<Integer> integerProvider(ProviderFactory providers,
+                                             String key,
+                                             Provider<Integer> property,
+                                             Order order,
+                                             int defaultValue) {
+        integerProvider(providers, toEnv(key), toProperty(key), property, order, defaultValue)
+    }
+
+    static Provider<Integer> integerProvider(ProviderFactory providers,
+                                             String envKey,
+                                             String propertyKey,
+                                             Provider<Integer> property,
+                                             int defaultValue) {
+        integerProvider(providers, envKey, propertyKey, property, resolvePropertyOrder(), defaultValue)
+    }
+
+    static Provider<Integer> integerProvider(ProviderFactory providers,
+                                             String envKey,
+                                             String propertyKey,
+                                             Provider<Integer> property,
+                                             Order order,
+                                             int defaultValue) {
+        providers.provider {
+            if (property.present) return property.get()
+            String value = resolveValue(envKey, propertyKey, order)
+            if (isNotBlank(value)) {
+                return Integer.parseInt(value)
+            }
+            defaultValue
+        }
+    }
+
+    static Provider<Long> longProvider(ProviderFactory providers,
+                                       String key,
+                                       Provider<Long> property,
+                                       long defaultValue) {
+        longProvider(providers, toEnv(key), toProperty(key), property, resolvePropertyOrder(), defaultValue)
+    }
+
+    static Provider<Long> longProvider(ProviderFactory providers,
+                                       String key,
+                                       Provider<Long> property,
+                                       Order order,
+                                       long defaultValue) {
+        longProvider(providers, toEnv(key), toProperty(key), property, order, defaultValue)
+    }
+
+    static Provider<Long> longProvider(ProviderFactory providers,
+                                       String envKey,
+                                       String propertyKey,
+                                       Provider<Long> property,
+                                       long defaultValue) {
+        longProvider(providers, envKey, propertyKey, property, resolvePropertyOrder(), defaultValue)
+    }
+
+    static Provider<Long> longProvider(ProviderFactory providers,
+                                       String envKey,
+                                       String propertyKey,
+                                       Provider<Long> property,
+                                       Order order,
+                                       long defaultValue) {
+        providers.provider {
+            if (property.present) return property.get()
+            String value = resolveValue(envKey, propertyKey, order)
+            if (isNotBlank(value)) {
+                return Long.parseLong(value)
+            }
+            defaultValue
+        }
+    }
+
+    static Provider<String> stringProvider(ProviderFactory providers,
+                                           String key,
+                                           Provider<String> property,
+                                           String defaultValue) {
+        stringProvider(providers, toEnv(key), toProperty(key), property, resolvePropertyOrder(), defaultValue)
+    }
+
+    static Provider<String> stringProvider(ProviderFactory providers,
+                                           String key,
+                                           Provider<String> property,
+                                           Order order,
+                                           String defaultValue) {
+        stringProvider(providers, toEnv(key), toProperty(key), property, order, defaultValue)
+    }
+
+    static Provider<String> stringProvider(ProviderFactory providers,
+                                           String envKey,
+                                           String propertyKey,
+                                           Provider<String> property,
+                                           String defaultValue) {
+        stringProvider(providers, envKey, propertyKey, property, resolvePropertyOrder(), defaultValue)
+    }
+
+    static Provider<String> stringProvider(ProviderFactory providers,
+                                           String envKey,
+                                           String propertyKey,
+                                           Provider<String> property,
+                                           Order order,
+                                           String defaultValue) {
+        providers.provider {
+            if (property.present) return property.get()
+            String value = resolveValue(envKey, propertyKey, order)
+            if (isNotBlank(value)) {
+                return value
+            }
+            defaultValue
+        }
+    }
+
+    static Provider<List<String>> listProvider(ProviderFactory providers,
+                                               String key,
+                                               Provider<List<String>> property,
+                                               List<String> defaultValue) {
+        listProvider(providers, toEnv(key), toProperty(key), property, resolvePropertyOrder(), defaultValue)
+    }
+
+    static Provider<List<String>> listProvider(ProviderFactory providers,
+                                               String key,
+                                               Provider<List<String>> property,
+                                               Order order,
+                                               List<String> defaultValue) {
+        listProvider(providers, toEnv(key), toProperty(key), property, order, defaultValue)
+    }
+
+    static Provider<List<String>> listProvider(ProviderFactory providers,
+                                               String envKey,
+                                               String propertyKey,
+                                               Provider<List<String>> property,
+                                               List<String> defaultValue) {
+        listProvider(providers, envKey, propertyKey, property, resolvePropertyOrder(), defaultValue)
+    }
+
+    static Provider<List<String>> listProvider(ProviderFactory providers,
+                                               String envKey,
+                                               String propertyKey,
+                                               Provider<List<String>> property,
+                                               Order order,
+                                               List<String> defaultValue) {
+        providers.provider {
+            if (property.present) return property.get()
+            String value = resolveValue(envKey, propertyKey, order)
+            if (isNotBlank(value)) {
+                return convertToList(value)
+            }
+            defaultValue
+        }
+    }
+
+    static Provider<Set<String>> setProvider(ProviderFactory providers,
+                                             String key,
+                                             Provider<Set<String>> property,
+                                             Set<String> defaultValue) {
+        setProvider(providers, toEnv(key), toProperty(key), property, resolvePropertyOrder(), defaultValue)
+    }
+
+    static Provider<Set<String>> setProvider(ProviderFactory providers,
+                                             String key,
+                                             Provider<Set<String>> property,
+                                             Order order,
+                                             Set<String> defaultValue) {
+        setProvider(providers, toEnv(key), toProperty(key), property, order, defaultValue)
+    }
+
+    static Provider<Set<String>> setProvider(ProviderFactory providers,
+                                             String envKey,
+                                             String propertyKey,
+                                             Provider<Set<String>> property,
+                                             Set<String> defaultValue) {
+        setProvider(providers, envKey, propertyKey, property, resolvePropertyOrder(), defaultValue)
+    }
+
+    static Provider<Set<String>> setProvider(ProviderFactory providers,
+                                             String envKey,
+                                             String propertyKey,
+                                             Provider<Set<String>> property,
+                                             Order order,
+                                             Set<String> defaultValue) {
+        providers.provider {
+            if (property.present) return property.get()
+            String value = resolveValue(envKey, propertyKey, order)
+            if (isNotBlank(value)) {
+                return convertToSet(value)
+            }
+            defaultValue
+        }
+    }
+
+    static Provider<Map<String, String>> mapProvider(ProviderFactory providers,
+                                                     String key,
+                                                     Provider<Map<String, String>> property,
+                                                     Map<String, String> defaultValue) {
+        mapProvider(providers, toEnv(key), toProperty(key), property, resolvePropertyOrder(), defaultValue)
+    }
+
+    static Provider<Map<String, String>> mapProvider(ProviderFactory providers,
+                                                     String key,
+                                                     Provider<Map<String, String>> property,
+                                                     Order order,
+                                                     Map<String, String> defaultValue) {
+        mapProvider(providers, toEnv(key), toProperty(key), property, order, defaultValue)
+    }
+
+    static Provider<Map<String, String>> mapProvider(ProviderFactory providers,
+                                                     String envKey,
+                                                     String propertyKey,
+                                                     Provider<Map<String, String>> property,
+                                                     Map<String, String> defaultValue) {
+        mapProvider(providers, envKey, propertyKey, property, resolvePropertyOrder(), defaultValue)
+    }
+
+    static Provider<Map<String, String>> mapProvider(ProviderFactory providers,
+                                                     String envKey,
+                                                     String propertyKey,
+                                                     Provider<Map<String, String>> property,
+                                                     Order order,
+                                                     Map<String, String> defaultValue) {
+        providers.provider {
+            if (property.present) return property.get()
+            String value = resolveValue(envKey, propertyKey, order)
+            if (isNotBlank(value)) {
+                return convertToMap(value)
+            }
+            defaultValue
+        }
+    }
+
     /**
      * Creates a hierarchical boolean property.
      * Returns the {@code property}'s value if present, otherwise check's if the supplied
@@ -1768,6 +2086,31 @@ final class PropertyUtils {
 
     private static String resolveValue(String envKey,
                                        String propertyKey,
+                                       Order order) {
+        order = order ?: resolvePropertyOrder()
+
+        switch (order) {
+            case Order.ENV_SYS_PROP:
+            case Order.ENV_PROP_SYS:
+            case Order.PROP_ENV_SYS: ES:
+                {
+                    String value = System.getenv(envKey)
+                    if (isBlank(value)) value = System.getProperty(propertyKey)
+                    return value
+                }
+            case Order.SYS_ENV_PROP:
+            case Order.SYS_PROP_ENV:
+            case Order.PROP_SYS_ENV: SE:
+                {
+                    String value = System.getProperty(propertyKey)
+                    if (isBlank(value)) value = System.getenv(envKey)
+                    return value
+                }
+        }
+    }
+
+    private static String resolveValue(String envKey,
+                                       String propertyKey,
                                        Order order,
                                        Path path,
                                        boolean projectAccess,
@@ -2114,11 +2457,7 @@ final class PropertyUtils {
             if (property.present) return property.get()
             String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
             if (isNotBlank(value)) {
-                Set<String> set = new LinkedHashSet<>()
-                for (String v : value.split(',')) {
-                    if (isNotBlank(v)) set.add(v.trim())
-                }
-                return set
+                return convertToSet(value)
             }
             provider.getOrElse(defaultValue)
         }
@@ -2137,11 +2476,7 @@ final class PropertyUtils {
             if (property.present) return property.get()
             String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
             if (isNotBlank(value)) {
-                List<String> list = new ArrayList<>()
-                for (String v : value.split(',')) {
-                    if (isNotBlank(v)) list.add(v.trim())
-                }
-                return list
+                return convertToList(value)
             }
             provider.getOrElse(defaultValue)
         }
@@ -2160,16 +2495,36 @@ final class PropertyUtils {
             if (property.present) return property.get()
             String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
             if (isNotBlank(value)) {
-                Map<String, String> map = new LinkedHashMap<>()
-                for (String val : value.split(',')) {
-                    String[] kv = val.split('=')
-                    if (kv.length == 2) {
-                        map.put(kv[0], kv[1])
-                    }
-                }
-                return map
+                return convertToMap(value)
             }
             provider.getOrElse(defaultValue)
         }
+    }
+
+    private static LinkedHashSet<String> convertToSet(String value) {
+        Set<String> set = new LinkedHashSet<>()
+        for (String v : value.split(',')) {
+            if (isNotBlank(v)) set.add(v.trim())
+        }
+        return set
+    }
+
+    private static ArrayList<String> convertToList(String value) {
+        List<String> list = new ArrayList<>()
+        for (String v : value.split(',')) {
+            if (isNotBlank(v)) list.add(v.trim())
+        }
+        return list
+    }
+
+    private static Map<String, String> convertToMap(String value) {
+        Map<String, String> map = new LinkedHashMap<>()
+        for (String val : value.split(',')) {
+            String[] kv = val.split('=')
+            if (kv.length == 2) {
+                map.put(kv[0], kv[1])
+            }
+        }
+        return map
     }
 }

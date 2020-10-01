@@ -19,6 +19,7 @@ package org.kordamp.gradle.util
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.configuration.ConsoleOutput
 
 /**
@@ -30,7 +31,11 @@ class AnsiConsole {
     private boolean plain
 
     AnsiConsole(Project project) {
-        plain = project.gradle.startParameter.consoleOutput == ConsoleOutput.Plain ||
+        this(project.gradle)
+    }
+
+    AnsiConsole(Gradle gradle) {
+        plain = gradle.startParameter.consoleOutput == ConsoleOutput.Plain ||
             'plain'.equalsIgnoreCase(System.getProperty('org.gradle.console'))
     }
 
