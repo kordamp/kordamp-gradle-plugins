@@ -1,0 +1,145 @@
+
+[[_org_kordamp_gradle_insight]]
+= Insight
+
+[horizontal]
+id:: `org.kordamp.gradle.insight`
+class:: `org.kordamp.gradle.plugin.insight.InsightPlugin`
+    (link:api/org/kordamp/gradle/plugin/insight/InsightPlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/insight/InsightPlugin.html[source])
+
+NOTE: This plugin should be applied to `settings.gradle(.kts)` only!
+
+Records information about the build and outputs reports at the end of the build.
+
+[[_org_kordamp_gradle_insight_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+insight {
+    enabled
+
+    colors {
+        success
+        failure
+        skipped
+        partial
+    }
+
+    report(Class<T extends BuildReport) {
+        // report configuring action
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name    | Type    | Required | Default Value | Description
+| enabled | boolean | no       | true          | Whether report generation is enabled or not.
+|===
+
+[[_insight_colors]]
+*colors*
+
+[options="header", cols="5*"]
+|===
+| Name    | Type   | Required | Default Value | Description
+| success | String | no       | green         | Color to use when state is SUCCESS
+| failure | String | no       | red           | Color to use when state is FAILURE
+| skipped | String | no       | yellow        | Color to use when state is SKIPPED
+| partial | String | no       | cyan          | Color to use when state is PARTIAL
+|===
+
+Reports must implement the `org.kordamp.gradle.plugin.insight.model.BuildReport` interface. A report of type
+`org.kordamp.gradle.plugin.insight.reports.SummaryBuildReport` will be configured by default if no other reports are
+explicitly configured.
+
+[[_org_kordamp_gradle_insight_reports]]
+== Reports
+
+=== SummaryBuildReport
+`org.kordamp.gradle.plugin.insight.reports.SummaryBuildReport` accepts the following configuration properties:
+
+[options="header", cols="5*"]
+|===
+| Name               | Type    | Required | Default Value | Description
+| enabled            | boolean | no       | true          | Enables or disables this report.
+| format             | String  | no       | short         | Displays project and task counts. Valid values are [`short`, `long`].
+| zeroPadding        | boolean | no       | false         | Output `0` characters in task table.
+| maxProjectPathSize | int     | no       | 36            | Maximum size for displaying project path.
+| confTimeThreshold  | double  | no       | 0.5d          | Time threshold used to flag slow configuration (in seconds).
+| execTimeThreshold  | double  | no       | 120d          | Time threshold used to flag slow execution (in seconds).
+|===
+
+.Project State
+
+A Project may be in any of the following states:
+
+[horizontal]
+SUCCESS:: All its tasks succeeded.
+FAILURE:: At least one of its task failed.
+SKIPPED:: None of its tasks were executed.
+PARTIAL:: Some tasks were executed.
+
+==== Formats
+.Short
+
+The short format displays:
+
+ * project path
+ * project configuration time
+ * project execution time.
+
+WARNING: Project execution time is reported in *linear time*, as the sum of the execution time of all its tasks.
+
+.Long
+
+The long format displays the same information as the short format plus a table of task states.
+
+[horizontal]
+TOT:: Total number of tasks in the project.
+EXE:: Number of tasks executed.
+FLD:: Number of tasks failed.
+SKP:: Number of tasks skipped.
+UTD:: Number of tasks that are up to date.
+WRK:: Number of tasks that did work.
+CHD:: Number of tasks retrieved from cache.
+NSR:: Number of tasks with no source.
+ACT:: Number of actionable tasks.
+
+.Examples
+
+Figure 1. shows a successful build for a project with 4 submodules
+
+.`$ gm build`
+image::build-summary-short1.png[align="center"]
+
+Figure 2. shows a failed build where a failed test in `project1` prevents other projects from being executed
+
+.`$ gm build`
+image::build-summary-short2.png[align="center"]
+
+Figure 3. shows the same failure but `project2` and `project3` are marked as PARTIAL because some of their tasks
+were invoked.
+
+.`$ gm clean build`
+image::build-summary-short3.png[align="center"]
+
+Figures 4., 5., and 6. show the previous scenarios but using the long format
+
+.`$ gm build`
+image::build-summary-long1.png[align="center"]
+
+.`$ gm build`
+image::build-summary-long2.png[align="center"]
+
+.`$ gm clean build`
+image::build-summary-long3.png[align="center"]
+
+Figure 7. shows another project where a subset of modules was invoked. The `griffon-javafx` project has long running
+tests and hit the default execution threshold of 2 minutes
+
+.`$ gm :griffon-javafx:test`
+image::build-summary-short4.png[align="center"]
