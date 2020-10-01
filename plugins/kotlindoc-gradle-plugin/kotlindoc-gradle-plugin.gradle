@@ -19,7 +19,8 @@ dependencies {
     api project(':base-gradle-plugin')
     api project(':javadoc-gradle-plugin')
     api "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    api 'org.jetbrains.dokka:dokka-gradle-plugin:0.10.1'
+    api "org.jetbrains.dokka:dokka-core:$dokkaVersion"
+    api "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     implementation "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion"
     implementation "org.jetbrains.kotlin:kotlin-daemon-embeddable:$kotlinVersion"

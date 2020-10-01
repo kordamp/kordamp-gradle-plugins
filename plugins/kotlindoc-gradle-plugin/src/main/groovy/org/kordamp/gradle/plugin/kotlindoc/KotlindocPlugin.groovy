@@ -21,20 +21,20 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.DependencySet
-import org.gradle.api.artifacts.ResolvableDependencies
-import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenArtifact
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
+import org.jetbrains.dokka.gradle.DokkaCollectorTask
+import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
 import org.jetbrains.dokka.gradle.DokkaPlugin
 import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.dokka.gradle.DokkaVersion
-import org.jetbrains.dokka.gradle.GradlePassConfigurationImpl
+import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
+import org.jetbrains.dokka.gradle.GradleExternalDocumentationLinkBuilder
+import org.jetbrains.dokka.gradle.GradlePackageOptionsBuilder
+import org.jetbrains.dokka.gradle.GradleSourceLinkBuilder
 import org.kordamp.gradle.annotations.DependsOn
 import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
 import org.kordamp.gradle.listener.ProjectEvaluatedListener
@@ -43,7 +43,6 @@ import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.Kotlindoc
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
-import org.kordamp.gradle.util.StringUtils
 
 import javax.inject.Named
 
@@ -51,7 +50,6 @@ import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAl
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 import static org.kordamp.gradle.util.PluginUtils.registerJarVariant
-import static org.kordamp.gradle.util.PluginUtils.resolveClassesTask
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
@@ -62,16 +60,6 @@ import static org.kordamp.gradle.util.PluginUtils.resolveConfig
  */
 @CompileStatic
 class KotlindocPlugin extends AbstractKordampPlugin {
-    static final String KOTLINDOC_BASENAME = 'kotlindoc'
-    static final String AGGREGATE_KOTLINDOC_BASENAME = 'aggregateKotlindoc'
-    static final String DOKKA_RUNTIME_CONFIGURATION_NAME = 'dokkaRuntime'
-
-    private static final DokkaVersion DOKKA_VERSION = DokkaVersion.INSTANCE
-
-    static {
-        DOKKA_VERSION.loadFrom(DokkaPlugin.class.getResourceAsStream('/META-INF/gradle-plugins/org.jetbrains.dokka.properties'))
-    }
-
     Project project
 
     KotlindocPlugin() {
@@ -80,8 +68,6 @@ class KotlindocPlugin extends AbstractKordampPlugin {
 
     void apply(Project project) {
         this.project = project
-
-        configureDokkaRuntimeConfiguration(project)
 
         configureProject(project)
         if (isRootProject(project)) {
@@ -106,45 +92,8 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension config = resolveConfig(project)
         setEnabled(config.docs.kotlindoc.aggregate.enabled)
 
-        config.docs.kotlindoc.outputFormats.each { String format ->
-            String formatName = format == 'html-as-java' ? 'htmljava' : format
-            String suffix = StringUtils.capitalize(formatName)
-            String taskName = AGGREGATE_KOTLINDOC_BASENAME + suffix
-
-            List<DokkaTask> docTasks = []
-            project.tasks.withType(DokkaTask) { DokkaTask t ->
-                if (project in config.docs.kotlindoc.aggregate.excludedProjects) return
-                if (t.name != taskName && t.enabled && t.name.endsWith(suffix)) docTasks << t
-            }
-            project.childProjects.values().each { Project p ->
-                if (p in config.docs.kotlindoc.aggregate.excludedProjects) return
-                p.tasks.withType(DokkaTask) { DokkaTask t -> if (t.enabled && t.name.endsWith(suffix)) docTasks << t }
-            }
-            docTasks = docTasks.unique()
-
-            if (docTasks) {
-                TaskProvider<DokkaTask> aggregateKotlindoc = project.tasks.named(taskName, DokkaTask,
-                    new Action<DokkaTask>() {
-                        @Override
-                        @CompileDynamic
-                        void execute(DokkaTask t) {
-                            t.enabled = config.docs.kotlindoc.aggregate.enabled
-                            if (!config.docs.kotlindoc.aggregate.fast) t.dependsOn docTasks
-                            t.configuration.classpath = docTasks.configuration.classpath.flatten().unique()
-                        }
-                    })
-
-                project.tasks.named(taskName + 'Jar', Jar,
-                    new Action<Jar>() {
-                        @Override
-                        void execute(Jar t) {
-                            t.enabled = config.docs.kotlindoc.aggregate.enabled
-                            t.from aggregateKotlindoc.get().outputDirectory
-                            t.onlyIf { aggregateKotlindoc.get().enabled }
-                            t.archiveClassifier.set(config.docs.kotlindoc.aggregate.replaceJavadoc ? 'javadoc' : 'kotlindoc')
-                        }
-                    })
-            }
+        project.tasks.withType(DokkaCollectorTask) { DokkaCollectorTask task ->
+            task.setEnabled(config.docs.kotlindoc.aggregate.enabled)
         }
 
         updatePublications(project)
@@ -157,6 +106,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
+        project.pluginManager.apply(DokkaPlugin)
 
         project.pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
             addProjectEvaluatedListener(project, new KotlindocProjectEvaluatedListener())
@@ -171,12 +121,76 @@ class KotlindocPlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.docs.kotlindoc.enabled)
 
-            config.docs.kotlindoc.outputFormats.each { String format ->
-                TaskProvider<DokkaTask> kotlindoc = createKotlindocTask(project, format)
-                TaskProvider<Jar> kotlindocJar = createKotlindocJarTask(project, kotlindoc, format)
+            List<DokkaTask> tasks = []
+            project.tasks.withType(DokkaTask).each { DokkaTask dokkaTask ->
+                tasks << dokkaTask
+            }
+
+            tasks.each { DokkaTask dokkaTask ->
+                dokkaTask.setEnabled(config.docs.kotlindoc.enabled)
+                configureDokkaTask(config, dokkaTask)
+                TaskProvider<Jar> kotlindocJar = createKotlindocJarTask(project, dokkaTask)
                 project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(kotlindocJar)
             }
+
+            project.tasks.withType(DokkaMultiModuleTask) { DokkaMultiModuleTask task ->
+                task.setEnabled(config.docs.kotlindoc.enabled)
+            }
         }
+    }
+
+    private void configureDokkaTask(ProjectConfigurationExtension config, DokkaTask dokkaTask) {
+        Kotlindoc kotlindoc = config.docs.kotlindoc
+        if (kotlindoc.outputDirectory) dokkaTask.outputDirectory.set(kotlindoc.outputDirectory)
+        dokkaTask.dokkaSourceSets.configureEach(new Action<GradleDokkaSourceSetBuilder>() {
+            @Override
+            void execute(GradleDokkaSourceSetBuilder ss) {
+                ss.displayName.set(kotlindoc.displayName ?: config.project.displayName)
+                if (kotlindoc.includes) ss.includes.from(kotlindoc.includes)
+                if (kotlindoc.samples) ss.samples.from(kotlindoc.samples)
+                if (kotlindoc.jdkVersion) ss.jdkVersion.set(kotlindoc.jdkVersion)
+                if (kotlindoc.includeNonPublic) ss.includeNonPublic.set(kotlindoc.includeNonPublic)
+                if (kotlindoc.skipDeprecated) ss.skipDeprecated.set(kotlindoc.skipDeprecated)
+                if (kotlindoc.reportUndocumented) ss.reportUndocumented.set(kotlindoc.reportUndocumented)
+                if (kotlindoc.skipEmptyPackages) ss.skipEmptyPackages.set(kotlindoc.skipEmptyPackages)
+                if (kotlindoc.noStdlibLink) ss.noStdlibLink.set(kotlindoc.noStdlibLink)
+                if (kotlindoc.noJdkLink) ss.noJdkLink.set(kotlindoc.noJdkLink)
+
+                kotlindoc.sourceLinks.resolveSourceLinks().each { sourceLink ->
+                    ss.sourceLink(new Action<GradleSourceLinkBuilder>() {
+                        @Override
+                        void execute(GradleSourceLinkBuilder l) {
+                            if (sourceLink.remoteUrl) l.remoteUrl.set(sourceLink.remoteUrl.toURL())
+                            if (sourceLink.localDirectory) l.localDirectory.set(dokkaTask.project.file(sourceLink.localDirectory))
+                            if (sourceLink.remoteLineSuffix) l.remoteLineSuffix.set(sourceLink.remoteLineSuffix)
+                        }
+                    })
+                }
+
+                kotlindoc.externalDocumentationLinks.resolveExternalDocumentationLinks().each { link ->
+                    ss.externalDocumentationLink(new Action<GradleExternalDocumentationLinkBuilder>() {
+                        @Override
+                        void execute(GradleExternalDocumentationLinkBuilder l) {
+                            if (link.url) l.url.set(link.url.toURL())
+                            if (link.packageListUrl) l.packageListUrl.set(link.packageListUrl.toURL())
+                        }
+                    })
+                }
+
+                kotlindoc.packageOptions.resolvePackageOptions().each { packageOption ->
+                    ss.perPackageOption(new Action<GradlePackageOptionsBuilder>() {
+                        @Override
+                        void execute(GradlePackageOptionsBuilder p) {
+                            if (packageOption.prefix) p.prefix.set(packageOption.prefix)
+                            p.includeNonPublic.set(packageOption.includeNonPublic)
+                            p.reportUndocumented.set(packageOption.reportUndocumented)
+                            p.skipDeprecated.set(packageOption.skipDeprecated)
+                            p.suppress.set(packageOption.suppress)
+                        }
+                    })
+                }
+            }
+        })
     }
 
     @Named('kotlindoc')
@@ -189,50 +203,23 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         }
     }
 
-    @CompileDynamic
-    private TaskProvider<DokkaTask> createKotlindocTask(Project project, String format) {
-        String formatName = format == 'html-as-java' ? 'htmljava' : format
-        String taskName = KOTLINDOC_BASENAME + StringUtils.capitalize(formatName)
+    private TaskProvider<Jar> createKotlindocJarTask(Project project, DokkaTask dokkaTask) {
+        String classifier = (dokkaTask.name - 'dokka').toLowerCase()
+        classifier = classifier != 'javadoc' ? classifier : 'kotlindoc'
 
         ProjectConfigurationExtension config = resolveConfig(project)
 
-        project.tasks.register(taskName, DokkaTask,
-            new Action<DokkaTask>() {
-                @Override
-                void execute(DokkaTask t) {
-                    t.enabled = config.docs.kotlindoc.enabled
-                    t.dependsOn resolveClassesTask(project)
-                    t.group = JavaBasePlugin.DOCUMENTATION_GROUP
-                    t.description = "Generates Kotlindoc API documentation in $format format"
-                    t.dokkaRuntime = project.configurations.findByName(DOKKA_RUNTIME_CONFIGURATION_NAME)
-                    t.extensions.add('multiplatform', project.container(GradlePassConfigurationImpl))
-                    t.extensions.add('configuration', new GradlePassConfigurationImpl())
-                    applyConfiguration(config.docs.kotlindoc, t, format, formatName)
-                }
-            })
-    }
-
-    private TaskProvider<Jar> createKotlindocJarTask(Project project, TaskProvider<DokkaTask> kotlindoc, String format) {
-        String formatName = format == 'html-as-java' ? 'htmljava' : format
-        String resolvedClassifier = 'kotlindoc'
-        String taskName = KOTLINDOC_BASENAME + StringUtils.capitalize(formatName) + 'Jar'
-        ProjectConfigurationExtension config = resolveConfig(project)
-
-        if (config.docs.kotlindoc.outputFormats.size() > 1) {
-            resolvedClassifier += '-' + formatName
-        }
-
-        project.tasks.register(taskName, Jar,
+        project.tasks.register(dokkaTask.name + 'Jar', Jar,
             new Action<Jar>() {
                 @Override
                 void execute(Jar t) {
                     t.enabled = config.docs.kotlindoc.enabled
-                    t.dependsOn kotlindoc
+                    t.dependsOn dokkaTask
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
-                    t.description = "An archive of the $format formatted Kotlindoc API docs"
-                    t.archiveClassifier.set(resolvedClassifier)
-                    t.from kotlindoc.get().outputDirectory
-                    t.onlyIf { kotlindoc.get().enabled }
+                    t.description = "An archive of the ${dokkaTask.path} docs"
+                    t.archiveClassifier.set(classifier)
+                    t.from dokkaTask.outputDirectory
+                    t.onlyIf { dokkaTask.enabled }
                 }
             })
     }
@@ -246,9 +233,9 @@ class KotlindocPlugin extends AbstractKordampPlugin {
 
     private void updatePublication(Project project) {
         ProjectConfigurationExtension config = resolveConfig(project)
-        for (String format : config.docs.kotlindoc.outputFormats) {
-            String formatName = format == 'html-as-java' ? 'htmljava' : format
-            String taskName = KOTLINDOC_BASENAME + StringUtils.capitalize(formatName) + 'Jar'
+
+        project.tasks.withType(DokkaTask).each { DokkaTask dokkaTask ->
+            String taskName = dokkaTask.name + 'Jar'
             if (project.tasks.findByName(taskName)) {
                 TaskProvider<Jar> kotlindocJar = project.tasks.named(taskName, Jar)
                 if (config.docs.kotlindoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
@@ -258,79 +245,51 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                         if (config.docs.kotlindoc.replaceJavadoc) {
                             MavenArtifact javadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
                             if (javadocJar) mainPublication.artifacts.remove(javadocJar)
-                            if (config.docs.kotlindoc.outputFormats.indexOf(format) == 0) {
-                                kotlindocJar.configure(new Action<Jar>() {
-                                    @Override
-                                    void execute(Jar t) {
-                                        t.archiveClassifier.set('javadoc')
-                                    }
-                                })
-                                project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
-                                project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
-                            }
+                            kotlindocJar.configure(new Action<Jar>() {
+                                @Override
+                                void execute(Jar t) {
+                                    t.archiveClassifier.set('javadoc')
+                                }
+                            })
+                            project.tasks.findByName(JavadocPlugin.JAVADOC_TASK_NAME)?.enabled = false
+                            project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
+
                             mainPublication.artifact(kotlindocJar.get())
                         }
                     }
 
-                    registerJarVariant('Kotlindoc (' + format + ')', ' kotlindoc ', kotlindocJar, project)
+                    String classifier = kotlindocJar.get().archiveClassifier.get()
+                    registerJarVariant('Kotlindoc (' + classifier + ')', " $classifier ".toString(), kotlindocJar, project)
                 }
             }
         }
     }
 
     private void createAggregateTasks(Project project) {
-        ProjectConfigurationExtension config = resolveConfig(project)
+        List<DokkaCollectorTask> tasks = []
 
-        config.docs.kotlindoc.outputFormats.each { String format ->
-            String formatName = format == 'html-as-java' ? 'htmljava' : format
-            String suffix = StringUtils.capitalize(formatName)
-            String taskName = AGGREGATE_KOTLINDOC_BASENAME + suffix
+        project.tasks.withType(DokkaCollectorTask).each { DokkaCollectorTask collectorTask ->
+            tasks << collectorTask
+        }
 
-            TaskProvider<DokkaTask> aggregateKotlindoc = project.tasks.register(taskName, DokkaTask,
-                new Action<DokkaTask>() {
-                    @Override
-                    void execute(DokkaTask t) {
-                        t.enabled = false
-                        t.group = JavaBasePlugin.DOCUMENTATION_GROUP
-                        t.description = "Generates aggregate Kotlindoc API documentation in $format format"
-                        t.dokkaRuntime = project.configurations.findByName(DOKKA_RUNTIME_CONFIGURATION_NAME)
-                        t.extensions.add('multiplatform', project.container(GradlePassConfigurationImpl))
-                        t.extensions.add('configuration', new GradlePassConfigurationImpl())
-                        t.subProjects = project.childProjects.values().findAll { p ->
-                            p.pluginManager.hasPlugin('org.jetbrains.kotlin.jvm')
-                        }.collect { it.name }.toList()
-                        applyConfiguration(config.docs.kotlindoc, t, format, formatName)
-                        t.outputDirectory = config.docs.kotlindoc.outputDirectory.absolutePath + File.separator + 'aggregate-' + formatName
-                    }
-                })
+        tasks.each { DokkaCollectorTask collectorTask ->
+            String classifier = (collectorTask.name - 'dokka' - 'Collector').toLowerCase()
+            classifier = classifier != 'javadoc' ? classifier : 'kotlindoc'
 
-            project.tasks.register(taskName + 'Jar', Jar,
+
+            project.tasks.register(collectorTask.name + 'Jar', Jar,
                 new Action<Jar>() {
                     @Override
                     void execute(Jar t) {
                         t.enabled = false
-                        t.dependsOn aggregateKotlindoc
+                        t.dependsOn collectorTask
                         t.group = JavaBasePlugin.DOCUMENTATION_GROUP
-                        t.description = "An archive of the aggregated $format formatted Kotlindoc API docs"
-                        t.archiveClassifier.set 'kotlindoc' + '-' + formatName
-                        t.from aggregateKotlindoc.get().outputDirectory
+                        t.description = "An archive of the aggregated ${collectorTask.name} docs"
+                        t.archiveClassifier.set classifier
+                        t.from collectorTask.outputDirectory
                     }
                 })
         }
-    }
-
-    private Configuration configureDokkaRuntimeConfiguration(Project project) {
-        Configuration dokkaRuntime = project.configurations.maybeCreate(DOKKA_RUNTIME_CONFIGURATION_NAME)
-        dokkaRuntime.incoming.beforeResolve(new Action<ResolvableDependencies>() {
-            @SuppressWarnings('UnusedMethodParameter')
-            void execute(ResolvableDependencies resolvableDependencies) {
-                DependencyHandler dependencyHandler = project.dependencies
-                DependencySet dependencies = dokkaRuntime.dependencies
-                dependencies.add(dependencyHandler.create("org.jetbrains.dokka:dokka-fatjar:${DOKKA_VERSION.version}"))
-            }
-        })
-
-        dokkaRuntime
     }
 
     @CompileDynamic
@@ -353,9 +312,9 @@ class KotlindocPlugin extends AbstractKordampPlugin {
 
         kotlindoc.sourceLinks.resolveSourceLinks().each { sourceLink ->
             task.configuration.sourceLink {
-                delegate.url = sourceLink.url
-                delegate.path = sourceLink.path
-                delegate.lineSuffix = sourceLink.suffix
+                delegate.url = sourceLink.remoteUrl
+                delegate.path = sourceLink.localDirectory
+                delegate.lineSuffix = sourceLink.remoteLineSuffix
             }
         }
 

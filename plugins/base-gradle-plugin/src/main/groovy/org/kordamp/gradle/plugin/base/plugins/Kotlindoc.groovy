@@ -35,24 +35,18 @@ class Kotlindoc extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.kotlindoc'
     static final String KOTLIN_JVM_PLUGIN_ID = 'org.jetbrains.kotlin.jvm'
 
-    private final Set<String> PLATFORMS = ['Common', 'JVM', 'JS', 'Native'] as Set
-    private final Set<String> FORMATS = ['html', 'javadoc', 'html-as-java', 'markdown', 'gfm', 'jekyll'] as Set
-
-    String moduleName = ""
-    List<String> outputFormats = ['html']
     File outputDirectory
-    List<Object> includes = []
-    List<Object> samples = []
-    int jdkVersion
-    String cacheRoot
-    String languageVersion
-    String apiVersion
     boolean includeNonPublic = false
     boolean skipDeprecated = false
     boolean reportUndocumented = true
     boolean skipEmptyPackages = true
+    String displayName
+    List<Object> includes = []
+    List<Object> samples = []
+    int jdkVersion
     boolean noStdlibLink = false
-    Set<String> impliedPlatforms = [] as Set
+    boolean noJdkLink = false
+
     final SourceLinkSet sourceLinks = new SourceLinkSet()
     final ExternalDocumentationLinkSet externalDocumentationLinks = new ExternalDocumentationLinkSet()
     final PackageOptionSet packageOptions = new PackageOptionSet()
@@ -66,6 +60,7 @@ class Kotlindoc extends AbstractFeature {
     private boolean reportUndocumentedSet
     private boolean skipEmptyPackagesSet
     private boolean noStdlibLinkSet
+    private boolean noJdkLinkSet
 
     Kotlindoc(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID)
@@ -83,10 +78,10 @@ class Kotlindoc extends AbstractFeature {
 
         List<Map<String, Map<String, String>>> lms = []
         sourceLinks.sourceLinks.each { lm ->
-            if (!lm.empty) lms << new LinkedHashMap<String, Map<String, String>>([(lm.url): new LinkedHashMap<String, String>([
-                url   : lm.url,
-                path  : lm.path,
-                suffix: lm.suffix
+            if (!lm.empty) lms << new LinkedHashMap<String, Map<String, String>>([(lm.remoteUrl): new LinkedHashMap<String, String>([
+                url   : lm.remoteUrl,
+                path  : lm.localDirectory,
+                suffix: lm.remoteLineSuffix
             ])])
         }
 
@@ -108,21 +103,17 @@ class Kotlindoc extends AbstractFeature {
         }
 
         map.replaceJavadoc = replaceJavadoc
-        map.moduleName = moduleName
+        map.displayName = displayName
         map.outputDirectory = outputDirectory
-        map.outputFormats = outputFormats
         map.includes = includes
         map.samples = samples
         map.jdkVersion = jdkVersion
-        map.cacheRoot = cacheRoot
-        map.languageVersion = languageVersion
-        map.apiVersion = apiVersion
         map.includeNonPublic = includeNonPublic
         map.skipDeprecated = skipDeprecated
         map.reportUndocumented = reportUndocumented
         map.skipEmptyPackages = skipEmptyPackages
         map.noStdlibLink = noStdlibLink
-        map.impliedPlatforms = impliedPlatforms
+        map.noJdkLink = noJdkLink
         map.sourceLinks = lms
         map.externalDocumentationLinks = edls
         map.packageOptions = pos
@@ -132,15 +123,6 @@ class Kotlindoc extends AbstractFeature {
         }
 
         new LinkedHashMap<>('kotlindoc': map)
-    }
-
-    @Override
-    void normalize() {
-        super.normalize()
-
-        if (!impliedPlatforms) {
-            impliedPlatforms << 'JVM'
-        }
     }
 
     @Override
@@ -202,6 +184,15 @@ class Kotlindoc extends AbstractFeature {
         this.noStdlibLinkSet
     }
 
+    void setNoJdkLink(boolean noJdkLink) {
+        this.noJdkLink = noJdkLink
+        this.noJdkLinkSet = true
+    }
+
+    boolean isNoJdkLinkSet() {
+        this.noJdkLink
+    }
+
     void sourceLinks(Action<? super SourceLinkSet> action) {
         action.execute(sourceLinks)
     }
@@ -238,19 +229,15 @@ class Kotlindoc extends AbstractFeature {
         o2.normalize()
         AbstractFeature.merge(o1, o2)
         o1.setReplaceJavadoc((boolean) (o1.replaceJavadocSet ? o1.replaceJavadoc : o2.replaceJavadoc))
-        o1.moduleName = o1.moduleName ?: o2.moduleName
-        CollectionUtils.merge(o1.outputFormats, o2?.outputFormats)
+        o1.displayName = o1.displayName ?: o2.displayName
         o1.outputDirectory = o1.outputDirectory ?: o1.project.file("${o1.project.buildDir}/docs/kotlindoc")
         o1.jdkVersion = o1.jdkVersion ?: o2.jdkVersion
-        o1.cacheRoot = o1.cacheRoot ?: o2.cacheRoot
-        o1.languageVersion = o1.languageVersion ?: o2.languageVersion
-        o1.apiVersion = o1.apiVersion ?: o2.apiVersion
         o1.setIncludeNonPublic((boolean) (o1.includeNonPublicSet ? o1.includeNonPublic : o2.includeNonPublic))
         o1.setSkipDeprecated((boolean) (o1.skipDeprecatedSet ? o1.skipDeprecated : o2.skipDeprecated))
         o1.setReportUndocumented((boolean) (o1.reportUndocumentedSet ? o1.reportUndocumented : o2.reportUndocumented))
         o1.setSkipEmptyPackages((boolean) (o1.skipEmptyPackagesSet ? o1.skipEmptyPackages : o2.skipEmptyPackages))
         o1.setNoStdlibLink((boolean) (o1.noStdlibLinkSet ? o1.noStdlibLink : o2.noStdlibLink))
-        CollectionUtils.merge(o1.impliedPlatforms, o2?.impliedPlatforms)
+        o1.setNoJdkLink((boolean) (o1.noJdkLinkSet ? o1.noJdkLink : o2.noJdkLink))
         CollectionUtils.merge(o1.includes, o2?.includes)
         CollectionUtils.merge(o1.samples, o2?.samples)
         SourceLinkSet.merge(o1.sourceLinks, o2.sourceLinks)
@@ -265,26 +252,6 @@ class Kotlindoc extends AbstractFeature {
         outputDirectory = outputDirectory ?: project.file("${project.buildDir}/docs/kotlindoc")
         jdkVersion = jdkVersion ?: 6
         if (replaceJavadoc) config.docs.javadoc.enabled = false
-    }
-
-    List<String> validate(ProjectConfigurationExtension extension) {
-        List<String> errors = []
-
-        if (!enabled) return errors
-
-        impliedPlatforms.each { platform ->
-            if (!PLATFORMS.contains(platform)) {
-                errors << "Platform '$platform' is not supported".toString()
-            }
-        }
-
-        outputFormats.each { format ->
-            if (!FORMATS.contains(format)) {
-                errors << "Output format '$format' is not supported".toString()
-            }
-        }
-
-        errors
     }
 
     @CompileStatic
@@ -304,8 +271,8 @@ class Kotlindoc extends AbstractFeature {
         }
 
         static void merge(SourceLinkSet o1, SourceLinkSet o2) {
-            Map<String, SourceLink> a = o1.sourceLinks.collectEntries { [(it.url): it] }
-            Map<String, SourceLink> b = o2.sourceLinks.collectEntries { [(it.url): it] }
+            Map<String, SourceLink> a = o1.sourceLinks.collectEntries { [(it.remoteUrl): it] }
+            Map<String, SourceLink> b = o2.sourceLinks.collectEntries { [(it.remoteUrl): it] }
 
             a.each { k, sourceLink ->
                 SourceLink.merge(sourceLink, b.remove(k))
@@ -322,18 +289,18 @@ class Kotlindoc extends AbstractFeature {
 
     @CompileStatic
     static class SourceLink {
-        String path
-        String url
-        String suffix
+        String localDirectory
+        String remoteUrl
+        String remoteLineSuffix
 
         static void merge(SourceLink o1, SourceLink o2) {
-            o1.path = o1.path ?: o2?.path
-            o1.url = o1.url ?: o2?.url
-            o1.suffix = o1.suffix ?: o2?.suffix
+            o1.localDirectory = o1.localDirectory ?: o2?.localDirectory
+            o1.remoteUrl = o1.remoteUrl ?: o2?.remoteUrl
+            o1.remoteLineSuffix = o1.remoteLineSuffix ?: o2?.remoteLineSuffix
         }
 
         boolean isEmpty() {
-            isBlank(path) || isBlank(url)
+            isBlank(localDirectory) || isBlank(remoteUrl)
         }
     }
 

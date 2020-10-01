@@ -853,12 +853,6 @@ class ProjectConfigurationExtension {
             sourceXref.postMerge()
             this
         }
-
-        List<String> validate() {
-            List<String> errors = []
-            errors.addAll(this.@kotlindoc.validate(config))
-            errors
-        }
     }
 
     @CompileStatic

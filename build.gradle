@@ -49,6 +49,12 @@ config {
     bintray {
         skipMavenSync = true
     }
+
+    coverage {
+        jacoco {
+            toolVersion = jacocoVersion
+        }
+    }
 }
 
 allprojects {
