@@ -214,6 +214,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
                 t.description = 'Scanning license on Maven files'
                 t.source = project.fileTree(project.projectDir) {
                     include('**/pom.xml')
+                    exclude('build/**/pom.xml')
                 }
             }
         })
@@ -226,6 +227,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
                 t.description = 'Scanning license on Maven files'
                 t.source = project.fileTree(project.projectDir) {
                     include('**/pom.xml')
+                    exclude('build/**/pom.xml')
                 }
             }
         })
