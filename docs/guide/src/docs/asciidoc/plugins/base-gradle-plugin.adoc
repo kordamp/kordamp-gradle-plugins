@@ -380,22 +380,141 @@ WARNING: Dependencies defined in this way cannot have classifiers and must be re
 [[_org_kordamp_gradle_base_dependencies_methods]]
 === Methods
 
-dependency(String):: Defines a dependency. Argument must use the `groupId:artifactId:version` notation. Dependency name will be equal to `artifactId`.
-dependency(String, String):: Defines a dependency. Second argument must use the `groupId:artifactId:version` notation.
-dependency(String, String, Action):: Defines and configures a dependency. Second argument must use the `groupId:artifactId:version` notation.
-dependency(String, String, Closure):: Defines and configures a dependency. Second argument must use the `groupId:artifactId:version` notation.
-platform(String):: Defines a platform dependency. Argument must use the `groupId:artifactId:version` notation. Dependency name will be equal to `artifactId`.
-platform(String, String):: Defines a platform dependency. Second argument must use the `groupId:artifactId:version` notation.
-platform(String, String, Action):: Defines and configures a platform dependency. Second argument must use the `groupId:artifactId:version` notation.
-platform(String, String, Closure):: Defines and configures a platform dependency. Second argument must use the `groupId:artifactId:version` notation.
-dependency(String, Action):: Defines and configures a dependency by name.
-dependency(String, Closure):: Defines and configures a dependency by name.
-getDependency(String):: Returns the named dependency (if it exists). Throws an exception otherwise.
-findDependencyByName(String):: Finds a dependency by name if it exists, `null` otherwise.
-findDependencyByGA(String, String):: Finds a dependency by groupId and artifactId if it exists, `null` otherwise.
-gav(String):: Returns the given dependency in GAV notation if it exists. Throws an exception otherwise.
-gav(String, String):: Returns the given module dependency in GAV notation if it exists. Throws an exception otherwise.
-ga(String, String):: Returns the given module dependency in GA (groupId/artifactId) notation if it exists. Throws an exception otherwise.
+dependency(String):: Defines a dependency. Argument must use the `groupId:artifactId:version` notation. Dependency name will be equal to `artifactId`. +
+Example: +
+[source,groovy]
+----
+dependency('com.googlecode.guava:guava:29.0-jre')
+----
+dependency(String, String):: Defines a dependency. Second argument must use the `groupId:artifactId:version` notation. +
+Example: +
+[source,groovy]
+----
+dependency('guava', 'com.googlecode.guava:guava:29.0-jre')
+----
+dependency(String, String, Action):: Defines and configures a dependency. Second argument must use the `groupId:artifactId:version` notation. +
+Example: +
+[source,groovy]
+----
+dependency('groovy', 'org.codehaus.groovy:groovy:3.0.6') {
+    modules = [
+        'groovy-test',
+        'groovy-json',
+        'groovy-xml'
+    ]
+}
+----
+dependency(String, String, Closure):: Defines and configures a dependency. Second argument must use the `groupId:artifactId:version` notation. +
+Example: +
+[source,groovy]
+----
+dependency('groovy', 'org.codehaus.groovy:groovy:3.0.6') {
+    modules = [
+        'groovy-test',
+        'groovy-json',
+        'groovy-xml'
+    ]
+}
+----
+platform(String):: Defines a platform dependency. Argument must use the `groupId:artifactId:version` notation. Dependency name will be equal to `artifactId`. +
+Example: +
+[source,groovy]
+----
+platform('io.micronaut:micronaut-bom:2.0.2')
+----
+platform(String, String):: Defines a platform dependency. Second argument must use the `groupId:artifactId:version` notation. +
+Example: +
+[source,groovy]
+----
+platform('micronaut', 'io.micronaut:micronaut-bom:2.0.2')
+----
+platform(String, String, Action):: Defines and configures a platform dependency. Second argument must use the `groupId:artifactId:version` notation. +
+Example: +
+[source,groovy]
+----
+platform('micronaut', 'io.micronaut:micronaut-bom:2.0.2') {
+    modules = [
+        'micronaut-core',
+        'micronaut-inject',
+        'micronaut-validation'
+    ]
+}
+----
+platform(String, String, Closure):: Defines and configures a platform dependency. Second argument must use the `groupId:artifactId:version` notation. +
+Example: +
+[source,groovy]
+----
+platform('micronaut', 'io.micronaut:micronaut-bom:2.0.2') {
+    modules = [
+        'micronaut-core',
+        'micronaut-inject',
+        'micronaut-validation'
+    ]
+}
+----
+dependency(String, Action):: Defines and configures a dependency by name. +
+Example: +
+[source,groovy]
+----
+dependency('org.codehaus.groovy:groovy:3.0.6') {
+    modules = [
+        'groovy-test',
+        'groovy-json',
+        'groovy-xml'
+    ]
+}
+----
+dependency(String, Closure):: Defines and configures a dependency by name. +
+Example: +
+[source,groovy]
+----
+dependency('org.codehaus.groovy:groovy:3.0.6') {
+    modules = [
+        'groovy-test',
+        'groovy-json',
+        'groovy-xml'
+    ]
+}
+----
+getDependency(String):: Returns the named dependency (if it exists). Throws an exception otherwise. +
+Example: +
+[source,groovy]
+----
+getDependency('guava') instanceof org.kordamp.gradle.plugin.base.model.artifact.Dependency
+----
+findDependencyByName(String):: Finds a dependency by name if it exists, `null` otherwise. +
+Example: +
+[source,groovy]
+----
+findDependencyByName('guava') instanceof org.kordamp.gradle.plugin.base.model.artifact.Dependency
+----
+findDependencyByGA(String, String):: Finds a dependency by groupId and artifactId if it exists, `null` otherwise. +
+Example: +
+[source,groovy]
+----
+findDependencyByGA('com.googlecode.guava', 'guava') instanceof org.kordamp.gradle.plugin.base.model.artifact.Dependency
+----
+gav(String):: Returns the given dependency in GAV notation if it exists. Throws an exception otherwise. +
+Example: +
+[source,groovy]
+----
+gav('groovy') == 'org.codehaus.groovy:groovy:3.0.6'
+----
+gav(String, String):: Returns the given module dependency in GAV notation if it exists. Throws an exception otherwise. +
+Example: +
+[source,groovy]
+----
+gav('groovy', 'groovy-json') == 'org.codehaus.groovy:groovy-json:3.0.6'
+----
+ga(String, String):: Returns the given module dependency in GA (groupId/artifactId) notation if it exists. Throws an exception otherwise. +
+Example: +
+[source,groovy]
+----
+ga('micronaut', 'micronaut-core') == 'io.micronaut:micronaut-core'
+----
+
+WARNING: Instances of type `org.kordamp.gradle.plugin.base.model.artifact.Dependency` can not be pass directly to Gradle's dependency
+resolution mechanism. You must convert them to any of the accepted notations such as `groupId:artifactId:version`.
 
 ==== Example
 
@@ -408,7 +527,7 @@ config {
         dependency('groovy') {
             groupId    = 'org.codehaus.groovy'
             artifactId = 'groovy'
-            version    = '3.0.3'
+            version    = '3.0.6'
             modules    = [
                 'groovy-test',
                 'groovy-json',
@@ -418,7 +537,7 @@ config {
         // a dependency without modules
         dependency('junit:junit:4.13')
         // a platform
-        platform('micronaut', 'io.micronaut:micronaut-bom:2.0.0.M3') {
+        platform('micronaut', 'io.micronaut:micronaut-bom:2.0.2') {
             modules = [
                 'micronaut-core',
                 'micronaut-inject',
@@ -445,7 +564,7 @@ config {
         dependency('groovy') {
             groupId    = 'org.codehaus.groovy'
             artifactId = 'groovy'
-            version    = '3.0.3'
+            version    = '3.0.6'
             modules    = [
                 'groovy-test',
                 'groovy-json',
@@ -455,7 +574,7 @@ config {
         // a dependency without modules
         dependency('junit:junit:4.13')
         // a platform
-        platform('micronaut', 'io.micronaut:micronaut-bom:2.0.0.M3') {
+        platform('micronaut', 'io.micronaut:micronaut-bom:2.0.2') {
             modules = [
                 'micronaut-core',
                 'micronaut-inject',
@@ -493,8 +612,8 @@ Will generate the following entries in the POM if publishing is enabled
     coordinates and other elements omitted for brevity
    -->
   <properties>
-    <micronaut.version>2.0.0.M3</micronaut.version>
-    <groovy.version>3.0.3</groovy.version>
+    <micronaut.version>2.0.2</micronaut.version>
+    <groovy.version>3.0.6</groovy.version>
   </properties>
   <dependencyManagement>
     <dependencies>
