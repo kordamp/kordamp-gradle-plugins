@@ -127,8 +127,8 @@ class Scaladoc extends AbstractFeature {
         AbstractFeature.merge(o1, o2)
         o1.setTitle(o1.title ?: o2?.title)
         o1.setReplaceJavadoc((boolean) (o1.replaceJavadocSet ? o1.replaceJavadoc : o2.replaceJavadoc))
-        CollectionUtils.merge(o1.excludes, o2?.excludes)
-        CollectionUtils.merge(o1.includes, o2?.includes)
+        o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
+        o1.includes = CollectionUtils.merge(o1.includes, o2.includes, false)
         ScaladocOptions.merge(o1.options, o2.options)
         Aggregate.merge(o1.aggregate, o2.aggregate)
     }

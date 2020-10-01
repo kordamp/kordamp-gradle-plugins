@@ -69,7 +69,7 @@ class ScaladocOptions {
         o1.setDocTitle(o1.docTitle ?: o2.docTitle)
         o1.setHeader(o1.header ?: o2.header)
         o1.setFooter(o1.footer ?: o2.footer)
-        CollectionUtils.merge(o1.additionalParameters, o2?.additionalParameters)
+        o1.additionalParameters = CollectionUtils.merge(o1.additionalParameters, o2?.additionalParameters, false)
     }
 
     void applyTo(ScalaDoc scaladoc) {

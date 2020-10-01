@@ -135,7 +135,7 @@ class Sonar extends AbstractFeature {
         o1.username = o1.username ?: o2.username
         o1.organization = o1.organization ?: o2.organization
         o1.login = o1.login ?: o2.login
-        CollectionUtils.merge(o1.configProperties, o2?.configProperties)
-        CollectionUtils.merge(o1.excludes, o2?.excludes)
+        o1.configProperties = CollectionUtils.merge(o1.configProperties, o2?.configProperties, false)
+        o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
     }
 }

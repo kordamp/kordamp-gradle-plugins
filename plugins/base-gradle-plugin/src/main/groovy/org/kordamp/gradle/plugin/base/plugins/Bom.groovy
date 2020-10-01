@@ -190,9 +190,9 @@ class Bom extends AbstractFeature implements PomOptions {
     static void merge(Bom o1, Bom o2) {
         AbstractFeature.merge(o1, o2)
         CollectionUtils.merge(o1.@dependencies, o2.@dependencies)
-        CollectionUtils.merge(o1.excludes, o2.excludes)
-        CollectionUtils.merge(o1.includes, o2.includes)
-        CollectionUtils.merge(o1.properties, o2.properties)
+        o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
+        o1.includes = CollectionUtils.merge(o1.includes, o2.includes, false)
+        o1.properties = CollectionUtils.merge(o1.properties, o2.properties, false)
         o1.setAutoIncludes((boolean) (o1.autoIncludesSet ? o1.autoIncludes : o2.autoIncludes))
 
         o1.parent = o1.parent ?: o2?.parent

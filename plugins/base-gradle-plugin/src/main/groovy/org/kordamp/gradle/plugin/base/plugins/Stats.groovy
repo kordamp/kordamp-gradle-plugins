@@ -125,7 +125,7 @@ class Stats extends AbstractAggregateFeature {
         AbstractAggregateFeature.merge(o1, o2)
         o1.counters.putAll(o2.counters)
         o1.paths.putAll(o2.paths)
-        CollectionUtils.merge(o1.formats, o2?.formats)
+        o1.formats = CollectionUtils.merge(o1.formats, o2?.formats, false)
     }
 
     void postMerge() {

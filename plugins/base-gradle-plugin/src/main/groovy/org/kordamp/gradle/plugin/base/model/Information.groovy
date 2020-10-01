@@ -92,7 +92,7 @@ class Information {
         o1.description = o1.description ?: o2.description
         o1.inceptionYear = o1.@inceptionYear ?: o2.inceptionYear
         o1.vendor = o1.@vendor ?: o2.vendor
-        CollectionUtils.merge(o1.tags, o2.tags)
+        o1.tags = CollectionUtils.merge(o1.tags, o2.tags, false)
         Specification.merge(o1.spec, o2.spec)
         Implementation.merge(o1.impl, o2.impl)
         Organization.merge(o1.organization, o2.organization)

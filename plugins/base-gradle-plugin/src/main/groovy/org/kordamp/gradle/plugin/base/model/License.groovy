@@ -77,6 +77,6 @@ class License {
         o1.distribution = o1.distribution ?: o2?.distribution
         o1.comments = o1.comments ?: o2?.comments
         o1.primary = o1.primary ?: o2?.primary
-        CollectionUtils.merge(o1.aliases, o2?.aliases)
+        o1.aliases = CollectionUtils.merge(o1.aliases, o2?.aliases, false)
     }
 }

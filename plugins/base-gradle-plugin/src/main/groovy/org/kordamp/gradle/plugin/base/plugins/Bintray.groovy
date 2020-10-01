@@ -143,7 +143,7 @@ class Bintray extends AbstractFeature {
         o1.repo = o1.@repo ?: o2.@repo
         o1.userOrg = o1.userOrg ?: o2.userOrg
         o1.githubRepo = o1.@githubRepo ?: o2.githubRepo
-        CollectionUtils.merge(o1.publications, o2.publications)
+        o1.publications = CollectionUtils.merge(o1.publications, o2.publications, false)
         Credentials.merge(o1.credentials, o2.credentials)
     }
 

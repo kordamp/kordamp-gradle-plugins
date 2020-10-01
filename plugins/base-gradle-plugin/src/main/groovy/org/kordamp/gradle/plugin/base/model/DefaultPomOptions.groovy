@@ -120,7 +120,7 @@ class DefaultPomOptions implements PomOptions {
 
     static void merge(DefaultPomOptions o1, DefaultPomOptions o2) {
         o1.packaging = (o1.packaging ?: o2.packaging) ?: 'jar'
-        CollectionUtils.merge(o1.properties, o2.properties)
+        o1.properties = CollectionUtils.merge(o1.properties, o2.properties, false)
         o1.parent = o1.parent ?: o2.parent
         o1.setOverwriteInceptionYear((boolean) (o1.overwriteInceptionYearSet ? o1.overwriteInceptionYear : o2.overwriteInceptionYear))
         o1.setOverwriteUrl((boolean) (o1.overwriteUrlSet ? o1.overwriteUrl : o2.overwriteUrl))

@@ -50,7 +50,7 @@ class MailingList {
         o1.unsubscribe = o1.unsubscribe ?: o2?.unsubscribe
         o1.post = o1.post ?: o2?.post
         o1.archive = o1.archive ?: o2?.archive
-        CollectionUtils.merge(o1.otherArchives, o2?.otherArchives)
+        o1.otherArchives = CollectionUtils.merge(o1.otherArchives, o2?.otherArchives, false)
         o1
     }
 }

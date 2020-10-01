@@ -122,12 +122,12 @@ class Spotbugs extends AbstractQualityFeature {
     static void merge(Spotbugs o1, Spotbugs o2) {
         AbstractQualityFeature.merge(o1, o2)
         o1.setShowProgress((boolean) (o1.showProgressSet ? o1.showProgress : o2.showProgress))
-        CollectionUtils.merge(o1.excludes, o2?.excludes)
-        CollectionUtils.merge(o1.includes, o2?.includes)
-        CollectionUtils.merge(o1.visitors, o2?.visitors)
-        CollectionUtils.merge(o1.omitVisitors, o2?.omitVisitors)
-        CollectionUtils.merge(o1.extraArgs, o2?.extraArgs)
-        CollectionUtils.merge(o1.jvmArgs, o2?.jvmArgs)
+        o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
+        o1.includes = CollectionUtils.merge(o1.includes, o2.includes, false)
+        o1.visitors = CollectionUtils.merge(o1.visitors, o2?.visitors, false)
+        o1.omitVisitors = CollectionUtils.merge(o1.omitVisitors, o2?.omitVisitors, false)
+        o1.extraArgs = CollectionUtils.merge(o1.extraArgs, o2?.extraArgs, false)
+        o1.jvmArgs = CollectionUtils.merge(o1.jvmArgs, o2?.jvmArgs, false)
         o1.includeFilterFile = o1.includeFilterFile ?: o2.includeFilterFile
         o1.excludeFilterFile = o1.excludeFilterFile ?: o2.excludeFilterFile
         o1.excludeBugsFilterFile = o1.excludeBugsFilterFile ?: o2.excludeBugsFilterFile

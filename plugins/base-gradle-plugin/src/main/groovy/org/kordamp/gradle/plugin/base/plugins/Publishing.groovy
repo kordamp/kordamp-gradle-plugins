@@ -141,8 +141,8 @@ class Publishing extends AbstractFeature {
         o1.@useVersionExpressionsSet = o1.useVersionExpressionsSet ?: o2.useVersionExpressionsSet
         o1.@flattenPlatforms = o1.flattenPlatformsSet ? o1.flattenPlatforms : o2.flattenPlatforms
         o1.@flattenPlatformsSet = o1.flattenPlatformsSet ?: o2.flattenPlatformsSet
-        CollectionUtils.merge(o1.publications, o2?.publications)
-        CollectionUtils.merge(o1.scopes, o2?.scopes)
+        o1.publications = CollectionUtils.merge(o1.publications, o2?.publications, false)
+        o1.scopes = CollectionUtils.merge(o1.scopes, o2?.scopes, false)
         DefaultPomOptions.merge(o1.pom, o2.pom)
     }
 
@@ -240,7 +240,7 @@ class Publishing extends AbstractFeature {
 
         static void merge(DefaultPomOptions o1, DefaultPomOptions o2) {
             o1.packaging = (o1.packaging ?: o2.packaging) ?: 'jar'
-            CollectionUtils.merge(o1.properties, o2.properties)
+            o1.properties = CollectionUtils.merge(o1.properties, o2.properties, false)
             o1.parent = o1.parent ?: o2.parent
             o1.setOverwriteInceptionYear((boolean) (o1.overwriteInceptionYearSet ? o1.overwriteInceptionYear : o2.overwriteInceptionYear))
             o1.setOverwriteUrl((boolean) (o1.overwriteUrlSet ? o1.overwriteUrl : o2.overwriteUrl))

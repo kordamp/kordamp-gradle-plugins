@@ -58,7 +58,7 @@ class Notifier {
         o1.setSendOnFailure((boolean) (o1.sendOnFailureSet ? o1.sendOnFailure : o2.sendOnFailure))
         o1.setSendOnSuccess((boolean) (o1.sendOnSuccessSet ? o1.sendOnSuccess : o2.sendOnSuccess))
         o1.setSendOnWarning((boolean) (o1.sendOnWarningSet ? o1.sendOnWarning : o2.sendOnWarning))
-        CollectionUtils.merge(o1.configuration, o2?.configuration)
+        o1.configuration = CollectionUtils.merge(o1.configuration, o2?.configuration, false)
         o1
     }
 }

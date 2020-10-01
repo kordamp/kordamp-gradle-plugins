@@ -64,8 +64,7 @@ class Plugin {
         o1.displayName = o1.displayName ?: o2?.displayName
         o1.description = o1.description ?: o2?.description
         o1.implementationClass = o1.implementationClass ?: o2?.implementationClass
-        CollectionUtils.merge(o1.tags, o2?.tags)
-        CollectionUtils.merge(o1.properties, o2?.properties)
+        o1.tags = CollectionUtils.merge(o1.tags, o2?.tags, false)
 
         o1
     }

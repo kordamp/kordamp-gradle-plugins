@@ -110,11 +110,11 @@ class Checkstyle extends AbstractQualityFeature {
             if (o2.configFileSet) o1.configFile = o2.configFile
         }
         o1.setShowViolations((boolean) (o1.showViolationsSet ? o1.showViolations : o2.showViolations))
-        CollectionUtils.merge(o1.excludes, o2?.excludes)
-        CollectionUtils.merge(o1.includes, o2?.includes)
+        o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
+        o1.includes = CollectionUtils.merge(o1.includes, o2.includes, false)
         o1.maxErrors = o1.maxErrors ?: o2.maxErrors
         o1.maxWarnings = o1.maxWarnings ?: o2.maxWarnings
-        CollectionUtils.merge(o1.configProperties, o2?.configProperties)
+        o1.configProperties = CollectionUtils.merge(o1.configProperties, o2?.configProperties, false)
     }
 
     @CompileDynamic

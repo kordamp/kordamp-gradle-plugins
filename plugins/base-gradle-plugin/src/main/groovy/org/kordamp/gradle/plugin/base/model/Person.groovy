@@ -56,13 +56,13 @@ class Person {
         o1.email = o1.email ?: o2?.email
         o1.url = o1.url ?: o2?.url
         o1.timezone = o1.timezone ?: o2?.timezone
-        CollectionUtils.merge(o1.roles, o2?.roles)
+        o1.roles = CollectionUtils.merge(o1.roles, o2?.roles, false)
         if (o1.organization) {
             Organization.merge(o1.organization, o2?.organization)
         } else {
             o1.organization = o2?.organization
         }
-        CollectionUtils.merge(o1.properties, o2?.properties)
+        o1.properties = CollectionUtils.merge(o1.properties, o2?.properties, false)
 
         o1
     }

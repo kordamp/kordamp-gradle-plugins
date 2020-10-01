@@ -104,7 +104,7 @@ class SourceXref extends AbstractAggregateFeature {
         o1.bottom = o1.bottom ?: o2?.bottom
         o1.stylesheet = o1.stylesheet ?: o2?.stylesheet
         o1.javaVersion = o1.javaVersion ?: o2?.javaVersion
-        CollectionUtils.merge(o1.excludes, o2?.excludes)
-        CollectionUtils.merge(o1.includes, o2?.includes)
+        o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
+        o1.includes = CollectionUtils.merge(o1.includes, o2.includes, false)
     }
 }

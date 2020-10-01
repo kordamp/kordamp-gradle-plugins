@@ -114,7 +114,7 @@ class GroovydocOptions {
         o1.setHeader(o1.header ?: o2.header)
         o1.setFooter(o1.footer ?: o2.footer)
         o1.setOverviewText(o1.overviewText ?: o2.overviewText)
-        CollectionUtils.merge(o1.links, o2?.links)
+        o1.links = CollectionUtils.merge(o1.links, o2?.links, false)
     }
 
     void applyTo(Groovydoc groovydoc) {

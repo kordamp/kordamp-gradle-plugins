@@ -155,8 +155,8 @@ class Javadoc extends AbstractFeature {
 
     static void merge(Javadoc o1, Javadoc o2) {
         AbstractFeature.merge(o1, o2)
-        CollectionUtils.merge(o1.excludes, o2.excludes)
-        CollectionUtils.merge(o1.includes, o2.includes)
+        o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
+        o1.includes = CollectionUtils.merge(o1.includes, o2.includes, false)
         o1.title = o1.title ?: o2.title
         ExtStandardJavadocDocletOptions.merge(o1.options, o2.options)
         AutoLinks.merge(o1.autoLinks, o2.autoLinks)
@@ -226,9 +226,9 @@ class Javadoc extends AbstractFeature {
         static void merge(AutoLinks o1, AutoLinks o2) {
             o1.setEnabled((boolean) (o1.enabledSet ? o1.enabled : o2.enabled))
             o1.useJavadocIo = o1.useJavadocIo != null ? o1.getUseJavadocIo() : o2.getUseJavadocIo()
-            CollectionUtils.merge(o1.@excludes, o2?.excludes)
-            CollectionUtils.merge(o1.@configurations, o2?.configurations)
-            CollectionUtils.merge(o1.@offlineLinks, o2?.offlineLinks)
+            o1.@excludes = CollectionUtils.merge(o1.@excludes, o2?.excludes, false)
+            o1.@configurations = CollectionUtils.merge(o1.@configurations, o2?.configurations, false)
+            o1.@offlineLinks = CollectionUtils.merge(o1.@offlineLinks, o2?.offlineLinks, false)
         }
 
         Map<String, Object> toMap() {
