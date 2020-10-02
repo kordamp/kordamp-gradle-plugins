@@ -10,7 +10,21 @@ class:: `org.kordamp.gradle.plugin.testing.TestingPlugin`
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 applied by:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
 
-Configures test reports.
+Configures test reports for unit, integration (if the `<<_org_kordamp_gradle_integrationtest,org.kordamp.gradle.integration-test>>`)
+plugin is applied), and functional (if the `<<_org_kordamp_gradle_functionaltest,org.kordamp.gradle.functional-test>>`)
+plugin is applied). Both individual and aggregate reports can be configured.
+
+Additionally, each testcase and project will output a summary of the testes that were executed, successful, failed, and skipped,
+as the following screenshots show:
+
+.Successful tests
+image::test-output1.png[align="center"]
+
+.A failed test
+image::test-output2.png[align="center"]
+
+.Test summary
+image::test-output3.png[align="center"]
 
 [[_org_kordamp_gradle_testing_dsl]]
 == DSL
@@ -82,6 +96,8 @@ config {
 | failure | String  | no       | red           |
 | ignored | String  | no       | yellow        |
 |===
+
+Valid values are [`black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`].
 
 [[_org_kordamp_gradle_testing_tasks]]
 == Tasks
