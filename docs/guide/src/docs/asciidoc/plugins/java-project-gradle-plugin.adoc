@@ -44,20 +44,26 @@ NOTE: The following configurations will be used if none are specified: `api`, `i
 
 .Methods
 
-* void platform(Object notation)
-* void platform(Object notation, Action<? super Dependency> action)
-* void platform(Object notation, String... configurations)
-* void platform(Object notation, List<String> configurations)
-* void platform(Object notation, List<String> configurations, Action<? super Dependency> action)
-* void enforcedPlatform(Object notation)
-* void enforcedPlatform(Object notation, Action<? super Dependency> action)
-* void enforcedPlatform(Object notation, String... configurations)
-* void enforcedPlatform(Object notation, List<String> configurations)
-* void enforcedPlatform(Object notation, List<String> configurations, Action<? super Dependency> action)
-* void dependency(String name, String configuration, String... configurations)
-* void dependency(String name, String configuration, Closure)
-* void module(String name, String configuration, String... configurations)
-* void module(String name, String configuration, Closure)
+void platform(Object notation):: Declares a dependency on a platform.
+void platform(Object notation, Action<? super Dependency> action):: Declares and configures a dependency on a platform.
+void platform(Object notation, String... configurations):: Declares a dependency on a platform for a set of specific configurations.
+void platform(Object notation, List<String> configurations):: Declares a dependency on a platform for a set of specific configurations.
+void platform(Object notation, List<String> configurations, Action<? super Dependency> action):: Declares and configures a dependency on a platform for a set of specific configurations.
+void enforcedPlatform(Object notation):: Declares a dependency on an enforced platform.
+void enforcedPlatform(Object notation, Action<? super Dependency> action):: Declares and configures a dependency on an enforced platform.
+void enforcedPlatform(Object notation, String... configurations):: Declares a dependency on an enforced platform for a set of specific configurations.
+void enforcedPlatform(Object notation, List<String> configurations):: Declares a dependency on an enforced platform for a set of specific configurations.
+void enforcedPlatform(Object notation, List<String> configurations, Action<? super Dependency> action):: Declares and configures a dependency on an enforced platform for a set of specific configurations.
+void dependency(String name, String configuration, String... configurations):: Declares a dependency for a set of specific configurations.
+void dependency(String name, String configuration, Closure):: Declares and configures a dependency for a set of specific configurations.
+void module(String name, String configuration, String... configurations):: Declares a module dependency (from a platform) for a set of specific configurations.
+void module(String name, String configuration, Closure):: Declares and configures a module dependency (from a platform) for a set of specific configurations.
+
+Where `notation` may be one of
+
+ * `java.lang.CharSequence` with format `groupId:artifactId:version`.
+ * `java.util.Map` with `group`, `artifactId`, `version` keys.
+ * `java.lang.CharSequence` with the name of a platform declared in `config.dependencies`.
 
 .Example
 The following example shows how the Micronaut BOM can be used to configure all configurations
@@ -90,6 +96,9 @@ dependencies {
 
         module('micronaut','micronaut-inject-groovy', 'compileOnly')
     }
+
+    // because the `micronaut` platform was applied a few lines above
+    // the following dependencies can skip the version number
 
     // you can still use standard configuration methods
     api('io.micronaut:micronaut-inject')

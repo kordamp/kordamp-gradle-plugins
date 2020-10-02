@@ -477,10 +477,12 @@ dependency('org.codehaus.groovy:groovy:3.0.6') {
 }
 ----
 getDependency(String name):: Returns the named dependency (if it exists). Throws an exception otherwise. +
+The `name` parameter may be the logical name or the `groupId:artifactId` of the dependency. +
 Example: +
 [source,groovy]
 ----
 getDependency('guava') instanceof org.kordamp.gradle.plugin.base.model.artifact.Dependency
+getDependency('com.googlecode.guava:guava') instanceof org.kordamp.gradle.plugin.base.model.artifact.Dependency
 ----
 findDependencyByName(String name):: Finds a dependency by name if it exists, `null` otherwise. +
 Example: +
@@ -495,22 +497,28 @@ Example: +
 findDependencyByGA('com.googlecode.guava', 'guava') instanceof org.kordamp.gradle.plugin.base.model.artifact.Dependency
 ----
 gav(String name):: Returns the given dependency in GAV notation if it exists. Throws an exception otherwise. +
+The `name` parameter may be the logical name or the `groupId:artifactId` of the dependency. +
 Example: +
 [source,groovy]
 ----
 gav('groovy') == 'org.codehaus.groovy:groovy:3.0.6'
+gav('org.codehaus.groovy:groovy') == 'org.codehaus.groovy:groovy:3.0.6'
 ----
 gav(String name, String moduleName):: Returns the given module dependency in GAV notation if it exists. Throws an exception otherwise. +
+The `name` parameter may be the logical name or the `groupId:artifactId` of the dependency. +
 Example: +
 [source,groovy]
 ----
 gav('groovy', 'groovy-json') == 'org.codehaus.groovy:groovy-json:3.0.6'
+gav('org.codehaus.groovy:groovy', 'groovy-json') == 'org.codehaus.groovy:groovy-json:3.0.6'
 ----
 ga(String name, String moduleName):: Returns the given module dependency in GA (groupId/artifactId) notation if it exists. Throws an exception otherwise. +
+The `name` parameter may be the logical name or the `groupId:artifactId` of the dependency. +
 Example: +
 [source,groovy]
 ----
 ga('micronaut', 'micronaut-core') == 'io.micronaut:micronaut-core'
+ga('io.micronaut:micronaut-bom', 'micronaut-core') == 'io.micronaut:micronaut-core'
 ----
 
 WARNING: Instances of type `org.kordamp.gradle.plugin.base.model.artifact.Dependency` can not be passed directly to Gradle's dependency

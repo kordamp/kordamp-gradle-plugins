@@ -305,16 +305,28 @@ class Dependencies {
     /**
      * Retrieves a declared dependency by name.
      *
-     * @param name the logical name of the dependency to find
+     * @param nameOrGa the logical name or the {@code groupId:artifactId} of the dependency to find
      * @return {@code org.kordamp.gradle.plugin.base.model.artifact.Dependency} instance when found.
      * @throws IllegalArgumentException if the named dependency is not found
      */
-    Dependency getDependency(String name) {
-        Dependency dependency = findDependencyByName(name)
+    Dependency getDependency(String nameOrGa) {
+        if (nameOrGa.contains(':')) {
+            String[] parts = nameOrGa.split(':')
+            if (parts.length != 2) {
+                throw new IllegalArgumentException('Invalid groupId:artifactId input: ' + nameOrGa)
+            }
+            Dependency dependency = findDependencyByGA(parts[0], parts[1])
+            if (dependency) {
+                return dependency
+            }
+            throw new IllegalArgumentException("Undeclared dependency ${nameOrGa}.")
+        }
+
+        Dependency dependency = findDependencyByName(nameOrGa)
         if (dependency) {
             return dependency
         }
-        throw new IllegalArgumentException("Undeclared dependency ${name}.")
+        throw new IllegalArgumentException("Undeclared dependency ${nameOrGa}.")
     }
 
     /**
@@ -374,72 +386,80 @@ class Dependencies {
 
     /**
      * Formats the named dependency in {@code groupId:artifactId:version} notation.
-     * @param name the logical name of the dependency to find
+     * @param nameOrGa the logical name or the {@code groupId:artifactId} of the dependency to find
      * @throws IllegalArgumentException if the named dependency is not found
      */
-    String gav(String name) {
-        getDependency(name).gav
+    String gav(String nameOrGa) {
+        getDependency(nameOrGa).gav
     }
 
     /**
      * Formats the named module dependency in {@code groupId:artifactId:version} notation.
-     * @param name the logical name of the dependency to find
+     * @param nameOrGa the logical name or the {@code groupId:artifactId} of the dependency to find
      * @param moduleName the name of the module to find.
      * @throws IllegalArgumentException if the given args are blank or the named dependency is not found
      */
-    String gav(String name, String moduleName) {
-        if (isBlank(name)) {
+    String gav(String nameOrGa, String moduleName) {
+        if (isBlank(nameOrGa)) {
             throw new IllegalArgumentException('Dependency name cannot be blank.')
         }
         if (isBlank(moduleName)) {
             throw new IllegalArgumentException('Dependency moduleName cannot be blank.')
         }
 
-        if (dependencies.containsKey(name)) {
-            if (dependencies.get(name).artifactId == moduleName) {
-                return dependencies.get(name).gav
+        if (nameOrGa.contains(':')) {
+            return getDependency(nameOrGa).gav(moduleName)
+        }
+
+        if (dependencies.containsKey(nameOrGa)) {
+            if (dependencies.get(nameOrGa).artifactId == moduleName) {
+                return dependencies.get(nameOrGa).gav
             }
-            return dependencies.get(name).gav(moduleName)
+            return dependencies.get(nameOrGa).gav(moduleName)
         }
 
         if (project != project.rootProject) {
             return project.rootProject.extensions
                 .findByType(ProjectConfigurationExtension)
                 .dependencies
-                .gav(name, moduleName)
+                .gav(nameOrGa, moduleName)
         }
 
-        throw new IllegalArgumentException("Undeclared depedency ${name}.")
+        throw new IllegalArgumentException("Undeclared depedency ${nameOrGa}.")
     }
 
     /**
      * Formats the named module dependency in {@code groupId:artifactId} notation.
-     * @param name the logical name of the dependency to find
+     * @param nameOrGa the logical name or the {@code groupId:artifactId} of the dependency to find
      * @param moduleName the name of the module to find.
      * @throws IllegalArgumentException if the given args are blank or the named dependency is not found
      */
-    String ga(String name, String moduleName) {
-        if (isBlank(name)) {
+    String ga(String nameOrGa, String moduleName) {
+        if (isBlank(nameOrGa)) {
             throw new IllegalArgumentException('Dependency name cannot be blank.')
         }
         if (isBlank(moduleName)) {
             throw new IllegalArgumentException('Dependency moduleName cannot be blank.')
         }
 
-        if (dependencies.containsKey(name)) {
-            if (dependencies.get(name).artifactId == moduleName) {
-                return dependencies.get(name).ga
+        if (nameOrGa.contains(':')) {
+            return getDependency(nameOrGa).ga(moduleName)
+        }
+
+        if (dependencies.containsKey(nameOrGa)) {
+            if (dependencies.get(nameOrGa).artifactId == moduleName) {
+                return dependencies.get(nameOrGa).ga
             }
-            return dependencies.get(name).ga(moduleName)
+            return dependencies.get(nameOrGa).ga(moduleName)
         }
 
         if (project != project.rootProject) {
             return project.rootProject.extensions
                 .findByType(ProjectConfigurationExtension)
                 .dependencies
-                .ga(name, moduleName)
+                .ga(nameOrGa, moduleName)
         }
 
-        throw new IllegalArgumentException("Undeclared depedency ${name}.")
+        throw new IllegalArgumentException("Undeclared depedency ${nameOrGa}.")
     }
 }

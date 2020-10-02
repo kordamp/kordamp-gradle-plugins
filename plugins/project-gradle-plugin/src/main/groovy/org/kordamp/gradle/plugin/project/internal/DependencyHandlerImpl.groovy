@@ -165,57 +165,57 @@ class DependencyHandlerImpl implements DependencyHandler {
     }
 
     @Override
-    void dependency(String name, String configuration, String... configurations) {
+    void dependency(String nameOrGa, String configuration, String... configurations) {
         ProjectConfigurationExtension config = resolveConfig(project)
         if (project.configurations.findByName(configuration)) {
-            project.dependencies.add(configuration, config.dependencies.getDependency(name).gav)
+            project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).gav)
         }
 
         if (configurations) {
             for (String conf : configurations) {
                 if (project.configurations.findByName(conf)) {
-                    project.dependencies.add(conf, config.dependencies.getDependency(name).gav)
+                    project.dependencies.add(conf, config.dependencies.getDependency(nameOrGa).gav)
                 }
             }
         }
     }
 
     @Override
-    void dependency(String name, String configuration, Closure configurer) {
+    void dependency(String nameOrGa, String configuration, Closure configurer) {
         ProjectConfigurationExtension config = resolveConfig(project)
         if (project.configurations.findByName(configuration)) {
             if (configurer) {
-                project.dependencies.add(configuration, config.dependencies.getDependency(name).gav, configurer)
+                project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).gav, configurer)
             } else {
-                project.dependencies.add(configuration, config.dependencies.getDependency(name).gav)
+                project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).gav)
             }
         }
     }
 
     @Override
-    void module(String name, String moduleName, String configuration, String... configurations) {
+    void module(String nameOrGa, String moduleName, String configuration, String... configurations) {
         ProjectConfigurationExtension config = resolveConfig(project)
         if (project.configurations.findByName(configuration)) {
-            project.dependencies.add(configuration, config.dependencies.getDependency(name).asGav(moduleName))
+            project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).asGav(moduleName))
         }
 
         if (configurations) {
             for (String conf : configurations) {
                 if (project.configurations.findByName(conf)) {
-                    project.dependencies.add(conf, config.dependencies.getDependency(name).asGav(moduleName))
+                    project.dependencies.add(conf, config.dependencies.getDependency(nameOrGa).asGav(moduleName))
                 }
             }
         }
     }
 
     @Override
-    void module(String name, String moduleName, String configuration, Closure configurer) {
+    void module(String nameOrGa, String moduleName, String configuration, Closure configurer) {
         ProjectConfigurationExtension config = resolveConfig(project)
         if (project.configurations.findByName(configuration)) {
             if (configurer) {
-                project.dependencies.add(configuration, config.dependencies.getDependency(name).asGav(moduleName), configurer)
+                project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).asGav(moduleName), configurer)
             } else {
-                project.dependencies.add(configuration, config.dependencies.getDependency(name).asGav(moduleName))
+                project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).asGav(moduleName))
             }
         }
     }

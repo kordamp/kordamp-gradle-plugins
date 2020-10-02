@@ -34,7 +34,7 @@ interface DependencyHandler {
      * Valid values for {@code notation} are:
      * <ul>
      *     <li>a {@code java.lang.CharSequence} with format groupId:artifactId:version</li>
-     *     <li>a {@code java.util.Map} with group:, artifactId, version: keys</li>
+     *     <li>a {@code java.util.Map} with group, artifactId, version keys</li>
      *     <li>a {@code java.lang.CharSequence} with the name of a platform declared in {@code config.dependencies}</li>
      * </ul>
      *
@@ -52,7 +52,7 @@ interface DependencyHandler {
      * </ul>
      *
      * @param notation - the coordinates of the platform
-     * @action - the dependency configuration block
+     * @param action the dependency configuration block
      */
     void platform(Object notation, Action<? super Dependency> action)
 
@@ -61,7 +61,7 @@ interface DependencyHandler {
      * Valid values for {@code notation} are:
      * <ul>
      *     <li>a {@code java.lang.CharSequence} with format groupId:artifactId:version</li>
-     *     <li>a {@code java.util.Map} with group:, artifactId, version: keys</li>
+     *     <li>a {@code java.util.Map} with group, artifactId, version keys</li>
      *     <li>a {@code java.lang.CharSequence} with the name of a platform declared in {@code config.dependencies}</li>
      * </ul>
      *
@@ -88,7 +88,7 @@ interface DependencyHandler {
      * Valid values for {@code notation} are:
      * <ul>
      *     <li>a {@code java.lang.CharSequence} with format groupId:artifactId:version</li>
-     *     <li>a {@code java.util.Map} with group:, artifactId, version: keys</li>
+     *     <li>a {@code java.util.Map} with group, artifactId, version keys</li>
      *     <li>a {@code java.lang.CharSequence} with the name of a platform declared in {@code config.dependencies}</li>
      * </ul>
      *
@@ -111,8 +111,7 @@ interface DependencyHandler {
     void platform(Object notation, List<String> configurations)
 
     /**
-     * Declares a dependency on a platform.
-     *
+     * Declares and configures a dependency on a platform.
      *
      * The following configurations will be used by default if none are supplied:
      * <ul>
@@ -129,16 +128,16 @@ interface DependencyHandler {
      *
      * @param notation - the coordinates of the platform
      * @param configurations - the set of configurations to use
-     * @action - the dependency configuration block
+     * @param action the dependency configuration block
      */
     void platform(Object notation, List<String> configurations, Action<? super Dependency> action)
 
     /**
-     * Declares a dependency on an enforced platform.
+     * Declares and configures a dependency on an enforced platform.
      * Valid values for {@code notation} are:
      * <ul>
      *     <li>a {@code java.lang.CharSequence} with format groupId:artifactId:version</li>
-     *     <li>a {@code java.util.Map} with group:, artifactId, version: keys</li>
+     *     <li>a {@code java.util.Map} with group, artifactId, version keys</li>
      *     <li>a {@code java.lang.CharSequence} with the name of a platform declared in {@code config.dependencies}</li>
      * </ul>
      *
@@ -156,7 +155,7 @@ interface DependencyHandler {
      * </ul>
      *
      * @param notation - the coordinates of the platform
-     * @action - the dependency configuration block
+     * @param action the dependency configuration block
      */
     void enforcedPlatform(Object notation, Action<? super Dependency> action)
 
@@ -165,7 +164,7 @@ interface DependencyHandler {
      * Valid values for {@code notation} are:
      * <ul>
      *     <li>a {@code java.lang.CharSequence} with format groupId:artifactId:version</li>
-     *     <li>a {@code java.util.Map} with group:, artifactId, version: keys</li>
+     *     <li>a {@code java.util.Map} with group, artifactId, version keys</li>
      *     <li>a {@code java.lang.CharSequence} with the name of a platform declared in {@code config.dependencies}</li>
      * </ul>
      *
@@ -192,7 +191,7 @@ interface DependencyHandler {
      * Valid values for {@code notation} are:
      * <ul>
      *     <li>a {@code java.lang.CharSequence} with format groupId:artifactId:version</li>
-     *     <li>a {@code java.util.Map} with group:, artifactId, version: keys</li>
+     *     <li>a {@code java.util.Map} with group, artifactId, version keys</li>
      *     <li>a {@code java.lang.CharSequence} with the name of a platform declared in {@code config.dependencies}</li>
      * </ul>
      *
@@ -219,7 +218,7 @@ interface DependencyHandler {
      * Valid values for {@code notation} are:
      * <ul>
      *     <li>a {@code java.lang.CharSequence} with format groupId:artifactId:version</li>
-     *     <li>a {@code java.util.Map} with group:, artifactId, version: keys</li>
+     *     <li>a {@code java.util.Map} with group, artifactId, version keys</li>
      *     <li>a {@code java.lang.CharSequence} with the name of a platform declared in {@code config.dependencies}</li>
      * </ul>
      *
@@ -238,7 +237,7 @@ interface DependencyHandler {
      *
      * @param notation - the coordinates of the platform
      * @param configurations - the set of configurations to use
-     * @action - the dependency configuration block
+     * @param action the dependency configuration block
      */
     void enforcedPlatform(Object notation, List<String> configurations, Action<? super Dependency> action)
 
@@ -246,39 +245,39 @@ interface DependencyHandler {
      * Declares a dependency on target configuration(s).
      * Dependencies must be declared using the {@code config.dependencies} block before using this method.
      *
-     * @param name the name of the dependency found in {@code config.dependencies}.
+     * @param nameOrGa the name or the {@code groupId:artifactId} of the dependency found in {@code config.dependencies}.
      * @param configuration the target configuration, e.g, <tt>api</tt>.
      * @param configurations additional configurations (if any).
      */
-    void dependency(String name, String configuration, String... configurations)
+    void dependency(String nameOrGa, String configuration, String... configurations)
 
     /**
      * Declares a dependency on target a configuration.
      * Dependencies must be declared using the {@code config.dependencies} block before using this method.
      *
-     * @param name the name of the dependency found in {@code config.dependencies}.
+     * @param nameOrGa the name or the {@code groupId:artifactId} of the dependency found in {@code config.dependencies}.
      * @param configuration the target configuration, e.g, <tt>api</tt>.
      * @param configurer the closure to use to configure the dependency.
      */
-    void dependency(String name, String configuration, Closure configurer)
+    void dependency(String nameOrGa, String configuration, Closure configurer)
 
     /**
      * Declares a module dependency on target configuration(s).
      * Dependencies must be declared using the {@code config.dependencies} block before using this method.
      *
-     * @param name the name of the dependency found in {@code config.dependencies}.
+     * @param nameOrGa the name or the {@code groupId:artifactId} of the dependency found in {@code config.dependencies}.
      * @param configuration the target configuration, e.g, <tt>api</tt>.
      * @param configurations additional configurations (if any).
      */
-    void module(String name, String moduleName, String configuration, String... configurations)
+    void module(String nameOrGa, String moduleName, String configuration, String... configurations)
 
     /**
      * Declares a module dependency on target a configuration.
      * Dependencies must be declared using the {@code config.dependencies} block before using this method.
      *
-     * @param name the name of the dependency found in {@code config.dependencies}.
+     * @param nameOrGa the name or the {@code groupId:artifactId} of the dependency found in {@code config.dependencies}.
      * @param configuration the target configuration, e.g, <tt>api</tt>.
      * @param configurer the closure to use to configure the dependency.
      */
-    void module(String name, String moduleName, String configuration, Closure configurer)
+    void module(String nameOrGa, String moduleName, String configuration, Closure configurer)
 }
