@@ -40,6 +40,11 @@ insight {
 | enabled | boolean | no       | true          | Whether report generation is enabled or not.
 |===
 
+The enabled state may be set directly in the build file or using:
+
+ - INSIGHT_ENABLED environment variable
+ - `insight.enabled` System property or project property.
+
 [[_insight_colors]]
 *colors*
 
@@ -51,6 +56,8 @@ insight {
 | skipped | String | no       | yellow        | Color to use when state is SKIPPED
 | partial | String | no       | cyan          | Color to use when state is PARTIAL
 |===
+
+Valid values are [`black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`].
 
 Reports must implement the `org.kordamp.gradle.plugin.insight.model.BuildReport` interface. A report of type
 `org.kordamp.gradle.plugin.insight.reports.SummaryBuildReport` will be configured by default if no other reports are
@@ -94,6 +101,28 @@ The short format displays:
 
 WARNING: Project execution time is reported in *linear time*, as the sum of the execution time of all its tasks.
 
+Figure 1. shows a successful build for a project with 4 submodules
+
+.`$ gm build`
+image::build-summary-short1.png[align="center"]
+
+Figure 2. shows a failed build where a failed test in `project1` prevents other projects from being executed
+
+.`$ gm build`
+image::build-summary-short2.png[align="center"]
+
+Figure 3. shows the same failure but `project2` and `project3` are marked as PARTIAL because some of their tasks
+were invoked.
+
+.`$ gm clean build`
+image::build-summary-short3.png[align="center"]
+
+Figure 4. shows another project where a subset of modules was invoked. The `griffon-javafx` project has long running
+tests and hit the default execution threshold of 2 minutes
+
+.`$ gm :griffon-javafx:test`
+image::build-summary-short4.png[align="center"]
+
 .Long
 
 The long format displays the same information as the short format plus a table of task states.
@@ -111,35 +140,18 @@ ACT:: Number of actionable tasks.
 
 .Examples
 
-Figure 1. shows a successful build for a project with 4 submodules
-
-.`$ gm build`
-image::build-summary-short1.png[align="center"]
-
-Figure 2. shows a failed build where a failed test in `project1` prevents other projects from being executed
-
-.`$ gm build`
-image::build-summary-short2.png[align="center"]
-
-Figure 3. shows the same failure but `project2` and `project3` are marked as PARTIAL because some of their tasks
-were invoked.
-
-.`$ gm clean build`
-image::build-summary-short3.png[align="center"]
-
-Figures 4., 5., and 6. show the previous scenarios but using the long format
+Figure 5. shows a successful build for a project with 4 submodules
 
 .`$ gm build`
 image::build-summary-long1.png[align="center"]
 
+Figure 6. shows a failed build where a failed test in `project1` prevents other projects from being executed
+
 .`$ gm build`
 image::build-summary-long2.png[align="center"]
 
+Figure 7. shows the same failure but `project2` and `project3` are marked as PARTIAL because some of their tasks
+were invoked.
+
 .`$ gm clean build`
 image::build-summary-long3.png[align="center"]
-
-Figure 7. shows another project where a subset of modules was invoked. The `griffon-javafx` project has long running
-tests and hit the default execution threshold of 2 minutes
-
-.`$ gm :griffon-javafx:test`
-image::build-summary-short4.png[align="center"]
