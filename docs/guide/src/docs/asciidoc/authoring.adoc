@@ -167,6 +167,12 @@ $ gm echo -Pecho.message="from project" -Decho.message="from System"
 from build
 ----
 
+Explicit values set in the build file have priority over values provided via environment, System, or project properties.
+You can switch this behavior (globally) by setting a System property `kordamp.property.priority` to any of these values
+
+ * `PROPERTY`
+ * `PROVIDER`
+
 The resolution order shown here is ENV_SYS_PROP, but it can be changed to any of these values
 
  * `ENV_SYS_PROP`
@@ -202,18 +208,20 @@ You may fix these values when authoring your own tasks or you may leave it to th
 will check the following System properties
 
 [horizontal]
-property.order:: Determines the order between ENV, SYS, and PROP. Defaults to `ENV_SYS_PROP`.
-property.access:: Determines the access level for calculating a prefix. Defaults to `GLOBAL_PROJECT_OWNER`.
+kordamp.property.order:: Determines the order between ENV, SYS, and PROP. Defaults to `ENV_SYS_PROP`.
+kordamp.property.access:: Determines the access level for calculating a prefix. Defaults to `GLOBAL_PROJECT_OWNER`.
+kordamp.property.priority:: Determines the priority between explicit values in the build file (PROPERTY) or values resolved via
+environment, System, or project properties (PROVIDER). Defaults to `PROPERTY`.
 
 There are base states for the following types:
 
  * `link:api/org/kordamp/gradle/property/SimpleBooleanState.html[BooleanState]`
- * `link:api/org/kordamp/gradle/property/SimpleBooleanState.html[DirectoryState]`
- * `link:api/org/kordamp/gradle/property/SimpleBooleanState.html[IntegerState]`
- * `link:api/org/kordamp/gradle/property/SimpleBooleanState.html[ListState]`
- * `link:api/org/kordamp/gradle/property/SimpleBooleanState.html[LongState]`
- * `link:api/org/kordamp/gradle/property/SimpleBooleanState.html[MapState]`
- * `link:api/org/kordamp/gradle/property/SimpleBooleanState.html[RegularFileState]`
- * `link:api/org/kordamp/gradle/property/SimpleBooleanState.html[SetState]`
- * `link:api/org/kordamp/gradle/property/SimpleBooleanState.html[StringState]`
+ * `link:api/org/kordamp/gradle/property/SimpleDirectoryState.html[DirectoryState]`
+ * `link:api/org/kordamp/gradle/property/SimpleIntegerState.html[IntegerState]`
+ * `link:api/org/kordamp/gradle/property/SimpleListState.html[ListState]`
+ * `link:api/org/kordamp/gradle/property/SimpleLongState.html[LongState]`
+ * `link:api/org/kordamp/gradle/property/SimpleMapState.html[MapState]`
+ * `link:api/org/kordamp/gradle/property/SimpleRegularFileState.html[RegularFileState]`
+ * `link:api/org/kordamp/gradle/property/SimpleSetState.html[SetState]`
+ * `link:api/org/kordamp/gradle/property/SimpleListState.html[StringState]`
 

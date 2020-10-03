@@ -45,6 +45,11 @@ import static org.kordamp.gradle.util.StringUtils.isNotBlank
  */
 @CompileStatic
 final class PropertyUtils {
+    enum Priority {
+        PROPERTY,
+        PROVIDER
+    }
+
     enum Order {
         ENV_SYS_PROP,
         ENV_PROP_SYS,
@@ -82,8 +87,9 @@ final class PropertyUtils {
         }
     }
 
-    static final String KEY_PROPERTY_ORDER = 'property.order'
-    static final String KEY_PROPERTY_PATH = 'property.path'
+    static final String KEY_PROPERTY_ORDER = 'kordamp.property.order'
+    static final String KEY_PROPERTY_PATH = 'kordamp.property.path'
+    static final String KEY_PROPERTY_PRIORITY = 'kordamp.property.priority'
 
     /**
      * Creates a hierarchical boolean property.
@@ -101,7 +107,12 @@ final class PropertyUtils {
                                                         Provider<E> provider,
                                                         E defaultValue) {
         providers.provider {
-            property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    return property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+                case Priority.PROVIDER:
+                    return provider ? provider.getOrElse(property.getOrElse(defaultValue)) : property.getOrElse(defaultValue)
+            }
         }
     }
 
@@ -128,12 +139,21 @@ final class PropertyUtils {
                                                         Object owner,
                                                         E defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order, path, project, owner)
-            if (isNotBlank(value)) {
-                return enumType.valueOf(value.toUpperCase())
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    if (isNotBlank(value)) {
+                        return enumType.valueOf(value.toUpperCase())
+                    }
+                    return defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    if (isNotBlank(value)) {
+                        return enumType.valueOf(value.toUpperCase())
+                    }
+                    return property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
@@ -285,12 +305,21 @@ final class PropertyUtils {
                                                         Order order,
                                                         E defaultValue) {
         providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order)
-            if (isNotBlank(value)) {
-                return enumType.valueOf(value.toUpperCase())
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    if (isNotBlank(value)) {
+                        return enumType.valueOf(value.toUpperCase())
+                    }
+                    return defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    if (isNotBlank(value)) {
+                        return enumType.valueOf(value.toUpperCase())
+                    }
+                    return property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
@@ -324,12 +353,21 @@ final class PropertyUtils {
                                              Provider<Boolean> property,
                                              boolean defaultValue) {
         providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order)
-            if (isNotBlank(value)) {
-                return Boolean.parseBoolean(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order)
+                    if (isNotBlank(value)) {
+                        return Boolean.parseBoolean(value)
+                    }
+                    return defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order)
+                    if (isNotBlank(value)) {
+                        return Boolean.parseBoolean(value)
+                    }
+                    return property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
@@ -363,12 +401,21 @@ final class PropertyUtils {
                                              Order order,
                                              int defaultValue) {
         providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order)
-            if (isNotBlank(value)) {
-                return Integer.parseInt(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order)
+                    if (isNotBlank(value)) {
+                        return Integer.parseInt(value)
+                    }
+                    return defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order)
+                    if (isNotBlank(value)) {
+                        return Integer.parseInt(value)
+                    }
+                    return property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
@@ -402,12 +449,21 @@ final class PropertyUtils {
                                        Order order,
                                        long defaultValue) {
         providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order)
-            if (isNotBlank(value)) {
-                return Long.parseLong(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order)
+                    if (isNotBlank(value)) {
+                        return Long.parseLong(value)
+                    }
+                    return defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order)
+                    if (isNotBlank(value)) {
+                        return Long.parseLong(value)
+                    }
+                    return property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
@@ -441,12 +497,21 @@ final class PropertyUtils {
                                            Order order,
                                            String defaultValue) {
         providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order)
-            if (isNotBlank(value)) {
-                return value
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order)
+                    if (isNotBlank(value)) {
+                        return value
+                    }
+                    return defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order)
+                    if (isNotBlank(value)) {
+                        return value
+                    }
+                    return property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
@@ -480,12 +545,21 @@ final class PropertyUtils {
                                                Order order,
                                                List<String> defaultValue) {
         providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order)
-            if (isNotBlank(value)) {
-                return convertToList(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order)
+                    if (isNotBlank(value)) {
+                        return convertToList(value)
+                    }
+                    return defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order)
+                    if (isNotBlank(value)) {
+                        return convertToList(value)
+                    }
+                    return property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
@@ -519,12 +593,21 @@ final class PropertyUtils {
                                              Order order,
                                              Set<String> defaultValue) {
         providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order)
-            if (isNotBlank(value)) {
-                return convertToSet(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order)
+                    if (isNotBlank(value)) {
+                        return convertToSet(value)
+                    }
+                    return defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order)
+                    if (isNotBlank(value)) {
+                        return convertToSet(value)
+                    }
+                    return property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
@@ -558,19 +641,30 @@ final class PropertyUtils {
                                                      Order order,
                                                      Map<String, String> defaultValue) {
         providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order)
-            if (isNotBlank(value)) {
-                return convertToMap(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order)
+                    if (isNotBlank(value)) {
+                        return convertToMap(value)
+                    }
+                    return defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order)
+                    if (isNotBlank(value)) {
+                        return convertToMap(value)
+                    }
+                    return property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
     /**
      * Creates a hierarchical boolean property.
      * Returns the {@code property}'s value if present, otherwise check's if the supplied
-     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.
+     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param providers the {@code Provider} factory used to create a {@code Provider}.
      * @param property the property to use
@@ -583,14 +677,21 @@ final class PropertyUtils {
                                              Provider<Boolean> provider,
                                              boolean defaultValue) {
         providers.provider {
-            property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    return property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+                case Priority.PROVIDER:
+                    return provider ? provider.getOrElse(property.getOrElse(defaultValue)) : property.getOrElse(defaultValue)
+            }
         }
     }
 
     /**
      * Creates a hierarchical String property.
      * Returns the {@code property}'s value if present, otherwise check's if the supplied
-     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.
+     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param providers the {@code Provider} factory used to create a {@code Provider}.
      * @param property the property to use
@@ -603,14 +704,21 @@ final class PropertyUtils {
                                            Provider<String> provider,
                                            String defaultValue) {
         providers.provider {
-            property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    return property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+                case Priority.PROVIDER:
+                    return provider ? provider.getOrElse(property.getOrElse(defaultValue)) : property.getOrElse(defaultValue)
+            }
         }
     }
 
     /**
      * Creates a hierarchical Object property.
      * Returns the {@code property}'s value if present, otherwise check's if the supplied
-     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.
+     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param providers the {@code Provider} factory used to create a {@code Provider}.
      * @param property the property to use
@@ -623,14 +731,21 @@ final class PropertyUtils {
                                           Provider<T> provider,
                                           T defaultValue) {
         providers.provider {
-            property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    return property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+                case Priority.PROVIDER:
+                    return provider ? provider.getOrElse(property.getOrElse(defaultValue)) : property.getOrElse(defaultValue)
+            }
         }
     }
 
     /**
      * Creates a hierarchical int property.
      * Returns the {@code property}'s value if present, otherwise check's if the supplied
-     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.
+     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param providers the {@code Provider} factory used to create a {@code Provider}.
      * @param property the property to use
@@ -643,14 +758,21 @@ final class PropertyUtils {
                                              Provider<Integer> provider,
                                              int defaultValue) {
         providers.provider {
-            property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    return property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+                case Priority.PROVIDER:
+                    return provider ? provider.getOrElse(property.getOrElse(defaultValue)) : property.getOrElse(defaultValue)
+            }
         }
     }
 
     /**
      * Creates a hierarchical long property.
      * Returns the {@code property}'s value if present, otherwise check's if the supplied
-     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.
+     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param providers the {@code Provider} factory used to create a {@code Provider}.
      * @param property the property to use
@@ -663,14 +785,21 @@ final class PropertyUtils {
                                        Provider<Long> provider,
                                        long defaultValue) {
         providers.provider {
-            property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    return property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+                case Priority.PROVIDER:
+                    return provider ? provider.getOrElse(property.getOrElse(defaultValue)) : property.getOrElse(defaultValue)
+            }
         }
     }
 
     /**
      * Creates a hierarchical File property.
      * Returns the {@code property}'s value if present, otherwise check's if the supplied
-     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.
+     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param providers the {@code Provider} factory used to create a {@code Provider}.
      * @param property the property to use
@@ -683,14 +812,21 @@ final class PropertyUtils {
                                               Provider<RegularFile> provider,
                                               RegularFile defaultValue) {
         providers.provider {
-            property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    return property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+                case Priority.PROVIDER:
+                    return provider ? provider.getOrElse(property.getOrElse(defaultValue)) : property.getOrElse(defaultValue)
+            }
         }
     }
 
     /**
      * Creates a hierarchical File (directory) property.
      * Returns the {@code property}'s value if present, otherwise check's if the supplied
-     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.
+     * {@code provider} is not null and returns its value, otherwise returns the {@code defaultValue}.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param providers the {@code Provider} factory used to create a {@code Provider}.
      * @param property the property to use
@@ -703,13 +839,20 @@ final class PropertyUtils {
                                                  Provider<Directory> provider,
                                                  Directory defaultValue) {
         providers.provider {
-            property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    return property.getOrElse(provider ? provider.getOrElse(defaultValue) : defaultValue)
+                case Priority.PROVIDER:
+                    return provider ? provider.getOrElse(property.getOrElse(defaultValue)) : property.getOrElse(defaultValue)
+            }
         }
     }
 
     /**
      * Creates a hierarchical Map property.
-     * Returns merged contents of {@code defaultValue}, provider's value, and property's value, in that order.
+     * Returns merged contents of {@code defaultValue}, provider's value, and property's value, in that order.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param providers the {@code Provider} factory used to create a {@code Provider}.
      * @param property the property to use
@@ -724,20 +867,33 @@ final class PropertyUtils {
         providers.provider {
             Map<K, V> map = new LinkedHashMap<>(defaultValue)
 
-            if (provider) {
-                map.putAll(provider.get())
-            }
-            if (property.present) {
-                map.putAll(property.get())
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (provider) {
+                        map.putAll(provider.get())
+                    }
+                    if (property.present) {
+                        map.putAll(property.get())
+                    }
+                    break
+                case Priority.PROVIDER:
+                    if (property.present) {
+                        map.putAll(property.get())
+                    }
+                    if (provider) {
+                        map.putAll(provider.get())
+                    }
             }
 
-            map
+            return map
         }
     }
 
     /**
      * Creates a hierarchical List property.
-     * Returns merged contents of {@code defaultValue}, provider's value, and property's value, in that order.
+     * Returns merged contents of {@code defaultValue}, provider's value, and property's value, in that order.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param providers the {@code Provider} factory used to create a {@code Provider}.
      * @param property the property to use
@@ -752,24 +908,41 @@ final class PropertyUtils {
         providers.provider {
             List<E> list = new ArrayList<>(defaultValue)
 
-            if (provider) {
-                list.addAll(provider.get())
-            }
-            if (property.present) {
-                for (E e : property.get()) {
-                    if (!list.contains(e)) {
-                        list.add(e)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (provider) {
+                        list.addAll(provider.get())
                     }
-                }
+                    if (property.present) {
+                        for (E e : property.get()) {
+                            if (!list.contains(e)) {
+                                list.add(e)
+                            }
+                        }
+                    }
+                    break
+                case Priority.PROVIDER:
+                    if (property.present) {
+                        for (E e : property.get()) {
+                            if (!list.contains(e)) {
+                                list.add(e)
+                            }
+                        }
+                    }
+                    if (provider) {
+                        list.addAll(provider.get())
+                    }
             }
 
-            list
+            return list
         }
     }
 
     /**
      * Creates a hierarchical Set property.
-     * Returns merged contents of {@code defaultValue}, provider's value, and property's value, in that order.
+     * Returns merged contents of {@code defaultValue}, provider's value, and property's value, in that order.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param providers the {@code Provider} factory used to create a {@code Provider}.
      * @param property the property to use
@@ -784,19 +957,40 @@ final class PropertyUtils {
         providers.provider {
             Set<E> set = new LinkedHashSet<>(defaultValue)
 
-            if (provider) {
-                set.addAll(provider.get())
-            }
-            if (property.present) {
-                set.addAll(property.get())
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (provider) {
+                        set.addAll(provider.get())
+                    }
+                    if (property.present) {
+                        for (E e : property.get()) {
+                            if (!set.contains(e)) {
+                                set.add(e)
+                            }
+                        }
+                    }
+                    break
+                case Priority.PROVIDER:
+                    if (property.present) {
+                        for (E e : property.get()) {
+                            if (!set.contains(e)) {
+                                set.add(e)
+                            }
+                        }
+                    }
+                    if (provider) {
+                        set.addAll(provider.get())
+                    }
             }
 
-            set
+            return set
         }
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param envKey the environment variable to check.
      * @param propertyKey the system and project property to check.
@@ -816,14 +1010,22 @@ final class PropertyUtils {
                                            Object owner,
                                            String defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order, path, project, owner)
-            isNotBlank(value) ? value : defaultValue
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    return isNotBlank(value) ? value : defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    return isNotBlank(value) ? value : property.getOrElse(defaultValue)
+            }
         }
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param key the environment variable, system and project property to check.
      * @param property the property to check value from.
@@ -844,7 +1046,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -866,7 +1071,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to lowercase and '_' replaced with '.' for constructing the property key.
@@ -887,7 +1095,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -909,7 +1120,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -932,7 +1146,9 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param envKey the environment variable to check.
      * @param propertyKey the system and project property to check.
@@ -952,17 +1168,22 @@ final class PropertyUtils {
                                              Object owner,
                                              boolean defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order, path, project, owner)
-            if (isNotBlank(value)) {
-                return Boolean.parseBoolean(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    return isNotBlank(value) ? Boolean.parseBoolean(value) : defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    return isNotBlank(value) ? Boolean.parseBoolean(value) : property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param key the environment variable, system and project property to check.
      * @param property the property to check value from.
@@ -983,7 +1204,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1005,7 +1229,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -1025,7 +1252,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -1046,7 +1276,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1069,7 +1302,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      *
@@ -1091,17 +1327,22 @@ final class PropertyUtils {
                                              Object owner,
                                              int defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order, path, project, owner)
-            if (isNotBlank(value)) {
-                return Integer.parseInt(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    return isNotBlank(value) ? Integer.parseInt(value) : defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    return isNotBlank(value) ? Integer.parseInt(value) : property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param key the environment variable, system and project property to check.
      * @param property the property to check value from.
@@ -1122,7 +1363,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1144,7 +1388,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -1164,7 +1411,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -1185,7 +1435,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1208,7 +1461,9 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param envKey the environment variable to check.
      * @param propertyKey the system and project property to check.
@@ -1228,17 +1483,22 @@ final class PropertyUtils {
                                        Object owner,
                                        long defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order, path, project, owner)
-            if (isNotBlank(value)) {
-                return Long.parseLong(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    return isNotBlank(value) ? Long.parseLong(value) : defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    return isNotBlank(value) ? Long.parseLong(value) : property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param key the environment variable, system and project property to check.
      * @param property the property to check value from.
@@ -1259,7 +1519,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1281,7 +1544,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -1301,7 +1567,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -1322,7 +1591,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1345,7 +1617,9 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param envKey the environment variable to check.
      * @param propertyKey the system and project property to check.
@@ -1365,19 +1639,32 @@ final class PropertyUtils {
                                               Object owner,
                                               RegularFile defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order, path, project, owner)
-            if (isNotBlank(value)) {
-                RegularFileProperty p = project.objects.fileProperty()
-                p.set(Paths.get(value).toFile())
-                return p.get()
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    if (isNotBlank(value)) {
+                        RegularFileProperty p = project.objects.fileProperty()
+                        p.set(Paths.get(value).toFile())
+                        return p.get()
+                    }
+                    return defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    if (isNotBlank(value)) {
+                        RegularFileProperty p = project.objects.fileProperty()
+                        p.set(Paths.get(value).toFile())
+                        return p.get()
+                    }
+                    return property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param key the environment variable, system and project property to check.
      * @param property the property to check value from.
@@ -1398,7 +1685,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1420,7 +1710,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -1440,7 +1733,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -1461,7 +1757,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1484,7 +1783,9 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param envKey the environment variable to check.
      * @param propertyKey the system and project property to check.
@@ -1504,19 +1805,32 @@ final class PropertyUtils {
                                                  Object owner,
                                                  Directory defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order, path, project, owner)
-            if (isNotBlank(value)) {
-                DirectoryProperty p = project.objects.directoryProperty()
-                p.set(Paths.get(value).toFile())
-                return p.get()
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    if (isNotBlank(value)) {
+                        DirectoryProperty p = project.objects.directoryProperty()
+                        p.set(Paths.get(value).toFile())
+                        return p.get()
+                    }
+                    return defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    if (isNotBlank(value)) {
+                        DirectoryProperty p = project.objects.directoryProperty()
+                        p.set(Paths.get(value).toFile())
+                        return p.get()
+                    }
+                    return property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param key the environment variable, system and project property to check.
      * @param property the property to check value from.
@@ -1537,7 +1851,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1559,7 +1876,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -1579,7 +1899,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -1600,7 +1923,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1623,7 +1949,9 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param envKey the environment variable to check.
      * @param propertyKey the system and project property to check.
@@ -1644,21 +1972,36 @@ final class PropertyUtils {
                                              Object owner,
                                              Set<String> defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order, path, project, owner)
-            if (isNotBlank(value)) {
-                Set<String> set = new LinkedHashSet<>()
-                for (String v : value.split(',')) {
-                    if (isNotBlank(v)) set.add(v.trim())
-                }
-                return set
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    if (isNotBlank(value)) {
+                        Set<String> set = new LinkedHashSet<>()
+                        for (String v : value.split(',')) {
+                            if (isNotBlank(v)) set.add(v.trim())
+                        }
+                        return set
+                    }
+                    return defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    if (isNotBlank(value)) {
+                        Set<String> set = new LinkedHashSet<>()
+                        for (String v : value.split(',')) {
+                            if (isNotBlank(v)) set.add(v.trim())
+                        }
+                        return set
+                    }
+                    return property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param key the environment variable, system and project property to check.
      * @param property the property to check value from.
@@ -1679,7 +2022,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1701,7 +2047,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -1721,7 +2070,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -1742,7 +2094,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1765,7 +2120,9 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param envKey the environment variable to check.
      * @param propertyKey the system and project property to check.
@@ -1800,7 +2157,9 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not list.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param key the environment variable, system and project property to check.
      * @param property the property to check value from.
@@ -1821,7 +2180,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1843,7 +2205,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -1863,7 +2228,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -1884,7 +2252,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1907,7 +2278,9 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param envKey the environment variable to check.
      * @param propertyKey the system and project property to check.
@@ -1928,24 +2301,42 @@ final class PropertyUtils {
                                                      Object owner,
                                                      Map<String, String> defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(envKey, propertyKey, order, path, project, owner)
-            if (isNotBlank(value)) {
-                Map<String, String> map = new LinkedHashMap<>()
-                for (String val : value.split(',')) {
-                    String[] kv = val.split('=')
-                    if (kv.length == 2) {
-                        map.put(kv[0], kv[1])
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    if (isNotBlank(value)) {
+                        Map<String, String> map = new LinkedHashMap<>()
+                        for (String val : value.split(',')) {
+                            String[] kv = val.split('=')
+                            if (kv.length == 2) {
+                                map.put(kv[0], kv[1])
+                            }
+                        }
+                        return map
                     }
-                }
-                return map
+                    return defaultValue
+                case Priority.PROVIDER:
+                    String value = resolveValue(envKey, propertyKey, order, path, project, owner)
+                    if (isNotBlank(value)) {
+                        Map<String, String> map = new LinkedHashMap<>()
+                        for (String val : value.split(',')) {
+                            String[] kv = val.split('=')
+                            if (kv.length == 2) {
+                                map.put(kv[0], kv[1])
+                            }
+                        }
+                        return map
+                    }
+                    return property.getOrElse(defaultValue)
             }
-            defaultValue
         }
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not map.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
      *
      * @param key the environment variable, system and project property to check.
      * @param property the property to check value from.
@@ -1966,7 +2357,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -1988,7 +2382,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -2008,7 +2405,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
      * property. Defaults to {@code GLOBAL_PROJECT_OWNER}.
      * The value of key will be converted to uppercase and '.' replaced with '_' for constructing the environment variable key.
@@ -2029,7 +2429,10 @@ final class PropertyUtils {
     }
 
     /**
-     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.
+     * Creates a {@code Provider} that resolves values from additional sources if the property's value is not set.</p>
+     * The resolution priority between {@code property} and {@code provider} is governed by the
+     * {@code PropertyUtils.KEY_PROPERTY_PRIORITY} System property whose default value is {@code PROPERTY}.
+     *
      * The value of {@code Order} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_ORDER} System
      * property. Defaults to {@code ENV_SYS_PROP}.
      * The value of {@code Path} will be resolved from the {@code PropertyUtils.KEY_PROPERTY_PATH} System
@@ -2049,6 +2452,15 @@ final class PropertyUtils {
                                                      Project project,
                                                      Object owner) {
         mapProvider(toEnv(key), toProperty(key), property, order, resolvePropertyPath(), project, owner, Collections.<String, String> emptyMap())
+    }
+
+    private static Priority resolvePropertyPriority() {
+        String value = System.getProperty(KEY_PROPERTY_PRIORITY)
+        try {
+            return Priority.valueOf(value.toUpperCase())
+        } catch (Exception ignored) {
+            return Priority.PROPERTY
+        }
     }
 
     private static Order resolvePropertyOrder() {
@@ -2093,19 +2505,19 @@ final class PropertyUtils {
             case Order.ENV_SYS_PROP:
             case Order.ENV_PROP_SYS:
             case Order.PROP_ENV_SYS: ES:
-                {
-                    String value = System.getenv(envKey)
-                    if (isBlank(value)) value = System.getProperty(propertyKey)
-                    return value
-                }
+            {
+                String value = System.getenv(envKey)
+                if (isBlank(value)) value = System.getProperty(propertyKey)
+                return value
+            }
             case Order.SYS_ENV_PROP:
             case Order.SYS_PROP_ENV:
             case Order.PROP_SYS_ENV: SE:
-                {
-                    String value = System.getProperty(propertyKey)
-                    if (isBlank(value)) value = System.getenv(envKey)
-                    return value
-                }
+            {
+                String value = System.getProperty(propertyKey)
+                if (isBlank(value)) value = System.getenv(envKey)
+                return value
+            }
         }
     }
 
@@ -2303,12 +2715,21 @@ final class PropertyUtils {
                                                         Project project,
                                                         E defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
-            if (isNotBlank(value)) {
-                return enumType.valueOf(value.toUpperCase())
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return enumType.valueOf(value.toUpperCase())
+                    }
+                    return provider.getOrElse(defaultValue)
+                case Priority.PROVIDER:
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return enumType.valueOf(value.toUpperCase())
+                    }
+                    return property.getOrElse(provider.getOrElse(defaultValue))
             }
-            provider.getOrElse(defaultValue)
         }
     }
 
@@ -2321,12 +2742,21 @@ final class PropertyUtils {
                                              Project project,
                                              boolean defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
-            if (isNotBlank(value)) {
-                return Boolean.parseBoolean(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return Boolean.parseBoolean(value)
+                    }
+                    return provider.getOrElse(defaultValue)
+                case Priority.PROVIDER:
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return Boolean.parseBoolean(value)
+                    }
+                    return property.getOrElse(provider.getOrElse(defaultValue))
             }
-            provider.getOrElse(defaultValue)
         }
     }
 
@@ -2339,12 +2769,21 @@ final class PropertyUtils {
                                              Project project,
                                              int defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
-            if (isNotBlank(value)) {
-                return Integer.parseInt(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return Integer.parseInt(value)
+                    }
+                    return provider.getOrElse(defaultValue)
+                case Priority.PROVIDER:
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return Integer.parseInt(value)
+                    }
+                    return property.getOrElse(provider.getOrElse(defaultValue))
             }
-            provider.getOrElse(defaultValue)
         }
     }
 
@@ -2357,12 +2796,21 @@ final class PropertyUtils {
                                        Project project,
                                        long defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
-            if (isNotBlank(value)) {
-                return Long.parseLong(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return  Long.parseLong(value)
+                    }
+                    return provider.getOrElse(defaultValue)
+                case Priority.PROVIDER:
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return  Long.parseLong(value)
+                    }
+                    return property.getOrElse(provider.getOrElse(defaultValue))
             }
-            provider.getOrElse(defaultValue)
         }
     }
 
@@ -2375,12 +2823,21 @@ final class PropertyUtils {
                                            Project project,
                                            String defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
-            if (isNotBlank(value)) {
-                return value
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return  value
+                    }
+                    return provider.getOrElse(defaultValue)
+                case Priority.PROVIDER:
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return value
+                    }
+                    return property.getOrElse(provider.getOrElse(defaultValue))
             }
-            provider.getOrElse(defaultValue)
         }
     }
 
@@ -2393,14 +2850,25 @@ final class PropertyUtils {
                                                Project project,
                                                Directory defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
-            if (isNotBlank(value)) {
-                DirectoryProperty p = project.objects.directoryProperty()
-                p.set(Paths.get(value).toFile())
-                return p.get()
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        DirectoryProperty p = project.objects.directoryProperty()
+                        p.set(Paths.get(value).toFile())
+                        return p.get()
+                    }
+                    return provider.getOrElse(defaultValue)
+                case Priority.PROVIDER:
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        DirectoryProperty p = project.objects.directoryProperty()
+                        p.set(Paths.get(value).toFile())
+                        return p.get()
+                    }
+                    return property.getOrElse(provider.getOrElse(defaultValue))
             }
-            provider.getOrElse(defaultValue)
         }
     }
 
@@ -2413,14 +2881,25 @@ final class PropertyUtils {
                                                  Project project,
                                                  Directory defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
-            if (isNotBlank(value)) {
-                DirectoryProperty p = project.objects.directoryProperty()
-                p.set(Paths.get(value).toFile())
-                return p.get()
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        DirectoryProperty p = project.objects.directoryProperty()
+                        p.set(Paths.get(value).toFile())
+                        return p.get()
+                    }
+                    return provider.getOrElse(defaultValue)
+                case Priority.PROVIDER:
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        DirectoryProperty p = project.objects.directoryProperty()
+                        p.set(Paths.get(value).toFile())
+                        return p.get()
+                    }
+                    return property.getOrElse(provider.getOrElse(defaultValue))
             }
-            provider.getOrElse(defaultValue)
         }
     }
 
@@ -2433,14 +2912,25 @@ final class PropertyUtils {
                                               Project project,
                                               RegularFile defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
-            if (isNotBlank(value)) {
-                RegularFileProperty p = project.objects.fileProperty()
-                p.set(Paths.get(value).toFile())
-                return p.get()
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        RegularFileProperty p = project.objects.fileProperty()
+                        p.set(Paths.get(value).toFile())
+                        return p.get()
+                    }
+                    return provider.getOrElse(defaultValue)
+                case Priority.PROVIDER:
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        RegularFileProperty p = project.objects.fileProperty()
+                        p.set(Paths.get(value).toFile())
+                        return p.get()
+                    }
+                    return property.getOrElse(provider.getOrElse(defaultValue))
             }
-            provider.getOrElse(defaultValue)
         }
     }
 
@@ -2454,12 +2944,21 @@ final class PropertyUtils {
                                              Project project,
                                              Set<String> defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
-            if (isNotBlank(value)) {
-                return convertToSet(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return convertToSet(value)
+                    }
+                    return provider.getOrElse(defaultValue)
+                case Priority.PROVIDER:
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return convertToSet(value)
+                    }
+                    return property.getOrElse(provider.getOrElse(defaultValue))
             }
-            provider.getOrElse(defaultValue)
         }
     }
 
@@ -2473,12 +2972,21 @@ final class PropertyUtils {
                                                Project project,
                                                List<String> defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
-            if (isNotBlank(value)) {
-                return convertToList(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return convertToList(value)
+                    }
+                    return provider.getOrElse(defaultValue)
+                case Priority.PROVIDER:
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return convertToList(value)
+                    }
+                    return property.getOrElse(provider.getOrElse(defaultValue))
             }
-            provider.getOrElse(defaultValue)
         }
     }
 
@@ -2492,12 +3000,21 @@ final class PropertyUtils {
                                                      Project project,
                                                      Map<String, String> defaultValue) {
         project.providers.provider {
-            if (property.present) return property.get()
-            String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
-            if (isNotBlank(value)) {
-                return convertToMap(value)
+            switch (resolvePropertyPriority()) {
+                case Priority.PROPERTY:
+                    if (property.present) return property.get()
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return convertToMap(value)
+                    }
+                    return provider.getOrElse(defaultValue)
+                case Priority.PROVIDER:
+                    String value = resolveValue(toEnv(key), toProperty(key), order, path, projectAccess, project, null)
+                    if (isNotBlank(value)) {
+                        return convertToMap(value)
+                    }
+                    return property.getOrElse(provider.getOrElse(defaultValue))
             }
-            provider.getOrElse(defaultValue)
         }
     }
 

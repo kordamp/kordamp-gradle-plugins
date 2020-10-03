@@ -47,11 +47,39 @@ class PropertyUtilsSpec extends Specification {
         """
     }
 
+    def "ENV_SYS_PROP with property and ENV_SYS_PROP and PROVIDER priority set resolves ENV"() {
+        given:
+        buildFile << """
+            import org.kordamp.gradle.property.PropertyUtils
+
+            System.setProperty('kordamp.property.priority', 'PROVIDER')
+            ext.stringProperty = objects.property(String)
+            stringProperty.set('property')
+            ext.stringProvider = PropertyUtils.stringProvider(
+                'foo.bar', stringProperty, project, project)
+            assert stringProvider.get() == 'env'
+        """
+
+        when:
+        BuildResult result = GradleRunner.create()
+            .withPluginClasspath()
+            .withProjectDir(testProjectDir.root)
+            .withArguments('clean',
+                '-Dorg.kordamp.gradle.base.validate=false',
+                '-Pfoo.bar=prop',
+                '-Dfoo.bar=sys')
+            .withEnvironment(['FOO_BAR': 'env'])
+            .build()
+
+        then:
+        result.task(':clean').outcome == UP_TO_DATE
+    }
+
     def "ENV_SYS_PROP with property and ENV_SYS_PROP set resolves property"() {
         given:
         buildFile << """
             import org.kordamp.gradle.property.PropertyUtils
-            
+
             ext.stringProperty = objects.property(String)
             stringProperty.set('property')
             ext.stringProvider = PropertyUtils.stringProvider(
