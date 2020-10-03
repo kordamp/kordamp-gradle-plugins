@@ -27,6 +27,7 @@ import org.kordamp.gradle.plugin.insight.model.Build
 import org.kordamp.gradle.plugin.insight.model.BuildReport
 import org.kordamp.gradle.plugin.insight.model.Project
 import org.kordamp.gradle.plugin.insight.model.Task
+import org.kordamp.gradle.util.TimeUtils
 
 import javax.inject.Inject
 
@@ -153,14 +154,6 @@ class SummaryBuildReport implements BuildReport {
     }
 
     private static String formatDuration(double time) {
-        String formatted = String.format('%.3f', time) + ' s'
-        if (time >= 60d) {
-            int seconds = (int) time
-            String m = String.valueOf((int) (seconds / 60))
-            String s = String.valueOf(seconds % 60)
-            formatted = "${m.padLeft(2, '0')}:${s.padLeft(2, '0')}  m".toString()
-        }
-
-        formatted.padLeft(9, ' ')
+        TimeUtils.formatDuration(time).padLeft(9, ' ')
     }
 }

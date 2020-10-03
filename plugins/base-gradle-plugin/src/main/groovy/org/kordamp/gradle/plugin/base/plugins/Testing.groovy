@@ -40,6 +40,7 @@ class Testing extends AbstractTestingFeature {
 
     boolean logging = true
     boolean aggregate = true
+    double timeThreshold = -1
 
     private boolean loggingSet = false
     private boolean aggregateSet = false
@@ -85,12 +86,13 @@ class Testing extends AbstractTestingFeature {
     @Override
     Map<String, Map<String, Object>> toMap() {
         new LinkedHashMap<>('testing': new LinkedHashMap<>([
-            enabled    : enabled,
-            logging    : logging,
-            aggregate  : aggregate,
-            integration: integration.toMap(),
-            functional : functional.toMap(),
-            colors     : colors.toMap()
+            enabled      : enabled,
+            logging      : logging,
+            timeThreshold: timeThreshold,
+            aggregate    : aggregate,
+            integration  : integration.toMap(),
+            functional   : functional.toMap(),
+            colors       : colors.toMap()
         ]))
     }
 
@@ -121,6 +123,7 @@ class Testing extends AbstractTestingFeature {
     static void merge(Testing o1, Testing o2) {
         AbstractFeature.merge(o1, o2)
         o1.setLogging((boolean) (o1.loggingSet ? o1.logging : o2.logging))
+        o1.setTimeThreshold((o1.timeThreshold != -1 ? o1.timeThreshold : (o2.timeThreshold != -1 ? o2.timeThreshold : 2000d)))
         o1.setAggregate((boolean) (o1.aggregateSet ? o1.aggregate : o2.aggregate))
         Integration.merge(o1.integration, o2.integration)
         Functional.merge(o1.functional, o2.functional)

@@ -36,6 +36,7 @@ config {
     testing {
         enabled
         logging
+        timeThreshold
         aggregate
         integration {
             logging
@@ -58,10 +59,11 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name      | Type    | Required | Default Value | Description
-| enabled   | boolean | no       | true          | Disables `org.kordamp.gradle.test` plugin if `false`
-| logging   | boolean | no       | true          | Enables verbose output
-| aggregate | boolean | no       | true          | Enables test report aggregation
+| Name          | Type    | Required | Default Value | Description
+| enabled       | boolean | no       | true          | Disables `org.kordamp.gradle.test` plugin if `false`
+| logging       | boolean | no       | true          | Enables verbose output
+| timeThreshold | double  | no       | 2000d         | Flags slow tests that run for more than the given threshold.
+| aggregate     | boolean | no       | true          | Enables test report aggregation
 |===
 
 [[_testing_integration]]

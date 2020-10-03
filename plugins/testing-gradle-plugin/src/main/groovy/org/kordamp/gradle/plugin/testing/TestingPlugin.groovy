@@ -41,6 +41,7 @@ import org.kordamp.gradle.plugin.base.plugins.Testing
 import org.kordamp.gradle.plugin.test.tasks.FunctionalTest
 import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
 import org.kordamp.gradle.util.AnsiConsole
+import org.kordamp.gradle.util.TimeUtils
 
 import javax.inject.Named
 
@@ -284,10 +285,15 @@ class TestingPlugin extends AbstractKordampPlugin {
                 indicator = config.testing.colors.failure(console, WINDOWS ? 'X' : '✘')
             }
 
+            long time = result.endTime - result.startTime
+            String duration = TimeUtils.formatDuration(time / 1000d)
             String str = console.erase("${indicator} Test ${descriptor.name} ")
-            str += "Executed: ${result.testCount}/${config.testing.colors.success(console, String.valueOf(result.successfulTestCount))}/"
+            str += "[Tests: ${result.testCount}/${config.testing.colors.success(console, String.valueOf(result.successfulTestCount))}/"
             str += "${config.testing.colors.failure(console, String.valueOf(result.failedTestCount))}/"
-            str += "${config.testing.colors.ignored(console, String.valueOf(result.skippedTestCount))} "
+            str += "${config.testing.colors.ignored(console, String.valueOf(result.skippedTestCount))}]"
+            if (!descriptor.name.contains('Gradle Test Run')) {
+                str += " [Time: ${(time >= config.testing.timeThreshold) ? config.testing.colors.failure(console, duration) : duration}]"
+            }
             testTask.project.logger.lifecycle(str.toString())
         }
     }
@@ -363,10 +369,12 @@ class TestingPlugin extends AbstractKordampPlugin {
                     indicator = config.testing.colors.failure(console, WINDOWS ? 'X' : '✘')
                 }
 
+                String duration = TimeUtils.formatDuration(results.time / 1000d)
                 String str = console.erase("${indicator} ${category} Tests ")
-                str += "Executed: ${results.total}/${config.testing.colors.success(console, String.valueOf(results.success))}/"
+                str += "[Tests: ${results.total}/${config.testing.colors.success(console, String.valueOf(results.success))}/"
                 str += "${config.testing.colors.failure(console, String.valueOf(results.failure))}/"
-                str += "${config.testing.colors.ignored(console, String.valueOf(results.skipped))} "
+                str += "${config.testing.colors.ignored(console, String.valueOf(results.skipped))}] "
+                str += "[Time: ${duration}]"
                 t.project.logger.lifecycle(str.toString())
 
                 if (results.failure > 0) {
@@ -385,6 +393,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                 descriptor.name.contains('Gradle Test Run')) return
 
             results.put('total', results.get('total') + result.testCount)
+            results.put('time', results.get('time') + (result.endTime - result.startTime))
             results.put('success', results.get('success') + result.successfulTestCount)
             results.put('failure', results.get('failure') + result.failedTestCount)
             results.put('skipped', results.get('skipped') + result.skippedTestCount)
