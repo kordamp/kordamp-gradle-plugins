@@ -18,8 +18,10 @@
 package org.kordamp.gradle.plugin.insight.model
 
 import groovy.transform.Canonical
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
+import groovy.transform.Sortable
 import groovy.transform.ToString
 
 /**
@@ -40,6 +42,7 @@ class Project {
     final Set<String> tasksToBeExecuted = new LinkedHashSet<>()
 
     private final org.gradle.api.Project gradleProject
+    private double execDuration = -1d
 
     Project(String path, String name, org.gradle.api.Project gradleProject) {
         this.path = path
@@ -52,7 +55,10 @@ class Project {
     }
 
     double getExecDuration() {
-        ((Double) tasks.values().sum { it.execDuration } ?: 0d)
+        if (execDuration < 0) {
+            execDuration = calculateExecDuration()
+        }
+        execDuration
     }
 
     enum State {
@@ -69,7 +75,7 @@ class Project {
         }
 
         if (tasksToBeExecuted.size() != tasks.size()) {
-            return tasks.size() == 0? State.SKIPPED : State.PARTIAL
+            return tasks.size() == 0 ? State.SKIPPED : State.PARTIAL
         }
 
         if (gradleProject.state.executed || tasks.values().every { it.state == Task.State.SUCCESS }) {
@@ -77,5 +83,42 @@ class Project {
         }
 
         return State.SKIPPED
+    }
+
+    @CompileDynamic
+    private double calculateExecDuration() {
+        Set<TimeSlot> slots = new TreeSet<>()
+        tasks.values().each { task ->
+            TimeSlot slot = new TimeSlot(start: task.beforeExecute, end: task.afterExecute)
+            TimeSlot existing = slots.find({ s -> s.intersects(slot) })
+            if (existing) {
+                existing.expand(slot)
+            } else {
+                slots << slot
+            }
+        }
+
+        slots ? (Double) slots.sum { it.duration } : 0d
+    }
+
+    @CompileStatic
+    @Canonical
+    @Sortable(includes = ['start'])
+    private static class TimeSlot {
+        long start = Long.MAX_VALUE
+        long end = Long.MIN_VALUE
+
+        boolean intersects(TimeSlot other) {
+            other.start <= end && start <= other.end
+        }
+
+        void expand(TimeSlot other) {
+            start = Math.min(start, other.start)
+            end = Math.max(end, other.end)
+        }
+
+        double getDuration() {
+            Math.max(0, end - start) / 1000d
+        }
     }
 }

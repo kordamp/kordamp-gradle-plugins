@@ -99,8 +99,6 @@ The short format displays:
  * project configuration time
  * project execution time.
 
-WARNING: Project execution time is reported in *linear time*, as the sum of the execution time of all its tasks.
-
 Figure 1. shows a successful build for a project with 4 submodules
 
 .`$ gm build`
