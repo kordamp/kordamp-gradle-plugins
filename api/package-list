@@ -1,4 +1,3 @@
-org.kordamp.gradle
 org.kordamp.gradle.annotations
 org.kordamp.gradle.listener
 org.kordamp.gradle.plugin
@@ -34,6 +33,10 @@ org.kordamp.gradle.plugin.groovydoc
 org.kordamp.gradle.plugin.guide
 org.kordamp.gradle.plugin.inline
 org.kordamp.gradle.plugin.inline.adapters
+org.kordamp.gradle.plugin.insight
+org.kordamp.gradle.plugin.insight.internal
+org.kordamp.gradle.plugin.insight.model
+org.kordamp.gradle.plugin.insight.reports
 org.kordamp.gradle.plugin.integrationtest
 org.kordamp.gradle.plugin.jacoco
 org.kordamp.gradle.plugin.jar

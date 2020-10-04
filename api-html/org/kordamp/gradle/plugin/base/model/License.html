@@ -108,7 +108,7 @@ License.groovy
 <a name="77"><font color="#808080">77</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">o1.distribution&nbsp;=&nbsp;o1.distribution&nbsp;?:&nbsp;o2?.distribution</font><br />
 <a name="78"><font color="#808080">78</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">o1.comments&nbsp;=&nbsp;o1.comments&nbsp;?:&nbsp;o2?.comments</font><br />
 <a name="79"><font color="#808080">79</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">o1.primary&nbsp;=&nbsp;o1.primary&nbsp;?:&nbsp;o2?.primary</font><br />
-<a name="80"><font color="#808080">80</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">CollectionUtils.merge</font><font color="#000000">(</font><font color="#000000">o1.aliases,&nbsp;o2?.aliases</font><font color="#000000">)</font><br />
+<a name="80"><font color="#808080">80</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">o1.aliases&nbsp;=&nbsp;CollectionUtils.merge</font><font color="#000000">(</font><font color="#000000">o1.aliases,&nbsp;o2?.aliases,&nbsp;</font><font color="#0000c0"><b>false</b></font><font color="#000000">)</font><br />
 <a name="81"><font color="#808080">81</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="82"><font color="#808080">82</font>&nbsp;</a><font color="#000000">}</font></code>
     
