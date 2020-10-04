@@ -134,7 +134,7 @@ Creates an Asciidoctor based guide. Depends on the output of the following tasks
  * `asciidoctor`
  * `aggregateJavadoc` (if enabled)
  * `aggregateGroovydoc` (if enabled)
- * `aggregateKotlindocHtml` (if enabled)
+ * `dokkaHtmlCollector` (if enabled)
  * `aggregateSourceHtml` (if enabled)
  * `aggregateSourceXref` (if enabled)
 
