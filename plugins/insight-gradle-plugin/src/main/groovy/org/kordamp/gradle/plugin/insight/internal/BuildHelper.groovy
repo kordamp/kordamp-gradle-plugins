@@ -19,7 +19,7 @@ package org.kordamp.gradle.plugin.insight.internal
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.gradle.BuildListener
+import org.gradle.BuildAdapter
 import org.gradle.BuildResult
 import org.gradle.api.Action
 import org.gradle.api.ProjectEvaluationListener
@@ -47,8 +47,7 @@ import java.time.ZonedDateTime
  * @since 0.40.0
  */
 @CompileStatic
-class BuildHelper implements BuildListener,
-    ProjectEvaluationListener,
+class BuildHelper extends BuildAdapter implements ProjectEvaluationListener,
     TaskExecutionGraphListener,
     TaskExecutionListener {
 
@@ -57,11 +56,6 @@ class BuildHelper implements BuildListener,
 
     BuildHelper(Settings settings) {
         this.settings = settings
-    }
-
-    @Override
-    void buildStarted(Gradle gradle) {
-
     }
 
     @Override
