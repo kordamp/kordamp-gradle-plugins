@@ -25,6 +25,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.property.SimpleStringState
 import org.kordamp.gradle.property.StringState
 
@@ -38,6 +39,11 @@ class EchoTask extends DefaultTask {
 
     EchoTask() {
         message = SimpleStringState.of(this, 'echo.message', '')
+    }
+
+    @Option(option='echo-message', description = 'The message to write')
+    void setMessage(String message) {
+        getMessage().set(message)
     }
 
     @Internal
