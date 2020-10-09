@@ -51,7 +51,7 @@ class InlinePlugin implements Plugin<Settings> {
 
     @Override
     void apply(Settings settings) {
-        if (!checkFlag(KORDAMP_INLINE_ADAPT, true)) {
+        if (!checkFlag(KORDAMP_INLINE_ENABLED, true)) {
             return
         }
 
