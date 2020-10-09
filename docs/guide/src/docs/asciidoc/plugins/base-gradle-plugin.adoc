@@ -1130,145 +1130,175 @@ $ gm :plugins
 
 Results in the following output
 
-[source]
+[source,subs="verbatim,attributes"]
 ----
 > Task :plugins
 Total plugins: 30
 
 plugin 0:
     id: help-tasks
+    version: {gradle-version}
     implementationClass: org.gradle.api.plugins.HelpTasksPlugin
 
 plugin 1:
     id: build-init
+    version: {gradle-version}
     implementationClass: org.gradle.buildinit.plugins.BuildInitPlugin
 
 plugin 2:
     id: wrapper
+    version: {gradle-version}
     implementationClass: org.gradle.buildinit.plugins.WrapperPlugin
 
 plugin 3:
     id: lifecycle-base
+    version: {gradle-version}
     implementationClass: org.gradle.language.base.plugins.LifecycleBasePlugin
 
 plugin 4:
     id: base
+    version: {gradle-version}
     implementationClass: org.gradle.api.plugins.BasePlugin
 
 plugin 5:
     id: org.kordamp.gradle.base
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.base.BasePlugin
     enabled: true
 
 plugin 6:
     id: org.kordamp.gradle.profiles
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.profiles.ProfilesPlugin
     enabled: true
 
 plugin 7:
     id: org.kordamp.gradle.build-info
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
     enabled: true
 
 plugin 8:
     id: reporting-base
+    version: {gradle-version}
     implementationClass: org.gradle.api.plugins.ReportingBasePlugin
 
 plugin 9:
     id: com.github.hierynomus.license-report
+    version: 0.15.0
     implementationClass: com.hierynomus.gradle.license.LicenseReportingPlugin
 
 plugin 10:
     id: com.github.hierynomus.license-base
+    version: 0.15.0
     implementationClass: com.hierynomus.gradle.license.LicenseBasePlugin
 
 plugin 11:
     id: com.github.hierynomus.license
+    version: 0.15.0
     implementationClass: nl.javadude.gradle.plugins.license.LicensePlugin
 
 plugin 12:
     id: org.kordamp.gradle.licensing
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.licensing.LicensingPlugin
     enabled: false
 
 plugin 13:
     id: jacoco
+    version: {gradle-version}
     implementationClass: org.gradle.testing.jacoco.plugins.JacocoPlugin
 
 plugin 14:
     id: org.kordamp.gradle.jacoco
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.jacoco.JacocoPlugin
     enabled: true
 
 plugin 15:
     id: com.github.kt3k.coveralls
+    version: 2.10.2
     implementationClass: org.kt3k.gradle.plugin.CoverallsPlugin
 
 plugin 16:
     id: org.kordamp.gradle.coveralls
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.coveralls.CoverallsPlugin
     enabled: true
 
 plugin 17:
     id: org.kordamp.gradle.publishing
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.publishing.PublishingPlugin
     enabled: true
 
 plugin 18:
     id: signing
+    version: {gradle-version}
     implementationClass: org.gradle.plugins.signing.SigningPlugin
 
 plugin 19:
     id: org.kordamp.gradle.minpom
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.minpom.MinPomPlugin
     enabled: true
 
 plugin 20:
     id: org.kordamp.gradle.jar
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.jar.JarPlugin
     enabled: true
 
 plugin 21:
     id: org.kordamp.gradle.source-jar
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.source.SourceJarPlugin
     enabled: true
 
 plugin 22:
     id: org.kordamp.gradle.source-stats
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.stats.SourceStatsPlugin
     enabled: true
 
 plugin 23:
     id: org.kordamp.gradle.source-html
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
     enabled: true
 
 plugin 24:
     id: org.kordamp.gradle.source-xref
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.sourcexref.SourceXrefPlugin
     enabled: true
 
 plugin 25:
     id: org.kordamp.gradle.bintray
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.bintray.BintrayPlugin
     enabled: true
 
 plugin 26:
     id: org.kordamp.gradle.testing
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.testing.TestingPlugin
     enabled: true
 
 plugin 27:
     id: com.github.ben-manes.versions
+    version: 0.33.0
     implementationClass: com.github.benmanes.gradle.versions.VersionsPlugin
 
 plugin 28:
     id: org.kordamp.gradle.project
+    version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.project.ProjectPlugin
     enabled: true
 
 plugin 29:
     id: net.nemerosa.versioning
+    version: 2.14.0
     implementationClass: net.nemerosa.versioning.VersioningPlugin
 ----
 

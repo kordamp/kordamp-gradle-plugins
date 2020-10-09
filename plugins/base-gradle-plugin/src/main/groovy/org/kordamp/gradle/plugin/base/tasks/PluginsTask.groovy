@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.base.tasks
 
-
 import groovy.transform.CompileStatic
 import org.gradle.api.Plugin
 import org.gradle.api.tasks.TaskAction
@@ -37,7 +36,7 @@ class PluginsTask extends AbstractReportingTask {
     void report() {
         Map<String, Map<String, Object>> plugins = new LinkedHashMap<String, Map<String, Object>>()
 
-        Map<String, String> pluginMetadata = new LinkedHashMap<String, String>()
+        Map<String, PluginInfo> pluginMetadata = new LinkedHashMap<>()
         Enumeration<URL> e = PluginsTask.classLoader.getResources('META-INF/gradle-plugins')
         while (e.hasMoreElements()) {
             extractMetadata(e.nextElement(), pluginMetadata)
@@ -53,7 +52,7 @@ class PluginsTask extends AbstractReportingTask {
         doPrint(plugins, 0)
     }
 
-    private void extractMetadata(URL url, Map<String, String> pluginMetadata) {
+    private void extractMetadata(URL url, Map<String, PluginInfo> pluginMetadata) {
         if (url.protocol != 'jar') return
 
         JarFile jarFile = new JarFile(url.toString()[9..url.toString().indexOf('!') - 1])
@@ -64,20 +63,34 @@ class PluginsTask extends AbstractReportingTask {
             if (matcher.matches()) {
                 Properties props = new Properties()
                 props.load(jarFile.getInputStream(entry))
-                pluginMetadata.put((String) props.'implementation-class', matcher.group(1))
+                PluginInfo pluginInfo = new PluginInfo()
+                pluginMetadata.put((String) props.'implementation-class', pluginInfo)
+                pluginInfo.id = matcher.group(1) - 'org.gradle.'
+                matcher = (jarFile.name =~ /.*\-(\d[\d+\-_A-Za-z\.]+)\.jar/)
+                if (matcher.matches()) {
+                    pluginInfo.version = matcher.group(1)
+                }
             }
         }
     }
 
-    private static Map<String, Map<String, Object>> doReport(Plugin plugin, int index, Map<String, String> pluginMetadata) {
+    private static Map<String, Map<String, Object>> doReport(Plugin plugin, int index, Map<String, PluginInfo> pluginMetadata) {
         Map<String, Object> map = new LinkedHashMap<>()
 
-        map.id = (pluginMetadata[plugin.class.name] ?: plugin.class.name) - 'org.gradle.'
+        PluginInfo pluginInfo = pluginMetadata[plugin.class.name]
+        map.id = pluginInfo.id
+        if (pluginInfo.version) map.version = pluginInfo.version
         map.implementationClass = plugin.class.name
         if (plugin instanceof KordampPlugin) {
             map.enabled = plugin.enabled
         }
 
         new LinkedHashMap<>([('plugin ' + index): map])
+    }
+
+    @CompileStatic
+    private static class PluginInfo {
+        String id
+        String version
     }
 }
