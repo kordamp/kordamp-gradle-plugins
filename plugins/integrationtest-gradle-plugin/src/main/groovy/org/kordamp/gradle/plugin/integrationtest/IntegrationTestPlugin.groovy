@@ -121,6 +121,9 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
         sourceSet.compileClasspath += resolveSourceSets(project).main.output
         sourceSet.compileClasspath += project.configurations.compileClasspath
         sourceSet.compileClasspath += project.configurations.testCompileClasspath
+        if (config.testing.integration.includeTestOutput) {
+            sourceSet.compileClasspath += resolveSourceSets(project).test.output
+        }
         sourceSet.runtimeClasspath += sourceSet.compileClasspath
         sourceSet.runtimeClasspath += project.configurations.testRuntimeClasspath
 

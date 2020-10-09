@@ -31,10 +31,12 @@ class Integration {
 
     boolean logging = true
     boolean aggregate = true
+    boolean includeTestOutput = false
     String baseDir
 
     private boolean loggingSet = false
     private boolean aggregateSet = false
+    private boolean includeTestOutputSet = false
 
     protected final Testing test
 
@@ -60,17 +62,28 @@ class Integration {
         this.aggregateSet
     }
 
+    void setIncludeTestOutput(boolean includeTestOutput) {
+        this.includeTestOutput = includeTestOutput
+        this.includeTestOutputSet = true
+    }
+
+    boolean isIncludeTestOutputSet() {
+        this.includeTestOutputSet
+    }
+
     Map<String, Object> toMap() {
         new LinkedHashMap<String, Object>([
-            logging  : logging,
-            aggregate: aggregate,
-            baseDir  : baseDir
+            logging          : logging,
+            aggregate        : aggregate,
+            includeTestOutput: includeTestOutput,
+            baseDir          : baseDir
         ])
     }
 
     static void merge(Integration o1, Integration o2) {
         o1.setLogging((boolean) (o1.loggingSet ? o1.logging : (o2.loggingSet ? o2.logging : (o1.test.loggingSet ? o1.test.logging : o2.test.logging))))
         o1.setAggregate((boolean) (o1.aggregateSet ? o1.aggregate : (o2.aggregateSet ? o2.aggregate : (o1.test.aggregateSet ? o1.test.aggregate : o2.test.aggregate))))
+        o1.setIncludeTestOutput((boolean) (o1.includeTestOutputSet ? o1.includeTestOutput : o2.includeTestOutput))
         o1.setBaseDir(isNotBlank(o1.baseDir) ? o1.baseDir : o2.baseDir)
     }
 

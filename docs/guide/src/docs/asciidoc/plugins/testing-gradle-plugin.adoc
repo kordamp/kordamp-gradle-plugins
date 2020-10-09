@@ -42,6 +42,7 @@ config {
         integration {
             logging
             aggregate
+            includeTestOutput
             baseDir
         }
         functional {
@@ -73,10 +74,11 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name      | Type    | Required | Default Value        | Description
-| logging   | boolean | no       | true                 | Enables verbose output
-| aggregate | boolean | no       | true                 | Enables test report aggregation
-| baseDir   | String  | no       | src/integration-test |
+| Name              | Type    | Required | Default Value        | Description
+| logging           | boolean | no       | true                 | Enables verbose output
+| aggregate         | boolean | no       | true                 | Enables test report aggregation
+| includeTestOutput | boolean | no       | false                | Includes the compiled output from the `test` sourceSet.
+| baseDir           | String  | no       | src/integration-test |
 |===
 
 [[_testing_functional]]
