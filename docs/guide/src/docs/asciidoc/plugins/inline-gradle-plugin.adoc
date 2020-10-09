@@ -43,6 +43,21 @@ link:api/org/kordamp/gradle/plugin/inline/PropertyAdapter.html[PropertyAdapter] 
 This plugin also lets you invoke tasks prefixed by a project path regex, in which case all projects whose paths match
 the given regex will be affected by the given goal.
 
+[[_org_kordamp_gradle_inline_properties]]
+== Flags
+
+The following flags may be set using System properties to alter the behavior of this plugin
+
+org.kordamp.gradle.inline.enabled::
+Disable all capabilities of this plugin if set to `false`. Default is `true`.
+org.kordamp.gradle.inline.project.regex::
+Disable evaluation of project regexes if set to `false`. Default is `true`.
+org.kordamp.gradle.inline.plugins::
+Disable inlining plugins if set to `false`. Default is `true`.
+org.kordamp.gradle.inline.adapt::
+Dsable adapting task properties with link:api/org/kordamp/gradle/plugin/inline/PropertyAdapter.html[PropertyAdapter] instances
+if set to `false`. Default is `true`.
+
 [[_org_kordamp_gradle_inline_example]]
 == Example
 

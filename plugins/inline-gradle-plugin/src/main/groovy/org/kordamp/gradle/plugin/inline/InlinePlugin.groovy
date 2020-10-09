@@ -32,6 +32,7 @@ import java.util.jar.JarFile
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+import static org.kordamp.gradle.util.PluginUtils.checkFlag
 import static org.kordamp.gradle.util.StringUtils.isBlank
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
@@ -41,10 +42,19 @@ import static org.kordamp.gradle.util.StringUtils.isNotBlank
  */
 @CompileStatic
 class InlinePlugin implements Plugin<Settings> {
+    static final String KORDAMP_INLINE_PROJECT_REGEX = 'org.kordamp.gradle.inline.project.regex'
+    static final String KORDAMP_INLINE_PLUGINS = 'org.kordamp.gradle.inline.plugins'
+    static final String KORDAMP_INLINE_ADAPT = 'org.kordamp.gradle.inline.adapt'
+    static final String KORDAMP_INLINE_ENABLED = 'org.kordamp.gradle.inline.enabled'
+
     private Settings settings
 
     @Override
     void apply(Settings settings) {
+        if (!checkFlag(KORDAMP_INLINE_ADAPT, true)) {
+            return
+        }
+
         this.settings = settings
 
         Configuration configuration = settings.buildscript.configurations.maybeCreate('inlinePlugins')
@@ -56,15 +66,19 @@ class InlinePlugin implements Plugin<Settings> {
         Set<IncludedPlugin> plugins = []
         Set<ProjectRegex> regexes = []
 
+        boolean projectRegexEnabled = checkFlag(KORDAMP_INLINE_PROJECT_REGEX, true)
+        boolean pluginsEnabled = checkFlag(KORDAMP_INLINE_PLUGINS, true)
+        boolean adaptEnabled = checkFlag(KORDAMP_INLINE_ADAPT, true)
+
         for (String task : settings.gradle.startParameter.taskNames) {
-            if (ProjectRegex.isProjectRegex(task)) {
+            if (projectRegexEnabled && ProjectRegex.isProjectRegex(task)) {
                 ProjectRegex regex = ProjectRegex.parse(task)
                 regexes << regex
-            } else if (IncludedCorePlugin.isPluginDefinition(task)) {
+            } else if (pluginsEnabled && IncludedCorePlugin.isPluginDefinition(task)) {
                 IncludedCorePlugin plugin = IncludedCorePlugin.parse(task)
                 plugins << plugin
                 taskNames << plugin.taskName
-            } else if (IncludedExternalPlugin.isPluginDefinition(task)) {
+            } else if (pluginsEnabled && IncludedExternalPlugin.isPluginDefinition(task)) {
                 IncludedExternalPlugin plugin = IncludedExternalPlugin.parse(task)
                 plugins << plugin
                 taskNames << plugin.taskName
@@ -96,18 +110,20 @@ class InlinePlugin implements Plugin<Settings> {
                     includePlugins(plugins, files)
                 }
 
-                List<String> tasks = []
-                tasks.addAll(settings.gradle.startParameter.taskNames)
-                for (ProjectRegex regex : regexes) {
-                    tasks.addAll(regex.expand(gradle.rootProject))
-                }
+                if (projectRegexEnabled) {
+                    List<String> tasks = []
+                    tasks.addAll(settings.gradle.startParameter.taskNames)
+                    for (ProjectRegex regex : regexes) {
+                        tasks.addAll(regex.expand(gradle.rootProject))
+                    }
 
-                settings.gradle.startParameter.taskNames = tasks
+                    settings.gradle.startParameter.taskNames = tasks
+                }
             }
 
             @Override
             void projectsEvaluated(Gradle gradle) {
-                adaptProperties(gradle.rootProject)
+                if (adaptEnabled) adaptProperties(gradle.rootProject)
             }
         })
     }
