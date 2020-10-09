@@ -151,23 +151,34 @@ class PluginUtils {
         GradleVersion.current() >= GradleVersion.version('6.0')
     }
 
-    static void registerJarVariant(String feature, String classifier, TaskProvider<Jar> jarProvider, Project project) {
+    static Configuration registerJarVariant(String feature,
+                                            String classifier,
+                                            TaskProvider<Jar> jarProvider,
+                                            Project project,
+                                            boolean addAttributes = true,
+                                            String scope = 'runtime') {
         if (isGradle6Compatible()) {
-            Configuration variant = project.configurations.maybeCreate(classifier + 'Elements')
+            Configuration variant = project.configurations.maybeCreate(feature.uncapitalize() + 'Elements')
             variant.visible = false
-            variant.description = feature + ' elements for main.'
+            variant.description = feature + ' elements.'
             variant.canBeResolved = false
             variant.canBeConsumed = true
-            variant.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, Usage.JAVA_RUNTIME))
-            variant.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category, Category.DOCUMENTATION))
-            variant.attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.objects.named(Bundling, Bundling.EXTERNAL))
-            variant.attributes.attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType, classifier))
+            if (addAttributes) {
+                variant.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, Usage.JAVA_RUNTIME))
+                variant.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category, Category.DOCUMENTATION))
+                variant.attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.objects.named(Bundling, Bundling.EXTERNAL))
+                variant.attributes.attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType, classifier))
+            }
 
             variant.outgoing.artifact(new LazyPublishArtifact(jarProvider))
             AdhocComponentWithVariants component = findJavaComponent(project.components)
             if (component != null) {
-                component.addVariantsFromConfiguration(variant, new JavaConfigurationVariantMapping('runtime', true))
+                component.addVariantsFromConfiguration(variant, new JavaConfigurationVariantMapping(scope, true))
             }
+
+            return variant
         }
+
+        return null
     }
 }

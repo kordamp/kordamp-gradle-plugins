@@ -38,6 +38,7 @@ config {
         logging
         timeThreshold
         aggregate
+        jar
         integration {
             logging
             aggregate
@@ -64,6 +65,7 @@ config {
 | logging       | boolean | no       | true          | Enables verbose output
 | timeThreshold | double  | no       | 2000d         | Flags slow tests that run for more than the given threshold.
 | aggregate     | boolean | no       | true          | Enables test report aggregation
+| jar           | boolean | no       | false         | Generates a `-tests` JAR.
 |===
 
 [[_testing_integration]]
@@ -100,6 +102,77 @@ config {
 |===
 
 Valid values are [`black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`].
+
+.Tests JAR
+
+If `config.testing.jar` is set to `true` an additional JAR file becomes available, with classifier `tests` and containing
+the compiled classes of the `test` sourceSet. Two additional configurations also become available:
+
+* `testElements` containing just the test JAR.
+* `testArtifacts` containing the test JAR and all elements from the `testImplementation` and `testRuntimeOnly` configurations.
+
+The second configuration may be consumed by sibling projects that require shared test classes, for example given the
+following structure
+
+[source]
+----
+.
+├── build.gradle
+├── settings.gradle
+└── subprojects
+    ├── project1
+    │   ├── project1.gradle
+    │   └── src
+    │       ├── main
+    │       │   └── java
+    │       │       └── org
+    │       │           └── kordamp
+    │       │               └── sample
+    │       │                   └── HelloWorld1.java
+    │       └── test
+    │           └── java
+    │               └── org
+    │                   └── kordamp
+    │                       └── sample
+    │                           └── HelloWorld1Test.java
+    └── project2
+        ├── project2.gradle
+        └── src
+            ├── main
+            │   └── java
+            │       └── org
+            │           └── kordamp
+            │               └── sample
+            │                   └── HelloWorld2.java
+            └── test
+                └── java
+                    └── org
+                        └── kordamp
+                            └── sample
+                                └── HelloWorld2Test.java
+----
+
+With the following builds files
+
+.project1.gradle
+[source,groovy]
+----
+dependencies {
+    implementation('junit:junit:4.13')
+}
+----
+
+.project2.gradle
+[source,groovy]
+----
+dependencies {
+    testImplementation(project(path: ':project1', configuration: 'testArtifacts'))
+}
+----
+
+Then the class `HelloWorldTest1` becomes available to classes in `project2/src/test/java`.
+
+The test JAR also becomes part of the `main` publication.
 
 [[_org_kordamp_gradle_testing_tasks]]
 == Tasks

@@ -23,9 +23,13 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.plugins.AppliedPlugin
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.api.tasks.testing.TestReport
@@ -49,7 +53,9 @@ import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAl
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addTaskGraphReadyListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.registerJarVariant
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveSourceSets
 
 /**
  *
@@ -63,6 +69,7 @@ class TestingPlugin extends AbstractKordampPlugin {
     static final String AGGREGATE_FUNCTIONAL_TEST_REPORTS_TASK_NAME = 'aggregateFunctionalTestReports'
     static final String AGGREGATE_ALL_TEST_REPORTS_TASK_NAME = 'aggregateAllTestReports'
     static final String ALL_TESTS_TASK_NAME = 'allTests'
+    static final String TEST_JAR_TASK_NAME = 'testJar'
 
     private static final boolean WINDOWS = System.getProperty('os.name').startsWith('Windows')
 
@@ -187,10 +194,6 @@ class TestingPlugin extends AbstractKordampPlugin {
             }
 
             project.tasks.withType(Test) { Test testTask ->
-                if (!testTask.enabled) {
-                    return
-                }
-
                 if (testTask instanceof IntegrationTest) {
                     configureLogging(testTask, config.testing.integration.logging)
                     config.testing.integrationTasks() << (IntegrationTest) testTask
@@ -199,6 +202,10 @@ class TestingPlugin extends AbstractKordampPlugin {
                     config.testing.functionalTestTasks() << (FunctionalTest) testTask
                 } else {
                     configureLogging(testTask, config.testing.logging)
+                    if (config.testing.jar) {
+                        project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME)
+                            .dependsOn(createTestJar(project, testTask))
+                    }
                     config.testing.testTasks() << testTask
                 }
             }
@@ -221,21 +228,22 @@ class TestingPlugin extends AbstractKordampPlugin {
             }
         }
     }
-
-    @Named('testing')
-    private class TestingAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
-        @Override
-        void allProjectsEvaluated(Project rootProject) {
-            configureAggregateTestReportTasks(rootProject)
-        }
-    }
-
     @Named('testing')
     @DependsOn(['base'])
     private class TestingTaskGraphReadyListener implements TaskGraphReadyListener {
         @Override
         void taskGraphReady(Project rootProject, TaskExecutionGraph graph) {
             configureAggregates(rootProject, graph)
+        }
+    }
+
+    @Named('testing')
+    @DependsOn(['publishing'])
+    private class TestingAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+        @Override
+        void allProjectsEvaluated(Project rootProject) {
+            configureAggregateTestReportTasks(rootProject)
+            updatePublications(rootProject)
         }
     }
 
@@ -296,6 +304,24 @@ class TestingPlugin extends AbstractKordampPlugin {
             }
             testTask.project.logger.lifecycle(str.toString())
         }
+    }
+
+    private static TaskProvider<Jar> createTestJar(Project project, Test testTask) {
+        ProjectConfigurationExtension config = resolveConfig(project)
+
+        project.tasks.register(TEST_JAR_TASK_NAME, Jar,
+            new Action<Jar>() {
+                @Override
+                @CompileDynamic
+                void execute(Jar t) {
+                    t.enabled = config.testing.enabled
+                    t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
+                    t.description = 'An archive of the unit tests'
+                    t.archiveClassifier.set('tests')
+                    t.dependsOn testTask
+                    t.from resolveSourceSets(project).test.output
+                }
+            })
     }
 
     @CompileDynamic
@@ -403,5 +429,35 @@ class TestingPlugin extends AbstractKordampPlugin {
         }
 
         results
+    }
+
+    private void updatePublications(Project project) {
+        updatePublication(project)
+        for (Project p : project.childProjects.values()) {
+            updatePublications(p)
+        }
+    }
+
+    private void updatePublication(Project project) {
+        if (project.tasks.findByName(TEST_JAR_TASK_NAME)) {
+            TaskProvider<Jar> testJar = project.tasks.named(TEST_JAR_TASK_NAME, Jar)
+            ProjectConfigurationExtension config = resolveConfig(project)
+            if (config.testing.enabled && project.pluginManager.hasPlugin('maven-publish')) {
+                PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
+                MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
+                if (mainPublication) mainPublication.artifact(testJar.get())
+                Configuration variant = registerJarVariant('Test', 'tests', testJar, project, false, 'runtime')
+                variant.canBeResolved = true
+
+                Configuration testArtifacts = project.configurations.maybeCreate('testArtifacts')
+                testArtifacts.extendsFrom(variant)
+                testArtifacts.extendsFrom(project.configurations.findByName('testImplementation'))
+                testArtifacts.extendsFrom(project.configurations.findByName('testRuntimeOnly'))
+                testArtifacts.visible = true
+                testArtifacts.description = 'Test artifacts'
+                testArtifacts.canBeResolved = true
+                testArtifacts.canBeConsumed = true
+            }
+        }
     }
 }

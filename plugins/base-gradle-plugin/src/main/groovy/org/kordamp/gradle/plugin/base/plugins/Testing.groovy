@@ -40,10 +40,12 @@ class Testing extends AbstractTestingFeature {
 
     boolean logging = true
     boolean aggregate = true
+    boolean jar = false
     double timeThreshold = -1
 
     private boolean loggingSet = false
     private boolean aggregateSet = false
+    private boolean jarSet = false
 
     final Integration integration
     final Functional functional
@@ -83,11 +85,21 @@ class Testing extends AbstractTestingFeature {
         this.aggregateSet
     }
 
+    void setJar(boolean jar) {
+        this.jar = jar
+        this.jarSet = true
+    }
+
+    boolean isJarSet() {
+        this.jarSet
+    }
+
     @Override
     Map<String, Map<String, Object>> toMap() {
         new LinkedHashMap<>('testing': new LinkedHashMap<>([
             enabled      : enabled,
             logging      : logging,
+            jar          : jar,
             timeThreshold: timeThreshold,
             aggregate    : aggregate,
             integration  : integration.toMap(),
@@ -124,6 +136,7 @@ class Testing extends AbstractTestingFeature {
         AbstractFeature.merge(o1, o2)
         o1.setLogging((boolean) (o1.loggingSet ? o1.logging : o2.logging))
         o1.setTimeThreshold((o1.timeThreshold != -1 ? o1.timeThreshold : (o2.timeThreshold != -1 ? o2.timeThreshold : 2000d)))
+        o1.setJar((boolean) (o1.jarSet ? o1.jar : o2.jar))
         o1.setAggregate((boolean) (o1.aggregateSet ? o1.aggregate : o2.aggregate))
         Integration.merge(o1.integration, o2.integration)
         Functional.merge(o1.functional, o2.functional)
