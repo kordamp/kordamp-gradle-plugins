@@ -25,8 +25,162 @@ This plugin adds the following plugins to the classpath without applying them:
 [[_org_kordamp_gradle_java_project_extensions]]
 == Extensions
 
+[[_org_kordamp_gradle_java_project_extension_applyToDefaults]]
+=== applyToDefaults
+
+Configures platform dependencies based on settings available from `config.dependencies`. Since Gradle 6 platform dependencies
+must be applied per configuration, which results in verbose build files when a  BOM/platform should be applied in common
+configurations. This extension lets you apply a BOM/platform to multiple configurations with a single method call.
+The following configurations will be used:
+
+* `api`
+* `implementation`
+* `annotationProcessor`
+* `testImplementation`
+* `testAnnotationProcessor`
+* `compileOnly`
+* `testCompileOnly`
+* `runtimeOnly`
+* `testRuntimeOnly`
+
+[horizontal]
+Name:: applyToDefaults
+Type:: `org.kordamp.gradle.plugin.project.DefaultConfigurationsDependencyHandler`
+Applied to:: `org.gradle.api.artifacts.dsl.DependencyHandler`
+
+.Methods
+
+void platform(Object notation):: Declares a dependency on a platform.
+void platform(Object notation, Action<? super Dependency> action):: Declares and configures a dependency on a platform.
+void enforcedPlatform(Object notation):: Declares a dependency on an enforced platform.
+void enforcedPlatform(Object notation, Action<? super Dependency> action):: Declares and configures a dependency on an enforced platform.
+
+Where `notation` may be one of
+
+* `java.lang.CharSequence` with format `groupId:artifactId:version`.
+* `java.util.Map` with `group`, `artifactId`, `version` keys.
+* `java.lang.CharSequence` with the name of a platform declared in `config.dependencies`.
+
+.Example
+The following example shows how the Micronaut BOM can be used to configure all configurations
+
+[source,groovy]
+.build.gradle
+----
+config {
+    dependencies {
+        dependency('micronaut') {
+            platform   = true
+            groupId    = 'io.micronaut'
+            artifactId = 'micronaut-bom'
+            version    = micronautVersion
+            modules    = ['micronaut-inject-java',
+                          'micronaut-inject-groovy',
+                          'micronaut-inject',
+                          'micronaut-validation',
+                          'micronaut-runtime-groovy']
+        }
+    }
+}
+
+dependencies {
+    applyToDefaults.enforcedPlatform('micronaut')
+
+    // The following dependencies can now be resolved by their respective configurations
+    // without specifying a version as the 'micronaut' platform will provide it
+    annotationProcessor('io.micronaut:micronaut-inject-java')
+    annotationProcessor('io.micronaut:micronaut-validation')
+    api('io.micronaut:micronaut-validation')
+    compileOnly('io.micronaut:micronaut-inject-groovy')
+}
+----
+
+[[_org_kordamp_gradle_java_project_extension_applyTo]]
+=== applyTo
+
+Configures platform, module, and regular dependencies based on settings available from `config.dependencies`.
+
+[horizontal]
+Name:: applyTo
+Type:: `org.kordamp.gradle.plugin.project.ConfigurationsDependencyHandler`
+Applied to:: `org.gradle.api.artifacts.dsl.DependencyHandler`
+
+.Methods
+
+DependencyHandlerSpec configuration(String configuration)::
+Declares the target configuration on which platforms and dependencies will be applied
+DependencyHandlerSpec configurations(String configuration, String... configurations)::
+Declares target configurations on which platforms and dependencies will be applied.
+DependencyHandlerSpec configurations(Set<String> configurations)::
+Declares target configurations on which platforms and dependencies will be applied.
+DependencyHandlerSpec c(String configuration)::
+Declares the target configuration on which platforms and dependencies will be applied. +
+Alias for `configuration(configuration)`.
+DependencyHandlerSpec c(String configuration, String... configurations)::
+Declares target configurations on which platforms and dependencies will be applied. +
+Alias for `configurations(configuration,configurations)`.
+DependencyHandlerSpec c(Set<String> configurations)::
+Declares target configurations on which platforms and dependencies will be applied. +
+Alias for `configurations(configurations)`.
+
+`DependencyHandlerSpec` has the following methods
+
+void platform(Object notation):: Declares a dependency on a platform.
+void platform(Object notation, Action<? super Dependency> action):: Declares and configures a dependency on a platform.
+void enforcedPlatform(Object notation):: Declares a dependency on an enforced platform.
+void enforcedPlatform(Object notation, Action<? super Dependency> action):: Declares and configures a dependency on an enforced platform.
+void dependency(String nameOrGa):: Declares a dependency.
+void dependency(String nameOrGa, Closure):: Declares and configures a dependency.
+void module(String nameOrGa):: Declares a module dependency (from a platform).
+void module(String nameOrGa, Closure):: Declares and configures a module dependency (from a platform).
+
+Where `notation` may be one of
+
+* `java.lang.CharSequence` with format `groupId:artifactId:version`.
+* `java.util.Map` with `group`, `artifactId`, `version` keys.
+* `java.lang.CharSequence` with the name of a platform declared in `config.dependencies`.
+
+.Example
+The following example shows how the Micronaut BOM can be used to configure all configurations
+
+[source,groovy]
+.build.gradle
+----
+config {
+    dependencies {
+        dependency('junit:junit:4.13')
+        dependency('micronaut') {
+            platform   = true
+            groupId    = 'io.micronaut'
+            artifactId = 'micronaut-bom'
+            version    = micronautVersion
+            modules    = ['micronaut-inject-java',
+                          'micronaut-inject-groovy',
+                          'micronaut-inject',
+                          'micronaut-validation',
+                          'micronaut-runtime-groovy']
+        }
+    }
+}
+
+dependencies {
+    applyToDefaults.enforcedPlatform('micronaut')
+
+    // The following dependencies can now be resolved by their respective configurations
+    // without specifying a version as the 'micronaut' platform will provide it
+
+    applyTo.configuration('annotationProcessor').module('micronaut', 'micronaut-inject-java')
+    // apply to both annotationProcessor & api
+    applyTo.c('annotationProcessor', 'api').module('micronaut', 'micronaut-validation')
+    applyTo.c('api').module('micronaut', 'micronaut-runtime-groovy')
+    applyTo.c('testImplementation').dependency('junit')
+}
+----
+
 [[_org_kordamp_gradle_java_project_extension_cfg]]
 === cfg
+
+WARNING: This extension has been *DEPRECATED*. Use `applyToDefaults` and/or `applyTo` instead.
 
 Configures dependencies based on settings available from `config.dependencies`.
 
@@ -54,10 +208,10 @@ void enforcedPlatform(Object notation, Action<? super Dependency> action):: Decl
 void enforcedPlatform(Object notation, String... configurations):: Declares a dependency on an enforced platform for a set of specific configurations.
 void enforcedPlatform(Object notation, List<String> configurations):: Declares a dependency on an enforced platform for a set of specific configurations.
 void enforcedPlatform(Object notation, List<String> configurations, Action<? super Dependency> action):: Declares and configures a dependency on an enforced platform for a set of specific configurations.
-void dependency(String name, String configuration, String... configurations):: Declares a dependency for a set of specific configurations.
-void dependency(String name, String configuration, Closure):: Declares and configures a dependency for a set of specific configurations.
-void module(String name, String configuration, String... configurations):: Declares a module dependency (from a platform) for a set of specific configurations.
-void module(String name, String configuration, Closure):: Declares and configures a module dependency (from a platform) for a set of specific configurations.
+void dependency(String nameOrGa, String configuration, String... configurations):: Declares a dependency for a set of specific configurations.
+void dependency(String nameOrGa, String configuration, Closure):: Declares and configures a dependency for a set of specific configurations.
+void module(String nameOrGa, String configuration, String... configurations):: Declares a module dependency (from a platform) for a set of specific configurations.
+void module(String nameOrGa, String configuration, Closure):: Declares and configures a module dependency (from a platform) for a set of specific configurations.
 
 Where `notation` may be one of
 

@@ -17,25 +17,31 @@
  */
 package org.kordamp.gradle.plugin.project.internal
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency as KDependency
-import org.kordamp.gradle.plugin.project.DependencyHandler
+import org.kordamp.gradle.plugin.project.ConfigurationsDependencyHandler
+import org.kordamp.gradle.plugin.project.DefaultConfigurationsDependencyHandler
+import org.kordamp.gradle.plugin.project.DependencyHandlerSpec
 
-import static java.util.Arrays.asList
+import javax.inject.Inject
+
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
+import static org.kordamp.gradle.util.StringUtils.isBlank
 
 /**
  *
  * @author Andres Almiray
- * @since 0.37.0
+ * @since 0.41.0
  */
 @CompileStatic
-class DependencyHandlerImpl implements DependencyHandler {
-    private static final List<String> DEFAULT_CONFIGURATIONS = [
+class DependencyHandlerImpl {
+    private static final Set<String> DEFAULT_CONFIGURATIONS = [
         'api',
         'implementation',
         'annotationProcessor',
@@ -45,177 +51,279 @@ class DependencyHandlerImpl implements DependencyHandler {
         'testCompileOnly',
         'runtimeOnly',
         'testRuntimeOnly'
-    ]
+    ] as Set
 
-    private final Project project
+    private ConfigurationsDependencyHandlerImpl cdh
+    private DefaultConfigurationsDependencyHandlerImpl dcdh
 
+    final Project project
     final List<Map<String, Object>> platforms = []
 
+    @Inject
     DependencyHandlerImpl(Project project) {
         this.project = project
     }
 
-    private Object maybeResolveGav(Object notation) {
-        if (notation instanceof CharSequence) {
-            String str = String.valueOf(notation)
-            Project prj = project.rootProject.findProject(str)
-            if (prj) return prj
+    ConfigurationsDependencyHandler configurationsDependencyHandler() {
+        cdh ? cdh : (cdh = new ConfigurationsDependencyHandlerImpl(this))
+    }
 
-            KDependency dependency = resolveConfig(project).dependencies.findDependencyByName(str)
-            if (dependency) {
-                prj = project.rootProject.findProject(dependency.artifactId)
+    DefaultConfigurationsDependencyHandler defaultConfigurationsDependencyHandler() {
+        dcdh ? dcdh : (dcdh = new DefaultConfigurationsDependencyHandlerImpl(this))
+    }
+
+    static class ConfigurationsDependencyHandlerImpl implements ConfigurationsDependencyHandler {
+        final DependencyHandlerImpl owner
+
+        ConfigurationsDependencyHandlerImpl(DependencyHandlerImpl owner) {
+            this.owner = owner
+        }
+
+        List<Map<String, Object>> getPlatforms() {
+            owner.platforms
+        }
+
+        @Override
+        DependencyHandlerSpec configuration(String configuration) {
+            if (isBlank(configuration)) {
+                throw new IllegalArgumentException('Target configuration must not be blank')
+            }
+            return new DependencyHandlerSpecImpl(owner, [configuration] as Set)
+        }
+
+        @Override
+        DependencyHandlerSpec configurations(String configuration, String... configurations) {
+            if (isBlank(configuration)) {
+                throw new IllegalArgumentException('Target configuration must not be blank')
+            }
+
+            Set<String> confs = [configuration] as Set
+            if (configurations) confs.addAll(configurations.toList())
+            return new DependencyHandlerSpecImpl(owner, confs)
+        }
+
+        @Override
+        DependencyHandlerSpec configurations(Set<String> configurations) {
+            if (!configurations) {
+                throw new IllegalArgumentException('Target configurations must not be empty')
+            }
+            return new DependencyHandlerSpecImpl(owner, configurations)
+        }
+
+        @Override
+        DependencyHandlerSpec c(String configuration) {
+            this.configuration(configuration)
+        }
+
+        @Override
+        DependencyHandlerSpec c(String configuration, String... configurations) {
+            this.configurations(configuration, configurations)
+        }
+
+        @Override
+        DependencyHandlerSpec c(Set<String> configurations) {
+            this.configurations(configurations)
+        }
+    }
+
+    @CompileDynamic
+    private static class DefaultConfigurationsDependencyHandlerImpl extends DependencyHandlerSpecImpl implements DefaultConfigurationsDependencyHandler {
+        DefaultConfigurationsDependencyHandlerImpl(DependencyHandlerImpl owner) {
+            super(owner, DEFAULT_CONFIGURATIONS)
+        }
+    }
+
+    private static class DependencyHandlerSpecImpl implements DependencyHandlerSpec {
+        final DependencyHandlerImpl owner
+        final Set<String> configurations = [] as Set
+
+        DependencyHandlerSpecImpl(DependencyHandlerImpl owner, Set<String> configurations) {
+            this.owner = owner
+            this.configurations.addAll(configurations)
+        }
+
+        @Override
+        void platform(Object notation) {
+            configurePlatform(notation, configurations, null)
+        }
+
+        @Override
+        void platform(Object notation, Action<? super Dependency> action) {
+            configurePlatform(notation, configurations, action)
+        }
+
+        @Override
+        void enforcedPlatform(Object notation) {
+            configureEnforcedPlatform(notation, configurations, null)
+        }
+
+        @Override
+        void enforcedPlatform(Object notation, Action<? super Dependency> action) {
+            configureEnforcedPlatform(notation, configurations, action)
+        }
+
+        @Override
+        void dependency(String nameOrGa) {
+            configureDependency(nameOrGa, configurations, null)
+        }
+
+        @Override
+        void dependency(String nameOrGa, Closure configurer) {
+            configureDependency(nameOrGa, configurations, configurer)
+        }
+
+        @Override
+        void module(String nameOrGa, String moduleName) {
+            configureDependency(nameOrGa, moduleName, configurations, null)
+        }
+
+        @Override
+        void module(String nameOrGa, String moduleName, Closure configurer) {
+            configureDependency(nameOrGa, moduleName, configurations, configurer)
+        }
+
+        List<Map<String, Object>> getPlatforms() {
+            owner.platforms
+        }
+
+        Project getProject() {
+            owner.project
+        }
+
+        private Object maybeResolveGav(Object notation, boolean platform = false) {
+            if (notation instanceof CharSequence) {
+                String str = String.valueOf(notation)
+                Project prj = project.rootProject.findProject(str)
                 if (prj) return prj
-                return dependency.gav
+
+                KDependency dependency = resolveConfig(project).dependencies.findDependencyByName(str)
+                if (dependency) {
+                    prj = project.rootProject.findProject(dependency.artifactId)
+                    if (prj) return prj
+                    if (platform && !dependency.platform) {
+                        throw new IllegalArgumentException("Target dependency is not a platform: ${notation}")
+                    }
+                    return dependency.gav
+                }
+            } else if (notation instanceof KDependency) {
+                KDependency dependency = (KDependency) notation
+                if (dependency) {
+                    Project prj = project.rootProject.findProject(dependency.artifactId)
+                    if (prj) return prj
+                    if (platform && !dependency.platform) {
+                        throw new IllegalArgumentException("Target dependency is not a platform: ${notation}")
+                    }
+                    return dependency.gav
+                }
             }
-        } else if (notation instanceof KDependency) {
-            KDependency dependency = (KDependency) notation
-            if (dependency) {
-                Project prj = project.rootProject.findProject(dependency.artifactId)
-                if (prj) return prj
-                return dependency.gav
-            }
+            notation
         }
-        notation
-    }
 
-    @Override
-    void platform(Object notation, Action<? super Dependency> action) {
-        platform(notation, DEFAULT_CONFIGURATIONS, action)
-    }
+        private void configurePlatform(Object notation, Set<String> configurations, Action<? super Dependency> action) {
+            Object gavOrNotation = maybeResolveGav(notation, true)
 
-    @Override
-    void platform(Object notation, String... configurations) {
-        platform(notation, configurations ? asList(configurations) : DEFAULT_CONFIGURATIONS, null)
-    }
+            Set<String> confs = configurations ?: DEFAULT_CONFIGURATIONS
+            Set<String> actualConfs = []
 
-    @Override
-    void platform(Object notation, List<String> configurations) {
-        platform(notation, configurations, null)
-    }
+            for (String configuration : confs) {
+                if (isBlank(configuration)) {
+                    throw new IllegalArgumentException('Target configuration must not be blank')
+                }
 
-    @Override
-    void platform(Object notation, List<String> configurations, Action<? super Dependency> action) {
-        Object gavOrNotation = maybeResolveGav(notation)
-
-        List<String> confs = configurations ?: DEFAULT_CONFIGURATIONS
-        List<String> actualConfs = []
-
-        for (String configuration : confs) {
-            if (project.configurations.findByName(configuration)) {
-                project.logger.debug("Configuring platform '${gavOrNotation}' in ${configuration}")
-                org.gradle.api.artifacts.dsl.DependencyHandler dh = project.dependencies
-                if (action) {
-                    Dependency d = dh.platform(gavOrNotation, action)
-                    dh.add(configuration, d)
-                    notation = "${d.group}:${d.name}:${d.version}".toString()
+                if (project.configurations.findByName(configuration)) {
+                    project.logger.debug("Configuring platform '${gavOrNotation}' in ${configuration}")
+                    DependencyHandler dh = project.dependencies
+                    if (action) {
+                        Dependency d = dh.platform(gavOrNotation, action)
+                        dh.add(configuration, d)
+                        notation = "${d.group}:${d.name}:${d.version}".toString()
+                    } else {
+                        Dependency d = dh.platform(gavOrNotation)
+                        dh.add(configuration, d)
+                        notation = "${d.group}:${d.name}:${d.version}".toString()
+                    }
+                    actualConfs << configuration
                 } else {
-                    Dependency d = dh.platform(gavOrNotation)
-                    dh.add(configuration, d)
-                    notation = "${d.group}:${d.name}:${d.version}".toString()
+                    throw new IllegalArgumentException("Target configuration '${configuration}' was not found")
                 }
-                actualConfs << configuration
             }
+
+            platforms << [
+                platform      : notation,
+                enforced      : false,
+                configurations: actualConfs
+            ]
         }
 
-        platforms << [
-            platform      : notation,
-            enforced      : false,
-            configurations: actualConfs
-        ]
-    }
+        private void configureEnforcedPlatform(Object notation, Set<String> configurations, Action<? super Dependency> action) {
+            Object gavOrNotation = maybeResolveGav(notation, true)
 
-    @Override
-    void enforcedPlatform(Object notation, Action<? super Dependency> action) {
-        enforcedPlatform(notation, DEFAULT_CONFIGURATIONS, action)
-    }
+            Set<String> confs = configurations ?: DEFAULT_CONFIGURATIONS
+            Set<String> actualConfs = []
 
-    @Override
-    void enforcedPlatform(Object notation, String... configurations) {
-        enforcedPlatform(notation, configurations ? asList(configurations) : DEFAULT_CONFIGURATIONS, null)
-    }
+            for (String configuration : confs) {
+                if (isBlank(configuration)) {
+                    throw new IllegalArgumentException('Target configuration must not be blank')
+                }
 
-    @Override
-    void enforcedPlatform(Object notation, List<String> configurations) {
-        enforcedPlatform(notation, configurations, null)
-    }
-
-    @Override
-    void enforcedPlatform(Object notation, List<String> configurations, Action<? super Dependency> action) {
-        Object gavOrNotation = maybeResolveGav(notation)
-        List<String> confs = configurations ?: DEFAULT_CONFIGURATIONS
-        List<String> actualConfs = []
-        for (String configuration : confs) {
-            if (project.configurations.findByName(configuration)) {
-                project.logger.debug("Configuring enforced platform '${gavOrNotation}' in ${configuration}")
-                org.gradle.api.artifacts.dsl.DependencyHandler dh = project.dependencies
-                if (action) {
-                    dh.add(configuration, dh.enforcedPlatform(gavOrNotation, action))
+                if (project.configurations.findByName(configuration)) {
+                    project.logger.debug("Configuring enforced platform '${gavOrNotation}' in ${configuration}")
+                    DependencyHandler dh = project.dependencies
+                    if (action) {
+                        dh.add(configuration, dh.enforcedPlatform(gavOrNotation, action))
+                    } else {
+                        dh.add(configuration, dh.enforcedPlatform(gavOrNotation))
+                    }
+                    actualConfs << configuration
                 } else {
-                    dh.add(configuration, dh.enforcedPlatform(gavOrNotation))
-                }
-                actualConfs << configuration
-            }
-        }
-
-        platforms << [
-            platform      : notation,
-            enforced      : true,
-            configurations: actualConfs
-        ]
-    }
-
-    @Override
-    void dependency(String nameOrGa, String configuration, String... configurations) {
-        ProjectConfigurationExtension config = resolveConfig(project)
-        if (project.configurations.findByName(configuration)) {
-            project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).gav)
-        }
-
-        if (configurations) {
-            for (String conf : configurations) {
-                if (project.configurations.findByName(conf)) {
-                    project.dependencies.add(conf, config.dependencies.getDependency(nameOrGa).gav)
+                    throw new IllegalArgumentException("Target configuration '${configuration}' was not found")
                 }
             }
-        }
-    }
 
-    @Override
-    void dependency(String nameOrGa, String configuration, Closure configurer) {
-        ProjectConfigurationExtension config = resolveConfig(project)
-        if (project.configurations.findByName(configuration)) {
-            if (configurer) {
-                project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).gav, configurer)
-            } else {
-                project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).gav)
-            }
-        }
-    }
-
-    @Override
-    void module(String nameOrGa, String moduleName, String configuration, String... configurations) {
-        ProjectConfigurationExtension config = resolveConfig(project)
-        if (project.configurations.findByName(configuration)) {
-            project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).asGav(moduleName))
+            platforms << [
+                platform      : notation,
+                enforced      : true,
+                configurations: actualConfs
+            ]
         }
 
-        if (configurations) {
-            for (String conf : configurations) {
-                if (project.configurations.findByName(conf)) {
-                    project.dependencies.add(conf, config.dependencies.getDependency(nameOrGa).asGav(moduleName))
+        private void configureDependency(String nameOrGa, Set<String> configurations, Closure configurer) {
+            ProjectConfigurationExtension config = resolveConfig(project)
+
+            for (String configuration : configurations) {
+                if (isBlank(configuration)) {
+                    throw new IllegalArgumentException('Target configuration must not be blank')
+                }
+
+                if (project.configurations.findByName(configuration)) {
+                    if (configurer) {
+                        project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).gav, configurer)
+                    } else {
+                        project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).gav)
+                    }
+                } else {
+                    throw new IllegalArgumentException("Target configuration '${configuration}' was not found")
                 }
             }
         }
-    }
 
-    @Override
-    void module(String nameOrGa, String moduleName, String configuration, Closure configurer) {
-        ProjectConfigurationExtension config = resolveConfig(project)
-        if (project.configurations.findByName(configuration)) {
-            if (configurer) {
-                project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).asGav(moduleName), configurer)
-            } else {
-                project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).asGav(moduleName))
+        private void configureDependency(String nameOrGa, String moduleName, Set<String> configurations, Closure configurer) {
+            ProjectConfigurationExtension config = resolveConfig(project)
+
+            for (String configuration : configurations) {
+                if (isBlank(configuration)) {
+                    throw new IllegalArgumentException('Target configuration must not be blank')
+                }
+
+                if (project.configurations.findByName(configuration)) {
+                    if (configurer) {
+                        project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).asGav(moduleName), configurer)
+                    } else {
+                        project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).asGav(moduleName))
+                    }
+                } else {
+                    throw new IllegalArgumentException("Target configuration '${configuration}' was not found")
+                }
             }
         }
     }

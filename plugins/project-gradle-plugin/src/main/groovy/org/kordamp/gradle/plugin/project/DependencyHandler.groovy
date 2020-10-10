@@ -28,6 +28,7 @@ import org.gradle.api.artifacts.Dependency
  * @since 0.37.0
  */
 @CompileStatic
+@Deprecated
 interface DependencyHandler {
     /**
      * Declares a dependency on a platform.
@@ -54,6 +55,7 @@ interface DependencyHandler {
      * @param notation - the coordinates of the platform
      * @param action the dependency configuration block
      */
+    @Deprecated
     void platform(Object notation, Action<? super Dependency> action)
 
     /**
@@ -81,6 +83,7 @@ interface DependencyHandler {
      * @param notation - the coordinates of the platform
      * @param configurations - the set of configurations to use
      */
+    @Deprecated
     void platform(Object notation, String... configurations)
 
     /**
@@ -108,6 +111,7 @@ interface DependencyHandler {
      * @param notation - the coordinates of the platform
      * @param configurations - the set of configurations to use
      */
+    @Deprecated
     void platform(Object notation, List<String> configurations)
 
     /**
@@ -130,6 +134,7 @@ interface DependencyHandler {
      * @param configurations - the set of configurations to use
      * @param action the dependency configuration block
      */
+    @Deprecated
     void platform(Object notation, List<String> configurations, Action<? super Dependency> action)
 
     /**
@@ -157,6 +162,7 @@ interface DependencyHandler {
      * @param notation - the coordinates of the platform
      * @param action the dependency configuration block
      */
+    @Deprecated
     void enforcedPlatform(Object notation, Action<? super Dependency> action)
 
     /**
@@ -184,6 +190,7 @@ interface DependencyHandler {
      * @param notation - the coordinates of the platform
      * @param configurations - the set of configurations to use
      */
+    @Deprecated
     void enforcedPlatform(Object notation, String... configurations)
 
     /**
@@ -211,6 +218,7 @@ interface DependencyHandler {
      * @param notation - the coordinates of the platform
      * @param configurations - the set of configurations to use
      */
+    @Deprecated
     void enforcedPlatform(Object notation, List<String> configurations)
 
     /**
@@ -239,6 +247,7 @@ interface DependencyHandler {
      * @param configurations - the set of configurations to use
      * @param action the dependency configuration block
      */
+    @Deprecated
     void enforcedPlatform(Object notation, List<String> configurations, Action<? super Dependency> action)
 
     /**
@@ -249,6 +258,7 @@ interface DependencyHandler {
      * @param configuration the target configuration, e.g, <tt>api</tt>.
      * @param configurations additional configurations (if any).
      */
+    @Deprecated
     void dependency(String nameOrGa, String configuration, String... configurations)
 
     /**
@@ -259,6 +269,7 @@ interface DependencyHandler {
      * @param configuration the target configuration, e.g, <tt>api</tt>.
      * @param configurer the closure to use to configure the dependency.
      */
+    @Deprecated
     void dependency(String nameOrGa, String configuration, Closure configurer)
 
     /**
@@ -269,6 +280,7 @@ interface DependencyHandler {
      * @param configuration the target configuration, e.g, <tt>api</tt>.
      * @param configurations additional configurations (if any).
      */
+    @Deprecated
     void module(String nameOrGa, String moduleName, String configuration, String... configurations)
 
     /**
@@ -279,5 +291,6 @@ interface DependencyHandler {
      * @param configuration the target configuration, e.g, <tt>api</tt>.
      * @param configurer the closure to use to configure the dependency.
      */
+    @Deprecated
     void module(String nameOrGa, String moduleName, String configuration, Closure configurer)
 }

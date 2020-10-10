@@ -20,8 +20,10 @@ package org.kordamp.gradle.plugin.project.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
+import org.kordamp.gradle.plugin.project.ConfigurationsDependencyHandler
 import org.kordamp.gradle.plugin.project.DependencyHandler
 import org.kordamp.gradle.plugin.project.internal.DependencyHandlerImpl
+import org.kordamp.gradle.plugin.project.internal.DeprecatedDependencyHandlerImpl
 
 /**
  * @author Andres Almiray
@@ -31,9 +33,9 @@ import org.kordamp.gradle.plugin.project.internal.DependencyHandlerImpl
 class PlatformsTask extends AbstractReportingTask {
     @TaskAction
     void report() {
-        DependencyHandler dh = project.dependencies.extensions.findByType(DependencyHandler)
+        ConfigurationsDependencyHandler dh = project.dependencies.extensions.findByType(ConfigurationsDependencyHandler)
         if (dh) {
-            List<Map<String, Object>> platforms = ((DependencyHandlerImpl) dh).platforms
+            List<Map<String, Object>> platforms = ((DependencyHandlerImpl.ConfigurationsDependencyHandlerImpl) dh).platforms
             println('Total platforms: ' + console.cyan((platforms.size()).toString()) + '\n')
             platforms.eachWithIndex { Map<String, Object> platform, int index ->
                 doPrintMapEntry("Platform $index", platform, 0)

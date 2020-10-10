@@ -27,9 +27,12 @@ import org.kordamp.gradle.annotations.DependsOn
 import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
+import org.kordamp.gradle.plugin.project.ConfigurationsDependencyHandler
+import org.kordamp.gradle.plugin.project.DefaultConfigurationsDependencyHandler
 import org.kordamp.gradle.plugin.project.DependencyHandler
 import org.kordamp.gradle.plugin.project.ProjectPlugin
 import org.kordamp.gradle.plugin.project.internal.DependencyHandlerImpl
+import org.kordamp.gradle.plugin.project.internal.DeprecatedDependencyHandlerImpl
 import org.kordamp.gradle.plugin.project.java.tasks.JarSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.JavaCompilerSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.JavaExecSettingsTask
@@ -83,7 +86,10 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
         project.pluginManager.withPlugin('java-platform', new Action<AppliedPlugin>() {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
-                project.dependencies.extensions.create(DependencyHandler, 'cfg', DependencyHandlerImpl, project)
+                DependencyHandlerImpl dhi = project.objects.newInstance(DependencyHandlerImpl, project)
+                project.dependencies.extensions.add(ConfigurationsDependencyHandler, 'applyTo', dhi.configurationsDependencyHandler())
+                project.dependencies.extensions.add(DefaultConfigurationsDependencyHandler, 'applyToDefaults', dhi.defaultConfigurationsDependencyHandler())
+                project.dependencies.extensions.create(DependencyHandler, 'cfg', DeprecatedDependencyHandlerImpl, project)
 
                 project.tasks.register('platforms', PlatformsTask,
                     new Action<PlatformsTask>() {
@@ -99,7 +105,10 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
         project.pluginManager.withPlugin('java-base', new Action<AppliedPlugin>() {
             @Override
             void execute(AppliedPlugin appliedPlugin) {
-                project.dependencies.extensions.create(DependencyHandler, 'cfg', DependencyHandlerImpl, project)
+                DependencyHandlerImpl dhi = project.objects.newInstance(DependencyHandlerImpl, project)
+                project.dependencies.extensions.add(ConfigurationsDependencyHandler, 'applyTo', dhi.configurationsDependencyHandler())
+                project.dependencies.extensions.add(DefaultConfigurationsDependencyHandler, 'applyToDefaults', dhi.defaultConfigurationsDependencyHandler())
+                project.dependencies.extensions.create(DependencyHandler, 'cfg', DeprecatedDependencyHandlerImpl, project)
 
                 project.tasks.register('compile', DefaultTask,
                     new Action<DefaultTask>() {
