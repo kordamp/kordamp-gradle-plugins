@@ -157,7 +157,7 @@ config {
         }
     }
 
-    <<_base_dependencies,dependencies>> {
+    <<_base_dependencyManagement,dependencyManagement>> {
         dependency(String)
     }
 }
@@ -359,8 +359,8 @@ This block defines a list of MailingList entries.
 
 At least `name` must be defined.
 
-[[_base_dependencies]]
-*dependencies*
+[[_base_dependencyManagement]]
+*dependencyManagement*
 
 This block serves as a central point for declaring dependencies and platforms that can later be reused in other places
 such as the standard `dependencies` block. Dependency definitions require 4 elements:
@@ -377,7 +377,7 @@ Additionally a dependency may define a set of modules that go together, for exam
 
 WARNING: Dependencies defined in this way cannot have classifiers and must be resolvable from a Maven compatible repository.
 
-[[_org_kordamp_gradle_base_dependencies_methods]]
+[[_org_kordamp_gradle_base_dependencyManagement_methods]]
 === Methods
 
 dependency(String gavNotation):: Defines a dependency. Argument must use the `groupId:artifactId:version` notation. Dependency name will be equal to `artifactId`. +
@@ -530,7 +530,7 @@ resolution mechanism. You must convert them to any of the accepted notations suc
 .build.gradle
 ----
 config {
-    dependencies {
+    dependencyManagement {
         // a dependency with modules
         dependency('groovy') {
             groupId    = 'org.codehaus.groovy'
@@ -556,8 +556,9 @@ config {
 }
 ----
 
-These dependencies can be used in combination with the <<_org_kordamp_gradle_java_project_extension_cfg,cfg>> extension if
-the `<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>` plugin is applied, for example
+These dependencies can be used in combination with the <<_org_kordamp_gradle_java_project_extension_applyToDefaults,applyToDefaults>>
+and  <<_org_kordamp_gradle_java_project_extension_applyTo,applyTo>> extensions if the
+`<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>` plugin is applied, for example
 
 [source,groovy]
 .build.gradle
@@ -567,7 +568,7 @@ plugins {
 }
 
 config {
-    dependencies {
+    dependencyManagement {
         // a dependency with modules
         dependency('groovy') {
             groupId    = 'org.codehaus.groovy'
@@ -595,15 +596,15 @@ config {
 // consume dependencies
 dependencies {
     // apply Micronaut platform to some configurations
-    cfg.platform('micronaut', 'api', 'annotationProcessor', 'compileOnly')
+    applyTo.c('api', 'annotationProcessor', 'compileOnly').platform('micronaut')
     // configure a dependency in the standard way
     api 'io.micronaut:micronaut-core'
     // configure a platform module by groupId:artifactId
-    annotationProcessor config.dependencies.ga('micronaut', 'micronaut-inject')
+    annotationProcessor config.dependencyManagement.ga('micronaut', 'micronaut-inject')
     // pull in a module from Groovy
-    api config.dependencies.gav('groovy', 'groovy-json')
+    api config.dependencyManagement.gav('groovy', 'groovy-json')
     // configure a single dependency
-    testImplementation config.dependencies.gav('junit')
+    testImplementation config.dependencyManagement.gav('junit')
 }
 ----
 

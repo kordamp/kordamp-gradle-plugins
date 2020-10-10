@@ -62,7 +62,7 @@ class DeprecatedDependencyHandlerImpl implements DependencyHandler {
             Project prj = project.rootProject.findProject(str)
             if (prj) return prj
 
-            KDependency dependency = resolveConfig(project).dependencies.findDependencyByName(str)
+            KDependency dependency = resolveConfig(project).dependencyManagement.findDependencyByName(str)
             if (dependency) {
                 prj = project.rootProject.findProject(dependency.artifactId)
                 if (prj) return prj
@@ -178,13 +178,13 @@ class DeprecatedDependencyHandlerImpl implements DependencyHandler {
     void dependency(String nameOrGa, String configuration, String... configurations) {
         ProjectConfigurationExtension config = resolveConfig(project)
         if (project.configurations.findByName(configuration)) {
-            project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).gav)
+            project.dependencies.add(configuration, config.dependencyManagement.getDependency(nameOrGa).gav)
         }
 
         if (configurations) {
             for (String conf : configurations) {
                 if (project.configurations.findByName(conf)) {
-                    project.dependencies.add(conf, config.dependencies.getDependency(nameOrGa).gav)
+                    project.dependencies.add(conf, config.dependencyManagement.getDependency(nameOrGa).gav)
                 }
             }
         }
@@ -196,9 +196,9 @@ class DeprecatedDependencyHandlerImpl implements DependencyHandler {
         ProjectConfigurationExtension config = resolveConfig(project)
         if (project.configurations.findByName(configuration)) {
             if (configurer) {
-                project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).gav, configurer)
+                project.dependencies.add(configuration, config.dependencyManagement.getDependency(nameOrGa).gav, configurer)
             } else {
-                project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).gav)
+                project.dependencies.add(configuration, config.dependencyManagement.getDependency(nameOrGa).gav)
             }
         }
     }
@@ -208,13 +208,13 @@ class DeprecatedDependencyHandlerImpl implements DependencyHandler {
     void module(String nameOrGa, String moduleName, String configuration, String... configurations) {
         ProjectConfigurationExtension config = resolveConfig(project)
         if (project.configurations.findByName(configuration)) {
-            project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).asGav(moduleName))
+            project.dependencies.add(configuration, config.dependencyManagement.getDependency(nameOrGa).asGav(moduleName))
         }
 
         if (configurations) {
             for (String conf : configurations) {
                 if (project.configurations.findByName(conf)) {
-                    project.dependencies.add(conf, config.dependencies.getDependency(nameOrGa).asGav(moduleName))
+                    project.dependencies.add(conf, config.dependencyManagement.getDependency(nameOrGa).asGav(moduleName))
                 }
             }
         }
@@ -226,9 +226,9 @@ class DeprecatedDependencyHandlerImpl implements DependencyHandler {
         ProjectConfigurationExtension config = resolveConfig(project)
         if (project.configurations.findByName(configuration)) {
             if (configurer) {
-                project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).asGav(moduleName), configurer)
+                project.dependencies.add(configuration, config.dependencyManagement.getDependency(nameOrGa).asGav(moduleName), configurer)
             } else {
-                project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).asGav(moduleName))
+                project.dependencies.add(configuration, config.dependencyManagement.getDependency(nameOrGa).asGav(moduleName))
             }
         }
     }

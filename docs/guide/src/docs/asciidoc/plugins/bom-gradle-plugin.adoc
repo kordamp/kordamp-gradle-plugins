@@ -191,7 +191,7 @@ This block is optional.
 
 exclude(String):: Skips the named project from being added to the BOM.
 include(String):: Adds the named project to the BOM.
-void dependency(Dependency):: Adds an existing dependency, usually declared in `<<_base_dependencies,config.dependencies>>`.
+void dependency(Dependency):: Adds an existing dependency, usually declared in `<<_base_dependencyManagement,config.dependencyManagement>>`.
 dependency(String gavNotation):: Defines a dependency. Argument must use the `groupId:artifactId:version` notation. Dependency name will be equal to `artifactId`. +
 Example: +
 [source,groovy]

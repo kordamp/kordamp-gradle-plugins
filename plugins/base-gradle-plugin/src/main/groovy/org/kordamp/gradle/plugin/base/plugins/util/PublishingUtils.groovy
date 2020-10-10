@@ -333,7 +333,7 @@ class PublishingUtils {
         String versionExp = dep.version
 
         if (config.publishing.useVersionExpressions) {
-            Dependency dependency = config.dependencies.findDependencyByGA(dep.group, dep.name)
+            Dependency dependency = config.dependencyManagement.findDependencyByGA(dep.group, dep.name)
             if (dependency) {
                 if (config.publishing.flattenPlatforms) {
                     if (dependency.platform) {
@@ -366,7 +366,7 @@ class PublishingUtils {
                 }
             }
         } else {
-            Dependency dependency = config.dependencies.findDependencyByGA(dep.group, dep.name)
+            Dependency dependency = config.dependencyManagement.findDependencyByGA(dep.group, dep.name)
             if (dependency) {
                 if (config.publishing.flattenPlatforms) {
                     versionExp = dependency.version

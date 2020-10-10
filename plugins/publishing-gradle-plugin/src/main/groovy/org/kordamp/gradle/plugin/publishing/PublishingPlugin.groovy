@@ -188,7 +188,7 @@ class PublishingPlugin extends AbstractKordampPlugin {
                                     String gid = dep.groupId.text()
                                     String aid = dep.artifactId.text()
 
-                                    Dependency dependency = config.dependencies.findDependencyByGA(gid, aid)
+                                    Dependency dependency = config.dependencyManagement.findDependencyByGA(gid, aid)
                                     if (dependency && dependency.version == dep.version.text()) {
                                         String versionKey = dependency.name + '.version'
                                         String versionExp = '${' + versionKey + '}'

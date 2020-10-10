@@ -28,7 +28,7 @@ This plugin adds the following plugins to the classpath without applying them:
 [[_org_kordamp_gradle_java_project_extension_applyToDefaults]]
 === applyToDefaults
 
-Configures platform dependencies based on settings available from `config.dependencies`. Since Gradle 6 platform dependencies
+Configures platform dependencies based on settings available from `config.dependencyManagement`. Since Gradle 6 platform dependencies
 must be applied per configuration, which results in verbose build files when a  BOM/platform should be applied in common
 configurations. This extension lets you apply a BOM/platform to multiple configurations with a single method call.
 The following configurations will be used:
@@ -59,7 +59,7 @@ Where `notation` may be one of
 
 * `java.lang.CharSequence` with format `groupId:artifactId:version`.
 * `java.util.Map` with `group`, `artifactId`, `version` keys.
-* `java.lang.CharSequence` with the name of a platform declared in `config.dependencies`.
+* `java.lang.CharSequence` with the name of a platform declared in `config.dependencyManagement`.
 
 .Example
 The following example shows how the Micronaut BOM can be used to configure all configurations
@@ -68,7 +68,7 @@ The following example shows how the Micronaut BOM can be used to configure all c
 .build.gradle
 ----
 config {
-    dependencies {
+    dependencyManagement {
         dependency('micronaut') {
             platform   = true
             groupId    = 'io.micronaut'
@@ -98,7 +98,7 @@ dependencies {
 [[_org_kordamp_gradle_java_project_extension_applyTo]]
 === applyTo
 
-Configures platform, module, and regular dependencies based on settings available from `config.dependencies`.
+Configures platform, module, and regular dependencies based on settings available from `config.dependencyManagement`.
 
 [horizontal]
 Name:: applyTo
@@ -138,7 +138,7 @@ Where `notation` may be one of
 
 * `java.lang.CharSequence` with format `groupId:artifactId:version`.
 * `java.util.Map` with `group`, `artifactId`, `version` keys.
-* `java.lang.CharSequence` with the name of a platform declared in `config.dependencies`.
+* `java.lang.CharSequence` with the name of a platform declared in `config.dependencyManagement`.
 
 .Example
 The following example shows how the Micronaut BOM can be used to configure all configurations
@@ -147,7 +147,7 @@ The following example shows how the Micronaut BOM can be used to configure all c
 .build.gradle
 ----
 config {
-    dependencies {
+    dependencyManagement {
         dependency('junit:junit:4.13')
         dependency('micronaut') {
             platform   = true
@@ -182,7 +182,7 @@ dependencies {
 
 WARNING: This extension has been *DEPRECATED*. Use `applyToDefaults` and/or `applyTo` instead.
 
-Configures dependencies based on settings available from `config.dependencies`.
+Configures dependencies based on settings available from `config.dependencyManagement`.
 
 [horizontal]
 Name:: cfg
@@ -217,7 +217,7 @@ Where `notation` may be one of
 
  * `java.lang.CharSequence` with format `groupId:artifactId:version`.
  * `java.util.Map` with `group`, `artifactId`, `version` keys.
- * `java.lang.CharSequence` with the name of a platform declared in `config.dependencies`.
+ * `java.lang.CharSequence` with the name of a platform declared in `config.dependencyManagement`.
 
 .Example
 The following example shows how the Micronaut BOM can be used to configure all configurations
@@ -226,7 +226,7 @@ The following example shows how the Micronaut BOM can be used to configure all c
 .build.gradle
 ----
 config {
-    dependencies {
+    dependencyManagement {
         dependency('micronaut') {
             platform   = true
             groupId    = 'io.micronaut'
@@ -258,7 +258,7 @@ dependencies {
     api('io.micronaut:micronaut-inject')
 
     // you can mix them both
-    api(config.dependencies.ga('micronaut', 'micronaut-runtime-groovy'))
+    api(config.dependencyManagement.ga('micronaut', 'micronaut-runtime-groovy'))
 }
 ----
 

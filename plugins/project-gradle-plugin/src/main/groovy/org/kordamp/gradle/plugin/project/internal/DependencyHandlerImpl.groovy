@@ -196,7 +196,7 @@ class DependencyHandlerImpl {
                 Project prj = project.rootProject.findProject(str)
                 if (prj) return prj
 
-                KDependency dependency = resolveConfig(project).dependencies.findDependencyByName(str)
+                KDependency dependency = resolveConfig(project).dependencyManagement.findDependencyByName(str)
                 if (dependency) {
                     prj = project.rootProject.findProject(dependency.artifactId)
                     if (prj) return prj
@@ -297,9 +297,9 @@ class DependencyHandlerImpl {
 
                 if (project.configurations.findByName(configuration)) {
                     if (configurer) {
-                        project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).gav, configurer)
+                        project.dependencies.add(configuration, config.dependencyManagement.getDependency(nameOrGa).gav, configurer)
                     } else {
-                        project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).gav)
+                        project.dependencies.add(configuration, config.dependencyManagement.getDependency(nameOrGa).gav)
                     }
                 } else {
                     throw new IllegalArgumentException("Target configuration '${configuration}' was not found")
@@ -317,9 +317,9 @@ class DependencyHandlerImpl {
 
                 if (project.configurations.findByName(configuration)) {
                     if (configurer) {
-                        project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).asGav(moduleName), configurer)
+                        project.dependencies.add(configuration, config.dependencyManagement.getDependency(nameOrGa).asGav(moduleName), configurer)
                     } else {
-                        project.dependencies.add(configuration, config.dependencies.getDependency(nameOrGa).asGav(moduleName))
+                        project.dependencies.add(configuration, config.dependencyManagement.getDependency(nameOrGa).asGav(moduleName))
                     }
                 } else {
                     throw new IllegalArgumentException("Target configuration '${configuration}' was not found")

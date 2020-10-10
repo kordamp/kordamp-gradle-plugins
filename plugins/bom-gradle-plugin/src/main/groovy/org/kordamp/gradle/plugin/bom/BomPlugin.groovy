@@ -100,7 +100,7 @@ class BomPlugin extends AbstractKordampPlugin {
 
     private Dependency findOwnDependency(ProjectConfigurationExtension config) {
         Dependency artifact = findOwnDependency(config.bom.dependencies.values())
-        if (!artifact) artifact = findOwnDependency(config.dependencies.dependencies.values())
+        if (!artifact) artifact = findOwnDependency(config.dependencyManagement.dependencies.values())
         if (artifact) {
             artifact
         } else {

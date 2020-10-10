@@ -30,6 +30,7 @@ import org.kordamp.gradle.plugin.base.plugins.Codenarc
 import org.kordamp.gradle.plugin.base.plugins.Coveralls
 import org.kordamp.gradle.plugin.base.plugins.Cpd
 import org.kordamp.gradle.plugin.base.plugins.Dependencies
+import org.kordamp.gradle.plugin.base.plugins.DependencyManagement
 import org.kordamp.gradle.plugin.base.plugins.Detekt
 import org.kordamp.gradle.plugin.base.plugins.ErrorProne
 import org.kordamp.gradle.plugin.base.plugins.Groovydoc
@@ -65,7 +66,7 @@ class ProjectConfigurationExtension {
 
     final Project project
     final Information info
-    final Dependencies dependencies
+    final Dependencies dependencyManagement
     final Bom bom
     final Bintray bintray
     final BuildInfo buildInfo
@@ -85,7 +86,7 @@ class ProjectConfigurationExtension {
     ProjectConfigurationExtension(Project project) {
         this.project = project
         info = new Information(this, project)
-        dependencies = new Dependencies(this, project)
+        dependencyManagement = new Dependencies(this, project)
         bom = new Bom(this, project)
         bintray = new Bintray(this, project)
         buildInfo = new BuildInfo(this, project)
@@ -106,7 +107,7 @@ class ProjectConfigurationExtension {
         Map<String, Object> map = new LinkedHashMap<String, Object>(release: release)
 
         map.putAll(info.toMap())
-        map.putAll(dependencies.toMap())
+        map.putAll(dependencyManagement.toMap())
         if (buildInfo.visible) map.putAll(buildInfo.toMap())
         map.putAll(artifacts.toMap())
         if (bintray.visible) map.putAll(bintray.toMap())
@@ -133,12 +134,34 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, info)
     }
 
-    void dependencies(Action<? super Dependencies> action) {
-        action.execute(dependencies)
+    void dependencyManagement(Action<? super DependencyManagement> action) {
+        action.execute(dependencyManagement)
     }
 
+    void dependencyManagement(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DependencyManagement) Closure<Void> action) {
+        ConfigureUtil.configure(action, dependencyManagement)
+    }
+
+    DependencyManagement getDependencyManagement() {
+        this.dependencyManagement
+    }
+
+    @Deprecated
+    Dependencies getDependencies() {
+        println("The method config.dependencies is deprecated and will be removed in the future. Use config.dependencies instead")
+        dependencyManagement
+    }
+
+    @Deprecated
+    void dependencies(Action<? super Dependencies> action) {
+        println("The method config.dependencies is deprecated and will be removed in the future. Use config.dependencyManagement instead")
+        action.execute(dependencyManagement)
+    }
+
+    @Deprecated
     void dependencies(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Dependencies) Closure<Void> action) {
-        ConfigureUtil.configure(action, dependencies)
+        println("The method config.dependencies is deprecated and will be removed in the future. Use config.dependencyManagement instead")
+        ConfigureUtil.configure(action, dependencyManagement)
     }
 
     void bom(Action<? super Bom> action) {
@@ -257,7 +280,7 @@ class ProjectConfigurationExtension {
     ProjectConfigurationExtension merge(ProjectConfigurationExtension other) {
         this.setRelease((boolean) (this.@releaseSet ? this.@release : other.@release))
         Information.merge(this.@info, other.@info)
-        Dependencies.merge(this.@dependencies, other.@dependencies)
+        Dependencies.merge(this.@dependencyManagement, other.@dependencyManagement)
         Bom.merge(this.@bom, other.@bom)
         Bintray.merge(this.@bintray, other.@bintray)
         BuildInfo.merge(this.@buildInfo, other.@buildInfo)
