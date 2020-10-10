@@ -165,10 +165,18 @@ dependencies {
 ----
 
 .project2.gradle
-[source,groovy]
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
 ----
 dependencies {
     testImplementation(project(path: ':project1', configuration: 'testArtifacts'))
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.project2.gradle.kts
+----
+dependencies {
+    testImplementation(project(":project1", "testArtifacts"))
 }
 ----
 
