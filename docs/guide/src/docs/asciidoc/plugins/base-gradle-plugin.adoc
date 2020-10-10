@@ -375,6 +375,9 @@ platform:: `true` if this dependency constitutes a platform, `false` otherwise (
 Additionally a dependency may define a set of modules that go together, for example, for `groovy` you can have the
 `grovy-core`, `groovy-xml`, `groovy-json` modules. All modules and the owning dependency share the same `groupId` and `version`.
 
+The `dependencyManagement` block will suggest/force dependency versions for all configurations. You ccan disable this feature
+by defining a System property `org.kordamp.gradle.base.dependency.management` with `false` as value.
+
 WARNING: Dependencies defined in this way cannot have classifiers and must be resolvable from a Maven compatible repository.
 
 [[_org_kordamp_gradle_base_dependencyManagement_methods]]
@@ -653,6 +656,7 @@ Will generate the following entries in the POM if publishing is enabled
 === System Properties
 
 org.kordamp.gradle.base.validate:: Perform validation on DSL settings. Defaults to `true`.
+org.kordamp.gradle.base.dependency.management:: Suggest/force dependency versions. Defaults to `true`.
 
 [[_org_kordamp_gradle_base_tasks]]
 == Tasks

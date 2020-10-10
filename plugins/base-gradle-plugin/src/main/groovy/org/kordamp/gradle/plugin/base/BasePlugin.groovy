@@ -22,12 +22,16 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.DependencyResolveDetails
 import org.gradle.api.execution.TaskExecutionGraph
 import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
 import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.listener.ProjectEvaluationListenerManager
 import org.kordamp.gradle.listener.TaskGraphReadyListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
+import org.kordamp.gradle.plugin.base.model.artifact.Dependency
+import org.kordamp.gradle.plugin.base.plugins.DependencyManagement
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationsTask
 import org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask
@@ -41,13 +45,14 @@ import org.kordamp.gradle.plugin.base.tasks.RepositoriesTask
 import org.kordamp.gradle.plugin.base.tasks.TarSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.TaskSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ZipSettingsTask
-import org.kordamp.gradle.util.PluginUtils
 
 import javax.inject.Named
 
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addTaskGraphReadyListener
+import static org.kordamp.gradle.util.PluginUtils.checkFlag
+import static org.kordamp.gradle.util.StringUtils.isBlank
 
 /**
  *
@@ -57,6 +62,7 @@ import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addTa
 @CompileStatic
 class BasePlugin extends AbstractKordampPlugin {
     static final String ORG_KORDAMP_GRADLE_BASE_VALIDATE = 'org.kordamp.gradle.base.validate'
+    static final String ORG_KORDAMP_GRADLE_BASE_DEPENDENCY_MANAGEMENT = 'org.kordamp.gradle.base.dependency.management'
 
     Project project
 
@@ -330,7 +336,7 @@ class BasePlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension extension = project.extensions.findByType(ProjectConfigurationExtension)
             extension.normalize()
 
-            boolean validate = PluginUtils.checkFlag(ORG_KORDAMP_GRADLE_BASE_VALIDATE, true)
+            boolean validate = checkFlag(ORG_KORDAMP_GRADLE_BASE_VALIDATE, true)
 
             List<String> errors = []
             if (isRootProject(project)) {
@@ -344,6 +350,11 @@ class BasePlugin extends AbstractKordampPlugin {
                     extension.postMerge()
                 }
             }
+
+            if (checkFlag(ORG_KORDAMP_GRADLE_BASE_DEPENDENCY_MANAGEMENT, true)) {
+                handleDependencyManagement(project, extension.dependencyManagement)
+            }
+
             if (validate) errors.addAll(extension.validate())
 
             if (validate && errors) {
@@ -378,5 +389,27 @@ class BasePlugin extends AbstractKordampPlugin {
 
     static boolean isRootProject(Project project) {
         project == project.rootProject
+    }
+
+    private void handleDependencyManagement(Project project, DependencyManagement dependencyManagement) {
+        project.configurations.all(new Action<Configuration>() {
+            @Override
+            void execute(Configuration c) {
+                c.resolutionStrategy.eachDependency(new Action<DependencyResolveDetails>() {
+                    @Override
+                    void execute(DependencyResolveDetails d) {
+                        Dependency dependency = dependencyManagement.findDependencyByGA(d.requested.group, d.requested.name)
+                        if (dependency && dependency.version != d.requested.version) {
+                            if (isBlank(d.requested.version)) {
+                                project.logger.info("dependencyManagement suggests ${dependency.gav}")
+                            } else {
+                                project.logger.info("dependencyManagement forces ${dependency.gav}, requested ${dependency.ga}:${d.requested.version}")
+                            }
+                            d.useVersion(dependency.version)
+                        }
+                    }
+                })
+            }
+        })
     }
 }
