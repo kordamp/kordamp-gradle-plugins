@@ -64,29 +64,53 @@ class InlinePlugin implements Plugin<Settings> {
 
         List<String> taskNames = []
         Set<IncludedPlugin> plugins = []
-        Set<ProjectRegex> regexes = []
+        Stack<ProjectRegex> regexes = new Stack<>()
 
         boolean projectRegexEnabled = checkFlag(KORDAMP_INLINE_PROJECT_REGEX, true)
         boolean pluginsEnabled = checkFlag(KORDAMP_INLINE_PLUGINS, true)
         boolean adaptEnabled = checkFlag(KORDAMP_INLINE_ADAPT, true)
 
+        List<String> args = []
+        boolean regexFound = false
         for (String task : settings.gradle.startParameter.taskNames) {
             if (projectRegexEnabled && ProjectRegex.isProjectRegex(task)) {
+                if (regexFound) {
+                    regexes.peek().args.addAll(args)
+                    args.clear()
+                }
                 ProjectRegex regex = ProjectRegex.parse(task)
                 regexes << regex
+                regexFound = true
             } else if (pluginsEnabled && IncludedCorePlugin.isPluginDefinition(task)) {
+                if (regexFound) {
+                    regexes.peek().args.addAll(args)
+                    args.clear()
+                    regexFound = false
+                }
                 IncludedCorePlugin plugin = IncludedCorePlugin.parse(task)
                 plugins << plugin
                 taskNames << plugin.taskName
             } else if (pluginsEnabled && IncludedExternalPlugin.isPluginDefinition(task)) {
+                if (regexFound) {
+                    regexes.peek().args.addAll(args)
+                    args.clear()
+                    regexFound = false
+                }
                 IncludedExternalPlugin plugin = IncludedExternalPlugin.parse(task)
                 plugins << plugin
                 taskNames << plugin.taskName
                 settings.buildscript.dependencies.add('inlinePlugins', plugin.coordinates)
             } else {
-                taskNames << task
+                args << task
             }
         }
+
+        if (regexFound) {
+            regexes.peek().args.addAll(args)
+            args.clear()
+        }
+        // any remaining args?
+        if (args) taskNames.addAll(args)
         settings.gradle.startParameter.taskNames = taskNames
 
         Set<File> files = []
@@ -112,10 +136,10 @@ class InlinePlugin implements Plugin<Settings> {
 
                 if (projectRegexEnabled) {
                     List<String> tasks = []
-                    tasks.addAll(settings.gradle.startParameter.taskNames)
                     for (ProjectRegex regex : regexes) {
                         tasks.addAll(regex.expand(gradle.rootProject))
                     }
+                    tasks.addAll(settings.gradle.startParameter.taskNames)
 
                     settings.gradle.startParameter.taskNames = tasks
                 }
@@ -427,10 +451,13 @@ class InlinePlugin implements Plugin<Settings> {
     private static class ProjectRegex {
         final String regex
         final String taskName
+        final List<String> args = []
 
         static boolean isProjectRegex(String str) {
             String[] parts = str.split(':')
-            parts.size() == 3 && isBlank(parts[0]) && isNotBlank(parts[1]) && isNotBlank(parts[2])
+            parts.size() == 3 && isBlank(parts[0]) &&
+                isNotBlank(parts[1]) && isNotBlank(parts[2]) &&
+                parts[1] =~ /[\*\+\?\|\[\]\{\}\^\$]/
         }
 
         static ProjectRegex parse(String str) {
@@ -443,15 +470,17 @@ class InlinePlugin implements Plugin<Settings> {
             this.taskName = taskName
         }
 
-        Set<String> expand(Project rootProject) {
-            Set<String> taskNames = []
+        List<String> expand(Project rootProject) {
+            List<String> taskNames = []
 
             if (matches(rootProject)) {
                 taskNames << rootProject.path + ':' + taskName
+                taskNames.addAll(args)
             }
             for (Project p : rootProject.childProjects.values()) {
                 if (matches(p)) {
                     taskNames << p.path + ':' + taskName
+                    taskNames.addAll(args)
                 }
             }
 
