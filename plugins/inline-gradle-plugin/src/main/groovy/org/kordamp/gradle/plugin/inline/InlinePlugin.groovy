@@ -20,12 +20,15 @@ package org.kordamp.gradle.plugin.inline
 import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import groovy.transform.ToString
+import groovy.transform.TupleConstructor
 import org.gradle.BuildAdapter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.plugins.BasePlugin
 
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -46,8 +49,13 @@ class InlinePlugin implements Plugin<Settings> {
     static final String KORDAMP_INLINE_PLUGINS = 'org.kordamp.gradle.inline.plugins'
     static final String KORDAMP_INLINE_ADAPT = 'org.kordamp.gradle.inline.adapt'
     static final String KORDAMP_INLINE_ENABLED = 'org.kordamp.gradle.inline.enabled'
+    static final String KORDAMP_INLINE_PLUGIN_GROUPS = 'org.kordamp.gradle.inline.plugin.groups'
+    static final String GRADLE_PLUGIN_GROUP = 'org.gradle'
 
     private Settings settings
+
+    private final Set<String> corePlugins = new TreeSet<>()
+    private final Map<String, Properties> pluginGroups = new LinkedHashMap<>()
 
     @Override
     void apply(Settings settings) {
@@ -56,6 +64,11 @@ class InlinePlugin implements Plugin<Settings> {
         }
 
         this.settings = settings
+
+        findDefaultPlugins()
+        findPluginGroupsInClasspath()
+        findPluginGroupsInGradleUserHome(settings.gradle.gradleUserHomeDir)
+        sortPluginGroups()
 
         Configuration configuration = settings.buildscript.configurations.maybeCreate('inlinePlugins')
         configuration.extendsFrom(settings.buildscript.configurations.findByName('classpath'))
@@ -73,6 +86,8 @@ class InlinePlugin implements Plugin<Settings> {
         List<String> args = []
         boolean regexFound = false
         for (String task : settings.gradle.startParameter.taskNames) {
+            PluginAlias pluginAlias = ExternalPlugin.isAliasedPluginDefinition(task, pluginGroups)
+
             if (projectRegexEnabled && ProjectRegex.isProjectRegex(task)) {
                 if (regexFound) {
                     regexes.peek().args.addAll(args)
@@ -81,22 +96,43 @@ class InlinePlugin implements Plugin<Settings> {
                 ProjectRegex regex = ProjectRegex.parse(task)
                 regexes << regex
                 regexFound = true
-            } else if (pluginsEnabled && IncludedCorePlugin.isPluginDefinition(task)) {
+            } else if (pluginsEnabled && CorePlugin.isPluginDefinition(task)) {
                 if (regexFound) {
                     regexes.peek().args.addAll(args)
                     args.clear()
                     regexFound = false
                 }
-                IncludedCorePlugin plugin = IncludedCorePlugin.parse(task)
-                plugins << plugin
-                taskNames << plugin.taskName
-            } else if (pluginsEnabled && IncludedExternalPlugin.isPluginDefinition(task)) {
+                CorePlugin plugin = CorePlugin.parse(task)
+                if (plugin.isGradleCorePlugin(corePlugins)) {
+                    plugins << plugin
+                    taskNames << plugin.taskName
+                } else if (pluginAlias) {
+                    ExternalPlugin p = ExternalPlugin.of(pluginAlias)
+                    plugins << p
+                    taskNames << p.taskName
+                    settings.buildscript.dependencies.add('inlinePlugins', p.coordinates)
+                } else {
+                    // unmatched
+                    // TODO: warn?
+                    taskNames << task
+                }
+            } else if (pluginsEnabled && pluginAlias) {
                 if (regexFound) {
                     regexes.peek().args.addAll(args)
                     args.clear()
                     regexFound = false
                 }
-                IncludedExternalPlugin plugin = IncludedExternalPlugin.parse(task)
+                ExternalPlugin p = ExternalPlugin.of(pluginAlias)
+                plugins << p
+                taskNames << p.taskName
+                settings.buildscript.dependencies.add('inlinePlugins', p.coordinates)
+            } else if (pluginsEnabled && ExternalPlugin.isPluginDefinition(task)) {
+                if (regexFound) {
+                    regexes.peek().args.addAll(args)
+                    args.clear()
+                    regexFound = false
+                }
+                ExternalPlugin plugin = ExternalPlugin.parse(task)
                 plugins << plugin
                 taskNames << plugin.taskName
                 settings.buildscript.dependencies.add('inlinePlugins', plugin.coordinates)
@@ -118,8 +154,8 @@ class InlinePlugin implements Plugin<Settings> {
             files = configuration.resolve()
             for (File file : files) {
                 for (IncludedPlugin plugin : plugins) {
-                    if (plugin instanceof IncludedExternalPlugin) {
-                        if (((IncludedExternalPlugin) plugin).fileNameMatches(file.name)) {
+                    if (plugin instanceof ExternalPlugin) {
+                        if (((ExternalPlugin) plugin).fileNameMatches(file.name)) {
                             findPluginDescriptors(file, plugin.pluginIds)
                         }
                     }
@@ -150,6 +186,104 @@ class InlinePlugin implements Plugin<Settings> {
                 if (adaptEnabled) adaptProperties(gradle.rootProject)
             }
         })
+    }
+
+    private void findDefaultPlugins() {
+        Enumeration<URL> e = InlinePlugin.classLoader.getResources('META-INF/gradle-plugins')
+        while (e.hasMoreElements()) {
+            extractMetadata(e.nextElement(), corePlugins)
+        }
+        e = BasePlugin.classLoader.getResources('META-INF/gradle-plugins')
+        while (e.hasMoreElements()) {
+            extractMetadata(e.nextElement(), corePlugins)
+        }
+    }
+
+    private void extractMetadata(URL url, Set<String> corePlugins) {
+        if (url.protocol != 'jar') return
+
+        JarFile jarFile = new JarFile(url.toString()[9..url.toString().indexOf('!') - 1])
+        Enumeration<JarEntry> entries = jarFile.entries()
+        while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement()
+            Matcher matcher = (entry.name =~ /META-INF\/gradle-plugins\/(.+)\.properties/)
+            if (matcher.matches()) {
+                Properties props = new Properties()
+                props.load(jarFile.getInputStream(entry))
+                String implementationClass = (String) props.'implementation-class'
+                String pluginId = matcher.group(1) - 'org.gradle.'
+
+                if (implementationClass.startsWith(GRADLE_PLUGIN_GROUP)) {
+                    corePlugins.add(pluginId)
+                }
+            }
+        }
+    }
+
+    private void findPluginGroupsInClasspath() {
+        Enumeration<URL> e = InlinePlugin.classLoader.getResources('META-INF/org.kordamp.gradle.inline')
+        while (e.hasMoreElements()) {
+            URL url = e.nextElement()
+            if (url.protocol != 'jar') continue
+
+            JarFile jarFile = new JarFile(url.toString()[9..url.toString().indexOf('!') - 1])
+            Enumeration<JarEntry> entries = jarFile.entries()
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement()
+                Matcher matcher = (entry.name =~ /META-INF\/org.kordamp.gradle.inline\/(.+)\.properties/)
+                if (matcher.matches()) {
+                    Properties props = new Properties()
+                    props.load(jarFile.getInputStream(entry))
+                    String pluginGroup = matcher.group(1)
+                    if (pluginGroups.containsKey(pluginGroup)) {
+                        Properties other = pluginGroups.get(pluginGroup)
+                        other.putAll(props)
+                    } else {
+                        pluginGroups.put(pluginGroup, props)
+                    }
+                }
+            }
+        }
+    }
+
+    private void findPluginGroupsInGradleUserHome(File gradleUserHomeDir) {
+        println  gradleUserHomeDir
+        File inlinePluginDir = new File(gradleUserHomeDir, 'org.kordamp.gradle.inline')
+        if (inlinePluginDir.exists() && inlinePluginDir.directory) {
+            inlinePluginDir.listFiles(new FilenameFilter() {
+                @Override
+                boolean accept(File dir, String name) {
+                    return name.endsWith('.properties')
+                }
+            }).each { File file ->
+                Properties props = new Properties()
+                file.withInputStream { ins -> props.load(ins) }
+                String pluginGroup = file.name - '.properties'
+                if (pluginGroups.containsKey(pluginGroup)) {
+                    Properties other = pluginGroups.get(pluginGroup)
+                    other.putAll(props)
+                } else {
+                    pluginGroups.put(pluginGroup, props)
+                }
+            }
+        }
+    }
+
+    private void sortPluginGroups() {
+        String[] groupOrder = System.getProperty(KORDAMP_INLINE_PLUGIN_GROUPS, '').split(',')
+
+        Map<String, Properties> map = new LinkedHashMap<>()
+        Map<String, Properties> copy = new LinkedHashMap<>(pluginGroups)
+        for (String group : groupOrder) {
+            Properties props = copy.remove(group.trim())
+            if (props) {
+                map.put(group.trim(), props)
+            }
+        }
+        map.putAll(copy)
+
+        pluginGroups.clear()
+        pluginGroups.putAll(map)
     }
 
     private ClassLoader resolveClassLoader() {
@@ -396,26 +530,31 @@ class InlinePlugin implements Plugin<Settings> {
 
     @Canonical
     @CompileStatic
-    private static class IncludedCorePlugin extends IncludedPlugin {
+    private static class CorePlugin extends IncludedPlugin {
         static boolean isPluginDefinition(String str) {
             String[] parts = str.split(':')
             parts.length == 2 && isNotBlank(parts[0]) && isNotBlank(parts[1])
         }
 
-        static IncludedCorePlugin parse(String str) {
+        static CorePlugin parse(String str) {
             String[] parts = str.split(':')
-            new IncludedCorePlugin(parts[0], parts[1])
+            new CorePlugin(parts[0], parts[1])
         }
 
-        private IncludedCorePlugin(String pluginId, String taskName) {
+        private CorePlugin(String pluginId, String taskName) {
             super(taskName)
             this.pluginIds << pluginId
+        }
+
+        private isGradleCorePlugin(Set<String> pluginIds) {
+            Collection<String> intersection = pluginIds.intersect(this.pluginIds)
+            return intersection != null && !intersection.isEmpty()
         }
     }
 
     @Canonical
     @CompileStatic
-    private static class IncludedExternalPlugin extends IncludedPlugin {
+    private static class ExternalPlugin extends IncludedPlugin {
         final String groupId
         final String artifactId
         final String version
@@ -428,15 +567,45 @@ class InlinePlugin implements Plugin<Settings> {
             return parts.length == 4 && isNotBlank(parts[0]) && isNotBlank(parts[1]) && isNotBlank(parts[2]) && isNotBlank(parts[3])
         }
 
-        static IncludedExternalPlugin parse(String str) {
+        static PluginAlias isAliasedPluginDefinition(String str, Map<String, Properties> pluginGroups) {
             String[] parts = str.split(':')
-            if (parts.length == 3) {
-                return new IncludedExternalPlugin(parts[0], parts[1], 'latest.release', parts[2])
+            if (parts.length == 2 && isNotBlank(parts[0]) && isNotBlank(parts[1])) {
+                String alias = parts[0]
+                for (Map.Entry<String, Properties> entry : pluginGroups.entrySet()) {
+                    Properties props = entry.value
+                    if (props.containsKey(alias)) {
+                        return new PluginAlias(alias, entry.key, props.getProperty(alias), 'latest.release', parts[1])
+                    }
+                }
+            } else if (parts.length == 3 && isNotBlank(parts[0]) && isNotBlank(parts[1]) && isNotBlank(parts[2])) {
+                String alias = parts[0]
+                for (Map.Entry<String, Properties> entry : pluginGroups.entrySet()) {
+                    Properties props = entry.value
+                    if (props.containsKey(alias)) {
+                        return new PluginAlias(alias, entry.key, props.getProperty(alias), parts[1], parts[2])
+                    }
+                }
             }
-            return new IncludedExternalPlugin(parts[0], parts[1], parts[2], parts[3])
+            null
         }
 
-        private IncludedExternalPlugin(String groupId, String artifactId, String version, String taskName) {
+        static ExternalPlugin parse(String str) {
+            String[] parts = str.split(':')
+            if (parts.length == 3) {
+                return of(parts[0], parts[1], parts[2])
+            }
+            return new ExternalPlugin(parts[0], parts[1], parts[2], parts[3])
+        }
+
+        static ExternalPlugin of(String groupId, String artifactId, String taskName) {
+            return new ExternalPlugin(groupId, artifactId, 'latest.release', taskName)
+        }
+
+        static ExternalPlugin of(PluginAlias pluginAlias) {
+            return new ExternalPlugin(pluginAlias.groupId, pluginAlias.artifactId, pluginAlias.version, pluginAlias.taskName)
+        }
+
+        private ExternalPlugin(String groupId, String artifactId, String version, String taskName) {
             super(taskName)
             this.groupId = groupId
             this.artifactId = artifactId
@@ -453,6 +622,17 @@ class InlinePlugin implements Plugin<Settings> {
             }
             return fileName.startsWith(artifactId + '-') && fileName.endsWith('.jar')
         }
+    }
+
+    @CompileStatic
+    @TupleConstructor
+    @ToString(includeNames = true)
+    private static class PluginAlias {
+        final String alias
+        final String groupId
+        final String artifactId
+        final String version
+        final String taskName
     }
 
     @Canonical

@@ -15,9 +15,27 @@ supported in which case you only have to specify their plugin id, not their GAV 
 
 The following formats for including plugins are supported:
 
- 1. `pluginId:task` where `pluginId` is a core Gradle plugin.
- 2.`groupId:artifactId:version:task`.
- 3. `groupId:artifactId:task` where `version` will be set as `latest.release`.
+ 1. `pluginId:task` where `pluginId` is either a core Gradle plugin or an aliased plugin.
+ 2. `pluginId:version:task` where `pluginId` is a core Gradle plugin or an aliased plugin.
+ 3. `groupId:artifactId:version:task`.
+ 4. `groupId:artifactId:task` where `version` will be set as `latest.release`.
+
+Aliased plugins require an additional resource that identifies their `groupId` and `artifactId` coordinates. This resource
+may be placed inside `$HOME/.gradle/org.kordamp.gradle.inline/` as a properties file. The name of the file identifies the
+`groupId`. Every key in the file defines a `pluginId` while the value is the matching `artifactId`.
+
+The following example shows how the link:https://github.com/jbangdev/jbang-gradle-plugin[jbang-gradle-plugin] may be configured
+to take advantage of this feature
+
+.$HOME/.gradle/org.kordamp.gradle.inline/dev.jbang.properties
+[source,java]
+----
+dev.jbang=jbang-gradle-plugin
+----
+
+Additionaly this plugin will also search the classpath for resources at `META-INF/org.kordamp.gradle.inline` that follow
+the same rules as above. Given that order matters it's possible to define sorting order for all resolved groupIds by defining
+a value for the `org.kordamp.gradle.inline.plugin.groups` System property, which is a comma separated list of groupIds.
 
 The `inline` plugin chooses the target `Project` on which plugins will be applied based on the following rules:
 
@@ -34,13 +52,13 @@ Plugin properties, such as those exposed by extensions added by plugins, may be 
 be supplied using System and/or project properties. These are the default property adapters provided by the `org.kordamp.gradle.inline`
 plugin:
 
-link:api/org/kordamp/gradle/plugin/inline/adapters/ApplicationPluginPropertyAdapter.html[ApplicationPluginPropertyAdapter]
+link:api/org/kordamp/gradle/plugin/inline/adapters/ApplicationPluginPropertyAdapter.html[ApplicationPluginPropertyAdapter]::
 Adapts the `link:https://docs.gradle.org/current/userguide/application_plugin.html[application]` plugin. Supported properties are:
 
- * application.mainClass - requires Gradle 6.4+
- * application.mainModule - requires Gradle 6.4+
- * application.mainClassName
- * application.applicationDefaultJvmArgs
+ * `application.mainClass` - requires Gradle 6.4+; aliased to `exec.mainClass`.
+ * `application.mainModule` - requires Gradle 6.4+
+ * `application.mainClassName` - aliased to `exec.mainClass`.
+ * `application.applicationDefaultJvmArgs` - aliased to `exec.args`.
 
 Custom property adapters may be added to the classpath. Such adapters must implement
 link:api/org/kordamp/gradle/plugin/inline/PropertyAdapter.html[PropertyAdapter] and be registered as a service in
@@ -61,8 +79,10 @@ Disable evaluation of project regexes if set to `false`. Default is `true`.
 org.kordamp.gradle.inline.plugins::
 Disable inlining plugins if set to `false`. Default is `true`.
 org.kordamp.gradle.inline.adapt::
-Dsable adapting task properties with link:api/org/kordamp/gradle/plugin/inline/PropertyAdapter.html[PropertyAdapter] instances
+Disable adapting task properties with link:api/org/kordamp/gradle/plugin/inline/PropertyAdapter.html[PropertyAdapter] instances
 if set to `false`. Default is `true`.
+org.kordamp.gradle.inline.plugin.groups::
+List of groupIds to be queried in order for resolving pluginId aliases.
 
 [[_org_kordamp_gradle_inline_example]]
 == Example
@@ -81,6 +101,20 @@ Invoking the latest release of the `<<_org_kordamp_gradle_echo,echo>>` plugin
 $ gm {project-group}:echo-gradle-plugin:echo -Decho.message="Hello World"
 ----
 
+Invoking a given release of the `<<_org_kordamp_gradle_echo,echo>>` plugin using an alias
+
+[source,subs="attributes"]
+----
+$ gm {project-group}.echo:{project-version}:echo -Decho.message="Hello World"
+----
+
+Invoking the latest release of the `<<_org_kordamp_gradle_echo,echo>>` plugin using an alias
+
+[source,subs="attributes"]
+----
+$ gm {project-group}.echo:echo -Decho.message="Hello World"
+----
+
 Invoking the `application` plugin
 
 [source,subs="attributes"]
@@ -93,5 +127,16 @@ Invoking the `distZip` goal on all projects that have `-app` in their paths
 [source,subs="attributes"]
 ----
 $ gm :*-app:distZip
+----
+
+[[_org_kordamp_gradle_inline_aliases]]
+== Plugin Aliases
+
+The following are the aliases for all Kordamp plugins, some of which are not included in this plugin suite
+
+.META-INF/org.kordamp.gradle.inline/org.kordamp.gradle.properties
+[source,java,subs="attributes"]
+----
+include::{rootdir}/plugins/inline-gradle-plugin/src/main/resources/META-INF/org.kordamp.gradle.inline/org.kordamp.gradle.properties[lines=19..-1]
 ----
 

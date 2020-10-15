@@ -18,6 +18,7 @@
 package org.kordamp.gradle.plugin.base.tasks
 
 import groovy.transform.CompileStatic
+import groovy.transform.ToString
 import org.gradle.api.Plugin
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.KordampPlugin
