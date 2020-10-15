@@ -119,7 +119,7 @@ class InlinePlugin implements Plugin<Settings> {
             for (File file : files) {
                 for (IncludedPlugin plugin : plugins) {
                     if (plugin instanceof IncludedExternalPlugin) {
-                        if (file.name == ((IncludedExternalPlugin) plugin).fileName) {
+                        if (((IncludedExternalPlugin) plugin).fileNameMatches(file.name)) {
                             findPluginDescriptors(file, plugin.pluginIds)
                         }
                     }
@@ -399,7 +399,7 @@ class InlinePlugin implements Plugin<Settings> {
     private static class IncludedCorePlugin extends IncludedPlugin {
         static boolean isPluginDefinition(String str) {
             String[] parts = str.split(':')
-            parts.size() == 2 && isNotBlank(parts[0]) && isNotBlank(parts[1])
+            parts.length == 2 && isNotBlank(parts[0]) && isNotBlank(parts[1])
         }
 
         static IncludedCorePlugin parse(String str) {
@@ -422,12 +422,18 @@ class InlinePlugin implements Plugin<Settings> {
 
         static boolean isPluginDefinition(String str) {
             String[] parts = str.split(':')
-            parts.size() == 4 && isNotBlank(parts[0]) && isNotBlank(parts[1]) && isNotBlank(parts[2]) && isNotBlank(parts[3])
+            if (parts.length == 3) {
+                return isNotBlank(parts[0]) && isNotBlank(parts[1]) && isNotBlank(parts[2])
+            }
+            return parts.length == 4 && isNotBlank(parts[0]) && isNotBlank(parts[1]) && isNotBlank(parts[2]) && isNotBlank(parts[3])
         }
 
         static IncludedExternalPlugin parse(String str) {
             String[] parts = str.split(':')
-            new IncludedExternalPlugin(parts[0], parts[1], parts[2], parts[3])
+            if (parts.length == 3) {
+                return new IncludedExternalPlugin(parts[0], parts[1], 'latest.release', parts[2])
+            }
+            return new IncludedExternalPlugin(parts[0], parts[1], parts[2], parts[3])
         }
 
         private IncludedExternalPlugin(String groupId, String artifactId, String version, String taskName) {
@@ -441,8 +447,11 @@ class InlinePlugin implements Plugin<Settings> {
             "${groupId}:${artifactId}:${version}".toString()
         }
 
-        String getFileName() {
-            "${artifactId}-${version}.jar".toString()
+        boolean fileNameMatches(String fileName) {
+            if (version != 'latest.release') {
+                return fileName == "${artifactId}-${version}.jar".toString()
+            }
+            return fileName.startsWith(artifactId + '-') && fileName.endsWith('.jar')
         }
     }
 
@@ -455,7 +464,7 @@ class InlinePlugin implements Plugin<Settings> {
 
         static boolean isProjectRegex(String str) {
             String[] parts = str.split(':')
-            parts.size() == 3 && isBlank(parts[0]) &&
+            parts.length == 3 && isBlank(parts[0]) &&
                 isNotBlank(parts[1]) && isNotBlank(parts[2]) &&
                 parts[1] =~ /[\*\+\?\|\[\]\{\}\^\$]/
         }

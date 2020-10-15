@@ -13,6 +13,12 @@ NOTE: This plugin should be applied to `settings.gradle(.kts)` only!
 Enables invocation of any Gradle plugin by providing GAV coordinates plus a given task name. Core Gradle plugins are also
 supported in which case you only have to specify their plugin id, not their GAV coordinates.
 
+The following formats for including plugins are supported:
+
+ 1. `pluginId:task` where `pluginId` is a core Gradle plugin.
+ 2.`groupId:artifactId:version:task`.
+ 3. `groupId:artifactId:task` where `version` will be set as `latest.release`.
+
 The `inline` plugin chooses the target `Project` on which plugins will be applied based on the following rules:
 
  * If the `inline.target` System property is set:
@@ -66,6 +72,13 @@ Invoking the `<<_org_kordamp_gradle_echo,echo>>` plugin
 [source,subs="attributes"]
 ----
 $ gm {project-group}:echo-gradle-plugin:{project-version}:echo -Decho.message="Hello World"
+----
+
+Invoking the latest release of the `<<_org_kordamp_gradle_echo,echo>>` plugin
+
+[source,subs="attributes"]
+----
+$ gm {project-group}:echo-gradle-plugin:echo -Decho.message="Hello World"
 ----
 
 Invoking the `application` plugin
