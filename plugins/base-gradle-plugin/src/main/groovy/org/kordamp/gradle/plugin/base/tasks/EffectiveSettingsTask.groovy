@@ -35,6 +35,7 @@ class EffectiveSettingsTask extends AbstractReportingTask {
     private final List<String> DOCS = ['guide', 'groovydoc', 'javadoc', 'kotlindoc', 'scaladoc', 'sourceHtml', 'sourceXref'].asImmutable()
     private final List<String> QUALITY = ['checkstyle', 'codenarc', 'detekt', 'errorprone', 'pmd', 'cpd', 'sonar', 'spotbugs'].asImmutable()
     private final List<String> SECTIONS = [
+        'info',
         'buildInfo',
         'bintray',
         'publishing',
