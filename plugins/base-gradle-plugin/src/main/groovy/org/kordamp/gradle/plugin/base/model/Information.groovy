@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -40,15 +41,16 @@ class Information {
     List<String> tags = []
 
     final Project project
-    final PersonSet people = new PersonSet()
-    final RepositorySet repositories = new RepositorySet()
     final Organization organization = new Organization()
     final Links links = new Links()
     final Scm scm = new Scm()
     final IssueManagement issueManagement = new IssueManagement()
-    final CiManagement ciManagement = new CiManagement()
-    final MailingListSet mailingLists = new MailingListSet()
-    final CredentialsSet credentials = new CredentialsSet()
+    final CiManagement ciManagement
+
+    private final RepositorySetImpl repositories
+    private final PersonSetImpl people
+    private final MailingListSetImpl mailingLists
+    private final CredentialsSetImpl credentials
 
     final Specification specification = new Specification()
     final Implementation implementation = new Implementation()
@@ -61,6 +63,28 @@ class Information {
     Information(ProjectConfigurationExtension config, Project project) {
         this.config = config
         this.project = project
+
+        ciManagement = new CiManagement(project.objects)
+        repositories = new RepositorySetImpl(project.objects)
+        people = new PersonSetImpl(project.objects)
+        mailingLists = new MailingListSetImpl(project.objects)
+        credentials = new CredentialsSetImpl(project.objects)
+    }
+
+    PersonSet getPeople() {
+        this.people
+    }
+
+    RepositorySet getRepositories() {
+        this.repositories
+    }
+
+    MailingListSet getMailingLists() {
+        this.mailingLists
+    }
+
+    CredentialsSet getCredentials() {
+        this.credentials
     }
 
     Map<String, Map<String, Object>> toMap() {
@@ -96,14 +120,14 @@ class Information {
         Specification.merge(o1.spec, o2.spec)
         Implementation.merge(o1.impl, o2.impl)
         Organization.merge(o1.organization, o2.organization)
-        PersonSet.merge(o1.people, o2.people)
-        RepositorySet.merge(o1.repositories, o2.repositories)
+        PersonSetImpl.merge(o1.@people, o2.@people)
+        RepositorySetImpl.merge(o1.@repositories, o2.@repositories)
         Links.merge(o1.links, o2.links)
         Scm.merge(o1.scm, o2.scm)
         IssueManagement.merge(o1.issueManagement, o2.issueManagement)
         CiManagement.merge(o1.ciManagement, o2.ciManagement)
-        MailingListSet.merge(o1.mailingLists, o2.mailingLists)
-        CredentialsSet.merge(o1.credentials, o2.credentials)
+        MailingListSetImpl.merge(o1.@mailingLists, o2.@mailingLists)
+        CredentialsSetImpl.merge(o1.@credentials, o2.@credentials)
         o1.normalize()
     }
 

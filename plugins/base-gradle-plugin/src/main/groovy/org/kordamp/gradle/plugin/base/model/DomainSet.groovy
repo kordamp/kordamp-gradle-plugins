@@ -18,19 +18,29 @@
 package org.kordamp.gradle.plugin.base.model
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
+import org.kordamp.gradle.plugin.base.plugins.MergeStrategy
+
+import java.util.function.Consumer
 
 /**
  * @author Andres Almiray
  * @since 0.41.0
  */
 @CompileStatic
-interface RepositorySet extends DomainSet<Repository> {
-    List<Repository> getRepositories()
+interface DomainSet<T> {
+    Map<String, Object> toMap()
 
-    void repository(Action<? super Repository> action)
+    boolean isEmpty()
 
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Repository) Closure<Void> action)
+    void setMergeStrategy(String str)
 
-    Repository getRepository(String name)
+    void setMergeStrategy(MergeStrategy mergeStrategy)
+
+    MergeStrategy getMergeStrategy()
+
+    void forEach(Consumer<? super T> consumer)
+
+    void setInherits(boolean value)
+
+    boolean isInherits()
 }

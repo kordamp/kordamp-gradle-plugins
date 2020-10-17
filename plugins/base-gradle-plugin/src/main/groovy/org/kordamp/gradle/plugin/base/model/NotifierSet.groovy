@@ -17,57 +17,18 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.kordamp.gradle.util.ConfigureUtil
 
 /**
  * @author Andres Almiray
- * @since 0.22.0
+ * @since 0.41.0
  */
 @CompileStatic
-class NotifierSet {
-    final List<Notifier> notifiers = []
+interface NotifierSet extends DomainSet<Notifier> {
+    List<Notifier> getNotifiers()
 
-    @CompileDynamic
-    Map<String, Map<String, Object>> toMap() {
-        if (isEmpty()) return [:]
+    void notifier(Action<? super Notifier> action)
 
-        notifiers.collectEntries { Notifier notifier ->
-            [(notifier.id ?: notifier.name): notifier.toMap()]
-        }
-    }
-
-    void notifier(Action<? super Notifier> action) {
-        Notifier notifier = new Notifier()
-        action.execute(notifier)
-        notifiers << notifier
-    }
-
-    void notifier(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Notifier) Closure<Void> action) {
-        Notifier notifier = new Notifier()
-        ConfigureUtil.configure(action, notifier)
-        notifiers << notifier
-    }
-
-    static void merge(NotifierSet o1, NotifierSet o2) {
-        Map<String, Notifier> a = o1.notifiers.collectEntries { [(it.id): it] }
-        Map<String, Notifier> b = o2.notifiers.collectEntries { [(it.id): it] }
-
-        a.each { k, notifier ->
-            Notifier.merge(notifier, b.remove(k))
-        }
-        a.putAll(b)
-        o1.notifiers.clear()
-        o1.notifiers.addAll(a.values())
-    }
-
-    void forEach(Closure<Void> action) {
-        notifiers.each(action)
-    }
-
-    boolean isEmpty() {
-        notifiers.isEmpty()
-    }
+    void notifier(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Notifier) Closure<Void> action)
 }

@@ -17,57 +17,18 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.kordamp.gradle.util.ConfigureUtil
 
 /**
  * @author Andres Almiray
- * @since 0.22.0
+ * @since 0.41.0
  */
 @CompileStatic
-class MailingListSet {
-    final List<MailingList> mailingLists = []
+interface MailingListSet extends DomainSet<MailingList> {
+    List<MailingList> getMailingLists()
 
-    @CompileDynamic
-    Map<String, Map<String, Object>> toMap() {
-        if (isEmpty()) return [:]
+    void mailingList(Action<? super MailingList> action)
 
-        mailingLists.collectEntries { MailingList mailingList ->
-            [(mailingList.name): mailingList.toMap()]
-        }
-    }
-
-    void mailingList(Action<? super MailingList> action) {
-        MailingList mailingList = new MailingList()
-        action.execute(mailingList)
-        mailingLists << mailingList
-    }
-
-    void mailingList(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MailingList) Closure<Void> action) {
-        MailingList mailingList = new MailingList()
-        ConfigureUtil.configure(action, mailingList)
-        mailingLists << mailingList
-    }
-
-    static void merge(MailingListSet o1, MailingListSet o2) {
-        Map<String, MailingList> a = o1.mailingLists.collectEntries { [(it.name): it] }
-        Map<String, MailingList> b = o2.mailingLists.collectEntries { [(it.name): it] }
-
-        a.each { k, mailingList ->
-            MailingList.merge(mailingList, b.remove(k))
-        }
-        a.putAll(b)
-        o1.mailingLists.clear()
-        o1.mailingLists.addAll(a.values())
-    }
-
-    void forEach(Closure<Void> action) {
-        mailingLists.each(action)
-    }
-
-    boolean isEmpty() {
-        mailingLists.isEmpty()
-    }
+    void mailingList(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MailingList) Closure<Void> action)
 }

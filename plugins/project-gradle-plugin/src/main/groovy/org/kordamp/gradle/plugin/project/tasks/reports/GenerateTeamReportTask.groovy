@@ -79,7 +79,7 @@ class GenerateTeamReportTask extends DefaultTask implements ReportGeneratingTask
         StringBuilder document = new StringBuilder(engine.createTemplate(teamHeader).make().toString())
         document.append(engine.createTemplate(teamTableHeader).make())
 
-        for (Person person : config.info.people.people) {
+        config.info.people.forEach { Person person ->
             document.append(processPerson(person, engine.createTemplate(teamTableRow)))
         }
 

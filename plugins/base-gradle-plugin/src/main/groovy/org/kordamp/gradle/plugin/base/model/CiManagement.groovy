@@ -19,6 +19,8 @@ package org.kordamp.gradle.plugin.base.model
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.model.ObjectFactory
+import org.kordamp.gradle.plugin.base.plugins.MergeStrategy
 import org.kordamp.gradle.util.ConfigureUtil
 
 import static org.kordamp.gradle.util.StringUtils.isBlank
@@ -31,8 +33,21 @@ import static org.kordamp.gradle.util.StringUtils.isBlank
 class CiManagement {
     String system
     String url
+    MergeStrategy mergeStrategy
 
-    final NotifierSet notifiers = new NotifierSet()
+    final NotifierSetImpl notifiers
+
+    CiManagement(ObjectFactory objects) {
+        notifiers = new NotifierSetImpl(objects)
+    }
+
+    NotifierSet getNotifiers() {
+        this.notifiers
+    }
+
+    void setMergeStrategy(String str) {
+        mergeStrategy = MergeStrategy.of(str)
+    }
 
     Map<String, Object> toMap() {
         new LinkedHashMap<String, Object>([
@@ -45,7 +60,7 @@ class CiManagement {
     static void merge(CiManagement o1, CiManagement o2) {
         o1.system = o1.system ?: o2?.system
         o1.url = o1.url ?: o2?.url
-        NotifierSet.merge(o1.notifiers, o2.notifiers)
+        NotifierSetImpl.merge(o1.@notifiers, o2?.@notifiers)
     }
 
     boolean isEmpty() {

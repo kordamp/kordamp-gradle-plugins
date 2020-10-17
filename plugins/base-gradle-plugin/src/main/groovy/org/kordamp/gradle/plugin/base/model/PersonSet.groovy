@@ -17,57 +17,18 @@
  */
 package org.kordamp.gradle.plugin.base.model
 
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.kordamp.gradle.util.ConfigureUtil
 
 /**
  * @author Andres Almiray
- * @since 0.8.0
+ * @since 0.41.0
  */
 @CompileStatic
-class PersonSet {
-    final List<Person> people = []
+interface PersonSet extends DomainSet<Person> {
+    List<Person> getPeople()
 
-    @CompileDynamic
-    Map<String, Map<String, Object>> toMap() {
-        if (isEmpty()) return [:]
+    void person(Action<? super Person> action)
 
-        people.collectEntries { Person person ->
-            [(person.id ?: person.name): person.toMap()]
-        }
-    }
-
-    void person(Action<? super Person> action) {
-        Person person = new Person()
-        action.execute(person)
-        people << person
-    }
-
-    void person(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Person) Closure<Void> action) {
-        Person person = new Person()
-        ConfigureUtil.configure(action, person)
-        people << person
-    }
-
-    static void merge(PersonSet o1, PersonSet o2) {
-        Map<String, Person> a = o1.people.collectEntries { [(it.name): it] }
-        Map<String, Person> b = o2.people.collectEntries { [(it.name): it] }
-
-        a.each { k, person ->
-            Person.merge(person, b.remove(k))
-        }
-        a.putAll(b)
-        o1.people.clear()
-        o1.people.addAll(a.values())
-    }
-
-    void forEach(Closure action) {
-        people.each(action)
-    }
-
-    boolean isEmpty() {
-        people.isEmpty()
-    }
+    void person(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Person) Closure<Void> action)
 }

@@ -19,18 +19,20 @@ package org.kordamp.gradle.plugin.base.model
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 /**
  * @author Andres Almiray
  * @since 0.41.0
  */
 @CompileStatic
-interface RepositorySet extends DomainSet<Repository> {
-    List<Repository> getRepositories()
+interface LicenseSet extends DomainSet<License> {
 
-    void repository(Action<? super Repository> action)
+    List<License> getLicenses()
 
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Repository) Closure<Void> action)
+    void license(Action<? super License> action)
 
-    Repository getRepository(String name)
+    void license(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = License) Closure<Void> action)
+
+    List<String> validate(ProjectConfigurationExtension extension)
 }

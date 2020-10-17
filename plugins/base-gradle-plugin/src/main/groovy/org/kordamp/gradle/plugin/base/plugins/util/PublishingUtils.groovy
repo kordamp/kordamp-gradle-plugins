@@ -433,7 +433,7 @@ class PublishingUtils {
             pom.licenses(new Action<MavenPomLicenseSpec>() {
                 @Override
                 void execute(MavenPomLicenseSpec licenses) {
-                    config.licensing.licenses.each { License lic ->
+                    config.licensing.licenses.forEach { License lic ->
                         licenses.license(new Action<MavenPomLicense>() {
                             @Override
                             void execute(MavenPomLicense license) {

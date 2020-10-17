@@ -340,7 +340,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension config = resolveConfig(project)
 
         Map<Object, List<Object>> defaultAliases = new LinkedHashMap<>(DEFAULT_ALIASES)
-        config.licensing.licenses.licenses.each { license ->
+        config.licensing.licenses.forEach { license ->
             if (license.licenseId && license.aliases) {
                 LicenseMetadata licenseMetadata = LICENSES_MAP.get(license.licenseId)
                 if (!licenseMetadata) {

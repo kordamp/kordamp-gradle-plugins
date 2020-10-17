@@ -93,6 +93,8 @@ config {
         }
 
         <<_base_info_credentials,credentials>> {
+            inherits
+            mergeStrategy
             github {
                 username
                 password
@@ -109,6 +111,8 @@ config {
         }
 
         <<_base_info_repositories,repositories>> {
+            inherits
+            mergeStrategy
             <<_base_info_repository,repository>> {
                 name
                 url
@@ -120,6 +124,8 @@ config {
         }
 
         <<_base_info_people,people>> {
+            inherits
+            mergeStrategy
             <<_base_info_person,person>> {
                 id
                 name
@@ -146,6 +152,8 @@ config {
         }
 
         <<_base_info_mailingLists,mailingLists>> {
+            inherits
+            mergeStrategy
             <<_base_info_mailingList,mailingList>> {
                 name
                 subscribe
@@ -258,11 +266,23 @@ This block is optional.
 
 [options="header", cols="5*"]
 |===
-| Name     | Type        | Required | Default Value   | Description
-| github   | Credentials | no*      |                 | Username/Password for connecting to GitHub
-| sonatype | Credentials | no*      |                 | Username/Password for connecting to Maven Central
-| named    | Credentials | no*      |                 | Defines a named credentials entry. Name may match a repository entry.
+| Name          | Type          | Required | Default Value | Description
+| github        | Credentials   | no*      |               | Username/Password for connecting to GitHub
+| sonatype      | Credentials   | no*      |               | Username/Password for connecting to Maven Central
+| named         | Credentials   | no*      |               | Defines a named credentials entry. Name may match a repository entry.
+| inherits      | boolean       | no       | true          | Whether to inherit values from a parent `POM`.
+| mergeStrategy | MergeStrategy | no       | UNIQUE        | One of `PREPEND`, `APPEND`, `UNIQUE`, `OVERWRITE`.
 |===
+
+The value of `inherits` cannot be changed once it has been set.
+
+The values of `mergeStrategy` control how multiple credentials will be handled
+
+[horizontal]
+PREPEND:: Child values (if any) will be placed before inherited values (if any).
+APPEND:: Child values (if any) will be placed after inherited values (if any).
+UNIQUE:: Child and inherited values will be merged by license id.
+OVERWRITE:: Child values will be used unless empty, in which case inherited values will be used.
 
 The `sonatype` entry may be used by the `<<_org_kordamp_gradle_bintray,org.kordamp.gradle.bintray>>` plugin to configure
 auto-sync with Maven Central when pushing a publication. Named credentials my match the name of a repository, in which
@@ -274,6 +294,23 @@ This block is optional.
 *repositories*
 
 This block defines data associated with a particular repository. Entries may be used during publication.
+
+[options="header", cols="5*"]
+|===
+| Name          | Type          | Required | Default Value | Description
+| inherits      | boolean       | no       | true          | Whether to inherit values from a parent `POM`.
+| mergeStrategy | MergeStrategy | no       | UNIQUE        | One of `PREPEND`, `APPEND`, `UNIQUE`, `OVERWRITE`.
+|===
+
+The value of `inherits` cannot be changed once it has been set.
+
+The values of `mergeStrategy` control how multiple repositories will be handled
+
+[horizontal]
+PREPEND:: Child values (if any) will be placed before inherited values (if any).
+APPEND:: Child values (if any) will be placed after inherited values (if any).
+UNIQUE:: Child and inherited values will be merged by license id.
+OVERWRITE:: Child values will be used unless empty, in which case inherited values will be used.
 
 [[_base_info_repository]]
 *repository*
@@ -292,6 +329,23 @@ the repository name.
 
 [[_base_info_people]]
 *people*
+
+[options="header", cols="5*"]
+|===
+| Name          | Type          | Required | Default Value | Description
+| inherits      | boolean       | no       | true          | Whether to inherit values from a parent `POM`.
+| mergeStrategy | MergeStrategy | no       | UNIQUE        | One of `PREPEND`, `APPEND`, `UNIQUE`, `OVERWRITE`.
+|===
+
+The value of `inherits` cannot be changed once it has been set.
+
+The values of `mergeStrategy` control how multiple people will be handled
+
+[horizontal]
+PREPEND:: Child values (if any) will be placed before inherited values (if any).
+APPEND:: Child values (if any) will be placed after inherited values (if any).
+UNIQUE:: Child and inherited values will be merged by license id.
+OVERWRITE:: Child values will be used unless empty, in which case inherited values will be used.
 
 This block defines data associated with a particular person.
 
@@ -340,6 +394,23 @@ block in the POM. If a `contributor` role exists then the person instance is map
 
 [[_base_info_mailingLists]]
 *mailingLists*
+
+[options="header", cols="5*"]
+|===
+| Name          | Type          | Required | Default Value | Description
+| inherits      | boolean       | no       | true          | Whether to inherit values from a parent `POM`.
+| mergeStrategy | MergeStrategy | no       | UNIQUE        | One of `PREPEND`, `APPEND`, `UNIQUE`, `OVERWRITE`.
+|===
+
+The value of `inherits` cannot be changed once it has been set.
+
+The values of `mergeStrategy` control how multiple mailing lists will be handled
+
+[horizontal]
+PREPEND:: Child values (if any) will be placed before inherited values (if any).
+APPEND:: Child values (if any) will be placed after inherited values (if any).
+UNIQUE:: Child and inherited values will be merged by license id.
+OVERWRITE:: Child values will be used unless empty, in which case inherited values will be used.
 
 This block defines a list of MailingList entries.
 
