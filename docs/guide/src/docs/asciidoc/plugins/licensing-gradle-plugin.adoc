@@ -41,13 +41,21 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name               | Type        | Required | Default Value | Description
-| enabled            | boolean     | no       | true          | Disables `org.kordamp.gradle.licensing` plugin if `false`
-| mergeStrategy      | String      | no       | merge         | Either `merge` or `overwrite`
-| excludedSourceSets | Set<String> | no       | []            |
-| licenses           | LicenseSet  | yes      |               | This block maps to the `<licenses>` block in POM. +
+| Name               | Type          | Required | Default Value | Description
+| enabled            | boolean       | no       | true          | Disables `org.kordamp.gradle.licensing` plugin if `false`
+| mergeStrategy      | MergeStartegy | no       | UNIQUE        | One of `PREPEND`, `APPEND`, `UNIQUE`, `OVERWRITE`.
+| excludedSourceSets | Set<String>   | no       | []            |
+| licenses           | LicenseSet    | yes      |               | This block maps to the `<licenses>` block in POM. +
                                                                 At least one nested `license` block must be defined.
 |===
+
+The values of `mergeStrategy` control how multiple licenses will be handled
+
+[horizontal]
+PREPEND:: Child values (if any) will be placed before inherited values (if any).
+APPEND:: Child values (if any) will be placed after inherited values (if any).
+UNIQUE:: Child and inherited values will be merged by license id.
+OVERWRITE:: Child values will be used unless empty, in which case inherited values will be used.
 
 .Methods
 
