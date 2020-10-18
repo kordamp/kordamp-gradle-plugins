@@ -92,9 +92,16 @@ abstract class AbstractFeature implements Feature {
                     setEnabled(hasBasePlugin(project) && isApplied())
                 }
             } else {
-                setEnabled(hasBasePlugin(project) && isApplied())
-                if (isEnabled()) {
-                    getParentFeature().setEnabled(true)
+                boolean localEnabled = hasBasePlugin(project) && isApplied()
+                boolean parentEnabled = getParentFeature().enabled
+                boolean parentEnabledSet = getParentFeature().enabledSet
+                if (parentEnabledSet) {
+                    setEnabled(parentEnabled)
+                } else {
+                    setEnabled(localEnabled)
+                    if (isEnabled()) {
+                        getParentFeature().setEnabled(true)
+                    }
                 }
             }
         }

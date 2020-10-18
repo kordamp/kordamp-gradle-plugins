@@ -49,14 +49,6 @@ class Licensing extends AbstractFeature {
         this.licenses
     }
 
-
-    @Override
-    protected void normalizeEnabled() {
-        if (!enabledSet) {
-            setEnabled(isApplied())
-        }
-    }
-
     @Override
     protected AbstractFeature getParentFeature() {
         return project.rootProject.extensions.getByType(ProjectConfigurationExtension).licensing

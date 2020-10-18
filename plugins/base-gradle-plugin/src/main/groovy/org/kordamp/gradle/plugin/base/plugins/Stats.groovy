@@ -58,13 +58,6 @@ class Stats extends AbstractAggregateFeature {
     }
 
     @Override
-    protected void normalizeEnabled() {
-        if (!enabledSet) {
-            setEnabled(isApplied())
-        }
-    }
-
-    @Override
     protected void populateMapDescription(Map<String, Object> map) {
         map.formats = formats
         map.counters = counters

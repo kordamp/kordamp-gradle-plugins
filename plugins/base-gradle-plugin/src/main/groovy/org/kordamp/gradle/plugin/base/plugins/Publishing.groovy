@@ -74,17 +74,6 @@ class Publishing extends AbstractFeature {
         new LinkedHashMap<>('publishing': map)
     }
 
-    @Override
-    protected void normalizeEnabled() {
-        if (!enabledSet) {
-            if (isRoot()) {
-                setEnabled(project.childProjects.isEmpty() && isApplied())
-            } else {
-                setEnabled(isApplied())
-            }
-        }
-    }
-
     void postMerge() {
         if (!scopes) {
             scopes << 'compile'
