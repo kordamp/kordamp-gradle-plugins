@@ -29,6 +29,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.internal.hash.HashUtil
 
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -189,6 +190,40 @@ class InlinePlugin implements Plugin<Settings> {
     }
 
     private void findDefaultPlugins() {
+        File cacheFile = new File([settings.gradle.gradleUserHomeDir.absolutePath,
+                                   'caches',
+                                   'kordamp',
+                                   settings.gradle.gradleVersion,
+                                   HashUtil.sha256(settings.gradle.gradleHomeDir.absolutePath.getBytes()).asHexString(),
+                                   'plugins.txt'].join(File.separator))
+
+        if (cacheFile.exists()) {
+            try {
+                readDefaultPlugins(cacheFile)
+            } catch (Exception e) {
+                computeDefaultPlugins()
+                writeDefaultPlugins(cacheFile)
+            }
+        } else {
+            computeDefaultPlugins()
+            writeDefaultPlugins(cacheFile)
+        }
+    }
+
+    private void readDefaultPlugins(File cacheFile) {
+        cacheFile.text.split('\n').each { pluginId -> corePlugins.add(pluginId) }
+    }
+
+    private void writeDefaultPlugins(File cacheFile) {
+        try {
+            cacheFile.parentFile.mkdirs()
+            cacheFile.withWriter { w -> w.write(corePlugins.join('\n')) }
+        } catch (IOException ignored) {
+            // noop
+        }
+    }
+
+    private void computeDefaultPlugins() {
         Enumeration<URL> e = InlinePlugin.classLoader.getResources('META-INF/gradle-plugins')
         while (e.hasMoreElements()) {
             extractMetadata(e.nextElement(), corePlugins)
@@ -247,7 +282,6 @@ class InlinePlugin implements Plugin<Settings> {
     }
 
     private void findPluginGroupsInGradleUserHome(File gradleUserHomeDir) {
-        println  gradleUserHomeDir
         File inlinePluginDir = new File(gradleUserHomeDir, 'org.kordamp.gradle.inline')
         if (inlinePluginDir.exists() && inlinePluginDir.directory) {
             inlinePluginDir.listFiles(new FilenameFilter() {
