@@ -32,6 +32,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
+import org.kordamp.gradle.plugin.base.model.artifact.Platform
 
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
@@ -118,16 +119,16 @@ class MinpomTask extends DefaultTask {
         ProjectConfigurationExtension config = resolveConfig(project)
 
         Map<String, String> versionExpressions = [:]
-        Set<Dependency> platforms = [] as Set
+        Set<Platform> platforms = [] as Set
         Set<DependencyPair> processedDependencies = []
 
         versionExpressions.putAll(config.publishing.pom.properties)
 
-        platforms.each { Dependency dependency ->
-            String versionKey = dependency.name + '.version'
-            versionExpressions.put(versionKey, dependency.version)
-            dependency.version = '${' + versionKey + '}'
-        }
+        // platforms.each { Dependency dependency ->
+        //     String versionKey = dependency.name + '.version'
+        //     versionExpressions.put(versionKey, dependency.version)
+        //     dependency.version = '${' + versionKey + '}'
+        // }
 
         compileDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
             processDependency(dep, config, versionExpressions, platforms, processedDependencies, 'compile')
@@ -176,7 +177,7 @@ class MinpomTask extends DefaultTask {
             if (platforms && !config.publishing.flattenPlatforms) {
                 dependencyManagement {
                     dependencies {
-                        platforms.each { Dependency dep ->
+                        platforms.each { Platform dep ->
                             dependency {
                                 groupId(dep.groupId)
                                 artifactId(dep.artifactId)
@@ -216,7 +217,7 @@ class MinpomTask extends DefaultTask {
     private static void processDependency(org.gradle.api.artifacts.Dependency dep,
                                           ProjectConfigurationExtension config,
                                           Map<String, String> versionExpressions,
-                                          Set<Dependency> platforms,
+                                          Set<Platform> platforms,
                                           Set<DependencyPair> processedDependencies,
                                           String scope) {
         String versionExp = dep.version
@@ -225,9 +226,9 @@ class MinpomTask extends DefaultTask {
             Dependency dependency = config.dependencyManagement.findDependencyByGA(dep.group, dep.name)
             if (dependency) {
                 if (config.publishing.flattenPlatforms) {
-                    if (dependency.platform) {
+                    if (dependency instanceof Platform) {
                         if (dependency.artifactId == dep.name) {
-                            platforms << dependency
+                            platforms << (Platform) dependency
                             return
                         } else {
                             String versionKey = dependency.name + '.version'
@@ -240,9 +241,9 @@ class MinpomTask extends DefaultTask {
                         versionExpressions.put(versionKey, dependency.version)
                     }
                 } else {
-                    if (dependency.platform) {
+                    if (dependency instanceof Platform) {
                         if (dependency.artifactId == dep.name) {
-                            platforms << dependency
+                            platforms << (Platform) dependency
                             return
                         } else {
                             versionExp = ''
@@ -259,14 +260,14 @@ class MinpomTask extends DefaultTask {
             if (dependency) {
                 if (config.publishing.flattenPlatforms) {
                     versionExp = dependency.version
-                    if (dependency.platform && dependency.artifactId == dep.name) {
-                        platforms << dependency
+                    if (dependency instanceof Platform && dependency.artifactId == dep.name) {
+                        platforms << (Platform) dependency
                         return
                     }
                 } else {
-                    if (dependency.platform) {
+                    if (dependency instanceof Platform) {
                         if (dependency.artifactId == dep.name) {
-                            platforms << dependency
+                            platforms << (Platform) dependency
                             return
                         } else {
                             versionExp = ''

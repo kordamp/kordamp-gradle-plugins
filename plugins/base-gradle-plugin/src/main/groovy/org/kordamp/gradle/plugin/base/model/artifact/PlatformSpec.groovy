@@ -21,11 +21,15 @@ import groovy.transform.CompileStatic
 
 /**
  * @author Andres Almiray
- * @since 0.37.0
+ * @since 0.41.0
  */
 @CompileStatic
-interface HasModulesSpec {
-    void setModules(Set<String> modules)
+interface PlatformSpec {
+    void setGroupId(String getGroupId)
 
-    void module(String module)
+    void setArtifactId(String artifactId)
+
+    void setVersion(String version)
+
+    Platform asPlatform()
 }

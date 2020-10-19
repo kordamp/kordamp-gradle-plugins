@@ -191,7 +191,6 @@ This block is optional.
 
 exclude(String):: Skips the named project from being added to the BOM.
 include(String):: Adds the named project to the BOM.
-void dependency(Dependency):: Adds an existing dependency, usually declared in `<<_base_dependencyManagement,config.dependencyManagement>>`.
 dependency(String gavNotation):: Defines a dependency. Argument must use the `groupId:artifactId:version` notation. Dependency name will be equal to `artifactId`. +
 Example: +
 [source,groovy]
@@ -240,30 +239,6 @@ Example: +
 ----
 platform('micronaut', 'io.micronaut:micronaut-bom:2.0.2')
 ----
-platform(String name, String gavNotation, Action action):: Defines and configures a platform dependency. Second argument must use the `groupId:artifactId:version` notation. +
-Example: +
-[source,groovy]
-----
-platform('micronaut', 'io.micronaut:micronaut-bom:2.0.2') {
-    modules = [
-        'micronaut-core',
-        'micronaut-inject',
-        'micronaut-validation'
-    ]
-}
-----
-platform(String name, String gavNotation, Closure action):: Defines and configures a platform dependency. Second argument must use the `groupId:artifactId:version` notation. +
-Example: +
-[source,groovy]
-----
-platform('micronaut', 'io.micronaut:micronaut-bom:2.0.2') {
-    modules = [
-        'micronaut-core',
-        'micronaut-inject',
-        'micronaut-validation'
-    ]
-}
-----
 dependency(String gavNotation, Action action):: Defines and configures a dependency by name. +
 Example: +
 [source,groovy]
@@ -289,10 +264,19 @@ dependency('org.codehaus.groovy:groovy:3.0.6') {
 }
 ----
 getDependency(String name):: Returns the named dependency (if it exists). Throws an exception otherwise. +
+The `name` parameter may be the logical name or the `groupId:artifactId` of the dependency. +
 Example: +
 [source,groovy]
 ----
 getDependency('guava') instanceof org.kordamp.gradle.plugin.base.model.artifact.Dependency
+getDependency('com.googlecode.guava:guava') instanceof org.kordamp.gradle.plugin.base.model.artifact.Dependency
+----
+findDependency(String nameOrGa):: Finds a dependency by name or GA if it exists, `null` otherwise. +
+Example: +
+[source,groovy]
+----
+findDependency('guava') instanceof org.kordamp.gradle.plugin.base.model.artifact.Dependency
+findDependency('com.googlecode.guava:guava') instanceof org.kordamp.gradle.plugin.base.model.artifact.Dependency
 ----
 findDependencyByName(String name):: Finds a dependency by name if it exists, `null` otherwise. +
 Example: +
@@ -306,26 +290,60 @@ Example: +
 ----
 findDependencyByGA('com.googlecode.guava', 'guava') instanceof org.kordamp.gradle.plugin.base.model.artifact.Dependency
 ----
+getPlatform(String name):: Returns the named platform (if it exists). Throws an exception otherwise. +
+The `name` parameter may be the logical name or the `groupId:artifactId` of the platform. +
+Example: +
+[source,groovy]
+----
+getPlatform('micronaut') instanceof org.kordamp.gradle.plugin.base.model.artifact.Platform
+getPlatform('io.micronaut:micronaut-bom') instanceof org.kordamp.gradle.plugin.base.model.artifact.Platform
+----
+findPlatform(String nameOrGa):: Returns the named platform (if it exists).
+The `nameOrGa` parameter may be the logical name or the `groupId:artifactId` of the platform. +
+Example: +
+[source,groovy]
+----
+findPlatform('micronaut') instanceof org.kordamp.gradle.plugin.base.model.artifact.Platform
+findPlatform('io.micronaut:micronaut-bom') instanceof org.kordamp.gradle.plugin.base.model.artifact.Platform
+----
+findPlatformByName(String name):: Finds a platform by name if it exists, `null` otherwise. +
+Example: +
+[source,groovy]
+----
+findPlatformByName('micronaut') instanceof org.kordamp.gradle.plugin.base.model.artifact.Platform
+----
+findPlatformByGA(String name, String moduleNAme):: Finds a platform by groupId and artifactId if it exists, `null` otherwise. +
+Example: +
+[source,groovy]
+----
+findPlatformByGA('io.micronaut', 'micronaut-bom') instanceof org.kordamp.gradle.plugin.base.model.artifact.Platform
+----
 gav(String name):: Returns the given dependency in GAV notation if it exists. Throws an exception otherwise. +
+The `name` parameter may be the logical name or the `groupId:artifactId` of the dependency. +
 Example: +
 [source,groovy]
 ----
 gav('groovy') == 'org.codehaus.groovy:groovy:3.0.6'
+gav('org.codehaus.groovy:groovy') == 'org.codehaus.groovy:groovy:3.0.6'
 ----
 gav(String name, String moduleName):: Returns the given module dependency in GAV notation if it exists. Throws an exception otherwise. +
+The `name` parameter may be the logical name or the `groupId:artifactId` of the dependency. +
 Example: +
 [source,groovy]
 ----
 gav('groovy', 'groovy-json') == 'org.codehaus.groovy:groovy-json:3.0.6'
+gav('org.codehaus.groovy:groovy', 'groovy-json') == 'org.codehaus.groovy:groovy-json:3.0.6'
 ----
 ga(String name, String moduleName):: Returns the given module dependency in GA (groupId/artifactId) notation if it exists. Throws an exception otherwise. +
+The `name` parameter may be the logical name or the `groupId:artifactId` of the dependency. +
 Example: +
 [source,groovy]
 ----
 ga('micronaut', 'micronaut-core') == 'io.micronaut:micronaut-core'
+ga('io.micronaut:micronaut-bom', 'micronaut-core') == 'io.micronaut:micronaut-core'
 ----
 
-WARNING: Instances of type `org.kordamp.gradle.plugin.base.model.artifact.Dependency` can not be passed directly to Gradle's dependency
-resolution mechanism. You must convert them to any of the accepted notations such as `groupId:artifactId:version`.
-
+WARNING: Instances of type `org.kordamp.gradle.plugin.base.model.artifact.Dependency` or `org.kordamp.gradle.plugin.base.model.artifact.Platform`
+can not be passed directly to Gradle's dependency resolution mechanism. You must convert them to any of the accepted
+notations such as `groupId:artifactId:version`, use the `gav()` or `ga()` utility methods instead.
 

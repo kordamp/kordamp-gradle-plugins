@@ -20,6 +20,8 @@ package org.kordamp.gradle.plugin.base.plugins
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
+import org.kordamp.gradle.plugin.base.model.artifact.DependencyManagement
+import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencyManagementImpl
 
 /**
  * @author Andres Almiray
@@ -27,7 +29,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  */
 @CompileStatic
 @Deprecated
-class Dependencies extends DependencyManagement {
+class Dependencies extends DependencyManagementImpl {
     Dependencies(ProjectConfigurationExtension config, Project project) {
         super(config, project)
     }

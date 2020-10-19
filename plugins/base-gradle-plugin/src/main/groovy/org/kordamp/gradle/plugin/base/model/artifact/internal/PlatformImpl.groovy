@@ -19,31 +19,27 @@ package org.kordamp.gradle.plugin.base.model.artifact.internal
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
-import org.kordamp.gradle.plugin.base.model.artifact.Dependency
+import org.kordamp.gradle.plugin.base.model.artifact.Platform
 
 /**
  * @author Andres Almiray
- * @since 0.37.0
+ * @since 0.41.0
  */
 @CompileStatic
 @PackageScope
-class DependencyImpl implements Dependency {
+class PlatformImpl implements Platform {
     final String name
     final String groupId
     final String artifactId
     final String version
-    final Set<String> modules = new TreeSet<>()
+    final Map<String, String> modules = new TreeMap<>()
     final Set<String> moduleNames = new TreeSet<>()
 
-    DependencyImpl(String name, String groupId, String artifactId, String version, Set<String> moduleNames) {
+    PlatformImpl(String name, String groupId, String artifactId, String version) {
         this.name = name
         this.groupId = groupId
         this.artifactId = artifactId
         this.version = version
-        if (moduleNames) {
-            this.moduleNames.addAll(moduleNames)
-            this.modules.addAll(moduleNames.collect { "${groupId}:${it}:${version}".toString() })
-        }
     }
 
     @Override
@@ -52,11 +48,21 @@ class DependencyImpl implements Dependency {
             groupId   : groupId,
             artifactId: artifactId,
             version   : version,
-            modules   : modules
+            modules   : getModules()
         ]
         new LinkedHashMap<String, Map<String, Object>>([
             (name): map
         ])
+    }
+
+    @PackageScope
+    void setModules(Map<String, String> modules) {
+        this.moduleNames.addAll(modules.keySet())
+        this.modules.putAll(modules)
+    }
+
+    Set<String> getModules() {
+        Collections.unmodifiableSet(this.modules.values() as Set)
     }
 
     @Override
@@ -87,9 +93,9 @@ class DependencyImpl implements Dependency {
     @Override
     String asGav(String moduleName) {
         if (moduleNames.contains(moduleName)) {
-            return "${groupId}:${moduleName}:${version}".toString()
+            return modules.get(moduleName)
         }
-        throw new IllegalArgumentException("Dependency '${name}' does not define module '${moduleName}'.")
+        throw new IllegalArgumentException("Platform '${name}' does not define module '${moduleName}'.")
     }
 
     @Override
@@ -100,9 +106,10 @@ class DependencyImpl implements Dependency {
     @Override
     String asGa(String moduleName) {
         if (moduleNames.contains(moduleName)) {
-            return "${groupId}:${moduleName}".toString()
+            String[] parts = modules.get(moduleName).split(':')
+            return "${parts[0]}:${parts[1]}".toString()
         }
-        throw new IllegalArgumentException("Dependency '${name}' does not define module '${moduleName}'.")
+        throw new IllegalArgumentException("Platform '${name}' does not define module '${moduleName}'.")
     }
 
     @Override

@@ -25,6 +25,8 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency as KDependency
+import org.kordamp.gradle.plugin.base.model.artifact.Platform
+import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencyManagementImpl
 import org.kordamp.gradle.plugin.project.ConfigurationsDependencyHandler
 import org.kordamp.gradle.plugin.project.DefaultConfigurationsDependencyHandler
 import org.kordamp.gradle.plugin.project.DependencyHandlerSpec
@@ -200,7 +202,7 @@ class DependencyHandlerImpl {
                 if (dependency) {
                     prj = project.rootProject.findProject(dependency.artifactId)
                     if (prj) return prj
-                    if (platform && !dependency.platform) {
+                    if (platform && !(dependency instanceof Platform)) {
                         throw new IllegalArgumentException("Target dependency is not a platform: ${notation}")
                     }
                     return dependency.gav
@@ -210,7 +212,7 @@ class DependencyHandlerImpl {
                 if (dependency) {
                     Project prj = project.rootProject.findProject(dependency.artifactId)
                     if (prj) return prj
-                    if (platform && !dependency.platform) {
+                    if (platform && !(dependency instanceof Platform)) {
                         throw new IllegalArgumentException("Target dependency is not a platform: ${notation}")
                     }
                     return dependency.gav
@@ -315,14 +317,20 @@ class DependencyHandlerImpl {
                     throw new IllegalArgumentException('Target configuration must not be blank')
                 }
 
-                if (project.configurations.findByName(configuration)) {
-                    if (configurer) {
-                        project.dependencies.add(configuration, config.dependencyManagement.getDependency(nameOrGa).asGav(moduleName), configurer)
-                    } else {
-                        project.dependencies.add(configuration, config.dependencyManagement.getDependency(nameOrGa).asGav(moduleName))
-                    }
+                Platform platform = config.dependencyManagement.findPlatform(nameOrGa)
+                if (platform) {
+                    ((DependencyManagementImpl) config.dependencyManagement).registerDeferredPlatformModule(project,
+                        configuration, platform, moduleName, configurer)
                 } else {
-                    throw new IllegalArgumentException("Target configuration '${configuration}' was not found")
+                    if (project.configurations.findByName(configuration)) {
+                        if (configurer) {
+                            project.dependencies.add(configuration, config.dependencyManagement.findDependency(nameOrGa).asGav(moduleName), configurer)
+                        } else {
+                            project.dependencies.add(configuration, config.dependencyManagement.findDependency(nameOrGa).asGav(moduleName))
+                        }
+                    } else {
+                        throw new IllegalArgumentException("Target configuration '${configuration}' was not found")
+                    }
                 }
             }
         }

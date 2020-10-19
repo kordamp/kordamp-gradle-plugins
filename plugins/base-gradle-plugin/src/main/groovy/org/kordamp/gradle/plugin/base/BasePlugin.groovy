@@ -31,7 +31,8 @@ import org.kordamp.gradle.listener.ProjectEvaluationListenerManager
 import org.kordamp.gradle.listener.TaskGraphReadyListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
-import org.kordamp.gradle.plugin.base.plugins.DependencyManagement
+import org.kordamp.gradle.plugin.base.model.artifact.DependencyManagement
+import org.kordamp.gradle.plugin.base.tasks.ClearKordampFileCacheTask
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationsTask
 import org.kordamp.gradle.plugin.base.tasks.EffectiveSettingsTask
@@ -52,6 +53,7 @@ import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAl
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addTaskGraphReadyListener
 import static org.kordamp.gradle.util.PluginUtils.checkFlag
+import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.StringUtils.isBlank
 
 /**
@@ -111,6 +113,15 @@ class BasePlugin extends AbstractKordampPlugin {
                     t.dependsOn(project.tasks.named('assemble'))
                     t.group = 'Build'
                     t.description = 'Assembles the outputs of this project.'
+                }
+            })
+
+        project.tasks.register('clearKordampFileCache', ClearKordampFileCacheTask,
+            new Action<ClearKordampFileCacheTask>() {
+                @Override
+                void execute(ClearKordampFileCacheTask t) {
+                    t.group = 'Insight'
+                    t.description = 'Clears the Kordamp file cache'
                 }
             })
 
@@ -351,10 +362,6 @@ class BasePlugin extends AbstractKordampPlugin {
                 }
             }
 
-            if (checkFlag(ORG_KORDAMP_GRADLE_BASE_DEPENDENCY_MANAGEMENT, true)) {
-                handleDependencyManagement(project, extension.dependencyManagement)
-            }
-
             if (validate) errors.addAll(extension.validate())
 
             if (validate && errors) {
@@ -369,7 +376,12 @@ class BasePlugin extends AbstractKordampPlugin {
     private class BaseAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
         @Override
         void allProjectsEvaluated(Project rootProject) {
-            // noop
+            if (checkFlag(ORG_KORDAMP_GRADLE_BASE_DEPENDENCY_MANAGEMENT, true)) {
+                handleDependencyManagement(rootProject)
+                rootProject.childProjects.values().each { Project project ->
+                    handleDependencyManagement(project)
+                }
+            }
         }
     }
 
@@ -391,7 +403,10 @@ class BasePlugin extends AbstractKordampPlugin {
         project == project.rootProject
     }
 
-    private void handleDependencyManagement(Project project, DependencyManagement dependencyManagement) {
+    private void handleDependencyManagement(Project project) {
+        DependencyManagement dependencyManagement = resolveConfig(project).dependencyManagement
+        dependencyManagement.resolve()
+
         project.configurations.all(new Action<Configuration>() {
             @Override
             void execute(Configuration c) {

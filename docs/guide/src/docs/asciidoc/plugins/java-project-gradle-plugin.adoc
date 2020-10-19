@@ -69,17 +69,7 @@ The following example shows how the Micronaut BOM can be used to configure all c
 ----
 config {
     dependencyManagement {
-        dependency('micronaut') {
-            platform   = true
-            groupId    = 'io.micronaut'
-            artifactId = 'micronaut-bom'
-            version    = micronautVersion
-            modules    = ['micronaut-inject-java',
-                          'micronaut-inject-groovy',
-                          'micronaut-inject',
-                          'micronaut-validation',
-                          'micronaut-runtime-groovy']
-        }
+        platform('micronaut', "io.micronaut:micronaut-bom:$micronautVersion")
     }
 }
 
@@ -149,17 +139,7 @@ The following example shows how the Micronaut BOM can be used to configure all c
 config {
     dependencyManagement {
         dependency('junit:junit:4.13')
-        dependency('micronaut') {
-            platform   = true
-            groupId    = 'io.micronaut'
-            artifactId = 'micronaut-bom'
-            version    = micronautVersion
-            modules    = ['micronaut-inject-java',
-                          'micronaut-inject-groovy',
-                          'micronaut-inject',
-                          'micronaut-validation',
-                          'micronaut-runtime-groovy']
-        }
+        platform('micronaut', "io.micronaut:micronaut-bom:$micronautVersion")
     }
 }
 
@@ -227,17 +207,7 @@ The following example shows how the Micronaut BOM can be used to configure all c
 ----
 config {
     dependencyManagement {
-        dependency('micronaut') {
-            platform   = true
-            groupId    = 'io.micronaut'
-            artifactId = 'micronaut-bom'
-            version    = micronautVersion
-            modules    = ['micronaut-inject-java',
-                          'micronaut-inject-groovy',
-                          'micronaut-inject',
-                          'micronaut-validation',
-                          'micronaut-runtime-groovy']
-        }
+        platform('micronaut', "io.micronaut:micronaut-bom:$micronautVersion")
     }
 }
 
@@ -355,7 +325,7 @@ Results in the following output
 Total platforms: 1
 
 Platform 0:
-    platform: io.micronaut:micronaut-bom:2.0.0.M3
+    platform: io.micronaut:micronaut-bom:2.0.2
     enforced: true
     configurations:
         api

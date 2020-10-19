@@ -29,8 +29,9 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.internal.hash.HashUtil
+import org.kordamp.gradle.util.Cache
 
+import java.util.function.Consumer
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.regex.Matcher
@@ -190,36 +191,13 @@ class InlinePlugin implements Plugin<Settings> {
     }
 
     private void findDefaultPlugins() {
-        File cacheFile = new File([settings.gradle.gradleUserHomeDir.absolutePath,
-                                   'caches',
-                                   'kordamp',
-                                   settings.gradle.gradleVersion,
-                                   HashUtil.sha256(settings.gradle.gradleHomeDir.absolutePath.getBytes()).asHexString(),
-                                   'plugins.txt'].join(File.separator))
+        Cache.Key key = Cache.key(settings.gradle.gradleHomeDir.absolutePath + '-plugins.txt')
 
-        if (cacheFile.exists()) {
-            try {
-                readDefaultPlugins(cacheFile)
-            } catch (Exception e) {
-                computeDefaultPlugins()
-                writeDefaultPlugins(cacheFile)
-            }
-        } else {
+        Consumer<InputStream> reader = { InputStream r -> r.text.split('\n').each { pluginId -> corePlugins.add(pluginId) } }
+
+        if (!Cache.getInstance().get(settings.gradle, key, reader)) {
             computeDefaultPlugins()
-            writeDefaultPlugins(cacheFile)
-        }
-    }
-
-    private void readDefaultPlugins(File cacheFile) {
-        cacheFile.text.split('\n').each { pluginId -> corePlugins.add(pluginId) }
-    }
-
-    private void writeDefaultPlugins(File cacheFile) {
-        try {
-            cacheFile.parentFile.mkdirs()
-            cacheFile.withWriter { w -> w.write(corePlugins.join('\n')) }
-        } catch (IOException ignored) {
-            // noop
+            Cache.getInstance().write(settings.gradle, key) { w -> w.write(corePlugins.join('\n')) }
         }
     }
 

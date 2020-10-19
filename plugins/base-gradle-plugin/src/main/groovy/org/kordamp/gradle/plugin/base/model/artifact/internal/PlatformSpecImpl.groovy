@@ -21,48 +21,38 @@ import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.kordamp.gradle.plugin.base.model.artifact.Dependency
-import org.kordamp.gradle.plugin.base.model.artifact.DependencySpec
+import org.kordamp.gradle.plugin.base.model.artifact.Platform
+import org.kordamp.gradle.plugin.base.model.artifact.PlatformSpec
 
 import static org.kordamp.gradle.util.StringUtils.isBlank
-import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
- * @since 0.37.0
+ * @since 0.41.0
  */
 @CompileStatic
 @PackageScope
-class DependencySpecImpl implements DependencySpec {
+class PlatformSpecImpl implements PlatformSpec {
     final String name
     String groupId
     String artifactId
     String version
 
-    Set<String> modules = [] as Set
-
-    DependencySpecImpl(String name) {
+    PlatformSpecImpl(String name) {
         this.name = name
-    }
-
-    @Override
-    void module(String module) {
-        if (isNotBlank(module)) {
-            modules << module.trim()
-        }
     }
 
     void validate(Project project) {
         List<String> errors = []
 
         if (isBlank(groupId)) {
-            errors.add("Dependency '${name}' is missing groupId.".toString())
+            errors.add("Platform '${name}' is missing groupId.".toString())
         }
         if (isBlank(artifactId)) {
-            errors.add("Dependency '${name}' is missing artifactId.".toString())
+            errors.add("Platform '${name}' is missing artifactId.".toString())
         }
         if (isBlank(version)) {
-            errors.add("Dependency '${name}' is missing version.".toString())
+            errors.add("Platform '${name}' is missing version.".toString())
         }
 
         if (errors) {
@@ -74,7 +64,7 @@ class DependencySpecImpl implements DependencySpec {
     }
 
     @Override
-    Dependency asDependency() {
-        new DependencyImpl(name, groupId.trim(), artifactId.trim(), version.trim(), modules)
+    Platform asPlatform() {
+        new PlatformImpl(name, groupId.trim(), artifactId.trim(), version.trim())
     }
 }

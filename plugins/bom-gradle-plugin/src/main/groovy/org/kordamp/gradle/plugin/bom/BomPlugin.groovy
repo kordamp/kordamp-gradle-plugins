@@ -32,7 +32,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Credentials
 import org.kordamp.gradle.plugin.base.model.Repository
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
-import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencyImpl
+import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencyUtils
 import org.kordamp.gradle.plugin.base.plugins.Bom
 import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 
@@ -105,7 +105,7 @@ class BomPlugin extends AbstractKordampPlugin {
             artifact
         } else {
             String name = config.project.rootProject.name.toLowerCase().replace('-', '.').replace('_', '.')
-            DependencyImpl.of(name, config.project.group.toString(), name, config.project.version.toString())
+            DependencyUtils.dependency(name, config.project.group.toString(), name, config.project.version.toString())
         }
     }
 
@@ -144,10 +144,10 @@ class BomPlugin extends AbstractKordampPlugin {
                 if (p == project || excludedProjects.contains(p.name)) continue
                 if (includedProjects) {
                     if (includedProjects.contains(p.name)) {
-                        projectDependencies << DependencyImpl.of(ownDependency.name, String.valueOf(p.group), p.name, '${' + ownDependency.name + '.version}')
+                        projectDependencies << DependencyUtils.dependency(ownDependency.name, String.valueOf(p.group), p.name, '${' + ownDependency.name + '.version}')
                     }
                 } else {
-                    projectDependencies << DependencyImpl.of(ownDependency.name, String.valueOf(p.group), p.name, '${' + ownDependency.name + '.version}')
+                    projectDependencies << DependencyUtils.dependency(ownDependency.name, String.valueOf(p.group), p.name, '${' + ownDependency.name + '.version}')
                 }
             }
         }

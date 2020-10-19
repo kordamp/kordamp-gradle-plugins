@@ -233,3 +233,36 @@ There are base states for the following types:
  * `link:api/org/kordamp/gradle/property/SimpleSetState.html[SetState]`
  * `link:api/org/kordamp/gradle/property/SimpleListState.html[StringState]`
 
+== File Cache
+
+A File cache local to a Gradle distribution is also accessible for storing data between builds. The cache is provided by
+the `org.kordamp.gradle.util.Cache` class and exposes the following behavior:
+
+boolean has(Gradle gradle, Key key):: Queries the existence of a key in the cache.
+void delete(Gradle gradle, Key key):: Deletes an entry from the cache.
+boolean get(Gradle gradle, Key key, Consumer<? super InputStream> consumer):: Reads from the cache using an {@code java.io.InputStream}.
+boolean read(Gradle gradle, Key key, Consumer<? super BufferedReader> consumer):: Reads from the cache using a {@code java.io.BufferedReader}.
+boolean put(Gradle gradle, Key key, Consumer<? super OutputStream> consumer):: Writes to the cache using an {@code java.io.OutputStream}.
+boolean write(Gradle gradle, Key key, Consumer<? super BufferedWriter> consumer):: Writes to the cache using a {@code java.io.BufferedWriter}.
+void clear(Gradle gradle):: Deletes the whole cache.
+Key key(Object input):: Creates a `Key` instance based on the given input.
+
+Example:
+
+[source,groovy]
+----
+// obtain a key
+Cache.Key key = Cache.key(settings.gradle.gradleHomeDir.absolutePath + '-plugins.txt')
+
+// define a reader function
+Consumer<InputStream> reader = { InputStream r -> r.text.split('\n').each { pluginId -> corePlugins.add(pluginId) } }
+
+// read from the cache
+if (!Cache.getInstance().get(settings.gradle, key, reader)) {
+    // read failed, compute values
+    computeDefaultPlugins()
+    // write to the cache
+    Cache.getInstance().write(settings.gradle, key) { w -> w.write(corePlugins.join('\n')) }
+}
+----
+

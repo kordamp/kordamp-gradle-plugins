@@ -48,7 +48,8 @@ import org.kordamp.gradle.plugin.base.model.MailingList
 import org.kordamp.gradle.plugin.base.model.Person
 import org.kordamp.gradle.plugin.base.model.PomOptions
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
-import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencySpecImpl
+import org.kordamp.gradle.plugin.base.model.artifact.Platform
+import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencyUtils
 
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.StringUtils.isBlank
@@ -219,7 +220,6 @@ class PublishingUtils {
                 .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
         }
 
-
         compileDependencies.keySet().each { key ->
             runtimeDependencies.remove(key)
             testDependencies.remove(key)
@@ -241,7 +241,7 @@ class PublishingUtils {
                                            Map<String, org.gradle.api.artifacts.Dependency> testDependencies,
                                            Map<String, org.gradle.api.artifacts.Dependency> providedDependencies,
                                            Map<String, String> expressions) {
-        Set<Dependency> platforms = [] as Set
+        Set<Platform> platforms = [] as Set
 
         pom.withXml {
             Node dependenciesNode = asNode().appendNode('dependencies')
@@ -283,17 +283,17 @@ class PublishingUtils {
                     managedDependencies = new Node(dependencyManagementNode, 'dependencies')
                 }
 
-                for (Dependency dependency : platforms) {
-                    String versionKey = dependency.name + '.version'
-                    String versionExp = dependency.version
+                for (Platform platform : platforms) {
+                    String versionKey = platform.name + '.version'
+                    String versionExp = platform.version
                     if (config.publishing.useVersionExpressions) {
                         versionExp = '${' + versionKey + '}'
-                        expressions.put(versionKey, dependency.version)
+                        expressions.put(versionKey, platform.version)
                     }
 
                     managedDependencies.appendNode('dependency').with {
-                        appendNode('groupId', dependency.groupId)
-                        appendNode('artifactId', dependency.artifactId)
+                        appendNode('groupId', platform.groupId)
+                        appendNode('artifactId', platform.artifactId)
                         appendNode('version', versionExp)
                         appendNode('scope', 'import')
                         appendNode('type', 'pom')
@@ -328,7 +328,7 @@ class PublishingUtils {
                                             org.gradle.api.artifacts.Dependency dep,
                                             ProjectConfigurationExtension config,
                                             Map<String, String> expressions,
-                                            Set<Dependency> platforms,
+                                            Set<Platform> platforms,
                                             String scope) {
         String versionExp = dep.version
 
@@ -336,9 +336,9 @@ class PublishingUtils {
             Dependency dependency = config.dependencyManagement.findDependencyByGA(dep.group, dep.name)
             if (dependency) {
                 if (config.publishing.flattenPlatforms) {
-                    if (dependency.platform) {
+                    if (dependency instanceof Platform) {
                         if (dependency.artifactId == dep.name) {
-                            platforms << dependency
+                            platforms << (Platform) dependency
                             return
                         } else {
                             String versionKey = dependency.name + '.version'
@@ -351,9 +351,9 @@ class PublishingUtils {
                         expressions.put(versionKey, dependency.version)
                     }
                 } else {
-                    if (dependency.platform) {
+                    if (dependency instanceof Platform) {
                         if (dependency.artifactId == dep.name) {
-                            platforms << dependency
+                            platforms << (Platform) dependency
                             return
                         } else {
                             versionExp = ''
@@ -370,14 +370,14 @@ class PublishingUtils {
             if (dependency) {
                 if (config.publishing.flattenPlatforms) {
                     versionExp = dependency.version
-                    if (dependency.platform && dependency.artifactId == dep.name) {
-                        platforms << dependency
+                    if (dependency instanceof Platform && dependency.artifactId == dep.name) {
+                        platforms << (Platform) dependency
                         return
                     }
                 } else {
-                    if (dependency.platform) {
+                    if (dependency instanceof Platform) {
                         if (dependency.artifactId == dep.name) {
-                            platforms << dependency
+                            platforms << (Platform) dependency
                             return
                         } else {
                             versionExp = ''
@@ -580,8 +580,8 @@ class PublishingUtils {
         }
 
         if (isNotBlank(pomOptions.parent)) {
-            DependencySpecImpl spec = DependencySpecImpl.parse(config.project.rootProject, 'parent', pomOptions.parent)
-            Dependency parentPom = spec.asDependency()
+            Dependency parentPom = DependencyUtils.parseDependency(config.project.rootProject, 'parent', pomOptions.parent)
+                .asDependency()
 
             pom.withXml {
                 Node parentNode = new XmlParser().parseText("""

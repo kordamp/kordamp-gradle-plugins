@@ -23,9 +23,13 @@ import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.PomOptions
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
+import org.kordamp.gradle.plugin.base.model.artifact.DependencyManagement
 import org.kordamp.gradle.plugin.base.model.artifact.DependencySpec
-import org.kordamp.gradle.plugin.base.model.artifact.HasModulesSpec
+import org.kordamp.gradle.plugin.base.model.artifact.Platform
+import org.kordamp.gradle.plugin.base.model.artifact.PlatformSpec
+import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencyManagementImpl
 import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencySpecImpl
+import org.kordamp.gradle.plugin.base.model.artifact.internal.PlatformSpecImpl
 import org.kordamp.gradle.util.CollectionUtils
 import org.kordamp.gradle.util.ConfigureUtil
 
@@ -37,7 +41,7 @@ import static org.kordamp.gradle.util.StringUtils.isNotBlank
  * @since 0.9.0
  */
 @CompileStatic
-class Bom extends AbstractFeature implements PomOptions {
+class Bom extends AbstractFeature implements PomOptions, DependencyManagement {
     static final String PLUGIN_ID = 'org.kordamp.gradle.bom'
 
     final String packaging = 'pom'
@@ -74,8 +78,12 @@ class Bom extends AbstractFeature implements PomOptions {
     private boolean overwriteCiManagementSet
     private boolean overwriteMailingListsSet
 
+    @Delegate
+    private final DependencyManagement dependencyManagement
+
     Bom(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID)
+        this.dependencyManagement = new DependencyManagementImpl(config, project)
     }
 
     @Override
@@ -220,259 +228,5 @@ class Bom extends AbstractFeature implements PomOptions {
         if (dependency) {
             dependencies[dependency.name] = dependency
         }
-    }
-
-    /**
-     * Defines a dependency.</p>
-     * Dependency name will be equal to parsed {@code artifactId}.</p>
-     * Example:
-     *
-     * <pre>
-     * dependency('com.googlecode.guava:guava:29.0-jre')
-     * </pre>
-     * @param gavNotation must be in the {@code groupId:artifactId:version} notation
-     */
-    Dependency dependency(String gavNotation) {
-        if (isBlank(gavNotation)) {
-            throw new IllegalArgumentException('Dependency notation cannot be blank.')
-        }
-        DependencySpecImpl d = DependencySpecImpl.parsePartial(project.rootProject, gavNotation)
-        d.validate(project)
-        dependencies[d.name] = d.asDependency()
-    }
-
-    /**
-     * Defines a dependency.</p>
-     * Example:
-     *
-     * <pre>
-     * dependency('guava', 'com.googlecode.guava:guava:29.0-jre')
-     * </pre>
-     *
-     * @param name the logical name of the dependency
-     * @param gavNotation  must be in the {@code groupId:artifactId:version} notation
-     */
-    Dependency dependency(String name, String gavNotation) {
-        if (isBlank(name)) {
-            throw new IllegalArgumentException('Dependency name cannot be blank.')
-        }
-        DependencySpecImpl d = DependencySpecImpl.parse(project.rootProject, name.trim(), gavNotation)
-        d.validate(project)
-        dependencies[d.name] = d.asDependency()
-    }
-
-    /**
-     * Defines and configures a dependency.</p>
-     * Example:
-     *
-     * <pre>
-     * dependency('groovy', 'org.codehaus.groovy:groovy:3.0.6') {
-     *     modules = [
-     *         'groovy-test',
-     *         'groovy-json',
-     *         'groovy-xml'
-     *     ]
-     * }
-     * </pre>
-     *
-     * @param name the logical name of the dependency
-     * @param gavNotation  must be in the {@code groupId:artifactId:version} notation
-     */
-    Dependency dependency(String name, String gavNotation, Action<? super HasModulesSpec> action) {
-        if (isBlank(name)) {
-            throw new IllegalArgumentException('Dependency name cannot be blank.')
-        }
-        DependencySpecImpl d = DependencySpecImpl.parse(project.rootProject, name.trim(), gavNotation)
-        action.execute(d)
-        d.validate(project)
-        dependencies[d.name] = d.asDependency()
-    }
-
-    /**
-     * Defines and configures a dependency.</p>
-     * Example:
-     *
-     * <pre>
-     * dependency('groovy', 'org.codehaus.groovy:groovy:3.0.6') {
-     *     modules = [
-     *         'groovy-test',
-     *         'groovy-json',
-     *         'groovy-xml'
-     *     ]
-     * }
-     * </pre>
-     *
-     * @param name the logical name of the dependency
-     * @param gavNotation  must be in the {@code groupId:artifactId:version} notation
-     */
-    Dependency dependency(String name, String gavNotation, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DependencySpec) Closure<Void> action) {
-        if (isBlank(name)) {
-            throw new IllegalArgumentException('Dependency name cannot be blank.')
-        }
-        DependencySpecImpl d = DependencySpecImpl.parse(project.rootProject, name.trim(), gavNotation)
-        ConfigureUtil.configure(action, d)
-        d.validate(project)
-        dependencies[d.name] = d.asDependency()
-    }
-
-    /**
-     * Defines a platform dependency.</p>
-     * Dependency name will be equal to parsed {@code artifactId}.</p>
-     * Example:
-     *
-     * <pre>
-     * platform('io.micronaut:micronaut-bom:2.0.2')
-     * </pre>
-     *
-     * @param gavNotation  must be in the {@code groupId:artifactId:version} notation
-     */
-    Dependency platform(String gavNotation) {
-        if (isBlank(gavNotation)) {
-            throw new IllegalArgumentException('Platform notation cannot be blank.')
-        }
-        DependencySpecImpl d = DependencySpecImpl.parsePartial(project.rootProject, gavNotation)
-        d.platform = true
-        d.validate(project)
-        dependencies[d.name] = d.asDependency()
-    }
-
-    /**
-     * Defines a platform dependency.</p>
-     * Example:
-     *
-     * <pre>
-     * platform('micronaut', 'io.micronaut:micronaut-bom:2.0.2')
-     * </pre>
-     *
-     * @param name the logical name of the dependency
-     * @param gavNotation  must be in the {@code groupId:artifactId:version} notation
-     */
-    Dependency platform(String name, String gavNotation) {
-        if (isBlank(name)) {
-            throw new IllegalArgumentException('Platform name cannot be blank.')
-        }
-        DependencySpecImpl d = DependencySpecImpl.parse(project.rootProject, name.trim(), gavNotation)
-        d.platform = true
-        d.validate(project)
-        dependencies[d.name] = d.asDependency()
-    }
-
-    /**
-     * Defines and configures a platform dependency.</p>
-     * Example:
-     *
-     * <pre>
-     * platform('micronaut', 'io.micronaut:micronaut-bom:2.0.2') {
-     *     modules = [
-     *         'micronaut-core',
-     *         'micronaut-inject',
-     *         'micronaut-validation'
-     *     ]
-     * }
-     * </pre>
-     *
-     * @param name the logical name of the dependency
-     * @param gavNotation  must be in the {@code groupId:artifactId:version} notation
-     */
-    Dependency platform(String name, String gavNotation, Action<? super HasModulesSpec> action) {
-        if (isBlank(name)) {
-            throw new IllegalArgumentException('Platform name cannot be blank.')
-        }
-        DependencySpecImpl d = DependencySpecImpl.parse(project.rootProject, name.trim(), gavNotation)
-        d.platform = true
-        action.execute(d)
-        d.validate(project)
-        dependencies[d.name] = d.asDependency()
-    }
-
-    /**
-     * Defines and configures a platform dependency.</p>
-     * Example:
-     *
-     * <pre>
-     * platform('micronaut', 'io.micronaut:micronaut-bom:2.0.2') {
-     *     modules = [
-     *         'micronaut-core',
-     *         'micronaut-inject',
-     *         'micronaut-validation'
-     *     ]
-     * }
-     * </pre>
-     *
-     * @param name the logical name of the dependency
-     * @param gavNotation  must be in the {@code groupId:artifactId:version} notation
-     */
-    Dependency platform(String name, String gavNotation, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DependencySpec) Closure<Void> action) {
-        if (isBlank(name)) {
-            throw new IllegalArgumentException('Platform name cannot be blank.')
-        }
-        DependencySpecImpl d = DependencySpecImpl.parse(project.rootProject, name.trim(), gavNotation)
-        d.platform = true
-        ConfigureUtil.configure(action, d)
-        d.validate(project)
-        dependencies[d.name] = d.asDependency()
-    }
-
-    /**
-     * Defines and configures a dependency by gavNotation.</p>
-     * Example:
-     *
-     * <pre>
-     * dependency('org.codehaus.groovy:groovy:3.0.6') {
-     *     modules = [
-     *         'groovy-test',
-     *         'groovy-json',
-     *         'groovy-xml'
-     *     ]
-     * }
-     * </pre>
-     *
-     * @param gavNotation  must be in the {@code groupId:artifactId:version} notation
-     */
-    Dependency dependency(String gavNotation, Action<? super DependencySpec> action) {
-        if (isBlank(gavNotation)) {
-            throw new IllegalArgumentException('Dependency gavNotation cannot be blank.')
-        }
-        DependencySpecImpl d = DependencySpecImpl.parsePartial(project.rootProject, gavNotation.trim())
-        action.execute(d)
-        d.validate(project)
-        dependencies[d.name] = d.asDependency()
-    }
-
-    /**
-     * Defines and configures a dependency by gavNotation.</p>
-     * Example:
-     *
-     * <pre>
-     * dependency('org.codehaus.groovy:groovy:3.0.6') {
-     *     modules = [
-     *         'groovy-test',
-     *         'groovy-json',
-     *         'groovy-xml'
-     *     ]
-     * }
-     * </pre>
-     *
-     * @param gavNotation  must be in the {@code groupId:artifactId:version} notation
-     */
-    Dependency dependency(String gavNotation, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DependencySpec) Closure<Void> action) {
-        if (isBlank(gavNotation)) {
-            throw new IllegalArgumentException('Dependency gavNotation cannot be blank.')
-        }
-        DependencySpecImpl d = DependencySpecImpl.parsePartial(project.rootProject, gavNotation.trim())
-        ConfigureUtil.configure(action, d)
-        d.validate(project)
-        dependencies[d.name] = d.asDependency()
-    }
-
-    Dependency getDependency(String name) {
-        if (isBlank(name)) {
-            throw new IllegalArgumentException('Dependency name cannot be blank.')
-        }
-
-        if (dependencies.containsKey(name)) {
-            return dependencies.get(name)
-        }
-        throw new IllegalArgumentException("Undeclared dependency ${name}.")
     }
 }

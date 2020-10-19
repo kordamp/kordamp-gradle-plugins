@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.model.Information
+import org.kordamp.gradle.plugin.base.model.artifact.DependencyManagement
 import org.kordamp.gradle.plugin.base.plugins.Bintray
 import org.kordamp.gradle.plugin.base.plugins.Bom
 import org.kordamp.gradle.plugin.base.plugins.BuildInfo
@@ -30,7 +31,7 @@ import org.kordamp.gradle.plugin.base.plugins.Codenarc
 import org.kordamp.gradle.plugin.base.plugins.Coveralls
 import org.kordamp.gradle.plugin.base.plugins.Cpd
 import org.kordamp.gradle.plugin.base.plugins.Dependencies
-import org.kordamp.gradle.plugin.base.plugins.DependencyManagement
+
 import org.kordamp.gradle.plugin.base.plugins.Detekt
 import org.kordamp.gradle.plugin.base.plugins.ErrorProne
 import org.kordamp.gradle.plugin.base.plugins.Groovydoc

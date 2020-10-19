@@ -15,43 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.base.model.artifact
+package org.kordamp.gradle.plugin.base.tasks
 
 import groovy.transform.CompileStatic
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.TaskAction
+import org.kordamp.gradle.util.Cache
 
 /**
  * @author Andres Almiray
- * @since 0.37.0
+ * @since 0.41.0
  */
 @CompileStatic
-interface Dependency {
-    String getName()
-
-    String getGroupId()
-
-    String getArtifactId()
-
-    String getVersion()
-
-    String asGav()
-
-    String getGav()
-
-    String asGa()
-
-    String getGa()
-
-    Set<String> getModules()
-
-    Set<String> getModuleNames()
-
-    String gav(String moduleName)
-
-    String asGav(String moduleName)
-
-    String ga(String moduleName)
-
-    String asGa(String moduleName)
-
-    Map<String, Map<String, Object>> toMap()
+class ClearKordampFileCacheTask extends DefaultTask {
+    @TaskAction
+    void clearCache() {
+        Cache.getInstance().clear(project.gradle)
+    }
 }
