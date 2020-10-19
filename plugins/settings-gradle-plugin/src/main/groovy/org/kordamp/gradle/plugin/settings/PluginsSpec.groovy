@@ -23,6 +23,8 @@ import org.gradle.api.Action
 import java.util.function.Supplier
 
 /**
+ * Configures plugins for included projects.
+ *
  * @author Andres Almiray
  * @since 0.35.0
  */

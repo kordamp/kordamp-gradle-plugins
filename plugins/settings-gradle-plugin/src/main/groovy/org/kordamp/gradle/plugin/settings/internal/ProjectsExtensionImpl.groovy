@@ -18,11 +18,13 @@
 package org.kordamp.gradle.plugin.settings.internal
 
 import groovy.transform.CompileStatic
+import groovy.transform.Memoized
 import org.gradle.BuildAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.initialization.ProjectDescriptor
 import org.gradle.api.initialization.Settings
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -35,6 +37,8 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import java.util.regex.Pattern
 
+import static org.kordamp.gradle.util.GlobUtils.asGlobRegex
+
 /**
  * @author Andres Almiray
  * @since 0.35.0
@@ -45,14 +49,14 @@ class ProjectsExtensionImpl implements ProjectsExtension {
 
     final PluginsSpecImpl plugins = new PluginsSpecImpl()
 
-    final Property<String> layout
+    final Property<Layout> layout
     final Property<Boolean> enforceNamingConvention
     final Property<Boolean> useLongPaths
     final ListProperty<String> directories
     final ListProperty<String> excludes
     final Property<String> prefix
     final Property<String> suffix
-    final Property<String> fileNameTransformation
+    final Property<FileNameTransformation> fileNameTransformation
 
     final Set<DirectorySpecImpl> directoryConditions = []
     final Set<PathSpecImpl> pathConditions = []
@@ -61,28 +65,31 @@ class ProjectsExtensionImpl implements ProjectsExtension {
 
     ProjectsExtensionImpl(Settings settings, ObjectFactory objects) {
         this.settings = settings
-        layout = objects.property(String).convention('two-level')
+        layout = objects.property(Layout).convention(Layout.TWO_LEVEL)
         enforceNamingConvention = objects.property(Boolean).convention(true)
         useLongPaths = objects.property(Boolean).convention(false)
         directories = objects.listProperty(String).convention([])
         excludes = objects.listProperty(String).convention([])
-        prefix = objects.property(String)
-        suffix = objects.property(String)
-        fileNameTransformation = objects.property(String)
+        prefix = objects.property(String).convention(Providers.notDefined())
+        suffix = objects.property(String).convention(Providers.notDefined())
+        fileNameTransformation = objects.property(FileNameTransformation).convention(Providers.notDefined())
 
         settings.gradle.addBuildListener(new BuildAdapter() {
             @Override
             void settingsEvaluated(Settings s) {
-                if ('two-level' == layout.get().toLowerCase()) {
-                    processTwoLevelLayout()
-                } else if ('multi-level' == layout.get().toLowerCase()) {
-                    processMultiLevelLayout()
-                } else if ('standard' == layout.get().toLowerCase()) {
-                    processStandardLayout()
-                } else if ('explicit' == layout.get().toLowerCase()) {
-                    processExplicitDirectoriesAndPaths()
-                } else {
-                    LOG.warn "Unknown project layout '${layout.orNull}'. No subprojects will be added."
+                switch (layout.get()) {
+                    case Layout.TWO_LEVEL:
+                        processTwoLevelLayout()
+                        break
+                    case Layout.MULTI_LEVEL:
+                        processMultiLevelLayout()
+                        break
+                    case Layout.STANDARD:
+                        processStandardLayout()
+                        break
+                    case Layout.EXPLICIT:
+                        processExplicitDirectoriesAndPaths()
+                        break
                 }
                 cleanup()
             }
@@ -92,6 +99,16 @@ class ProjectsExtensionImpl implements ProjectsExtension {
                 applyPlugins(gradle.rootProject)
             }
         })
+    }
+
+    @Override
+    void setLayout(String layout) {
+        this.layout.set(Layout.valueOf(layout.trim().toUpperCase().replace('-', '_')))
+    }
+
+    @Override
+    void setFileNameTransformation(String transformation) {
+        this.fileNameTransformation.set(FileNameTransformation.valueOf(transformation.trim().toUpperCase()))
     }
 
     @Override
@@ -105,15 +122,29 @@ class ProjectsExtensionImpl implements ProjectsExtension {
     }
 
     @Override
+    @Deprecated
     DirectorySpec includeFromDir(String dir) {
+        println("The method includeFromDir is deprecated and will be removed in the future. Use includeProjects instead")
+        includeProjects(dir)
+    }
+
+    @Override
+    DirectorySpec includeProjects(String dir) {
         DirectorySpecImpl spec = new DirectorySpecImpl(dir)
         directoryConditions << spec
         spec
     }
 
     @Override
-    PathSpec includeFromPath(String path) {
-        PathSpecImpl spec = new PathSpecImpl(path)
+    @Deprecated
+    PathSpec includeFromPath(String dir) {
+        println("The method includeFromPath is deprecated and will be removed in the future. Use includeProject instead")
+        includeProject(dir)
+    }
+
+    @Override
+    PathSpec includeProject(String dir) {
+        PathSpecImpl spec = new PathSpecImpl(dir)
         pathConditions << spec
         spec
     }
@@ -142,7 +173,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
                 LOG.info "Skipping ${projectDir} as it does not exist."
                 continue
             }
-            includeProject(spec.path)
+            doIncludeProject(spec.path)
         }
     }
 
@@ -171,13 +202,13 @@ class ProjectsExtensionImpl implements ProjectsExtension {
                 LOG.info "Skipping ${projectDir} as it does not exist."
                 continue
             }
-            includeProject(path)
+            doIncludeProject(path)
         }
     }
 
     private void processStandardLayout() {
         settings.rootDir.eachDir { File projectDir ->
-            if (excludes.get().contains(projectDir.name)) return
+            if (isProjectExcluded(projectDir.name, projectDir.name)) return
 
             File buildFile = resolveBuildFile(projectDir, projectDir.name)
             doIncludeProject(settings.rootDir, projectDir.name, buildFile)
@@ -186,30 +217,30 @@ class ProjectsExtensionImpl implements ProjectsExtension {
 
     private void doProcessTwoLevelLayout(File parentDir) {
         parentDir.eachDir { File projectDir ->
-            if (excludes.get().contains(projectDir.name)) return
+            if (isProjectExcluded("${projectDir.parentFile.name}/${projectDir.name}", projectDir.name)) return
 
             File buildFile = resolveBuildFile(projectDir, projectDir.name)
             doIncludeProject(parentDir, projectDir.name, buildFile)
         }
     }
 
-    private void includeProject(File parentDir, String projectDirName) {
+    private void doIncludeProject(File parentDir, String projectDirName) {
         File buildFile = resolveBuildFile(parentDir, projectDirName)
         doIncludeProject(settings.rootDir, parentDir.name, buildFile)
     }
 
-    private void includeProject(File projectDir) {
-        includeProject(projectDir.parentFile, projectDir.name)
+    private void doIncludeProject(File projectDir) {
+        doIncludeProject(projectDir.parentFile, projectDir.name)
     }
 
-    private void includeProject(String path) {
+    private void doIncludeProject(String path) {
         String[] parts = path.split(Pattern.quote(File.separator))
         String projectDirName = path
         String projectName = parts[-1]
 
-        if (excludes.get().contains(projectName)) return
+        if (isProjectExcluded(projectDirName, projectName)) return
 
-        File projectDir = new File(projectDirName)
+        File projectDir = new File(settings.rootDir, projectDirName)
 
         assert projectDir.isDirectory()
 
@@ -225,16 +256,34 @@ class ProjectsExtensionImpl implements ProjectsExtension {
         }
     }
 
+    private boolean isProjectExcluded(String projectDir, String projectName) {
+        if (excludes.get().contains(projectName)) return true
+
+        for (String exclude : excludes.get()) {
+            if (pattern(exclude).matcher(projectDir).matches()) return true
+        }
+        for (String exclude : excludes.get()) {
+            if (pattern(exclude).matcher(projectName).matches()) return true
+        }
+
+        false
+    }
+
+    @Memoized
+    private Pattern pattern(String regex) {
+        Pattern.compile(asGlobRegex(regex))
+    }
+
     private File resolveBuildFile(File projectDir, String projectName) {
         if (enforceNamingConvention.get()) {
-            if ('add'.equalsIgnoreCase(fileNameTransformation.orNull)) {
+            if (FileNameTransformation.ADD == fileNameTransformation.orNull) {
                 if (!isBlank(prefix.orNull)) {
                     projectName = prefix.get() + projectName
                 }
                 if (!isBlank(suffix.orNull)) {
                     projectName += suffix.get()
                 }
-            } else if ('remove'.equalsIgnoreCase(fileNameTransformation.orNull)) {
+            } else if (FileNameTransformation.REMOVE == fileNameTransformation.orNull) {
                 if (!isBlank(prefix.get())) {
                     projectName -= prefix.get()
                 }

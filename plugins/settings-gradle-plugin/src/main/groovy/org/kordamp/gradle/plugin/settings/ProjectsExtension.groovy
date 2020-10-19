@@ -25,12 +25,34 @@ import org.gradle.api.provider.Property
 import java.util.function.Supplier
 
 /**
+ * Conventions for included projects in a build.
+ *
  * @author Andres Almiray
  * @since 0.15.0
  */
 @CompileStatic
 interface ProjectsExtension {
+    enum FileNameTransformation {
+        /** Add text to the file name (see suffix, prefix) */
+        ADD,
+        /** Remove text from the file name (see suffix, prefix) */
+        REMOVE
+    }
+
+    enum Layout {
+        /** Projects organized by a common parent */
+        TWO_LEVEL,
+        /** Projects organized at mixed levels */
+        MULTI_LEVEL,
+        /** Projects adjacent to the root */
+        STANDARD,
+        /** Custom combination */
+        EXPLICIT
+    }
+
     Property<String> getLayout()
+
+    void setLayout(String layout)
 
     Property<Boolean> getEnforceNamingConvention()
 
@@ -40,31 +62,103 @@ interface ProjectsExtension {
 
     ListProperty<String> getExcludes()
 
+    /**
+     * The prefix to add/remove to/from the build file name.
+     */
     Property<String> getPrefix()
 
+    /**
+     * The suffix to add/remove to/from the build file name.
+     */
     Property<String> getSuffix()
 
-    Property<String> getFileNameTransformation()
+    /**
+     * The transformation to be applied to the build file name.
+     */
+    Property<FileNameTransformation> getFileNameTransformation()
 
+    /**
+     * Sets the transformation to be applied to the build file name.
+     * Valid values are {@code ADD}, {@code REMOVE}.
+     */
+    void setFileNameTransformation(String transformation)
+
+    /**
+     * Configures plugins for all included projects.
+     */
     void plugins(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PluginsSpec) Closure<Void> action)
 
+    /**
+     * Configures plugins for all included projects.
+     */
     void plugins(Action<? super PluginsSpec> action)
 
+    /**
+     * Includes matching projects in the given directory.
+     * Projects must be direct children of the given argument.
+     *
+     * @param dir the parent directory of the projects to be included.
+     */
+    DirectorySpec includeProjects(String dir)
+
+    /**
+     * Includes a single project.
+     * @param dir the project directory.
+     */
+    PathSpec includeProject(String dir)
+
+    /**
+     * Includes matching projects in the given directory.
+     * Projects must be direct children of the given argument.
+     *
+     * @param dir the parent directory of the projects to be included.
+     * @deprecated As of release 0.41.0, replaced with {@link #includeProjects()} instead.
+     */
+    @Deprecated
     DirectorySpec includeFromDir(String dir)
 
+    /**
+     * Includes a single project.
+     * @param dir the project directory.
+     * @deprecated As of release 0.41.0, replaced with {@link #includeProject()} instead.
+     */
+    @Deprecated
     PathSpec includeFromPath(String path)
 
+    /**
+     * Configures multiple projects inside a parent directory
+     */
     interface DirectorySpec {
+        /**
+         * Excludes the given directory from the build.
+         *
+         * @param projectName the exact match to the project's directory name.
+         */
         DirectorySpec exclude(String projectName)
 
+        /**
+         * Includes the project if the input is {@code true}.
+         */
         void when(boolean value)
 
+        /**
+         * Applies the project if the condition evaluates to {@code true}.
+         */
         void when(Supplier<Boolean> supplier)
     }
 
+    /**
+     * Configures a single project by directory path.
+     */
     interface PathSpec {
+        /**
+         * Includes the project if the input is {@code true}.
+         */
         void when(boolean value)
 
+        /**
+         * Applies the project if the condition evaluates to {@code true}.
+         */
         void when(Supplier<Boolean> supplier)
     }
 }

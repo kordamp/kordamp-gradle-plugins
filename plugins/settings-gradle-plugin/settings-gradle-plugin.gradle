@@ -16,6 +16,20 @@
  * limitations under the License.
  */
 
+plugins {
+    id 'org.kordamp.gradle.integration-test'
+}
+
 dependencies {
     api project(':base-gradle-plugin')
+}
+
+integrationTest {
+    dependsOn(project(':base-gradle-plugin').jar, jar)
+    systemProperty 'project.version', project.version
+    systemProperty 'jars.dir', [
+        project(':base-gradle-plugin').jar,
+        jar
+    ].collect { "'${it.destinationDirectory.get().asFile.absolutePath}'" }
+        .join(',')
 }
