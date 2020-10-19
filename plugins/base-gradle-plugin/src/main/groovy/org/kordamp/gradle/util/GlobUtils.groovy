@@ -15,42 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.settings.internal
+package org.kordamp.gradle.util
 
+import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.PackageScope
-import org.gradle.api.Project
-import org.kordamp.gradle.plugin.settings.PluginsSpec
 
 /**
+ *
  * @author Andres Almiray
- * @since 0.35.0
+ * @author Leonard Bruenings
+ * @since 0.41.0
  */
-@PackageScope
+@Canonical
 @CompileStatic
-abstract class AbstractPluginsSpec {
-    final Set<PluginIdSpecImpl> ids = new LinkedHashSet<>()
-
-    PluginsSpec.PluginIdSpec id(String pluginId) {
-        String s = pluginId ? pluginId.trim() : pluginId
-        if (isNotBlank(s)) {
-            PluginIdSpecImpl spec = new PluginIdSpecImpl(s)
-            ids << spec
-            return spec
-        }
-        null
-    }
-
-    protected void applyPluginsTo(Project project) {
-        for (PluginIdSpecImpl spec : ids) {
-            if (spec.applies()) {
-                project.logger.debug("[settings] Applying plugin ${spec.id} to ${project}")
-                project.pluginManager.apply(spec.id)
-            }
-        }
-    }
-
-    protected String asGlobRegex(String globPattern) {
+class GlobUtils {
+    static String asGlobRegex(String globPattern, boolean isPathSyntax = false) {
         StringBuilder result = new StringBuilder(globPattern.length() + 2)
         result.append('^')
         for (int index = 0; index < globPattern.length(); index++) {
@@ -60,14 +39,22 @@ abstract class AbstractPluginsSpec {
                     if (next(globPattern, index + 1) == '*') {
                         // crosses directory boundaries
                         result.append('.*')
-                        index++;
+                        index++
                     } else {
-                        // within directory boundaryz
-                        result.append('[^:]*')
+                        // within directory boundary
+                        if (isPathSyntax) {
+                            result.append('[^:]*')
+                        } else {
+                            result.append('[^/]*')
+                        }
                     }
                     break
                 case '?':
-                    result.append('[^:]')
+                    if (isPathSyntax) {
+                        result.append('[^:]')
+                    } else {
+                        result.append('[^/]')
+                    }
                     break
                 case '$':
                 case '(':
@@ -95,22 +82,5 @@ abstract class AbstractPluginsSpec {
             return glob.charAt(i)
         }
         return 0
-    }
-
-    protected boolean isBlank(String str) {
-        if (str == null || str.length() == 0) {
-            return true
-        }
-        for (char c : str.toCharArray()) {
-            if (!Character.isWhitespace(c)) {
-                return false
-            }
-        }
-
-        return true
-    }
-
-    protected boolean isNotBlank(String str) {
-        !isBlank(str)
     }
 }

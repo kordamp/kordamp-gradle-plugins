@@ -96,7 +96,7 @@ interface PluginsSpec {
         /**
          * Excludes the given project matching its path. May be an exact project path match or a regex.
          */
-        void exclude(String path)
+        void excludePath(String path)
     }
 
     /**
@@ -117,7 +117,12 @@ interface PluginsSpec {
         /**
          * Excludes the given project matching its directory.
          */
-        void exclude(String dir)
+        void excludeDir(String dir)
+
+        /**
+         * Excludes the given project matching its path. May be an exact project path match or a regex.
+         */
+        void excludePath(String path)
     }
 
     /**

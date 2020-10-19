@@ -37,6 +37,7 @@ import java.util.jar.JarFile
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+import static org.kordamp.gradle.util.GlobUtils.asGlobRegex
 import static org.kordamp.gradle.util.PluginUtils.checkFlag
 import static org.kordamp.gradle.util.StringUtils.isBlank
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
@@ -393,44 +394,11 @@ class InlinePlugin implements Plugin<Settings> {
             if (subprojects && project != project.rootProject) return true
             for (String p : paths) {
                 String path = p.trim()
-                if (path == project.path || Pattern.compile(asRegex(path)).matcher(project.path).matches()) {
+                if (path == project.path || Pattern.compile(asGlobRegex(path, true)).matcher(project.path).matches()) {
                     return true
                 }
             }
             return false
-        }
-
-        private String asRegex(String wildcard) {
-            StringBuilder result = new StringBuilder(wildcard.length())
-            result.append('^')
-            for (int index = 0; index < wildcard.length(); index++) {
-                char character = wildcard.charAt(index)
-                switch (character) {
-                    case '*':
-                        result.append('.*')
-                        break;
-                    case '?':
-                        result.append('.')
-                        break;
-                    case '$':
-                    case '(':
-                    case ')':
-                    case '.':
-                    case '[':
-                    case '\\':
-                    case ']':
-                    case '^':
-                    case '{':
-                    case '|':
-                    case '}':
-                        result.append('\\')
-                    default:
-                        result.append(character)
-                        break;
-                }
-            }
-            result.append('$')
-            return result.toString()
         }
     }
 
@@ -689,40 +657,7 @@ class InlinePlugin implements Plugin<Settings> {
         }
 
         boolean matches(Project project) {
-            return regex == project.path || Pattern.compile(asRegex(regex)).matcher(project.path).matches()
-        }
-
-        private String asRegex(String wildcard) {
-            StringBuilder result = new StringBuilder(wildcard.length())
-            result.append('^')
-            for (int index = 0; index < wildcard.length(); index++) {
-                char character = wildcard.charAt(index)
-                switch (character) {
-                    case '*':
-                        result.append('.*')
-                        break;
-                    case '?':
-                        result.append('.')
-                        break;
-                    case '$':
-                    case '(':
-                    case ')':
-                    case '.':
-                    case '[':
-                    case '\\':
-                    case ']':
-                    case '^':
-                    case '{':
-                    case '|':
-                    case '}':
-                        result.append('\\')
-                    default:
-                        result.append(character)
-                        break;
-                }
-            }
-            result.append('$')
-            return result.toString()
+            return regex == project.path || Pattern.compile(asGlobRegex(regex, true)).matcher(project.path).matches()
         }
     }
 }

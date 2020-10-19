@@ -26,6 +26,8 @@ import org.kordamp.gradle.util.ConfigureUtil
 import java.util.function.Function
 import java.util.regex.Pattern
 
+import static org.kordamp.gradle.util.GlobUtils.asGlobRegex
+
 /**
  * @author Andres Almiray
  * @since 0.35.0
@@ -115,7 +117,7 @@ final class ProjectsSpecImpl implements ProjectsSpec {
         new Function<Project, Boolean>() {
             @Override
             Boolean apply(Project project) {
-                path == project.path || Pattern.compile(asRegex(path)).matcher(project.path).matches()
+                path == project.path || Pattern.compile(asGlobRegex(path, true)).matcher(project.path).matches()
             }
         }
     }
@@ -125,46 +127,13 @@ final class ProjectsSpecImpl implements ProjectsSpec {
             @Override
             Boolean apply(Project project) {
                 for (String path : paths) {
-                    if (path == project.path || Pattern.compile(asRegex(path)).matcher(project.path).matches()) {
+                    if (path == project.path || Pattern.compile(asGlobRegex(path, true)).matcher(project.path).matches()) {
                         return true
                     }
                 }
                 false
             }
         }
-    }
-
-    private static String asRegex(String wildcard) {
-        StringBuilder result = new StringBuilder(wildcard.length())
-        result.append('^')
-        for (int index = 0; index < wildcard.length(); index++) {
-            char character = wildcard.charAt(index)
-            switch (character) {
-                case '*':
-                    result.append('.*')
-                    break;
-                case '?':
-                    result.append('.')
-                    break;
-                case '$':
-                case '(':
-                case ')':
-                case '.':
-                case '[':
-                case '\\':
-                case ']':
-                case '^':
-                case '{':
-                case '|':
-                case '}':
-                    result.append('\\')
-                default:
-                    result.append(character)
-                    break;
-            }
-        }
-        result.append('$')
-        return result.toString()
     }
 
     Action<? super Project> asProjectConfigurer() {

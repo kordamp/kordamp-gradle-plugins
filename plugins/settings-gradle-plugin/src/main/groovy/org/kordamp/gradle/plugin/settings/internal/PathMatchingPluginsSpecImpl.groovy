@@ -64,6 +64,6 @@ class PathMatchingPluginsSpecImpl extends AbstractPluginsSpec implements Plugins
 
     @Memoized
     protected Pattern pattern(String regex) {
-        Pattern.compile(asRegex(regex))
+        Pattern.compile(asGlobRegex(regex))
     }
 }

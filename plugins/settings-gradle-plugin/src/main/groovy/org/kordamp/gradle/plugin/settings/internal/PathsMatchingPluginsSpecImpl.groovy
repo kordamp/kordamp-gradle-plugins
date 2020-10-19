@@ -40,7 +40,7 @@ class PathsMatchingPluginsSpecImpl extends PathMatchingPluginsSpecImpl implement
     }
 
     @Override
-    void exclude(String path) {
+    void excludePath(String path) {
         String s = path?.trim()
         if (isNotBlank(s)) {
             excludes << s
