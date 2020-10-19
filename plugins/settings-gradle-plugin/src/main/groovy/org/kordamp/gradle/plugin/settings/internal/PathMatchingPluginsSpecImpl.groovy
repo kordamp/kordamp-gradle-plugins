@@ -18,6 +18,7 @@
 package org.kordamp.gradle.plugin.settings.internal
 
 import groovy.transform.CompileStatic
+import groovy.transform.Memoized
 import groovy.transform.PackageScope
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.settings.PluginsSpec
@@ -55,9 +56,14 @@ class PathMatchingPluginsSpecImpl extends AbstractPluginsSpec implements Plugins
 
     void apply(Project project) {
         for (String path : paths) {
-            if (path == project.path || Pattern.compile(asRegex(path)).matcher(project.path).matches()) {
+            if (path == project.path || pattern(path).matcher(project.path).matches()) {
                 applyPluginsTo(project)
             }
         }
+    }
+
+    @Memoized
+    protected Pattern pattern(String regex) {
+        Pattern.compile(asRegex(regex))
     }
 }

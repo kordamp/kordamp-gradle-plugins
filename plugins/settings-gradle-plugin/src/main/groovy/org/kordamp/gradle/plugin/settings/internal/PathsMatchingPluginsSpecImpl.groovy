@@ -22,8 +22,6 @@ import groovy.transform.PackageScope
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.settings.PluginsSpec
 
-import java.util.regex.Pattern
-
 /**
  * @author Andres Almiray
  * @since 0.41.0
@@ -51,11 +49,11 @@ class PathsMatchingPluginsSpecImpl extends PathMatchingPluginsSpecImpl implement
 
     void apply(Project project) {
         for (String path : paths) {
-            if (path == project.path || Pattern.compile(asRegex(path)).matcher(project.path).matches()) {
+            if (path == project.path || pattern(path).matcher(project.path).matches()) {
                 boolean excluded = excludes.contains(project.path)
-                if(excluded) {
+                if (!excluded) {
                     for (String exclude : excludes) {
-                        if (Pattern.compile(asRegex(exclude)).matcher(project.path).matches()) {
+                        if (pattern(exclude).matcher(project.path).matches()) {
                             excluded = true
                             break
                         }
