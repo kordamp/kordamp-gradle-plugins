@@ -17,7 +17,7 @@
  */
 
 dependencies {
-    compileOnly "org.apache.maven:maven-model-builder:$mavenVersion"
+    implementation "org.apache.maven:maven-model-builder:$mavenVersion"
 
     // added here so that dependencyUpdates can tell if there are newer versions
     compileOnly "net.sourceforge.pmd:pmd:$pmdVersion"

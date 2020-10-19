@@ -23,6 +23,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:$shadowPluginVersion"
         classpath "org.ajoberstar:gradle-git-publish:$gitPluginVersion"
         classpath "org.kordamp.gradle:groovy-project-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:bintray-gradle-plugin:$kordampPluginVersion"
