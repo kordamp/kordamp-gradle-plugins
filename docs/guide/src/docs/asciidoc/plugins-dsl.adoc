@@ -14,25 +14,27 @@ The DSL is comprised of the following elements
 projects {
     plugins {
         all {
-           id(String).when(boolean)
-           id(String).when(Supplier<Boolean>)
+            exclude(String pathOrRegex)
+            id(String pluginId).when(boolean)
+            id(String pluginId).when(Supplier<Boolean> condition)
         }
-        dir(String) {
-            id(String).when(boolean)
-            id(String).when(Supplier<Boolean>)
+        dir(String dir) {
+            id(String pluginId).when(boolean value)
+            id(String pluginId).when(Supplier<Boolean> condition)
         }
-        dirs(List<String>) {
-            exclude(String)
-            id(String).when(boolean)
-            id(String).when(Supplier<Boolean>)
+        dirs(List<String> dirs) {
+            exclude(String dir)
+            id(String pluginId).when(boolean value)
+            id(String pluginId).when(Supplier<Boolean> condition)
         }
-        path(String) {
-            id(String).when(boolean)
-            id(String).when(Supplier<Boolean>)
+        path(String pathOrRegex) {
+            id(String pluginId).when(boolean value)
+            id(String pluginId).when(Supplier<Boolean> condition)
         }
-        paths(List<String>) {
-            id(String).when(boolean)
-            id(String).when(Supplier<Boolean>)
+        paths(List<String> pathsOrRegexes) {
+            exclude(String pathOrRegex)
+            id(String pluginId).when(boolean value)
+            id(String pluginId).when(Supplier<Boolean> condition)
         }
     }
 }
@@ -46,7 +48,8 @@ dir:: A project whose parent directory exactly matches the given argument.
 dirs:: Projects whose parent directory exactly matches any of the elements in the given list of values.
 path:: A project that exactly matches the argument by path, _or_ projects whose path matches the argument as regex.
 paths:: Projects whose path either matches exactly any of the given elements, _or_ the path matches any of the elements as regex.
-exclude:: A project path to be excluded. Path must be an exact match to the given argument.
+exclude:: A project to be excluded. Arguments must be an exact match to the  project directory when used with `dirs()`
+or an exact match to a project path or a path regex when used with `paths()` and `all()`.
 
 These are the usage rules:
 

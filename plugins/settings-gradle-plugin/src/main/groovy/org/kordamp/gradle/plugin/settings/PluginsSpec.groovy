@@ -28,39 +28,110 @@ import java.util.function.Supplier
  */
 @CompileStatic
 interface PluginsSpec {
-    void all(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PathMatchingPluginsSpec) Closure<Void> action)
+    /**
+     * Configures plugins for all projects.
+     */
+    void all(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PathsMatchingPluginsSpec) Closure<Void> action)
 
+    /**
+     * Configures plugins for a project matching by its directory.
+     */
     void dir(String dir, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DirMatchingPluginsSpec) Closure<Void> action)
 
-    void dirs(List<String> dirs, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DirMatchingPluginsSpec) Closure<Void> action)
+    /**
+     * Configures plugins for all matching projects by their directories.
+     */
+    void dirs(List<String> dirs, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DirsMatchingPluginsSpec) Closure<Void> action)
 
+    /**
+     * Configures plugins for a project matching by path.
+     */
     void path(String path, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PathMatchingPluginsSpec) Closure<Void> action)
 
-    void paths(List<String> paths, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PathMatchingPluginsSpec) Closure<Void> action)
+    /**
+     * Configures plugins for all matching projects by their paths.
+     */
+    void paths(List<String> paths, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PathsMatchingPluginsSpec) Closure<Void> action)
 
-    void all(Action<? super PathMatchingPluginsSpec> action)
+    /**
+     * Configures plugins for all projects.
+     */
+    void all(Action<? super PathsMatchingPluginsSpec> action)
 
+    /**
+     * Configures plugins for a project matching by its directory.
+     */
     void dir(String dir, Action<? super DirMatchingPluginsSpec> action)
 
-    void dirs(List<String> dirs, Action<? super DirMatchingPluginsSpec> action)
+    /**
+     * Configures plugins for all matching projects by their directories.
+     */
+    void dirs(List<String> dirs, Action<? super DirsMatchingPluginsSpec> action)
 
+    /**
+     * Configures plugins for a project matching by path.
+     */
     void path(String path, Action<? super PathMatchingPluginsSpec> action)
 
-    void paths(List<String> paths, Action<? super PathMatchingPluginsSpec> action)
+    /**
+     * Configures plugins for all matching projects by their paths.
+     */
+    void paths(List<String> paths, Action<? super PathsMatchingPluginsSpec> action)
 
+    /**
+     * Configures a project path matching instruction.
+     */
     interface PathMatchingPluginsSpec {
+        /**
+         * Defines a plugin id to apply to the matching project.
+         * @param id a plugin id such as "java-library".
+         */
         PluginIdSpec id(String pluginId)
     }
 
-    interface DirMatchingPluginsSpec {
+    /**
+     * Configures a project path matching instruction for multiple paths.
+     */
+    interface PathsMatchingPluginsSpec extends PathMatchingPluginsSpec {
+        /**
+         * Excludes the given project matching its path. May be an exact project path match or a regex.
+         */
         void exclude(String path)
+    }
 
+    /**
+     * Configures a directory matching instruction.
+     */
+    interface DirMatchingPluginsSpec {
+        /**
+         * Defines a plugin id to apply to the matching project.
+         * @param id a plugin id such as "java-library".
+         */
         PluginIdSpec id(String pluginId)
     }
 
+    /**
+     * Configures a project directory matching instruction for multiple directories.
+     */
+    interface DirsMatchingPluginsSpec extends DirMatchingPluginsSpec {
+        /**
+         * Excludes the given project matching its directory.
+         */
+        void exclude(String dir)
+    }
+
+    /**
+     * Configures a plugin id definition
+     */
     interface PluginIdSpec {
+        /**
+         * Applies the plugin if the input is {@code true}.
+         */
         void when(boolean value)
 
+        /**
+         * Applies the plugin if the condition evaluates to {@code true}.
+         */
         void when(Supplier<Boolean> supplier)
     }
 }

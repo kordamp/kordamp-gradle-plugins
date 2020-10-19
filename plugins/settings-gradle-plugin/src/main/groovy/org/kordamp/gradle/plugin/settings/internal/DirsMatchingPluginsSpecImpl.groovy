@@ -24,37 +24,33 @@ import org.kordamp.gradle.plugin.settings.PluginsSpec
 
 /**
  * @author Andres Almiray
- * @since 0.35.0
+ * @since 0.41.0
  */
 @PackageScope
 @CompileStatic
-class DirMatchingPluginsSpecImpl extends AbstractPluginsSpec implements PluginsSpec.DirMatchingPluginsSpec {
-    final Set<String> dirs = new LinkedHashSet<>()
+class DirsMatchingPluginsSpecImpl extends DirMatchingPluginsSpecImpl implements PluginsSpec.DirsMatchingPluginsSpec {
+    final Set<String> excludes = new LinkedHashSet<>()
 
-    DirMatchingPluginsSpecImpl(String dir) {
+    DirsMatchingPluginsSpecImpl(String dir) {
         this([dir])
     }
 
-    DirMatchingPluginsSpecImpl(List<String> dirs) {
-        if (!dirs) {
-            throw new IllegalArgumentException('Empty argument list')
-        }
+    DirsMatchingPluginsSpecImpl(List<String> dirs) {
+        super(dirs)
+    }
 
-        for (String dir : dirs) {
-            if (isNotBlank(dir?.trim())) {
-                this.dirs << dir.trim()
-            }
-        }
-
-        if (!this.dirs) {
-            throw new IllegalArgumentException('Empty argument list')
+    @Override
+    void exclude(String dir) {
+        String s = dir?.trim()
+        if (isNotBlank(s)) {
+            excludes << s
         }
     }
 
     void apply(Project project) {
         String parentDir = project.projectDir.parentFile.name
         for (String dir : dirs) {
-            if (parentDir == dir) {
+            if (parentDir == dir && !(excludes.contains(project.projectDir.name))) {
                 applyPluginsTo(project)
             }
         }

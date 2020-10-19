@@ -35,8 +35,8 @@ class PluginsSpecImpl implements PluginsSpec {
     private final List<PathMatchingPluginsSpecImpl> pluginsByPath = []
 
     @Override
-    void all(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PathMatchingPluginsSpec) Closure<Void> action) {
-        PathMatchingPluginsSpecImpl spec = new PathMatchingPluginsSpecImpl('*')
+    void all(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PathsMatchingPluginsSpec) Closure<Void> action) {
+        PathsMatchingPluginsSpecImpl spec = new PathsMatchingPluginsSpecImpl('*')
         ConfigureUtil.configure(action, spec)
         pluginsByPath << spec
     }
@@ -49,8 +49,8 @@ class PluginsSpecImpl implements PluginsSpec {
     }
 
     @Override
-    void dirs(List<String> dirs, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DirMatchingPluginsSpec) Closure<Void> action) {
-        DirMatchingPluginsSpecImpl spec = new DirMatchingPluginsSpecImpl(dirs)
+    void dirs(List<String> dirs, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DirsMatchingPluginsSpec) Closure<Void> action) {
+        DirsMatchingPluginsSpecImpl spec = new DirsMatchingPluginsSpecImpl(dirs)
         ConfigureUtil.configure(action, spec)
         pluginsByDir << spec
     }
@@ -63,15 +63,15 @@ class PluginsSpecImpl implements PluginsSpec {
     }
 
     @Override
-    void paths(List<String> paths, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PathMatchingPluginsSpec) Closure<Void> action) {
-        PathMatchingPluginsSpecImpl spec = new PathMatchingPluginsSpecImpl(paths)
+    void paths(List<String> paths, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PathsMatchingPluginsSpec) Closure<Void> action) {
+        PathsMatchingPluginsSpecImpl spec = new PathsMatchingPluginsSpecImpl(paths)
         ConfigureUtil.configure(action, spec)
         pluginsByPath << spec
     }
 
     @Override
-    void all(Action<? super PathMatchingPluginsSpec> action) {
-        PathMatchingPluginsSpecImpl spec = new PathMatchingPluginsSpecImpl('*')
+    void all(Action<? super PathsMatchingPluginsSpec> action) {
+        PathsMatchingPluginsSpecImpl spec = new PathsMatchingPluginsSpecImpl('*')
         action.execute(spec)
         pluginsByPath << spec
     }
@@ -84,8 +84,8 @@ class PluginsSpecImpl implements PluginsSpec {
     }
 
     @Override
-    void dirs(List<String> dirs, Action<? super DirMatchingPluginsSpec> action) {
-        DirMatchingPluginsSpecImpl spec = new DirMatchingPluginsSpecImpl(dirs)
+    void dirs(List<String> dirs, Action<? super DirsMatchingPluginsSpec> action) {
+        DirsMatchingPluginsSpecImpl spec = new DirsMatchingPluginsSpecImpl(dirs)
         action.execute(spec)
         pluginsByDir << spec
     }
@@ -98,8 +98,8 @@ class PluginsSpecImpl implements PluginsSpec {
     }
 
     @Override
-    void paths(List<String> paths, Action<? super PathMatchingPluginsSpec> action) {
-        PathMatchingPluginsSpecImpl spec = new PathMatchingPluginsSpecImpl(paths)
+    void paths(List<String> paths, Action<? super PathsMatchingPluginsSpec> action) {
+        PathsMatchingPluginsSpecImpl spec = new PathsMatchingPluginsSpecImpl(paths)
         action.execute(spec)
         pluginsByPath << spec
     }
