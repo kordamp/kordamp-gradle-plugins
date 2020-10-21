@@ -175,7 +175,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension config = resolveConfig(project)
 
         FileCollection srcdirs = project.objects.fileCollection()
-        project.tasks.withType(JxrTask) { JxrTask task ->
+        project.tasks.withType(JxrTask).configureEach { JxrTask task ->
             if (project in config.docs.sourceHtml.aggregate.excludedProjects) return
             if (task.name != AGGREGATE_SOURCE_XREF_TASK_NAME &&
                 task.enabled)
@@ -184,7 +184,7 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
 
         project.childProjects.values().each { p ->
             if (p in config.docs.sourceHtml.aggregate.excludedProjects) return
-            p.tasks.withType(JxrTask) { JxrTask task ->
+            p.tasks.withType(JxrTask).configureEach { JxrTask task ->
                 if (task.enabled) srcdirs = srcdirs.plus(task.sourceDirs)
             }
         }

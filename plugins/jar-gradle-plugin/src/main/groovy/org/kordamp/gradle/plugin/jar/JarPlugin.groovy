@@ -107,7 +107,7 @@ class JarPlugin extends AbstractKordampPlugin {
     private class JarAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
         @Override
         void allProjectsEvaluated(Project rootProject) {
-            rootProject.tasks.withType(Jar) { Jar t ->
+            rootProject.tasks.withType(Jar).configureEach { Jar t ->
                 if (t.name == 'jar' && resolveConfig(rootProject).artifacts.jar.enabled) {
                     configureJarMetainf(rootProject, t)
                     configureClasspathManifest(rootProject, t)
@@ -115,7 +115,7 @@ class JarPlugin extends AbstractKordampPlugin {
                 configureJarManifest(rootProject, t)
             }
             rootProject.childProjects.values().each { Project p ->
-                p.tasks.withType(Jar) { Jar t ->
+                p.tasks.withType(Jar).configureEach { Jar t ->
                     if (t.name == 'jar' && resolveConfig(p).artifacts.jar.enabled) {
                         configureJarMetainf(p, t)
                         configureClasspathManifest(p, t)

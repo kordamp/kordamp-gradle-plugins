@@ -144,7 +144,7 @@ class PmdPlugin extends AbstractKordampPlugin {
             PmdExtension pmdExt = project.extensions.findByType(PmdExtension)
             pmdExt.toolVersion = config.quality.pmd.toolVersion
 
-            project.tasks.withType(Pmd) { Pmd task ->
+            project.tasks.withType(Pmd).configureEach { Pmd task ->
                 task.setGroup('Quality')
                 config.quality.pmd.applyTo(task)
                 String sourceSetName = task.name['pmd'.size()..-1].uncapitalize()
@@ -155,7 +155,7 @@ class PmdPlugin extends AbstractKordampPlugin {
 
             if (allPmdTask) {
                 Set<Pmd> tt = new LinkedHashSet<>()
-                project.tasks.withType(Pmd) { Pmd task ->
+                project.tasks.withType(Pmd).configureEach { Pmd task ->
                     if (task.name != ALL_PMD_TASK_NAME &&
                         task.enabled) tt << task
                 }
@@ -191,7 +191,7 @@ class PmdPlugin extends AbstractKordampPlugin {
         pmdExt.toolVersion = config.quality.pmd.toolVersion
 
         Set<Pmd> tt = new LinkedHashSet<>()
-        project.tasks.withType(Pmd) { Pmd task ->
+        project.tasks.withType(Pmd).configureEach { Pmd task ->
             if (project in config.quality.pmd.aggregate.excludedProjects) return
             if (task.name != ALL_PMD_TASK_NAME &&
                 task.name != AGGREGATE_PMD_TASK_NAME &&
@@ -200,7 +200,7 @@ class PmdPlugin extends AbstractKordampPlugin {
 
         project.childProjects.values().each { p ->
             if (p in config.quality.pmd.aggregate.excludedProjects) return
-            p.tasks.withType(Pmd) { Pmd task ->
+            p.tasks.withType(Pmd).configureEach { Pmd task ->
                 if (task.name != ALL_PMD_TASK_NAME &&
                     task.enabled) tt << task
             }

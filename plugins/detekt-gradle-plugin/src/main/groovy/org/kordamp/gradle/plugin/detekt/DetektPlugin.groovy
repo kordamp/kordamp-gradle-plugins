@@ -135,7 +135,7 @@ class DetektPlugin extends AbstractKordampPlugin {
             DetektExtension detektExt = project.extensions.findByType(DetektExtension)
             detektExt.toolVersion = config.quality.detekt.toolVersion
 
-            project.tasks.withType(Detekt) { Detekt task ->
+            project.tasks.withType(Detekt).configureEach { Detekt task ->
                 task.setGroup('Quality')
                 DetektPlugin.applyTo(config, task)
                 String sourceSetName = task.name['detekt'.size()..-1].uncapitalize()
@@ -144,17 +144,17 @@ class DetektPlugin extends AbstractKordampPlugin {
                 }
             }
 
-            project.tasks.withType(DetektGenerateConfigTask) { DetektGenerateConfigTask t ->
+            project.tasks.withType(DetektGenerateConfigTask).configureEach { DetektGenerateConfigTask t ->
                 t.setGroup('Quality')
             }
 
-            project.tasks.withType(DetektCreateBaselineTask) { DetektCreateBaselineTask t ->
+            project.tasks.withType(DetektCreateBaselineTask).configureEach { DetektCreateBaselineTask t ->
                 t.setGroup('Quality')
             }
 
             if (allDetektTask) {
                 Set<Detekt> tt = new LinkedHashSet<>()
-                project.tasks.withType(Detekt) { Detekt task ->
+                project.tasks.withType(Detekt).configureEach { Detekt task ->
                     if (task.name != ALL_DETEKT_TASK_NAME &&
                         task.enabled) tt << task
                 }
@@ -191,7 +191,7 @@ class DetektPlugin extends AbstractKordampPlugin {
         detektExt.toolVersion = config.quality.detekt.toolVersion
 
         Set<Detekt> tt = new LinkedHashSet<>()
-        project.tasks.withType(Detekt) { Detekt task ->
+        project.tasks.withType(Detekt).configureEach { Detekt task ->
             if (project in config.quality.detekt.aggregate.excludedProjects) return
             if (task.name != ALL_DETEKT_TASK_NAME &&
                 task.name != AGGREGATE_DETEKT_TASK_NAME &&
@@ -200,7 +200,7 @@ class DetektPlugin extends AbstractKordampPlugin {
 
         project.childProjects.values().each { p ->
             if (p in config.quality.detekt.aggregate.excludedProjects) return
-            p.tasks.withType(Detekt) { Detekt task ->
+            p.tasks.withType(Detekt).configureEach { Detekt task ->
                 if (task.name != ALL_DETEKT_TASK_NAME &&
                     task.enabled) tt << task
             }

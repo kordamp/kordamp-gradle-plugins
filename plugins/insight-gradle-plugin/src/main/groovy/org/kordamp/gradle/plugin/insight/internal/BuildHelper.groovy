@@ -61,7 +61,7 @@ class BuildHelper extends BuildAdapter implements ProjectEvaluationListener,
     @Override
     void settingsEvaluated(Settings settings) {
         build.setSettingsEvaluated(System.currentTimeMillis())
-        build.setRootProjectName(settings.getRootProject().getName())
+        build.setRootProjectName(settings.rootProject.name)
     }
 
     @Override
@@ -77,13 +77,13 @@ class BuildHelper extends BuildAdapter implements ProjectEvaluationListener,
     @Override
     void buildFinished(BuildResult result) {
         build.setEnd(ZonedDateTime.now())
-        build.setFailure(result.getFailure() != null)
+        build.setFailure(result.failure != null)
         writeReports()
     }
 
     @Override
     void beforeEvaluate(org.gradle.api.Project project) {
-        Project p = build.getProjects().computeIfAbsent(project.getPath(), { k -> new Project(k, project.getName(), project) })
+        Project p = build.projects.computeIfAbsent(project.path, { k -> new Project(k, project.name, project) })
         long millis = System.currentTimeMillis()
         p.setStartEvaluate(millis)
         p.setEndEvaluate(millis)
@@ -91,7 +91,7 @@ class BuildHelper extends BuildAdapter implements ProjectEvaluationListener,
 
     @Override
     void afterEvaluate(org.gradle.api.Project project, ProjectState projectState) {
-        Project p = build.getProjects().get(project.getPath())
+        Project p = build.projects.get(project.path)
         p.setEndEvaluate(System.currentTimeMillis())
     }
 
@@ -108,8 +108,8 @@ class BuildHelper extends BuildAdapter implements ProjectEvaluationListener,
 
     @Override
     void beforeExecute(org.gradle.api.Task task) {
-        Task t = build.getProjects().get(task.getProject().getPath())
-            .getTasks().computeIfAbsent(task.getPath(), { k -> new Task(k, task.getName()) })
+        Task t = build.projects.get(task.project.path)
+            .tasks.computeIfAbsent(task.path, { k -> new Task(k, task.name) })
         long millis = System.currentTimeMillis()
         t.setBeforeExecute(millis)
         t.setAfterExecute(millis)
@@ -126,20 +126,19 @@ class BuildHelper extends BuildAdapter implements ProjectEvaluationListener,
 
     @Override
     void afterExecute(org.gradle.api.Task task, TaskState state) {
-        Task t = build.getProjects().get(task.getProject().getPath())
-            .getTasks().get(task.getPath())
+        Task t = build.projects.get(task.project.path)
+            .tasks.get(task.path)
         t.setAfterExecute(System.currentTimeMillis())
 
-        t.setExecuted(state.getExecuted())
-        t.setSkipped(state.getSkipped())
-        t.setUpToDate(state.getUpToDate())
-        t.setExecuted(state.getExecuted())
-        t.setDidWork(state.getDidWork())
-        t.setNoSource(state.getNoSource())
-        t.setFailed(state.getFailure() != null)
+        t.setExecuted(state.executed)
+        t.setSkipped(state.skipped)
+        t.setUpToDate(state.upToDate)
+        t.setDidWork(state.didWork)
+        t.setNoSource(state.noSource)
+        t.setFailed(state.failure != null)
         if (state instanceof TaskStateInternal) {
-            t.setFromCache(((TaskStateInternal) state).isFromCache())
-            t.setActionable(((TaskStateInternal) state).isActionable())
+            t.setFromCache(((TaskStateInternal) state).fromCache)
+            t.setActionable(((TaskStateInternal) state).actionable)
         }
     }
 

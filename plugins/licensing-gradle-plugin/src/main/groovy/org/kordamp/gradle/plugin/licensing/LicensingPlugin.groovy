@@ -360,7 +360,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
         DownloadLicensesExtension extension = project.extensions.findByType(DownloadLicensesExtension)
         extension.aliases = new LinkedHashMap<>(defaultAliases)
 
-        project.tasks.withType(DownloadLicenses) { DownloadLicenses task ->
+        project.tasks.withType(DownloadLicenses).configureEach { DownloadLicenses task ->
             task.aliases = defaultAliases
         }
     }

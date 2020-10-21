@@ -59,7 +59,7 @@ class AggregateSourceStatsReportTask extends DefaultTask {
         Map<String, Map<String, Integer>> stats = [:]
 
         project.subprojects.each { subprj ->
-            subprj.tasks.withType(SourceStatsTask) { SourceStatsTask t ->
+            subprj.tasks.withType(SourceStatsTask).configureEach { SourceStatsTask t ->
                 if (!t.enabled || !t.xmlReport.exists()) return
 
                 def xml = new XmlSlurper().parse(t.xmlReport)

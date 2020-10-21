@@ -107,7 +107,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
         setEnabled(config.bintray.enabled)
 
         if (!config.bintray.enabled) {
-            project.getTasks().findByName(BintrayUploadTask.TASK_NAME)?.enabled = false
+            project.tasks.findByName(BintrayUploadTask.TASK_NAME)?.enabled = false
             setEnabled(false)
             return
         }

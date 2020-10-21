@@ -193,7 +193,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                 return
             }
 
-            project.tasks.withType(Test) { Test testTask ->
+            project.tasks.withType(Test).configureEach { Test testTask ->
                 if (testTask instanceof IntegrationTest) {
                     configureLogging(testTask, config.testing.integration.logging)
                     config.testing.integrationTasks() << (IntegrationTest) testTask
