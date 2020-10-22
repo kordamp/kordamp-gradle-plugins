@@ -190,10 +190,9 @@ class ProjectsExtensionImpl implements ProjectsExtension {
             }
         } else {
             settings.settingsDir.eachDir { File parentDir ->
-                println parentDir.absolutePath
-                //if (!skipDirectory(parentDir)) {
+                if (!skipDirectoryDiscoveryFor(parentDir)) {
                     doProcessTwoLevelLayout(parentDir)
-                //}
+                }
             }
         }
     }
@@ -218,9 +217,8 @@ class ProjectsExtensionImpl implements ProjectsExtension {
         }
     }
 
-    private boolean skipDirectory(File dir) {
-        dir.name.startsWith('.') ||
-            dir.name in ['buildSrc', 'gradle']
+    private boolean skipDirectoryDiscoveryFor(File dir) {
+        dir.name.charAt(0) == '.' || (dir.name in ['buildSrc', 'gradle'])
     }
 
     private void doProcessTwoLevelLayout(File parentDir) {
