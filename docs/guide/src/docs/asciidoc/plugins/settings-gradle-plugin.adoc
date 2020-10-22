@@ -75,6 +75,7 @@ to `false`, in which case the default build file name (`build.gradle`, `build.gr
 [subs="+macros"]
 ----
 projects {
+    cache
     layout
     enforceNamingConvention
     directories
@@ -102,6 +103,7 @@ projects {
 [options="header", cols="5*"]
 |===
 | Name                    | Type                   | Required | Default Value | Description
+| cache                   | boolean                | no       | false         | If `true` then the project structure will be cached.
 | layout                  | Layout                 | no       | TWO_LEVEL     | Defines the project layout. Valid values are [TWO_LEVEL, MULTI_LEVEL, STANDARD, EXPLICIT]. +
                                                                                 Also accepts literal values [`two-level`, `multi-level`, `standard`, `explicit`].
 | enforceNamingConvention | boolean                | no       | true          | If `true` then build file names must match their containing project directory name.
@@ -116,6 +118,11 @@ projects {
 
 The `directories` property is not required if the chosen layout is set to `standard` or `explicit`. It may be omitted if the chosen layout
 is `two-level` however is recommended to define it if the search space is too big (too many first level directories).
+
+The use of this DSL implies the computation of the root project's structure on every build. You can cache the project structure
+by settings `cache` to `true`. The cache will be automatically invalidated if the settings file is updated in any way, thus
+when adding or removing a project directory for autodiscovery you must, at least, modify the last modified timestamp of the
+settings file, typically by invoking the `touch` OS command on the file, failing that make a simple edit and save the file.
 
 [[_org_kordamp_gradle_settings_methods]]
 === Methods

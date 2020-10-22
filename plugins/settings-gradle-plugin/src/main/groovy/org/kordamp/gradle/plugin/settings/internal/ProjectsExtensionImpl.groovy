@@ -33,6 +33,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.kordamp.gradle.plugin.settings.PluginsSpec
 import org.kordamp.gradle.plugin.settings.ProjectsExtension
+import org.kordamp.gradle.util.Cache
 import org.kordamp.gradle.util.ConfigureUtil
 
 import java.util.regex.Pattern
@@ -52,6 +53,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
     final Property<Layout> layout
     final Property<Boolean> enforceNamingConvention
     final Property<Boolean> useLongPaths
+    final Property<Boolean> cache
     final ListProperty<String> directories
     final ListProperty<String> excludes
     final Property<String> prefix
@@ -68,6 +70,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
         layout = objects.property(Layout).convention(Layout.TWO_LEVEL)
         enforceNamingConvention = objects.property(Boolean).convention(true)
         useLongPaths = objects.property(Boolean).convention(false)
+        cache = objects.property(Boolean).convention(false)
         directories = objects.listProperty(String).convention([])
         excludes = objects.listProperty(String).convention([])
         prefix = objects.property(String).convention(Providers.notDefined())
@@ -77,21 +80,12 @@ class ProjectsExtensionImpl implements ProjectsExtension {
         settings.gradle.addBuildListener(new BuildAdapter() {
             @Override
             void settingsEvaluated(Settings s) {
-                switch (layout.get()) {
-                    case Layout.TWO_LEVEL:
-                        processTwoLevelLayout()
-                        break
-                    case Layout.MULTI_LEVEL:
-                        processMultiLevelLayout()
-                        break
-                    case Layout.STANDARD:
-                        processStandardLayout()
-                        break
-                    case Layout.EXPLICIT:
-                        processExplicitDirectoriesAndPaths()
-                        break
+                Cache.Key key = Cache.key(s.settingsDir.absolutePath + '-projects')
+                if (!resolveFromCache(key)) {
+                    resolveFromConfig()
+                    writeConfigToCache(key)
                 }
-                cleanup()
+                Cache.getInstance().touch(settings.gradle, key)
             }
 
             @Override
@@ -99,6 +93,82 @@ class ProjectsExtensionImpl implements ProjectsExtension {
                 applyPlugins(gradle.rootProject)
             }
         })
+    }
+
+    private boolean resolveFromCache(Cache.Key key) {
+        long settingsLastModified = findSettingsFile()?.lastModified() ?: Long.MIN_VALUE
+
+        if (cache.get() &&
+            Cache.getInstance().has(settings.gradle, key) &&
+            Cache.getInstance().lastModified(settings.gradle, key) > settingsLastModified) {
+
+            LOG.info("[settings] Reading project structure from cache. ${key.getAbsolutePath(settings.gradle)}")
+
+            return Cache.getInstance().read(settings.gradle, key) { BufferedReader reader ->
+                reader.readLines().each { String line ->
+                    String[] parts = line.split('#')
+                    String projectPath = parts[0]
+                    String projectName = parts[1]
+                    File projectDir = new File(parts[2])
+                    File buildFile = new File(parts[3])
+                    settings.include(projectPath)
+                    settings.project(projectPath).name = projectName
+                    settings.project(projectPath).projectDir = projectDir
+                    settings.project(projectPath).buildFileName = buildFile.name
+                    LOG.info("[settings] Including project ${projectPath} -> ${buildFile.absolutePath}")
+                }
+            }
+        }
+
+        false
+    }
+
+    private File findSettingsFile() {
+        [
+            settings.gradle.startParameter.settingsFile,
+            new File(settings.settingsDir, 'settings.gradle'),
+            new File(settings.settingsDir, 'settings.gradle.kts')
+        ].find { it?.exists() } ?: null
+    }
+
+    private void resolveFromConfig() {
+        LOG.info('[settings] Resolving project structure from configuration')
+
+        switch (layout.get()) {
+            case Layout.TWO_LEVEL:
+                processTwoLevelLayout()
+                break
+            case Layout.MULTI_LEVEL:
+                processMultiLevelLayout()
+                break
+            case Layout.STANDARD:
+                processStandardLayout()
+                break
+            case Layout.EXPLICIT:
+                processExplicitDirectoriesAndPaths()
+                break
+        }
+        cleanup()
+    }
+
+    private void writeConfigToCache(Cache.Key key) {
+        LOG.info("[settings] Writing project structure to cache. ${key.getAbsolutePath(settings.gradle)}")
+
+        Cache.getInstance().write(settings.gradle, key) { BufferedWriter writer ->
+            writeProjectToCache(settings.rootProject, writer)
+        }
+    }
+
+    private void writeProjectToCache(ProjectDescriptor project, BufferedWriter writer) {
+        writer.writeLine([
+            project.path,
+            project.name,
+            project.projectDir.absolutePath,
+            project.buildFile.absolutePath
+        ].join('#'))
+        for (ProjectDescriptor child : project.children) {
+            writeProjectToCache(child, writer)
+        }
     }
 
     @Override

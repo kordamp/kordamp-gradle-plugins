@@ -41,6 +41,10 @@ final class Cache {
         private Key(Object input) {
             this.value = HashUtil.sha256(String.valueOf(input).bytes).asHexString()
         }
+
+        String getAbsolutePath(Gradle gradle) {
+            Cache.getInstance().resolveCacheFile(gradle, this).absolutePath
+        }
     }
 
     private static final Cache INSTANCE = new Cache()
@@ -58,6 +62,34 @@ final class Cache {
             throw new IllegalArgumentException('Input must not be null')
         }
         new Key(input)
+    }
+
+    /**
+     * Returns the last modification timestamp of the given {@code Key}.
+     * Returns {@code Long.MIN_VALUE} if a matching key is not found.
+     *
+     * @param gradle the {@code Gradle} instance that owns the cache
+     * @param key the key that identifies the cache entry
+     */
+    long lastModified(Gradle gradle, Key key) {
+        File file = resolveCacheFile(gradle, key)
+        file.exists() ? file.lastModified() : Long.MIN_VALUE
+    }
+
+    /**
+     * Updates the last modification timestamp of the given {@code Key}.
+     * Returns {@code Long.MIN_VALUE} if a matching key is not found.
+     *
+     * @param gradle the {@code Gradle} instance that owns the cache
+     * @param key the key that identifies the cache entry
+     */
+    long touch(Gradle gradle, Key key) {
+        File file = resolveCacheFile(gradle, key)
+        if (file.exists()) {
+            file.setLastModified(new Date().time)
+            return file.lastModified()
+        }
+        return Long.MIN_VALUE
     }
 
     /**

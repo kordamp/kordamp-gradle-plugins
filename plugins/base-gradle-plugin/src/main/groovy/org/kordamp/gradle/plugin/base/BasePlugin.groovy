@@ -389,7 +389,6 @@ class BasePlugin extends AbstractKordampPlugin {
                 rootProject.allprojects(new Action<Project>() {
                     @Override
                     void execute(Project project) {
-                        println "DP $project"
                         handleDependencyManagement(project)
                     }
                 })

@@ -58,6 +58,8 @@ interface ProjectsExtension {
 
     Property<Boolean> getUseLongPaths()
 
+    Property<Boolean> getCache()
+
     ListProperty<String> getDirectories()
 
     ListProperty<String> getExcludes()
