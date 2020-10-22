@@ -18,9 +18,12 @@
 package org.kordamp.gradle.plugin.settings.internal
 
 import groovy.transform.CompileStatic
+import groovy.transform.Memoized
 import groovy.transform.PackageScope
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.settings.PluginsSpec
+
+import java.util.regex.Pattern
 
 /**
  * @author Andres Almiray
@@ -30,6 +33,8 @@ import org.kordamp.gradle.plugin.settings.PluginsSpec
 @CompileStatic
 class DirMatchingPluginsSpecImpl extends AbstractPluginsSpec implements PluginsSpec.DirMatchingPluginsSpec {
     final Set<String> dirs = new LinkedHashSet<>()
+    final Set<String> excludedDirs = new LinkedHashSet<>()
+    final Set<String> excludedPaths = new LinkedHashSet<>()
 
     DirMatchingPluginsSpecImpl(String dir) {
         this([dir])
@@ -51,12 +56,49 @@ class DirMatchingPluginsSpecImpl extends AbstractPluginsSpec implements PluginsS
         }
     }
 
+    @Override
+    @Deprecated
+    void exclude(String dir) {
+        println("The method plugins.dir.exclude is deprecated and will be removed in the future. Use plugins.dir.excludeDir instead")
+        excludeDir(dir)
+    }
+
+    @Override
+    void excludeDir(String dir) {
+        String s = dir?.trim()
+        if (isNotBlank(s)) {
+            excludedDirs << s
+        }
+    }
+
+    @Override
+    void excludePath(String path) {
+        String s = path?.trim()
+        if (isNotBlank(s)) {
+            excludedPaths << s
+        }
+    }
+
     void apply(Project project) {
         String parentDir = project.projectDir.parentFile.name
         for (String dir : dirs) {
-            if (parentDir == dir) {
-                applyPluginsTo(project)
+            if (parentDir == dir && !(excludedDirs.contains(project.projectDir.name))) {
+                boolean excluded = excludedPaths.contains(project.path)
+                if (!excluded) {
+                    for (String exclude : excludedPaths) {
+                        if (pattern(exclude).matcher(project.path).matches()) {
+                            excluded = true
+                            break
+                        }
+                    }
+                }
+                if (!excluded) applyPluginsTo(project)
             }
         }
+    }
+
+    @Memoized
+    protected Pattern pattern(String regex) {
+        Pattern.compile(asGlobRegex(regex))
     }
 }

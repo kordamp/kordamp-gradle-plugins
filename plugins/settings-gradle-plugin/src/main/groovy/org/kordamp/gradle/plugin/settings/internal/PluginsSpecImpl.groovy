@@ -49,8 +49,8 @@ class PluginsSpecImpl implements PluginsSpec {
     }
 
     @Override
-    void dirs(List<String> dirs, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DirsMatchingPluginsSpec) Closure<Void> action) {
-        DirsMatchingPluginsSpecImpl spec = new DirsMatchingPluginsSpecImpl(dirs)
+    void dirs(List<String> dirs, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DirMatchingPluginsSpec) Closure<Void> action) {
+        DirMatchingPluginsSpecImpl spec = new DirMatchingPluginsSpecImpl(dirs)
         ConfigureUtil.configure(action, spec)
         pluginsByDir << spec
     }
@@ -84,8 +84,8 @@ class PluginsSpecImpl implements PluginsSpec {
     }
 
     @Override
-    void dirs(List<String> dirs, Action<? super DirsMatchingPluginsSpec> action) {
-        DirsMatchingPluginsSpecImpl spec = new DirsMatchingPluginsSpecImpl(dirs)
+    void dirs(List<String> dirs, Action<? super DirMatchingPluginsSpec> action) {
+        DirMatchingPluginsSpecImpl spec = new DirMatchingPluginsSpecImpl(dirs)
         action.execute(spec)
         pluginsByDir << spec
     }

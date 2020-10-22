@@ -43,7 +43,7 @@ interface PluginsSpec {
     /**
      * Configures plugins for all matching projects by their directories.
      */
-    void dirs(List<String> dirs, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DirsMatchingPluginsSpec) Closure<Void> action)
+    void dirs(List<String> dirs, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DirMatchingPluginsSpec) Closure<Void> action)
 
     /**
      * Configures plugins for a project matching by path.
@@ -68,7 +68,7 @@ interface PluginsSpec {
     /**
      * Configures plugins for all matching projects by their directories.
      */
-    void dirs(List<String> dirs, Action<? super DirsMatchingPluginsSpec> action)
+    void dirs(List<String> dirs, Action<? super DirMatchingPluginsSpec> action)
 
     /**
      * Configures plugins for a project matching by path.
@@ -110,12 +110,14 @@ interface PluginsSpec {
          * @param id a plugin id such as "java-library".
          */
         PluginIdSpec id(String pluginId)
-    }
 
-    /**
-     * Configures a project directory matching instruction for multiple directories.
-     */
-    interface DirsMatchingPluginsSpec extends DirMatchingPluginsSpec {
+        /**
+         * Excludes the given project matching its directory.
+         * @deprecated As of release 0.41.0, replaced with {@link #excludeDir()} instead.
+         */
+        @Deprecated
+        void exclude(String dir)
+
         /**
          * Excludes the given project matching its directory.
          */
