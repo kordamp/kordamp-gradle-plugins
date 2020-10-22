@@ -190,7 +190,10 @@ class ProjectsExtensionImpl implements ProjectsExtension {
             }
         } else {
             settings.settingsDir.eachDir { File parentDir ->
-                doProcessTwoLevelLayout(parentDir)
+                println parentDir.absolutePath
+                //if (!skipDirectory(parentDir)) {
+                    doProcessTwoLevelLayout(parentDir)
+                //}
             }
         }
     }
@@ -213,6 +216,11 @@ class ProjectsExtensionImpl implements ProjectsExtension {
             File buildFile = resolveBuildFile(projectDir, projectDir.name)
             doIncludeProject(settings.rootDir, projectDir.name, buildFile)
         }
+    }
+
+    private boolean skipDirectory(File dir) {
+        dir.name.startsWith('.') ||
+            dir.name in ['buildSrc', 'gradle']
     }
 
     private void doProcessTwoLevelLayout(File parentDir) {

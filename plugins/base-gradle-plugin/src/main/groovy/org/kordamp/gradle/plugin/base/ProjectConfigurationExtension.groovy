@@ -149,7 +149,7 @@ class ProjectConfigurationExtension {
 
     @Deprecated
     Dependencies getDependencies() {
-        println("The method config.dependencies is deprecated and will be removed in the future. Use config.dependencies instead")
+        println("The method config.dependencies is deprecated and will be removed in the future. Use config.dependencyManagement instead")
         dependencyManagement
     }
 
