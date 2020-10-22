@@ -376,12 +376,7 @@ class BasePlugin extends AbstractKordampPlugin {
     private class BaseAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
         @Override
         void allProjectsEvaluated(Project rootProject) {
-            if (checkFlag(ORG_KORDAMP_GRADLE_BASE_DEPENDENCY_MANAGEMENT, true)) {
-                handleDependencyManagement(rootProject)
-                rootProject.childProjects.values().each { Project project ->
-                    handleDependencyManagement(project)
-                }
-            }
+            // noop
         }
     }
 
@@ -389,7 +384,16 @@ class BasePlugin extends AbstractKordampPlugin {
     private class BaseTaskGraphReadyListener implements TaskGraphReadyListener {
         @Override
         void taskGraphReady(Project rootProject, TaskExecutionGraph graph) {
-            // noop
+            // trigger dependencyManagement as late as possible
+            if (checkFlag(ORG_KORDAMP_GRADLE_BASE_DEPENDENCY_MANAGEMENT, true)) {
+                rootProject.allprojects(new Action<Project>() {
+                    @Override
+                    void execute(Project project) {
+                        println "DP $project"
+                        handleDependencyManagement(project)
+                    }
+                })
+            }
         }
     }
 
