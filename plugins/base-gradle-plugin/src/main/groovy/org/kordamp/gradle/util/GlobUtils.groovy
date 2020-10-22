@@ -30,6 +30,8 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class GlobUtils {
     static String asGlobRegex(String globPattern, boolean isPathSyntax = false) {
+        if (globPattern == '*') return '^.*$'
+
         StringBuilder result = new StringBuilder(globPattern.length() + 2)
         result.append('^')
         for (int index = 0; index < globPattern.length(); index++) {
