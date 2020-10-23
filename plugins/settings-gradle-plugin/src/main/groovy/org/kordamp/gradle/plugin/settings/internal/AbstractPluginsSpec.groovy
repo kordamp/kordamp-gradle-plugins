@@ -51,23 +51,18 @@ abstract class AbstractPluginsSpec {
     }
 
     protected String asGlobRegex(String globPattern) {
+        if (globPattern == '*') return '^.*$'
+
         StringBuilder result = new StringBuilder(globPattern.length() + 2)
         result.append('^')
         for (int index = 0; index < globPattern.length(); index++) {
             char character = globPattern.charAt(index)
             switch (character) {
                 case '*':
-                    if (next(globPattern, index + 1) == '*') {
-                        // crosses directory boundaries
-                        result.append('.*')
-                        index++;
-                    } else {
-                        // within directory boundaryz
-                        result.append('[^:]*')
-                    }
+                    result.append('.*')
                     break
                 case '?':
-                    result.append('[^:]')
+                    result.append('.')
                     break
                 case '$':
                 case '(':

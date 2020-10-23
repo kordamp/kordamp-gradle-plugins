@@ -103,7 +103,7 @@ projects {
 [options="header", cols="5*"]
 |===
 | Name                    | Type                   | Required | Default Value | Description
-| cache                   | boolean                | no       | false         | If `true` then the project structure will be cached.
+| cache                   | boolean                | no       | true          | If `true` then the project structure will be cached.
 | layout                  | Layout                 | no       | TWO_LEVEL     | Defines the project layout. Valid values are [TWO_LEVEL, MULTI_LEVEL, STANDARD, EXPLICIT]. +
                                                                                 Also accepts literal values [`two-level`, `multi-level`, `standard`, `explicit`].
 | enforceNamingConvention | boolean                | no       | true          | If `true` then build file names must match their containing project directory name.

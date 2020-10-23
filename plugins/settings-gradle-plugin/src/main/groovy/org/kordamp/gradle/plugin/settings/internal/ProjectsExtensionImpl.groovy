@@ -70,7 +70,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
         layout = objects.property(Layout).convention(Layout.TWO_LEVEL)
         enforceNamingConvention = objects.property(Boolean).convention(true)
         useLongPaths = objects.property(Boolean).convention(false)
-        cache = objects.property(Boolean).convention(false)
+        cache = objects.property(Boolean).convention(true)
         directories = objects.listProperty(String).convention([])
         excludes = objects.listProperty(String).convention([])
         prefix = objects.property(String).convention(Providers.notDefined())
