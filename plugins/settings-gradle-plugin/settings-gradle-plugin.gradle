@@ -30,6 +30,6 @@ integrationTest {
     systemProperty 'jars.dir', [
         project(':base-gradle-plugin').jar,
         jar
-    ].collect { "'${it.destinationDirectory.get().asFile.absolutePath}'" }
+    ].collect { "'${it.destinationDirectory.get().asFile.absolutePath.replace('\\', '/')}'" }
         .join(',')
 }
