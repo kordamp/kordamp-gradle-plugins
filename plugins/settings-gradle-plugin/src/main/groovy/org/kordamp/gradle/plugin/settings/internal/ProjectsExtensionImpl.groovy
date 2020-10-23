@@ -288,7 +288,9 @@ class ProjectsExtensionImpl implements ProjectsExtension {
     }
 
     private boolean skipDirectoryDiscoveryFor(File dir) {
-        dir.name.charAt(0) == '.' || (dir.name in ['buildSrc', 'gradle'])
+        dir.name.charAt(0) == '.' ||
+            (dir.name in ['buildSrc', 'gradle']) ||
+            (dir.name == 'build' && settings.findProject(dir.parentFile))
     }
 
     private void doProcessTwoLevelLayout(File parentDir) {
