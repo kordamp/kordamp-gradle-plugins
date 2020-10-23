@@ -268,13 +268,42 @@ class ProjectsExtensionImpl implements ProjectsExtension {
     }
 
     private void processMultiLevelLayout() {
-        for (String path : directories.get()) {
-            File projectDir = new File(settings.rootDir, path)
-            if (!projectDir.exists()) {
-                LOG.info "Skipping ${projectDir} as it does not exist."
-                continue
+        if (directories.get()) {
+            for (String path : directories.get()) {
+                File projectDir = new File(settings.rootDir, path)
+                if (!projectDir.exists()) {
+                    LOG.info "Skipping ${projectDir} as it does not exist."
+                    continue
+                }
+                doIncludeProject(path)
             }
-            doIncludeProject(path)
+        } else {
+            settings.settingsDir.eachDir { File projectDir ->
+                discoverProject(projectDir)
+            }
+        }
+    }
+
+    private void discoverProject(File projectDir) {
+        if (!skipDirectoryDiscoveryFor(projectDir)) {
+            // Is there a matching build file?
+            String projectDirName = projectDir.name
+            File buildFile = resolveBuildFile(projectDir, projectDirName)
+            // yes -> include and stop
+            if (buildFile && buildFile.exists()) {
+                String projectPath = resolveProjectPath(projectDir, projectDirName)
+
+                settings.include(projectPath)
+                settings.project(projectPath).name = projectDirName
+                settings.project(projectPath).projectDir = projectDir
+                settings.project(projectPath).buildFileName = buildFile.name
+                LOG.info("[settings] Including project ${projectPath} -> ${buildFile.absolutePath}")
+            } else {
+                // no -> continue search
+                projectDir.eachDir { File dir ->
+                    discoverProject(dir)
+                }
+            }
         }
     }
 

@@ -265,6 +265,8 @@ configure<org.kordamp.gradle.plugin.settings.ProjectsExtension> {
 }
 ----
 
+Alternatively you may skip setting a value for `directories` and have the project structure be automatically discovered.
+
 .Standard
 
 A project with the following structure

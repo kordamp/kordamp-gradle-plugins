@@ -177,6 +177,55 @@ class ProjectsExtensionSpec extends Specification {
         4     | true   | true
     }
 
+    def "Verify multi-level layout with autodiscovery [#index]"() {
+        given:
+        testProjectDir.newFolder('build')
+        testProjectDir.newFolder('gradle')
+        testProjectDir.newFolder('buildSrc')
+        testProjectDir.newFolder('.hidden')
+        // guide
+        createBuildFile(testProjectDir.newFolder('guide'), 'guide', naming, kotlin)
+        // projects
+        File subprojects = testProjectDir.newFolder('subprojects')
+        File plugins = testProjectDir.newFolder('plugins')
+        File plugindir = new File(plugins, 'plugin')
+        plugindir.mkdirs()
+        createBuildFile(plugindir, 'random-plugin', true, kotlin)
+        // projects
+        createProject(subprojects, 'project1', naming, kotlin)
+        createProject(subprojects, 'project2', naming, kotlin)
+        createProject(subprojects, 'project3', naming, kotlin)
+
+        when:
+        settingsFile << """
+            projects {
+                layout = 'multi-level'
+                enforceNamingConvention = $naming
+            }
+        """
+        BuildResult result = GradleRunner.create()
+            .withPluginClasspath()
+            .withProjectDir(testProjectDir.root)
+            .withArguments('projects')
+            .build()
+
+        then:
+        assert result.output.contains("""
+            |Root project 'test'
+            |+--- Project ':guide'
+            |+--- Project ':project1'
+            |+--- Project ':project2'
+            |\\--- Project ':project3'
+        """.stripMargin('|').trim())
+
+        where:
+        index | naming | kotlin
+        1     | false  | false
+        2     | true   | false
+        3     | false  | true
+        4     | true   | true
+    }
+
     def "Verify explicit layout [#index]"() {
         given:
         // guide
