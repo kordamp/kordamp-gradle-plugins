@@ -134,13 +134,27 @@ interface PluginsSpec {
      */
     interface PluginIdSpec {
         /**
-         * Applies the plugin if the input is {@code true}.
+         * Applies the plugin if the condition evaluates to {@code true}.
          */
+        void includeIf(boolean value)
+
+        /**
+         * Applies the plugin if the condition evaluates to {@code true}..
+         */
+        void includeIf(Supplier<Boolean> supplier)
+
+        /**
+         * Applies the plugin if the condition evaluates to {@code true}.
+         * @deprecated As of release 0.41.0, replaced with {@link #includeIf()} instead.
+         */
+        @Deprecated
         void when(boolean value)
 
         /**
          * Applies the plugin if the condition evaluates to {@code true}.
+         * @deprecated As of release 0.41.0, replaced with {@link #includeIf()} instead.
          */
+        @Deprecated
         void when(Supplier<Boolean> supplier)
     }
 }

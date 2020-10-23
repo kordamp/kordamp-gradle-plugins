@@ -15,27 +15,27 @@ projects {
     plugins {
         all {
             excludePath(String pathOrRegex)
-            id(String pluginId).when(boolean)
-            id(String pluginId).when(Supplier<Boolean> condition)
+            id(String pluginId).includeIf(boolean)
+            id(String pluginId).includeIf(Supplier<Boolean> condition)
         }
         dir(String dir) {
-            id(String pluginId).when(boolean value)
-            id(String pluginId).when(Supplier<Boolean> condition)
+            id(String pluginId).includeIf(boolean value)
+            id(String pluginId).includeIf(Supplier<Boolean> condition)
         }
         dirs(List<String> dirs) {
             excludedir(String dir)
             excludePath(String pathOrRegex)
-            id(String pluginId).when(boolean value)
-            id(String pluginId).when(Supplier<Boolean> condition)
+            id(String pluginId).includeIf(boolean value)
+            id(String pluginId).includeIf(Supplier<Boolean> condition)
         }
         path(String pathOrRegex) {
-            id(String pluginId).when(boolean value)
-            id(String pluginId).when(Supplier<Boolean> condition)
+            id(String pluginId).includeIf(boolean value)
+            id(String pluginId).includeIf(Supplier<Boolean> condition)
         }
         paths(List<String> pathsOrRegexes) {
             excludePath(String pathOrRegex)
-            id(String pluginId).when(boolean value)
-            id(String pluginId).when(Supplier<Boolean> condition)
+            id(String pluginId).includeIf(boolean value)
+            id(String pluginId).includeIf(Supplier<Boolean> condition)
         }
     }
 }
@@ -55,7 +55,7 @@ excludePath:: A project to be excluded by path. Argument must be an exact match 
 These are the usage rules:
 
 * The value of `id()` is a given plugin id, such as `org.kordamp.gradle.project`.
-* The `when()` condition (if specified) applies the plugin if `true`. Default is to apply the given plugin.
+* The `includeIf()` condition (if specified) applies the plugin if `true`. Default is to apply the given plugin.
 * Every block accepts multiple invocations of `id()`.
 * No additional elements besides `id()` (or `exclude()` when using `dirs()`) can appear.
 * The value of `dir()` and `dirs()` must match any of

@@ -37,13 +37,27 @@ class PluginIdSpecImpl implements PluginsSpec.PluginIdSpec {
     }
 
     @Override
-    void when(boolean value) {
+    void includeIf(boolean value) {
         condition = { -> value }
     }
 
     @Override
-    void when(Supplier<Boolean> supplier) {
+    void includeIf(Supplier<Boolean> supplier) {
         if (supplier) condition = supplier
+    }
+
+    @Override
+    @Deprecated
+    void when(boolean value) {
+        println("The method when() is deprecated and will be removed in the future. Use includeIf() instead")
+        includeIf(value)
+    }
+
+    @Override
+    @Deprecated
+    void when(Supplier<Boolean> supplier) {
+        println("The method when() is deprecated and will be removed in the future. Use includeIf() instead")
+        includeIf(supplier)
     }
 
     boolean applies() {
