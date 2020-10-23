@@ -86,15 +86,15 @@ projects {
 
     includeProjects(String dir)
         .exclude(String projectName)  // optional
-        .when(boolean)                // optional
+        .includeIf(boolean)           // optional
     includeProjects(String dir)
         .exclude(String projectName)  // optional
-        .when(Supplier<Boolean>)      // optional
+        .includeIf(Supplier<Boolean>) // optional
 
     includeProject(String projectFilePath)
-         .when(boolean)               // optional
+         .includeIf(boolean)          // optional
     includeProject(String projectFilePath)
-        .when(Supplier<Boolean>)      // optional
+        .includeIf(Supplier<Boolean>) // optional
 
     <<_plugins_dsl,plugins>> { }
 }
@@ -131,13 +131,13 @@ The following methods should be used when the chosen layout is `explicit`, other
 and included in the build
 
 *includeProjects(String dir)* +
-Includes projects found under the given directory unless the given condition (`when()`) evaluates to false.
+Includes projects found under the given directory unless the given condition (`includeIf()`) evaluates to false.
 
 *exclude(String)* +
 Excludes a project directory by name.
 
 *includeProject(String path)* +
-Includes a project found under the given path unless the given condition (`when()`) evaluates to false.
+Includes a project found under the given path unless the given condition (`includeIf()`) evaluates to false.
 
 [[_org_kordamp_gradle_settings_example]]
 == Example

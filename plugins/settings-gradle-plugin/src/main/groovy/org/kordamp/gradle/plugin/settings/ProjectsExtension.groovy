@@ -141,11 +141,25 @@ interface ProjectsExtension {
         /**
          * Includes the project if the input is {@code true}.
          */
-        void when(boolean value)
+        void includeIf(boolean value)
 
         /**
          * Applies the project if the condition evaluates to {@code true}.
          */
+        void includeIf(Supplier<Boolean> supplier)
+
+        /**
+         * Includes the project if the input is {@code true}.
+         * @deprecated As of release 0.41.0, replaced with {@link #includeIf()} instead.
+         */
+        @Deprecated
+        void when(boolean value)
+
+        /**
+         * Applies the project if the condition evaluates to {@code true}.
+         * @deprecated As of release 0.41.0, replaced with {@link #includeIf()} instead.
+         */
+        @Deprecated
         void when(Supplier<Boolean> supplier)
     }
 
@@ -156,11 +170,25 @@ interface ProjectsExtension {
         /**
          * Includes the project if the input is {@code true}.
          */
-        void when(boolean value)
+        void includeIf(boolean value)
 
         /**
          * Applies the project if the condition evaluates to {@code true}.
          */
+        void includeIf(Supplier<Boolean> supplier)
+
+        /**
+         * Includes the project if the input is {@code true}.
+         * @deprecated As of release 0.41.0, replaced with {@link #includeIf()} instead.
+         */
+        @Deprecated
+        void when(boolean value)
+
+        /**
+         * Applies the project if the condition evaluates to {@code true}.
+         * @deprecated As of release 0.41.0, replaced with {@link #includeIf()} instead.
+         */
+        @Deprecated
         void when(Supplier<Boolean> supplier)
     }
 }
