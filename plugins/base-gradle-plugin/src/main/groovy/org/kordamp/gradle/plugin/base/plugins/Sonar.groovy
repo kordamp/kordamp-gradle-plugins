@@ -89,7 +89,7 @@ class Sonar extends AbstractFeature {
 
     void normalize() {
         if (null == projectKey) {
-            projectKey = project.group + ':' + project.name
+            projectKey = String.valueOf(project.group) + ':' + project.name
         }
 
         super.normalize()
