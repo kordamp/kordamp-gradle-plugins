@@ -109,7 +109,7 @@ projects {
 | enforceNamingConvention | boolean                | no       | true          | If `true` then build file names must match their containing project directory name.
 | useLongPaths            | boolean                | no       | false         | If `true` then projects will use their long paths when layout != `standard`.
 | directories             | List<String>           | no*      | []            | List of directories to include for `two-level` and `multi-level` layout.
-| excludes                | List<String>           | no       | []            | List of directories to be excluded from automatic inclusion.
+| excludes                | Set<String>            | no       | []            | Set of directories to be excluded from automatic inclusion.
 | fileNameTransformation  | FileNameTransformation | no       |               | Transformation applied to build file name. Valid values are [ADD, REMOVE]. +
                                                                                 Also accepts literal values [`add`, `remove`].
 | prefix                  | String                 | no       |               | Prefix added/removed from build file name.
@@ -126,9 +126,6 @@ settings file, typically by invoking the `touch` OS command on the file, failing
 
 [[_org_kordamp_gradle_settings_methods]]
 === Methods
-
-The following methods should be used when the chosen layout is `explicit`, otherwise no additional projects will be discovered
-and included in the build
 
 *includeProjects(String dir)* +
 Includes projects found under the given directory unless the given condition (`includeIf()`) evaluates to false.

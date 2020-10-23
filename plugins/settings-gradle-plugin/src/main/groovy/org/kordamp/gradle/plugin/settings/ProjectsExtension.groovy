@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
 import java.util.function.Supplier
 
@@ -62,7 +63,7 @@ interface ProjectsExtension {
 
     ListProperty<String> getDirectories()
 
-    ListProperty<String> getExcludes()
+    SetProperty<String> getExcludes()
 
     /**
      * The prefix to add/remove to/from the build file name.

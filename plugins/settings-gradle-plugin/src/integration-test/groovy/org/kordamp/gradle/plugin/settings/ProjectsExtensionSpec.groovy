@@ -91,6 +91,51 @@ class ProjectsExtensionSpec extends Specification {
         4     | true   | true
     }
 
+    def "Verify two-level layout with explicit inclusions [#index]"() {
+        given:
+        File docs = testProjectDir.newFolder('docs')
+        File subprojects = testProjectDir.newFolder('subprojects')
+        // guide
+        createProject(docs, 'guide', naming, kotlin)
+        // projects
+        createProject(subprojects, 'project1', naming, kotlin)
+        createProject(subprojects, 'project2', naming, kotlin)
+        createProject(subprojects, 'project3', naming, kotlin)
+        createBuildFile(testProjectDir.newFolder('project4'), 'project4', naming, kotlin)
+
+        when:
+        settingsFile << """
+            projects {
+                layout = 'two-level'
+                directories = ['docs', 'subprojects']
+                enforceNamingConvention = $naming
+                includeProject('project4')
+            }
+        """
+        BuildResult result = GradleRunner.create()
+            .withPluginClasspath()
+            .withProjectDir(testProjectDir.root)
+            .withArguments('projects')
+            .build()
+
+        then:
+        assert result.output.contains("""
+            |Root project 'test'
+            |+--- Project ':guide'
+            |+--- Project ':project1'
+            |+--- Project ':project2'
+            |+--- Project ':project3'
+            |\\--- Project ':project4'
+        """.stripMargin('|').trim())
+
+        where:
+        index | naming | kotlin
+        1     | false  | false
+        2     | true   | false
+        3     | false  | true
+        4     | true   | true
+    }
+
     def "Verify standard layout [#index]"() {
         given:
         // guide
@@ -120,6 +165,49 @@ class ProjectsExtensionSpec extends Specification {
             |+--- Project ':project1'
             |+--- Project ':project2'
             |\\--- Project ':project3'
+        """.stripMargin('|').trim())
+
+        where:
+        index | naming | kotlin
+        1     | false  | false
+        2     | true   | false
+        3     | false  | true
+        4     | true   | true
+    }
+
+    def "Verify standard layout with explicit inclusions [#index]"() {
+        given:
+        // guide
+        createBuildFile(testProjectDir.newFolder('guide'), 'guide', naming, kotlin)
+        // projects
+        createBuildFile(testProjectDir.newFolder('project1'), 'project1', naming, kotlin)
+        createBuildFile(testProjectDir.newFolder('project2'), 'project2', naming, kotlin)
+        createBuildFile(testProjectDir.newFolder('project3'), 'project3', naming, kotlin)
+        File subprojects = testProjectDir.newFolder('subprojects')
+        createProject(subprojects, 'project4', naming, kotlin)
+
+        when:
+        settingsFile << """
+            projects {
+                layout = 'standard'
+                enforceNamingConvention = $naming
+                includeProjects('subprojects')
+            }
+        """
+        BuildResult result = GradleRunner.create()
+            .withPluginClasspath()
+            .withProjectDir(testProjectDir.root)
+            .withArguments('projects')
+            .build()
+
+        then:
+        assert result.output.contains("""
+            |Root project 'test'
+            |+--- Project ':guide'
+            |+--- Project ':project1'
+            |+--- Project ':project2'
+            |+--- Project ':project3'
+            |\\--- Project ':project4'
         """.stripMargin('|').trim())
 
         where:
@@ -167,6 +255,56 @@ class ProjectsExtensionSpec extends Specification {
             |+--- Project ':project1'
             |+--- Project ':project2'
             |\\--- Project ':project3'
+        """.stripMargin('|').trim())
+
+        where:
+        index | naming | kotlin
+        1     | false  | false
+        2     | true   | false
+        3     | false  | true
+        4     | true   | true
+    }
+
+    def "Verify multi-level layout with explicit inclusions [#index]"() {
+        given:
+        // guide
+        createBuildFile(testProjectDir.newFolder('guide'), 'guide', naming, kotlin)
+        // projects
+        File subprojects = testProjectDir.newFolder('subprojects')
+        // projects
+        createProject(subprojects, 'project1', naming, kotlin)
+        createProject(subprojects, 'project2', naming, kotlin)
+        createProject(subprojects, 'project3', naming, kotlin)
+        createBuildFile(testProjectDir.newFolder('project4'), 'project4', naming, kotlin)
+
+        when:
+        settingsFile << """
+            projects {
+                layout = 'multi-level'
+                enforceNamingConvention = $naming
+                directories = [
+                    'guide',
+                    'subprojects/project1',
+                    'subprojects/project2',
+                    'subprojects/project3'
+                ]
+                includeProject('project4')
+            }
+        """
+        BuildResult result = GradleRunner.create()
+            .withPluginClasspath()
+            .withProjectDir(testProjectDir.root)
+            .withArguments('projects')
+            .build()
+
+        then:
+        assert result.output.contains("""
+            |Root project 'test'
+            |+--- Project ':guide'
+            |+--- Project ':project1'
+            |+--- Project ':project2'
+            |+--- Project ':project3'
+            |\\--- Project ':project4'
         """.stripMargin('|').trim())
 
         where:

@@ -31,6 +31,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.kordamp.gradle.plugin.settings.PluginsSpec
 import org.kordamp.gradle.plugin.settings.ProjectsExtension
 import org.kordamp.gradle.util.Cache
@@ -55,7 +56,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
     final Property<Boolean> useLongPaths
     final Property<Boolean> cache
     final ListProperty<String> directories
-    final ListProperty<String> excludes
+    final SetProperty<String> excludes
     final Property<String> prefix
     final Property<String> suffix
     final Property<FileNameTransformation> fileNameTransformation
@@ -72,7 +73,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
         useLongPaths = objects.property(Boolean).convention(false)
         cache = objects.property(Boolean).convention(true)
         directories = objects.listProperty(String).convention([])
-        excludes = objects.listProperty(String).convention([])
+        excludes = objects.setProperty(String).convention(new LinkedHashSet<String>())
         prefix = objects.property(String).convention(Providers.notDefined())
         suffix = objects.property(String).convention(Providers.notDefined())
         fileNameTransformation = objects.property(FileNameTransformation).convention(Providers.notDefined())
@@ -145,9 +146,10 @@ class ProjectsExtensionImpl implements ProjectsExtension {
                 processStandardLayout()
                 break
             case Layout.EXPLICIT:
-                processExplicitDirectoriesAndPaths()
                 break
         }
+        // Always process explicit
+        processExplicitDirectoriesAndPaths()
         cleanup()
     }
 
