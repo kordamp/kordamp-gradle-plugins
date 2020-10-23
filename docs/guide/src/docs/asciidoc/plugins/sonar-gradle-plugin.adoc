@@ -29,9 +29,9 @@ config {
         sonar {
             enabled
             hostUrl
-            username
             organization
             login
+            password
             projectKey
             ignoreFailures
             configProperties
@@ -49,6 +49,7 @@ config {
 | projectKey       | String              | no       | ${project.group}:${project.name} | The project's unique key.
 | organization     | String              | yes*     |                                  | The name of the organization. Required if publishing to `https://sonarcloud.io`
 | login            | String              | yes      |                                  | The login or authentication token of a SonarQube user with publish analysis permission on the project.
+| password         | String              | yes*     |                                  | The password that goes with `login`. This should be left blank if an authentication token is being used.
 | ignoreFailures   | boolean             | no       | true                             |
 | excludedProjects | Set<Project>        | no       | []                               | Projects in the set are excluded from aggregation
 | configProperties | Map<String, Object> | no       | [:]                              | Additional sonar properties that are passed to sonar as such

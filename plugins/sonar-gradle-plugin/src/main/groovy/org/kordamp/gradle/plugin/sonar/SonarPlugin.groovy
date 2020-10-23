@@ -40,6 +40,7 @@ import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addPr
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.StringUtils.isBlank
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -149,6 +150,7 @@ class SonarPlugin extends AbstractKordampPlugin {
                 addIfUndefined('sonar.links.ci', config.info.ciManagement.url, p)
                 addIfUndefined('sonar.organization', config.quality.sonar.organization, p)
                 addIfUndefined('sonar.login', config.quality.sonar.login, p)
+                addIfUndefined('sonar.password', config.quality.sonar.password, p)
             }
 
             private String resolveBuiltFile(Project p, String path) {
@@ -157,7 +159,7 @@ class SonarPlugin extends AbstractKordampPlugin {
 
             private void addIfUndefined(String sonarProperty, String value, SonarQubeProperties p) {
                 Map<String, Object> properties = p.getProperties()
-                if (!properties.containsKey(sonarProperty) || isBlank(properties.get(sonarProperty) as String)) {
+                if (!properties.containsKey(sonarProperty) || isBlank(properties.get(sonarProperty) as String) && isNotBlank(value)) {
                     p.property(sonarProperty, value)
                 }
             }

@@ -37,6 +37,7 @@ class Sonar extends AbstractFeature {
     String projectKey
     String organization
     String login
+    String password
     Map<String, Object> configProperties = [:]
     Set<String> excludes = new LinkedHashSet<>()
     final Set<Project> excludedProjects = new LinkedHashSet<>()
@@ -68,6 +69,7 @@ class Sonar extends AbstractFeature {
             map.projectKey = this.projectKey
             map.organization = this.organization
             map.login = this.login
+            map.password = this.password
             map.ignoreFailures = getIgnoreFailures()
             map.configProperties = this.configProperties
             map.excludes = this.excludes
@@ -128,6 +130,7 @@ class Sonar extends AbstractFeature {
         o1.projectKey = o1.projectKey ?: o2.projectKey
         o1.organization = o1.organization ?: o2.organization
         o1.login = o1.login ?: o2.login
+        o1.password = o1.password ?: o2.password
         o1.configProperties = CollectionUtils.merge(o1.configProperties, o2?.configProperties, false)
         o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
     }
