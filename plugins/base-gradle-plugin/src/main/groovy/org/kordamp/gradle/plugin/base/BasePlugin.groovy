@@ -377,14 +377,6 @@ class BasePlugin extends AbstractKordampPlugin {
         @Override
         void allProjectsEvaluated(Project rootProject) {
             // noop
-        }
-    }
-
-    @Named('base')
-    private class BaseTaskGraphReadyListener implements TaskGraphReadyListener {
-        @Override
-        void taskGraphReady(Project rootProject, TaskExecutionGraph graph) {
-            // trigger dependencyManagement as late as possible
             if (checkFlag(ORG_KORDAMP_GRADLE_BASE_DEPENDENCY_MANAGEMENT, true)) {
                 rootProject.allprojects(new Action<Project>() {
                     @Override
@@ -393,6 +385,14 @@ class BasePlugin extends AbstractKordampPlugin {
                     }
                 })
             }
+        }
+    }
+
+    @Named('base')
+    private class BaseTaskGraphReadyListener implements TaskGraphReadyListener {
+        @Override
+        void taskGraphReady(Project rootProject, TaskExecutionGraph graph) {
+            // noop
         }
     }
 
