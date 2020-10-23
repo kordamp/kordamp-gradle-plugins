@@ -131,7 +131,7 @@ class CpdPlugin extends AbstractKordampPlugin {
             CpdExtension cpdExt = project.extensions.findByType(CpdExtension)
             cpdExt.toolVersion = config.quality.cpd.toolVersion
 
-            project.tasks.withType(Cpd).configureEach { Cpd task ->
+            project.tasks.withType(Cpd) { Cpd task ->
                 task.setGroup('Quality')
                 applyTo(config, task)
                 String sourceSetName = task.name['cpd'.size()..-1].uncapitalize()
@@ -142,7 +142,7 @@ class CpdPlugin extends AbstractKordampPlugin {
 
             if (allCpdTask) {
                 Set<Cpd> tt = new LinkedHashSet<>()
-                project.tasks.withType(Cpd).configureEach { Cpd task ->
+                project.tasks.withType(Cpd) { Cpd task ->
                     if (task.name != ALL_CPD_TASK_NAME &&
                         task.enabled) tt << task
                 }
@@ -177,7 +177,7 @@ class CpdPlugin extends AbstractKordampPlugin {
         cpdExt.toolVersion = config.quality.cpd.toolVersion
 
         Set<Cpd> tt = new LinkedHashSet<>()
-        project.tasks.withType(Cpd).configureEach { Cpd task ->
+        project.tasks.withType(Cpd) { Cpd task ->
             if (project in config.quality.cpd.aggregate.excludedProjects) return
             if (task.name != ALL_CPD_TASK_NAME &&
                 task.name != AGGREGATE_CPD_TASK_NAME &&
@@ -186,7 +186,7 @@ class CpdPlugin extends AbstractKordampPlugin {
 
         project.childProjects.values().each { p ->
             if (p in config.quality.cpd.aggregate.excludedProjects) return
-            p.tasks.withType(Cpd).configureEach { Cpd task ->
+            p.tasks.withType(Cpd) { Cpd task ->
                 if (task.name != ALL_CPD_TASK_NAME &&
                     task.enabled) tt << task
             }

@@ -116,11 +116,11 @@ class CoverallsPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension config = resolveConfig(project)
 
         Set<File> files = []
-        project.tasks.withType(JacocoReport).configureEach { JacocoReport r ->
+        project.tasks.withType(JacocoReport) { JacocoReport r ->
             files.addAll(r.allSourceDirs.files)
         }
         project.childProjects.values().each { p ->
-            p.tasks.withType(JacocoReport).configureEach { JacocoReport r ->
+            p.tasks.withType(JacocoReport) { JacocoReport r ->
                 files.addAll(r.allSourceDirs.files)
             }
         }

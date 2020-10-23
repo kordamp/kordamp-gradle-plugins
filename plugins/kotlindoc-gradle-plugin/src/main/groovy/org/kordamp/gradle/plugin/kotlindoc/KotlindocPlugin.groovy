@@ -92,7 +92,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension config = resolveConfig(project)
         setEnabled(config.docs.kotlindoc.aggregate.enabled)
 
-        project.tasks.withType(DokkaCollectorTask).configureEach { DokkaCollectorTask task ->
+        project.tasks.withType(DokkaCollectorTask) { DokkaCollectorTask task ->
             task.setEnabled(config.docs.kotlindoc.aggregate.enabled)
         }
 
@@ -133,7 +133,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                 project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(kotlindocJar)
             }
 
-            project.tasks.withType(DokkaMultiModuleTask).configureEach { DokkaMultiModuleTask task ->
+            project.tasks.withType(DokkaMultiModuleTask) { DokkaMultiModuleTask task ->
                 task.setEnabled(config.docs.kotlindoc.enabled)
             }
         }

@@ -249,7 +249,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension config = resolveConfig(project)
 
         FileCollection srcdirs = project.objects.fileCollection()
-        project.tasks.withType(SourceHtmlTask).configureEach { SourceHtmlTask task ->
+        project.tasks.withType(SourceHtmlTask) { SourceHtmlTask task ->
             if (project in config.docs.sourceHtml.aggregate.excludedProjects) return
             if (task.name != AGGREGATE_SOURCE_HTML_TASK_NAME &&
                 task.enabled)
@@ -258,7 +258,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
 
         project.childProjects.values().each { p ->
             if (p in config.docs.sourceHtml.aggregate.excludedProjects) return
-            p.tasks.withType(SourceHtmlTask).configureEach { SourceHtmlTask task ->
+            p.tasks.withType(SourceHtmlTask) { SourceHtmlTask task ->
                 if (task.enabled) srcdirs = srcdirs.plus(resolveConfig(p).docs.sourceHtml.srcDirs)
             }
         }

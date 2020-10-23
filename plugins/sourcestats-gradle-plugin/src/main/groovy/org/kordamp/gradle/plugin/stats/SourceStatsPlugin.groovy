@@ -136,7 +136,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension config = resolveConfig(project)
 
         Set<SourceStatsTask> tt = new LinkedHashSet<>()
-        project.tasks.withType(SourceStatsTask).configureEach { SourceStatsTask task ->
+        project.tasks.withType(SourceStatsTask) { SourceStatsTask task ->
             if (project in config.stats.aggregate.excludedProjects) return
             if (task.name != AGGREGATE_STATS_TASK_NAME &&
                 task.enabled)
@@ -145,7 +145,7 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
 
         project.childProjects.values().each { p ->
             if (p in config.stats.aggregate.excludedProjects) return
-            p.tasks.withType(SourceStatsTask).configureEach { SourceStatsTask task ->
+            p.tasks.withType(SourceStatsTask) { SourceStatsTask task ->
                 if (task.enabled) tt << task
             }
         }

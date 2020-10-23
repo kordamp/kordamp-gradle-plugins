@@ -95,7 +95,7 @@ class ErrorPronePlugin extends AbstractKordampPlugin {
                 errorproneJavac("com.google.errorprone:javac:${config.quality.errorprone.errorProneJavacVersion}")
             }
 
-            project.tasks.withType(JavaCompile).configureEach { JavaCompile t ->
+            project.tasks.withType(JavaCompile) { JavaCompile t ->
                 t.options.errorprone.enabled = config.quality.errorprone.enabled
                 t.options.errorprone.disableAllChecks = config.quality.errorprone.disableAllChecks
                 t.options.errorprone.allErrorsAsWarnings = config.quality.errorprone.allErrorsAsWarnings

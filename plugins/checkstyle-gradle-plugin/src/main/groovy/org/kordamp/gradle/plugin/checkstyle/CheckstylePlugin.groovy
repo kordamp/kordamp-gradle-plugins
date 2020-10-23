@@ -145,7 +145,7 @@ class CheckstylePlugin extends AbstractKordampPlugin {
             CheckstyleExtension checkstyleExt = project.extensions.findByType(CheckstyleExtension)
             checkstyleExt.toolVersion = config.quality.checkstyle.toolVersion
 
-            project.tasks.withType(Checkstyle).configureEach { Checkstyle task ->
+            project.tasks.withType(Checkstyle) { Checkstyle task ->
                 task.setGroup('Quality')
                 config.quality.checkstyle.applyTo(task)
                 String sourceSetName = task.name['checkstyle'.size()..-1].uncapitalize()
@@ -156,7 +156,7 @@ class CheckstylePlugin extends AbstractKordampPlugin {
 
             if (allCheckstyleTask) {
                 Set<Checkstyle> tt = new LinkedHashSet<>()
-                project.tasks.withType(Checkstyle).configureEach { Checkstyle task ->
+                project.tasks.withType(Checkstyle) { Checkstyle task ->
                     if (task.name != ALL_CHECKSTYLE_TASK_NAME &&
                         task.enabled) tt << task
                 }
@@ -192,7 +192,7 @@ class CheckstylePlugin extends AbstractKordampPlugin {
         checkstyleExt.toolVersion = config.quality.checkstyle.toolVersion
 
         Set<Checkstyle> tt = new LinkedHashSet<>()
-        project.tasks.withType(Checkstyle).configureEach { Checkstyle task ->
+        project.tasks.withType(Checkstyle) { Checkstyle task ->
             if (project in config.quality.checkstyle.aggregate.excludedProjects) return
             if (task.name != ALL_CHECKSTYLE_TASK_NAME &&
                 task.name != AGGREGATE_CHECKSTYLE_TASK_NAME &&
@@ -202,7 +202,7 @@ class CheckstylePlugin extends AbstractKordampPlugin {
 
         project.childProjects.values().each { p ->
             if (p in config.quality.checkstyle.aggregate.excludedProjects) return
-            p.tasks.withType(Checkstyle).configureEach { Checkstyle task ->
+            p.tasks.withType(Checkstyle) { Checkstyle task ->
                 if (task.name != ALL_CHECKSTYLE_TASK_NAME &&
                     task.enabled) tt << task
             }
