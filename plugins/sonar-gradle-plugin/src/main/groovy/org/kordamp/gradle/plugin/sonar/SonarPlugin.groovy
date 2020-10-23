@@ -124,9 +124,9 @@ class SonarPlugin extends AbstractKordampPlugin {
                 config.quality.sonar.getConfigProperties().each { property, value ->
                     p.property(property, value)
                 }
-                p.property('sonar.host.url', config.quality.sonar.hostUrl)
-                p.property('sonar.projectKey', config.quality.sonar.projectKey)
-                p.property('sonar.exclusions', config.quality.sonar.excludes.join(','))
+                addIfUndefined('sonar.host.url', config.quality.sonar.hostUrl, p)
+                addIfUndefined('sonar.projectKey', config.quality.sonar.projectKey, p)
+                addIfUndefined('sonar.exclusions', config.quality.sonar.excludes.join(','), p)
                 if (config.quality.checkstyle.enabled) {
                     p.property('sonar.java.checkstyle.reportPaths', resolveBuiltFile(project, 'reports/checkstyle/aggregate.xml'))
                 }
@@ -136,6 +136,7 @@ class SonarPlugin extends AbstractKordampPlugin {
                 if (config.coverage.jacoco.enabled) {
                     p.property('sonar.coverage.jacoco.xmlReportPaths', config.coverage.jacoco.aggregateReportXmlFile.absolutePath)
                     p.property('sonar.groovy.jacoco.reportPath', config.coverage.jacoco.aggregateExecFile.absolutePath)
+                    p.property('sonar.jacoco.reportPaths', config.coverage.jacoco.aggregateExecFile.absolutePath)
                 }
                 if (config.quality.detekt.enabled) {
                     p.property('sonar.kotlin.detekt.reportPaths', resolveBuiltFile(project, 'reports/detekt/aggregate.xml'))
@@ -154,8 +155,8 @@ class SonarPlugin extends AbstractKordampPlugin {
                 p.layout.buildDirectory.file(path).get().asFile.absolutePath
             }
 
-            private void addIfUndefined(final String sonarProperty, final String value, final SonarQubeProperties p) {
-                final Map<String, Object> properties = p.getProperties()
+            private void addIfUndefined(String sonarProperty, String value, SonarQubeProperties p) {
+                Map<String, Object> properties = p.getProperties()
                 if (!properties.containsKey(sonarProperty) || isBlank(properties.get(sonarProperty) as String)) {
                     p.property(sonarProperty, value)
                 }
