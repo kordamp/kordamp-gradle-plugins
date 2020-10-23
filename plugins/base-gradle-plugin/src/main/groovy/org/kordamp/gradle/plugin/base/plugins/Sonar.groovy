@@ -34,7 +34,6 @@ class Sonar extends AbstractFeature {
 
     Boolean ignoreFailures
     String hostUrl = 'https://sonarcloud.io'
-    String username
     String projectKey
     String organization
     String login
@@ -66,7 +65,6 @@ class Sonar extends AbstractFeature {
 
         if (isRoot()) {
             map.hostUrl = this.hostUrl
-            map.username = this.username
             map.projectKey = this.projectKey
             map.organization = this.organization
             map.login = this.login
@@ -89,7 +87,7 @@ class Sonar extends AbstractFeature {
 
     void normalize() {
         if (null == projectKey) {
-            projectKey = username + '_' + project.rootProject.name
+            projectKey = project.group + ':' + project.name
         }
 
         super.normalize()
@@ -103,15 +101,11 @@ class Sonar extends AbstractFeature {
         List<String> errors = []
 
         if (enabled) {
-            if (isBlank(username)) {
-                if (isBlank(organization) || isBlank(login)) {
-                    errors << "[${project.name}] Sonar username is blank".toString()
-                }
+            if (hostUrl == 'https://sonarcloud.io' && isBlank(organization)) {
+                errors << "[${project.name}] Sonar organization is blank".toString()
             }
-            if (isBlank(organization) || isBlank(login)) {
-                if (isBlank(username)) {
-                    errors << "[${project.name}] Sonar organization or login is blank".toString()
-                }
+            if (isBlank(login)) {
+                errors << "[${project.name}] Sonar login is blank".toString()
             }
         }
 
@@ -132,7 +126,6 @@ class Sonar extends AbstractFeature {
         AbstractQualityFeature.merge(o1, o2)
         o1.hostUrl = o1.hostUrl ?: o2.hostUrl
         o1.projectKey = o1.projectKey ?: o2.projectKey
-        o1.username = o1.username ?: o2.username
         o1.organization = o1.organization ?: o2.organization
         o1.login = o1.login ?: o2.login
         o1.configProperties = CollectionUtils.merge(o1.configProperties, o2?.configProperties, false)
