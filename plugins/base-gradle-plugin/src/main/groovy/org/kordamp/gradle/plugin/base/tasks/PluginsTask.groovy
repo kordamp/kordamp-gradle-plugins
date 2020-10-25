@@ -18,7 +18,6 @@
 package org.kordamp.gradle.plugin.base.tasks
 
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.gradle.api.Plugin
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.KordampPlugin
@@ -79,11 +78,14 @@ class PluginsTask extends AbstractReportingTask {
         Map<String, Object> map = new LinkedHashMap<>()
 
         PluginInfo pluginInfo = pluginMetadata[plugin.class.name]
-        map.id = pluginInfo.id
-        if (pluginInfo.version) map.version = pluginInfo.version
         map.implementationClass = plugin.class.name
-        if (plugin instanceof KordampPlugin) {
-            map.enabled = plugin.enabled
+
+        if (pluginInfo) {
+            map.id = pluginInfo.id
+            if (pluginInfo.version) map.version = pluginInfo.version
+            if (plugin instanceof KordampPlugin) {
+                map.enabled = plugin.enabled
+            }
         }
 
         new LinkedHashMap<>([('plugin ' + index): map])

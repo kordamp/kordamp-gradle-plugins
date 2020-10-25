@@ -18,22 +18,14 @@
 package org.kordamp.gradle.plugin.base.plugins
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.PomOptions
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
 import org.kordamp.gradle.plugin.base.model.artifact.DependencyManagement
-import org.kordamp.gradle.plugin.base.model.artifact.DependencySpec
-import org.kordamp.gradle.plugin.base.model.artifact.Platform
-import org.kordamp.gradle.plugin.base.model.artifact.PlatformSpec
 import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencyManagementImpl
-import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencySpecImpl
-import org.kordamp.gradle.plugin.base.model.artifact.internal.PlatformSpecImpl
 import org.kordamp.gradle.util.CollectionUtils
-import org.kordamp.gradle.util.ConfigureUtil
 
-import static org.kordamp.gradle.util.StringUtils.isBlank
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
@@ -96,6 +88,7 @@ class Bom extends AbstractFeature implements PomOptions, DependencyManagement {
         if (!enabledSet) {
             setEnabled(isApplied())
             if (isApplied()) {
+                if (isRoot() && project.childProjects.size() > 0) return
                 ProjectConfigurationExtension config = project.extensions.getByType(ProjectConfigurationExtension)
                 config.docs.javadoc.enabled = false
                 config.docs.groovydoc.enabled = false

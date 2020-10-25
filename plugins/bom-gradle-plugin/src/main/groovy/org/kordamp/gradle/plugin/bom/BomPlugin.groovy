@@ -39,6 +39,7 @@ import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 import javax.inject.Named
 
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
+import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
@@ -83,7 +84,9 @@ class BomPlugin extends AbstractKordampPlugin {
             project.pluginManager.apply(MavenPublishPlugin)
         }
 
-        project.extensions.findByType(ProjectConfigurationExtension).publishing.enabled = false
+        if (!isRootProject(project) || project.childProjects.size() == 0) {
+            project.extensions.findByType(ProjectConfigurationExtension).publishing.enabled = false
+        }
 
         addProjectEvaluatedListener(project, new BomProjectEvaluatedListener())
     }

@@ -89,7 +89,9 @@ abstract class AbstractFeature implements Feature {
         if (!enabledSet) {
             if (isRoot()) {
                 if (project.childProjects.isEmpty()) {
-                    setEnabled(hasBasePlugin(project) && isApplied())
+                    this.@enabled = hasBasePlugin(project) && isApplied()
+                } else {
+                    this.@enabled = isApplied()
                 }
             } else {
                 boolean localEnabled = hasBasePlugin(project) && isApplied()
