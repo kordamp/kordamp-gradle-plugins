@@ -155,6 +155,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                 if (kotlindoc.skipEmptyPackages) ss.skipEmptyPackages.set(kotlindoc.skipEmptyPackages)
                 if (kotlindoc.noStdlibLink) ss.noStdlibLink.set(kotlindoc.noStdlibLink)
                 if (kotlindoc.noJdkLink) ss.noJdkLink.set(kotlindoc.noJdkLink)
+                ss.classpath.from(ss.classpath, config.project.configurations.findByName('optional'))
 
                 kotlindoc.sourceLinks.resolveSourceLinks().each { sourceLink ->
                     ss.sourceLink(new Action<GradleSourceLinkBuilder>() {

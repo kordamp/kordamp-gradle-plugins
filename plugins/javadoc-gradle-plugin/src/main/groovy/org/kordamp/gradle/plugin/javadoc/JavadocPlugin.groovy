@@ -22,6 +22,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
@@ -195,6 +196,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                         t.description = 'Generates Javadoc API documentation'
                         t.destinationDir = project.file("${project.buildDir}/docs/javadoc")
                         t.source = resolveAllSource(project)
+                        t.classpath += project.configurations.findByName('optional')
                         config.docs.javadoc.applyTo(t)
                         t.options.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
                         if (JavaVersion.current().isJava8Compatible()) {
@@ -217,6 +219,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     t.description = 'Generates Javadoc API documentation'
                     t.destinationDir = project.file("${project.buildDir}/docs/javadoc")
                     t.source = project.sourceSets.main.allJava
+                    t.classpath += project.configurations.findByName('optional')
                     config.docs.javadoc.applyTo(t)
                     t.options.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
                     if (JavaVersion.current().isJava8Compatible()) {

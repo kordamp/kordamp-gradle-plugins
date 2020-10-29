@@ -21,8 +21,13 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.attributes.Usage
 import org.gradle.api.plugins.AppliedPlugin
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.SourceSet
 import org.kordamp.gradle.annotations.DependsOn
 import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
@@ -244,6 +249,23 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
                                     }
                                 })
                         }
+                    }
+                })
+
+                Configuration optional = project.configurations.maybeCreate('optional')
+                optional.attributes(new Action<AttributeContainer>() {
+                    @Override
+                    void execute(AttributeContainer attributes) {
+                        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, Usage.JAVA_RUNTIME))
+                    }
+                })
+
+                project.convention.getPlugin(JavaPluginConvention)
+                    .sourceSets.all(new Action<SourceSet>() {
+                    @Override
+                    void execute(SourceSet sourceSet) {
+                        sourceSet.compileClasspath = sourceSet.compileClasspath + optional
+                        sourceSet.runtimeClasspath = sourceSet.runtimeClasspath + optional
                     }
                 })
             }

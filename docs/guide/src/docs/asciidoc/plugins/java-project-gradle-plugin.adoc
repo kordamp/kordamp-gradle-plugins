@@ -22,6 +22,15 @@ This plugin adds the following plugins to the classpath without applying them:
  * `<<_org_kordamp_gradle_errorprone,org.kordamp.gradle.errorprone>>`
  * `<<_org_kordamp_gradle_spotbugs,org.kordamp.gradle.spotbugs>>`
 
+[[_org_kordamp_gradle_java_project_configurations]]
+== Configurations
+
+[[_org_kordamp_gradle_java_project_configuration_optional]]
+=== Optional
+
+A configuration that behaves like Maven's `<optional>` flag. Dependencies added to this configuration will be available to
+`compileClasspath` and `runtimeClasspath` but won't be exported in the generated POM.
+
 [[_org_kordamp_gradle_java_project_extensions]]
 == Extensions
 
