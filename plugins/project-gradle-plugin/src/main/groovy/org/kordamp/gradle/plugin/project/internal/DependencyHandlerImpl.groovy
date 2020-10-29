@@ -138,6 +138,7 @@ class DependencyHandlerImpl {
     private static class DependencyHandlerSpecImpl implements DependencyHandlerSpec {
         final DependencyHandlerImpl owner
         final Set<String> configurations = [] as Set
+        private final Closure EMPTY_CONFIGURER = { d -> }
 
         DependencyHandlerSpecImpl(DependencyHandlerImpl owner, Set<String> configurations) {
             this.owner = owner
@@ -165,13 +166,13 @@ class DependencyHandlerImpl {
         }
 
         @Override
-        void dependency(String nameOrGa) {
-            configureDependency(nameOrGa, configurations, null)
+        void dependency(String nameOrGav) {
+            configureDependency(nameOrGav, configurations, null)
         }
 
         @Override
-        void dependency(String nameOrGa, Closure configurer) {
-            configureDependency(nameOrGa, configurations, configurer)
+        void dependency(String nameOrGav, Closure configurer) {
+            configureDependency(nameOrGav, configurations, configurer)
         }
 
         @Override
@@ -289,8 +290,13 @@ class DependencyHandlerImpl {
             ]
         }
 
-        private void configureDependency(String nameOrGa, Set<String> configurations, Closure configurer) {
+        private void configureDependency(String nameOrGav, Set<String> configurations, Closure configurer) {
             ProjectConfigurationExtension config = resolveConfig(project)
+
+            int count = nameOrGav.count(':')
+            boolean fullCoordinates = count == 2 || count == 3
+            boolean partialCoordinates = count == 1
+            configurer = configurer ?: EMPTY_CONFIGURER
 
             for (String configuration : configurations) {
                 if (isBlank(configuration)) {
@@ -298,10 +304,18 @@ class DependencyHandlerImpl {
                 }
 
                 if (project.configurations.findByName(configuration)) {
-                    if (configurer) {
-                        project.dependencies.add(configuration, config.dependencyManagement.getDependency(nameOrGa).gav, configurer)
+                    if (fullCoordinates) {
+                        project.dependencies.add(configuration, nameOrGav, configurer)
+                        continue
+                    }
+
+                    KDependency dependency = config.dependencyManagement.findDependency(nameOrGav)
+                    if (dependency) {
+                        project.dependencies.add(configuration, dependency.gav, configurer)
+                    } else if (partialCoordinates) {
+                        project.dependencies.add(configuration, nameOrGav, configurer)
                     } else {
-                        project.dependencies.add(configuration, config.dependencyManagement.getDependency(nameOrGa).gav)
+                        throw new IllegalArgumentException("Undeclared dependency ${nameOrGav}.")
                     }
                 } else {
                     throw new IllegalArgumentException("Target configuration '${configuration}' was not found")

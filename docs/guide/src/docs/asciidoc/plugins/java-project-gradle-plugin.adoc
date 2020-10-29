@@ -128,8 +128,8 @@ void platform(Object notation):: Declares a dependency on a platform.
 void platform(Object notation, Action<? super Dependency> action):: Declares and configures a dependency on a platform.
 void enforcedPlatform(Object notation):: Declares a dependency on an enforced platform.
 void enforcedPlatform(Object notation, Action<? super Dependency> action):: Declares and configures a dependency on an enforced platform.
-void dependency(String nameOrGa):: Declares a dependency.
-void dependency(String nameOrGa, Closure):: Declares and configures a dependency.
+void dependency(String nameOrGav):: Declares a dependency.
+void dependency(String nameOrGav, Closure):: Declares and configures a dependency.
 void module(String nameOrGa):: Declares a module dependency (from a platform).
 void module(String nameOrGa, Closure):: Declares and configures a module dependency (from a platform).
 
@@ -163,6 +163,8 @@ dependencies {
     applyTo.c('annotationProcessor', 'api').module('micronaut', 'micronaut-validation')
     applyTo.c('api').module('micronaut', 'micronaut-runtime-groovy')
     applyTo.c('testImplementation').dependency('junit')
+    // undeclared dependencies require the use of groupId:artifactId:version
+    applyTo.c('testImplementation').dependency('org.hamcrest:hamcrest-core:2.2')
 }
 ----
 

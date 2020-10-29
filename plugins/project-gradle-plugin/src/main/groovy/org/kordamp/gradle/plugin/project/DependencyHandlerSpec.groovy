@@ -85,18 +85,20 @@ interface DependencyHandlerSpec {
      * Declares a dependency.
      * Dependencies must be declared using the {@code config.dependencies} block before using this method.
      *
-     * @param nameOrGa the name or the {@code groupId:artifactId} of the dependency found in {@code config.dependencies}.
+     * @param nameOrGav the name or the {@code groupId:artifactId} of the dependency found in {@code config.dependencies},
+     *  or regular {@code groupId:artifactId:version} dependency coordinates.
      */
-    void dependency(String nameOrGa)
+    void dependency(String nameOrGav)
 
     /**
      * Declares and configures a dependency.
      * Dependencies must be declared using the {@code config.dependencies} block before using this method.
      *
-     * @param nameOrGa the name or the {@code groupId:artifactId} of the dependency found in {@code config.dependencies}.
+     * @param nameOrGav the name or the {@code groupId:artifactId} of the dependency found in {@code config.dependencies},
+     *  or regular {@code groupId:artifactId:version} dependency coordinates.
      * @param configurer the closure to use to configure the dependency.
      */
-    void dependency(String nameOrGa, Closure configurer)
+    void dependency(String nameOrGav, Closure configurer)
 
     /**
      * Declares a module dependency.
