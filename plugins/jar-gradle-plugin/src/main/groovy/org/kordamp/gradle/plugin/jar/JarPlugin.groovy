@@ -196,6 +196,8 @@ class JarPlugin extends AbstractKordampPlugin {
                 attributesMap.'Implementation-Title' = config.info.implementation.title
                 attributesMap.'Implementation-Version' = config.info.implementation.version
                 if (isNotBlank(config.info.implementation.vendor)) attributesMap.'Implementation-Vendor' = config.info.implementation.vendor
+                if (isNotBlank(config.info.implementation.vendorId)) attributesMap.'Implementation-Vendor-Id' = config.info.implementation.vendorId
+                if (isNotBlank(config.info.implementation.url)) attributesMap.'Implementation-Url' = config.info.implementation.url
             }
 
             jarTask.configure {

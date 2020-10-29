@@ -78,14 +78,16 @@ class PluginsTask extends AbstractReportingTask {
         Map<String, Object> map = new LinkedHashMap<>()
 
         PluginInfo pluginInfo = pluginMetadata[plugin.class.name]
-        map.implementationClass = plugin.class.name
 
         if (pluginInfo) {
             map.id = pluginInfo.id
             if (pluginInfo.version) map.version = pluginInfo.version
+            map.implementationClass = plugin.class.name
             if (plugin instanceof KordampPlugin) {
                 map.enabled = plugin.enabled
             }
+        } else {
+            map.implementationClass = plugin.class.name
         }
 
         new LinkedHashMap<>([('plugin ' + index): map])

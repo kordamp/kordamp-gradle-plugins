@@ -90,6 +90,8 @@ config {
             title
             version
             vendor
+            vendorId
+            vendorUrl
         }
 
         <<_base_info_credentials,credentials>> {
@@ -252,11 +254,13 @@ This block is optional.
 
 [options="header", cols="5*"]
 |===
-| Name    | Type    | Required | Default Value   | Description
-| enabled | boolean | no       | true            | JAR manifest entries will be updated if `true`
-| title   | String  | no       | project.name    | Mapped to `Implementation-Title` manifest entry
-| version | String  | no       | project.version | Mapped to `Implementation-Version` manifest entry
-| vendor  | String  | no       | info.vendor     | Mapped to `Implementation-Vendor` manifest entry
+| Name     | Type    | Required | Default Value   | Description
+| enabled  | boolean | no       | true            | JAR manifest entries will be updated if `true`
+| title    | String  | no       | project.name    | Mapped to `Implementation-Title` manifest entry
+| version  | String  | no       | project.version | Mapped to `Implementation-Version` manifest entry
+| vendor   | String  | no       | info.vendor     | Mapped to `Implementation-Vendor` manifest entry
+| vendorId | String  | no       |                 | Mapped to `Implementation-Vendor-Id` manifest entry
+| url      | String  | no       |                 | Mapped to `Implementation-Url` manifest entry
 |===
 
 This block is optional.

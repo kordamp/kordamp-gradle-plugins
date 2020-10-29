@@ -29,6 +29,8 @@ class Implementation {
     String title
     String version
     String vendor
+    String vendorId
+    String url
 
     private boolean enabledSet
 
@@ -37,7 +39,9 @@ class Implementation {
             enabled: enabled,
             title  : title,
             version: version,
-            vendor : vendor
+            vendor : vendor,
+            vendorId : vendorId,
+            url : url
         ])
     }
 
@@ -55,5 +59,7 @@ class Implementation {
         o1.title = o1.title ?: o2.title
         o1.version = o1.version ?: o2.version
         o1.vendor = o1.vendor ?: o2.vendor
+        o1.vendorId = o1.vendorId ?: o2.vendorId
+        o1.url = o1.url ?: o2.url
     }
 }
