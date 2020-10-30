@@ -363,7 +363,7 @@ class InlinePlugin implements Plugin<Settings> {
         final boolean any
         final boolean all
         final boolean subprojects
-        final List<String> paths = []
+        final List<String> pathOrName = []
 
         PluginTargets() {
             String targets = System.getProperty('inline.target')
@@ -380,7 +380,7 @@ class InlinePlugin implements Plugin<Settings> {
                     any = false
                     all = false
                     subprojects = false
-                    paths.addAll(targets.split(','))
+                    pathOrName.addAll(targets.split(','))
                 }
             } else {
                 any = true
@@ -392,9 +392,12 @@ class InlinePlugin implements Plugin<Settings> {
         boolean matches(Project project) {
             if (any || all) return true
             if (subprojects && project != project.rootProject) return true
-            for (String p : paths) {
-                String path = p.trim()
-                if (path == project.path || Pattern.compile(asGlobRegex(path, true)).matcher(project.path).matches()) {
+            for (String p : pathOrName) {
+                String s = p.trim()
+                if (s == project.name ||
+                    Pattern.compile('^' + s + '$').matcher(project.name).matches() ||
+                    s == project.path ||
+                    Pattern.compile(asGlobRegex(s, true)).matcher(project.path).matches()) {
                     return true
                 }
             }

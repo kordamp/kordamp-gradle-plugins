@@ -42,7 +42,7 @@ The `inline` plugin chooses the target `Project` on which plugins will be applie
  * If the `inline.target` System property is set:
  ** All projects if the value is `all`.
  ** All projects except root if value is `subprojects`.
- ** Project(s) whose path matches the value (exactly or as regex). Value may be command separated.
+ ** Project(s) whose name or path matches the value (exactly or as regex). Value may be command separated.
  * The project whose `projectDir` matches the start parameter `-p` or `--project-dir` when given.
  * The project whose `buildFile` matches the start parameter `-b` or `--build-file` when given.
  * The project whose `projectDir` matches the current directory.
