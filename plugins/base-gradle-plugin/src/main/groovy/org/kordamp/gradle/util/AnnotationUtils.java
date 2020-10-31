@@ -538,7 +538,7 @@ public class AnnotationUtils {
         }
 
         instancesByName = mapInstancesByName(sorted, suffix);
-        LOG.info("[" + context + "] computed {} order is {}", type, instancesByName.keySet());
+        LOG.info("[" + context + "] Computed {} order is {}", type, instancesByName.keySet());
 
         return instancesByName;
     }

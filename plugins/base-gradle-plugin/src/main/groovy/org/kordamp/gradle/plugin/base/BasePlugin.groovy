@@ -22,16 +22,12 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.DependencyResolveDetails
 import org.gradle.api.execution.TaskExecutionGraph
 import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
 import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.listener.ProjectEvaluationListenerManager
 import org.kordamp.gradle.listener.TaskGraphReadyListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
-import org.kordamp.gradle.plugin.base.model.artifact.Dependency
-import org.kordamp.gradle.plugin.base.model.artifact.DependencyManagement
 import org.kordamp.gradle.plugin.base.tasks.ClearKordampFileCacheTask
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationsTask
@@ -54,7 +50,6 @@ import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addPr
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addTaskGraphReadyListener
 import static org.kordamp.gradle.util.PluginUtils.checkFlag
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
-import static org.kordamp.gradle.util.StringUtils.isBlank
 
 /**
  *
@@ -381,7 +376,7 @@ class BasePlugin extends AbstractKordampPlugin {
                 rootProject.allprojects(new Action<Project>() {
                     @Override
                     void execute(Project project) {
-                        handleDependencyManagement(project)
+                        resolveConfig(project).dependencyManagement.resolve()
                     }
                 })
             }
@@ -404,30 +399,5 @@ class BasePlugin extends AbstractKordampPlugin {
 
     static boolean isRootProject(Project project) {
         project == project.rootProject
-    }
-
-    private void handleDependencyManagement(Project project) {
-        DependencyManagement dependencyManagement = resolveConfig(project).dependencyManagement
-        dependencyManagement.resolve()
-
-        project.configurations.all(new Action<Configuration>() {
-            @Override
-            void execute(Configuration c) {
-                c.resolutionStrategy.eachDependency(new Action<DependencyResolveDetails>() {
-                    @Override
-                    void execute(DependencyResolveDetails d) {
-                        Dependency dependency = dependencyManagement.findDependencyByGA(d.requested.group, d.requested.name)
-                        if (dependency && dependency.version != d.requested.version) {
-                            if (isBlank(d.requested.version)) {
-                                project.logger.info("dependencyManagement suggests ${dependency.gav}")
-                            } else {
-                                project.logger.info("dependencyManagement forces ${dependency.gav}, requested ${dependency.ga}:${d.requested.version}")
-                            }
-                            d.useVersion(dependency.version)
-                        }
-                    }
-                })
-            }
-        })
     }
 }

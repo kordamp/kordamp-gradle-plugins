@@ -23,6 +23,8 @@ import groovy.transform.CompileStatic
 import org.apache.maven.model.Model
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.DependencyResolveDetails
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
 import org.kordamp.gradle.plugin.base.model.artifact.DependencyManagement
@@ -373,18 +375,35 @@ class DependencyManagementImpl implements DependencyManagement {
     }
 
     private boolean doResolve() {
-        Set<Dependency> ds = new LinkedHashSet<>()
         Set<Platform> ps = new LinkedHashSet<>()
         dependencies.values().each { d ->
             if (d instanceof Platform) {
                 ps << (Platform) d
-            } else {
-                ds << d
             }
         }
 
         resolvePlatforms(ps)
         applyDeferredPlatformModules()
+
+        project.configurations.all(new Action<Configuration>() {
+            @Override
+            void execute(Configuration c) {
+                c.resolutionStrategy.eachDependency(new Action<DependencyResolveDetails>() {
+                    @Override
+                    void execute(DependencyResolveDetails d) {
+                        Dependency dependency = config.dependencyManagement.findDependencyByGA(d.requested.group, d.requested.name)
+                        if (dependency && dependency.version != d.requested.version) {
+                            if (isBlank(d.requested.version)) {
+                                project.logger.info("dependencyManagement suggests ${dependency.gav}")
+                            } else {
+                                project.logger.info("dependencyManagement forces ${dependency.gav}, requested ${dependency.ga}:${d.requested.version}")
+                            }
+                            d.useVersion(dependency.version)
+                        }
+                    }
+                })
+            }
+        })
     }
 
     private void resolvePlatforms(Set<Platform> platforms) {
@@ -454,7 +473,8 @@ class DependencyManagementImpl implements DependencyManagement {
 
     private void applyDeferredPlatformModules() {
         for (DeferredPlatformModule module : deferredPlatformModules) {
-            if (module.project.configurations.findByName(module.configurationName)) {
+            Configuration configuration = module.project.configurations.findByName(module.configurationName)
+            if (configuration) {
                 if (module.configurer) {
                     module.project.dependencies.add(module.configurationName, module.platform.asGav(module.moduleName), module.configurer)
                 } else {
