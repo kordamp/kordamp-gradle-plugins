@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html><head>
-<title>org/kordamp/gradle/plugin/base/model/artifact/internal/HasModulesSpecImpl.groovy</title>
+<title>org/kordamp/gradle/plugin/base/model/artifact/PlatformSpec.groovy</title>
   <style type="text/css">
     <!--code { font-family: Courier New, Courier; font-size: 10pt; margin: 0px; }-->
   </style>
@@ -19,7 +19,7 @@
     <td colspan="2">
      <center><font size="+2">
       <code><b>
-HasModulesSpecImpl.groovy
+PlatformSpec.groovy
       </b></code>
      </font></center>
     </td>
@@ -46,27 +46,24 @@ HasModulesSpecImpl.groovy
 <a name="15"><font color="#808080">15</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;See&nbsp;the&nbsp;License&nbsp;for&nbsp;the&nbsp;specific&nbsp;language&nbsp;governing&nbsp;permissions&nbsp;and</font><br />
 <a name="16"><font color="#808080">16</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;limitations&nbsp;under&nbsp;the&nbsp;License.</font><br />
 <a name="17"><font color="#808080">17</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*/</font><br />
-<a name="18"><font color="#808080">18</font>&nbsp;</a><font color="#0000c0"><b>package&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.base.model.artifact.internal</font><br />
+<a name="18"><font color="#808080">18</font>&nbsp;</a><font color="#0000c0"><b>package&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.base.model.artifact</font><br />
 <a name="19"><font color="#808080">19</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="20"><font color="#808080">20</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">groovy.transform.CompileStatic</font><br />
-<a name="21"><font color="#808080">21</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.base.model.artifact.HasModulesSpec</font><br />
-<a name="22"><font color="#808080">22</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="23"><font color="#808080">23</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.util.StringUtils.isNotBlank</font><br />
-<a name="24"><font color="#808080">24</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="25"><font color="#808080">25</font>&nbsp;</a><font color="#008000">/**</font><br />
-<a name="26"><font color="#808080">26</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;</font><font color="#005500">@author&nbsp;</font><font color="#008000">Andres&nbsp;Almiray</font><br />
-<a name="27"><font color="#808080">27</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;</font><font color="#005500">@since&nbsp;</font><font color="#008000">0.37.0</font><br />
-<a name="28"><font color="#808080">28</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*/</font><br />
-<a name="29"><font color="#808080">29</font>&nbsp;</a><font color="#646464">@CompileStatic</font><br />
-<a name="30"><font color="#808080">30</font>&nbsp;</a><font color="#0000c0"><b>class&nbsp;</b></font><font color="#000000">HasModulesSpecImpl&nbsp;</font><font color="#0000c0"><b>implements&nbsp;</b></font><font color="#000000">HasModulesSpec&nbsp;</font><font color="#000000">{</font><br />
-<a name="31"><font color="#808080">31</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Set&lt;String&gt;&nbsp;modules&nbsp;=&nbsp;</font><font color="#000000">[]&nbsp;</font><font color="#000000">as&nbsp;Set</font><br />
-<a name="32"><font color="#808080">32</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="33"><font color="#808080">33</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">module</font><font color="#000000">(</font><font color="#000000">String&nbsp;module</font><font color="#000000">)&nbsp;{</font><br />
-<a name="34"><font color="#808080">34</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>if&nbsp;</b></font><font color="#000000">(</font><font color="#000000">isNotBlank</font><font color="#000000">(</font><font color="#000000">module</font><font color="#000000">))&nbsp;{</font><br />
-<a name="35"><font color="#808080">35</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">modules&nbsp;&lt;&lt;&nbsp;module.trim</font><font color="#000000">()</font><br />
-<a name="36"><font color="#808080">36</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
-<a name="37"><font color="#808080">37</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
-<a name="38"><font color="#808080">38</font>&nbsp;</a><font color="#000000">}</font></code>
+<a name="21"><font color="#808080">21</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="22"><font color="#808080">22</font>&nbsp;</a><font color="#008000">/**</font><br />
+<a name="23"><font color="#808080">23</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;</font><font color="#005500">@author&nbsp;</font><font color="#008000">Andres&nbsp;Almiray</font><br />
+<a name="24"><font color="#808080">24</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;</font><font color="#005500">@since&nbsp;</font><font color="#008000">0.41.0</font><br />
+<a name="25"><font color="#808080">25</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*/</font><br />
+<a name="26"><font color="#808080">26</font>&nbsp;</a><font color="#646464">@CompileStatic</font><br />
+<a name="27"><font color="#808080">27</font>&nbsp;</a><font color="#0000c0"><b>interface&nbsp;</b></font><font color="#000000">PlatformSpec&nbsp;</font><font color="#000000">{</font><br />
+<a name="28"><font color="#808080">28</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">setGroupId</font><font color="#000000">(</font><font color="#000000">String&nbsp;getGroupId</font><font color="#000000">)</font><br />
+<a name="29"><font color="#808080">29</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="30"><font color="#808080">30</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">setArtifactId</font><font color="#000000">(</font><font color="#000000">String&nbsp;artifactId</font><font color="#000000">)</font><br />
+<a name="31"><font color="#808080">31</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="32"><font color="#808080">32</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">setVersion</font><font color="#000000">(</font><font color="#000000">String&nbsp;version</font><font color="#000000">)</font><br />
+<a name="33"><font color="#808080">33</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="34"><font color="#808080">34</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Platform&nbsp;asPlatform</font><font color="#000000">()</font><br />
+<a name="35"><font color="#808080">35</font>&nbsp;</a><font color="#000000">}</font></code>
     
    </td>
   <!-- end source code -->

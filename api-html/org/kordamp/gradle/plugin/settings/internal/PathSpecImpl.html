@@ -68,19 +68,33 @@ PathSpecImpl.groovy
 <a name="37"><font color="#808080">37</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="38"><font color="#808080">38</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="39"><font color="#808080">39</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#646464">@Override</font><br />
-<a name="40"><font color="#808080">40</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">when</font><font color="#000000">(</font><font color="#c00000"><b>boolean&nbsp;</b></font><font color="#000000">value</font><font color="#000000">)&nbsp;{</font><br />
+<a name="40"><font color="#808080">40</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">includeIf</font><font color="#000000">(</font><font color="#c00000"><b>boolean&nbsp;</b></font><font color="#000000">value</font><font color="#000000">)&nbsp;{</font><br />
 <a name="41"><font color="#808080">41</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">condition&nbsp;=&nbsp;</font><font color="#000000">{&nbsp;</font><font color="#000000">-&gt;&nbsp;value&nbsp;</font><font color="#000000">}</font><br />
 <a name="42"><font color="#808080">42</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="43"><font color="#808080">43</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="44"><font color="#808080">44</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#646464">@Override</font><br />
-<a name="45"><font color="#808080">45</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">when</font><font color="#000000">(</font><font color="#000000">Supplier&lt;Boolean&gt;&nbsp;supplier</font><font color="#000000">)&nbsp;{</font><br />
+<a name="45"><font color="#808080">45</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">includeIf</font><font color="#000000">(</font><font color="#000000">Supplier&lt;Boolean&gt;&nbsp;supplier</font><font color="#000000">)&nbsp;{</font><br />
 <a name="46"><font color="#808080">46</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>if&nbsp;</b></font><font color="#000000">(</font><font color="#000000">supplier</font><font color="#000000">)&nbsp;</font><font color="#000000">condition&nbsp;=&nbsp;supplier</font><br />
 <a name="47"><font color="#808080">47</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="48"><font color="#808080">48</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="49"><font color="#808080">49</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>boolean&nbsp;</b></font><font color="#000000">applies</font><font color="#000000">()&nbsp;{</font><br />
-<a name="50"><font color="#808080">50</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>return&nbsp;</b></font><font color="#000000">condition.get</font><font color="#000000">()</font><br />
-<a name="51"><font color="#808080">51</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
-<a name="52"><font color="#808080">52</font>&nbsp;</a><font color="#000000">}</font></code>
+<a name="49"><font color="#808080">49</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#646464">@Override</font><br />
+<a name="50"><font color="#808080">50</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#646464">@Deprecated</font><br />
+<a name="51"><font color="#808080">51</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">when</font><font color="#000000">(</font><font color="#c00000"><b>boolean&nbsp;</b></font><font color="#000000">value</font><font color="#000000">)&nbsp;{</font><br />
+<a name="52"><font color="#808080">52</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">println</font><font color="#000000">(</font><font color="#990000">&#34;The&nbsp;method&nbsp;when()&nbsp;is&nbsp;deprecated&nbsp;and&nbsp;will&nbsp;be&nbsp;removed&nbsp;in&nbsp;the&nbsp;future.&nbsp;Use&nbsp;includeIf()&nbsp;instead&#34;</font><font color="#000000">)</font><br />
+<a name="53"><font color="#808080">53</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">includeIf</font><font color="#000000">(</font><font color="#000000">value</font><font color="#000000">)</font><br />
+<a name="54"><font color="#808080">54</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
+<a name="55"><font color="#808080">55</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="56"><font color="#808080">56</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#646464">@Override</font><br />
+<a name="57"><font color="#808080">57</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#646464">@Deprecated</font><br />
+<a name="58"><font color="#808080">58</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">when</font><font color="#000000">(</font><font color="#000000">Supplier&lt;Boolean&gt;&nbsp;supplier</font><font color="#000000">)&nbsp;{</font><br />
+<a name="59"><font color="#808080">59</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">println</font><font color="#000000">(</font><font color="#990000">&#34;The&nbsp;method&nbsp;when()&nbsp;is&nbsp;deprecated&nbsp;and&nbsp;will&nbsp;be&nbsp;removed&nbsp;in&nbsp;the&nbsp;future.&nbsp;Use&nbsp;includeIf()&nbsp;instead&#34;</font><font color="#000000">)</font><br />
+<a name="60"><font color="#808080">60</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">includeIf</font><font color="#000000">(</font><font color="#000000">supplier</font><font color="#000000">)</font><br />
+<a name="61"><font color="#808080">61</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
+<a name="62"><font color="#808080">62</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="63"><font color="#808080">63</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>boolean&nbsp;</b></font><font color="#000000">applies</font><font color="#000000">()&nbsp;{</font><br />
+<a name="64"><font color="#808080">64</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>return&nbsp;</b></font><font color="#000000">condition.get</font><font color="#000000">()</font><br />
+<a name="65"><font color="#808080">65</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
+<a name="66"><font color="#808080">66</font>&nbsp;</a><font color="#000000">}</font></code>
     
    </td>
   <!-- end source code -->
