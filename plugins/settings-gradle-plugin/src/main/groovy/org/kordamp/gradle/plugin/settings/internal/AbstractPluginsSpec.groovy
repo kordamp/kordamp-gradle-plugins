@@ -85,13 +85,6 @@ abstract class AbstractPluginsSpec {
         return result.toString()
     }
 
-    private static char next(String glob, int i) {
-        if (i < glob.length()) {
-            return glob.charAt(i)
-        }
-        return 0
-    }
-
     protected boolean isBlank(String str) {
         if (str == null || str.length() == 0) {
             return true

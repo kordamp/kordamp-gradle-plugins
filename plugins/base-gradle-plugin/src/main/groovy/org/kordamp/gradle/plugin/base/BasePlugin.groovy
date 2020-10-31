@@ -372,7 +372,7 @@ class BasePlugin extends AbstractKordampPlugin {
         @Override
         void allProjectsEvaluated(Project rootProject) {
             // noop
-            if (checkFlag(ORG_KORDAMP_GRADLE_BASE_DEPENDENCY_MANAGEMENT, true)) {
+            if (checkFlag(ORG_KORDAMP_GRADLE_BASE_DEPENDENCY_MANAGEMENT, false)) {
                 rootProject.allprojects(new Action<Project>() {
                     @Override
                     void execute(Project project) {
