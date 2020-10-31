@@ -60,7 +60,7 @@ class CredentialsSetImpl extends AbstractDomainSet<Credentials> implements Crede
 
     @Override
     Map<String, Credentials> getCredentials() {
-        credentialsMap.getOrElse(Collections.<String, Credentials> emptyMap())
+        credentialsMap.getOrElse([:])
     }
 
     @Override
