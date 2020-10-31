@@ -253,7 +253,7 @@ buildscript {
 apply(plugin = "org.kordamp.gradle.settings")
 
 configure<org.kordamp.gradle.plugin.settings.ProjectsExtension> {
-    layout.set("multi-level")
+    setLayout("multi-level")
     directories.set(listOf(
         "guide",
         "subprojects/project1",
@@ -313,7 +313,7 @@ buildscript {
 apply(plugin = "org.kordamp.gradle.settings")
 
 configure<org.kordamp.gradle.plugin.settings.ProjectsExtension> {
-    layout.set("standard")
+    setLayout("standard")
 }
 ----
 
@@ -371,7 +371,7 @@ buildscript {
 apply(plugin = "org.kordamp.gradle.settings")
 
 configure<org.kordamp.gradle.plugin.settings.ProjectsExtension> {
-    layout.set("explicit")
+    setLayout("explicit")
     includeProject("guide")
     includeProjects("subprojects")
 }
@@ -430,7 +430,7 @@ buildscript {
 apply(plugin = "org.kordamp.gradle.settings")
 
 configure<org.kordamp.gradle.plugin.settings.ProjectsExtension> {
-    layout.set("standard")
+    setLayout("standard")
     fileNameTransformation.set("add")
     prefix.set("project-")
 }
@@ -487,7 +487,7 @@ buildscript {
 apply(plugin = "org.kordamp.gradle.settings")
 
 configure<org.kordamp.gradle.plugin.settings.ProjectsExtension> {
-    layout.set("standard")
+    setLayout("standard")
     fileNameTransformation.set("remove")
     prefix.set("project-")
 }
