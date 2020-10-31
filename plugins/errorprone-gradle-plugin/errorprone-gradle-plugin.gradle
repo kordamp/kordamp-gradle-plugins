@@ -17,6 +17,6 @@
  */
 dependencies {
     api project(':base-gradle-plugin')
-    api 'net.ltgt.gradle:gradle-errorprone-plugin:1.2.1'
+    api 'net.ltgt.gradle:gradle-errorprone-plugin:1.3.0'
     api "com.google.errorprone:error_prone_annotations:$errorproneVersion"
 }
