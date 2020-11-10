@@ -5,10 +5,12 @@
 :project-name:    kordamp-gradle-plugins
 :project-group:   org.kordamp.gradle
 :project-version: 0.41.0
+:plugin-id:       {project-group}.base
 
 image:https://github.com/{project-owner}/{project-name}/workflows/Build/badge.svg["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
 image:https://img.shields.io/badge/license-ASL2-blue.svg["ASL2 Licensed", link="https://opensource.org/licenses/Apache-2.0"]
 image:https://api.bintray.com/packages/{project-owner}/{project-repo}/{project-name}/images/download.svg[link="https://bintray.com/{project-owner}/{project-repo}/{project-name}/_latestVersion"]
+image:https://img.shields.io/maven-metadata/v?label=Plugin%20Portal&metadataUrl=https://plugins.gradle.org/m2/org/kordamp/gradle/base/{plugin-id}.gradle.plugin/maven-metadata.xml["Gradle Plugin Portal, link="https://plugins.gradle.org/plugin/{plugin-id}"]
 image:https://img.shields.io/badge/donations-Patreon-orange.svg[link="https://www.patreon.com/user?u=6609318"]
 
 ---
@@ -19,7 +21,7 @@ A set of opinionated Gradle plugins that provide common behavior observed in Mav
 
 Option #1
 [source,groovy]
-[subs="attributes"]
+[subs="attributes,verbatim"]
 ----
 buildscript {
     repositories {
@@ -27,22 +29,22 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath '{project-group}:{plugin-id}:{plugin-version}'
+        classpath '{project-group}:<plugin-id>:{plugin-version}'
     }
 }
-apply plugin: '{plugin-id}'
+apply plugin: '<plugin-id>'
 ----
 
 Option #2
 [source,groovy]
-[subs="attributes"]
+[subs="attributes,verbatim"]
 ----
 plugins {
-    id '{plugin-id}' version '{plugin-version}'
+    id '<plugin-id>' version '{plugin-version}'
 }
 ----
 
-Where `{plugin-id}` stands for any of the ids described in the following section. Most times it's enough to simply apply
+Where `&lt;plugin-id&gt;` stands for any of the ids described in the following section. Most times it's enough to simply apply
 the `{project-group}.project` at the root. All plugins may be applied independently as well.
 
 Refer to the link:http://{project-owner}.github.io/{project-name}[guide, window="_blank"] for further information on configuration
