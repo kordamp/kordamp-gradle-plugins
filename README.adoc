@@ -8,10 +8,8 @@
 :plugin-id:       {project-group}.base
 
 image:https://github.com/{project-owner}/{project-name}/workflows/Build/badge.svg["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
-image:https://img.shields.io/badge/license-ASL2-blue.svg["ASL2 Licensed", link="https://opensource.org/licenses/Apache-2.0"]
 image:https://api.bintray.com/packages/{project-owner}/{project-repo}/{project-name}/images/download.svg[link="https://bintray.com/{project-owner}/{project-repo}/{project-name}/_latestVersion"]
 image:https://img.shields.io/maven-metadata/v?label=Plugin%20Portal&metadataUrl=https://plugins.gradle.org/m2/org/kordamp/gradle/base/{plugin-id}.gradle.plugin/maven-metadata.xml["Gradle Plugin Portal, link="https://plugins.gradle.org/plugin/{plugin-id}"]
-image:https://img.shields.io/badge/donations-Patreon-orange.svg[link="https://www.patreon.com/user?u=6609318"]
 
 ---
 
@@ -29,7 +27,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath '{project-group}:<plugin-id>:{plugin-version}'
+        classpath '{project-group}:<plugin-id>:{project-version}'
     }
 }
 apply plugin: '<plugin-id>'
@@ -40,7 +38,7 @@ Option #2
 [subs="attributes,verbatim"]
 ----
 plugins {
-    id '<plugin-id>' version '{plugin-version}'
+    id '<plugin-id>' version '{project-version}'
 }
 ----
 
@@ -53,4 +51,4 @@ and usage.
 == Requirements
 
  * Java 8
- * Gradle 5+
+ * Gradle 6+
