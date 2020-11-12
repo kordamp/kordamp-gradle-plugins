@@ -22,6 +22,8 @@ Configures aggregate license reports on the root project.
 config {
     licensing {
         enabled
+        includes
+        excludes
         excludedSourceSets
         licenses {
             inherits
@@ -44,6 +46,8 @@ config {
 |===
 | Name               | Type          | Required | Default Value | Description
 | enabled            | boolean       | no       | true          | Disables `org.kordamp.gradle.licensing` plugin if `false`
+| includes           | Set<String>   | no       | []            |
+| excludes           | Set<String>   | no       | []            |
 | excludedSourceSets | Set<String>   | no       | []            |
 | licenses           | LicenseSet    | yes      |               | This block maps to the `<licenses>` block in POM. +
                                                                   At least one nested `license` block must be defined.
@@ -169,6 +173,10 @@ mapping.java:: 'SLASHSTAR_STYLE'
 mapping.groovy:: 'SLASHSTAR_STYLE'
 mapping.kt:: 'SLASHSTAR_STYLE'
 mapping.scala:: 'SLASHSTAR_STYLE'
+mapping.gradle:: 'SLASHSTAR_STYLE'
+mapping.kts:: 'SLASHSTAR_STYLE'
+mapping.yml:: 'SCRIPT_STYLE'
+mapping.toml:: 'SCRIPT_STYLE'
 
 The following extra properties become available to license templates
 

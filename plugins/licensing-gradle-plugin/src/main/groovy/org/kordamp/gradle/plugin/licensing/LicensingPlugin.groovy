@@ -312,12 +312,16 @@ class LicensingPlugin extends AbstractKordampPlugin {
             author = config.info.getAuthors().join(', ')
             license = lic.licenseId?.spdx()
         }
+        licenseExtension.exclude '**/*.tpl'
         licenseExtension.exclude '**/*.png'
         licenseExtension.exclude '**/*.gif'
         licenseExtension.exclude '**/*.jpg'
         licenseExtension.exclude '**/*.jpeg'
         licenseExtension.exclude '**/*.json'
         licenseExtension.exclude 'META-INF/services/*'
+        licenseExtension.exclude 'META-INF/maven/*'
+        licenseExtension.excludes config.licensing.excludes
+        licenseExtension.includes config.licensing.includes
 
         project.tasks.withType(LicenseCheck, new Action<LicenseCheck>() {
             @Override

@@ -38,6 +38,8 @@ class Licensing extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.licensing'
 
     final LicenseSetImpl licenses
+    Set<String> excludes = new LinkedHashSet<>()
+    Set<String> includes = new LinkedHashSet<>()
     final Set<String> excludedSourceSets = new LinkedHashSet<>()
 
     Licensing(ProjectConfigurationExtension config, Project project) {
@@ -60,6 +62,8 @@ class Licensing extends AbstractFeature {
 
         map.excludedSourceSets = excludedSourceSets
         map.licenses = licenses.toMap()
+        map.excludes = excludes
+        map.includes = includes
 
         new LinkedHashMap<>('licensing': map)
     }
@@ -72,6 +76,14 @@ class Licensing extends AbstractFeature {
         ConfigureUtil.configure(action, licenses)
     }
 
+    void include(String str) {
+        includes << str
+    }
+
+    void exclude(String str) {
+        excludes << str
+    }
+
     void excludeSourceSet(String s) {
         if (isNotBlank(s)) {
             excludedSourceSets << s
@@ -82,6 +94,8 @@ class Licensing extends AbstractFeature {
         AbstractFeature.merge(o1, o2)
         CollectionUtils.merge(o1.excludedSourceSets, o2?.excludedSourceSets)
         LicenseSetImpl.merge(o1.@licenses, o2?.@licenses)
+        o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
+        o1.includes = CollectionUtils.merge(o1.includes, o2.includes, false)
     }
 
     List<String> validate(ProjectConfigurationExtension extension) {
