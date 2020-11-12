@@ -182,7 +182,11 @@ class LicensingPlugin extends AbstractKordampPlugin {
                     include('**/gradle.properties')
                     include('**/gradle.yml')
                     include('**/gradle.toml')
-                    exclude(project.buildDir.name + '/**')
+                    exclude("**/${project.buildDir.name}/**/*.gradle")
+                    exclude("**/${project.buildDir.name}/**/*.gradle.kts")
+                    exclude("**/${project.buildDir.name}/**/gradle.properties")
+                    exclude("**/${project.buildDir.name}/**/gradle.yml")
+                    exclude("**/${project.buildDir.name}/**/gradle.toml")
                 }
             }
         })
@@ -199,7 +203,11 @@ class LicensingPlugin extends AbstractKordampPlugin {
                     include('**/gradle.properties')
                     include('**/gradle.yml')
                     include('**/gradle.toml')
-                    exclude(project.buildDir.name + '/**')
+                    exclude("**/${project.buildDir.name}/**/*.gradle")
+                    exclude("**/${project.buildDir.name}/**/*.gradle.kts")
+                    exclude("**/${project.buildDir.name}/**/gradle.properties")
+                    exclude("**/${project.buildDir.name}/**/gradle.yml")
+                    exclude("**/${project.buildDir.name}/**/gradle.toml")
                 }
             }
         })
@@ -212,7 +220,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
                 t.description = 'Scanning license on Maven files'
                 t.source = project.fileTree(project.projectDir) {
                     include('**/pom.xml')
-                    exclude(project.buildDir.name + '/**')
+                    exclude("**/${project.buildDir.name}/**/pom.xml")
                 }
             }
         })
@@ -225,7 +233,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
                 t.description = 'Scanning license on Maven files'
                 t.source = project.fileTree(project.projectDir) {
                     include('**/pom.xml')
-                    exclude(project.buildDir.name + '/**')
+                    exclude("**/${project.buildDir.name}/**/pom.xml")
                 }
             }
         })
