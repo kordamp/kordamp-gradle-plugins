@@ -27,7 +27,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath '{project-group}:<plugin-id>:{project-version}'
+        classpath '{project-group}:<plugin-artifact-id>:{project-version}'
     }
 }
 apply plugin: '<plugin-id>'
@@ -42,7 +42,7 @@ plugins {
 }
 ----
 
-Where `&lt;plugin-id&gt;` stands for any of the ids described in the following section. Most times it's enough to simply apply
+Where `&lt;plugin-id&gt;` stands for any of the ids described in the guide. Most times it's enough to simply apply
 the `{project-group}.project` at the root. All plugins may be applied independently as well.
 
 Refer to the link:http://{project-owner}.github.io/{project-name}[guide, window="_blank"] for further information on configuration
