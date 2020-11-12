@@ -44,6 +44,7 @@ class SummaryBuildReport implements BuildReport {
     final Property<Integer> maxProjectPathSize
     final Property<Double> confTimeThreshold
     final Property<Double> execTimeThreshold
+    final Property<Integer> displayProjectThreshold
 
     @Inject
     SummaryBuildReport(ObjectFactory objects) {
@@ -53,6 +54,7 @@ class SummaryBuildReport implements BuildReport {
         this.maxProjectPathSize = objects.property(Integer).convention(36)
         this.confTimeThreshold = objects.property(Double).convention(0.5d)
         this.execTimeThreshold = objects.property(Double).convention(120d)
+        this.displayProjectThreshold = objects.property(Integer).convention(2)
     }
 
     @Override
@@ -64,8 +66,12 @@ class SummaryBuildReport implements BuildReport {
 
         InsightExtensionImpl x = (InsightExtensionImpl) extension
 
-        int paddingSize = Math.max(10, maxProjectPathSize.get())
+        int paddingSize = Math.max(13, maxProjectPathSize.get())
         String padding = ' ' * paddingSize
+        if (projects.size() >= 1) {
+            padding = "${projects.size()} projects".padRight(paddingSize)
+        }
+
         String header = '             CONF        EXEC   '
         if ('long'.equalsIgnoreCase(format.get())) {
             header += ' ' + ['TOT', 'EXE', 'FLD', 'SKP', 'UTD', 'WRK', 'CHD', 'NSR', 'ACT'].join(' ')
@@ -76,17 +82,14 @@ class SummaryBuildReport implements BuildReport {
         println(padding + header)
         println(separator)
 
-        double totalConfDuration = 0
-        double totalExecDuration = 0
-
         int[] totals = new int[9]
         Arrays.fill(totals, 0)
 
+        int projectExecutedCount = 0
         for (Project project : projects) {
             if (project.state == Project.State.HIDDEN) continue
 
-            totalConfDuration += project.confDuration
-            totalExecDuration += project.execDuration
+            projectExecutedCount++
 
             String confDuration = formatDuration(project.confDuration)
             String execDuration = formatDuration(project.execDuration)
@@ -132,25 +135,10 @@ class SummaryBuildReport implements BuildReport {
         }
 
         println(separator)
-
-        /*
-        String row = padding +
-            ' ' + x.colors.result(build.failure) + ' ' +
-            '[' + formatDuration(totalConfDuration) + '] ' +
-            '[' + formatDuration(totalExecDuration) + ']'
-        String details = ''
-
-        if ('long'.equalsIgnoreCase(format.get())) {
-            int index = 0
-            details = totals.collect { v ->
-                index++
-                String.valueOf(v == 0 ? (index == 1 || zeroPadding.get() ? v : ' ') : v).padLeft(3, ' ')
-            }.join(' ')
+        if (projectExecutedCount >= displayProjectThreshold.get()) {
+            println("${projectExecutedCount} projects executed")
+            println(separator)
         }
-        println(row + ' ' + details)
-
-        println(separator)
-        */
     }
 
     private static String formatDuration(double time) {

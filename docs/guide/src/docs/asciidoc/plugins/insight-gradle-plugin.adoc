@@ -71,13 +71,14 @@ explicitly configured.
 
 [options="header", cols="5*"]
 |===
-| Name               | Type    | Required | Default Value | Description
-| enabled            | boolean | no       | true          | Enables or disables this report.
-| format             | String  | no       | short         | Displays project and task counts. Valid values are [`short`, `long`].
-| zeroPadding        | boolean | no       | false         | Output `0` characters in task table.
-| maxProjectPathSize | int     | no       | 36            | Maximum size for displaying project path.
-| confTimeThreshold  | double  | no       | 0.5d          | Time threshold used to flag slow configuration (in seconds).
-| execTimeThreshold  | double  | no       | 120d          | Time threshold used to flag slow execution (in seconds).
+| Name                    | Type    | Required | Default Value | Description
+| enabled                 | boolean | no       | true          | Enables or disables this report.
+| format                  | String  | no       | short         | Displays project and task counts. Valid values are [`short`, `long`].
+| zeroPadding             | boolean | no       | false         | Output `0` characters in task table.
+| maxProjectPathSize      | int     | no       | 36            | Maximum size for displaying project path.
+| confTimeThreshold       | double  | no       | 0.5d          | Time threshold used to flag slow configuration (in seconds).
+| execTimeThreshold       | double  | no       | 120d          | Time threshold used to flag slow execution (in seconds).
+| displayProjectThreshold | int     | no       | 2             | Display project count threshold.
 |===
 
 .Project State
