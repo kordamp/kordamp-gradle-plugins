@@ -539,8 +539,8 @@ class ProjectConfigurationExtension {
         }
 
         static Coverage merge(Coverage o1, Coverage o2) {
-            Coveralls.merge(o1.@coveralls, o2.@coveralls)
             Jacoco.merge(o1.@jacoco, o2.@jacoco)
+            Coveralls.merge(o1.@coveralls, o2.@coveralls)
             o1
         }
 
