@@ -321,6 +321,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
         licenseExtension.exclude '**/*.json'
         licenseExtension.exclude 'META-INF/services/*'
         licenseExtension.exclude 'META-INF/maven/*'
+        licenseExtension.exclude 'META-INF/groovy/*'
         licenseExtension.excludes config.licensing.excludes
         licenseExtension.includes config.licensing.includes
 
