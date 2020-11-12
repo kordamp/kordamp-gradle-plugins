@@ -300,7 +300,9 @@ class TestingPlugin extends AbstractKordampPlugin {
             str += "${config.testing.colors.failure(console, String.valueOf(result.failedTestCount))}/"
             str += "${config.testing.colors.ignored(console, String.valueOf(result.skippedTestCount))}]"
             if (!descriptor.name.contains('Gradle Test Run')) {
-                str += " [Time: ${(time >= config.testing.timeThreshold) ? config.testing.colors.failure(console, duration) : duration}]"
+                double timeThreshold = config.testing.timeThreshold
+                if (timeThreshold <= 0d) timeThreshold = 2000d
+                str += ' [Time: ' + (time >= timeThreshold ? config.testing.colors.failure(console, duration) : duration) + ']'
             }
             testTask.project.logger.lifecycle(str.toString())
         }
