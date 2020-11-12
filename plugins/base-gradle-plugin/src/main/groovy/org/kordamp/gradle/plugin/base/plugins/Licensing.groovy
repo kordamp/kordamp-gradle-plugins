@@ -40,6 +40,7 @@ class Licensing extends AbstractFeature {
     final LicenseSetImpl licenses
     Set<String> excludes = new LinkedHashSet<>()
     Set<String> includes = new LinkedHashSet<>()
+    Map<String, String> mappings = [:]
     final Set<String> excludedSourceSets = new LinkedHashSet<>()
 
     Licensing(ProjectConfigurationExtension config, Project project) {
@@ -64,6 +65,7 @@ class Licensing extends AbstractFeature {
         map.licenses = licenses.toMap()
         map.excludes = excludes
         map.includes = includes
+        map.mappings = mappings
 
         new LinkedHashMap<>('licensing': map)
     }
@@ -84,6 +86,12 @@ class Licensing extends AbstractFeature {
         excludes << str
     }
 
+    void addMapping(String ext, String style) {
+        if (isNotBlank(ext) && isNotBlank(style)) {
+            mappings[ext] = style
+        }
+    }
+
     void excludeSourceSet(String s) {
         if (isNotBlank(s)) {
             excludedSourceSets << s
@@ -96,6 +104,7 @@ class Licensing extends AbstractFeature {
         LicenseSetImpl.merge(o1.@licenses, o2?.@licenses)
         o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
         o1.includes = CollectionUtils.merge(o1.includes, o2.includes, false)
+        o1.mappings = CollectionUtils.merge(o1.mappings, o2?.mappings, false)
     }
 
     List<String> validate(ProjectConfigurationExtension extension) {

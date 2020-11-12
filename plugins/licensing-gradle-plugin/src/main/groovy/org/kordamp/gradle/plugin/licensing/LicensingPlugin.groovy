@@ -305,6 +305,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
             yml = 'SCRIPT_STYLE'
             toml = 'SCRIPT_STYLE'
         }
+        licenseExtension.mapping(config.licensing.mappings)
         licenseExtension.ext.project = project.name
         licenseExtension.ext {
             projectName = config.info.name

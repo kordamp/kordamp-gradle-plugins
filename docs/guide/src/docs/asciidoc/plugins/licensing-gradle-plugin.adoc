@@ -24,6 +24,7 @@ config {
         enabled
         includes
         excludes
+        mappings
         excludedSourceSets
         licenses {
             inherits
@@ -44,15 +45,16 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name               | Type          | Required | Default Value | Description
-| enabled            | boolean       | no       | true          | Disables `org.kordamp.gradle.licensing` plugin if `false`
-| includes           | Set<String>   | no       | []            |
-| excludes           | Set<String>   | no       | []            |
-| excludedSourceSets | Set<String>   | no       | []            |
-| licenses           | LicenseSet    | yes      |               | This block maps to the `<licenses>` block in POM. +
-                                                                  At least one nested `license` block must be defined.
-| inherits           | boolean       | no       | true          | Whether to inherit values from a parent `POM`.
-| mergeStrategy      | MergeStrategy | no       | UNIQUE        | One of `PREPEND`, `APPEND`, `UNIQUE`, `OVERWRITE`.
+| Name               | Type                | Required | Default Value | Description
+| enabled            | boolean             | no       | true          | Disables `org.kordamp.gradle.licensing` plugin if `false`
+| includes           | Set<String>         | no       | []            |
+| excludes           | Set<String>         | no       | []            |
+| mappings           | Map<String, String> | no       | [:]           |
+| excludedSourceSets | Set<String>         | no       | []            |
+| licenses           | LicenseSet          | yes      |               | This block maps to the `<licenses>` block in POM. +
+                                                                        At least one nested `license` block must be defined.
+| inherits           | boolean             | no       | true          | Whether to inherit values from a parent `POM`.
+| mergeStrategy      | MergeStrategy       | no       | UNIQUE        | One of `PREPEND`, `APPEND`, `UNIQUE`, `OVERWRITE`.
 |===
 
 The value of `inherits` cannot be changed once it has been set.
