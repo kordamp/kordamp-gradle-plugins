@@ -24,6 +24,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExcludeRule
 import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.attributes.Category
 import org.gradle.api.publish.Publication
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPom
@@ -156,68 +157,88 @@ class PublishingUtils {
         })
     }
 
+    static boolean isPlatformDependency(org.gradle.api.artifacts.Dependency dep) {
+        if (dep instanceof ModuleDependency) {
+            ModuleDependency md = (ModuleDependency) dep
+            String value = String.valueOf(md.attributes.getAttribute(Category.CATEGORY_ATTRIBUTE))
+            return Category.REGULAR_PLATFORM.equals(value) || Category.ENFORCED_PLATFORM.equals(value)
+        }
+        return false
+    }
+
     static void configureDependencies(MavenPom pom, ProjectConfigurationExtension config, Project project, Map<String, String> expressions) {
         Closure<Boolean> filter = { org.gradle.api.artifacts.Dependency d ->
             d.name != 'unspecified'
         }
 
+        Map<String, Platform> platformDependencies = [:]
         Map<String, org.gradle.api.artifacts.Dependency> compileDependencies = [:]
         Map<String, org.gradle.api.artifacts.Dependency> runtimeDependencies = [:]
         Map<String, org.gradle.api.artifacts.Dependency> testDependencies = [:]
         Map<String, org.gradle.api.artifacts.Dependency> providedDependencies = [:]
 
+        Closure<Void> processDependency = { Map<String, org.gradle.api.artifacts.Dependency> bucket, org.gradle.api.artifacts.Dependency dep ->
+            String coordinates = "${dep.group}:${dep.name}:${dep.version}".toString()
+            if (PublishingUtils.isPlatformDependency(dep)) {
+                platformDependencies.put(coordinates, asPlatform(dep))
+            } else {
+                bucket.put(coordinates, dep)
+            }
+            return null
+        }
+
         if (project.configurations.findByName('compile')) {
-            compileDependencies = project.configurations.findByName('compile')
+            project.configurations.findByName('compile')
                 .allDependencies.findAll(filter)
-                .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+                .each(processDependency.curry(compileDependencies))
         }
 
         if (project.configurations.findByName('runtime')) {
-            runtimeDependencies = project.configurations.findByName('runtime')
+            project.configurations.findByName('runtime')
                 .allDependencies.findAll(filter)
-                .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+                .each(processDependency.curry(runtimeDependencies))
         }
 
         if (project.configurations.findByName('testRuntime')) {
-            testDependencies = project.configurations.findByName('testRuntime')
+            project.configurations.findByName('testRuntime')
                 .allDependencies.findAll(filter)
-                .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+                .each(processDependency.curry(testDependencies))
         }
 
         if (project.configurations.findByName('compileOnly')) {
-            providedDependencies = project.configurations.findByName('compileOnly')
+            project.configurations.findByName('compileOnly')
                 .allDependencies.findAll(filter)
-                .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+                .each(processDependency.curry(providedDependencies))
         }
 
         if (project.configurations.findByName('api')) {
-            compileDependencies.putAll(project.configurations.findByName('api')
+            project.configurations.findByName('api')
                 .allDependencies.findAll(filter)
-                .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+                .each(processDependency.curry(compileDependencies))
         }
 
         if (project.configurations.findByName('implementation')) {
-            runtimeDependencies.putAll(project.configurations.findByName('implementation')
+            project.configurations.findByName('implementation')
                 .allDependencies.findAll(filter)
-                .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+                .each(processDependency.curry(runtimeDependencies))
         }
 
         if (project.configurations.findByName('runtimeOnly')) {
-            runtimeDependencies.putAll(project.configurations.findByName('runtimeOnly')
+            project.configurations.findByName('runtimeOnly')
                 .allDependencies.findAll(filter)
-                .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+                .each(processDependency.curry(runtimeDependencies))
         }
 
         if (project.configurations.findByName('testImplementation')) {
-            testDependencies.putAll(project.configurations.findByName('testImplementation')
+            project.configurations.findByName('testImplementation')
                 .allDependencies.findAll(filter)
-                .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+                .each(processDependency.curry(testDependencies))
         }
 
         if (project.configurations.findByName('testRuntimeOnly')) {
-            testDependencies.putAll(project.configurations.findByName('testRuntimeOnly')
+            project.configurations.findByName('testRuntimeOnly')
                 .allDependencies.findAll(filter)
-                .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] }))
+                .each(processDependency.curry(testDependencies))
         }
 
         compileDependencies.keySet().each { key ->
@@ -228,14 +249,24 @@ class PublishingUtils {
             testDependencies.remove(key)
         }
 
-        if (compileDependencies || runtimeDependencies || testDependencies || providedDependencies) {
-            injectDependencies(pom, config, compileDependencies, runtimeDependencies, testDependencies, providedDependencies, expressions)
+        if (platformDependencies || compileDependencies || runtimeDependencies || testDependencies || providedDependencies) {
+            injectDependencies(pom, config, platformDependencies, compileDependencies, runtimeDependencies, testDependencies, providedDependencies, expressions)
         }
+    }
+
+    private static Platform asPlatform(org.gradle.api.artifacts.Dependency dependency) {
+        return DependencyUtils.platform(
+            dependency.name.replace('-','.').replace('_','.'),
+            dependency.group,
+            dependency.name,
+            dependency.version
+        )
     }
 
     @CompileDynamic
     private static void injectDependencies(MavenPom pom,
                                            ProjectConfigurationExtension config,
+                                           Map<String, Platform> platformDependencies,
                                            Map<String, org.gradle.api.artifacts.Dependency> compileDependencies,
                                            Map<String, org.gradle.api.artifacts.Dependency> runtimeDependencies,
                                            Map<String, org.gradle.api.artifacts.Dependency> testDependencies,
@@ -263,6 +294,12 @@ class PublishingUtils {
             if ('test' in config.publishing.scopes) {
                 testDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
                     configureDependency(dependenciesNode, dep, config, expressions, platforms, 'test')
+                }
+            }
+
+            platformDependencies.values().each { platform ->
+                if (!platforms.find { it.groupId == platform.groupId && it.artifactId == platform.artifactId }) {
+                    platforms.add(platform)
                 }
             }
 

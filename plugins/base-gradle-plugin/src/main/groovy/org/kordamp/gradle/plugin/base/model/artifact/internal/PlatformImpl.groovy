@@ -18,6 +18,7 @@
 package org.kordamp.gradle.plugin.base.model.artifact.internal
 
 import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
 import groovy.transform.PackageScope
 import org.kordamp.gradle.plugin.base.model.artifact.Platform
 
@@ -27,6 +28,7 @@ import org.kordamp.gradle.plugin.base.model.artifact.Platform
  */
 @CompileStatic
 @PackageScope
+@EqualsAndHashCode(includes = ['groupId', 'artifactId', 'version'])
 class PlatformImpl implements Platform {
     final String name
     final String groupId

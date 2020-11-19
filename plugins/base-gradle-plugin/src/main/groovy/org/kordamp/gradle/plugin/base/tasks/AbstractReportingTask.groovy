@@ -187,7 +187,7 @@ abstract class AbstractReportingTask extends DefaultTask {
 
     protected void doPrintElement(value, int offset) {
         String result = formatValue(value)
-        isNotNullNorBlank(result) println(('    ' * offset) + result)
+        if (isNotNullNorBlank(result)) println(('    ' * offset) + result)
     }
 
     protected boolean isNotNullNorBlank(value) {
