@@ -1,5 +1,34 @@
 # Changelog
 
+## [v0.42.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.42.0) (2020-11-28)
+
+[Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/v0.41.0...v0.42.0)
+
+**Implemented enhancements:**
+
+- \[licensing\] HTML report for aggregateLicenseReport task [\#421](https://github.com/kordamp/kordamp-gradle-plugins/issues/421)
+- \[licensing\] Adding exclusion/inclusion patterns in DSL [\#417](https://github.com/kordamp/kordamp-gradle-plugins/issues/417)
+- \[Insight\] Display the number of modules in the summary report [\#416](https://github.com/kordamp/kordamp-gradle-plugins/issues/416)
+- bundle reports after failure [\#426](https://github.com/kordamp/kordamp-gradle-plugins/pull/426) ([musketyr](https://github.com/musketyr))
+
+**Fixed bugs:**
+
+- \[Publishing\] Platforms are added as direct dependencies in generated POMs [\#425](https://github.com/kordamp/kordamp-gradle-plugins/issues/425)
+- \[Testing\] Test times are reported with the wrong color [\#424](https://github.com/kordamp/kordamp-gradle-plugins/issues/424)
+- \[Licensing\] Skip format/checks on Gradle/Maven files found in build directory [\#423](https://github.com/kordamp/kordamp-gradle-plugins/issues/423)
+- \[licensing\] aggregateLicenseReport produces empty report by default [\#420](https://github.com/kordamp/kordamp-gradle-plugins/issues/420)
+- \[sonar\] Invalid config if only login is configured [\#418](https://github.com/kordamp/kordamp-gradle-plugins/issues/418)
+- \[Base\] Credentials can't be modified [\#413](https://github.com/kordamp/kordamp-gradle-plugins/issues/413)
+
+**Closed issues:**
+
+- \[Licensing\] Support mappings property in DSL [\#422](https://github.com/kordamp/kordamp-gradle-plugins/issues/422)
+- Upgrading kordamp from 0.40.0 to 0.41.0 causes ProjectConfigurationException [\#415](https://github.com/kordamp/kordamp-gradle-plugins/issues/415)
+
+**Merged pull requests:**
+
+- Document change from ticket \#402 \(setLayout\) [\#414](https://github.com/kordamp/kordamp-gradle-plugins/pull/414) ([ursjoss](https://github.com/ursjoss))
+
 ## [v0.41.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.41.0) (2020-10-31)
 
 [Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/v0.40.0...v0.41.0)
@@ -29,6 +58,7 @@
 - \[IntegrationTest\] Add a flag to include output of test task in compileClasspath [\#387](https://github.com/kordamp/kordamp-gradle-plugins/issues/387)
 - \[Testing\] Support a testJar task with `-tests` classifier [\#384](https://github.com/kordamp/kordamp-gradle-plugins/issues/384)
 - \[Base\] Display plugin version when invoking `plugins` task [\#383](https://github.com/kordamp/kordamp-gradle-plugins/issues/383)
+- Bump detekt from 1.8.0 to 1.9.1 [\#323](https://github.com/kordamp/kordamp-gradle-plugins/pull/323) ([ursjoss](https://github.com/ursjoss))
 
 **Fixed bugs:**
 
@@ -116,6 +146,7 @@
 
 **Fixed bugs:**
 
+- \[Base\] NPE in EffectiveSettingsTask when querying for an invisible section [\#339](https://github.com/kordamp/kordamp-gradle-plugins/issues/339)
 - \[Jacoco\] Integration, Functional, and aggregate reports don't have any classes [\#337](https://github.com/kordamp/kordamp-gradle-plugins/issues/337)
 - \[Base\] Testing plugin shows as disabled even if there are tests [\#336](https://github.com/kordamp/kordamp-gradle-plugins/issues/336)
 - \[Sonar\] Sonarcloud reports 0% coverage even though local reports have coverage [\#335](https://github.com/kordamp/kordamp-gradle-plugins/issues/335)
@@ -161,12 +192,9 @@
 - \[Codenarc\] Improving flexibility of CodeNarc plugin [\#304](https://github.com/kordamp/kordamp-gradle-plugins/issues/304)
 - \[JavaProject\] Add a task to display configured platforms [\#303](https://github.com/kordamp/kordamp-gradle-plugins/issues/303)
 - \[JavaProject\] Simplify platform dependency configuration [\#302](https://github.com/kordamp/kordamp-gradle-plugins/issues/302)
-- \[Profiles\] Support multiple activations per profile [\#299](https://github.com/kordamp/kordamp-gradle-plugins/issues/299)
-- Bump detekt from 1.8.0 to 1.9.1 [\#323](https://github.com/kordamp/kordamp-gradle-plugins/pull/323) ([ursjoss](https://github.com/ursjoss))
 
 **Fixed bugs:**
 
-- \[Base\] NPE in EffectiveSettingsTask when querying for an invisible section [\#339](https://github.com/kordamp/kordamp-gradle-plugins/issues/339)
 - License badge link on main page is broken [\#328](https://github.com/kordamp/kordamp-gradle-plugins/issues/328)
 - \[Base\] TaskSettings should print out values of Property/Provider elements [\#326](https://github.com/kordamp/kordamp-gradle-plugins/issues/326)
 - \[Jar\] Calculating ClassPath manifest entry needs update [\#314](https://github.com/kordamp/kordamp-gradle-plugins/issues/314)
@@ -184,17 +212,16 @@
 
 **Implemented enhancements:**
 
+- \[Profiles\] Support multiple activations per profile [\#299](https://github.com/kordamp/kordamp-gradle-plugins/issues/299)
 - \[Settings\] support long project paths [\#298](https://github.com/kordamp/kordamp-gradle-plugins/issues/298)
 - \[Base\] Add varargs variants for dirs\(\) and paths\(\) in projects DSL [\#295](https://github.com/kordamp/kordamp-gradle-plugins/issues/295)
 - \[Settings\] Add varargs variants for dirs\(\) and paths\(\) [\#294](https://github.com/kordamp/kordamp-gradle-plugins/issues/294)
 - \[Guide\] upgrade asciidoctorj-tabbed-code-extension to latest [\#292](https://github.com/kordamp/kordamp-gradle-plugins/issues/292)
-- \[Publishing\] Let packaging be configurable [\#285](https://github.com/kordamp/kordamp-gradle-plugins/issues/285)
 
 **Fixed bugs:**
 
 - Can't import this project into IDEA 2020.1 on windows 10 [\#296](https://github.com/kordamp/kordamp-gradle-plugins/issues/296)
 - \[Publishing\] PluginMarker publication should not be enhanced [\#293](https://github.com/kordamp/kordamp-gradle-plugins/issues/293)
-- groovydocJar tasks produce Gradle warnings messages for Gradle 6.3 [\#291](https://github.com/kordamp/kordamp-gradle-plugins/issues/291)
 
 **Merged pull requests:**
 
@@ -211,8 +238,13 @@
 - \[Profiles\] Support Maven like profiles [\#288](https://github.com/kordamp/kordamp-gradle-plugins/issues/288)
 - better sonar integration [\#287](https://github.com/kordamp/kordamp-gradle-plugins/issues/287)
 - \[Bom\] Add an includes list [\#286](https://github.com/kordamp/kordamp-gradle-plugins/issues/286)
+- \[Publishing\] Let packaging be configurable [\#285](https://github.com/kordamp/kordamp-gradle-plugins/issues/285)
 - kordamp.org via HTTPS [\#283](https://github.com/kordamp/kordamp-gradle-plugins/issues/283)
 - \[Settings\] Make subproject's folders more meaningful [\#237](https://github.com/kordamp/kordamp-gradle-plugins/issues/237)
+
+**Fixed bugs:**
+
+- groovydocJar tasks produce Gradle warnings messages for Gradle 6.3 [\#291](https://github.com/kordamp/kordamp-gradle-plugins/issues/291)
 
 ## [v0.34.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.34.0) (2020-04-25)
 
@@ -238,6 +270,7 @@
 **Implemented enhancements:**
 
 - Improve documentation for the images \(guide\) [\#262](https://github.com/kordamp/kordamp-gradle-plugins/issues/262)
+- Update versioning plugin [\#212](https://github.com/kordamp/kordamp-gradle-plugins/issues/212)
 - Bump detekt from 1.7.0 to 1.7.1 [\#274](https://github.com/kordamp/kordamp-gradle-plugins/pull/274) ([ursjoss](https://github.com/ursjoss))
 - Bump detekt from 1.6.0 to 1.7.0 [\#273](https://github.com/kordamp/kordamp-gradle-plugins/pull/273) ([ursjoss](https://github.com/ursjoss))
 - \[Guide\] - Improve Documentation & initGuide [\#272](https://github.com/kordamp/kordamp-gradle-plugins/pull/272) ([ursjoss](https://github.com/ursjoss))
@@ -284,6 +317,7 @@
 **Fixed bugs:**
 
 - \[License\] Skip checking files in build directory [\#240](https://github.com/kordamp/kordamp-gradle-plugins/issues/240)
+- Improper usage of @DelegatesTo [\#238](https://github.com/kordamp/kordamp-gradle-plugins/issues/238)
 - if there are no tests in the subproject then aggregateJacocoMerge fails [\#236](https://github.com/kordamp/kordamp-gradle-plugins/issues/236)
 - Fix detektPlugin: Apply detekt to projects with plugin kotlin-base \(not java-base\) [\#251](https://github.com/kordamp/kordamp-gradle-plugins/pull/251) ([ursjoss](https://github.com/ursjoss))
 
@@ -300,7 +334,6 @@
 
 **Fixed bugs:**
 
-- Improper usage of @DelegatesTo [\#238](https://github.com/kordamp/kordamp-gradle-plugins/issues/238)
 - Problem with sourceJar after upgrade to 0.31.1 [\#235](https://github.com/kordamp/kordamp-gradle-plugins/issues/235)
 - problem with subproject of the same name [\#215](https://github.com/kordamp/kordamp-gradle-plugins/issues/215)
 
@@ -332,7 +365,6 @@
 - \[DSL\] Move documentation plugins to a 'docs' block [\#216](https://github.com/kordamp/kordamp-gradle-plugins/issues/216)
 - support for BinTray publish flag [\#214](https://github.com/kordamp/kordamp-gradle-plugins/issues/214)
 - include Coveralls plugin [\#213](https://github.com/kordamp/kordamp-gradle-plugins/issues/213)
-- Update versioning plugin [\#212](https://github.com/kordamp/kordamp-gradle-plugins/issues/212)
 - \[Base\] Add a task for displaying extension settings [\#211](https://github.com/kordamp/kordamp-gradle-plugins/issues/211)
 - Support for static analysis tools [\#210](https://github.com/kordamp/kordamp-gradle-plugins/issues/210)
 - \[Guide\] Configure publication via Git [\#207](https://github.com/kordamp/kordamp-gradle-plugins/issues/207)
@@ -349,6 +381,7 @@
 - \[Groovydoc\] Rename aggregateGroovydocs to aggregateGroovydoc [\#227](https://github.com/kordamp/kordamp-gradle-plugins/issues/227)
 - \[Javadoc\] Rename aggregateJavadocs to aggregateJavadoc [\#226](https://github.com/kordamp/kordamp-gradle-plugins/issues/226)
 - \[Apidoc\] Deprecate plugin [\#225](https://github.com/kordamp/kordamp-gradle-plugins/issues/225)
+- Deprecate build-scan plugin [\#206](https://github.com/kordamp/kordamp-gradle-plugins/issues/206)
 
 **Merged pull requests:**
 
@@ -370,10 +403,6 @@
 
 - \[Publishing\] MPE when exclusions are defined [\#204](https://github.com/kordamp/kordamp-gradle-plugins/issues/204)
 - \[project\] Avoid re-entrant calls to apply [\#203](https://github.com/kordamp/kordamp-gradle-plugins/issues/203)
-
-**Closed issues:**
-
-- Deprecate build-scan plugin [\#206](https://github.com/kordamp/kordamp-gradle-plugins/issues/206)
 
 ## [0.30.2](https://github.com/kordamp/kordamp-gradle-plugins/tree/0.30.2) (2019-11-29)
 
@@ -496,6 +525,7 @@
 
 - Documented applying com.github.ben-manes.versions [\#156](https://github.com/kordamp/kordamp-gradle-plugins/pull/156) ([tlinkowski](https://github.com/tlinkowski))
 - Add `maxDepth\(1\)` to `walkTopDown\(\)` [\#154](https://github.com/kordamp/kordamp-gradle-plugins/pull/154) ([tlinkowski](https://github.com/tlinkowski))
+- \[base\] Fixed org.kordamp.gradle.plugin.base.plugins.Plugin.merge [\#133](https://github.com/kordamp/kordamp-gradle-plugins/pull/133) ([tlinkowski](https://github.com/tlinkowski))
 
 ## [v0.24.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.24.0) (2019-07-08)
 
@@ -539,7 +569,6 @@
 **Merged pull requests:**
 
 - Fixed a minor typo [\#138](https://github.com/kordamp/kordamp-gradle-plugins/pull/138) ([tlinkowski](https://github.com/tlinkowski))
-- \[base\] Fixed org.kordamp.gradle.plugin.base.plugins.Plugin.merge [\#133](https://github.com/kordamp/kordamp-gradle-plugins/pull/133) ([tlinkowski](https://github.com/tlinkowski))
 
 ## [v0.22.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.22.0) (2019-06-15)
 
@@ -648,7 +677,6 @@
 
 **Fixed bugs:**
 
-- \[Base\] Honor console settings when printing reach output [\#93](https://github.com/kordamp/kordamp-gradle-plugins/issues/93)
 - \[Publishing\] Generated POM files are missing information [\#91](https://github.com/kordamp/kordamp-gradle-plugins/issues/91)
 - \[Settings\] Plugin doesn't seem to work in Kotlin DSL [\#90](https://github.com/kordamp/kordamp-gradle-plugins/issues/90)
 
@@ -671,6 +699,7 @@
 
 **Fixed bugs:**
 
+- \[Base\] Honor console settings when printing reach output [\#93](https://github.com/kordamp/kordamp-gradle-plugins/issues/93)
 - \[Base\] NPE when invoking :plugins on a project [\#87](https://github.com/kordamp/kordamp-gradle-plugins/issues/87)
 
 **Closed issues:**
@@ -755,6 +784,7 @@
 
 **Implemented enhancements:**
 
+- Add a plugin for BOM file generation [\#44](https://github.com/kordamp/kordamp-gradle-plugins/issues/44)
 - \[License\] Allow non FLOSS licenses to be specified [\#42](https://github.com/kordamp/kordamp-gradle-plugins/issues/42)
 
 **Fixed bugs:**
@@ -769,7 +799,6 @@
 **Implemented enhancements:**
 
 - \[Base\] Suppor the SCM block in POM files [\#45](https://github.com/kordamp/kordamp-gradle-plugins/issues/45)
-- Add a plugin for BOM file generation [\#44](https://github.com/kordamp/kordamp-gradle-plugins/issues/44)
 - Split project plugin for closed and open source usages [\#43](https://github.com/kordamp/kordamp-gradle-plugins/issues/43)
 - \[Guide\] Allow attribute values to be overriden in a document [\#41](https://github.com/kordamp/kordamp-gradle-plugins/issues/41)
 - \[Publishing\] Allow posting publications to release/snapshot repositories [\#39](https://github.com/kordamp/kordamp-gradle-plugins/issues/39)
