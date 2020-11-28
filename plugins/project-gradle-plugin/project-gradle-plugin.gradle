@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 dependencies {
-    api 'com.github.ben-manes:gradle-versions-plugin:0.33.0'
+    api 'com.github.ben-manes:gradle-versions-plugin:0.36.0'
     api project(':base-gradle-plugin')
     api project(':profiles-gradle-plugin')
     api project(':bom-gradle-plugin')
