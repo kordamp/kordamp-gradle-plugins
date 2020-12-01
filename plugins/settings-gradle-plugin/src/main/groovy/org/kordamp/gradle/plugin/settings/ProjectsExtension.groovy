@@ -51,7 +51,7 @@ interface ProjectsExtension {
         EXPLICIT
     }
 
-    Property<String> getLayout()
+    Property<Layout> getLayout()
 
     void setLayout(String layout)
 
