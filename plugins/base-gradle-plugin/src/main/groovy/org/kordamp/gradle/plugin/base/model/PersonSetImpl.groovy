@@ -117,6 +117,6 @@ class PersonSetImpl extends AbstractDomainSet<Person> implements PersonSet {
 
     @Override
     boolean isEmpty() {
-        !people.present
+        !people.present || people.get().isEmpty()
     }
 }

@@ -122,6 +122,6 @@ class RepositorySetImpl extends AbstractDomainSet<Repository> implements Reposit
 
     @Override
     boolean isEmpty() {
-        !repositories.present
+        !repositories.present || repositories.get().isEmpty()
     }
 }

@@ -117,6 +117,6 @@ class NotifierSetImpl extends AbstractDomainSet<Notifier> implements NotifierSet
 
     @Override
     boolean isEmpty() {
-        !notifiers.present
+        !notifiers.present || notifiers.get().isEmpty()
     }
 }

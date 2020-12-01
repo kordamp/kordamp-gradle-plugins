@@ -117,6 +117,6 @@ class MailingListSetImpl extends AbstractDomainSet<MailingList> implements Maili
 
     @Override
     boolean isEmpty() {
-        !mailingLists.present
+        !mailingLists.present || mailingLists.get().isEmpty()
     }
 }

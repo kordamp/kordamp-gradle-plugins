@@ -175,6 +175,6 @@ class CredentialsSetImpl extends AbstractDomainSet<Credentials> implements Crede
 
     @Override
     boolean isEmpty() {
-        !this.credentialsMap.present
+        !credentialsMap.present || credentialsMap.get().isEmpty()
     }
 }

@@ -127,6 +127,6 @@ class LicenseSetImpl extends AbstractDomainSet<License> implements LicenseSet {
 
     @Override
     boolean isEmpty() {
-        !licenses.present
+        !licenses.present || licenses.get().isEmpty()
     }
 }
