@@ -20,14 +20,17 @@ package org.kordamp.gradle.plugin.project.java
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
+import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
 import org.gradle.api.plugins.AppliedPlugin
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.javadoc.Javadoc
 import org.kordamp.gradle.annotations.DependsOn
 import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
@@ -251,23 +254,37 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
                         }
                     }
                 })
+            }
+        })
 
-                Configuration optional = project.configurations.maybeCreate('optional')
-                optional.attributes(new Action<AttributeContainer>() {
-                    @Override
-                    void execute(AttributeContainer attributes) {
-                        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, Usage.JAVA_RUNTIME))
-                    }
-                })
+        Configuration optional = project.configurations.create('optional')
+        optional.attributes(new Action<AttributeContainer>() {
+            @Override
+            void execute(AttributeContainer attributes) {
+                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, Usage.JAVA_RUNTIME))
+            }
+        })
 
+        project.plugins.withType(JavaPlugin, new Action<Plugin>() {
+            @Override
+            void execute(Plugin javaPlugin) {
                 project.convention.getPlugin(JavaPluginConvention)
                     .sourceSets.all(new Action<SourceSet>() {
                     @Override
                     void execute(SourceSet sourceSet) {
-                        sourceSet.compileClasspath = sourceSet.compileClasspath + optional
-                        sourceSet.runtimeClasspath = sourceSet.runtimeClasspath + optional
+                        project.configurations.findByName(sourceSet.compileClasspathConfigurationName)
+                            .extendsFrom(optional)
+                        project.configurations.findByName(sourceSet.runtimeClasspathConfigurationName)
+                            .extendsFrom(optional)
                     }
                 })
+                project.tasks.withType(Javadoc)
+                    .all(new Action<Javadoc>() {
+                        @Override
+                        void execute(Javadoc t) {
+                            t.classpath = t.classpath + optional
+                        }
+                    })
             }
         })
 
