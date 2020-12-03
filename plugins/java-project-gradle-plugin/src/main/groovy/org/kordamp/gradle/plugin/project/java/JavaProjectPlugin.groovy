@@ -254,20 +254,15 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
                         }
                     }
                 })
-            }
-        })
 
-        Configuration optional = project.configurations.create('optional')
-        optional.attributes(new Action<AttributeContainer>() {
-            @Override
-            void execute(AttributeContainer attributes) {
-                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, Usage.JAVA_RUNTIME))
-            }
-        })
+                Configuration optional = project.configurations.create('optional')
+                optional.attributes(new Action<AttributeContainer>() {
+                    @Override
+                    void execute(AttributeContainer attributes) {
+                        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, Usage.JAVA_RUNTIME))
+                    }
+                })
 
-        project.plugins.withType(JavaPlugin, new Action<Plugin>() {
-            @Override
-            void execute(Plugin javaPlugin) {
                 project.convention.getPlugin(JavaPluginConvention)
                     .sourceSets.all(new Action<SourceSet>() {
                     @Override
