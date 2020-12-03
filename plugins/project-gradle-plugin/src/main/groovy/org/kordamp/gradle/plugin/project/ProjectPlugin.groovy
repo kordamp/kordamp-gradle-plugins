@@ -37,6 +37,7 @@ import org.kordamp.gradle.plugin.jar.JarPlugin
 import org.kordamp.gradle.plugin.licensing.LicensingPlugin
 import org.kordamp.gradle.plugin.minpom.MinPomPlugin
 import org.kordamp.gradle.plugin.profiles.ProfilesPlugin
+import org.kordamp.gradle.plugin.project.tasks.CopyDependenciesTask
 import org.kordamp.gradle.plugin.project.tasks.reports.GenerateDependenciesReportTask
 import org.kordamp.gradle.plugin.project.tasks.reports.GenerateDependencyUpdatesReportTask
 import org.kordamp.gradle.plugin.project.tasks.reports.GeneratePluginReportTask
@@ -110,6 +111,15 @@ class ProjectPlugin extends AbstractKordampPlugin {
     }
 
     private void registerTasks(Project project) {
+        project.tasks.register('copyDependencies', CopyDependenciesTask,
+            new Action<CopyDependenciesTask>() {
+                @Override
+                void execute(CopyDependenciesTask t) {
+                    t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
+                    t.description = "Copies dependencies for '${project.name}' for a given configuration."
+                }
+            })
+
         TaskProvider<DependencyUpdatesTask> dependencyUpdates = project.tasks.named('dependencyUpdates', DependencyUpdatesTask,
             new Action<DependencyUpdatesTask>() {
                 @Override

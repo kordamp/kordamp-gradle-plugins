@@ -60,4 +60,20 @@ final class KordampMapState implements MapState {
             project,
             defaultValue)
     }
+
+    KordampMapState(Project project, String key, Provider<Map> parent, Provider<Map<String, String>> defaultValue) {
+        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+
+        property = project.objects.mapProperty(String, String).convention(Providers.notDefined())
+
+        provider = mapProvider(
+            key,
+            property,
+            parent,
+            Order.ENV_SYS_PROP,
+            Path.PROJECT_OWNER,
+            true,
+            project,
+            defaultValue)
+    }
 }

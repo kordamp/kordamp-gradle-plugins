@@ -46,7 +46,7 @@ final class SimpleEnumState<E extends Enum<E>> implements EnumState<E> {
 
     @Override
     E getValue() {
-        enumProvider(project.providers, property, provider, null).get()
+        enumProvider(project.providers, property, provider, (E) null).get()
     }
 
     SimpleEnumState(Project project, Class<E> enumType, Property<E> property, Provider<E> provider) {

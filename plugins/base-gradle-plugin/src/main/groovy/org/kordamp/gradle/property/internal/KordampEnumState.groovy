@@ -42,10 +42,27 @@ final class KordampEnumState<E extends Enum<E>> implements EnumState<E> {
 
     @Override
     E getValue() {
-        enumProvider(project.providers, property, provider, null).get()
+        enumProvider(project.providers, property, provider, (E) null).get()
     }
 
     KordampEnumState(Project project, String key, Class<E> enumType, Provider<E> parent, E defaultValue) {
+        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+
+        property = project.objects.property(enumType).convention(Providers.notDefined())
+
+        provider = enumProvider(
+            key,
+            enumType,
+            property,
+            parent,
+            Order.ENV_SYS_PROP,
+            Path.PROJECT_OWNER,
+            true,
+            project,
+            defaultValue)
+    }
+
+    KordampEnumState(Project project, String key, Class<E> enumType, Provider<E> parent, Provider<E> defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
         property = project.objects.property(enumType).convention(Providers.notDefined())

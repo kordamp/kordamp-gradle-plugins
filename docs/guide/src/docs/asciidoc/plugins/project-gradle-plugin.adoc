@@ -35,3 +35,27 @@ This plugin adds the following plugins to the classpath without applying them:
  * `<<_org_kordamp_gradle_sourcexref,org.kordamp.gradle.source-xref>>`
  * `<<_org_kordamp_gradle_integrationtest,org.kordamp.gradle.integration-test>>`
  * `<<_org_kordamp_gradle_functionaltest,org.kordamp.gradle.functional-test>>`
+
+[[_org_kordamp_gradle_project_tasks]]
+== Tasks
+
+[[_task_copy_dependencies]]
+=== CopyDependencies
+
+Copies dependencies for a given configuration.
+
+[horizontal]
+Name:: copyDependencies
+Type:: `org.kordamp.gradle.plugin.project.tasks.CopyDependenciesTask`
+
+.Options
+[horizontal]
+configuration-name:: The name of the configuration (REQUIRED).
+layout:: The layout type (OPTIONAL). Valid values are [`flat`, `default`].
+
+.Properties
+[horizontal]
+configurationName:: The name of the configuration (REQUIRED).
+layout:: The layout type (OPTIONAL). Valid values are [`flat`, `default`].
+outputDirectory:: The target directory where artifacts will be written to. Defaults to `${buildDir}/dependencies/${layout}`.
+

@@ -60,4 +60,20 @@ final class KordampIntegerState implements IntegerState {
             project,
             defaultValue)
     }
+
+    KordampIntegerState(Project project, String key, Provider<Integer> parent, Provider<Integer> defaultValue) {
+        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+
+        property = project.objects.property(Integer).convention(Providers.notDefined())
+
+        provider = integerProvider(
+            key,
+            property,
+            parent,
+            Order.ENV_SYS_PROP,
+            Path.PROJECT_OWNER,
+            true,
+            project,
+            defaultValue)
+    }
 }

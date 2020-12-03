@@ -46,7 +46,7 @@ final class SimpleRegularFileState implements RegularFileState {
 
     @Override
     RegularFile getValue() {
-        fileProvider(project.providers, property, provider, null).get()
+        fileProvider(project.providers, property, provider, (RegularFile) null).get()
     }
 
     SimpleRegularFileState(Project project, RegularFileProperty property, Provider<RegularFile> provider) {

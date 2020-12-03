@@ -60,4 +60,20 @@ final class KordampStringState implements StringState {
             project,
             defaultValue)
     }
+
+    KordampStringState(Project project, String key, Provider<String> parent, Provider<String> defaultValue) {
+        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+
+        property = project.objects.property(String).convention(Providers.notDefined())
+
+        provider = stringProvider(
+            key,
+            property,
+            parent,
+            Order.ENV_SYS_PROP,
+            Path.PROJECT_OWNER,
+            true,
+            project,
+            defaultValue)
+    }
 }

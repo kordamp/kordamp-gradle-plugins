@@ -60,4 +60,20 @@ final class KordampBooleanState implements BooleanState {
             project,
             defaultValue)
     }
+
+    KordampBooleanState(Project project, String key, Provider<Boolean> parent, Provider<Boolean> defaultValue) {
+        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+
+        property = project.objects.property(Boolean).convention(Providers.notDefined())
+
+        provider = booleanProvider(
+            key,
+            property,
+            parent,
+            Order.ENV_SYS_PROP,
+            Path.PROJECT_OWNER,
+            true,
+            project,
+            defaultValue)
+    }
 }

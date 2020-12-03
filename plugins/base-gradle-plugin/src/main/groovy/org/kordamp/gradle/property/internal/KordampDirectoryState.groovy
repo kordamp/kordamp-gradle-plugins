@@ -43,10 +43,26 @@ final class KordampDirectoryState implements DirectoryState {
 
     @Override
     Directory getValue() {
-        directoryProvider(project.providers, property, provider, null).get()
+        directoryProvider(project.providers, property, provider, (Directory) null).get()
     }
 
     KordampDirectoryState(Project project, String key, Provider<Directory> parent, Directory defaultValue) {
+        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+
+        property = project.objects.directoryProperty().convention(Providers.notDefined())
+
+        provider = directoryProvider(
+            key,
+            property,
+            parent,
+            Order.ENV_SYS_PROP,
+            Path.PROJECT_OWNER,
+            true,
+            project,
+            defaultValue)
+    }
+
+    KordampDirectoryState(Project project, String key, Provider<Directory> parent, Provider<Directory> defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
         property = project.objects.directoryProperty().convention(Providers.notDefined())

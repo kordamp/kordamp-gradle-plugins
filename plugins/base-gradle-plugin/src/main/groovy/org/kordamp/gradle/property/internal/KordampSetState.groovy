@@ -60,4 +60,20 @@ final class KordampSetState implements SetState {
             project,
             defaultValue)
     }
+
+    KordampSetState(Project project, String key, Provider<Set> parent, Provider<Set<String>> defaultValue) {
+        this.project = requireNonNull(project, "Argument 'project' must not be null.")
+
+        property = project.objects.setProperty(String).convention(Providers.notDefined())
+
+        provider = setProvider(
+            key,
+            property,
+            parent,
+            Order.ENV_SYS_PROP,
+            Path.PROJECT_OWNER,
+            true,
+            project,
+            defaultValue)
+    }
 }
