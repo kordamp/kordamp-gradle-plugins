@@ -73,7 +73,7 @@ KordampEnumState.groovy
 <a name="42"><font color="#808080">42</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="43"><font color="#808080">43</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#646464">@Override</font><br />
 <a name="44"><font color="#808080">44</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">E&nbsp;getValue</font><font color="#000000">()&nbsp;{</font><br />
-<a name="45"><font color="#808080">45</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">enumProvider</font><font color="#000000">(</font><font color="#000000">project.providers,&nbsp;property,&nbsp;provider,&nbsp;</font><font color="#0000c0"><b>null</b></font><font color="#000000">)</font><font color="#000000">.get</font><font color="#000000">()</font><br />
+<a name="45"><font color="#808080">45</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">enumProvider</font><font color="#000000">(</font><font color="#000000">project.providers,&nbsp;property,&nbsp;provider,&nbsp;</font><font color="#000000">(</font><font color="#000000">E</font><font color="#000000">)&nbsp;</font><font color="#0000c0"><b>null</b></font><font color="#000000">)</font><font color="#000000">.get</font><font color="#000000">()</font><br />
 <a name="46"><font color="#808080">46</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="47"><font color="#808080">47</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="48"><font color="#808080">48</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">KordampEnumState</font><font color="#000000">(</font><font color="#000000">Project&nbsp;project,&nbsp;String&nbsp;key,&nbsp;Class&lt;E&gt;&nbsp;enumType,&nbsp;Provider&lt;E&gt;&nbsp;parent,&nbsp;E&nbsp;defaultValue</font><font color="#000000">)&nbsp;{</font><br />
@@ -92,7 +92,24 @@ KordampEnumState.groovy
 <a name="61"><font color="#808080">61</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">project,</font><br />
 <a name="62"><font color="#808080">62</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">defaultValue</font><font color="#000000">)</font><br />
 <a name="63"><font color="#808080">63</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
-<a name="64"><font color="#808080">64</font>&nbsp;</a><font color="#000000">}</font></code>
+<a name="64"><font color="#808080">64</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="65"><font color="#808080">65</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">KordampEnumState</font><font color="#000000">(</font><font color="#000000">Project&nbsp;project,&nbsp;String&nbsp;key,&nbsp;Class&lt;E&gt;&nbsp;enumType,&nbsp;Provider&lt;E&gt;&nbsp;parent,&nbsp;Provider&lt;E&gt;&nbsp;defaultValue</font><font color="#000000">)&nbsp;{</font><br />
+<a name="66"><font color="#808080">66</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>this</b></font><font color="#000000">.project&nbsp;=&nbsp;requireNonNull</font><font color="#000000">(</font><font color="#000000">project,&nbsp;</font><font color="#990000">&#34;Argument&nbsp;'project'&nbsp;must&nbsp;not&nbsp;be&nbsp;null.&#34;</font><font color="#000000">)</font><br />
+<a name="67"><font color="#808080">67</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="68"><font color="#808080">68</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">property&nbsp;=&nbsp;project.objects.property</font><font color="#000000">(</font><font color="#000000">enumType</font><font color="#000000">)</font><font color="#000000">.convention</font><font color="#000000">(</font><font color="#000000">Providers.notDefined</font><font color="#000000">())</font><br />
+<a name="69"><font color="#808080">69</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="70"><font color="#808080">70</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">provider&nbsp;=&nbsp;enumProvider</font><font color="#000000">(</font><br />
+<a name="71"><font color="#808080">71</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">key,</font><br />
+<a name="72"><font color="#808080">72</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">enumType,</font><br />
+<a name="73"><font color="#808080">73</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">property,</font><br />
+<a name="74"><font color="#808080">74</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">parent,</font><br />
+<a name="75"><font color="#808080">75</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Order.ENV_SYS_PROP,</font><br />
+<a name="76"><font color="#808080">76</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Path.PROJECT_OWNER,</font><br />
+<a name="77"><font color="#808080">77</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">true,</font><br />
+<a name="78"><font color="#808080">78</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">project,</font><br />
+<a name="79"><font color="#808080">79</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">defaultValue</font><font color="#000000">)</font><br />
+<a name="80"><font color="#808080">80</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
+<a name="81"><font color="#808080">81</font>&nbsp;</a><font color="#000000">}</font></code>
     
    </td>
   <!-- end source code -->

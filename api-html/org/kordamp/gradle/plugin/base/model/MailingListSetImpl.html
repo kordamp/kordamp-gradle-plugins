@@ -148,7 +148,7 @@ MailingListSetImpl.groovy
 <a name="117"><font color="#808080">117</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="118"><font color="#808080">118</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#646464">@Override</font><br />
 <a name="119"><font color="#808080">119</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>boolean&nbsp;</b></font><font color="#000000">isEmpty</font><font color="#000000">()&nbsp;{</font><br />
-<a name="120"><font color="#808080">120</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">!mailingLists.present</font><br />
+<a name="120"><font color="#808080">120</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">!mailingLists.present&nbsp;||&nbsp;mailingLists.get</font><font color="#000000">()</font><font color="#000000">.isEmpty</font><font color="#000000">()</font><br />
 <a name="121"><font color="#808080">121</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="122"><font color="#808080">122</font>&nbsp;</a><font color="#000000">}</font></code>
     

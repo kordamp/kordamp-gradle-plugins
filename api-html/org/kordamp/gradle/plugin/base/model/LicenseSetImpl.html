@@ -158,7 +158,7 @@ LicenseSetImpl.groovy
 <a name="127"><font color="#808080">127</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="128"><font color="#808080">128</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#646464">@Override</font><br />
 <a name="129"><font color="#808080">129</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#c00000"><b>boolean&nbsp;</b></font><font color="#000000">isEmpty</font><font color="#000000">()&nbsp;{</font><br />
-<a name="130"><font color="#808080">130</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">!licenses.present</font><br />
+<a name="130"><font color="#808080">130</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">!licenses.present&nbsp;||&nbsp;licenses.get</font><font color="#000000">()</font><font color="#000000">.isEmpty</font><font color="#000000">()</font><br />
 <a name="131"><font color="#808080">131</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="132"><font color="#808080">132</font>&nbsp;</a><font color="#000000">}</font></code>
     
