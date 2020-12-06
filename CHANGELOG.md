@@ -1,5 +1,19 @@
 # Changelog
 
+## [v0.42.1](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.42.1) (2020-12-06)
+
+[Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/v0.42.0...v0.42.1)
+
+**Implemented enhancements:**
+
+- \[Project\] Add a task to copy dependencies [\#430](https://github.com/kordamp/kordamp-gradle-plugins/issues/430)
+
+**Fixed bugs:**
+
+- \[JavaProject\] optional dependencies are not available in test scope [\#429](https://github.com/kordamp/kordamp-gradle-plugins/issues/429)
+- \[Base\] NPE when computing author list [\#428](https://github.com/kordamp/kordamp-gradle-plugins/issues/428)
+- \[Settings\] ProjectsExtension.getLayout\(\) has the wrong type [\#427](https://github.com/kordamp/kordamp-gradle-plugins/issues/427)
+
 ## [v0.42.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.42.0) (2020-11-28)
 
 [Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/v0.41.0...v0.42.0)
@@ -58,7 +72,6 @@
 - \[IntegrationTest\] Add a flag to include output of test task in compileClasspath [\#387](https://github.com/kordamp/kordamp-gradle-plugins/issues/387)
 - \[Testing\] Support a testJar task with `-tests` classifier [\#384](https://github.com/kordamp/kordamp-gradle-plugins/issues/384)
 - \[Base\] Display plugin version when invoking `plugins` task [\#383](https://github.com/kordamp/kordamp-gradle-plugins/issues/383)
-- Bump detekt from 1.8.0 to 1.9.1 [\#323](https://github.com/kordamp/kordamp-gradle-plugins/pull/323) ([ursjoss](https://github.com/ursjoss))
 
 **Fixed bugs:**
 
@@ -192,6 +205,7 @@
 - \[Codenarc\] Improving flexibility of CodeNarc plugin [\#304](https://github.com/kordamp/kordamp-gradle-plugins/issues/304)
 - \[JavaProject\] Add a task to display configured platforms [\#303](https://github.com/kordamp/kordamp-gradle-plugins/issues/303)
 - \[JavaProject\] Simplify platform dependency configuration [\#302](https://github.com/kordamp/kordamp-gradle-plugins/issues/302)
+- Bump detekt from 1.8.0 to 1.9.1 [\#323](https://github.com/kordamp/kordamp-gradle-plugins/pull/323) ([ursjoss](https://github.com/ursjoss))
 
 **Fixed bugs:**
 
@@ -216,12 +230,12 @@
 - \[Settings\] support long project paths [\#298](https://github.com/kordamp/kordamp-gradle-plugins/issues/298)
 - \[Base\] Add varargs variants for dirs\(\) and paths\(\) in projects DSL [\#295](https://github.com/kordamp/kordamp-gradle-plugins/issues/295)
 - \[Settings\] Add varargs variants for dirs\(\) and paths\(\) [\#294](https://github.com/kordamp/kordamp-gradle-plugins/issues/294)
-- \[Guide\] upgrade asciidoctorj-tabbed-code-extension to latest [\#292](https://github.com/kordamp/kordamp-gradle-plugins/issues/292)
 
 **Fixed bugs:**
 
 - Can't import this project into IDEA 2020.1 on windows 10 [\#296](https://github.com/kordamp/kordamp-gradle-plugins/issues/296)
 - \[Publishing\] PluginMarker publication should not be enhanced [\#293](https://github.com/kordamp/kordamp-gradle-plugins/issues/293)
+- groovydocJar tasks produce Gradle warnings messages for Gradle 6.3 [\#291](https://github.com/kordamp/kordamp-gradle-plugins/issues/291)
 
 **Merged pull requests:**
 
@@ -233,6 +247,7 @@
 
 **Implemented enhancements:**
 
+- \[Guide\] upgrade asciidoctorj-tabbed-code-extension to latest [\#292](https://github.com/kordamp/kordamp-gradle-plugins/issues/292)
 - \[Minpom\] Register minpom task and disable it by default [\#290](https://github.com/kordamp/kordamp-gradle-plugins/issues/290)
 - \[Jar\] Only update JAR metaInf/manifest if config.artifacts.jar is enabled [\#289](https://github.com/kordamp/kordamp-gradle-plugins/issues/289)
 - \[Profiles\] Support Maven like profiles [\#288](https://github.com/kordamp/kordamp-gradle-plugins/issues/288)
@@ -240,11 +255,6 @@
 - \[Bom\] Add an includes list [\#286](https://github.com/kordamp/kordamp-gradle-plugins/issues/286)
 - \[Publishing\] Let packaging be configurable [\#285](https://github.com/kordamp/kordamp-gradle-plugins/issues/285)
 - kordamp.org via HTTPS [\#283](https://github.com/kordamp/kordamp-gradle-plugins/issues/283)
-- \[Settings\] Make subproject's folders more meaningful [\#237](https://github.com/kordamp/kordamp-gradle-plugins/issues/237)
-
-**Fixed bugs:**
-
-- groovydocJar tasks produce Gradle warnings messages for Gradle 6.3 [\#291](https://github.com/kordamp/kordamp-gradle-plugins/issues/291)
 
 ## [v0.34.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.34.0) (2020-04-25)
 
@@ -331,6 +341,10 @@
 ## [0.31.2](https://github.com/kordamp/kordamp-gradle-plugins/tree/0.31.2) (2020-01-04)
 
 [Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/0.31.1...0.31.2)
+
+**Implemented enhancements:**
+
+- \[Settings\] Make subproject's folders more meaningful [\#237](https://github.com/kordamp/kordamp-gradle-plugins/issues/237)
 
 **Fixed bugs:**
 
@@ -433,6 +447,7 @@
 - \[Base\] Display destinationDir property in GroovyCompilerSettingsTask [\#184](https://github.com/kordamp/kordamp-gradle-plugins/issues/184)
 - \[Base\] Display destinationDir property in JavaCompilerSettingsTask [\#183](https://github.com/kordamp/kordamp-gradle-plugins/issues/183)
 - Improve support for integration/functional test written in kotlin [\#188](https://github.com/kordamp/kordamp-gradle-plugins/pull/188) ([ursjoss](https://github.com/ursjoss))
+- Simplify configuration example for Kotlin DSL for release [\#179](https://github.com/kordamp/kordamp-gradle-plugins/pull/179) ([ursjoss](https://github.com/ursjoss))
 
 **Fixed bugs:**
 
@@ -451,10 +466,6 @@
 ## [v0.29.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.29.0) (2019-10-26)
 
 [Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/v0.28.0...v0.29.0)
-
-**Implemented enhancements:**
-
-- Simplify configuration example for Kotlin DSL for release [\#179](https://github.com/kordamp/kordamp-gradle-plugins/pull/179) ([ursjoss](https://github.com/ursjoss))
 
 **Fixed bugs:**
 
@@ -525,7 +536,6 @@
 
 - Documented applying com.github.ben-manes.versions [\#156](https://github.com/kordamp/kordamp-gradle-plugins/pull/156) ([tlinkowski](https://github.com/tlinkowski))
 - Add `maxDepth\(1\)` to `walkTopDown\(\)` [\#154](https://github.com/kordamp/kordamp-gradle-plugins/pull/154) ([tlinkowski](https://github.com/tlinkowski))
-- \[base\] Fixed org.kordamp.gradle.plugin.base.plugins.Plugin.merge [\#133](https://github.com/kordamp/kordamp-gradle-plugins/pull/133) ([tlinkowski](https://github.com/tlinkowski))
 
 ## [v0.24.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.24.0) (2019-07-08)
 
@@ -569,6 +579,7 @@
 **Merged pull requests:**
 
 - Fixed a minor typo [\#138](https://github.com/kordamp/kordamp-gradle-plugins/pull/138) ([tlinkowski](https://github.com/tlinkowski))
+- \[base\] Fixed org.kordamp.gradle.plugin.base.plugins.Plugin.merge [\#133](https://github.com/kordamp/kordamp-gradle-plugins/pull/133) ([tlinkowski](https://github.com/tlinkowski))
 
 ## [v0.22.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.22.0) (2019-06-15)
 
@@ -611,6 +622,7 @@
 - \[Base\] Display Test task compiler settings [\#120](https://github.com/kordamp/kordamp-gradle-plugins/issues/120)
 - \[Base\] Display Groovy compiler settings  [\#119](https://github.com/kordamp/kordamp-gradle-plugins/issues/119)
 - \[Base\] Display Java compiler settings [\#118](https://github.com/kordamp/kordamp-gradle-plugins/issues/118)
+- \[Base\] Add a task to list included builds [\#111](https://github.com/kordamp/kordamp-gradle-plugins/issues/111)
 
 ## [v0.19.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.19.0) (2019-04-24)
 
@@ -628,7 +640,6 @@
 
 - \[Guide\] Update files created by initGuide [\#115](https://github.com/kordamp/kordamp-gradle-plugins/issues/115)
 - \[Jacoco\] Automatically disable if no tests are available [\#112](https://github.com/kordamp/kordamp-gradle-plugins/issues/112)
-- \[Base\] Add a task to list included builds [\#111](https://github.com/kordamp/kordamp-gradle-plugins/issues/111)
 - \[Base\] Add a task to list projects [\#110](https://github.com/kordamp/kordamp-gradle-plugins/issues/110)
 - \[Testing\] Add a Test aggregating task [\#108](https://github.com/kordamp/kordamp-gradle-plugins/issues/108)
 - \[Settings\] Expose project inclusion methods [\#107](https://github.com/kordamp/kordamp-gradle-plugins/issues/107)
@@ -677,6 +688,7 @@
 
 **Fixed bugs:**
 
+- \[Base\] Honor console settings when printing reach output [\#93](https://github.com/kordamp/kordamp-gradle-plugins/issues/93)
 - \[Publishing\] Generated POM files are missing information [\#91](https://github.com/kordamp/kordamp-gradle-plugins/issues/91)
 - \[Settings\] Plugin doesn't seem to work in Kotlin DSL [\#90](https://github.com/kordamp/kordamp-gradle-plugins/issues/90)
 
@@ -699,7 +711,6 @@
 
 **Fixed bugs:**
 
-- \[Base\] Honor console settings when printing reach output [\#93](https://github.com/kordamp/kordamp-gradle-plugins/issues/93)
 - \[Base\] NPE when invoking :plugins on a project [\#87](https://github.com/kordamp/kordamp-gradle-plugins/issues/87)
 
 **Closed issues:**
@@ -737,6 +748,7 @@
 - \[BOM\] Support \<parent\> section [\#69](https://github.com/kordamp/kordamp-gradle-plugins/issues/69)
 - \[Publishing\] Support \<parent\> section [\#68](https://github.com/kordamp/kordamp-gradle-plugins/issues/68)
 - \[BOM\] Add an option for disable implicit includes [\#67](https://github.com/kordamp/kordamp-gradle-plugins/issues/67)
+- Move Clirr plugin [\#63](https://github.com/kordamp/kordamp-gradle-plugins/issues/63)
 
 **Fixed bugs:**
 
@@ -751,14 +763,12 @@
 
 **Implemented enhancements:**
 
-- Move Clirr plugin [\#63](https://github.com/kordamp/kordamp-gradle-plugins/issues/63)
 - \[SourceXref\] Allow some projects to be excluded from aggregate [\#62](https://github.com/kordamp/kordamp-gradle-plugins/issues/62)
 - \[SourceHtml\] Allow some projects to be excluded from aggregate [\#61](https://github.com/kordamp/kordamp-gradle-plugins/issues/61)
 - \[Source\] Allow some projects to be excluded from aggregate [\#60](https://github.com/kordamp/kordamp-gradle-plugins/issues/60)
 - \[Apidoc\] Allow some projects to be excluded from aggregate [\#59](https://github.com/kordamp/kordamp-gradle-plugins/issues/59)
 - \[Source\] Add an aggregate JAR task [\#58](https://github.com/kordamp/kordamp-gradle-plugins/issues/58)
 - \[Jacoco\] Allow additional source/class directories to be defined [\#57](https://github.com/kordamp/kordamp-gradle-plugins/issues/57)
-- \[SourceXref\] Add a JAR task for regular and aggregate sources [\#54](https://github.com/kordamp/kordamp-gradle-plugins/issues/54)
 - \[SourceHtml\] Add a JAR task for regular and aggregate sources [\#53](https://github.com/kordamp/kordamp-gradle-plugins/issues/53)
 
 **Fixed bugs:**
@@ -772,6 +782,7 @@
 
 **Implemented enhancements:**
 
+- \[SourceXref\] Add a JAR task for regular and aggregate sources [\#54](https://github.com/kordamp/kordamp-gradle-plugins/issues/54)
 - \[Base\] Add a task that displays configured properties [\#52](https://github.com/kordamp/kordamp-gradle-plugins/issues/52)
 - \[Base\] Add a task that displays applied extensions [\#51](https://github.com/kordamp/kordamp-gradle-plugins/issues/51)
 - \[Base\] Add a task that displays applied plugins [\#50](https://github.com/kordamp/kordamp-gradle-plugins/issues/50)
@@ -784,8 +795,8 @@
 
 **Implemented enhancements:**
 
-- Add a plugin for BOM file generation [\#44](https://github.com/kordamp/kordamp-gradle-plugins/issues/44)
 - \[License\] Allow non FLOSS licenses to be specified [\#42](https://github.com/kordamp/kordamp-gradle-plugins/issues/42)
+- \[Publishing\] Allow posting publications to release/snapshot repositories [\#39](https://github.com/kordamp/kordamp-gradle-plugins/issues/39)
 
 **Fixed bugs:**
 
@@ -799,9 +810,9 @@
 **Implemented enhancements:**
 
 - \[Base\] Suppor the SCM block in POM files [\#45](https://github.com/kordamp/kordamp-gradle-plugins/issues/45)
+- Add a plugin for BOM file generation [\#44](https://github.com/kordamp/kordamp-gradle-plugins/issues/44)
 - Split project plugin for closed and open source usages [\#43](https://github.com/kordamp/kordamp-gradle-plugins/issues/43)
 - \[Guide\] Allow attribute values to be overriden in a document [\#41](https://github.com/kordamp/kordamp-gradle-plugins/issues/41)
-- \[Publishing\] Allow posting publications to release/snapshot repositories [\#39](https://github.com/kordamp/kordamp-gradle-plugins/issues/39)
 - \[Publishing\] Configure artifact signing [\#38](https://github.com/kordamp/kordamp-gradle-plugins/issues/38)
 
 **Fixed bugs:**
