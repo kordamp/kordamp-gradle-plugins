@@ -132,7 +132,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(TestReport t) {
                     t.enabled = false
-                    t.group = 'Verification'
+                    t.group = 'Reporting'
                     t.description = 'Aggregate test reports.'
                     t.destinationDir = project.file("${project.buildDir}/reports/aggregate-tests")
                 }
@@ -143,7 +143,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(TestReport t) {
                     t.enabled = false
-                    t.group = 'Verification'
+                    t.group = 'Reporting'
                     t.description = 'Aggregate integration test reports.'
                     t.destinationDir = project.file("${project.buildDir}/reports/aggregate-integration-tests")
                 }
@@ -154,7 +154,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(TestReport t) {
                     t.enabled = false
-                    t.group = 'Verification'
+                    t.group = 'Reporting'
                     t.description = 'Aggregate functional test reports.'
                     t.destinationDir = project.file("${project.buildDir}/reports/aggregate-functional-tests")
                 }
@@ -165,7 +165,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                 @Override
                 void execute(TestReport t) {
                     t.enabled = false
-                    t.group = 'Verification'
+                    t.group = 'Reporting'
                     t.description = 'Aggregate all test reports.'
                     t.destinationDir = project.file("${project.buildDir}/reports/aggregate-all-tests")
                 }

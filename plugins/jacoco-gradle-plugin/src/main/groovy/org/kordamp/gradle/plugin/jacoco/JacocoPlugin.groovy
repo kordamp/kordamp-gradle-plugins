@@ -105,7 +105,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
                             @Override
                             void execute(DefaultTask t) {
                                 t.enabled = false
-                                t.group = 'Verification'
+                                t.group = 'Reporting'
                                 t.description = 'Executes all JaCoCo reports.'
                             }
                         })
@@ -168,7 +168,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
             project.pluginManager.withPlugin('java-base') {
                 // Do not aggregate root report if it does not have tests #198
-                if (isRootProject(project) && !config.coverage.jacoco.hasTestSourceSets()) {
+                if (isRootProject(project) && !config.coverage.jacoco.hasTestSourceSets(project)) {
                     return
                 }
 
@@ -253,7 +253,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
         if (!jacocoReportTask) {
             jacocoReportTask = project.tasks.create(taskName, JacocoReport) { t ->
                 t.dependsOn testTask
-                t.group = 'Verification'
+                t.group = 'Reporting'
                 t.description = "Generates code coverage report for the ${testTask.name} task."
 
                 t.jacocoClasspath = project.configurations.jacocoAnt
@@ -279,6 +279,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
             }
 
             t.additionalSourceDirs.from project.files(resolveSourceDirs(config, projects))
+            t.additionalClassDirs.from project.files(resolveClassDirs(config, projects))
             t.sourceDirectories.from project.files(resolveSourceDirs(config, projects))
             t.classDirectories.from project.files(resolveClassDirs(config, projects))
             adjustClassDirectories(t, config.coverage.jacoco.excludes)
@@ -353,9 +354,10 @@ class JacocoPlugin extends AbstractKordampPlugin {
             void execute(JacocoReport t) {
                 t.enabled = config.coverage.jacoco.enabled
 
-                t.additionalSourceDirs.from project.files(resolveSourceDirs(config, projects))
                 t.sourceDirectories.from project.files(resolveSourceDirs(config, projects))
                 t.classDirectories.from project.files(resolveClassDirs(config, projects))
+                t.additionalSourceDirs.from project.files(resolveSourceDirs(config, projects))
+                t.additionalClassDirs.from project.files(resolveClassDirs(config, projects))
                 t.executionData project.files(aggregateJacocoMerge.get().destinationFile)
 
                 t.reports(new Action<JacocoReportsContainer>() {
@@ -375,6 +377,9 @@ class JacocoPlugin extends AbstractKordampPlugin {
     private static void adjustClassDirectories(JacocoReport t, Set<String> excludes) {
         if (excludes) {
             t.classDirectories.setFrom(t.project.files(t.classDirectories.files.collect { d ->
+                t.project.fileTree(dir: d, exclude: excludes)
+            }))
+            t.additionalClassDirs().setFrom(t.project.files(t.additionalClassDirs.files.collect { d ->
                 t.project.fileTree(dir: d, exclude: excludes)
             }))
         }

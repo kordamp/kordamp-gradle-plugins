@@ -36,15 +36,9 @@ abstract class AbstractTestingFeature extends AbstractFeature {
     @Override
     protected void normalizeEnabled() {
         if (!enabledSet) {
-            if (isRoot()) {
-                if (project.childProjects.isEmpty()) {
-                    enabled = hasTestSourceSets()
-                }
-            } else {
-                enabled = hasTestSourceSets()
-                if (enabled) {
-                    getParentFeature().enabled = enabled
-                }
+            enabled = hasTestSourceSets()
+            if (enabled && !isRoot()) {
+                getParentFeature().enabled = enabled
             }
         }
     }
