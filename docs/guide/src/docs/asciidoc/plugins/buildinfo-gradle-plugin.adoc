@@ -19,7 +19,7 @@ Defines a set of build related properties. These properties are
 |===
 | Name             | Type             | Description
 | buildDate        | String           | The value of current timestamp formatted with "yyyy-MM-dd"
-| buildTime        | String           | The value of current timestamp formatted with "HH:mm:ss.SSSZ"
+| buildTime        | String           | The value of current timestamp formatted with "HH:mm:ssXXX"
 | buildBy          | String           | The value of the `user.name` System property
 | buildRevision    | String           | The value of the latest commit hash
 | buildJdk         | String           | Concatenation of the following System properties [`java.version`, `java.vendor`, `java.vm.version`]

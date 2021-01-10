@@ -111,7 +111,7 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
             }
 
             if (!config.buildInfo.skipBuildTime) {
-                config.buildInfo.buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(date)
+                config.buildInfo.buildTime = new SimpleDateFormat('HH:mm:ssXXX').format(date)
             }
 
             if (!config.buildInfo.skipBuildRevision) {
