@@ -71,7 +71,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
         layout = objects.property(Layout).convention(Layout.TWO_LEVEL)
         enforceNamingConvention = objects.property(Boolean).convention(true)
         useLongPaths = objects.property(Boolean).convention(false)
-        cache = objects.property(Boolean).convention(true)
+        cache = objects.property(Boolean).convention(false)
         directories = objects.listProperty(String).convention([])
         excludes = objects.setProperty(String).convention(new LinkedHashSet<String>())
         prefix = objects.property(String).convention(Providers.notDefined())
@@ -98,6 +98,8 @@ class ProjectsExtensionImpl implements ProjectsExtension {
 
     private boolean resolveFromCache(Cache.Key key) {
         long settingsLastModified = findSettingsFile()?.lastModified() ?: Long.MIN_VALUE
+
+        LOG.info("[settings] Caching of project structure is ${cache.get()? 'enabled': 'disabled'}.")
 
         if (cache.get() &&
             Cache.getInstance().has(settings.gradle, key) &&
