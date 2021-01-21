@@ -37,6 +37,4 @@ jobs:
         if: failure()
         with:
            name: reports-${{ runner.os }}
-           path: |
-             plugins/*/build/reports
-             plugins/*/build/test-results
+           path: plugins/*/build/test-results/
