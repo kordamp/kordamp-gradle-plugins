@@ -30,9 +30,8 @@ jobs:
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradlew') }}
           restore-keys: |
             ${{ runner.os }}-gradlew-
-      - uses: eskatos/gradle-command-action@v1
-        with:
-          arguments: build -S
+      - name: Execute Gradle
+        run: ./gradlew build -S
       - name: Show Reports
         uses: actions/upload-artifact@v1
         if: failure()

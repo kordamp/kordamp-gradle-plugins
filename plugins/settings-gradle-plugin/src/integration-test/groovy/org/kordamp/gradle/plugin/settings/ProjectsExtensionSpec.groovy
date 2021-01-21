@@ -75,13 +75,13 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        result.output.normalize().contains("""
+        verifyOutput(result, """
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
             |+--- Project ':project2'
             |\\--- Project ':project3'
-        """.stripMargin('|').trim())
+        """)
 
         where:
         index | naming | kotlin
@@ -119,14 +119,14 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        result.output.normalize().contains("""
+        verifyOutput(result, """
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
             |+--- Project ':project2'
             |+--- Project ':project3'
             |\\--- Project ':project4'
-        """.stripMargin('|').trim())
+        """)
 
         where:
         index | naming | kotlin
@@ -159,13 +159,13 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        result.output.normalize().contains("""
+        verifyOutput(result, """
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
             |+--- Project ':project2'
             |\\--- Project ':project3'
-        """.stripMargin('|').trim())
+        """)
 
         where:
         index | naming | kotlin
@@ -201,14 +201,14 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        result.output.normalize().contains("""
+        verifyOutput(result, """
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
             |+--- Project ':project2'
             |+--- Project ':project3'
             |\\--- Project ':project4'
-        """.stripMargin('|').trim())
+        """)
 
         where:
         index | naming | kotlin
@@ -249,13 +249,13 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        result.output.normalize().contains("""
+        verifyOutput(result, """
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
             |+--- Project ':project2'
             |\\--- Project ':project3'
-        """.stripMargin('|').trim())
+        """)
 
         where:
         index | naming | kotlin
@@ -298,14 +298,14 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        result.output.normalize().contains("""
+        verifyOutput(result, """
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
             |+--- Project ':project2'
             |+--- Project ':project3'
             |\\--- Project ':project4'
-        """.stripMargin('|').trim())
+        """)
 
         where:
         index | naming | kotlin
@@ -348,13 +348,13 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        result.output.normalize().contains("""
+        verifyOutput(result, """
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
             |+--- Project ':project2'
             |\\--- Project ':project3'
-        """.stripMargin('|').trim())
+        """)
 
         where:
         index | naming | kotlin
@@ -391,13 +391,13 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        result.output.normalize().contains("""
+        verifyOutput(result, """
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
             |+--- Project ':project2'
             |\\--- Project ':project3'
-        """.stripMargin('|').trim())
+        """)
 
         where:
         index | naming | kotlin
@@ -433,12 +433,12 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        result.output.normalize().contains("""
+        verifyOutput(result, """
             |Root project 'test'
             |+--- Project ':project1'
             |+--- Project ':project2'
             |\\--- Project ':project3'
-        """.stripMargin('|').trim())
+        """)
 
         where:
         index | prefix | suffix
@@ -474,12 +474,12 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        result.output.normalize().contains("""
+        verifyOutput(result, """
             |Root project 'test'
             |+--- Project ':${prefix}project1${suffix}'
             |+--- Project ':${prefix}project2${suffix}'
             |\\--- Project ':${prefix}project3${suffix}'
-        """.stripMargin('|').trim())
+        """)
 
         where:
         index | prefix | suffix
@@ -511,17 +511,23 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        result.output.normalize().contains("""
+        verifyOutput(result, """
             |Root project 'test'
             |+--- Project ':project1'
             |\\--- Project ':project3'
-        """.stripMargin('|').trim())
+        """)
 
         where:
         index | exclusion
         1     | 'project2'
         2     | '**/project2'
         3     | '**/*t2'
+    }
+
+    private void verifyOutput(BuildResult result, String input) {
+        String output = result.output.normalize()
+        String expected = input.stripMargin('|').trim()
+        assert output.contains(expected)
     }
 
     private void createProject(File parentDir, String filename, boolean naming, boolean kotlin) {
