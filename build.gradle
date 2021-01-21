@@ -80,6 +80,13 @@ projects.subprojects {
                     implementationClass = project.pluginImplementationClass
                 }
             }
+
+            test {
+                testLogging {
+                    events 'failed'
+                    exceptionFormat 'full'
+                }
+            }
         }
 
         dependencies {
