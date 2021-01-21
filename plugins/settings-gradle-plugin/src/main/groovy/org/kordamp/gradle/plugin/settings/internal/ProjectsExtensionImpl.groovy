@@ -344,8 +344,15 @@ class ProjectsExtensionImpl implements ProjectsExtension {
         doIncludeProject(projectDir.parentFile, projectDir.name)
     }
 
+    private String[] splitByFileSeparator(String path) {
+        if (path.contains('/')) {
+            return path.split('/')
+        }
+        return path.split(Pattern.quote(File.separator))
+    }
+
     private void doIncludeProject(String path) {
-        String[] parts = path.split(Pattern.quote(File.separator))
+        String[] parts = splitByFileSeparator(path)
         String projectDirName = path
         String projectName = parts[-1]
 
