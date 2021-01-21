@@ -63,7 +63,6 @@ class Javadoc extends AbstractFeature {
         options.windowTitle = "${project.name} ${project.version}"
         options.docTitle    = "${project.name} ${project.version}"
         options.header      = "${project.name} ${project.version}"
-        options.links(resolveJavadocLinks(project.findProperty('targetCompatibility')))
     }
 
     @Override
@@ -77,7 +76,11 @@ class Javadoc extends AbstractFeature {
         if (jv instanceof JavaVersion) {
             javaVersion = (JavaVersion) jv
         } else if (jv != null) {
-            javaVersion = JavaVersion.toVersion(jv)
+            try {
+                javaVersion = JavaVersion.toVersion(jv)
+            } catch (Exception ignored) {
+                // javaVersion will be JavaVersion.current()
+            }
         }
 
         if (javaVersion.isJava11Compatible()) {
@@ -126,6 +129,10 @@ class Javadoc extends AbstractFeature {
     @Override
     void postMerge() {
         super.postMerge()
+        if (autoLinks.enabled) {
+            options.links(resolveJavadocLinks(project.findProperty('sourceCompatibility') ||
+                project.findProperty('targetCompatibility')))
+        }
         autoLinks.resolveLinks(project).each { options.links(it) }
     }
 
