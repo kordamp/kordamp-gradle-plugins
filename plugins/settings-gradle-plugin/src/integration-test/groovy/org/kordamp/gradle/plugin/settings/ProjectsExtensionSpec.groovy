@@ -75,7 +75,7 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        assert result.output.contains("""
+        result.output.normalize().contains("""
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
@@ -119,7 +119,7 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        assert result.output.contains("""
+        result.output.normalize().contains("""
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
@@ -159,7 +159,7 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        assert result.output.contains("""
+        result.output.normalize().contains("""
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
@@ -201,7 +201,7 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        assert result.output.contains("""
+        result.output.normalize().contains("""
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
@@ -249,7 +249,7 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        assert result.output.contains("""
+        result.output.normalize().contains("""
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
@@ -298,7 +298,7 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        assert result.output.contains("""
+        result.output.normalize().contains("""
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
@@ -348,7 +348,7 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        assert result.output.contains("""
+        result.output.normalize().contains("""
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
@@ -391,7 +391,7 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        assert result.output.contains("""
+        result.output.normalize().contains("""
             |Root project 'test'
             |+--- Project ':guide'
             |+--- Project ':project1'
@@ -433,7 +433,7 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        assert result.output.contains("""
+        result.output.normalize().contains("""
             |Root project 'test'
             |+--- Project ':project1'
             |+--- Project ':project2'
@@ -474,7 +474,7 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        assert result.output.contains("""
+        result.output.normalize().contains("""
             |Root project 'test'
             |+--- Project ':${prefix}project1${suffix}'
             |+--- Project ':${prefix}project2${suffix}'
@@ -511,7 +511,7 @@ class ProjectsExtensionSpec extends Specification {
             .build()
 
         then:
-        assert result.output.contains("""
+        result.output.normalize().contains("""
             |Root project 'test'
             |+--- Project ':project1'
             |\\--- Project ':project3'
