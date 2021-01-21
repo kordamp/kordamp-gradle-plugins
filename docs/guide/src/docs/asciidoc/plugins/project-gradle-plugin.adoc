@@ -50,12 +50,26 @@ Type:: `org.kordamp.gradle.plugin.project.tasks.CopyDependenciesTask`
 
 .Options
 [horizontal]
-configuration-name:: The name of the configuration (REQUIRED).
+configuration:: The name of the configuration (REQUIRED).
 layout:: The layout type (OPTIONAL). Valid values are [`flat`, `default`].
+includes:: Comma separated artifact patterns, e.g, `<groupId>:<artifactId>:<version>:<classifier>`
+excludes:: Comma separated artifact patterns, e.g, `<groupId>:<artifactId>:<version>:<classifier>`
 
 .Properties
 [horizontal]
-configurationName:: The name of the configuration (REQUIRED).
+configuration:: The name of the configuration (REQUIRED).
 layout:: The layout type (OPTIONAL). Valid values are [`flat`, `default`].
 outputDirectory:: The target directory where artifacts will be written to. Defaults to `${buildDir}/dependencies/${layout}`.
+includes:: Artifact patterns, e.g, `<groupId>:<artifactId>:<version>:<classifier>`
+excludes:: Artifact patterns, e.g, `<groupId>:<artifactId>:<version>:<classifier>`
+
+.Artifact pattern examples:
+
+* org.apache.maven
+* org.apache.maven:badArtifact
+* org.apache.maven:artifact:badVersion
+* org.apache.maven:*:1.2 (exclude version 1.2 and above, equivalent to [1.2,) )
+* org.apache.maven:*:[1.2] (explicit exclude of version 1.2)
+* org.apache.maven:*:*:test
+* org.apache.+*+:maven-+*+:*
 

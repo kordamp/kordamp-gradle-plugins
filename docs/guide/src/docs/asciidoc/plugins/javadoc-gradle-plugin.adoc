@@ -68,11 +68,11 @@ This block is optional.
 
 [options="header", cols="5*"]
 |===
-| Name           | Type         | Required | Default Value                                                | Description
-| enabled        | boolean      | no       | true                                                         | Disables generation of auto links if `false`
-| configurations | List<String> | no       | ['compile', 'compileOnly', 'annotationProcessor', 'runtime'] | Configurations to be checked for dependencies
-| excludes       | Set<String>  | no       | []                                                           | Dependencies to be excluded. Format: '${artifactId}-${version}'
-| useJavadocIo   | boolean      | no       | true                                                         | Resolve links against `https://static.javadoc.io/`
+| Name           | Type         | Required | Default Value                                                                  | Description
+| enabled        | boolean      | no       | true                                                                           | Disables generation of auto links if `false`
+| configurations | List<String> | no       | ['api', 'implementation', 'compileOnly', 'annotationProcessor', 'runtimeOnly'] | Configurations to be checked for dependencies
+| excludes       | Set<String>  | no       | []                                                                             | Dependencies to be excluded. Format: '${artifactId}-${version}'
+| useJavadocIo   | boolean      | no       | true                                                                           | Resolve links against `https://static.javadoc.io/`
 |===
 
 .Methods
