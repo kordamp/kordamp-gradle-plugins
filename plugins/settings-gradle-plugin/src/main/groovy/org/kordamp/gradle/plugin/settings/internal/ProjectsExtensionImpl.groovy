@@ -313,7 +313,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
 
     private void processStandardLayout() {
         settings.rootDir.eachDir { File projectDir ->
-            if (isProjectExcluded(projectDir.name, projectDir.name)) return
+            if (skipDirectoryDiscoveryFor(projectDir) || isProjectExcluded(projectDir.name, projectDir.name)) return
 
             File buildFile = resolveBuildFile(projectDir, projectDir.name)
             doIncludeProject(settings.rootDir, projectDir.name, buildFile)
