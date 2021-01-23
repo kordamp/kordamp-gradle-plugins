@@ -75,6 +75,7 @@ class BintrayPlugin extends AbstractKordampPlugin {
         PublishingPlugin.applyIfMissing(project)
 
         BintrayProjectEvaluatedListener listener = new BintrayProjectEvaluatedListener()
+
         project.pluginManager.withPlugin('java-base') {
             if (!project.plugins.findPlugin(com.jfrog.bintray.gradle.BintrayPlugin)) {
                 project.pluginManager.apply(com.jfrog.bintray.gradle.BintrayPlugin)

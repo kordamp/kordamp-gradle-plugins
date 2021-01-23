@@ -103,7 +103,9 @@ class SourceStatsPlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.stats.enabled)
 
-            createSourceStatsTask(project)
+            if (config.stats.enabled) {
+                createSourceStatsTask(project)
+            }
         }
     }
 

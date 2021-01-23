@@ -132,6 +132,7 @@ class CpdPlugin extends AbstractKordampPlugin {
             cpdExt.toolVersion = config.quality.cpd.toolVersion
 
             project.tasks.withType(Cpd) { Cpd task ->
+                task.enabled = config.quality.cpd.enabled
                 task.setGroup('Quality')
                 applyTo(config, task)
                 String sourceSetName = task.name['cpd'.size()..-1].uncapitalize()

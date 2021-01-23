@@ -146,6 +146,7 @@ class CheckstylePlugin extends AbstractKordampPlugin {
             checkstyleExt.toolVersion = config.quality.checkstyle.toolVersion
 
             project.tasks.withType(Checkstyle) { Checkstyle task ->
+                task.enabled = config.quality.checkstyle.enabled
                 task.setGroup('Quality')
                 config.quality.checkstyle.applyTo(task)
                 String sourceSetName = task.name['checkstyle'.size()..-1].uncapitalize()

@@ -24,6 +24,7 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
@@ -90,6 +91,11 @@ class GuidePlugin extends AbstractKordampPlugin {
         @Override
         void projectEvaluated(Project project) {
             configureAsciidoctorTask(project)
+            ProjectConfigurationExtension config = resolveConfig(project)
+            if (!config.docs.guide.enabled) {
+                return
+            }
+
             createGuideTask(project)
             createInitGuideTask(project)
             configurePublishing(project)
@@ -101,6 +107,11 @@ class GuidePlugin extends AbstractKordampPlugin {
     private class GuideAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
         @Override
         void allProjectsEvaluated(Project rootProject) {
+            ProjectConfigurationExtension config = resolveConfig(project)
+            if (!config.docs.guide.enabled) {
+                return
+            }
+
             GuideExtension extension = project.extensions.findByType(GuideExtension)
 
             project.tasks.named(CREATE_GUIDE_TASK_NAME, Copy, new Action<Copy>() {
@@ -144,7 +155,8 @@ class GuidePlugin extends AbstractKordampPlugin {
         project.tasks.named(ASCIIDOCTOR).configure(new Action<AsciidoctorTask>() {
             @Override
             void execute(AsciidoctorTask t) {
-                ProjectConfigurationExtension config = resolveConfig(project.rootProject) ?: resolveConfig(project)
+                ProjectConfigurationExtension config = resolveConfig(project)
+                t.enabled = config.docs.guide.enabled
 
                 Map attrs = [:]
                 attrs.putAll(t.attributes)
@@ -172,6 +184,7 @@ class GuidePlugin extends AbstractKordampPlugin {
                 checkAttribute(attrs, t.attributes, 'project-version', project.version)
                 checkAttribute(attrs, t.attributes, 'project-name', project.rootProject.name)
 
+                config = resolveConfig(project.rootProject)
                 checkAttribute(attrs, t.attributes, 'build-by', config.buildInfo.buildBy)
                 checkAttribute(attrs, t.attributes, 'build-date', config.buildInfo.buildDate)
                 checkAttribute(attrs, t.attributes, 'build-time', config.buildInfo.buildTime)
@@ -243,23 +256,24 @@ class GuidePlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private void configurePublishing(Project project) {
-        ProjectConfigurationExtension config = resolveConfig(project)
-        if (!config.docs.guide.publish.enabled) {
-            return
-        }
+        project.pluginManager.withPlugin('org.ajoberstar.git-publish', new Action<AppliedPlugin>() {
+            @Override
+            void execute(AppliedPlugin plugin) {
+                Task createGuideTask = project.tasks.findByName(CREATE_GUIDE_TASK_NAME)
+                ProjectConfigurationExtension config = resolveConfig(project)
 
-        Task createGuideTask = project.tasks.findByName(CREATE_GUIDE_TASK_NAME)
+                project.gitPublish {
+                    repoUri = config.info.resolveScmLink()
+                    branch = config.docs.guide.publish.branch
+                    contents {
+                        from createGuideTask.outputs.files
+                    }
+                    commitMessage = config.docs.guide.publish.message
+                }
 
-        project.gitPublish {
-            repoUri = config.info.resolveScmLink()
-            branch = config.docs.guide.publish.branch
-            contents {
-                from createGuideTask.outputs.files
+                project.gitPublishCommit.dependsOn(createGuideTask)
             }
-            commitMessage = config.docs.guide.publish.message
-        }
-
-        project.gitPublishCommit.dependsOn(createGuideTask)
+        })
     }
 
     static void initGuide(Project project) {

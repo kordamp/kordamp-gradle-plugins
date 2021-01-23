@@ -136,6 +136,7 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
             spotbugsExt.toolVersion = config.quality.spotbugs.toolVersion
 
             project.tasks.withType(SpotBugsTask) { SpotBugsTask task ->
+                task.enabled = config.quality.spotbugs.enabled
                 task.setGroup('Quality')
                 applyTo(config, task)
                 String sourceSetName = task.name['spotbugs'.size()..-1].uncapitalize()

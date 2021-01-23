@@ -145,6 +145,7 @@ class PmdPlugin extends AbstractKordampPlugin {
             pmdExt.toolVersion = config.quality.pmd.toolVersion
 
             project.tasks.withType(Pmd) { Pmd task ->
+                task.enabled = config.quality.pmd.enabled
                 task.setGroup('Quality')
                 config.quality.pmd.applyTo(task)
                 String sourceSetName = task.name['pmd'.size()..-1].uncapitalize()

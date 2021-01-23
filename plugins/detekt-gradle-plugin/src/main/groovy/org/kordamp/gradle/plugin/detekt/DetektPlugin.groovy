@@ -136,6 +136,7 @@ class DetektPlugin extends AbstractKordampPlugin {
             detektExt.toolVersion = config.quality.detekt.toolVersion
 
             project.tasks.withType(Detekt) { Detekt task ->
+                task.enabled = config.quality.detekt.enabled
                 task.setGroup('Quality')
                 DetektPlugin.applyTo(config, task)
                 String sourceSetName = task.name['detekt'.size()..-1].uncapitalize()

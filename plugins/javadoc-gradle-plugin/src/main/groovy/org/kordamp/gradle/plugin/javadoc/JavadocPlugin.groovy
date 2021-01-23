@@ -167,6 +167,10 @@ class JavadocPlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.docs.javadoc.enabled)
 
+            if (!config.docs.javadoc.enabled) {
+                return
+            }
+
             TaskProvider<Javadoc> javadoc = createJavadocTask(project)
             TaskProvider<Jar> javadocJar = createJavadocJarTask(project, javadoc)
             project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(javadocJar)
@@ -256,9 +260,13 @@ class JavadocPlugin extends AbstractKordampPlugin {
     }
 
     private void updatePublication(Project project) {
+        ProjectConfigurationExtension config = resolveConfig(project)
+        if (!config.docs.javadoc.enabled) {
+            return
+        }
+
         if (project.tasks.findByName(JAVADOC_JAR_TASK_NAME)) {
             TaskProvider<Jar> javadocJar = project.tasks.named(JAVADOC_JAR_TASK_NAME, Jar)
-            ProjectConfigurationExtension config = resolveConfig(project)
             if (config.docs.javadoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
                 PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
                 MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')

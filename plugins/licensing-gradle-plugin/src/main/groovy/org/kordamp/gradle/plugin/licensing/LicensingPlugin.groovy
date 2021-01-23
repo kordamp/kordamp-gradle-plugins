@@ -170,7 +170,9 @@ class LicensingPlugin extends AbstractKordampPlugin {
         }
 
         preConfigureDownloadLicensesExtension(project)
+    }
 
+    private void configureAdditionalLicenseTasks(Project project) {
         TaskProvider<LicenseCheck> licenseGradle = project.tasks.register('licenseGradle', LicenseCheck, new Action<LicenseCheck>() {
             @Override
             @CompileDynamic
@@ -259,6 +261,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
     private class LicensingProjectEvaluatedListener implements ProjectEvaluatedListener {
         @Override
         void projectEvaluated(Project project) {
+            configureAdditionalLicenseTasks(project)
             configureLicenseExtension(project)
             postConfigureDownloadLicensesExtension(project)
         }

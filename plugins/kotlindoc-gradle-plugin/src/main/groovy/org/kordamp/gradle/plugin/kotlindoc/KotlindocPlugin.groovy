@@ -121,6 +121,10 @@ class KotlindocPlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.docs.kotlindoc.enabled)
 
+            if (!config.docs.kotlindoc.enabled) {
+                return
+            }
+
             List<DokkaTask> tasks = []
             project.tasks.withType(DokkaTask).each { DokkaTask dokkaTask ->
                 tasks << dokkaTask
@@ -234,6 +238,9 @@ class KotlindocPlugin extends AbstractKordampPlugin {
 
     private void updatePublication(Project project) {
         ProjectConfigurationExtension config = resolveConfig(project)
+        if (!config.docs.kotlindoc.enabled) {
+            return
+        }
 
         project.tasks.withType(DokkaTask).each { DokkaTask dokkaTask ->
             String taskName = dokkaTask.name + 'Jar'

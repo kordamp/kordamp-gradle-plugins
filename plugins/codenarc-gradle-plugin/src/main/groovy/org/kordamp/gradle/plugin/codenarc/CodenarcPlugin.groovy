@@ -147,6 +147,7 @@ class CodenarcPlugin extends AbstractKordampPlugin {
             codenarcExt.toolVersion = config.quality.codenarc.toolVersion
 
             project.tasks.withType(CodeNarc) { CodeNarc task ->
+                task.enabled = config.quality.codenarc.enabled
                 task.setGroup('Quality')
                 config.quality.codenarc.applyTo(task)
                 String sourceSetName = task.name['codenarc'.size()..-1].uncapitalize()

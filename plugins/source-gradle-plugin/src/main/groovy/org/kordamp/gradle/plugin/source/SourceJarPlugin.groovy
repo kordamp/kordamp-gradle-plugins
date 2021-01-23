@@ -119,6 +119,10 @@ class SourceJarPlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.artifacts.source.enabled)
 
+            if (!config.artifacts.source.enabled) {
+                return
+            }
+
             TaskProvider<Jar> sourcesJar = createSourceJarTask(project)
             project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(sourcesJar)
         }
@@ -177,7 +181,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                 }
 
                 project.childProjects.values().each { p ->
-                    if (p in config.artifacts.source.aggregate.excludedProjects || !config.artifacts.source.enabled) return
+                    if (p in config.artifacts.source.aggregate.excludedProjects || !resolveConfig(p).artifacts.source.enabled) return
                     if (hasSourceSets(p)) projects << p
                 }
 

@@ -132,8 +132,12 @@ class ClirrPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private TaskProvider<ClirrTask> configureClirrTask(Project project) {
+    private void configureClirrTask(Project project) {
         ProjectConfigurationExtension config = resolveConfig(project)
+
+        if (!config.clirr.enabled) {
+            return
+        }
 
         FileCollection newfiles = null
         if (PluginUtils.isAndroidProject(project)) {
@@ -153,57 +157,52 @@ class ClirrPlugin extends AbstractKordampPlugin {
                     t.newClasspath = t.project.configurations[supportsApiConfiguration(t.project) ? 'api' : 'compile']
                     t.xmlReport = t.project.file("${t.project.reporting.baseDir.path}/clirr/compatibility-report.xml")
                     t.htmlReport = t.project.file("${t.project.reporting.baseDir.path}/clirr/compatibility-report.html")
-                    t.enabled = newfiles && config.clirr.enabled
+                    t.enabled = !newfiles.isEmpty()
                 }
             })
 
-        // calculate baseline only if enabled
-        if (config.clirr.enabled) {
-            String baseline = config.clirr.baseline
-            if (!baseline) {
-                // attempt resolving baseline using current version
-                Version current = Version.of(String.valueOf(project.version))
-                if (current == Version.ZERO) {
-                    // can't run clirr
-                    project.logger.info("{}: version '{}' could not be parsed as semver", project.name, project.version)
-                    project.logger.info('{}: please set clirr.baseline explicitly or disable clirr', project.name)
-                    return clirrTask
-                }
-
-                Versions versions = Versions.of(current, config.clirr.semver)
-                if (versions.previous == Version.ZERO) {
-                    project.logger.info("{}: could not determine previous version for '{}' [semver compatibility={}]", project.name, current, config.clirr.semver)
-                    project.logger.info('{}: please set clirr.baseline explicitly or disable clirr', project.name)
-                    return clirrTask
-                }
-
-                baseline = [project.group ?: '', project.name, versions.previous].join(':')
+        String baseline = config.clirr.baseline
+        if (!baseline) {
+            // attempt resolving baseline using current version
+            Version current = Version.of(String.valueOf(project.version))
+            if (current == Version.ZERO) {
+                // can't run clirr
+                project.logger.info("{}: version '{}' could not be parsed as semver", project.name, project.version)
+                project.logger.info('{}: please set clirr.baseline explicitly or disable clirr', project.name)
+                return
             }
 
-            project.logger.info('{}: baseline has been set to {}', project.name, baseline)
-
-            // temporary change the group of the current project  otherwise
-            // the latest version will always override the baseline
-            String projectGroup = project.group
-            try {
-                project.group = projectGroup + '.clirr'
-                Configuration detached = project.configurations.detachedConfiguration(
-                    project.dependencies.create(baseline)
-                )
-                detached.transitive = true
-                detached.resolve()
-                clirrTask.configure(new Action<ClirrTask>() {
-                    @Override
-                    void execute(ClirrTask t) {
-                        t.baseFiles = detached
-                    }
-                })
-            } finally {
-                project.group = projectGroup
+            Versions versions = Versions.of(current, config.clirr.semver)
+            if (versions.previous == Version.ZERO) {
+                project.logger.info("{}: could not determine previous version for '{}' [semver compatibility={}]", project.name, current, config.clirr.semver)
+                project.logger.info('{}: please set clirr.baseline explicitly or disable clirr', project.name)
+                return
             }
+
+            baseline = [project.group ?: '', project.name, versions.previous].join(':')
         }
 
-        clirrTask
+        project.logger.info('{}: baseline has been set to {}', project.name, baseline)
+
+        // temporary change the group of the current project  otherwise
+        // the latest version will always override the baseline
+        String projectGroup = project.group
+        try {
+            project.group = projectGroup + '.clirr'
+            Configuration detached = project.configurations.detachedConfiguration(
+                project.dependencies.create(baseline)
+            )
+            detached.transitive = true
+            detached.resolve()
+            clirrTask.configure(new Action<ClirrTask>() {
+                @Override
+                void execute(ClirrTask t) {
+                    t.baseFiles = detached
+                }
+            })
+        } finally {
+            project.group = projectGroup
+        }
     }
 
     @CompileDynamic
@@ -221,13 +220,15 @@ class ClirrPlugin extends AbstractKordampPlugin {
         }
         clirrTasks = clirrTasks.unique()
 
-        project.tasks.named(AGGREGATE_CLIRR_TASK_NAME, AggregateClirrReportTask, new Action<AggregateClirrReportTask>() {
-            @Override
-            void execute(AggregateClirrReportTask t) {
-                t.dependsOn clirrTasks
-                t.enabled = config.clirr.aggregate.enabled
-                t.reports = project.files(clirrTasks*.xmlReport)
-            }
-        })
+        if (clirrTasks) {
+            project.tasks.named(AGGREGATE_CLIRR_TASK_NAME, AggregateClirrReportTask, new Action<AggregateClirrReportTask>() {
+                @Override
+                void execute(AggregateClirrReportTask t) {
+                    t.dependsOn clirrTasks
+                    t.enabled = config.clirr.aggregate.enabled
+                    t.reports = project.files(clirrTasks*.xmlReport)
+                }
+            })
+        }
     }
 }

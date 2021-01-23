@@ -161,6 +161,10 @@ class GroovydocPlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.docs.groovydoc.enabled)
 
+            if (!config.docs.groovydoc.enabled) {
+                return
+            }
+
             TaskProvider<Groovydoc> groovydoc = createGroovydocTask(project)
             TaskProvider<Jar> groovydocJar = createGroovydocJarTask(project, groovydoc)
             project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(groovydocJar)
@@ -222,9 +226,13 @@ class GroovydocPlugin extends AbstractKordampPlugin {
     }
 
     private void updatePublication(Project project) {
+        ProjectConfigurationExtension config = resolveConfig(project)
+        if (!config.docs.groovydoc.enabled) {
+            return
+        }
+
         if (project.tasks.findByName(GROOVYDOC_JAR_TASK_NAME)) {
             TaskProvider<Jar> groovydocJar = project.tasks.named(GROOVYDOC_JAR_TASK_NAME, Jar)
-            ProjectConfigurationExtension config = resolveConfig(project)
             if (config.docs.groovydoc.enabled && project.pluginManager.hasPlugin('maven-publish')) {
                 PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
                 MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')

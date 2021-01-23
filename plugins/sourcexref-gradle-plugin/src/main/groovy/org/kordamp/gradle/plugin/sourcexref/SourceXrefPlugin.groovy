@@ -124,7 +124,9 @@ class SourceXrefPlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.docs.sourceXref.enabled)
 
-            configureSourceXrefTask(project)
+            if (config.docs.sourceXref.enabled) {
+                configureSourceXrefTask(project)
+            }
         }
     }
 

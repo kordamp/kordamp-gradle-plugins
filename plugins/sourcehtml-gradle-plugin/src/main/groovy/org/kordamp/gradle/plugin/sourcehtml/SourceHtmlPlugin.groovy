@@ -144,7 +144,9 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             ProjectConfigurationExtension config = resolveConfig(project)
             setEnabled(config.docs.sourceHtml.enabled)
 
-            configureSourceHtmlTask(project)
+            if (config.docs.sourceHtml.enabled) {
+                configureSourceHtmlTask(project)
+            }
         }
     }
 
@@ -157,7 +159,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
         }
     }
 
-    private boolean configureSourceHtmlTask(Project project) {
+    private void configureSourceHtmlTask(Project project) {
         Configuration configuration = project.configurations.findByName(CONFIGURATION_NAME)
         ProjectConfigurationExtension config = resolveConfig(project)
 
@@ -240,8 +242,6 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                     t.onlyIf { sourceHtmlTask.get().enabled }
                 }
             })
-
-        return !config.docs.sourceHtml.srcDirs.isEmpty()
     }
 
     private void configureAggregateSourceHtmlTask(Project project) {
