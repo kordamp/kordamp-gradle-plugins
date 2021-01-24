@@ -54,6 +54,8 @@ abstract class AbstractReportingTask extends DefaultTask {
             doPrintMap((Map) value, offset)
         } else if (value instanceof Collection) {
             doPrintCollection(value, offset)
+        } else if (value instanceof FileCollection) {
+            doPrintCollection(value, offset)
         } else if (value?.class?.array) {
             doPrintArray((Object[]) value, offset)
         } else {
@@ -73,6 +75,11 @@ abstract class AbstractReportingTask extends DefaultTask {
                     if (!value.isEmpty()) {
                         println(('    ' * offset) + key + ':')
                         doPrintCollection((Collection) value, offset + 1)
+                    }
+                } else if (value instanceof FileCollection) {
+                    if (!value.isEmpty()) {
+                        println(('    ' * offset) + key + ':')
+                        doPrintCollection((FileCollection) value, offset + 1)
                     }
                 } else if (value?.class?.array) {
                     if (((Object[]) value).size()) {
@@ -105,6 +112,8 @@ abstract class AbstractReportingTask extends DefaultTask {
             doPrintMap(key, (Map) value, offset)
         } else if (value instanceof Collection) {
             doPrintCollection(key, value, offset)
+        } else if (value instanceof FileCollection) {
+            doPrintCollection(key, value, offset)
         } else if (value?.class?.array) {
             doPrintArray(key, (Object[]) value, offset)
         } else {
@@ -124,6 +133,10 @@ abstract class AbstractReportingTask extends DefaultTask {
                     if (!value.isEmpty()) {
                         doPrintCollection((Collection) value, offset + 1)
                     }
+                } else if (value instanceof FileCollection) {
+                    if (!value.isEmpty()) {
+                        doPrintCollection((FileCollection) value, offset + 1)
+                    }
                 } else if (value?.class?.array) {
                     if (((Object[]) value).size()) {
                         doPrintArray((Object[]) value, offset + 1)
@@ -131,6 +144,14 @@ abstract class AbstractReportingTask extends DefaultTask {
                 } else if (isNotNullNorBlank(value)) {
                     doPrintElement(value, offset)
                 }
+            }
+        }
+    }
+
+    protected void doPrintCollection(FileCollection collection, int offset) {
+        if (collection != null) {
+            collection.files.each { value ->
+                doPrintElement(value, offset)
             }
         }
     }

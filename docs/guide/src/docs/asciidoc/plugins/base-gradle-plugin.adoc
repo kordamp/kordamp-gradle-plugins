@@ -738,6 +738,68 @@ org.kordamp.gradle.base.dependency.management:: Suggest/force dependency version
 [[_org_kordamp_gradle_base_tasks]]
 == Tasks
 
+[[_task_archives]]
+=== Archives
+
+Displays all configured archives in a project.
+
+[horizontal]
+Name:: archives
+Type:: `org.kordamp.gradle.plugin.base.tasks.ArchivesTask`
+
+==== Example Output
+
+For a project defined as follows
+
+[source,groovy,subs="verbatim,attributes"]
+.build.gradle
+----
+plugins {
+    id 'java-library'
+    id 'org.kordamp.gradle.project' version '{project-version}'
+}
+
+config {
+    info {
+        description      = 'Demo project'
+        vendor           = 'Acme'
+        links.scm        = 'https://github.com/acme/demo'
+        organization.url = 'https://github.com/acme'
+    }
+    licensing  { enabled = false }
+}
+
+----
+
+Invoking these command
+
+[source]
+----
+$ gm :archives
+----
+
+Results in the following output
+
+[source]
+----
+> Task :archives
+Total archives: 2
+
+artifact 0
+    name: demo
+    type: jar
+    extension: jar
+    date: Sun Jan 24 14:30:57 CET 2021
+    file: /tmp/demo/build/libs/demo.jar
+artifact 1
+    name: demo
+    type: jar
+    extension: jar
+    classifier: javadoc
+    date: Sun Jan 24 14:30:57 CET 2021
+    file: /tmp/demo/build/libs/demo-javadoc.jar
+----
+
 [[_task_clear_kordamp_file_cache]]
 === ClearKordampFileCache
 
@@ -764,7 +826,7 @@ For a project defined as follows
 .build.gradle
 ----
 plugins {
-    id 'java'
+    id 'java-library'
     id 'org.kordamp.gradle.project' version '{project-version}'
 }
 

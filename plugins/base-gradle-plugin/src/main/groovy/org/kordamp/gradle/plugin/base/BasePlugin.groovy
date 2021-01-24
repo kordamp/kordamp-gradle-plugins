@@ -28,6 +28,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.listener.ProjectEvaluationListenerManager
 import org.kordamp.gradle.listener.TaskGraphReadyListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
+import org.kordamp.gradle.plugin.base.tasks.ArchivesTask
 import org.kordamp.gradle.plugin.base.tasks.ClearKordampFileCacheTask
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationsTask
@@ -162,6 +163,15 @@ class BasePlugin extends AbstractKordampPlugin {
                 void execute(ConfigurationsTask t) {
                     t.group = 'Insight'
                     t.description = "Displays all configurations available in project '$project.name'."
+                }
+            })
+
+        project.tasks.register('archives', ArchivesTask,
+            new Action<ArchivesTask>() {
+                @Override
+                void execute(ArchivesTask t) {
+                    t.group = 'Insight'
+                    t.description = "Displays all configured archives in project '$project.name'."
                 }
             })
 
