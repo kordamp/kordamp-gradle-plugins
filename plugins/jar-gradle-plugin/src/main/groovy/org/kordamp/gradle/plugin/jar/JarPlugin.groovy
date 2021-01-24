@@ -210,7 +210,7 @@ class JarPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private static void checkBuildInfoAttribute(BuildInfo buildInfo, String key, Map map, String manifestKey) {
-        if (!buildInfo."skip${key.capitalize()}") {
+        if (!buildInfo."skip${key.capitalize()}" || isNotBlank(buildInfo[key])) {
             map[manifestKey] = buildInfo[key]
         }
     }

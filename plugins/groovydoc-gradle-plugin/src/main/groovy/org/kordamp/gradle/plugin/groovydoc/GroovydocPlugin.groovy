@@ -225,6 +225,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileDynamic
     private void updatePublication(Project project) {
         ProjectConfigurationExtension config = resolveConfig(project)
         if (!config.docs.groovydoc.enabled) {
@@ -245,6 +246,7 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                         project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
                     }
                     mainPublication.artifact(groovydocJar.get())
+                    project.artifacts { archives(groovydocJar.get()) }
                 }
 
                 registerJarVariant('Groovydoc', config.docs.groovydoc.replaceJavadoc ? 'javadoc' : 'groovydoc', groovydocJar, project)

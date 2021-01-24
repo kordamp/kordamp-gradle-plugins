@@ -217,6 +217,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileDynamic
     private void updatePublication(Project project) {
         ProjectConfigurationExtension config = resolveConfig(project)
         if (!config.docs.scaladoc.enabled) {
@@ -237,6 +238,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                         project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
                     }
                     mainPublication.artifact(scaladocJarTask.get())
+                    project.artifacts { archives(scaladocJarTask.get()) }
                 }
 
                 registerJarVariant('Scaladoc', config.docs.scaladoc.replaceJavadoc ? 'javadoc' : 'scaladoc', scaladocJarTask, project)

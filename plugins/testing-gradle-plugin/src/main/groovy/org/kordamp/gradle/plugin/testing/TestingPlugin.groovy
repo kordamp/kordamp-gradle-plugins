@@ -440,6 +440,7 @@ class TestingPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileDynamic
     private void updatePublication(Project project) {
         if (project.tasks.findByName(TEST_JAR_TASK_NAME)) {
             TaskProvider<Jar> testJar = project.tasks.named(TEST_JAR_TASK_NAME, Jar)
@@ -447,7 +448,10 @@ class TestingPlugin extends AbstractKordampPlugin {
             if (config.testing.enabled && project.pluginManager.hasPlugin('maven-publish')) {
                 PublishingExtension publishing = project.extensions.findByType(PublishingExtension)
                 MavenPublication mainPublication = (MavenPublication) publishing.publications.findByName('main')
-                if (mainPublication) mainPublication.artifact(testJar.get())
+                if (mainPublication) {
+                    mainPublication.artifact(testJar.get())
+                    project.artifacts { archives(testJar.get()) }
+                }
                 Configuration variant = registerJarVariant('Test', 'tests', testJar, project, false, 'runtime')
                 variant.canBeResolved = true
 

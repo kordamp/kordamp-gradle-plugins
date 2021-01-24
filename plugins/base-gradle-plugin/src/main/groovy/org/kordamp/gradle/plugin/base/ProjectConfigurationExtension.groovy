@@ -45,6 +45,7 @@ import org.kordamp.gradle.plugin.base.plugins.Minpom
 import org.kordamp.gradle.plugin.base.plugins.Plugins
 import org.kordamp.gradle.plugin.base.plugins.Pmd
 import org.kordamp.gradle.plugin.base.plugins.Publishing
+import org.kordamp.gradle.plugin.base.plugins.Reproducible
 import org.kordamp.gradle.plugin.base.plugins.Scaladoc
 import org.kordamp.gradle.plugin.base.plugins.Sonar
 import org.kordamp.gradle.plugin.base.plugins.Source
@@ -73,6 +74,7 @@ class ProjectConfigurationExtension {
     final BuildInfo buildInfo
     final Clirr clirr
     final Licensing licensing
+    final Reproducible reproducible
     final Plugins plugins
     final Publishing publishing
     final Stats stats
@@ -93,6 +95,7 @@ class ProjectConfigurationExtension {
         buildInfo = new BuildInfo(this, project)
         clirr = new Clirr(this, project)
         licensing = new Licensing(this, project)
+        reproducible = new Reproducible(this, project)
         plugins = new Plugins(this, project)
         publishing = new Publishing(this, project)
         stats = new Stats(this, project)
@@ -115,6 +118,7 @@ class ProjectConfigurationExtension {
         if (publishing.visible) map.putAll(publishing.toMap())
         if (bom.visible) map.putAll(bom.toMap())
         if (licensing.visible) map.putAll(licensing.toMap())
+        if (reproducible.visible) map.putAll(reproducible.toMap())
         map.putAll(docs.toMap())
         map.putAll(coverage.toMap())
         map.putAll(quality.toMap())
@@ -205,6 +209,14 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, licensing)
     }
 
+    void reproducible(Action<? super Reproducible> action) {
+        action.execute(reproducible)
+    }
+
+    void reproducible(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Reproducible) Closure<Void> action) {
+        ConfigureUtil.configure(action, reproducible)
+    }
+
     void plugins(Action<? super Plugins> action) {
         action.execute(plugins)
     }
@@ -287,6 +299,7 @@ class ProjectConfigurationExtension {
         BuildInfo.merge(this.@buildInfo, other.@buildInfo)
         Clirr.merge(this.@clirr, other.@clirr)
         Licensing.merge(this.@licensing, other.@licensing)
+        Reproducible.merge(this.@reproducible, other.@reproducible)
         Plugins.merge(this.@plugins, other.@plugins)
         Publishing.merge(this.@publishing, other.@publishing)
         Stats.merge(this.@stats, other.@stats)
@@ -306,6 +319,7 @@ class ProjectConfigurationExtension {
         errors.addAll(this.@bom.validate(this))
         errors.addAll(this.@bintray.validate(this))
         errors.addAll(this.@licensing.validate(this))
+        errors.addAll(this.@reproducible.validate(this))
         errors.addAll(this.@plugins.validate(this))
         errors.addAll(this.@quality.validate(this))
 
@@ -320,6 +334,7 @@ class ProjectConfigurationExtension {
         publishing.normalize()
         bom.normalize()
         licensing.normalize()
+        reproducible.normalize()
         testing.normalize()
         clirr.normalize()
         plugins.normalize()
@@ -337,6 +352,7 @@ class ProjectConfigurationExtension {
         publishing.postMerge()
         bom.postMerge()
         licensing.postMerge()
+        reproducible.postMerge()
         testing.postMerge()
         clirr.postMerge()
         plugins.postMerge()

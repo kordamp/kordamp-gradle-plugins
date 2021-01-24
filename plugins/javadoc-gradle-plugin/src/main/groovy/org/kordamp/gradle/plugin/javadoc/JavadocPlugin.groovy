@@ -259,6 +259,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileDynamic
     private void updatePublication(Project project) {
         ProjectConfigurationExtension config = resolveConfig(project)
         if (!config.docs.javadoc.enabled) {
@@ -274,6 +275,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     MavenArtifact oldJavadocJar = mainPublication.artifacts?.find { it.classifier == 'javadoc' }
                     if (oldJavadocJar) mainPublication.artifacts.remove(oldJavadocJar)
                     mainPublication.artifact(javadocJar.get())
+                    project.artifacts { archives(javadocJar.get()) }
                 }
 
                 registerJarVariant('Javadoc', 'javadoc', javadocJar, project)

@@ -236,6 +236,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileDynamic
     private void updatePublication(Project project) {
         ProjectConfigurationExtension config = resolveConfig(project)
         if (!config.docs.kotlindoc.enabled) {
@@ -263,6 +264,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                             project.tasks.findByName(JavadocPlugin.JAVADOC_JAR_TASK_NAME)?.enabled = false
 
                             mainPublication.artifact(kotlindocJar.get())
+                            project.artifacts { archives(kotlindocJar.get()) }
                         }
                     }
 

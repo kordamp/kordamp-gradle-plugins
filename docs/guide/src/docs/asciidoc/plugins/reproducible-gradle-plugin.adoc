@@ -1,0 +1,59 @@
+
+[[_org_kordamp_gradle_reproducible]]
+= Reproducible
+
+[horizontal]
+id:: `org.kordamp.gradle.reproducible`
+class:: `org.kordamp.gradle.plugin.source.ReproduciblePlugin`
+    (link:api/org/kordamp/gradle/plugin/reproducible/ReproduciblePlugin.html[groovydoc],
+     link:api-html/org/kordamp/gradle/plugin/reproducible/ReproduciblePlugin.html[source])
+applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
+
+Configures a project for link:https://reproducible-builds.org[Reproducible Builds]. +
+Follows the instructions explained at link:https://reproducible-builds.org/docs/jvm/[] which include:
+
+* Disables time, date, and author information from `<<_org_kordamp_gradle_buildinfo,org.kordamp.gradle.build-info>>`.
+* Disable timestamps on Javadoc and Groovydoc files.
+* Configured all generated archives as link:https://docs.gradle.org/current/userguide/working_with_files.html#sec:reproducible_archives[reproducible].
+
+[[_org_kordamp_gradle_reproducible_dsl]]
+== DSL
+
+[source,groovy]
+[subs="+macros"]
+----
+config {
+    reproducible {
+        enabled
+        additionalProperties
+        additionalArtifacts
+    }
+}
+----
+
+[options="header", cols="5*"]
+|===
+| Name                 | Type                | Required | Default Value | Description
+| enabled              | boolean             | no       | true          | Disables `org.kordamp.gradle.reproducible` plugin if `false`
+| additionalProperties | Map<String, Object> | no       | no            | Additional properties to be added to the `.buildinfo` file.
+| additionalArtifacts  | FileCollection      | no       | no            | Additional file outputs to be added to the `.buildinfo` file.
+|===
+
+[[_org_kordamp_gradle_reproducible_tasks]]
+== Tasks
+
+[[_task_create_build_info]]
+=== createBuildInfo
+
+Generates a .buildinfo file with reproducible build settings. +
+The file is added to the `main` publication.
+
+[horizontal]
+Name:: createBuildInfo
+Type:: `org.kordamp.gradle.plugin.reproducible.tasks.CreateBuildInfoTask`
+
+.Properties
+[horizontal]
+outputFile:: `${rootProject.buildDir}/buildinfo/${project.name}-${project.version}.buildinfo`
+additionalProperties:: Map of additional properties to be added to the `.buildinfo` file.
+additionalArtifacts:: Set of additional artifacts (such as `.zip` or `.tar.gz`) to be added to the `.buildinfo` file.

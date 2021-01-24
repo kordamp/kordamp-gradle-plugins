@@ -39,9 +39,8 @@ import static org.kordamp.gradle.util.PluginUtils.resolveConfig
  * Calculates build properties and attaches them to the root {@code Project}.
  * The following properties are exposed when this plugin is applied:
  * <ul>
- *     <li>buildTimeAndDate: a {@code java.util.Date} instance.</li>
- *     <li>buildDate: the value of {@code buildTimeAndDate} formatted with "yyyy-MM-dd".</li>
- *     <li>buildTime: the value of {@code buildTimeAndDate} formatted with "HH:mm:ss.SSSZ".</li>
+ *     <li>buildDate: the value of {@code new Date()} formatted with "yyyy-MM-dd".</li>
+ *     <li>buildTime: the value of {@code new Date()} formatted with "HH:mm:ss.ssXXX".</li>
  *     <li>buildBy: the value of the "user.name" System property.</li>
  *     <li>buildRevision: the value of the latest commit hash.</li>
  *     <li>buildJdk: concatenation of the following System properties [java.version, java.vendor, java.vm.version].</li>

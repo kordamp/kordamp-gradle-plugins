@@ -137,6 +137,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
         }
     }
 
+    @CompileDynamic
     private TaskProvider<Jar> createSourceJarTask(Project project) {
         ProjectConfigurationExtension config = resolveConfig(project)
         TaskProvider<Jar> sourcesJar = project.tasks.register(SOURCES_JAR_TASK_NAME, Jar,
@@ -160,6 +161,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                 MavenArtifact oldSourceJar = mainPublication.artifacts?.find { it.classifier == 'sources' }
                 if (oldSourceJar) mainPublication.artifacts.remove(oldSourceJar)
                 mainPublication.artifact(sourcesJar.get())
+                project.artifacts { archives(sourcesJar.get()) }
             }
 
             registerJarVariant('Source', 'sources', sourcesJar, project)
