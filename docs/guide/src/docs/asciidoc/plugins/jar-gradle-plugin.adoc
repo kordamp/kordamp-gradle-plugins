@@ -30,6 +30,7 @@ Build-Jdk     :: rootProject.extensions.config.buildInfo.buildJdk
 Build-Date    :: rootProject.extensions.config.buildInfo.buildDate
 Build-Time    :: rootProject.extensions.config.buildInfo.buildTime
 Build-Revision:: rootProject.extensions.config.buildInfo.buildRevision
+Build-Jdk-Spec:: System.getProperty('java.specification.version')
 
 If `config.<<_org_kordamp_gradle_base_dsl,release>>` is `true` and  `config.info.<<_base_info_specification,specification>>`
 is enabled then the following entries are also added to the Manifest of all generated JAR files
@@ -50,9 +51,9 @@ Implementation-Vendor :: config.info.implementation.vendor
 == Reproducible Builds
 
 It's worth noting that enriching JAR manifests with environment and/or temporary related data will result in non-reproducible
-builds. All elements calculated by the `<<_org_kordamp_gradle_buildinfo,buildInfo>>` plugin will affect build reproducibility
-(except for `buildRevision`). You can disable any of these values from being injected by configuring a `skip` flag that matches
-the particular value to be skipped.
+builds. All elements calculated by the `<<_org_kordamp_gradle_buildinfo,otg.kordamp.gradle.buildInfo>>` plugin will affect build
+reproducibility (except for `buildRevision`). You can disable any of these values from being injected by configuring a `skip`
+flag that matches the particular value to be skipped.
 
 You may also skip checks on the Manifest file with the following
 
@@ -75,6 +76,9 @@ normalization {
     }
 }
 ----
+
+Check out the `<<_org_kordamp_gradle_reproducible,org.kordamp.gradle.reproducible>>` for additional settings required to
+ensure artifacts are reproducible.
 
 [[_org_kordamp_gradle_jar_dsl]]
 == DSL

@@ -45,6 +45,9 @@ import static org.kordamp.gradle.util.StringUtils.isBlank
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
+ * Based on https://github.com/apache/maven-artifact-plugin/blob/master/src/main/java/org/apache/maven/plugins/artifact/buildinfo/BuildInfoWriter.java
+ * Original author: Herve Boutemy
+ *
  * @author Andres Almiray
  * @since 0.43.0
  */

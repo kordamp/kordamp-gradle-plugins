@@ -185,6 +185,7 @@ class JarPlugin extends AbstractKordampPlugin {
                 checkBuildInfoAttribute(config.buildInfo, 'buildTime', attributesMap, 'Build-Time')
                 checkBuildInfoAttribute(config.buildInfo, 'buildRevision', attributesMap, 'Build-Revision')
             }
+            attributesMap.'Build-Jdk-Spec' = System.getProperty('java.specification.version')
 
             if (config.info.specification.enabled) {
                 attributesMap.'Specification-Title' = config.info.specification.title
