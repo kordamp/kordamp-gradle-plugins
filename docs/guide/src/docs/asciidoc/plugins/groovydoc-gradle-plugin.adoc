@@ -23,6 +23,7 @@ config {
     docs {
         groovydoc {
             enabled
+            empty
             includes
             excludes
             replaceJavadoc
@@ -40,6 +41,7 @@ config {
             }
             <<_groovydoc_aggregate,aggregate>> {
                 enabled
+                empty
                 fast
                 replaceJavadoc
                 excludedProjects
@@ -53,6 +55,7 @@ config {
 |===
 | Name           | Type        | Required | Default Value | Description
 | enabled        | boolean     | no       | true          | Disables `org.kordamp.gradle.groovydoc` plugin if `false`
+| empty          | boolean     | no       | false         | Generates an empty JAR if `true`.
 | includes       | Set<String> | no       | []            |
 | excludes       | Set<String> | no       | []            |
 | replaceJavadoc | boolean     | no       | false         | Disables `javadocJar` and applies the `javadoc` classifier
@@ -90,6 +93,7 @@ This block is optional.
 |===
 | Name             | Type         | Required | Default Value | Description
 | enabled          | boolean      | no       | true          | Enables or disables aggregation
+| empty            | boolean      | no       | false         | Generates an empty JAR if `true`.
 | fast             | boolean      | no       | true          | Does not execute child `groovydoc` tasks if `true`
 | replaceJavadoc   | boolean      | no       | false         | Disables `aggregateJavadoc` and applies the `javadoc` classifier
 | excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation

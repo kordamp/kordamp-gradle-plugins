@@ -92,45 +92,50 @@ class GroovydocPlugin extends AbstractKordampPlugin {
 
     private void doConfigureRootProject(Project project) {
         ProjectConfigurationExtension config = resolveConfig(project)
-        setEnabled(config.docs.groovydoc.aggregate.enabled)
+        setEnabled(config.docs.groovydoc.enabled || config.docs.groovydoc.aggregate.enabled)
 
         List<Groovydoc> docTasks = []
-        project.tasks.withType(Groovydoc) { Groovydoc t ->
-            if (project in config.docs.groovydoc.aggregate.excludedProjects) return
-            if (t.name != AGGREGATE_GROOVYDOC_TASK_NAME && t.enabled) docTasks << t
-        }
-        project.childProjects.values().each { Project p ->
-            if (p in config.docs.groovydoc.aggregate.excludedProjects) return
-            p.tasks.withType(Groovydoc) { Groovydoc t -> if (t.enabled) docTasks << t }
-        }
-        docTasks = docTasks.unique()
-
-        if (docTasks) {
-            TaskProvider<Groovydoc> aggregateGroovydoc = project.tasks.named(AGGREGATE_GROOVYDOC_TASK_NAME, Groovydoc,
-                new Action<Groovydoc>() {
-                    @Override
-                    void execute(Groovydoc t) {
-                        t.enabled = config.docs.groovydoc.aggregate.enabled
-                        if (!config.docs.groovydoc.aggregate.fast) t.dependsOn docTasks
-                        t.source docTasks.source
-                        t.classpath = project.files(docTasks.classpath)
-                        t.groovyClasspath = project.files(docTasks.groovyClasspath)
-                        config.docs.groovydoc.applyTo(t)
-                        t.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
+        if (!(config.docs.groovydoc.aggregate.getEmpty())) {
+            project.tasks.withType(Groovydoc) { Groovydoc t ->
+                if (project in config.docs.groovydoc.aggregate.excludedProjects) return
+                if (t.name != AGGREGATE_GROOVYDOC_TASK_NAME && t.enabled &&
+                    !(config.docs.groovydoc.empty)) docTasks << t
+            }
+            project.childProjects.values().each { Project p ->
+                if (p in config.docs.groovydoc.aggregate.excludedProjects) return
+                p.tasks.withType(Groovydoc) { Groovydoc t ->
+                    if (t.enabled && !(resolveConfig(p).docs.groovydoc.empty)) {
+                        docTasks << t
                     }
-                })
-
-            project.tasks.named(AGGREGATE_GROOVYDOC_JAR_TASK_NAME, Jar,
-                new Action<Jar>() {
-                    @Override
-                    void execute(Jar t) {
-                        t.enabled = config.docs.groovydoc.aggregate.enabled
-                        t.from aggregateGroovydoc.get().destinationDir
-                        t.archiveClassifier.set config.docs.groovydoc.aggregate.replaceJavadoc ? 'javadoc' : 'groovydoc'
-                        t.onlyIf { aggregateGroovydoc.get().enabled }
-                    }
-                })
+                }
+            }
+            docTasks = docTasks.unique()
         }
+
+        TaskProvider<Groovydoc> aggregateGroovydoc = project.tasks.named(AGGREGATE_GROOVYDOC_TASK_NAME, Groovydoc,
+            new Action<Groovydoc>() {
+                @Override
+                void execute(Groovydoc t) {
+                    t.enabled = config.docs.groovydoc.aggregate.enabled
+                    if (!config.docs.groovydoc.aggregate.fast) t.dependsOn docTasks
+                    t.source docTasks.source
+                    t.classpath = project.files(docTasks.classpath)
+                    t.groovyClasspath = project.files(docTasks.groovyClasspath)
+                    t.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
+                    config.docs.groovydoc.applyTo(t)
+                }
+            })
+
+        project.tasks.named(AGGREGATE_GROOVYDOC_JAR_TASK_NAME, Jar,
+            new Action<Jar>() {
+                @Override
+                void execute(Jar t) {
+                    t.enabled = config.docs.groovydoc.aggregate.enabled
+                    t.from aggregateGroovydoc.get().destinationDir
+                    t.archiveClassifier.set config.docs.groovydoc.aggregate.replaceJavadoc ? 'javadoc' : 'groovydoc'
+                    t.onlyIf { aggregateGroovydoc.get().enabled }
+                }
+            })
 
         updatePublications(project)
     }
@@ -190,12 +195,12 @@ class GroovydocPlugin extends AbstractKordampPlugin {
                     t.dependsOn resolveClassesTask(project)
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Generates Groovydoc API documentation'
-                    t.source = resolveAllSource(project)
+                    t.source = config.docs.groovydoc.empty ? [] : resolveAllSource(project)
                     t.destinationDir = project.file("${project.buildDir}/docs/groovydoc")
                     t.classpath = project.tasks.named('javadoc', Javadoc).get().classpath
                     t.enabled = config.docs.groovydoc.enabled
-                    config.docs.groovydoc.applyTo(t)
                     t.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
+                    config.docs.groovydoc.applyTo(t)
                 }
             })
     }

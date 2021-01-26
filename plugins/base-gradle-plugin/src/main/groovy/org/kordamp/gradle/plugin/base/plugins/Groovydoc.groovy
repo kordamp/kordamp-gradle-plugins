@@ -34,6 +34,7 @@ import org.kordamp.gradle.util.ConfigureUtil
 class Groovydoc extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.groovydoc'
 
+    Boolean empty
     boolean replaceJavadoc = false
     Set<String> excludes = new LinkedHashSet<>()
     Set<String> includes = new LinkedHashSet<>()
@@ -83,6 +84,7 @@ class Groovydoc extends AbstractFeature {
             links << [(link.url): link.packages.join(', ')]
         }
 
+        map['empty'] = getEmpty()
         map.replaceJavadoc = replaceJavadoc
         map.excludes = excludes
         map.includes = includes
@@ -104,6 +106,10 @@ class Groovydoc extends AbstractFeature {
         }
 
         new LinkedHashMap<>('groovydoc': map)
+    }
+
+    boolean getEmpty() {
+        this.@empty != null && this.@empty
     }
 
     @Override
@@ -146,6 +152,7 @@ class Groovydoc extends AbstractFeature {
 
     static void merge(Groovydoc o1, Groovydoc o2) {
         AbstractFeature.merge(o1, o2)
+        o1.setEmpty(o1.@empty != null ? o1.getEmpty() : o2.getEmpty())
         o1.setReplaceJavadoc((boolean) (o1.replaceJavadocSet ? o1.replaceJavadoc : o2.replaceJavadoc))
         o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
         o1.includes = CollectionUtils.merge(o1.includes, o2.includes, false)
@@ -170,6 +177,7 @@ class Groovydoc extends AbstractFeature {
     @CompileStatic
     static class Aggregate {
         Boolean enabled
+        Boolean empty
         Boolean fast
         Boolean replaceJavadoc
         final Set<Project> excludedProjects = new LinkedHashSet<>()
@@ -186,6 +194,7 @@ class Groovydoc extends AbstractFeature {
             Map<String, Object> map = new LinkedHashMap<String, Object>()
 
             map.enabled = getEnabled()
+            map['empty'] = getEmpty()
             map.fast = getFast()
             map.replaceJavadoc = getReplaceJavadoc()
             map.excludedProjects = excludedProjects
@@ -195,6 +204,10 @@ class Groovydoc extends AbstractFeature {
 
         boolean getEnabled() {
             this.@enabled == null || this.@enabled
+        }
+
+        boolean getEmpty() {
+            this.@empty != null && this.@empty
         }
 
         boolean getFast() {
@@ -207,6 +220,7 @@ class Groovydoc extends AbstractFeature {
 
         static void merge(Aggregate o1, Aggregate o2) {
             o1.enabled = o1.@enabled != null ? o1.getEnabled() : o2.getEnabled()
+            o1.empty = o1.@empty != null ? o1.getEmpty() : o2.getEmpty()
             o1.fast = o1.@fast != null ? o1.getFast() : o2.getFast()
             o1.replaceJavadoc = o1.@replaceJavadoc != null ? o1.getReplaceJavadoc() : o2.getReplaceJavadoc()
         }
