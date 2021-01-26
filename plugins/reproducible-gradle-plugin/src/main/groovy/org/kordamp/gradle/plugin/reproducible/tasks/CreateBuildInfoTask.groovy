@@ -76,7 +76,6 @@ class CreateBuildInfoTask extends DefaultTask {
         Collection<File> files = resolveFiles()
 
         if (!files) {
-            println "SKIP"
             return
         }
 

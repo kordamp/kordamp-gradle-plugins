@@ -23,8 +23,10 @@ config {
     artifacts {
         source {
             enabled
+            emty
             <<_source_aggregate,aggregate>> {
                 enabled
+                empty
                 excludedProjects
             }
         }
@@ -36,6 +38,7 @@ config {
 |===
 | Name    | Type    | Required | Default Value | Description
 | enabled | boolean | no       | true          | Disables `org.kordamp.gradle.source-jar` plugin if `false`
+| empty   | boolean | no       | false         | Generates an empty JAR if `true`.
 |===
 
 This block is optional.
@@ -47,6 +50,7 @@ This block is optional.
 |===
 | Name             | Type         | Required | Default Value | Description
 | enabled          | boolean      | no       | true          | Enables or disables aggregation
+| empty            | boolean      | no       | false         | Generates an empty JAR if `true`.
 | excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
 |===
 

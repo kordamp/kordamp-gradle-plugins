@@ -140,6 +140,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
     @CompileDynamic
     private TaskProvider<Jar> createSourceJarTask(Project project) {
         ProjectConfigurationExtension config = resolveConfig(project)
+
         TaskProvider<Jar> sourcesJar = project.tasks.register(SOURCES_JAR_TASK_NAME, Jar,
             new Action<Jar>() {
                 @Override
@@ -148,9 +149,8 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                     t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
                     t.description = 'An archive of the source code.'
                     t.archiveClassifier.set('sources')
-                    // t.dependsOn resolveClassesTask(project)
                     t.setEnabled(config.artifacts.source.enabled)
-                    t.from resolveAllSource(project)
+                    t.from(config.artifacts.source.empty ? [] : resolveAllSource(project))
                 }
             })
 
@@ -171,24 +171,34 @@ class SourceJarPlugin extends AbstractKordampPlugin {
     }
 
     private void configureAggregateSourceJarTask(Project project) {
+        ProjectConfigurationExtension config = resolveConfig(project)
+        setEnabled(config.artifacts.source.enabled || config.artifacts.source.aggregate.enabled)
+
         project.tasks.named(AGGREGATE_SOURCES_JAR_TASK_NAME, Jar, new Action<Jar>() {
             @Override
             @CompileDynamic
             void execute(Jar t) {
-                ProjectConfigurationExtension config = resolveConfig(project)
-
-                Set<Project> projects = new LinkedHashSet<>()
-                if (!(project in config.artifacts.source.aggregate.excludedProjects) && config.artifacts.source.enabled) {
-                    if (hasSourceSets(project)) projects << project
-                }
-
-                project.childProjects.values().each { p ->
-                    if (p in config.artifacts.source.aggregate.excludedProjects || !resolveConfig(p).artifacts.source.enabled) return
-                    if (hasSourceSets(p)) projects << p
-                }
-
-                t.from projects.collect { resolveAllSource(it) }.flatten()
                 t.enabled = config.artifacts.source.aggregate.enabled
+
+                if (config.artifacts.source.aggregate.getEmpty()) {
+                    t.from([])
+                } else {
+                    Set<Project> projects = new LinkedHashSet<>()
+                    if (!(project in config.artifacts.source.aggregate.excludedProjects) &&
+                        config.artifacts.source.enabled &&
+                        !(config.artifacts.source.empty) &&
+                        hasSourceSets(project)) projects << project
+
+                    project.childProjects.values().each { p ->
+                        ProjectConfigurationExtension c = resolveConfig(p)
+                        if (!(p in config.artifacts.source.aggregate.excludedProjects) &&
+                            c.artifacts.source.enabled &&
+                            !(c.artifacts.source.empty) &&
+                            hasSourceSets(p)) projects << p
+                    }
+
+                    t.from projects.collect { resolveAllSource(it) }.flatten()
+                }
             }
         })
     }
