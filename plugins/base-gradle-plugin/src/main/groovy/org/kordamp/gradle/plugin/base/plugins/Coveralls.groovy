@@ -54,6 +54,10 @@ class Coveralls extends AbstractFeature {
         }
     }
 
+    protected void normalizeVisible() {
+        setVisible(isRoot() ? isApplied() : false)
+    }
+
     static void merge(Coveralls o1, Coveralls o2) {
         AbstractFeature.merge(o1, o2)
     }
