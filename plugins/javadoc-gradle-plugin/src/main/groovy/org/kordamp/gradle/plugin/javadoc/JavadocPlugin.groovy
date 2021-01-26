@@ -22,7 +22,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
@@ -93,44 +92,49 @@ class JavadocPlugin extends AbstractKordampPlugin {
 
     private void doConfigureRootProject(Project project) {
         ProjectConfigurationExtension config = resolveConfig(project)
-        setEnabled(config.docs.javadoc.aggregate.enabled)
+        setEnabled(config.docs.javadoc.enabled || config.docs.javadoc.aggregate.enabled)
 
         List<Javadoc> docTasks = []
-        project.tasks.withType(Javadoc) { Javadoc t ->
-            if (project in config.docs.javadoc.aggregate.excludedProjects) return
-            if (t.name != AGGREGATE_JAVADOC_TASK_NAME && t.enabled) docTasks << t
-        }
-        project.childProjects.values().each { Project p ->
-            if (p in config.docs.javadoc.aggregate.excludedProjects) return
-            p.tasks.withType(Javadoc) { Javadoc t -> if (t.enabled) docTasks << t }
-        }
-        docTasks = docTasks.unique()
-
-        if (docTasks) {
-            TaskProvider<Javadoc> aggregateJavadoc = project.tasks.named(AGGREGATE_JAVADOC_TASK_NAME, Javadoc,
-                new Action<Javadoc>() {
-                    @Override
-                    @CompileDynamic
-                    void execute(Javadoc t) {
-                        t.enabled = config.docs.javadoc.aggregate.enabled
-                        if (!config.docs.javadoc.aggregate.fast) t.dependsOn docTasks
-                        t.source docTasks.source
-                        t.classpath = project.files(docTasks.classpath)
-                        config.docs.javadoc.applyTo(t)
-                        t.options.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
+        if (!(config.docs.javadoc.aggregate.getEmpty())) {
+            project.tasks.withType(Javadoc) { Javadoc t ->
+                if (project in config.docs.javadoc.aggregate.excludedProjects) return
+                if (t.name != AGGREGATE_JAVADOC_TASK_NAME && t.enabled &&
+                    !(config.docs.javadoc.empty)) docTasks << t
+            }
+            project.childProjects.values().each { Project p ->
+                if (p in config.docs.javadoc.aggregate.excludedProjects) return
+                p.tasks.withType(Javadoc) { Javadoc t ->
+                    if (t.enabled && !(resolveConfig(p).docs.javadoc.empty)) {
+                        docTasks << t
                     }
-                })
-
-            project.tasks.named(AGGREGATE_JAVADOC_JAR_TASK_NAME, Jar,
-                new Action<Jar>() {
-                    @Override
-                    void execute(Jar t) {
-                        t.enabled = config.docs.javadoc.aggregate.enabled
-                        t.from aggregateJavadoc.get().destinationDir
-                        t.onlyIf { aggregateJavadoc.get().enabled }
-                    }
-                })
+                }
+            }
+            docTasks = docTasks.unique()
         }
+
+        TaskProvider<Javadoc> aggregateJavadoc = project.tasks.named(AGGREGATE_JAVADOC_TASK_NAME, Javadoc,
+            new Action<Javadoc>() {
+                @Override
+                @CompileDynamic
+                void execute(Javadoc t) {
+                    t.enabled = config.docs.javadoc.aggregate.enabled
+                    if (!config.docs.javadoc.aggregate.fast) t.dependsOn docTasks
+                    t.source docTasks.source
+                    t.classpath = project.files(docTasks.classpath)
+                    t.options.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
+                    config.docs.javadoc.applyTo(t)
+                }
+            })
+
+        project.tasks.named(AGGREGATE_JAVADOC_JAR_TASK_NAME, Jar,
+            new Action<Jar>() {
+                @Override
+                void execute(Jar t) {
+                    t.enabled = config.docs.javadoc.aggregate.enabled
+                    t.from aggregateJavadoc.get().destinationDir
+                    t.onlyIf { aggregateJavadoc.get().enabled }
+                }
+            })
 
         updatePublications(project)
     }
@@ -199,10 +203,10 @@ class JavadocPlugin extends AbstractKordampPlugin {
                         t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                         t.description = 'Generates Javadoc API documentation'
                         t.destinationDir = project.file("${project.buildDir}/docs/javadoc")
-                        t.source = resolveAllSource(project)
+                        t.source = config.docs.javadoc.empty ? [] : resolveAllSource(project)
                         t.classpath += project.configurations.findByName('optional')
-                        config.docs.javadoc.applyTo(t)
                         t.options.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."
+                        config.docs.javadoc.applyTo(t)
                         if (JavaVersion.current().isJava8Compatible()) {
                             t.options.addBooleanOption('Xdoclint:none', true)
                             t.options.quiet()
@@ -222,7 +226,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Generates Javadoc API documentation'
                     t.destinationDir = project.file("${project.buildDir}/docs/javadoc")
-                    t.source = project.sourceSets.main.allJava
+                    t.source = config.docs.javadoc.empty ? [] : project.sourceSets.main.allJava
                     t.classpath += project.configurations.findByName('optional')
                     config.docs.javadoc.applyTo(t)
                     t.options.footer = "Copyright &copy; ${config.info.copyrightYear} ${config.info.getAuthors().join(', ')}. All rights reserved."

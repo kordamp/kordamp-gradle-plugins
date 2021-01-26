@@ -25,6 +25,7 @@ config {
     docs {
         javadoc {
             enabled
+            empty
             includes
             excludes
             title
@@ -38,6 +39,7 @@ config {
             }
             <<_javadoc_aggregate,aggregate>> {
                 enabled
+                empty
                 fast
                 excludedProjects
             }
@@ -50,6 +52,7 @@ config {
 |===
 | Name     | Type                  | Required | Default Value | Description
 | enabled  | boolean               | no       | true          | Disables `org.kordamp.gradle.javadoc` plugin if `false`
+| empty    | boolean               | no       | false         | Generates an empty JAR if `true`.
 | includes | Set<String>           | no       | []            |
 | excludes | Set<String>           | no       | []            |
 | title    | String                | no       |               |
@@ -91,6 +94,7 @@ Offline links are automatically calculated for project dependencies using absolu
 |===
 | Name             | Type         | Required | Default Value | Description
 | enabled          | boolean      | no       | true          | Enables or disables aggregation
+| empty            | boolean      | no       | false         | Generates an empty JAR if `true`.
 | fast             | boolean      | no       | true          | Does not execute child `javadoc` tasks if `true`
 | excludedProjects | Set<Project> |          | []            | Projects in the set are excluded from aggregation
 |===

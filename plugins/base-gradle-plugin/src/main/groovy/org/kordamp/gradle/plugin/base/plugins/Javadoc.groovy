@@ -44,6 +44,7 @@ import static org.kordamp.gradle.util.StringUtils.isNotBlank
 class Javadoc extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.javadoc'
 
+    Boolean empty
     Set<String> excludes = new LinkedHashSet<>()
     Set<String> includes = new LinkedHashSet<>()
     String title
@@ -98,6 +99,7 @@ class Javadoc extends AbstractFeature {
             links << link
         }
 
+        map['empty'] = getEmpty()
         map.title = title
         map.excludes = excludes
         map.includes = includes
@@ -119,6 +121,10 @@ class Javadoc extends AbstractFeature {
         }
 
         new LinkedHashMap<>(['javadoc': map])
+    }
+
+    boolean getEmpty() {
+        this.@empty != null && this.@empty
     }
 
     @Override
@@ -162,6 +168,7 @@ class Javadoc extends AbstractFeature {
 
     static void merge(Javadoc o1, Javadoc o2) {
         AbstractFeature.merge(o1, o2)
+        o1.setEmpty(o1.@empty != null ? o1.getEmpty() : o2.getEmpty())
         o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
         o1.includes = CollectionUtils.merge(o1.includes, o2.includes, false)
         o1.title = o1.title ?: o2.title
@@ -363,6 +370,7 @@ class Javadoc extends AbstractFeature {
     @CompileStatic
     static class Aggregate {
         Boolean enabled
+        Boolean empty
         Boolean fast
         final Set<Project> excludedProjects = new LinkedHashSet<>()
 
@@ -378,6 +386,7 @@ class Javadoc extends AbstractFeature {
             Map<String, Object> map = new LinkedHashMap<String, Object>()
 
             map.enabled = getEnabled()
+            map['empty'] = getEmpty()
             map.fast = getFast()
             map.excludedProjects = excludedProjects
 
@@ -388,12 +397,17 @@ class Javadoc extends AbstractFeature {
             this.@enabled == null || this.@enabled
         }
 
+        boolean getEmpty() {
+            this.@empty != null && this.@empty
+        }
+
         boolean getFast() {
             this.@fast == null || this.@fast
         }
 
         static Aggregate merge(Aggregate o1, Aggregate o2) {
             o1.enabled = o1.@enabled != null ? o1.getEnabled() : o2.getEnabled()
+            o1.empty = o1.@empty != null ? o1.getEmpty() : o2.getEmpty()
             o1.fast = o1.@fast != null ? o1.getFast() : o2.getFast()
             o1
         }
