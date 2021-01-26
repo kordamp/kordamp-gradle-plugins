@@ -91,44 +91,49 @@ class ScaladocPlugin extends AbstractKordampPlugin {
 
     private void doConfigureRootProject(Project project) {
         ProjectConfigurationExtension config = resolveConfig(project)
-        setEnabled(config.docs.scaladoc.aggregate.enabled)
+        setEnabled(config.docs.scaladoc.enabled || config.docs.scaladoc.aggregate.enabled)
 
         List<ScalaDoc> docTasks = []
-        project.tasks.withType(ScalaDoc) { ScalaDoc t ->
-            if (project in config.docs.scaladoc.aggregate.excludedProjects) return
-            if (t.name != AGGREGATE_SCALADOC_TASK_NAME && t.enabled) docTasks << t
-        }
-        project.childProjects.values().each { Project p ->
-            if (p in config.docs.scaladoc.aggregate.excludedProjects) return
-            p.tasks.withType(ScalaDoc) { ScalaDoc t -> if (t.enabled) docTasks << t }
-        }
-        docTasks = docTasks.unique()
-
-        if (docTasks) {
-            TaskProvider<ScalaDoc> aggregateScaladoc = project.tasks.named(AGGREGATE_SCALADOC_TASK_NAME, ScalaDoc,
-                new Action<ScalaDoc>() {
-                    @Override
-                    void execute(ScalaDoc t) {
-                        t.enabled = config.docs.scaladoc.aggregate.enabled
-                        t.dependsOn docTasks
-                        if (!config.docs.scaladoc.aggregate.fast) t.dependsOn docTasks
-                        t.source docTasks.source
-                        t.classpath = project.files(docTasks.classpath)
-                        config.docs.scaladoc.applyTo(t)
+        if (!(config.docs.scaladoc.aggregate.getEmpty())) {
+            project.tasks.withType(ScalaDoc) { ScalaDoc t ->
+                if (project in config.docs.scaladoc.aggregate.excludedProjects) return
+                if (t.name != AGGREGATE_SCALADOC_TASK_NAME && t.enabled &&
+                    !(config.docs.scaladoc.empty)) docTasks << t
+            }
+            project.childProjects.values().each { Project p ->
+                if (p in config.docs.scaladoc.aggregate.excludedProjects) return
+                p.tasks.withType(ScalaDoc) { ScalaDoc t ->
+                    if (t.enabled && !(resolveConfig(p).docs.scaladoc.empty)) {
+                        docTasks << t
                     }
-                })
-
-            project.tasks.named(AGGREGATE_SCALADOC_JAR_TASK_NAME, Jar,
-                new Action<Jar>() {
-                    @Override
-                    void execute(Jar t) {
-                        t.enabled = config.docs.scaladoc.aggregate.enabled
-                        t.from aggregateScaladoc.get().destinationDir
-                        t.archiveClassifier.set config.docs.scaladoc.aggregate.replaceJavadoc ? 'javadoc' : 'scaladoc'
-                        t.onlyIf { aggregateScaladoc.get().enabled }
-                    }
-                })
+                }
+            }
+            docTasks = docTasks.unique()
         }
+
+        TaskProvider<ScalaDoc> aggregateScaladoc = project.tasks.named(AGGREGATE_SCALADOC_TASK_NAME, ScalaDoc,
+            new Action<ScalaDoc>() {
+                @Override
+                void execute(ScalaDoc t) {
+                    t.enabled = config.docs.scaladoc.aggregate.enabled
+                    t.dependsOn docTasks
+                    if (!config.docs.scaladoc.aggregate.fast) t.dependsOn docTasks
+                    t.source docTasks.source
+                    t.classpath = project.files(docTasks.classpath)
+                    config.docs.scaladoc.applyTo(t)
+                }
+            })
+
+        project.tasks.named(AGGREGATE_SCALADOC_JAR_TASK_NAME, Jar,
+            new Action<Jar>() {
+                @Override
+                void execute(Jar t) {
+                    t.enabled = config.docs.scaladoc.aggregate.enabled
+                    t.from aggregateScaladoc.get().destinationDir
+                    t.archiveClassifier.set config.docs.scaladoc.aggregate.replaceJavadoc ? 'javadoc' : 'scaladoc'
+                    t.onlyIf { aggregateScaladoc.get().enabled }
+                }
+            })
 
         updatePublications(project)
     }
@@ -184,7 +189,7 @@ class ScaladocPlugin extends AbstractKordampPlugin {
                     t.dependsOn resolveClassesTask(project)
                     t.group = JavaBasePlugin.DOCUMENTATION_GROUP
                     t.description = 'Generates Scaladoc API documentation'
-                    t.source = resolveAllSource(project)
+                    t.source = config.docs.javadoc.empty ? [] : resolveAllSource(project)
                     t.classpath += project.configurations.findByName('optional')
                     t.destinationDir = project.file("${project.buildDir}/docs/scaladoc")
                     config.docs.scaladoc.applyTo(t)

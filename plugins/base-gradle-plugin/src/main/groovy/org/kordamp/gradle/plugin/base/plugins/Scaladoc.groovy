@@ -34,6 +34,7 @@ import org.kordamp.gradle.util.ConfigureUtil
 class Scaladoc extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.scaladoc'
 
+    Boolean empty
     String title
     boolean replaceJavadoc = false
     Set<String> excludes = new LinkedHashSet<>()
@@ -62,6 +63,7 @@ class Scaladoc extends AbstractFeature {
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
+        map['empty'] = getEmpty()
         map.title = title
         map.replaceJavadoc = replaceJavadoc
         map.excludes = excludes
@@ -83,6 +85,10 @@ class Scaladoc extends AbstractFeature {
         }
 
         new LinkedHashMap<>('scaladoc': map)
+    }
+
+    boolean getEmpty() {
+        this.@empty != null && this.@empty
     }
 
     @Override
@@ -125,6 +131,7 @@ class Scaladoc extends AbstractFeature {
 
     static void merge(Scaladoc o1, Scaladoc o2) {
         AbstractFeature.merge(o1, o2)
+        o1.setEmpty(o1.@empty != null ? o1.getEmpty() : o2.getEmpty())
         o1.setTitle(o1.title ?: o2?.title)
         o1.setReplaceJavadoc((boolean) (o1.replaceJavadocSet ? o1.replaceJavadoc : o2.replaceJavadoc))
         o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
@@ -148,6 +155,7 @@ class Scaladoc extends AbstractFeature {
     @CompileStatic
     static class Aggregate {
         Boolean enabled
+        Boolean empty
         Boolean fast
         Boolean replaceJavadoc
         final Set<Project> excludedProjects = new LinkedHashSet<>()
@@ -164,6 +172,7 @@ class Scaladoc extends AbstractFeature {
             Map<String, Object> map = new LinkedHashMap<String, Object>()
 
             map.enabled = getEnabled()
+            map['empty'] = getEmpty()
             map.fast = getFast()
             map.replaceJavadoc = getReplaceJavadoc()
             map.excludedProjects = excludedProjects
@@ -173,6 +182,10 @@ class Scaladoc extends AbstractFeature {
 
         boolean getEnabled() {
             this.@enabled == null || this.@enabled
+        }
+
+        boolean getEmpty() {
+            this.@empty != null && this.@empty
         }
 
         boolean getFast() {
@@ -185,6 +198,7 @@ class Scaladoc extends AbstractFeature {
 
         static Aggregate merge(Aggregate o1, Aggregate o2) {
             o1.enabled = o1.@enabled != null ? o1.getEnabled() : o2.getEnabled()
+            o1.empty = o1.@empty != null ? o1.getEmpty() : o2.getEmpty()
             o1.fast = o1.@fast != null ? o1.getFast() : o2.getFast()
             o1.replaceJavadoc = o1.@replaceJavadoc != null ? o1.getReplaceJavadoc() : o2.getReplaceJavadoc()
             o1
