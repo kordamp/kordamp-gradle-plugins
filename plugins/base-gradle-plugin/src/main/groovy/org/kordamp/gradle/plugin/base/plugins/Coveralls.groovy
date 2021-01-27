@@ -26,7 +26,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
  * @since 0.31.0
  */
 @CompileStatic
-class Coveralls extends AbstractFeature {
+class Coveralls extends AbstractTestingFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.coveralls'
 
     Coveralls(ProjectConfigurationExtension config, Project project) {
@@ -50,7 +50,15 @@ class Coveralls extends AbstractFeature {
     @Override
     protected void normalizeEnabled() {
         if (!enabledSet) {
-            enabled = project.extensions.getByType(ProjectConfigurationExtension).coverage.jacoco.enabled
+            if (isRoot()) {
+                if (project.childProjects.size() == 0) {
+                    enabled = project.extensions.getByType(ProjectConfigurationExtension).coverage.jacoco.enabled
+                } else {
+                    enabled = project.childProjects.values().any { hasTestSourceSets(it) }
+                }
+            } else {
+                enabled = false
+            }
         }
     }
 

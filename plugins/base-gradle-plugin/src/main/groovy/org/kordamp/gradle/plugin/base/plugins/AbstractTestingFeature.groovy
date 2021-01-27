@@ -22,6 +22,7 @@ import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 import static org.kordamp.gradle.util.PluginUtils.isAndroidProject
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -56,8 +57,8 @@ abstract class AbstractTestingFeature extends AbstractFeature {
         ProjectConfigurationExtension config = project.extensions.getByType(ProjectConfigurationExtension)
 
         hasTestsAt(project.file('src/test')) ||
-            hasTestsAt(project.file(config.testing.integration.baseDir)) ||
-            hasTestsAt(project.file(config.testing.functional.baseDir)) ||
+            (isNotBlank(config.testing.integration.baseDir) && hasTestsAt(project.file(config.testing.integration.baseDir))) ||
+            (isNotBlank(config.testing.functional.baseDir) && hasTestsAt(project.file(config.testing.functional.baseDir))) ||
             (isAndroidProject(project) && hasTestsAt(project.file('src/androidTest')))
     }
 
