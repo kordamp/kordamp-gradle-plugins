@@ -215,7 +215,6 @@ class DetektPlugin extends AbstractKordampPlugin {
                 t.enabled = config.quality.detekt.aggregate.enabled &&
                     config.quality.detekt.configFile.exists() &&
                     tt.size() > 0
-                t.ignoreFailures = false
                 t.source(*((tt*.source).unique()))
                 t.classpath.from project.files(*((tt*.classpath).unique()))
                 t.detektClasspath.from project.files(*((tt*.detektClasspath).unique()))
