@@ -65,6 +65,8 @@ org.kordamp.gradle.plugin.project.tasks.reports
 org.kordamp.gradle.plugin.properties
 org.kordamp.gradle.plugin.properties.internal
 org.kordamp.gradle.plugin.publishing
+org.kordamp.gradle.plugin.reproducible
+org.kordamp.gradle.plugin.reproducible.tasks
 org.kordamp.gradle.plugin.scaladoc
 org.kordamp.gradle.plugin.settings
 org.kordamp.gradle.plugin.settings.internal
