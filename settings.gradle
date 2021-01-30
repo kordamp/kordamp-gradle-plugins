@@ -112,6 +112,7 @@ enforce {
             "org.apache.maven:maven-settings:$mavenVersion",
             "org.apache.maven:maven-model:$mavenVersion",
             "org.apache.maven:maven-resolver-provider:$mavenVersion",
+            "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlinVersion",
             "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion",
             "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
             "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
