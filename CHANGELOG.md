@@ -1,5 +1,33 @@
 # Changelog
 
+## [v0.43.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.43.0) (2021-01-30)
+
+[Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/v0.42.1...v0.43.0)
+
+**Implemented enhancements:**
+
+- \[Scaladoc\] Add option to generate an empty JAR [\#445](https://github.com/kordamp/kordamp-gradle-plugins/issues/445)
+- \[Groovydoc\] Add option to generate an empty JAR [\#444](https://github.com/kordamp/kordamp-gradle-plugins/issues/444)
+- \[Javadoc\] Add option to generate an empty JAR [\#443](https://github.com/kordamp/kordamp-gradle-plugins/issues/443)
+- \[Source\] Add option to generate an empty JAR [\#442](https://github.com/kordamp/kordamp-gradle-plugins/issues/442)
+- \[Jar\] Add Build-Jdk-Spec to manifest [\#441](https://github.com/kordamp/kordamp-gradle-plugins/issues/441)
+- \[Base\] Add a task to display the contents of the archives configuration [\#440](https://github.com/kordamp/kordamp-gradle-plugins/issues/440)
+- \[Javadoc\] Add an option to disable JDK autolink [\#438](https://github.com/kordamp/kordamp-gradle-plugins/issues/438)
+- Add a plugin for enabling reproducible builds [\#435](https://github.com/kordamp/kordamp-gradle-plugins/issues/435)
+
+**Fixed bugs:**
+
+- \[Settings\] Exclude buildSrc when standard layout is used [\#439](https://github.com/kordamp/kordamp-gradle-plugins/issues/439)
+- Jacoco Coverage for root src missing After Upgrading to \>= 0.37.0 [\#433](https://github.com/kordamp/kordamp-gradle-plugins/issues/433)
+- Adding tasks only if they don't exist yet [\#431](https://github.com/kordamp/kordamp-gradle-plugins/issues/431)
+- \[coveralls\] Coveralls stopped working in 0.38.0 and later [\#419](https://github.com/kordamp/kordamp-gradle-plugins/issues/419)
+
+**Closed issues:**
+
+- subproject not created [\#437](https://github.com/kordamp/kordamp-gradle-plugins/issues/437)
+- Project in a subdirectory not loaded [\#436](https://github.com/kordamp/kordamp-gradle-plugins/issues/436)
+- \[BuildInfo\] Use ISO 8601 instead of RCF 822 for time format [\#434](https://github.com/kordamp/kordamp-gradle-plugins/issues/434)
+
 ## [v0.42.1](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.42.1) (2020-12-06)
 
 [Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/v0.42.0...v0.42.1)
@@ -205,6 +233,7 @@
 - \[Codenarc\] Improving flexibility of CodeNarc plugin [\#304](https://github.com/kordamp/kordamp-gradle-plugins/issues/304)
 - \[JavaProject\] Add a task to display configured platforms [\#303](https://github.com/kordamp/kordamp-gradle-plugins/issues/303)
 - \[JavaProject\] Simplify platform dependency configuration [\#302](https://github.com/kordamp/kordamp-gradle-plugins/issues/302)
+- \[Base\] Add varargs variants for dirs\(\) and paths\(\) in projects DSL [\#295](https://github.com/kordamp/kordamp-gradle-plugins/issues/295)
 - Bump detekt from 1.8.0 to 1.9.1 [\#323](https://github.com/kordamp/kordamp-gradle-plugins/pull/323) ([ursjoss](https://github.com/ursjoss))
 
 **Fixed bugs:**
@@ -228,8 +257,8 @@
 
 - \[Profiles\] Support multiple activations per profile [\#299](https://github.com/kordamp/kordamp-gradle-plugins/issues/299)
 - \[Settings\] support long project paths [\#298](https://github.com/kordamp/kordamp-gradle-plugins/issues/298)
-- \[Base\] Add varargs variants for dirs\(\) and paths\(\) in projects DSL [\#295](https://github.com/kordamp/kordamp-gradle-plugins/issues/295)
 - \[Settings\] Add varargs variants for dirs\(\) and paths\(\) [\#294](https://github.com/kordamp/kordamp-gradle-plugins/issues/294)
+- \[Guide\] upgrade asciidoctorj-tabbed-code-extension to latest [\#292](https://github.com/kordamp/kordamp-gradle-plugins/issues/292)
 
 **Fixed bugs:**
 
@@ -247,7 +276,6 @@
 
 **Implemented enhancements:**
 
-- \[Guide\] upgrade asciidoctorj-tabbed-code-extension to latest [\#292](https://github.com/kordamp/kordamp-gradle-plugins/issues/292)
 - \[Minpom\] Register minpom task and disable it by default [\#290](https://github.com/kordamp/kordamp-gradle-plugins/issues/290)
 - \[Jar\] Only update JAR metaInf/manifest if config.artifacts.jar is enabled [\#289](https://github.com/kordamp/kordamp-gradle-plugins/issues/289)
 - \[Profiles\] Support Maven like profiles [\#288](https://github.com/kordamp/kordamp-gradle-plugins/issues/288)
@@ -255,6 +283,7 @@
 - \[Bom\] Add an includes list [\#286](https://github.com/kordamp/kordamp-gradle-plugins/issues/286)
 - \[Publishing\] Let packaging be configurable [\#285](https://github.com/kordamp/kordamp-gradle-plugins/issues/285)
 - kordamp.org via HTTPS [\#283](https://github.com/kordamp/kordamp-gradle-plugins/issues/283)
+- \[Settings\] Make subproject's folders more meaningful [\#237](https://github.com/kordamp/kordamp-gradle-plugins/issues/237)
 
 ## [v0.34.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.34.0) (2020-04-25)
 
@@ -342,10 +371,6 @@
 
 [Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/0.31.1...0.31.2)
 
-**Implemented enhancements:**
-
-- \[Settings\] Make subproject's folders more meaningful [\#237](https://github.com/kordamp/kordamp-gradle-plugins/issues/237)
-
 **Fixed bugs:**
 
 - Problem with sourceJar after upgrade to 0.31.1 [\#235](https://github.com/kordamp/kordamp-gradle-plugins/issues/235)
@@ -424,7 +449,6 @@
 
 **Fixed bugs:**
 
-- \[Plugin\] `{pluginName}PluginMarkerMaven` publication is not properly configured [\#167](https://github.com/kordamp/kordamp-gradle-plugins/issues/167)
 - \[Publishing\] Dependencies are not added to generated POM [\#202](https://github.com/kordamp/kordamp-gradle-plugins/issues/202)
 
 ## [v0.30.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.30.0) (2019-11-29)
@@ -443,11 +467,9 @@
 - \[Jacoco\] Add a task that generates all reports [\#191](https://github.com/kordamp/kordamp-gradle-plugins/issues/191)
 - \[Base\] Display Scala compiler settings [\#187](https://github.com/kordamp/kordamp-gradle-plugins/issues/187)
 - \[Base\] Add a task to display ZIP settings [\#186](https://github.com/kordamp/kordamp-gradle-plugins/issues/186)
-- \[Base\] Add a task to display JAR settings [\#185](https://github.com/kordamp/kordamp-gradle-plugins/issues/185)
 - \[Base\] Display destinationDir property in GroovyCompilerSettingsTask [\#184](https://github.com/kordamp/kordamp-gradle-plugins/issues/184)
 - \[Base\] Display destinationDir property in JavaCompilerSettingsTask [\#183](https://github.com/kordamp/kordamp-gradle-plugins/issues/183)
 - Improve support for integration/functional test written in kotlin [\#188](https://github.com/kordamp/kordamp-gradle-plugins/pull/188) ([ursjoss](https://github.com/ursjoss))
-- Simplify configuration example for Kotlin DSL for release [\#179](https://github.com/kordamp/kordamp-gradle-plugins/pull/179) ([ursjoss](https://github.com/ursjoss))
 
 **Fixed bugs:**
 
@@ -467,6 +489,11 @@
 
 [Full Changelog](https://github.com/kordamp/kordamp-gradle-plugins/compare/v0.28.0...v0.29.0)
 
+**Implemented enhancements:**
+
+- \[Base\] Add a task to display JAR settings [\#185](https://github.com/kordamp/kordamp-gradle-plugins/issues/185)
+- Simplify configuration example for Kotlin DSL for release [\#179](https://github.com/kordamp/kordamp-gradle-plugins/pull/179) ([ursjoss](https://github.com/ursjoss))
+
 **Fixed bugs:**
 
 - \[Scaladoc\] ScaladocJar is not attached to publication [\#182](https://github.com/kordamp/kordamp-gradle-plugins/issues/182)
@@ -481,6 +508,7 @@
 
 - Javadoc JAR is not published [\#178](https://github.com/kordamp/kordamp-gradle-plugins/issues/178)
 - Blank vendor is giving errors when organization.name is not blank [\#177](https://github.com/kordamp/kordamp-gradle-plugins/issues/177)
+- \[Javadoc\] Normalize path for local URLs in AutoLinks.calculateLocalJavadocLink [\#171](https://github.com/kordamp/kordamp-gradle-plugins/issues/171)
 
 ## [v0.27.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.27.0) (2019-09-27)
 
@@ -489,7 +517,6 @@
 **Fixed bugs:**
 
 - \[Javadoc\] MPE when Groovydoc.replaceJavadoc is enabled [\#174](https://github.com/kordamp/kordamp-gradle-plugins/issues/174)
-- \[Javadoc\] Normalize path for local URLs in AutoLinks.calculateLocalJavadocLink [\#171](https://github.com/kordamp/kordamp-gradle-plugins/issues/171)
 - Fix setting `-Xdoclint:none` and `-quiet` options for Javadoc [\#172](https://github.com/kordamp/kordamp-gradle-plugins/pull/172) ([tlinkowski](https://github.com/tlinkowski))
 
 ## [v0.26.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.26.0) (2019-08-30)
@@ -505,6 +532,7 @@
 
 **Fixed bugs:**
 
+- \[Plugin\] `{pluginName}PluginMarkerMaven` publication is not properly configured [\#167](https://github.com/kordamp/kordamp-gradle-plugins/issues/167)
 - \[BuildInfo, Jar\] Disabling buildInfo doesn't skip manifest attribute insertion [\#163](https://github.com/kordamp/kordamp-gradle-plugins/issues/163)
 - \[Kotlindoc\] Default output directory is incorrect for multi-project builds [\#161](https://github.com/kordamp/kordamp-gradle-plugins/issues/161)
 - \[Kotlindoc\] GroovyCastException for kotlindoc.externalDocumentationLinks [\#155](https://github.com/kordamp/kordamp-gradle-plugins/issues/155)
@@ -622,7 +650,6 @@
 - \[Base\] Display Test task compiler settings [\#120](https://github.com/kordamp/kordamp-gradle-plugins/issues/120)
 - \[Base\] Display Groovy compiler settings  [\#119](https://github.com/kordamp/kordamp-gradle-plugins/issues/119)
 - \[Base\] Display Java compiler settings [\#118](https://github.com/kordamp/kordamp-gradle-plugins/issues/118)
-- \[Base\] Add a task to list included builds [\#111](https://github.com/kordamp/kordamp-gradle-plugins/issues/111)
 
 ## [v0.19.0](https://github.com/kordamp/kordamp-gradle-plugins/tree/v0.19.0) (2019-04-24)
 
@@ -640,6 +667,7 @@
 
 - \[Guide\] Update files created by initGuide [\#115](https://github.com/kordamp/kordamp-gradle-plugins/issues/115)
 - \[Jacoco\] Automatically disable if no tests are available [\#112](https://github.com/kordamp/kordamp-gradle-plugins/issues/112)
+- \[Base\] Add a task to list included builds [\#111](https://github.com/kordamp/kordamp-gradle-plugins/issues/111)
 - \[Base\] Add a task to list projects [\#110](https://github.com/kordamp/kordamp-gradle-plugins/issues/110)
 - \[Testing\] Add a Test aggregating task [\#108](https://github.com/kordamp/kordamp-gradle-plugins/issues/108)
 - \[Settings\] Expose project inclusion methods [\#107](https://github.com/kordamp/kordamp-gradle-plugins/issues/107)
@@ -748,7 +776,6 @@
 - \[BOM\] Support \<parent\> section [\#69](https://github.com/kordamp/kordamp-gradle-plugins/issues/69)
 - \[Publishing\] Support \<parent\> section [\#68](https://github.com/kordamp/kordamp-gradle-plugins/issues/68)
 - \[BOM\] Add an option for disable implicit includes [\#67](https://github.com/kordamp/kordamp-gradle-plugins/issues/67)
-- Move Clirr plugin [\#63](https://github.com/kordamp/kordamp-gradle-plugins/issues/63)
 
 **Fixed bugs:**
 
@@ -763,12 +790,14 @@
 
 **Implemented enhancements:**
 
+- Move Clirr plugin [\#63](https://github.com/kordamp/kordamp-gradle-plugins/issues/63)
 - \[SourceXref\] Allow some projects to be excluded from aggregate [\#62](https://github.com/kordamp/kordamp-gradle-plugins/issues/62)
 - \[SourceHtml\] Allow some projects to be excluded from aggregate [\#61](https://github.com/kordamp/kordamp-gradle-plugins/issues/61)
 - \[Source\] Allow some projects to be excluded from aggregate [\#60](https://github.com/kordamp/kordamp-gradle-plugins/issues/60)
 - \[Apidoc\] Allow some projects to be excluded from aggregate [\#59](https://github.com/kordamp/kordamp-gradle-plugins/issues/59)
 - \[Source\] Add an aggregate JAR task [\#58](https://github.com/kordamp/kordamp-gradle-plugins/issues/58)
 - \[Jacoco\] Allow additional source/class directories to be defined [\#57](https://github.com/kordamp/kordamp-gradle-plugins/issues/57)
+- \[SourceXref\] Add a JAR task for regular and aggregate sources [\#54](https://github.com/kordamp/kordamp-gradle-plugins/issues/54)
 - \[SourceHtml\] Add a JAR task for regular and aggregate sources [\#53](https://github.com/kordamp/kordamp-gradle-plugins/issues/53)
 
 **Fixed bugs:**
@@ -782,7 +811,6 @@
 
 **Implemented enhancements:**
 
-- \[SourceXref\] Add a JAR task for regular and aggregate sources [\#54](https://github.com/kordamp/kordamp-gradle-plugins/issues/54)
 - \[Base\] Add a task that displays configured properties [\#52](https://github.com/kordamp/kordamp-gradle-plugins/issues/52)
 - \[Base\] Add a task that displays applied extensions [\#51](https://github.com/kordamp/kordamp-gradle-plugins/issues/51)
 - \[Base\] Add a task that displays applied plugins [\#50](https://github.com/kordamp/kordamp-gradle-plugins/issues/50)
@@ -796,7 +824,6 @@
 **Implemented enhancements:**
 
 - \[License\] Allow non FLOSS licenses to be specified [\#42](https://github.com/kordamp/kordamp-gradle-plugins/issues/42)
-- \[Publishing\] Allow posting publications to release/snapshot repositories [\#39](https://github.com/kordamp/kordamp-gradle-plugins/issues/39)
 
 **Fixed bugs:**
 
@@ -813,6 +840,7 @@
 - Add a plugin for BOM file generation [\#44](https://github.com/kordamp/kordamp-gradle-plugins/issues/44)
 - Split project plugin for closed and open source usages [\#43](https://github.com/kordamp/kordamp-gradle-plugins/issues/43)
 - \[Guide\] Allow attribute values to be overriden in a document [\#41](https://github.com/kordamp/kordamp-gradle-plugins/issues/41)
+- \[Publishing\] Allow posting publications to release/snapshot repositories [\#39](https://github.com/kordamp/kordamp-gradle-plugins/issues/39)
 - \[Publishing\] Configure artifact signing [\#38](https://github.com/kordamp/kordamp-gradle-plugins/issues/38)
 
 **Fixed bugs:**
