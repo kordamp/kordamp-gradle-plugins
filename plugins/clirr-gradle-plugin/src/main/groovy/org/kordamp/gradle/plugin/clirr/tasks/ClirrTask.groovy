@@ -53,15 +53,15 @@ import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 @CompileStatic
 class ClirrTask extends DefaultTask {
     @InputFiles
-    @PathSensitive(PathSensitivity.ABSOLUTE)
+    @PathSensitive(PathSensitivity.RELATIVE)
     FileCollection newClasspath
 
     @InputFiles
-    @PathSensitive(PathSensitivity.ABSOLUTE)
+    @PathSensitive(PathSensitivity.RELATIVE)
     FileCollection newFiles
 
     @InputFiles
-    @PathSensitive(PathSensitivity.ABSOLUTE)
+    @PathSensitive(PathSensitivity.RELATIVE)
     FileCollection baseFiles
 
     @OutputFile

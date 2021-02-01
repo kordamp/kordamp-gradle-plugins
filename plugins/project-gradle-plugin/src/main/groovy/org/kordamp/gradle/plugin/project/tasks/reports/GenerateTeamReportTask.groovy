@@ -25,6 +25,8 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Person
@@ -40,16 +42,20 @@ import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 class GenerateTeamReportTask extends DefaultTask implements ReportGeneratingTask {
     @Optional
     @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
     final RegularFileProperty teamHeaderTemplate = project.objects.fileProperty()
     @Optional
     @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
     final RegularFileProperty teamFooterTemplate = project.objects.fileProperty()
     @Optional
     @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
     final RegularFileProperty teamTableHeaderTemplate = project.objects.fileProperty()
 
     @Optional
     @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
     final RegularFileProperty teamTableRowTemplate = project.objects.fileProperty()
 
     @OutputFile

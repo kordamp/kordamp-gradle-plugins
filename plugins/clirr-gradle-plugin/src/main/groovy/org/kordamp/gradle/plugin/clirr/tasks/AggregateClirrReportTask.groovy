@@ -41,7 +41,7 @@ import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 @CacheableTask
 class AggregateClirrReportTask extends DefaultTask {
     @InputFiles
-    @PathSensitive(PathSensitivity.ABSOLUTE)
+    @PathSensitive(PathSensitivity.RELATIVE)
     FileCollection reports
 
     @OutputFile

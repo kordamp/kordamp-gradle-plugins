@@ -97,5 +97,10 @@ projects.subprojects {
                 exclude group: 'org.codehaus.groovy'
             }
         }
+
+        tasks.withType(ValidateTaskProperties) { validateTaskProperties ->
+            validateTaskProperties.failOnWarning = true
+            validateTaskProperties.enableStricterValidation = true
+        }
     }
 }
