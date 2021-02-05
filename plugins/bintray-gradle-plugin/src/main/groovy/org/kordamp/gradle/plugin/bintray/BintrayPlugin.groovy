@@ -44,6 +44,7 @@ import static org.kordamp.gradle.util.StringUtils.isNotBlank
  * @since 0.2.0
  */
 @CompileStatic
+@Deprecated
 class BintrayPlugin extends AbstractKordampPlugin {
     Project project
 

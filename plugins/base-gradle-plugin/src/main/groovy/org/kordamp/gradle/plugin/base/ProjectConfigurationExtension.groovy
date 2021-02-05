@@ -177,11 +177,15 @@ class ProjectConfigurationExtension {
         ConfigureUtil.configure(action, bom)
     }
 
+    @Deprecated
     void bintray(Action<? super Bintray> action) {
+        println("The method config.bintray is deprecated and will be removed in the future.")
         action.execute(bintray)
     }
 
+    @Deprecated
     void bintray(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Bintray) Closure<Void> action) {
+        println("The method config.bintray is deprecated and will be removed in the future.")
         ConfigureUtil.configure(action, bintray)
     }
 

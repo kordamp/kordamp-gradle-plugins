@@ -18,6 +18,9 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `link:https://github.com/bintray/gradle-bintray-plugin[com.jfrog.bintray]`
 applied by:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
 
+WARNING: This plugin has been deprecated without replacement. Bintray is shutting down
+link:https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/[]
+
 Configures artifact publications using Bintray. Relies on the publication configured by the
 `<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>` plugin. The name of the publication
 matches `"main"`.
