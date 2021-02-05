@@ -379,7 +379,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
             t.classDirectories.setFrom(t.project.files(t.classDirectories.files.collect { d ->
                 t.project.fileTree(dir: d, exclude: excludes)
             }))
-            t.additionalClassDirs().setFrom(t.project.files(t.additionalClassDirs.files.collect { d ->
+            t.additionalClassDirs.setFrom(t.project.files(t.additionalClassDirs.files.collect { d ->
                 t.project.fileTree(dir: d, exclude: excludes)
             }))
         }
