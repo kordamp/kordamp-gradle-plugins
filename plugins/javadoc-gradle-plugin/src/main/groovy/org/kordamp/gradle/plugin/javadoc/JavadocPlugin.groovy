@@ -27,6 +27,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenArtifact
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -47,6 +48,7 @@ import static org.kordamp.gradle.util.PluginUtils.registerJarVariant
 import static org.kordamp.gradle.util.PluginUtils.resolveAllSource
 import static org.kordamp.gradle.util.PluginUtils.resolveClassesTask
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
+import static org.kordamp.gradle.util.PluginUtils.resolveMainSourceDirs
 
 /**
  * Configures {@code javadoc} and {@code javadocJar} tasks.
@@ -94,18 +96,23 @@ class JavadocPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension config = resolveConfig(project)
         setEnabled(config.docs.javadoc.enabled || config.docs.javadoc.aggregate.enabled)
 
+        List<Project> projects = []
         List<Javadoc> docTasks = []
         if (!(config.docs.javadoc.aggregate.getEmpty())) {
             project.tasks.withType(Javadoc) { Javadoc t ->
                 if (project in config.docs.javadoc.aggregate.excludedProjects) return
                 if (t.name != AGGREGATE_JAVADOC_TASK_NAME && t.enabled &&
-                    !(config.docs.javadoc.empty)) docTasks << t
+                    !(config.docs.javadoc.empty)) {
+                    docTasks << t
+                    projects << project
+                }
             }
             project.childProjects.values().each { Project p ->
                 if (p in config.docs.javadoc.aggregate.excludedProjects) return
                 p.tasks.withType(Javadoc) { Javadoc t ->
                     if (t.enabled && !(resolveConfig(p).docs.javadoc.empty)) {
                         docTasks << t
+                        projects << p
                     }
                 }
             }
@@ -125,6 +132,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     config.docs.javadoc.applyTo(t)
                 }
             })
+        createCopyDocFilesTask(project, aggregateJavadoc, 'aggregateCopyDocFiles', resolveMainSourceDirs(projects))
 
         project.tasks.named(AGGREGATE_JAVADOC_JAR_TASK_NAME, Jar,
             new Action<Jar>() {
@@ -176,6 +184,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
             }
 
             TaskProvider<Javadoc> javadoc = createJavadocTask(project)
+            createCopyDocFilesTask(project, javadoc, 'copyDocFiles', resolveMainSourceDirs(project))
             TaskProvider<Jar> javadocJar = createJavadocJarTask(project, javadoc)
             project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(javadocJar)
         }
@@ -254,6 +263,31 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     t.onlyIf { javadoc.get().enabled }
                 }
             })
+    }
+
+    private void createCopyDocFilesTask(Project project,
+                                        TaskProvider<Javadoc> javadoc,
+                                        String taskName,
+                                        Object sourceDirs) {
+        ProjectConfigurationExtension config = resolveConfig(project)
+
+        TaskProvider<Copy> copyDocFiles = project.tasks.register(taskName, Copy,
+            new Action<Copy>() {
+                @Override
+                void execute(Copy t) {
+                    t.enabled = config.docs.javadoc.enabled
+                    t.group = JavaBasePlugin.DOCUMENTATION_GROUP
+                    t.description = 'Copy doc-files into Javadocs'
+                    t.dependsOn javadoc
+                    t.from sourceDirs
+                    t.into(javadoc.get().destinationDir)
+                    t.include('**/doc-files/*.*')
+                    t.onlyIf { javadoc.get().enabled }
+                    t.mustRunAfter(javadoc.get())
+                }
+            })
+
+        javadoc.get().finalizedBy(copyDocFiles)
     }
 
     private void updatePublications(Project project) {

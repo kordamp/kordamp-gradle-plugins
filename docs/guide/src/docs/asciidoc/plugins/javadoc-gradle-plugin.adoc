@@ -26,6 +26,7 @@ config {
         javadoc {
             enabled
             empty
+            copyDocFiles
             includes
             excludes
             title
@@ -50,13 +51,14 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name     | Type                  | Required | Default Value | Description
-| enabled  | boolean               | no       | true          | Disables `org.kordamp.gradle.javadoc` plugin if `false`
-| empty    | boolean               | no       | false         | Generates an empty JAR if `true`.
-| includes | Set<String>           | no       | []            |
-| excludes | Set<String>           | no       | []            |
-| title    | String                | no       |               |
-| options  | MinimalJavadocOptions | no       |               | Supports all options from `link:https://docs.gradle.org/4.10/javadoc/org/gradle/external/javadoc/StandardJavadocDocletOptions.html[StandardJavadocDocletOptions]`.
+| Name         | Type                  | Required | Default Value | Description
+| enabled      | boolean               | no       | true          | Disables `org.kordamp.gradle.javadoc` plugin if `false`
+| empty        | boolean               | no       | false         | Generates an empty JAR if `true`.
+| copyDocFiles | boolean               | no       | true          | Copies files found in `doc-files` subdirectories inside source folders.
+| includes     | Set<String>           | no       | []            |
+| excludes     | Set<String>           | no       | []            |
+| title        | String                | no       |               |
+| options      | MinimalJavadocOptions | no       |               | Supports all options from `link:https://docs.gradle.org/4.10/javadoc/org/gradle/external/javadoc/StandardJavadocDocletOptions.html[StandardJavadocDocletOptions]`.
 |===
 
 .Methods

@@ -45,6 +45,7 @@ class Javadoc extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.javadoc'
 
     Boolean empty
+    Boolean copyDocFiles
     Set<String> excludes = new LinkedHashSet<>()
     Set<String> includes = new LinkedHashSet<>()
     String title
@@ -100,6 +101,7 @@ class Javadoc extends AbstractFeature {
         }
 
         map['empty'] = getEmpty()
+        map['copyDocFiles'] = getCopyDocFiles()
         map.title = title
         map.excludes = excludes
         map.includes = includes
@@ -125,6 +127,10 @@ class Javadoc extends AbstractFeature {
 
     boolean getEmpty() {
         this.@empty != null && this.@empty
+    }
+
+    boolean getCopyDocFiles() {
+        this.@copyDocFiles == null || this.@copyDocFiles
     }
 
     @Override
@@ -169,6 +175,7 @@ class Javadoc extends AbstractFeature {
     static void merge(Javadoc o1, Javadoc o2) {
         AbstractFeature.merge(o1, o2)
         o1.setEmpty(o1.@empty != null ? o1.getEmpty() : o2.getEmpty())
+        o1.setCopyDocFiles(o1.@copyDocFiles != null ? o1.getCopyDocFiles() : o2.getCopyDocFiles())
         o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
         o1.includes = CollectionUtils.merge(o1.includes, o2.includes, false)
         o1.title = o1.title ?: o2.title
