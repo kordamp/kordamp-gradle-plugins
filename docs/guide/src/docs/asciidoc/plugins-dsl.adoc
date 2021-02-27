@@ -96,8 +96,8 @@ And the following settings file
 ----
 buildscript {
     repositories {
-        jcenter()
         gradlePluginPortal()
+        mavenCentral()
     }
     dependencies {
         classpath "{project-group}:settings-gradle-plugin:{project-version}"
@@ -144,8 +144,8 @@ import org.kordamp.gradle.plugin.settings.SettingsPlugin
 
 buildscript {
     repositories {
-        jcenter()
         gradlePluginPortal()
+        mavenCentral()
     }
 
     dependencies {

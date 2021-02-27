@@ -1563,7 +1563,6 @@ config {
 }
 
 repositories {
-    jcenter()
     mavenCentral()
     flatDir { dirs 'lib' }
 }
@@ -1581,19 +1580,14 @@ Results in the following output
 [source]
 ----
 > Task :repositories
-Total repositories: 3
+Total repositories: 2
 
 repository 0:
-    type: maven
-    name: BintrayJCenter
-    url: https://jcenter.bintray.com/
-
-repository 1:
     type: maven
     name: MavenRepo
     url: https://repo.maven.apache.org/maven2/
 
-repository 2:
+repository 1:
     type: flatDir
     name: flatDir
     dirs:

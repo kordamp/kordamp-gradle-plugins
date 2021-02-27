@@ -75,7 +75,7 @@ config {
 
 allprojects {
     repositories {
-        jcenter()
+        mavenCentral()
     }
 }
 ----
@@ -94,7 +94,7 @@ config {
 
 allprojects {
     repositories {
-        jcenter()
+        mavenCentral()
     }
 }
 ----

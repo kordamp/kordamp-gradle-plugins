@@ -23,8 +23,8 @@ Option #1
 ----
 buildscript {
     repositories {
-        jcenter()
         gradlePluginPortal()
+        mavenCentral()
     }
     dependencies {
         classpath '{project-group}:<plugin-artifact-id>:{project-version}'

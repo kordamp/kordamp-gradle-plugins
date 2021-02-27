@@ -12,8 +12,8 @@ Option #1
 buildscript {
     repositories {
         gradlePluginPortal()
-        // required for additional dependencies, may use mavenCentral() instead
-        jcenter()
+        // required for additional dependencies
+        mavenCentral()
     }
     dependencies {
         classpath '{project-group}:{plugin-id}:{project-version}'
@@ -28,8 +28,8 @@ apply plugin: '{plugin-id}'
 buildscript {
     repositories {
         gradlePluginPortal()
-        // required for additional dependencies, may use mavenCentral() instead
-        jcenter()
+        // required for additional dependencies
+        mavenCentral()
     }
     dependencies {
         classpath("{project-group}:{plugin-id}:{project-version}")
