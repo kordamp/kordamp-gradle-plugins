@@ -172,7 +172,7 @@ class ActivationOs implements Activation {
 
         MyDetector(Logger logger, List<String> classifierWithLikes) {
             this.logger = logger
-            props.put('failOnUnknownOS', false)
+            System.setProperty('failOnUnknownOS', 'false')
             detect(props, classifierWithLikes)
         }
 
