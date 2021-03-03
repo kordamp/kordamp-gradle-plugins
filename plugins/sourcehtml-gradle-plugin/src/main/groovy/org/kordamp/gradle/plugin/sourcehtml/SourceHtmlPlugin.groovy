@@ -307,6 +307,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                     t.docDescription = config.docs.sourceHtml.overview.docDescription ?: ''
                     t.icon = config.docs.sourceHtml.overview.icon
                     t.stylesheet = config.docs.sourceHtml.overview.stylesheet
+                    t.onlyIf { convertCodeTask.get().enabled }
                 }
             })
 
@@ -318,6 +319,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                     t.from convertCodeTask.get().destDir
                     t.from generateOverviewTask.get().destDir
                     t.enabled = config.docs.sourceHtml.aggregate.enabled
+                    t.onlyIf { generateOverviewTask.get().enabled }
                 }
             })
 
