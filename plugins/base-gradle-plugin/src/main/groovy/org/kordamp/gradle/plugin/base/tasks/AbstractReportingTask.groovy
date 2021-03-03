@@ -22,6 +22,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.TaskInputs
+import org.gradle.api.tasks.TaskOutputs
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.util.AnsiConsole
 
@@ -116,6 +118,12 @@ abstract class AbstractReportingTask extends DefaultTask {
             doPrintCollection(key, value, offset)
         } else if (value?.class?.array) {
             doPrintArray(key, (Object[]) value, offset)
+        } else if (value instanceof TaskInputs) {
+            println(('    ' * offset) + key + ':')
+            doPrintTaskInputs((TaskInputs) value, offset + 1)
+        } else if (value instanceof TaskOutputs) {
+            println(('    ' * offset) + key + ':')
+            doPrintTaskOutputs((TaskOutputs) value, offset + 1)
         } else {
             String result = formatValue(unwrapValue(value), isSecret(key))
             if (isNotNullNorBlank(result)) println(('    ' * offset) + key + ': ' + result)
@@ -207,6 +215,29 @@ abstract class AbstractReportingTask extends DefaultTask {
     }
 
     protected void doPrintElement(value, int offset) {
+        if (value instanceof TaskInputs) {
+            doPrintTaskInputs((TaskInputs) value, offset)
+        } else if (value instanceof TaskOutputs) {
+            doPrintTaskOutputs((TaskOutputs) value, offset)
+        } else {
+            doPrintValue(value, offset)
+        }
+    }
+
+    protected void doPrintTaskInputs(TaskInputs value, int offset) {
+        doPrintMapEntry("hasInputs", value.hasInputs, offset)
+        doPrintMapEntry("files", value.files, offset)
+        doPrintMapEntry("hasSourceFiles", value.hasSourceFiles, offset)
+        doPrintMapEntry("sourceFiles", value.sourceFiles, offset)
+        doPrintMapEntry("properties", value.properties, offset)
+    }
+
+    protected void doPrintTaskOutputs(TaskOutputs value, int offset) {
+        doPrintMapEntry("hasOutput", value.hasOutput, offset)
+        doPrintMapEntry("files", value.files, offset)
+    }
+
+    protected void doPrintValue(value, int offset) {
         String result = formatValue(value)
         if (isNotNullNorBlank(result)) println(('    ' * offset) + result)
     }
