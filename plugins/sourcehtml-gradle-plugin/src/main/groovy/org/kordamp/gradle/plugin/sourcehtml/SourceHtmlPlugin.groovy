@@ -267,7 +267,7 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
             new Action<ConvertCodeTask>() {
                 @Override
                 void execute(ConvertCodeTask t) {
-                    t.enabled = config.docs.sourceHtml.aggregate.enabled
+                    t.enabled = config.docs.sourceHtml.aggregate.enabled && !srcdirs.isEmpty()
                     t.group = 'Documentation'
                     t.description = 'Converts source code into HTML.'
                     t.classpath = configuration.asFileTree
