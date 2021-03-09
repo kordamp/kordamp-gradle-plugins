@@ -450,7 +450,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
 
     private void cleanup() {
         ProjectDescriptor pd = settings.rootProject
-        for (ProjectDescriptor child : pd.children) {
+        for (ProjectDescriptor child : new ArrayList<>(pd.children)) {
             purgeEmptyProjects(child, pd)
         }
     }
