@@ -450,7 +450,8 @@ class ProjectsExtensionImpl implements ProjectsExtension {
 
     private void cleanup() {
         ProjectDescriptor pd = settings.rootProject
-        for (ProjectDescriptor child : new ArrayList<>(pd.children)) {
+        Set<ProjectDescriptor> children = new LinkedHashSet<>(pd.children)
+        for (ProjectDescriptor child : children) {
             purgeEmptyProjects(child, pd)
         }
     }
@@ -461,7 +462,8 @@ class ProjectsExtensionImpl implements ProjectsExtension {
                 parent.children.remove(project)
             }
         } else {
-            for (ProjectDescriptor child : project.children) {
+            Set<ProjectDescriptor> children = new LinkedHashSet<>(project.children)
+            for (ProjectDescriptor child : children) {
                 purgeEmptyProjects(child, project)
             }
 
