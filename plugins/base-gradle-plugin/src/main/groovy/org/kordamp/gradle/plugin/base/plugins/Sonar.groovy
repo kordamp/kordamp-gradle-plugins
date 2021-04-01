@@ -105,18 +105,18 @@ class Sonar extends AbstractFeature {
         if (enabled) {
             String extHostUrl = System.getProperty('sonar.host.url')
             if (!isBlank(extHostUrl)) {
-                hostUrl = extHostUrl
+                setHostUrl(extHostUrl)
             }
 
             String extLogin = System.getProperty('sonar.login')
             if (!isBlank(extLogin)) {
-                login = extLogin
+                setLogin(extLogin)
             }
 
-            if (hostUrl == 'https://sonarcloud.io' && isBlank(organization)) {
+            if (getHostUrl().startsWith('https://sonarcloud.io') && isBlank(getOrganization())) {
                 errors << "[${project.name}] Sonar organization is blank".toString()
             }
-            if (isBlank(login)) {
+            if (isBlank(getLogin())) {
                 errors << "[${project.name}] Sonar login is blank".toString()
             }
         }
