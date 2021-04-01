@@ -25,7 +25,9 @@ import io.gitlab.arturbosch.detekt.DetektGenerateConfigTask
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.AppliedPlugin
+import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.annotations.DependsOn
 import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
@@ -107,7 +109,7 @@ class DetektPlugin extends AbstractKordampPlugin {
     private void configureRootProject(Project project) {
         addAllProjectsEvaluatedListener(project, new DetektAllProjectsEvaluatedListener())
 
-        project.tasks.register(AGGREGATE_DETEKT_TASK_NAME, Detekt,
+        TaskProvider<Detekt> aggregateTask = project.tasks.register(AGGREGATE_DETEKT_TASK_NAME, Detekt,
             new Action<Detekt>() {
                 @Override
                 void execute(Detekt t) {
@@ -116,6 +118,18 @@ class DetektPlugin extends AbstractKordampPlugin {
                     t.description = 'Aggregate all detekt reports.'
                 }
             })
+
+        project.tasks.matching(new Spec<Task>() {
+            @Override
+            boolean isSatisfiedBy(Task t) {
+                return t.name == 'check'
+            }
+        }).all(new Action<Task>() {
+            @Override
+            void execute(Task t) {
+                t.dependsOn(aggregateTask)
+            }
+        })
     }
 
     @Named('checkstyle')

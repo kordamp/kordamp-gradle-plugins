@@ -24,7 +24,9 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.AppliedPlugin
+import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.annotations.DependsOn
 import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
@@ -107,7 +109,7 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
     private void configureRootProject(Project project) {
         addAllProjectsEvaluatedListener(project, new SpotbugsAllProjectsEvaluatedListener())
 
-        project.tasks.register(AGGREGATE_SPOTBUGS_TASK_NAME, SpotBugsTask,
+        TaskProvider<SpotBugsTask> aggregateTask = project.tasks.register(AGGREGATE_SPOTBUGS_TASK_NAME, SpotBugsTask,
             new Action<SpotBugsTask>() {
                 @Override
                 void execute(SpotBugsTask t) {
@@ -116,6 +118,18 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
                     t.description = 'Aggregate all spotbugs reports.'
                 }
             })
+
+        project.tasks.matching(new Spec<Task>() {
+            @Override
+            boolean isSatisfiedBy(Task t) {
+                return t.name == 'check'
+            }
+        }).all(new Action<Task>() {
+            @Override
+            void execute(Task t) {
+                t.dependsOn(aggregateTask)
+            }
+        })
     }
 
     @Named('spotbugs')

@@ -21,9 +21,11 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.quality.Pmd
 import org.gradle.api.plugins.quality.PmdExtension
+import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.annotations.DependsOn
 import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
@@ -116,7 +118,7 @@ class PmdPlugin extends AbstractKordampPlugin {
     private void configureRootProject(Project project) {
         addAllProjectsEvaluatedListener(project, new PmdAllProjectsEvaluatedListener())
 
-        project.tasks.register(AGGREGATE_PMD_TASK_NAME, Pmd,
+        TaskProvider<Pmd> aggregateTask = project.tasks.register(AGGREGATE_PMD_TASK_NAME, Pmd,
             new Action<Pmd>() {
                 @Override
                 void execute(Pmd t) {
@@ -125,6 +127,18 @@ class PmdPlugin extends AbstractKordampPlugin {
                     t.description = 'Aggregate all pmd reports.'
                 }
             })
+
+        project.tasks.matching(new Spec<Task>() {
+            @Override
+            boolean isSatisfiedBy(Task t) {
+                return t.name == 'check'
+            }
+        }).all(new Action<Task>() {
+            @Override
+            void execute(Task t) {
+                t.dependsOn(aggregateTask)
+            }
+        })
     }
 
     @Named('pmd')

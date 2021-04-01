@@ -21,7 +21,9 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.AppliedPlugin
+import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.annotations.DependsOn
 import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
@@ -103,7 +105,7 @@ class CpdPlugin extends AbstractKordampPlugin {
     private void configureRootProject(Project project) {
         addAllProjectsEvaluatedListener(project, new CpdAllProjectsEvaluatedListener())
 
-        project.tasks.register(AGGREGATE_CPD_TASK_NAME, Cpd,
+        TaskProvider<Cpd> aggregateTask = project.tasks.register(AGGREGATE_CPD_TASK_NAME, Cpd,
             new Action<Cpd>() {
                 @Override
                 void execute(Cpd t) {
@@ -112,6 +114,18 @@ class CpdPlugin extends AbstractKordampPlugin {
                     t.description = 'Aggregate all cpd reports.'
                 }
             })
+
+        project.tasks.matching(new Spec<Task>() {
+            @Override
+            boolean isSatisfiedBy(Task t) {
+                return t.name == 'check'
+            }
+        }).all(new Action<Task>() {
+            @Override
+            void execute(Task t) {
+                t.dependsOn(aggregateTask)
+            }
+        })
     }
 
     @Named('cpd')

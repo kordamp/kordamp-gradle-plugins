@@ -21,10 +21,12 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.quality.CodeNarc
 import org.gradle.api.plugins.quality.CodeNarcExtension
 import org.gradle.api.plugins.quality.CodeNarcPlugin
+import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.annotations.DependsOn
 import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
@@ -118,7 +120,7 @@ class CodenarcPlugin extends AbstractKordampPlugin {
     private void configureRootProject(Project project) {
         addAllProjectsEvaluatedListener(project, new CodenarcAllProjectsEvaluatedListener())
 
-        project.tasks.register(AGGREGATE_CODENARC_TASK_NAME, CodeNarc,
+        TaskProvider<CodeNarc> aggregateTask = project.tasks.register(AGGREGATE_CODENARC_TASK_NAME, CodeNarc,
             new Action<CodeNarc>() {
                 @Override
                 void execute(CodeNarc t) {
@@ -127,6 +129,18 @@ class CodenarcPlugin extends AbstractKordampPlugin {
                     t.description = 'Aggregate all codenarc reports.'
                 }
             })
+
+        project.tasks.matching(new Spec<Task>() {
+            @Override
+            boolean isSatisfiedBy(Task t) {
+                return t.name == 'check'
+            }
+        }).all(new Action<Task>() {
+            @Override
+            void execute(Task t) {
+                t.dependsOn(aggregateTask)
+            }
+        })
     }
 
     @Named('codenarc')

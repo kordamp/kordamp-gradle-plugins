@@ -21,9 +21,11 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.quality.Checkstyle
 import org.gradle.api.plugins.quality.CheckstyleExtension
+import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.TaskProvider
 import org.kordamp.gradle.annotations.DependsOn
 import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
@@ -116,7 +118,7 @@ class CheckstylePlugin extends AbstractKordampPlugin {
     private void configureRootProject(Project project) {
         addAllProjectsEvaluatedListener(project, new CheckstyleAllProjectsEvaluatedListener())
 
-        project.tasks.register(AGGREGATE_CHECKSTYLE_TASK_NAME, Checkstyle,
+        TaskProvider<Checkstyle> aggregateTask = project.tasks.register(AGGREGATE_CHECKSTYLE_TASK_NAME, Checkstyle,
             new Action<Checkstyle>() {
                 @Override
                 void execute(Checkstyle t) {
@@ -126,6 +128,17 @@ class CheckstylePlugin extends AbstractKordampPlugin {
                 }
             })
 
+        project.tasks.matching(new Spec<Task>() {
+            @Override
+            boolean isSatisfiedBy(Task t) {
+                return t.name == 'check'
+            }
+        }).all(new Action<Task>() {
+            @Override
+            void execute(Task t) {
+                t.dependsOn(aggregateTask)
+            }
+        })
     }
 
     @Named('checkstyle')
