@@ -60,7 +60,7 @@ class TestSettingsTask extends AbstractSettingsTask {
         doPrintMapEntry('executable', task.executable, 1)
         doPrintMapEntry('failFast', task.failFast, 1)
         doPrintMapEntry('forkEvery', task.forkEvery, 1)
-        doPrintMapEntry('ignoreFailures', task.ignoreFailures, 1)
+        doPrintMapEntry('ignoreFailures', task.getIgnoreFailures(), 1)
         doPrintCollection('jvmArgs', task.jvmArgs, 1)
         doPrintMapEntry('minHeapSize', task.minHeapSize, 1)
         doPrintMapEntry('maxHeapSize', task.maxHeapSize, 1)

@@ -229,7 +229,7 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
         if (config.quality.spotbugs.visitors) t.visitors = config.quality.spotbugs.visitors
         if (config.quality.spotbugs.omitVisitors) t.omitVisitors = config.quality.spotbugs.omitVisitors
         t.showProgress = config.quality.spotbugs.showProgress
-        t.ignoreFailures = config.quality.spotbugs.ignoreFailures
+        t.ignoreFailures = config.quality.spotbugs.getIgnoreFailures()
         t.effort = config.quality.spotbugs.effort
         t.reportLevel = config.quality.spotbugs.reportLevel
         if (config.quality.spotbugs.extraArgs) t.extraArgs = config.quality.spotbugs.extraArgs

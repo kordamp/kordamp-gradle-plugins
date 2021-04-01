@@ -42,7 +42,7 @@ final class CpdInvoker {
         def antBuilder = cpdTask.antBuilder
         FileTree source = cpdTask.source
         CpdReports reports = cpdTask.reports
-        boolean ignoreFailures = cpdTask.ignoreFailures
+        boolean ignoreFailures = cpdTask.getIgnoreFailures()
         Logger logger = cpdTask.logger
 
         SystemProperties.instance.withSystemProperty('java.class.path',

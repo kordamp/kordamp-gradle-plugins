@@ -218,7 +218,7 @@ class CpdPlugin extends AbstractKordampPlugin {
         cpdTask.ignoreLiterals.set config.quality.cpd.getIgnoreLiterals()
         cpdTask.ignoreIdentifiers.set config.quality.cpd.getIgnoreIdentifiers()
         cpdTask.ignoreAnnotations.set config.quality.cpd.getIgnoreAnnotations()
-        cpdTask.ignoreFailures = config.quality.cpd.ignoreFailures
+        cpdTask.ignoreFailures = config.quality.cpd.getIgnoreFailures()
         cpdTask.reports.html.enabled = true
         cpdTask.reports.xml.enabled = true
         cpdTask.reports.html.destination = project.layout.buildDirectory.file("reports/cpd/${sourceSetName}.html").get().asFile

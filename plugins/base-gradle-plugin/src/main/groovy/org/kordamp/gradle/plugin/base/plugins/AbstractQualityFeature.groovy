@@ -45,7 +45,7 @@ abstract class AbstractQualityFeature extends AbstractAggregateFeature {
     }
 
     boolean getIgnoreFailures() {
-        this.@ignoreFailures == null || this.@ignoreFailures
+        this.@ignoreFailures != null && this.@ignoreFailures
     }
 
     protected boolean isIgnoreFailuresSet() {

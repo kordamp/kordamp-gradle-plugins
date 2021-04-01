@@ -107,7 +107,7 @@ class Pmd extends AbstractQualityFeature {
         pmdTask.enabled = enabled && !specificRuleSetFiles.empty && specificRuleSetFiles.files.every { it.exists() }
         pmdTask.targetJdk = TargetJdk.VERSION_1_7
         pmdTask.ruleSetFiles = specificRuleSetFiles
-        pmdTask.ignoreFailures = ignoreFailures
+        pmdTask.ignoreFailures = getIgnoreFailures()
         pmdTask.getIncrementalAnalysis().set(incrementalAnalysisSet)
         pmdTask.rulePriority = rulePriority
         pmdTask.reports.html.enabled = true

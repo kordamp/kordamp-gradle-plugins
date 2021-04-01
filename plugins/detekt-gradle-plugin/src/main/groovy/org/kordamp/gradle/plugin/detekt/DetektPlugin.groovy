@@ -236,7 +236,7 @@ class DetektPlugin extends AbstractKordampPlugin {
         detektTask.failFast = config.quality.detekt.failFast
         detektTask.buildUponDefaultConfig = config.quality.detekt.buildUponDefaultConfig
         detektTask.disableDefaultRuleSets = config.quality.detekt.disableDefaultRuleSets
-        detektTask.ignoreFailures = config.quality.detekt.ignoreFailures
+        detektTask.ignoreFailures = config.quality.detekt.getIgnoreFailures()
         detektTask.reports.html.enabled = true
         detektTask.reports.xml.enabled = true
         detektTask.reports.html.destination = config.project.layout.buildDirectory.file("reports/detekt/${sourceSetName}.html").get().asFile

@@ -80,7 +80,7 @@ class Sonar extends AbstractFeature {
     }
 
     boolean getIgnoreFailures() {
-        this.ignoreFailures == null || this.ignoreFailures
+        this.ignoreFailures != null && this.ignoreFailures
     }
 
     protected boolean isIgnoreFailuresSet() {
