@@ -38,19 +38,19 @@ class Publishing extends AbstractFeature {
 
     String releasesRepository
     String snapshotsRepository
-    boolean signing = false
     DefaultPomOptions pom = new DefaultPomOptions()
     List<String> publications = []
     List<String> scopes = []
     boolean useVersionExpressions = true
     boolean flattenPlatforms = false
+    final Signing signing
 
-    private boolean signingSet
     private boolean useVersionExpressionsSet
     private boolean flattenPlatformsSet
 
     Publishing(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID)
+        signing = new Signing(config, project)
     }
 
     @Override
@@ -62,7 +62,7 @@ class Publishing extends AbstractFeature {
     Map<String, Map<String, Object>> toMap() {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
-        map.signing = signing
+        map.putAll(signing.toMap())
         map.releasesRepository = releasesRepository
         map.snapshotsRepository = snapshotsRepository
         map.publications = publications
@@ -93,13 +93,18 @@ class Publishing extends AbstractFeature {
         ConfigureUtil.configure(action, pom)
     }
 
-    void setSigning(boolean value) {
-        this.signing = value
-        this.signingSet = true
+    void signing(Action<? super Signing> action) {
+        action.execute(signing)
     }
 
-    boolean isSigningSet() {
-        this.signingSet
+    void signing(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Signing) Closure<Void> action) {
+        ConfigureUtil.configure(action, signing)
+    }
+
+    @Deprecated
+    void setSigning(boolean value) {
+        println("The method publishing.setSigning() is deprecated and will be removed in the future. Use publishing.signing.setEnabled() instead")
+        this.signing.setEnabled(value)
     }
 
     void setUseVersionExpressions(boolean value) {
@@ -124,8 +129,7 @@ class Publishing extends AbstractFeature {
         AbstractFeature.merge(o1, o2)
         o1.releasesRepository = o1.@releasesRepository ?: o2.@releasesRepository
         o1.snapshotsRepository = o1.@snapshotsRepository ?: o2.@snapshotsRepository
-        o1.@signing = o1.signingSet ? o1.signing : o2.signing
-        o1.@signingSet = o1.signingSet ?: o2.signingSet
+        Signing.merge(o1.signing, o2.signing)
         o1.@useVersionExpressions = o1.useVersionExpressionsSet ? o1.useVersionExpressions : o2.useVersionExpressions
         o1.@useVersionExpressionsSet = o1.useVersionExpressionsSet ?: o2.useVersionExpressionsSet
         o1.@flattenPlatforms = o1.flattenPlatformsSet ? o1.flattenPlatforms : o2.flattenPlatforms
@@ -241,6 +245,48 @@ class Publishing extends AbstractFeature {
             o1.setOverwriteIssueManagement((boolean) (o1.overwriteIssueManagementSet ? o1.overwriteIssueManagement : o2.overwriteIssueManagement))
             o1.setOverwriteCiManagement((boolean) (o1.overwriteCiManagementSet ? o1.overwriteCiManagement : o2.overwriteCiManagement))
             o1.setOverwriteMailingLists((boolean) (o1.overwriteMailingListsSet ? o1.overwriteMailingLists : o2.overwriteMailingLists))
+        }
+    }
+
+    @CompileStatic
+    static class Signing {
+        Boolean enabled
+        String keyId
+        String secretKey
+        String password
+
+        private final ProjectConfigurationExtension config
+        private final Project project
+
+        Signing(ProjectConfigurationExtension config, Project project) {
+            this.config = config
+            this.project = project
+        }
+
+        Map<String, Object> toMap() {
+            Map<String, Object> map = new LinkedHashMap<String, Object>()
+
+            map.enabled = getEnabled()
+            map.keyId = this.keyId ? '************' : '**unset**'
+            map.secretKey = this.secretKey ? '************' : '**unset**'
+            map.password = password
+
+            new LinkedHashMap<>('signing': map)
+        }
+
+        boolean getEnabled() {
+            this.@enabled != null && this.@enabled
+        }
+
+        boolean isEnabledSet() {
+            this.@enabled != null
+        }
+
+        static void merge(Signing o1, Signing o2) {
+            o1.enabled = o1.isEnabledSet() ? o1.getEnabled() : o2.getEnabled()
+            o1.keyId = o1.@keyId != null ? o1.keyId : o2.keyId
+            o1.secretKey = o1.@secretKey != null ? o1.secretKey : o2.secretKey
+            o1.password = o1.@password != null ? o1.password : o2.password
         }
     }
 }

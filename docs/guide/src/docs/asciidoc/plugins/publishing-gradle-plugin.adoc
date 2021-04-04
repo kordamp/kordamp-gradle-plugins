@@ -14,12 +14,11 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 `<<_org_kordamp_gradle_source,org.kordamp.gradle.source-jar>>` +
 `link:https://docs.gradle.org/current/userguide/publishing_maven.html[maven-publish]`, +
 `link:https://docs.gradle.org/current/userguide/signing_plugin.html[signing]`
-applied by:: `<<_org_kordamp_gradle_bintray,org.kordamp.gradle.bintray>>` +
-`<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
+applied by:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
 
 Configures a MavenPublication for the project's artifacts using the core `maven-publish` plugin.
 The name of the publication matches `"main"`. Published artifacts include the main JAR, sources,
-javadoc/groovydoc/kotlindoc/scaladoc JARs.  Artifacts will be automatically signed if the `uploadArchives` task is present.
+javadoc/groovydoc/kotlindoc/scaladoc JARs.
 
 Data defined in the DSL's `config.info` and `config.licensing` blocks will be used to fill out information required by the
 generated POM file.
@@ -33,13 +32,18 @@ generated POM file.
 config {
     publishing {
         enabled
-        signing
         releasesRepository
         snapshotsRepository
         publications
         scopes
         flattenPlatforms
         useVersionExpressions
+        <<_publishing_signing,signing>> {
+            enabled
+            keyId
+            secretKey
+            password
+        }
         <<_publishing_pom,pom>>  {
             properties
             parent
@@ -59,7 +63,6 @@ config {
 |===
 | Name                  | Type         | Required | Default Value | Description
 | enabled               | boolean      | no       | true          | Disables `org.kordamp.gradle.publishing` plugin if `false`
-| signing               | boolean      | no       | false         | Enables signing of all artifacts associated with `main`
 | releasesRepository    | String       | no       |               | Name of a Maven compatible repository for publishing releases
 | snapshotsRepository   | String       | no       |               | Name of a Maven compatible repository for publishing snapshots
 | publications          | List<String> | no       | []            | Publication names to be included
@@ -69,6 +72,27 @@ config {
 |===
 
 This block is optional.
+
+[[_publishing_signing]]
+*signing*
+
+[options="header", cols="5*"]
+|===
+| Name      | Type    | Required | Default Value | Description
+| enabled   | boolean | no       | false         | Disables artifact signing if `false`
+| keyId     | String  | no       |               | The public key ID (The last 8 symbols of the keyId. You can use `gpg -K` to get it)
+| secretKey | String  | no       |               | Ascii armored secret key used for signing
+| password  | String  | no       |               | The passphrase used to protect the private key
+|===
+
+If `signing` is set to `true` and no other properties are set then the signatory is expected to be set by conventional
+means explained at link:https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials[Signatory credentials].
+
+If both `secretKey` and `password` are set then the signatory will use an
+link:https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys[in-memory ascii-armored key].
+
+If `keyId`, `secretKey`, and `password` are set then the signatory will use an
+link:https://docs.gradle.org/current/userguide/signing_plugin.html#using_in_memory_ascii_armored_openpgp_subkeys[in-memory ascii-armored OpenPGP subkey].
 
 [[_publishing_pom]]
 *pom*
@@ -127,7 +151,9 @@ config {
     }
 
     publishing {
-        signing = true
+        signing {
+            enabled = true
+        }
         releasesRepository  = 'mavenRelease'
         snapshotsRepository = 'mavenSnapshot'
     }

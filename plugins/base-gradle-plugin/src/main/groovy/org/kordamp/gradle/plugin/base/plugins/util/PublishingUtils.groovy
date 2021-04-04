@@ -51,6 +51,7 @@ import org.kordamp.gradle.plugin.base.model.PomOptions
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
 import org.kordamp.gradle.plugin.base.model.artifact.Platform
 import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencyUtils
+import org.kordamp.gradle.plugin.base.plugins.Publishing
 
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.StringUtils.isBlank
@@ -103,22 +104,18 @@ class PublishingUtils {
                 MavenPublication mavenPublication = (MavenPublication) publication
                 configurePom(mavenPublication.pom, config, config.publishing.pom)
             }
-            signingExtension.sign(publication)
+
+            if (config.publishing.signing.getEnabled()) {
+                configureSigningExtension(signingExtension, config.publishing.signing)
+                signingExtension.sign(publication)
+            }
         }
 
         project.tasks.withType(Sign, new Action<Sign>() {
             @Override
             void execute(Sign t) {
                 t.onlyIf {
-                    if (config.publishing.signingSet) {
-                        return config.publishing.signing
-                    } else {
-                        String taskPath = ':uploadArchives'
-                        if (project.rootProject != project) {
-                            taskPath = project.path + taskPath
-                        }
-                        return project.gradle.taskGraph.hasTask(taskPath)
-                    }
+                    return config.publishing.signing.getEnabled()
                 }
             }
         })
@@ -130,14 +127,17 @@ class PublishingUtils {
 
         if (!publications) {
             Publication publication = publishingExtension.publications.findByName('main')
-            if (publication) {
+
+            if (publication && config.publishing.signing.getEnabled()) {
+                configureSigningExtension(signingExtension, config.publishing.signing)
                 signingExtension.sign(publication)
             }
         } else {
             for (String publicationName : publications) {
                 if (publicationName.contains('PluginMarker')) continue
                 Publication publication = publishingExtension.publications.findByName(publicationName)
-                if (publication) {
+                if (publication && config.publishing.signing.getEnabled()) {
+                    configureSigningExtension(signingExtension, config.publishing.signing)
                     signingExtension.sign(publication)
                 }
             }
@@ -147,14 +147,23 @@ class PublishingUtils {
             @Override
             void execute(Sign t) {
                 t.onlyIf {
-                    if (config.publishing.signingSet) {
-                        return config.publishing.signing
-                    } else {
-                        return project.gradle.taskGraph.hasTask(":${project.name}:uploadArchives".toString())
-                    }
+                    return config.publishing.signing.getEnabled()
                 }
             }
         })
+    }
+
+    static void configureSigningExtension(SigningExtension signingExtension, Publishing.Signing signing) {
+        if (isNotBlank(signing.keyId) && isNotBlank(signing.secretKey) && isNotBlank(signing.password)) {
+            signingExtension.useInMemoryPgpKeys(
+                signing.keyId,
+                signing.secretKey,
+                signing.password)
+        } else if (isNotBlank(signing.secretKey) && isNotBlank(signing.password)) {
+            signingExtension.useInMemoryPgpKeys(
+                signing.secretKey,
+                signing.password)
+        }
     }
 
     static boolean isPlatformDependency(org.gradle.api.artifacts.Dependency dep) {
