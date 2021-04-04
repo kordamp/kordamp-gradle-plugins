@@ -82,52 +82,49 @@ There are 5 types of activations available in the `profiles` DSL
 [source,groovy]
 ----
 os {
-    name(String)
-    arch(String)
-    version(String)
-    release(String)
-    classifier(String)
-    classifierWithLikes(List<String>)
+    name
+    arch
+    version
+    release
+    classifier
+    classifierWithLikes
 }
 ----
 
-Where each method defines elements to be matched (exactly or as regex)
+Where each property defines elements to be matched (exactly or as regex)
 
 [horizontal]
-name:: The expected OS name.
-arch:: The expected OS architecture.
-version:: The expected OS version.
-release:: The expected OS release (Linux).
-classifier:: The expected OS classifier.
-classifierWithLikes:: Additional classifiers.
+name:: The expected OS name. Type = `String`.
+arch:: The expected OS architecture. Type = `String`.
+version:: The expected OS version. Type = `String`.
+release:: The expected OS release (Linux). Type = `String`.
+classifier:: The expected OS classifier. Type = `String`.
+classifierWithLikes:: Additional classifiers. Type = `List<String>`.
 
 .jdk
 [source,groovy]
 ----
 jdk {
-    version(String)
+    version
 }
 ----
 
 [horizontal]
-version:: The version number to match. It may be a version prefix, such as `1.8`, or a version range, such as `[1.7,1.8)`.
+version:: The version number to match. It may be a version prefix, such as `1.8`, or a version range,
+such as `[1.7,1.8)`. Type = `String`.
 
 .file
 [source,groovy]
 ----
 file {
-    exists(String)
-    exists(File)
-    exists(RegularFile)
-    missing(String)
-    missing(File)
-    missing(RegularFile)
+    exists
+    missing
 }
 ----
 
 [horizontal]
-exists:: The given file must exist.
-missing:: The given file must *not* exist.
+exists:: The given file must exist. Type = `RegularFile`.
+missing:: The given file must *not* exist. Type = `RegularFile`.
 
 .custom
 [source,groovy]
@@ -143,14 +140,14 @@ custom {
 [source,groovy]
 ----
 property {
-    key(String)
-    value(String)
+    key
+    value
 }
 ----
 
 [horizontal]
-key:: The name of the property (required).
-value:: The Value of the property (optional).
+key:: The name of the property (required). Type = `String`.
+value:: The value of the property (optional). Type = `String`.
 
 Usage rules:
 
@@ -169,7 +166,7 @@ Examples:
 .Environment variable SECRET_TOKEN must exist
 ----
 property {
-    key('env.SECRET_TOKEN')
+    key = 'env.SECRET_TOKEN'
 }
 ----
 
@@ -177,7 +174,7 @@ property {
 .System property server_ip must not exist
 ----
 property {
-    key('!systemProp.server_ip')
+    key = '!systemProp.server_ip'
 }
 ----
 
@@ -185,8 +182,8 @@ property {
 .Project property must match value
 ----
 property {
-    key('region')
-    value('Frankfurt')
+    key   = 'region'
+    value = 'Frankfurt'
 }
 ----
 
@@ -194,8 +191,8 @@ property {
 .Project property must not match value
 ----
 property {
-    key('release')
-    value('!false')
+    key   = 'release'
+    value = '!false'
 }
 ----
 
