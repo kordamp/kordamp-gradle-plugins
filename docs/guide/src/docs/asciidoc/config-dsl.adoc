@@ -13,7 +13,6 @@ The DSL is comprised of the following elements
 config {
     <<_org_kordamp_gradle_base,info>> { ... }
     <<_base_dependencyManagement,dependencyManagement>> { ... }
-    <<_org_kordamp_gradle_bintray,bintray>> { ... }
     <<_org_kordamp_gradle_bom,bom>> { ... }
     <<_org_kordamp_gradle_buildinfo,buildInfo>> { ... }
     <<_org_kordamp_gradle_clirr,clirr>> { ... }
@@ -103,7 +102,6 @@ allprojects {
 .build.gradle (child)
 ----
 config {
-    bintray    { enabled = false }
     publishing { enabled = false }
 }
 ----
@@ -112,7 +110,6 @@ config {
 .build.gradle.kts (child)
 ----
 config {
-    bintray    { enabled = false }
     publishing { enabled = false }
 }
 ----

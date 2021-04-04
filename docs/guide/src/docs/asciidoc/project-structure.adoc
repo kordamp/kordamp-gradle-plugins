@@ -174,7 +174,6 @@ With this structure in place the next step would be to setup the minimum configu
 ----
 plugins {
     id 'org.kordamp.gradle.java-project' version '{project-version}'      //<1>
-    id 'org.kordamp.gradle.bintray'      version '{project-version}'      //<1>
 }
 
 config {
@@ -207,16 +206,6 @@ config {
             }
         }
     }
-
-    bintray {                                                             // <5>
-        credentials {
-            username = project.bintrayUsername
-            password = project.bintrayApiKey
-        }
-        userOrg    = 'joecool'
-        name       = rootProject.name
-        githubRepo = 'joecool/sample'
-    }
 }
 
 allprojects {
@@ -229,18 +218,13 @@ allprojects {
 <2> Conditionally enable some features related to publishing
 <3> General information for all projects
 <4> License details
-<5> Publishing specific information
 
 [source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
 .Kotlin
 ----
 plugins {
     id("org.kordamp.gradle.java-project") version "{project-version}"     //<1>
-    id("org.kordamp.gradle.bintray")      version "{project-version}"     //<1>
 }
-
-val bintrayUsername: String by project
-val bintrayApiKey: String by project
 
 config {
     release = rootProject.findProperty("release").toString().toBoolean()  //<2>
@@ -272,16 +256,6 @@ config {
             }
         }
     }
-
-    bintray {                                                             // <5>
-        credentials {
-            username = project.bintrayUsername
-            password = project.bintrayApiKey
-        }
-        userOrg    = "joecool"
-        name       = rootProject.name
-        githubRepo = "joecool/sample"
-    }
 }
 
 allprojects {
@@ -294,7 +268,6 @@ allprojects {
 <2> Conditionally enable some features related to publishing
 <3> General information for all projects
 <4> License details
-<5> Publishing specific information
 
 This minimal configuration enables the following features:
 
@@ -308,7 +281,6 @@ This minimal configuration enables the following features:
  * Configure the license plugin with the license details [conum,data-value=4]_4_.
  * Configure the `maven-publish` plugin with data defined in [conum,data-value=3]_3_ and [conum,data-value=4]_4_. The
   `-sources` and  `-javadoc` JARs are automatically added to the default publication.
- * Configure the `bintray` plugin with data defined in [conum,data-value=5]_5_.
  * Configure the `jacoco` plugin on each project.
  * Configure aggregate JaCoCo reports on the root project.
  * Generate a source stats task per project.

@@ -124,10 +124,4 @@ class Licensing extends AbstractFeature {
     boolean isEmpty() {
         licenses.isEmpty()
     }
-
-    List<String> resolveBintrayLicenseIds() {
-        List<String> ids = allLicenses().collect { it.licenseId?.bintray() ?: '' }.unique()
-        ids.remove('')
-        ids
-    }
 }

@@ -29,7 +29,6 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.tasks.reports.ReportGeneratingTask
-import org.kordamp.gradle.plugin.bintray.BintrayPlugin
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.coveralls.CoverallsPlugin
 import org.kordamp.gradle.plugin.jacoco.JacocoPlugin
@@ -102,7 +101,6 @@ class ProjectPlugin extends AbstractKordampPlugin {
         SourceStatsPlugin.applyIfMissing(project)
         SourceHtmlPlugin.applyIfMissing(project)
         SourceXrefPlugin.applyIfMissing(project)
-        BintrayPlugin.applyIfMissing(project)
         TestingPlugin.applyIfMissing(project)
 
         project.pluginManager.apply(VersionsPlugin)

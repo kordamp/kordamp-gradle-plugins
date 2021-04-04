@@ -32,9 +32,10 @@ dependencies {
     api project(':sourcehtml-gradle-plugin')
     api project(':sourcestats-gradle-plugin')
     api project(':sourcexref-gradle-plugin')
-    api project(':bintray-gradle-plugin')
     api project(':testing-gradle-plugin')
     api project(':integrationtest-gradle-plugin')
     api project(':functionaltest-gradle-plugin')
     api project(':sonar-gradle-plugin')
+    api "org.apache.maven:maven-artifact:$mavenVersion"
+    api "org.apache.commons:commons-lang3:$commonsLang3Version"
 }

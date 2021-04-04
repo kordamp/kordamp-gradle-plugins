@@ -57,14 +57,14 @@ class Links {
         List<String> errors = []
 
         if (getEnabled() && isBlank(website) && isBlank(extension.info.organization.url) &&
-            (extension.publishing.enabled || extension.bintray.enabled)) {
+            extension.publishing.enabled) {
             errors << "[${extension.project.name}] Project links.website is blank".toString()
         }
-        if (getEnabled() && isBlank(issueTracker) && extension.bintray.enabled) {
+        if (getEnabled() && isBlank(issueTracker)) {
             errors << "[${extension.project.name}] Project links.issueTracker is blank".toString()
         }
         if (getEnabled() && isBlank(scm) && isBlank(extension.info.scm.url) &&
-            (extension.publishing.enabled || extension.bintray.enabled)) {
+            extension.publishing.enabled) {
             errors << "[${extension.project.name}] Project links.scm is blank".toString()
         }
 

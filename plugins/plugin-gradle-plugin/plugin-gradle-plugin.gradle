@@ -21,5 +21,5 @@ dependencies {
 
 dependencies {
     api 'com.gradle.publish:plugin-publish-plugin:0.13.0'
-    api project(':bintray-gradle-plugin')
+    api "org.apache.maven:maven-model:$mavenVersion"
 }

@@ -134,20 +134,17 @@ class Information {
     List<String> validate(ProjectConfigurationExtension extension) {
         List<String> errors = []
 
-        if (isBlank(description) &&
-            (extension.publishing.enabled || extension.bintray.enabled)) {
+        if (isBlank(description) && extension.publishing.enabled) {
             errors << "[${project.name}] Project description is blank".toString()
         }
-        if (isBlank(getVendor()) &&
-            (extension.publishing.enabled || extension.bintray.enabled)) {
+        if (isBlank(getVendor()) && extension.publishing.enabled) {
             errors << "[${project.name}] Project vendor is blank".toString()
         }
-        if (isBlank(getUrl()) &&
-            (extension.publishing.enabled || extension.bintray.enabled)) {
+        if (isBlank(getUrl()) && extension.publishing.enabled) {
             errors << "[${project.name}] Project organization.url is blank".toString()
         }
         if ((scm.enabled && isBlank(scm.url)) && (links.enabled && isBlank(links.scm)) &&
-            (extension.publishing.enabled || extension.bintray.enabled)) {
+            extension.publishing.enabled) {
             errors << "[${project.name}] Project scm.url is blank".toString()
         }
 

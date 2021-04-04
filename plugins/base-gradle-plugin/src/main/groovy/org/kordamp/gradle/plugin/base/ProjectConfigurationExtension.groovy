@@ -114,7 +114,6 @@ class ProjectConfigurationExtension {
         map.putAll(dependencyManagement.toMap())
         if (buildInfo.visible) map.putAll(buildInfo.toMap())
         map.putAll(artifacts.toMap())
-        if (bintray.visible) map.putAll(bintray.toMap())
         if (publishing.visible) map.putAll(publishing.toMap())
         if (bom.visible) map.putAll(bom.toMap())
         if (licensing.visible) map.putAll(licensing.toMap())

@@ -7,8 +7,7 @@ id:: `org.kordamp.gradle.base`
 class:: `org.kordamp.gradle.plugin.base.BasePlugin`
     (link:api/org/kordamp/gradle/plugin/base/BasePlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/base/BasePlugin.html[source])
-applied by:: `<<_org_kordamp_gradle_bintray,org.kordamp.gradle.bintray>>`, +
-`<<_org_kordamp_gradle_bom,org.kordamp.gradle.bom>>`, +
+applied by:: `<<_org_kordamp_gradle_bom,org.kordamp.gradle.bom>>`, +
 `<<_org_kordamp_gradle_buildinfo,org.kordamp.gradle.build-info>>`, +
 `<<_org_kordamp_gradle_checkstyle,org.kordamp.gradle.chekcstyle>>`, +
 `<<_org_kordamp_gradle_clirr,org.kordamp.gradle.clirr>>`, +
@@ -200,14 +199,9 @@ The value for `vendor` may be omitted if a value for `organization.name` is give
 | Name         | Type    | Required | Default Value | Description
 | enabled      | boolean | no       | true          | Enables or disables this block.
 | website      | String  | yes      | empty         | Mapped to the `<url>` block in POM.
-                                                      Mapped to `bintray.pkg.websiteUrl`
-| issueTracker | String  | no*      | empty         | Mapped to `bintray.pkg.issueTracker`
+| issueTracker | String  | no*      | empty         |
 | scm          | String  | no*      | empty         | Mapped to the `<scm>` block in POM.
-                                                      Mapped to `bintray.pkg.websiteUrl`
 |===
-
-Values for `issueTracker` and `scm` should be defined if the `<<_org_kordamp_gradle_bintray,org.kordamp.gradle.bintray>>`
-plugin is used.
 
 [[_base_info_scm]]
 *scm*
@@ -288,9 +282,8 @@ APPEND:: Child values (if any) will be placed after inherited values (if any).
 UNIQUE:: Child and inherited values will be merged by license id.
 OVERWRITE:: Child values will be used unless empty, in which case inherited values will be used.
 
-The `sonatype` entry may be used by the `<<_org_kordamp_gradle_bintray,org.kordamp.gradle.bintray>>` plugin to configure
-auto-sync with Maven Central when pushing a publication. Named credentials my match the name of a repository, in which
-case they will be used during artifact publication on the matching repository.
+Named credentials may match the name of a repository, in which case they will be used during artifact publication on
+the matching repository.
 
 This block is optional.
 
@@ -355,7 +348,7 @@ This block defines data associated with a particular person.
 
 This block is optional if none of the following plugins are used: `<<_org_kordamp_gradle_javadoc,org.kordamp.gradle.javadoc>>`,
 `<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>`,
-`<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>`, `<<_org_kordamp_gradle_bintray,org.kordamp.gradle.bintray>>`.
+`<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>`.
 
 [[_base_info_person]]
 *person*
@@ -1427,29 +1420,23 @@ plugin 24:
     enabled: true
 
 plugin 25:
-    id: org.kordamp.gradle.bintray
-    version: {project-version}
-    implementationClass: org.kordamp.gradle.plugin.bintray.BintrayPlugin
-    enabled: true
-
-plugin 26:
     id: org.kordamp.gradle.testing
     version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.testing.TestingPlugin
     enabled: true
 
-plugin 27:
+plugin 26:
     id: com.github.ben-manes.versions
-    version: 0.33.0
+    version: 0.36.0
     implementationClass: com.github.benmanes.gradle.versions.VersionsPlugin
 
-plugin 28:
+plugin 27:
     id: org.kordamp.gradle.project
     version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.project.ProjectPlugin
     enabled: true
 
-plugin 29:
+plugin 28:
     id: net.nemerosa.versioning
     version: 2.14.0
     implementationClass: net.nemerosa.versioning.VersioningPlugin

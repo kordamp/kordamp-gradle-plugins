@@ -37,7 +37,6 @@ class EffectiveSettingsTask extends AbstractReportingTask {
     private final List<String> SECTIONS = [
         'info',
         'buildInfo',
-        'bintray',
         'publishing',
         'bom',
         'licensing',
