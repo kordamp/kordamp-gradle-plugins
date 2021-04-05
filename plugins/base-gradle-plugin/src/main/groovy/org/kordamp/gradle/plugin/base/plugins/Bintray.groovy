@@ -149,24 +149,7 @@ class Bintray extends AbstractFeature {
     }
 
     List<String> validate(ProjectConfigurationExtension extension) {
-        List<String> errors = []
-
-        if (!enabled) return errors
-
-        if (isBlank(userOrg)) {
-            errors << "[${project.name}] Bintray userOrg is blank".toString()
-        }
-
-        if (isBlank(credentials.username)) {
-            errors << "[${project.name}] Bintray credentials.username is blank".toString()
-        }
-        if (isBlank(credentials.password)) {
-            errors << "[${project.name}] Bintray credentials.password is blank".toString()
-        }
-
-        errors.addAll(extension.info.links.validate(extension))
-
-        errors
+        []
     }
 
     List<String> resolvePublications() {
