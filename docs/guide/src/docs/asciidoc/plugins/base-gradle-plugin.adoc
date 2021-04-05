@@ -1427,7 +1427,7 @@ plugin 25:
 
 plugin 26:
     id: com.github.ben-manes.versions
-    version: 0.36.0
+    version: 0.38.0
     implementationClass: com.github.benmanes.gradle.versions.VersionsPlugin
 
 plugin 27:

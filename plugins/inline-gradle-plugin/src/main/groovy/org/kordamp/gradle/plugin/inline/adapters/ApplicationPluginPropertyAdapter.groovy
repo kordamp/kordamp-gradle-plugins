@@ -22,7 +22,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaApplication
 import org.kordamp.gradle.plugin.inline.PropertyAdapter
 import org.kordamp.gradle.util.PluginUtils
-import org.kordamp.jipsy.ServiceProviderFor
+import org.kordamp.jipsy.annotations.ServiceProviderFor
 
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
