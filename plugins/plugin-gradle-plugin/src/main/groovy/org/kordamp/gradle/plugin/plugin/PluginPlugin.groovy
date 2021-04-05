@@ -82,16 +82,6 @@ class PluginPlugin extends AbstractKordampPlugin {
                 }
             })
 
-        project.tasks.register('publishRelease', DefaultTask,
-            new Action<DefaultTask>() {
-                @Override
-                void execute(DefaultTask t) {
-                    t.group = 'Publishing'
-                    t.description = 'Publishes plugin artifacts to the Gradle Plugin Portal'
-                    t.dependsOn(project.tasks.named('publishPlugins'))
-                }
-            })
-
         addProjectEvaluatedListener(project, new PublishingProjectEvaluatedListener())
 
         project.pluginManager.apply(JavaGradlePluginPlugin)
