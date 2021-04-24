@@ -269,6 +269,15 @@ Displays information used for profile activation.
 Name:: displayActivationInfo
 Type:: `org.kordamp.gradle.plugin.profiles.tasks.DisplayActivationInfoTask`
 
+[[_task_list_profiles]]
+=== ListProfiles
+
+Displays all configured profiles regardless of their activation state.
+
+[horizontal]
+Name:: listProfiles
+Type:: `org.kordamp.gradle.plugin.profiles.tasks.ListProfilesTask`
+
 ==== Example Output
 
 [source]

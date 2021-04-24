@@ -16,7 +16,11 @@
  * limitations under the License.
  */
 
-version = file('VERSION').text.trim()
+project.rootProject.ext.theVersion = file('VERSION').text.trim()
+
+allprojects { p ->
+    p.version = p.rootProject.ext.theVersion
+}
 
 config {
     info {

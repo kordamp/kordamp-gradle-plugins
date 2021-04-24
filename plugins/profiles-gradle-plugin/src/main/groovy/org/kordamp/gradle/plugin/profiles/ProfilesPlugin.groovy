@@ -24,6 +24,7 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.profiles.internal.ProfilesExtensionImpl
 import org.kordamp.gradle.plugin.profiles.tasks.ActiveProfilesTask
 import org.kordamp.gradle.plugin.profiles.tasks.DisplayActivationInfoTask
+import org.kordamp.gradle.plugin.profiles.tasks.ListProfilesTask
 
 /**
  *
@@ -56,6 +57,15 @@ class ProfilesPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         project.extensions.create(ProfilesExtension, 'profiles', ProfilesExtensionImpl, project)
+
+        project.tasks.register('listProfiles', ListProfilesTask,
+            new Action<ListProfilesTask>() {
+                @Override
+                void execute(ListProfilesTask t) {
+                    t.group = 'Insight'
+                    t.description = "Displays all profiles for project '$project.name'."
+                }
+            })
 
         project.tasks.register('activeProfiles', ActiveProfilesTask,
             new Action<ActiveProfilesTask>() {

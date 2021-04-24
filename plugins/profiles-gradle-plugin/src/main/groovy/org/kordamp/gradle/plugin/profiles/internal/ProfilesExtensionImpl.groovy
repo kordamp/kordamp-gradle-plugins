@@ -103,6 +103,16 @@ class ProfilesExtensionImpl implements ProfilesExtension {
         activeProfiles
     }
 
+    Set<String> getProfiles() {
+        Set<String> list = []
+        if (!isEnabled()) return list
+
+        for (ProfileInternal profile : profiles.values()) {
+            list << profile.id
+        }
+        list
+    }
+
     private class ProfileSpecImpl implements ProfileSpec {
         private Activation activation
         private Closure<Void> closure
