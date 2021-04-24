@@ -167,6 +167,10 @@ class PublishingPlugin extends AbstractKordampPlugin {
             return
         }
 
+        if (project.pluginManager.hasPlugin('java-platform')) {
+            config.publishing.pom.packaging = 'pom'
+        }
+
         project.publishing {
             publications {
                 for (String pub : config.publishing.publications) {
