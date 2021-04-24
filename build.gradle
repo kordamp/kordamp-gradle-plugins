@@ -43,13 +43,9 @@ config {
             enabled = true
             replaceJavadoc = true
             options {
-                link 'https://docs.gradle.org/5.0/javadoc/', 'org.gradle.'
+                link 'https://docs.gradle.org/6.0/javadoc/', 'org.gradle.'
             }
         }
-    }
-
-    bintray {
-        skipMavenSync = true
     }
 
     coverage {
@@ -73,8 +69,6 @@ projects.subprojects {
             info {
                 description = project_description
             }
-
-            bintray { enabled = true }
 
             plugins {
                 plugin {

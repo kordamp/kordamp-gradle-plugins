@@ -42,7 +42,6 @@ projects {
         }
         path(':') {
             id 'org.kordamp.gradle.groovy-project'
-            id 'org.kordamp.gradle.bintray'
         }
         path(':guide') {
             id 'org.kordamp.gradle.guide'
