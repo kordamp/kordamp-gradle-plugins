@@ -1,0 +1,21 @@
+project:
+  name: kordamp-gradle-plugins
+  description: A collection of opinionated Gradle plugins
+  longDescription: |
+    This project provides a set of Gradle plugins that follow an opinionated way to build Java, Groovy, Scala or Kotlin projects.
+    The conventions defined by these plugins closely follow common practices observed in many Open Source projects.
+  website: https://kordamp.org/kordamp-gradle-plugins/
+  authors:
+    - Andres Almiray
+  license: Apache-2.0
+
+release:
+  github:
+    username: aalmiray
+    overwrite: true
+    milestone:
+      name: '{{projectVersion}}'
+
+announce:
+  twitter:
+    active: release
