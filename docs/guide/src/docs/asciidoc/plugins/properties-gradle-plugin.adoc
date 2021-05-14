@@ -52,7 +52,7 @@ properties {
 |===
 | Name      | Type    | Required | Default Value | Description
 | enabled   | boolean | no       | true          | Enables or disables processing of the target format.
-| overwrite | boolean | no       | true          | Whether to overwrite existing properties or not.
+| overwrite | boolean | no       | true          | Whether to overwrite existing properties or not.
 |===
 
 NOTE: You may use the `systemProp` prefix to declare a System property instead of a project property, just like it's

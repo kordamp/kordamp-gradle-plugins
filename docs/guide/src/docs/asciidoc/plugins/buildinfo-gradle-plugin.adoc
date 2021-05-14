@@ -18,13 +18,13 @@ Defines a set of build related properties. These properties are
 [options="header", cols="3*"]
 |===
 | Name             | Type             | Description
-| buildDate        | String           | The value of current timestamp formatted with "yyyy-MM-dd"
-| buildTime        | String           | The value of current timestamp formatted with "HH:mm:ssXXX"
-| buildBy          | String           | The value of the `user.name` System property
-| buildRevision    | String           | The value of the latest commit hash
-| buildJdk         | String           | Concatenation of the following System properties [`java.version`, `java.vendor`, `java.vm.version`]
-| buildOs          | String           | Concatenation of the following System properties [`os.name`, `os.version`, `os.arch`]
-| buildCreatedBy   | String           | The Gradle version used in the build
+| buildDate        | String           | The value of current timestamp formatted with "yyyy-MM-dd"
+| buildTime        | String           | The value of current timestamp formatted with "HH:mm:ssXXX"
+| buildBy          | String           | The value of the `user.name` System property
+| buildRevision    | String           | The value of the latest commit hash
+| buildJdk         | String           | Concatenation of the following System properties [`java.version`, `java.vendor`, `java.vm.version`]
+| buildOs          | String           | Concatenation of the following System properties [`os.name`, `os.version`, `os.arch`]
+| buildCreatedBy   | String           | The Gradle version used in the build
 |===
 
 These properties are consumed by the `<<_org_kordamp_gradle_jar,org.kordamp.gradle.jar>>` plugin when enhancing the

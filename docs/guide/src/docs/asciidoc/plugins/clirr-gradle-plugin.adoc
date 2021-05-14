@@ -42,12 +42,12 @@ config {
 |===
 | Name            | Type      | Required | Default Value | Description
 | enabled         | boolean   | no       | true          | Disables `org.kordamp.gradle.clirr` plugin if `false`
-| baseline        | String    | no       |               | Maven coordinates of the previous version, i.e. `groupId:artifactId:version`
-| filterFile      | File      | no       |               | A YAML file containing exclusions
-| filter          | Predicate | no       |               | Excludes a compatibility issue if there’s a matching criteria
-| failOnErrors    | boolean   | no       | true          | Abort the build if a compatibility issue with severity "error" is found
-| failOnException | boolean   | no       | false         | Abort the build if Clirr triggers an Exception during its checks
-| semver          | boolean   | no       | true          | Evaluates the project’s version using semver rules
+| baseline        | String    | no       |               | Maven coordinates of the previous version, i.e. `groupId:artifactId:version`
+| filterFile      | File      | no       |               | A YAML file containing exclusions
+| filter          | Predicate | no       |               | Excludes a compatibility issue if there’s a matching criteria
+| failOnErrors    | boolean   | no       | true          | Abort the build if a compatibility issue with severity "error" is found
+| failOnException | boolean   | no       | false         | Abort the build if Clirr triggers an Exception during its checks
+| semver          | boolean   | no       | true          | Evaluates the project’s version using semver rules
 |===
 
 This block is optional.

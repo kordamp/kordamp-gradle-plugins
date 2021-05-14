@@ -23,13 +23,13 @@ for example
 ├── build.gradle
 ├── settings.gradle
 ├── docs
-│   └── guide
-│       └── guide.gradle
+│   └── guide
+│       └── guide.gradle
 └── subprojects
-    ├── project1
-    │   ├── project1.gradle
-    └── project2
-        └── project2.gradle
+    ├── project1
+    │   ├── project1.gradle
+    └── project2
+        └── project2.gradle
 ----
 
 multi-level::
@@ -41,12 +41,12 @@ Subprojects are defined using any directory structure, for example
 ├── build.gradle
 ├── settings.gradle
 ├── guide
-│   └── guide.gradle
+│   └── guide.gradle
 └── subprojects
-    ├── project1
-    │   ├── project1.gradle
-    └── project2
-        └── project2.gradle
+    ├── project1
+    │   ├── project1.gradle
+    └── project2
+        └── project2.gradle
 ----
 
 standard::
@@ -58,11 +58,11 @@ Suprojects are defined as direct children of the root project, for example
 ├── build.gradle
 ├── settings.gradle
 ├── guide
-│   └── guide.gradle
+│   └── guide.gradle
 ├── project1
-│   └── project1.gradle
+│   └── project1.gradle
 └── project2
-    └── project2.gradle
+    └── project2.gradle
 ----
 
 Build files should be renamed to match their containing directory unless `enforceNamingConvention` is set
@@ -103,14 +103,14 @@ projects {
 [options="header", cols="5*"]
 |===
 | Name                    | Type                   | Required | Default Value | Description
-| cache                   | boolean                | no       | false         | If `true` then the project structure will be cached.
+| cache                   | boolean                | no       | false         | If `true` then the project structure will be cached.
 | layout                  | Layout                 | no       | TWO_LEVEL     | Defines the project layout. Valid values are [TWO_LEVEL, MULTI_LEVEL, STANDARD, EXPLICIT]. +
                                                                                 Also accepts literal values [`two-level`, `multi-level`, `standard`, `explicit`].
-| enforceNamingConvention | boolean                | no       | true          | If `true` then build file names must match their containing project directory name.
-| useLongPaths            | boolean                | no       | false         | If `true` then projects will use their long paths when layout != `standard`.
-| directories             | List<String>           | no*      | []            | List of directories to include for `two-level` and `multi-level` layout.
-| excludes                | Set<String>            | no       | []            | Set of directories to be excluded from automatic inclusion.
-| fileNameTransformation  | FileNameTransformation | no       |               | Transformation applied to build file name. Valid values are [ADD, REMOVE]. +
+| enforceNamingConvention | boolean                | no       | true          | If `true` then build file names must match their containing project directory name.
+| useLongPaths            | boolean                | no       | false         | If `true` then projects will use their long paths when layout != `standard`.
+| directories             | List<String>           | no*      | []            | List of directories to include for `two-level` and `multi-level` layout.
+| excludes                | Set<String>            | no       | []            | Set of directories to be excluded from automatic inclusion.
+| fileNameTransformation  | FileNameTransformation | no       |               | Transformation applied to build file name. Valid values are [ADD, REMOVE]. +
                                                                                 Also accepts literal values [`add`, `remove`].
 | prefix                  | String                 | no       |               | Prefix added/removed from build file name.
 | suffix                  | String                 | no       |               | Suffix added/removed from build file name.
@@ -149,13 +149,13 @@ A project with the following structure
 ├── build.gradle
 ├── settings.gradle
 ├── docs
-│   └── guide
-│       └── guide.gradle
+│   └── guide
+│       └── guide.gradle
 └── subprojects
-    ├── project1
-    │   ├── project1.gradle
-    └── project2
-        └── project2.gradle
+    ├── project1
+    │   ├── project1.gradle
+    └── project2
+        └── project2.gradle
 ----
 
 Can be configured as follows
@@ -206,12 +206,12 @@ A project with the following structure
 ├── build.gradle
 ├── settings.gradle
 ├── guide
-│   └── guide.gradle
+│   └── guide.gradle
 └── subprojects
-    ├── project1
-    │   ├── project1.gradle
-    └── project2
-        └── project2.gradle
+    ├── project1
+    │   ├── project1.gradle
+    └── project2
+        └── project2.gradle
 ----
 
 Can be configured as follows
@@ -274,11 +274,11 @@ A project with the following structure
 ├── build.gradle
 ├── settings.gradle
 ├── guide
-│   └── guide.gradle
+│   └── guide.gradle
 ├── project1
-│   └── project1.gradle
+│   └── project1.gradle
 └── project2
-    └── project2.gradle
+    └── project2.gradle
 ----
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
@@ -327,12 +327,12 @@ A project with the following structure
 ├── build.gradle
 ├── settings.gradle
 ├── guide
-│   └── guide.gradle
+│   └── guide.gradle
 └── subprojects
-    ├── project1
-    │   ├── project1.gradle
-    └── project2
-        └── project2.gradle
+    ├── project1
+    │   ├── project1.gradle
+    └── project2
+        └── project2.gradle
 ----
 
 Can be configured as follows
@@ -389,9 +389,9 @@ A project with the following structure
 ├── build.gradle
 ├── settings.gradle
 ├── core
-│   └── project-core.gradle
+│   └── project-core.gradle
 └── ext
-    └── project-ext.gradle
+    └── project-ext.gradle
 ----
 
 Can be configured as follows
@@ -446,9 +446,9 @@ A project with the following structure
 ├── build.gradle
 ├── settings.gradle
 ├── project-core
-│   └── core.gradle
+│   └── core.gradle
 └── project-ext
-    └── ext.gradle
+    └── ext.gradle
 ----
 
 Can be configured as follows

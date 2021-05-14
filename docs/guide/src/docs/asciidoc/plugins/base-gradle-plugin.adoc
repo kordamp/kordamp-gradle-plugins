@@ -265,8 +265,8 @@ This block is optional.
 [options="header", cols="5*"]
 |===
 | Name          | Type          | Required | Default Value | Description
-| github        | Credentials   | no*      |               | Username/Password for connecting to GitHub
-| sonatype      | Credentials   | no*      |               | Username/Password for connecting to Maven Central
+| github        | Credentials   | no*      |               | Username/Password for connecting to GitHub
+| sonatype      | Credentials   | no*      |               | Username/Password for connecting to Maven Central
 | named         | Credentials   | no*      |               | Defines a named credentials entry. Name may match a repository entry.
 | inherits      | boolean       | no       | true          | Whether to inherit values from a parent `POM`.
 | mergeStrategy | MergeStrategy | no       | UNIQUE        | One of `PREPEND`, `APPEND`, `UNIQUE`, `OVERWRITE`.
@@ -1012,7 +1012,7 @@ extension 2:
     type: org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 
 extension 3:
-    name: projects
+    name: gradleProjects
     type: org.kordamp.gradle.plugin.base.ProjectsExtension
 
 extension 4:
@@ -1151,10 +1151,10 @@ For a project defined as follows
 ├── build.gradle
 ├── settings.gradle
 └── subprojects
-    ├── project1
-    │   ├── project1.gradle
-    └── project2
-        └── project2.gradle
+    ├── project1
+    │   ├── project1.gradle
+    └── project2
+        └── project2.gradle
 ----
 
 [source,groovy,subs="verbatim,attributes"]

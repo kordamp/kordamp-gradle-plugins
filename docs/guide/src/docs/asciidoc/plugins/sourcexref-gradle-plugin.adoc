@@ -46,16 +46,16 @@ config {
 |===
 | Name           | Type        | Required | Default Value                                  | Description
 | enabled        | boolean     | no       | true                                           | Disables `org.kordamp.gradle.source-xref` plugin if `false`
-| templateDir    | String      | no       |                                                |
-| inputEncoding  | String      | no       | UTF-8                                          |
-| outputEncoding | String      | no       | UTF-8                                          |
-| windowTitle    | String      | no       | "${project.name} ${project.version} Reference" |
-| docTitle       | String      | no       | "${project.name} ${project.version} Reference" |
-| bottom         | String      | no       |                                                |
-| stylesheet     | String      | no       |                                                |
-| javaVersion    | String      | no       | `JavaVersion.current()`                        |
-| excludes       | Set<String> | no       | []                                             |
-| includes       | Set<String> | no       | []                                             |
+| templateDir    | String      | no       |                                                |
+| inputEncoding  | String      | no       | UTF-8                                          |
+| outputEncoding | String      | no       | UTF-8                                          |
+| windowTitle    | String      | no       | "${project.name} ${project.version} Reference" |
+| docTitle       | String      | no       | "${project.name} ${project.version} Reference" |
+| bottom         | String      | no       |                                                |
+| stylesheet     | String      | no       |                                                |
+| javaVersion    | String      | no       | `JavaVersion.current()`                        |
+| excludes       | Set<String> | no       | []                                             |
+| includes       | Set<String> | no       | []                                             |
 |===
 
 .Methods

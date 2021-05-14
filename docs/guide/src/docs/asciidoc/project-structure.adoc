@@ -14,18 +14,18 @@ may be added at later stages during development. Thus the minimum structure coul
 .
 ├── build.gradle
 ├── gradle
-│   └── wrapper
-│       ├── gradle-wrapper.jar
-│       └── gradle-wrapper.properties
+│   └── wrapper
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties
 ├── gradle.properties
 ├── gradlew
 ├── gradlew.bat
 ├── settings.gradle
 └── subprojects
-    └── project1
-        ├── build.gradle
-        └── src
-            └── main
+    └── project1
+        ├── build.gradle
+        └── src
+            └── main
 ----
 
 There are many ways to structure a multi-project build. Some prefer adding all submodule directories at the root level,
@@ -37,29 +37,29 @@ to pick the structure that suits your style better. Personally I prefer the foll
 .
 ├── build.gradle
 ├── gradle
-│   └── wrapper
-│       ├── gradle-wrapper.jar
-│       └── gradle-wrapper.properties
+│   └── wrapper
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties
 ├── gradle.properties
 ├── gradlew
 ├── gradlew.bat
 ├── settings.gradle
 ├── docs
-│   └── guide
-│       ├── guide.gradle
-│       └── src
-│           └── docs
-│               ├── asciidoc
-│               └── resources
+│   └── guide
+│       ├── guide.gradle
+│       └── src
+│           └── docs
+│               ├── asciidoc
+│               └── resources
 └── subprojects
-    ├── project1
-    │   ├── project1.gradle
-    │   └── src
-    │       └── main
-    └── project2
-        ├── project2.gradle
-        └── src
-            └── main
+    ├── project1
+    │   ├── project1.gradle
+    │   └── src
+    │       └── main
+    └── project2
+        ├── project2.gradle
+        └── src
+            └── main
 ----
 
 You'll notice that source code projects are placed under `subprojects` while documentation projects are placed under `docs`.

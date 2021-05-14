@@ -27,31 +27,31 @@ Using the following project layout as an example
 .
 ├── build.gradle
 ├── gradle
-│   └── wrapper
-│       ├── gradle-wrapper.jar
-│       └── gradle-wrapper.properties
+│   └── wrapper
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties
 ├── gradle.properties
 ├── gradlew
 ├── gradlew.bat
 ├── settings.gradle
 ├── docs
-│   └── guide
-│       ├── guide.gradle
-│       └── src
-│           └── docs
-│               ├── asciidoc
-│               └── resources
+│   └── guide
+│       ├── guide.gradle
+│       └── src
+│           └── docs
+│               ├── asciidoc
+│               └── resources
 └── subprojects
-    ├── sample-bom
-    │   └── sample-bom.gradle
-    ├── project1
-    │   ├── project1.gradle
-    │   └── src
-    │       └── main
-    └── project2
-        ├── project2.gradle
-        └── src
-            └── main
+    ├── sample-bom
+    │   └── sample-bom.gradle
+    ├── project1
+    │   ├── project1.gradle
+    │   └── src
+    │       └── main
+    └── project2
+        ├── project2.gradle
+        └── src
+            └── main
 ----
 
 With the following content set in the `sample-bom.gradle` build file
