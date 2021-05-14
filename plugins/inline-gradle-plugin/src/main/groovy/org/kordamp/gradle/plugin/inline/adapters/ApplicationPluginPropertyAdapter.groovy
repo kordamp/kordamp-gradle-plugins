@@ -51,7 +51,7 @@ class ApplicationPluginPropertyAdapter extends AbstractPropertyAdapter {
 
         String mainClass = resolveProperty(project, 'application.mainClass') ?: resolveProperty(project, 'exec.mainClass')
         if (isNotBlank(mainClass)) {
-            if (PluginUtils.isGradleCompatible('6.4')) {
+            if (PluginUtils.isGradle6Compatible()) {
                 project.logger.debug("Setting application.mainClass to '{}'", mainClass)
                 application.mainClass.set(mainClass)
             } else {
@@ -68,7 +68,7 @@ class ApplicationPluginPropertyAdapter extends AbstractPropertyAdapter {
 
         String mainModule = resolveProperty(project, 'application.mainModule')
         if (isNotBlank(mainModule)) {
-            if (PluginUtils.isGradleCompatible('6.4')) {
+            if (PluginUtils.isGradle6Compatible()) {
                 project.logger.debug("Setting application.mainModule to '{}'", mainClass)
                 application.mainModule.set(mainModule)
             }

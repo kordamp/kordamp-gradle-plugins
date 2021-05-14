@@ -34,6 +34,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
 import org.kordamp.gradle.plugin.base.model.artifact.Platform
 
+import static org.kordamp.gradle.util.PluginUtils.isGradle7Compatible
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
 import static org.kordamp.gradle.util.StringUtils.isBlank
@@ -72,17 +73,27 @@ class MinpomTask extends DefaultTask {
             d.name != 'unspecified'
         }
 
-        Map<String, org.gradle.api.artifacts.Dependency> compileDependencies = project.configurations.findByName('compile')
-            .allDependencies.findAll(filter)
-            .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+        Map<String, org.gradle.api.artifacts.Dependency> compileDependencies = [:]
+        Map<String, org.gradle.api.artifacts.Dependency> runtimeDependencies = [:]
+        Map<String, org.gradle.api.artifacts.Dependency> testDependencies = [:]
 
-        Map<String, org.gradle.api.artifacts.Dependency> runtimeDependencies = project.configurations.findByName('runtime')
-            .allDependencies.findAll(filter)
-            .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+        if (!isGradle7Compatible()) {
+            compileDependencies = project.configurations.findByName('compile')
+                .allDependencies.findAll(filter)
+                .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+        }
 
-        Map<String, org.gradle.api.artifacts.Dependency> testDependencies = project.configurations.findByName('testRuntime')
-            .allDependencies.findAll(filter)
-            .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+        if (!isGradle7Compatible()) {
+            runtimeDependencies = project.configurations.findByName('runtime')
+                .allDependencies.findAll(filter)
+                .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+        }
+
+        if (!isGradle7Compatible()) {
+            testDependencies = project.configurations.findByName('testRuntime')
+                .allDependencies.findAll(filter)
+                .collectEntries({ [("${it.group}:${it.name}:${it.version}"): it] })
+        }
 
         Map<String, org.gradle.api.artifacts.Dependency> providedDependencies = project.configurations.findByName('compileOnly')
             .allDependencies.findAll(filter)

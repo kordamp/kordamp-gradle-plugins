@@ -151,6 +151,10 @@ class PluginUtils {
         GradleVersion.current() >= GradleVersion.version('6.0')
     }
 
+    static boolean isGradle7Compatible() {
+        GradleVersion.current() >= GradleVersion.version('7.0')
+    }
+
     static Configuration registerJarVariant(String feature,
                                             String classifier,
                                             TaskProvider<Jar> jarProvider,
