@@ -179,16 +179,15 @@ class LicensingPlugin extends AbstractKordampPlugin {
             void execute(LicenseCheck t) {
                 t.description = 'Scanning license on Gradle files'
                 t.source = project.fileTree(project.projectDir) {
-                    include('**/*.gradle')
-                    include('**/*.gradle.kts')
-                    include('**/gradle.properties')
-                    include('**/gradle.yml')
-                    include('**/gradle.toml')
-                    exclude("**/${project.buildDir.name}/**/*.gradle")
-                    exclude("**/${project.buildDir.name}/**/*.gradle.kts")
-                    exclude("**/${project.buildDir.name}/**/gradle.properties")
-                    exclude("**/${project.buildDir.name}/**/gradle.yml")
-                    exclude("**/${project.buildDir.name}/**/gradle.toml")
+                    include('*.gradle')
+                    include('*.gradle.kts')
+                    include('gradle/*.gradle')
+                    include('gradle/*.gradle.kts')
+                    include('buildSrc/**/*.gradle')
+                    include('buildSrc/**/*.gradle.kts')
+                    include('gradle.properties')
+                    include('gradle.yml')
+                    include('gradle.toml')
                 }
             }
         })
@@ -200,16 +199,15 @@ class LicensingPlugin extends AbstractKordampPlugin {
             void execute(LicenseFormat t) {
                 t.description = 'Scanning license on Gradle files'
                 t.source = project.fileTree(project.projectDir) {
-                    include('**/*.gradle')
-                    include('**/*.gradle.kts')
-                    include('**/gradle.properties')
-                    include('**/gradle.yml')
-                    include('**/gradle.toml')
-                    exclude("**/${project.buildDir.name}/**/*.gradle")
-                    exclude("**/${project.buildDir.name}/**/*.gradle.kts")
-                    exclude("**/${project.buildDir.name}/**/gradle.properties")
-                    exclude("**/${project.buildDir.name}/**/gradle.yml")
-                    exclude("**/${project.buildDir.name}/**/gradle.toml")
+                    include('*.gradle')
+                    include('*.gradle.kts')
+                    include('gradle/*.gradle')
+                    include('gradle/*.gradle.kts')
+                    include('buildSrc/**/*.gradle')
+                    include('buildSrc/**/*.gradle.kts')
+                    include('gradle.properties')
+                    include('gradle.yml')
+                    include('gradle.toml')
                 }
             }
         })
@@ -221,8 +219,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
             void execute(LicenseCheck t) {
                 t.description = 'Scanning license on Maven files'
                 t.source = project.fileTree(project.projectDir) {
-                    include('**/pom.xml')
-                    exclude("**/${project.buildDir.name}/**/pom.xml")
+                    include('pom.xml')
                 }
             }
         })
@@ -234,8 +231,7 @@ class LicensingPlugin extends AbstractKordampPlugin {
             void execute(LicenseFormat t) {
                 t.description = 'Scanning license on Maven files'
                 t.source = project.fileTree(project.projectDir) {
-                    include('**/pom.xml')
-                    exclude("**/${project.buildDir.name}/**/pom.xml")
+                    include('pom.xml')
                 }
             }
         })
