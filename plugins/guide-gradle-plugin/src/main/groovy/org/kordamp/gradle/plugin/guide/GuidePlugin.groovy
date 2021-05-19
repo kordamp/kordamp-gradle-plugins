@@ -332,6 +332,16 @@ class GuidePlugin extends AbstractKordampPlugin {
                                    |Lorem ipsum dolor sit amet
                                    |""".stripMargin('|')
         }
+
+        File asciidoctorconfigIncludeDir = touchFile(project.file("${asciidocDir}/.asciidoctorconfig"))
+        if (!asciidoctorconfigIncludeDir.text) {
+            asciidoctorconfigIncludeDir.text = ':includedir: {asciidoctorconfigdir}'
+        }
+
+        File asciidoctorconfigRootDir = touchFile(project.rootProject.file(".asciidoctorconfig"))
+        if (!asciidoctorconfigRootDir.text) {
+            asciidoctorconfigRootDir.text = ':root-dir: {asciidoctorconfigdir}'
+        }
     }
 
     static File touchFile(File file) {
