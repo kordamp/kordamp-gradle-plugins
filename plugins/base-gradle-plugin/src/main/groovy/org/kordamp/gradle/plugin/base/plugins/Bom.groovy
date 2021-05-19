@@ -38,7 +38,6 @@ class Bom extends AbstractFeature implements PomOptions, DependencyManagement {
 
     final String packaging = 'pom'
 
-    private final Map<String, Dependency> dependencies = [:]
     Set<String> excludes = new LinkedHashSet<>()
     Set<String> includes = new LinkedHashSet<>()
 
@@ -99,10 +98,6 @@ class Bom extends AbstractFeature implements PomOptions, DependencyManagement {
                 config.artifacts.source.enabled = false
             }
         }
-    }
-
-    Map<String, Dependency> getDependencies() {
-        Collections.unmodifiableMap(dependencies)
     }
 
     @Override
@@ -190,7 +185,6 @@ class Bom extends AbstractFeature implements PomOptions, DependencyManagement {
 
     static void merge(Bom o1, Bom o2) {
         AbstractFeature.merge(o1, o2)
-        CollectionUtils.merge(o1.@dependencies, o2.@dependencies)
         o1.excludes = CollectionUtils.merge(o1.excludes, o2.excludes, false)
         o1.includes = CollectionUtils.merge(o1.includes, o2.includes, false)
         o1.properties = CollectionUtils.merge(o1.properties, o2.properties, false)
@@ -215,11 +209,5 @@ class Bom extends AbstractFeature implements PomOptions, DependencyManagement {
         if (!enabled) return errors
 
         errors
-    }
-
-    void dependency(Dependency dependency) {
-        if (dependency) {
-            dependencies[dependency.name] = dependency
-        }
     }
 }

@@ -26,6 +26,8 @@ import org.gradle.api.Action
  */
 @CompileStatic
 interface DependencyManagement {
+    Dependency dependency(Dependency dependency)
+
     /**
      * Defines a dependency.</p>
      * Dependency name will be equal to parsed {@code artifactId}.</p>

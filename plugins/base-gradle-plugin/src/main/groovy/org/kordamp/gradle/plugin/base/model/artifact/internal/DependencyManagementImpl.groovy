@@ -80,6 +80,15 @@ class DependencyManagementImpl implements DependencyManagement {
     }
 
     @Override
+    Dependency dependency(Dependency dependency) {
+        if (dependency) {
+            dependencies[dependency.name] = dependency
+        }
+
+        dependency
+    }
+
+    @Override
     Dependency dependency(String gavNotation) {
         if (isBlank(gavNotation)) {
             throw new IllegalArgumentException('Dependency notation cannot be blank.')

@@ -32,6 +32,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Credentials
 import org.kordamp.gradle.plugin.base.model.Repository
 import org.kordamp.gradle.plugin.base.model.artifact.Dependency
+import org.kordamp.gradle.plugin.base.model.artifact.Platform
 import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencyUtils
 import org.kordamp.gradle.plugin.base.plugins.Bom
 import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
@@ -172,19 +173,22 @@ class BomPlugin extends AbstractKordampPlugin {
                         for (Dependency d : config.bom.dependencies.values()) {
                             String versionKey = d.name + '.version'
                             String versionExp = '${' + versionKey + '}'
-                            versions.put(versionKey, d.version)
                             dependencyManagementNode.appendNode('dependency').with {
                                 appendNode('groupId', d.groupId)
                                 appendNode('artifactId', d.artifactId)
                                 appendNode('version', versionExp)
-                                if (d.platform) {
+                                if (d instanceof Platform) {
                                     appendNode('scope', 'import')
                                     appendNode('type', 'pom')
                                 }
                             }
                         }
+                    }
 
-                        pom.properties.putAll(versions)
+                    // eager
+                    for (Dependency d : config.bom.dependencies.values()) {
+                        String versionKey = d.name + '.version'
+                        versions.put(versionKey, d.version)
                     }
 
                     config.bom.properties.putAll(versions)
