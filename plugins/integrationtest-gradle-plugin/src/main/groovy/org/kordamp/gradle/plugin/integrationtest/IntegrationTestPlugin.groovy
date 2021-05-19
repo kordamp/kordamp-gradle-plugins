@@ -152,6 +152,7 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
     private void adjustTaskDependencies(Project project) {
         SourceSet sourceSet = ((SourceSetContainer) resolveSourceSets(project)).findByName('integrationTest')
         IntegrationTest integrationTest = (IntegrationTest) project.tasks.findByName('integrationTest')
+        integrationTest.include('**/*Test.class', '**/*IT.class')
         integrationTest.classpath = sourceSet.runtimeClasspath
         TestReport integrationTestReport = (TestReport) project.tasks.findByName('integrationTestReport')
         integrationTest.dependsOn project.tasks.findByName('jar')
