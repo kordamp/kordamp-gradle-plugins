@@ -34,6 +34,7 @@ import org.kordamp.gradle.plugin.test.tasks.IntegrationTest
 import javax.inject.Named
 
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
+import static org.kordamp.gradle.util.PluginUtils.isGradle7Compatible
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.PluginUtils.resolveSourceSets
 import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
@@ -137,7 +138,7 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
     private void adjustConfigurations(Project project) {
         String compileSuffix = 'Compile'
         String runtimeSuffix = 'Runtime'
-        if (supportsApiConfiguration(project)) {
+        if (supportsApiConfiguration(project) || isGradle7Compatible()) {
             compileSuffix = 'Implementation'
             runtimeSuffix = 'RuntimeOnly'
         }
@@ -166,7 +167,7 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
     private void createConfigurationsIfNeeded(Project project) {
         String compileSuffix = 'Compile'
         String runtimeSuffix = 'Runtime'
-        if (supportsApiConfiguration(project)) {
+        if (supportsApiConfiguration(project) || isGradle7Compatible()) {
             compileSuffix = 'Implementation'
             runtimeSuffix = 'RuntimeOnly'
         }

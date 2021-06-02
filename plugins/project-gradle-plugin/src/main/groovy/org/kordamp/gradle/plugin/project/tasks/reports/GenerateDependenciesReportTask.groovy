@@ -26,6 +26,7 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.base.tasks.reports.ReportGeneratingTask
 
+import static org.kordamp.gradle.util.PluginUtils.isGradle7Compatible
 import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
 
 /**
@@ -74,14 +75,16 @@ class GenerateDependenciesReportTask extends DefaultTask implements ReportGenera
             d.name != 'unspecified'
         }
 
-        Map<String, List<Dependency>> map = [
-            compile: project.configurations.findByName('compile')
-                ?.allDependencies?.findAll(filter)
-                ?.collect { it }?.sort(),
-            runtime: project.configurations.findByName('runtime')
+        Map<String, List<Dependency>> map = [:]
+
+        if (!isGradle7Compatible()) {
+            map.compile = project.configurations.findByName('compile')
                 ?.allDependencies?.findAll(filter)
                 ?.collect { it }?.sort()
-        ]
+            map.runtime = project.configurations.findByName('runtime')
+                ?.allDependencies?.findAll(filter)
+                ?.collect { it }?.sort()
+        }
 
         if (supportsApiConfiguration(project)) {
             map.api = project.configurations.findByName('api')

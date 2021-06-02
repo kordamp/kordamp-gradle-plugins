@@ -43,6 +43,7 @@ import javax.inject.Named
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
+import static org.kordamp.gradle.util.PluginUtils.isGradle7Compatible
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
 
@@ -154,7 +155,7 @@ class ClirrPlugin extends AbstractKordampPlugin {
                     t.group = 'Verification'
                     t.description = 'Determines the binary compatibility of the current codebase against a previous release.'
                     t.newFiles = newfiles ?: t.project.objects.fileCollection()
-                    t.newClasspath = t.project.configurations[supportsApiConfiguration(t.project) ? 'api' : 'compile']
+                    t.newClasspath = t.project.configurations[supportsApiConfiguration(t.project) || isGradle7Compatible() ? 'api' : 'compile']
                     t.xmlReport = t.project.file("${t.project.reporting.baseDir.path}/clirr/compatibility-report.xml")
                     t.htmlReport = t.project.file("${t.project.reporting.baseDir.path}/clirr/compatibility-report.html")
                     t.enabled = !newfiles.isEmpty()
