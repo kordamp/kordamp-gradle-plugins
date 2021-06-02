@@ -20,13 +20,11 @@ package org.kordamp.gradle.plugin.project.java
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
 import org.gradle.api.plugins.AppliedPlugin
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSet
@@ -37,10 +35,8 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.javadoc.JavadocPlugin
 import org.kordamp.gradle.plugin.project.ConfigurationsDependencyHandler
 import org.kordamp.gradle.plugin.project.DefaultConfigurationsDependencyHandler
-import org.kordamp.gradle.plugin.project.DependencyHandler
 import org.kordamp.gradle.plugin.project.ProjectPlugin
 import org.kordamp.gradle.plugin.project.internal.DependencyHandlerImpl
-import org.kordamp.gradle.plugin.project.internal.DeprecatedDependencyHandlerImpl
 import org.kordamp.gradle.plugin.project.java.tasks.JarSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.JavaCompilerSettingsTask
 import org.kordamp.gradle.plugin.project.java.tasks.JavaExecSettingsTask
@@ -97,7 +93,6 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
                 DependencyHandlerImpl dhi = project.objects.newInstance(DependencyHandlerImpl, project)
                 project.dependencies.extensions.add(ConfigurationsDependencyHandler, 'applyTo', dhi.configurationsDependencyHandler())
                 project.dependencies.extensions.add(DefaultConfigurationsDependencyHandler, 'applyToDefaults', dhi.defaultConfigurationsDependencyHandler())
-                project.dependencies.extensions.create(DependencyHandler, 'cfg', DeprecatedDependencyHandlerImpl, project)
 
                 project.tasks.register('platforms', PlatformsTask,
                     new Action<PlatformsTask>() {
@@ -116,7 +111,6 @@ class JavaProjectPlugin extends AbstractKordampPlugin {
                 DependencyHandlerImpl dhi = project.objects.newInstance(DependencyHandlerImpl, project)
                 project.dependencies.extensions.add(ConfigurationsDependencyHandler, 'applyTo', dhi.configurationsDependencyHandler())
                 project.dependencies.extensions.add(DefaultConfigurationsDependencyHandler, 'applyToDefaults', dhi.defaultConfigurationsDependencyHandler())
-                project.dependencies.extensions.create(DependencyHandler, 'cfg', DeprecatedDependencyHandlerImpl, project)
 
                 project.tasks.register('compile', DefaultTask,
                     new Action<DefaultTask>() {

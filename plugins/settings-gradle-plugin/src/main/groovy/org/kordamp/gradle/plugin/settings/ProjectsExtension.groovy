@@ -111,24 +111,6 @@ interface ProjectsExtension {
     PathSpec includeProject(String dir)
 
     /**
-     * Includes matching projects in the given directory.
-     * Projects must be direct children of the given argument.
-     *
-     * @param dir the parent directory of the projects to be included.
-     * @deprecated As of release 0.41.0, replaced with {@link #includeProjects()} instead.
-     */
-    @Deprecated
-    DirectorySpec includeFromDir(String dir)
-
-    /**
-     * Includes a single project.
-     * @param dir the project directory.
-     * @deprecated As of release 0.41.0, replaced with {@link #includeProject()} instead.
-     */
-    @Deprecated
-    PathSpec includeFromPath(String path)
-
-    /**
      * Configures multiple projects inside a parent directory
      */
     interface DirectorySpec {
@@ -148,20 +130,6 @@ interface ProjectsExtension {
          * Applies the project if the condition evaluates to {@code true}.
          */
         void includeIf(Supplier<Boolean> supplier)
-
-        /**
-         * Includes the project if the input is {@code true}.
-         * @deprecated As of release 0.41.0, replaced with {@link #includeIf()} instead.
-         */
-        @Deprecated
-        void when(boolean value)
-
-        /**
-         * Applies the project if the condition evaluates to {@code true}.
-         * @deprecated As of release 0.41.0, replaced with {@link #includeIf()} instead.
-         */
-        @Deprecated
-        void when(Supplier<Boolean> supplier)
     }
 
     /**
@@ -177,19 +145,5 @@ interface ProjectsExtension {
          * Applies the project if the condition evaluates to {@code true}.
          */
         void includeIf(Supplier<Boolean> supplier)
-
-        /**
-         * Includes the project if the input is {@code true}.
-         * @deprecated As of release 0.41.0, replaced with {@link #includeIf()} instead.
-         */
-        @Deprecated
-        void when(boolean value)
-
-        /**
-         * Applies the project if the condition evaluates to {@code true}.
-         * @deprecated As of release 0.41.0, replaced with {@link #includeIf()} instead.
-         */
-        @Deprecated
-        void when(Supplier<Boolean> supplier)
     }
 }

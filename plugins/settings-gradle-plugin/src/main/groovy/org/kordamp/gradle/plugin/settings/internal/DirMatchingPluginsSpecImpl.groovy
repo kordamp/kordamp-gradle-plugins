@@ -57,13 +57,6 @@ class DirMatchingPluginsSpecImpl extends AbstractPluginsSpec implements PluginsS
     }
 
     @Override
-    @Deprecated
-    void exclude(String dir) {
-        println("The method plugins.dir.exclude is deprecated and will be removed in the future. Use plugins.dir.excludeDir instead")
-        excludeDir(dir)
-    }
-
-    @Override
     void excludeDir(String dir) {
         String s = dir?.trim()
         if (isNotBlank(s)) {

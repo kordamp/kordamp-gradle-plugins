@@ -113,13 +113,6 @@ interface PluginsSpec {
 
         /**
          * Excludes the given project matching its directory.
-         * @deprecated As of release 0.41.0, replaced with {@link #excludeDir()} instead.
-         */
-        @Deprecated
-        void exclude(String dir)
-
-        /**
-         * Excludes the given project matching its directory.
          */
         void excludeDir(String dir)
 
@@ -142,19 +135,5 @@ interface PluginsSpec {
          * Applies the plugin if the condition evaluates to {@code true}..
          */
         void includeIf(Supplier<Boolean> supplier)
-
-        /**
-         * Applies the plugin if the condition evaluates to {@code true}.
-         * @deprecated As of release 0.41.0, replaced with {@link #includeIf()} instead.
-         */
-        @Deprecated
-        void when(boolean value)
-
-        /**
-         * Applies the plugin if the condition evaluates to {@code true}.
-         * @deprecated As of release 0.41.0, replaced with {@link #includeIf()} instead.
-         */
-        @Deprecated
-        void when(Supplier<Boolean> supplier)
     }
 }

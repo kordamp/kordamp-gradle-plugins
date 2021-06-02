@@ -22,7 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.model.Information
 import org.kordamp.gradle.plugin.base.model.artifact.DependencyManagement
-import org.kordamp.gradle.plugin.base.plugins.Bintray
+import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencyManagementImpl
 import org.kordamp.gradle.plugin.base.plugins.Bom
 import org.kordamp.gradle.plugin.base.plugins.BuildInfo
 import org.kordamp.gradle.plugin.base.plugins.Checkstyle
@@ -30,8 +30,6 @@ import org.kordamp.gradle.plugin.base.plugins.Clirr
 import org.kordamp.gradle.plugin.base.plugins.Codenarc
 import org.kordamp.gradle.plugin.base.plugins.Coveralls
 import org.kordamp.gradle.plugin.base.plugins.Cpd
-import org.kordamp.gradle.plugin.base.plugins.Dependencies
-
 import org.kordamp.gradle.plugin.base.plugins.Detekt
 import org.kordamp.gradle.plugin.base.plugins.ErrorProne
 import org.kordamp.gradle.plugin.base.plugins.Groovydoc
@@ -68,9 +66,8 @@ class ProjectConfigurationExtension {
 
     final Project project
     final Information info
-    final Dependencies dependencyManagement
+    final DependencyManagementImpl dependencyManagement
     final Bom bom
-    final Bintray bintray
     final BuildInfo buildInfo
     final Clirr clirr
     final Licensing licensing
@@ -89,9 +86,8 @@ class ProjectConfigurationExtension {
     ProjectConfigurationExtension(Project project) {
         this.project = project
         info = new Information(this, project)
-        dependencyManagement = new Dependencies(this, project)
+        dependencyManagement = new DependencyManagementImpl(this, project)
         bom = new Bom(this, project)
-        bintray = new Bintray(this, project)
         buildInfo = new BuildInfo(this, project)
         clirr = new Clirr(this, project)
         licensing = new Licensing(this, project)
@@ -150,42 +146,12 @@ class ProjectConfigurationExtension {
         this.dependencyManagement
     }
 
-    @Deprecated
-    Dependencies getDependencies() {
-        println("The method config.dependencies is deprecated and will be removed in the future. Use config.dependencyManagement instead")
-        dependencyManagement
-    }
-
-    @Deprecated
-    void dependencies(Action<? super Dependencies> action) {
-        println("The method config.dependencies is deprecated and will be removed in the future. Use config.dependencyManagement instead")
-        action.execute(dependencyManagement)
-    }
-
-    @Deprecated
-    void dependencies(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Dependencies) Closure<Void> action) {
-        println("The method config.dependencies is deprecated and will be removed in the future. Use config.dependencyManagement instead")
-        ConfigureUtil.configure(action, dependencyManagement)
-    }
-
     void bom(Action<? super Bom> action) {
         action.execute(bom)
     }
 
     void bom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Bom) Closure<Void> action) {
         ConfigureUtil.configure(action, bom)
-    }
-
-    @Deprecated
-    void bintray(Action<? super Bintray> action) {
-        println("The method config.bintray is deprecated and will be removed in the future.")
-        action.execute(bintray)
-    }
-
-    @Deprecated
-    void bintray(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Bintray) Closure<Void> action) {
-        println("The method config.bintray is deprecated and will be removed in the future.")
-        ConfigureUtil.configure(action, bintray)
     }
 
     void buildInfo(Action<? super BuildInfo> action) {
@@ -296,9 +262,8 @@ class ProjectConfigurationExtension {
     ProjectConfigurationExtension merge(ProjectConfigurationExtension other) {
         this.setRelease((boolean) (this.@releaseSet ? this.@release : other.@release))
         Information.merge(this.@info, other.@info)
-        Dependencies.merge(this.@dependencyManagement, other.@dependencyManagement)
+        DependencyManagementImpl.merge(this.@dependencyManagement, other.@dependencyManagement)
         Bom.merge(this.@bom, other.@bom)
-        Bintray.merge(this.@bintray, other.@bintray)
         BuildInfo.merge(this.@buildInfo, other.@buildInfo)
         Clirr.merge(this.@clirr, other.@clirr)
         Licensing.merge(this.@licensing, other.@licensing)
@@ -320,7 +285,6 @@ class ProjectConfigurationExtension {
 
         errors.addAll(this.@info.validate(this))
         errors.addAll(this.@bom.validate(this))
-        errors.addAll(this.@bintray.validate(this))
         errors.addAll(this.@licensing.validate(this))
         errors.addAll(this.@reproducible.validate(this))
         errors.addAll(this.@plugins.validate(this))
@@ -333,7 +297,6 @@ class ProjectConfigurationExtension {
         info.normalize()
         buildInfo.normalize()
         artifacts.normalize()
-        bintray.normalize()
         publishing.normalize()
         bom.normalize()
         licensing.normalize()
@@ -351,7 +314,6 @@ class ProjectConfigurationExtension {
     ProjectConfigurationExtension postMerge() {
         buildInfo.postMerge()
         artifacts.postMerge()
-        bintray.postMerge()
         publishing.postMerge()
         bom.postMerge()
         licensing.postMerge()

@@ -196,24 +196,10 @@ class ProjectsExtensionImpl implements ProjectsExtension {
     }
 
     @Override
-    @Deprecated
-    DirectorySpec includeFromDir(String dir) {
-        println("The method includeFromDir is deprecated and will be removed in the future. Use includeProjects instead")
-        includeProjects(dir)
-    }
-
-    @Override
     DirectorySpec includeProjects(String dir) {
         DirectorySpecImpl spec = new DirectorySpecImpl(dir)
         directoryConditions << spec
         spec
-    }
-
-    @Override
-    @Deprecated
-    PathSpec includeFromPath(String dir) {
-        println("The method includeFromPath is deprecated and will be removed in the future. Use includeProject instead")
-        includeProject(dir)
     }
 
     @Override

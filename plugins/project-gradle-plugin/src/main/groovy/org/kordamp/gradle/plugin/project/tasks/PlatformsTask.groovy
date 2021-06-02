@@ -21,9 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
 import org.kordamp.gradle.plugin.project.ConfigurationsDependencyHandler
-import org.kordamp.gradle.plugin.project.DependencyHandler
 import org.kordamp.gradle.plugin.project.internal.DependencyHandlerImpl
-import org.kordamp.gradle.plugin.project.internal.DeprecatedDependencyHandlerImpl
 
 /**
  * @author Andres Almiray

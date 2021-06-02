@@ -101,12 +101,6 @@ class Publishing extends AbstractFeature {
         ConfigureUtil.configure(action, signing)
     }
 
-    @Deprecated
-    void setSigning(boolean value) {
-        println("The method publishing.setSigning() is deprecated and will be removed in the future. Use publishing.signing.setEnabled() instead")
-        this.signing.setEnabled(value)
-    }
-
     void setUseVersionExpressions(boolean value) {
         this.useVersionExpressions = value
         this.useVersionExpressionsSet = true

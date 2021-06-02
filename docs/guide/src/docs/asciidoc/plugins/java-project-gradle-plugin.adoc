@@ -168,81 +168,6 @@ dependencies {
 }
 ----
 
-[[_org_kordamp_gradle_java_project_extension_cfg]]
-=== cfg
-
-WARNING: This extension has been *DEPRECATED*. Use `applyToDefaults` and/or `applyTo` instead.
-
-Configures dependencies based on settings available from `config.dependencyManagement`.
-
-[horizontal]
-Name:: cfg
-Type:: `org.kordamp.gradle.plugin.project.DependencyHandler`
-Applied to:: `org.gradle.api.artifacts.dsl.DependencyHandler`
-
-Since Gradle 6 platform dependencies must be applied per configuration, which results in verbose build files when a
-BOM/platform should be applied in common configurations. This extension lets you apply a BOM/platform to multiple
-configurations with a single method call.
-
-NOTE: The following configurations will be used if none are specified: `api`, `implementation`, `annotationProcessor`,
-`testImplementation`, `testAnnotationProcessor`, `compileOnly`, `testCompileOnly`, `runtimeOnly`, `testRuntimeOnly`.
-
-.Methods
-
-void platform(Object notation):: Declares a dependency on a platform.
-void platform(Object notation, Action<? super Dependency> action):: Declares and configures a dependency on a platform.
-void platform(Object notation, String... configurations):: Declares a dependency on a platform for a set of specific configurations.
-void platform(Object notation, List<String> configurations):: Declares a dependency on a platform for a set of specific configurations.
-void platform(Object notation, List<String> configurations, Action<? super Dependency> action):: Declares and configures a dependency on a platform for a set of specific configurations.
-void enforcedPlatform(Object notation):: Declares a dependency on an enforced platform.
-void enforcedPlatform(Object notation, Action<? super Dependency> action):: Declares and configures a dependency on an enforced platform.
-void enforcedPlatform(Object notation, String... configurations):: Declares a dependency on an enforced platform for a set of specific configurations.
-void enforcedPlatform(Object notation, List<String> configurations):: Declares a dependency on an enforced platform for a set of specific configurations.
-void enforcedPlatform(Object notation, List<String> configurations, Action<? super Dependency> action):: Declares and configures a dependency on an enforced platform for a set of specific configurations.
-void dependency(String nameOrGa, String configuration, String... configurations):: Declares a dependency for a set of specific configurations.
-void dependency(String nameOrGa, String configuration, Closure):: Declares and configures a dependency for a set of specific configurations.
-void module(String nameOrGa, String configuration, String... configurations):: Declares a module dependency (from a platform) for a set of specific configurations.
-void module(String nameOrGa, String configuration, Closure):: Declares and configures a module dependency (from a platform) for a set of specific configurations.
-
-Where `notation` may be one of
-
- * `java.lang.CharSequence` with format `groupId:artifactId:version`.
- * `java.util.Map` with `group`, `artifactId`, `version` keys.
- * `java.lang.CharSequence` with the name of a platform declared in `config.dependencyManagement`.
-
-.Example
-The following example shows how the Micronaut BOM can be used to configure all configurations
-
-[source,groovy]
-.build.gradle
-----
-config {
-    dependencyManagement {
-        platform('micronaut', "io.micronaut:micronaut-bom:$micronautVersion")
-    }
-}
-
-dependencies {
-    cfg {
-        enforcedPlatform('micronaut')
-
-        module('micronaut','micronaut-inject-java', 'annotationProcessor')
-        module('micronaut','micronaut-validation', 'annotationProcessor', 'api')
-
-        module('micronaut','micronaut-inject-groovy', 'compileOnly')
-    }
-
-    // because the `micronaut` platform was applied a few lines above
-    // the following dependencies can skip the version number
-
-    // you can still use standard configuration methods
-    api('io.micronaut:micronaut-inject')
-
-    // you can mix them both
-    api(config.dependencyManagement.ga('micronaut', 'micronaut-runtime-groovy'))
-}
-----
-
 [[_org_kordamp_gradle_java_project_tasks]]
 == Tasks
 
@@ -294,7 +219,8 @@ if neither of these options is specified.
 [[_task_platforms]]
 === Platforms
 
-Displays all configured platforms in the project. Requires the use of the <<_org_kordamp_gradle_java_project_extension_cfg,cfg>> extension.
+Displays all configured platforms in the project. Requires the use of the <<_org_kordamp_gradle_java_project_extension_applyTo,applyTo>> or
+<<_org_kordamp_gradle_java_project_extension_applyToDefaults,applyToDefaults>> extensions.
 
 [horizontal]
 Name:: platforms
@@ -308,7 +234,7 @@ For a project with the following dependencies
 .build.gradle
 ----
 dependencies {
-    cfg.enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion")
+    applyToDefaults.enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion")
 
     annotationProcessor 'io.micronaut:micronaut-inject-java'
     annotationProcessor 'io.micronaut:micronaut-validation'
