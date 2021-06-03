@@ -85,10 +85,11 @@ class Stats extends AbstractAggregateFeature {
             toml      : 'TOML',
             clojure   : 'Clojure'
         ].each { extension, name ->
-            ['src' + File.separator + 'test',
-             config.testing.integration.baseDir ?: 'src' + File.separator + 'integration-test',
-             config.testing.functional.baseDir ?: 'src' + File.separator + 'functional-test'].each { source ->
-                String[] parts = source.split(Pattern.quote(File.separator))
+            ['src/test',
+             config.testing.integration.baseDir ?: 'src/integration-test',
+             config.testing.functional.baseDir ?: 'src/functional-test'].each { source ->
+                source = source.replace('\\', '/')
+                String[] parts = source.split(Pattern.quote('/'))
                 String classifier = getPropertyNameForLowerCaseHyphenSeparatedName(parts[-1])
                 basePaths[classifier + extension.capitalize()] = [name: name + ' ' + getNaturalName(classifier) + ' Sources', path: source, extension: extension]
             }
@@ -126,6 +127,11 @@ class Stats extends AbstractAggregateFeature {
         mergedPaths.putAll(defaultPaths())
         mergedPaths.putAll(paths)
         paths.putAll(mergedPaths)
+
+        paths.each { k, v ->
+            v.path = v.path.replace('\\', '/')
+        }
+
         super.postMerge()
     }
 }
