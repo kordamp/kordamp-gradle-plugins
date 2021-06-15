@@ -391,7 +391,9 @@ class Kotlindoc extends AbstractFeature {
 
     @CompileStatic
     static class PackageOption {
+        // TODO: remove
         String prefix
+        String matchingRegex
         boolean includeNonPublic = false
         boolean reportUndocumented = true
         boolean skipDeprecated = false
@@ -440,6 +442,7 @@ class Kotlindoc extends AbstractFeature {
 
         static void merge(PackageOption o1, PackageOption o2) {
             o1.prefix = o1.prefix ?: o2?.prefix
+            o1.matchingRegex = o1.matchingRegex ?: o2?.matchingRegex
             o1.setIncludeNonPublic((boolean) (o1.includeNonPublicSet ? o1.includeNonPublic : o2.includeNonPublic))
             o1.setReportUndocumented((boolean) (o1.reportUndocumentedSet ? o1.reportUndocumented : o2.reportUndocumented))
             o1.setSkipDeprecated((boolean) (o1.skipDeprecatedSet ? o1.skipDeprecated : o2.skipDeprecated))
@@ -447,7 +450,7 @@ class Kotlindoc extends AbstractFeature {
         }
 
         boolean isEmpty() {
-            isBlank(prefix)
+            isBlank(prefix) && isBlank(matchingRegex)
         }
     }
 

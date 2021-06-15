@@ -186,7 +186,7 @@ class KotlindocPlugin extends AbstractKordampPlugin {
                     ss.perPackageOption(new Action<GradlePackageOptionsBuilder>() {
                         @Override
                         void execute(GradlePackageOptionsBuilder p) {
-                            if (packageOption.prefix) p.prefix.set(packageOption.prefix)
+                            if (packageOption.prefix) p.matchingRegex.set(packageOption.prefix)
                             p.includeNonPublic.set(packageOption.includeNonPublic)
                             p.reportUndocumented.set(packageOption.reportUndocumented)
                             p.skipDeprecated.set(packageOption.skipDeprecated)
