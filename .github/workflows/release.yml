@@ -84,3 +84,6 @@ jobs:
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
+
+      - name: Guide
+        run: ./gradlew createGuide gitPublishPush -S
