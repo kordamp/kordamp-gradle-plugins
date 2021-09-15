@@ -66,6 +66,11 @@ interface ProjectsExtension {
     SetProperty<String> getExcludes()
 
     /**
+     * Mappings of directory names (key) to prefix/suffix (value).
+     */
+    void directories(Map<String, String> dirs)
+
+    /**
      * The prefix to add/remove to/from the build file name.
      */
     Property<String> getPrefix()

@@ -136,6 +136,18 @@ Excludes a project directory by name.
 *includeProject(String path)* +
 Includes a project found under the given path unless the given condition (`includeIf()`) evaluates to false.
 
+*directories(Map<String, String>)* +
+Defines a set of directories where the key is the parent directory name and the value is a prefix, e.g.
+[source,groovy]
+----
+projects {
+    layout = 'two-level'
+    directories('subprojects': 'sub-')
+}
+----
+
+This will match all projects inside `subprojects` whose name have a `sub-` prefix.
+
 [[_org_kordamp_gradle_settings_example]]
 == Example
 

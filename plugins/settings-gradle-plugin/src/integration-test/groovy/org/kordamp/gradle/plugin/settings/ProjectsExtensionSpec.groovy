@@ -136,6 +136,52 @@ class ProjectsExtensionSpec extends Specification {
         4     | true   | true
     }
 
+    def "Verify two-level layout with prefix [#index]"() {
+        given:
+        File docs = testProjectDir.newFolder('docs')
+        File subprojects = testProjectDir.newFolder('subprojects')
+        // guide
+        createProject(docs, 'docs-guide', naming, kotlin)
+        // projects
+        createProject(subprojects, 'sub-project1', naming, kotlin)
+        createProject(subprojects, 'sub-project2', naming, kotlin)
+        createProject(subprojects, 'sub-project3', naming, kotlin)
+        createBuildFile(testProjectDir.newFolder('project4'), 'project4', naming, kotlin)
+
+        when:
+        settingsFile << """
+            projects {
+                layout = 'two-level'
+                directories = ['docs']
+                directories('subprojects': 'sub-')
+                enforceNamingConvention = $naming
+                includeProject('project4')
+            }
+        """
+        BuildResult result = GradleRunner.create()
+            .withPluginClasspath()
+            .withProjectDir(testProjectDir.root)
+            .withArguments('projects')
+            .build()
+
+        then:
+        verifyOutput(result, """
+            |Root project 'test'
+            |+--- Project ':guide'
+            |+--- Project ':sub-project1'
+            |+--- Project ':sub-project2'
+            |+--- Project ':sub-project3'
+            |\\--- Project ':project4'
+        """)
+
+        where:
+        index | naming | kotlin
+        1     | false  | false
+        2     | true   | false
+        3     | false  | true
+        4     | true   | true
+    }
+
     def "Verify standard layout [#index]"() {
         given:
         // guide

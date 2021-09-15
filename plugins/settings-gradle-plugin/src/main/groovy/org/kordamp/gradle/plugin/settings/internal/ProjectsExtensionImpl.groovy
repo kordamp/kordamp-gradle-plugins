@@ -30,6 +30,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.kordamp.gradle.plugin.settings.PluginsSpec
@@ -56,6 +57,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
     final Property<Boolean> useLongPaths
     final Property<Boolean> cache
     final ListProperty<String> directories
+    final MapProperty<String, String> directoriesWithPrefixSuffix
     final SetProperty<String> excludes
     final Property<String> prefix
     final Property<String> suffix
@@ -73,6 +75,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
         useLongPaths = objects.property(Boolean).convention(false)
         cache = objects.property(Boolean).convention(false)
         directories = objects.listProperty(String).convention([])
+        directoriesWithPrefixSuffix = objects.mapProperty(String, String).convention([:])
         excludes = objects.setProperty(String).convention(new LinkedHashSet<String>())
         prefix = objects.property(String).convention(Providers.notDefined())
         suffix = objects.property(String).convention(Providers.notDefined())
@@ -209,6 +212,11 @@ class ProjectsExtensionImpl implements ProjectsExtension {
         spec
     }
 
+    @Override
+    void directories(Map<String, String> dirs) {
+        directoriesWithPrefixSuffix.putAll(dirs)
+    }
+
     private void applyPlugins(Project rootProject) {
         plugins.apply(rootProject)
     }
@@ -248,6 +256,17 @@ class ProjectsExtensionImpl implements ProjectsExtension {
 
                 doProcessTwoLevelLayout(parentDir)
             }
+        } else if(directoriesWithPrefixSuffix.get()) {
+            Map<String, String> dirs = directoriesWithPrefixSuffix.get()
+            for (String parentDirName : dirs.keySet()) {
+                File parentDir = new File(settings.rootDir, parentDirName)
+                if (!parentDir.exists()) {
+                    LOG.info "Skipping ${parentDir} as it does not exist."
+                    continue
+                }
+
+                doProcessTwoLevelLayout(parentDir, dirs.get(parentDirName))
+            }
         } else {
             settings.settingsDir.eachDir { File parentDir ->
                 if (!skipDirectoryDiscoveryFor(parentDir)) {
@@ -267,7 +286,18 @@ class ProjectsExtensionImpl implements ProjectsExtension {
                 }
                 doIncludeProject(path)
             }
-        } else {
+        } else if(directoriesWithPrefixSuffix.get()) {
+            Map<String, String> dirs = directoriesWithPrefixSuffix.get()
+            for (String parentDirName : dirs.keySet()) {
+                File parentDir = new File(settings.rootDir, parentDirName)
+                if (!parentDir.exists()) {
+                    LOG.info "Skipping ${parentDir} as it does not exist."
+                    continue
+                }
+
+                doProcessTwoLevelLayout(parentDir, dirs.get(parentDirName))
+            }
+        }  else {
             settings.settingsDir.eachDir { File projectDir ->
                 discoverProject(projectDir)
             }
@@ -312,7 +342,7 @@ class ProjectsExtensionImpl implements ProjectsExtension {
             (dir.name == 'build' && settings.findProject(dir.parentFile))
     }
 
-    private void doProcessTwoLevelLayout(File parentDir) {
+    private void doProcessTwoLevelLayout(File parentDir, String prefixSuffix = null) {
         parentDir.eachDir { File projectDir ->
             if (isProjectExcluded("${projectDir.parentFile.name}/${projectDir.name}", projectDir.name)) return
 
