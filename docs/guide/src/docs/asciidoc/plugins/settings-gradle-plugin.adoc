@@ -84,6 +84,8 @@ projects {
     prefix
     suffix
 
+    directories([String: String])     // optional
+
     includeProjects(String dir)
         .exclude(String projectName)  // optional
         .includeIf(boolean)           // optional

@@ -11,7 +11,7 @@ The DSL is comprised of the following elements
 [source,groovy]
 [subs="+macros"]
 ----
-projects {
+gradleProjects {
     all {
         condition(Function<Project,Boolean>) {
            // configuration
@@ -92,7 +92,7 @@ config {
     // ...
 }
 
-projects
+gradleProjects {
     all {
         path('*') {
             repositories {
