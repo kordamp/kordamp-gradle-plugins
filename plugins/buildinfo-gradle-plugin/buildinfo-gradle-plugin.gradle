@@ -18,7 +18,7 @@
 dependencies {
     api project(':base-gradle-plugin')
 
-    api 'gradle.plugin.net.nemerosa:versioning:2.14.0'
+    api 'gradle.plugin.net.nemerosa:versioning:2.15.0'
     // api 'org.ajoberstar.grgit:grgit-core:4.0.1'
     // api "org.eclipse.jgit:org.eclipse.jgit.ui:$jgitVersion"
     // api "org.eclipse.jgit:org.eclipse.jgit:$jgitVersion"
