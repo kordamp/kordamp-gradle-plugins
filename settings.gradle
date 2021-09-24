@@ -29,6 +29,7 @@ buildscript {
         classpath "org.kordamp.gradle:plugin-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:guide-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:kordamp-parentbuild:$kordampBuildVersion"
+        classpath 'gradle.plugin.com.hierynomus.gradle.plugins:license-gradle-plugin:0.16.1'
     }
 }
 apply plugin: 'org.kordamp.gradle.kordamp-parentbuild'
@@ -116,6 +117,9 @@ enforce {
             "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
             "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
             'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8',
+            'org.jetbrains:annotations:20.1.0',
+            'org.junit.platform:junit-platform-launcher:1.7.2',
+            'org.assertj:assertj-core:3.19.0',
             "org.slf4j:slf4j-api:$slf4jVersion",
             "junit:junit:$junitVersion",
             "org.ow2.asm:asm:$asmVersion",
@@ -129,6 +133,7 @@ enforce {
             'com.google.code.findbugs:jsr305:3.0.2',
             'org.bouncycastle:bcprov-jdk15on:1.64',
             'org.bouncycastle:bcpkix-jdk15on:1.64',
-            "com.google.errorprone:error_prone_annotations:$errorproneVersion"
+            "com.google.errorprone:error_prone_annotations:$errorproneVersion",
+            "commons-codec:commons-codec:$commonsCodecVersion"
     }
 }

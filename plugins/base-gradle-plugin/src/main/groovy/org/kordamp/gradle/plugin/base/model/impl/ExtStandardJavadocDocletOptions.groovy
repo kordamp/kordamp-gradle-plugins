@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base.model.impl
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.external.javadoc.CoreJavadocOptions
 import org.gradle.external.javadoc.JavadocOptionFileOption
@@ -541,10 +542,12 @@ class ExtStandardJavadocDocletOptions extends StandardJavadocDocletOptions {
         }
     }
 
+    @CompileDynamic
     static <T> List<T> list(List<T> src) {
         new ArrayList<>(src.unique())
     }
 
+    @CompileDynamic
     static <T> List<T> list(List<T> l1, List<T> l2) {
         new ArrayList<>((l1 + l2).unique())
     }

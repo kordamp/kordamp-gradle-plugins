@@ -17,10 +17,12 @@
  */
 package org.kordamp.gradle.util
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.internal.metaobject.ConfigureDelegate
+import org.kordamp.gradle.plugin.base.model.Information
 
 import javax.annotation.Nullable
 
@@ -48,7 +50,8 @@ class ConfigureUtil {
         }
     }
 
-    static <T> T configure(@Nullable Closure configureClosure, T target) {
+    @CompileDynamic
+    static <T> T configure(@Nullable @DelegatesTo(strategy = Closure.DELEGATE_FIRST) Closure configureClosure, T target) {
         try {
             org.gradle.util.ConfigureUtil.configure(configureClosure, target)
         } catch (MissingMethodException mme) {

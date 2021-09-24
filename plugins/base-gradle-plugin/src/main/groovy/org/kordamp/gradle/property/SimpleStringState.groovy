@@ -81,7 +81,7 @@ final class SimpleStringState implements StringState {
     static SimpleStringState of(Project project, Object owner, String key) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<String> property = project.objects.property(String).convention(Providers.notDefined())
+        Property<String> property = project.objects.property(String).convention(Providers.<String>notDefined())
 
         Provider<String> provider = stringProvider(
             key,
@@ -95,7 +95,7 @@ final class SimpleStringState implements StringState {
     static SimpleStringState of(Project project, Object owner, String key, String defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<String> property = project.objects.property(String).convention(Providers.notDefined())
+        Property<String> property = project.objects.property(String).convention(Providers.<String>notDefined())
 
         Provider<String> provider = stringProvider(
             key,
@@ -110,7 +110,7 @@ final class SimpleStringState implements StringState {
     static SimpleStringState of(Project project, Object owner, String key, Order order) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<String> property = project.objects.property(String).convention(Providers.notDefined())
+        Property<String> property = project.objects.property(String).convention(Providers.<String>notDefined())
 
         Provider<String> provider = stringProvider(
             key,
@@ -125,7 +125,7 @@ final class SimpleStringState implements StringState {
     static SimpleStringState of(Project project, Object owner, String key, Order order, Path path, String defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<String> property = project.objects.property(String).convention(Providers.notDefined())
+        Property<String> property = project.objects.property(String).convention(Providers.<String>notDefined())
 
         Provider<String> provider = stringProvider(
             key,
@@ -142,7 +142,7 @@ final class SimpleStringState implements StringState {
     static SimpleStringState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, String defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<String> property = project.objects.property(String).convention(Providers.notDefined())
+        Property<String> property = project.objects.property(String).convention(Providers.<String>notDefined())
 
         Provider<String> provider = stringProvider(
             envKey,

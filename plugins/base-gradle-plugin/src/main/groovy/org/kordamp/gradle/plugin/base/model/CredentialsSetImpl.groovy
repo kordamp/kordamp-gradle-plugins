@@ -40,7 +40,7 @@ class CredentialsSetImpl extends AbstractDomainSet<Credentials> implements Crede
     final MapProperty<String, Credentials> credentialsMap
 
     CredentialsSetImpl(ObjectFactory objects) {
-        credentialsMap = objects.mapProperty(String, Credentials).convention(Providers.notDefined())
+        credentialsMap = objects.mapProperty(String, Credentials).convention(Providers.<Map<String, Credentials>>notDefined())
     }
 
     @Override

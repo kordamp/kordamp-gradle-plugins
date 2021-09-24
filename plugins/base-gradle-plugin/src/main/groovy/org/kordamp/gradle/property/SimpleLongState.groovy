@@ -81,7 +81,7 @@ final class SimpleLongState implements LongState {
     static SimpleLongState of(Project project, Object owner, String key) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Long> property = project.objects.property(Long).convention(Providers.notDefined())
+        Property<Long> property = project.objects.property(Long).convention(Providers.<Long>notDefined())
 
         Provider<Long> provider = longProvider(
             key,
@@ -95,7 +95,7 @@ final class SimpleLongState implements LongState {
     static SimpleLongState of(Project project, Object owner, String key, long defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Long> property = project.objects.property(Long).convention(Providers.notDefined())
+        Property<Long> property = project.objects.property(Long).convention(Providers.<Long>notDefined())
 
         Provider<Long> provider = longProvider(
             key,
@@ -110,7 +110,7 @@ final class SimpleLongState implements LongState {
     static SimpleLongState of(Project project, Object owner, String key, Order order) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Long> property = project.objects.property(Long).convention(Providers.notDefined())
+        Property<Long> property = project.objects.property(Long).convention(Providers.<Long>notDefined())
 
         Provider<Long> provider = longProvider(
             key,
@@ -125,7 +125,7 @@ final class SimpleLongState implements LongState {
     static SimpleLongState of(Project project, Object owner, String key, Order order, Path path, long defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Long> property = project.objects.property(Long).convention(Providers.notDefined())
+        Property<Long> property = project.objects.property(Long).convention(Providers.<Long>notDefined())
 
         Provider<Long> provider = longProvider(
             key,
@@ -142,7 +142,7 @@ final class SimpleLongState implements LongState {
     static SimpleLongState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, long defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Long> property = project.objects.property(Long).convention(Providers.notDefined())
+        Property<Long> property = project.objects.property(Long).convention(Providers.<Long>notDefined())
 
         Provider<Long> provider = longProvider(
             envKey,

@@ -102,6 +102,7 @@ final class PropertyUtils {
      * @param defaultValue the default value in case neither property nor provider has one
      * @return property's value, provider's value, or the defaultValue, in that order.
      */
+    @CompileDynamic
     static <E extends Enum<E>> Provider<E> enumProvider(ProviderFactory providers,
                                                         Property<E> property,
                                                         Provider<E> provider,

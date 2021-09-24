@@ -32,7 +32,8 @@ class CollectionUtils {
     }
 
     private static <T> Set<T> doMerge(Set<T> s1, Set<T> s2) {
-        Set<T> r = new LinkedHashSet<>(s1)
+        Set<T> r = new LinkedHashSet<>()
+        r.addAll(s1)
         if (s2) r.addAll(s2)
         r
     }
@@ -46,7 +47,8 @@ class CollectionUtils {
     }
 
     private static <T> List<T> doMerge(List<T> l1, List<T> l2) {
-        List<T> r = new ArrayList<>(l1)
+        List<T> r = new ArrayList<>()
+        r.addAll(l1)
         if (l2) r.addAll(l2)
         r.unique()
     }

@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.plugin.base.plugins
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -110,6 +111,7 @@ class Jar extends AbstractFeature {
             this.@addClasspath != null && this.@addClasspath
         }
 
+        @CompileDynamic
         static Manifest merge(Manifest o1, Manifest o2) {
             o1.setEnabled(o1.@enabled != null ? o1.getEnabled() : o2.getEnabled())
             o1.setAddClasspath(o1.@addClasspath != null ? o1.getAddClasspath() : o2.getAddClasspath())

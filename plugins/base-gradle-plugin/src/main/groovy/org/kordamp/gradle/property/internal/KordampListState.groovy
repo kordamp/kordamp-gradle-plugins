@@ -48,7 +48,7 @@ final class KordampListState implements ListState {
     KordampListState(Project project, String key, Provider<List> parent, List<String> defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.listProperty(String).convention(Providers.notDefined())
+        property = project.objects.listProperty(String).convention(Providers.<List<String>>notDefined())
 
         provider = listProvider(
             key,
@@ -64,7 +64,7 @@ final class KordampListState implements ListState {
     KordampListState(Project project, String key, Provider<List> parent, Provider<List<String>> defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.listProperty(String).convention(Providers.notDefined())
+        property = project.objects.listProperty(String).convention(Providers.<List<String>>notDefined())
 
         provider = listProvider(
             key,

@@ -36,7 +36,7 @@ class LicenseSetImpl extends AbstractDomainSet<License> implements LicenseSet {
     final ListProperty<License> licenses
 
     LicenseSetImpl(ObjectFactory objects) {
-        licenses = objects.listProperty(License).convention(Providers.notDefined())
+        licenses = objects.listProperty(License).convention(Providers.<List<License>>notDefined())
     }
 
     @Override
@@ -62,6 +62,7 @@ class LicenseSetImpl extends AbstractDomainSet<License> implements LicenseSet {
     }
 
     @Override
+    @CompileDynamic
     void license(Action<? super License> action) {
         License license = new License()
         action.execute(license)
@@ -69,12 +70,14 @@ class LicenseSetImpl extends AbstractDomainSet<License> implements LicenseSet {
     }
 
     @Override
+    @CompileDynamic
     void license(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = License) Closure<Void> action) {
         License license = new License()
         ConfigureUtil.configure(action, license)
         licenses.add(license)
     }
 
+    @CompileDynamic
     static void merge(LicenseSetImpl o1, LicenseSetImpl o2) {
         o1.mergeStrategy = (o1.mergeStrategy ?: o2?.mergeStrategy) ?: MergeStrategy.UNIQUE
 

@@ -82,7 +82,7 @@ final class SimpleRegularFileState implements RegularFileState {
     static SimpleRegularFileState of(Project project, Object owner, String key) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        RegularFileProperty property = project.objects.fileProperty().convention(Providers.notDefined())
+        RegularFileProperty property = project.objects.fileProperty().convention(Providers.<RegularFile>notDefined())
 
         Provider<RegularFile> provider = fileProvider(
             key,
@@ -96,7 +96,7 @@ final class SimpleRegularFileState implements RegularFileState {
     static SimpleRegularFileState of(Project project, Object owner, String key, RegularFile defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        RegularFileProperty property = project.objects.fileProperty().convention(Providers.notDefined())
+        RegularFileProperty property = project.objects.fileProperty().convention(Providers.<RegularFile>notDefined())
 
         Provider<RegularFile> provider = fileProvider(
             key,
@@ -111,7 +111,7 @@ final class SimpleRegularFileState implements RegularFileState {
     static SimpleRegularFileState of(Project project, Object owner, String key, Order order) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        RegularFileProperty property = project.objects.fileProperty().convention(Providers.notDefined())
+        RegularFileProperty property = project.objects.fileProperty().convention(Providers.<RegularFile>notDefined())
 
         Provider<RegularFile> provider = fileProvider(
             key,
@@ -126,7 +126,7 @@ final class SimpleRegularFileState implements RegularFileState {
     static SimpleRegularFileState of(Project project, Object owner, String key, Order order, Path path, RegularFile defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        RegularFileProperty property = project.objects.fileProperty().convention(Providers.notDefined())
+        RegularFileProperty property = project.objects.fileProperty().convention(Providers.<RegularFile>notDefined())
 
         Provider<RegularFile> provider = fileProvider(
             key,
@@ -143,7 +143,7 @@ final class SimpleRegularFileState implements RegularFileState {
     static SimpleRegularFileState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, RegularFile defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        RegularFileProperty property = project.objects.fileProperty().convention(Providers.notDefined())
+        RegularFileProperty property = project.objects.fileProperty().convention(Providers.<RegularFile>notDefined())
 
         Provider<RegularFile> provider = fileProvider(
             envKey,

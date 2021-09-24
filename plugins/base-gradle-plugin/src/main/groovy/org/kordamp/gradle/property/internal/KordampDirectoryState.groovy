@@ -49,7 +49,7 @@ final class KordampDirectoryState implements DirectoryState {
     KordampDirectoryState(Project project, String key, Provider<Directory> parent, Directory defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.directoryProperty().convention(Providers.notDefined())
+        property = project.objects.directoryProperty().convention(Providers.<Directory>notDefined())
 
         provider = directoryProvider(
             key,
@@ -65,7 +65,7 @@ final class KordampDirectoryState implements DirectoryState {
     KordampDirectoryState(Project project, String key, Provider<Directory> parent, Provider<Directory> defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.directoryProperty().convention(Providers.notDefined())
+        property = project.objects.directoryProperty().convention(Providers.<Directory>notDefined())
 
         provider = directoryProvider(
             key,

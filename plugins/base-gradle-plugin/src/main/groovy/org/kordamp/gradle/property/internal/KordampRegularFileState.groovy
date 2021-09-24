@@ -49,7 +49,7 @@ final class KordampRegularFileState implements RegularFileState {
     KordampRegularFileState(Project project, String key, Provider<RegularFile> parent, RegularFile defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.fileProperty().convention(Providers.notDefined())
+        property = project.objects.fileProperty().convention(Providers.<RegularFile>notDefined())
 
         provider = fileProvider(
             key,
@@ -65,7 +65,7 @@ final class KordampRegularFileState implements RegularFileState {
     KordampRegularFileState(Project project, String key, Provider<RegularFile> parent, Provider<RegularFile> defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.fileProperty().convention(Providers.notDefined())
+        property = project.objects.fileProperty().convention(Providers.<RegularFile>notDefined())
 
         provider = fileProvider(
             key,

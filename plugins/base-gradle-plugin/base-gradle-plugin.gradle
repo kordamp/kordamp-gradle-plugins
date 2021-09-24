@@ -17,6 +17,7 @@
  */
 dependencies {
     implementation "org.apache.maven:maven-model-builder:$mavenVersion"
+    implementation "commons-codec:commons-codec:$commonsCodecVersion"
 
     // added here so that dependencyUpdates can tell if there are newer versions
     compileOnly "net.sourceforge.pmd:pmd:$pmdVersion"

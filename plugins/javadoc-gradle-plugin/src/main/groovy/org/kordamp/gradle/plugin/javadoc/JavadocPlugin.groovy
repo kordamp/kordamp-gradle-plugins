@@ -184,8 +184,8 @@ class JavadocPlugin extends AbstractKordampPlugin {
             }
 
             TaskProvider<Javadoc> javadoc = createJavadocTask(project)
-            createCopyDocFilesTask(project, javadoc, 'copyDocFiles', resolveMainSourceDirs(project))
-            TaskProvider<Jar> javadocJar = createJavadocJarTask(project, javadoc)
+            TaskProvider<Copy> copyDocFiles = createCopyDocFilesTask(project, javadoc, 'copyDocFiles', resolveMainSourceDirs(project))
+            TaskProvider<Jar> javadocJar = createJavadocJarTask(project, javadoc, copyDocFiles)
             project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(javadocJar)
         }
     }
@@ -247,7 +247,7 @@ class JavadocPlugin extends AbstractKordampPlugin {
             })
     }
 
-    private TaskProvider<Jar> createJavadocJarTask(Project project, TaskProvider<Javadoc> javadoc) {
+    private TaskProvider<Jar> createJavadocJarTask(Project project, TaskProvider<Javadoc> javadoc, TaskProvider<Copy> copyDocFiles) {
         ProjectConfigurationExtension config = resolveConfig(project)
 
         project.tasks.register(JAVADOC_JAR_TASK_NAME, Jar,
@@ -259,13 +259,14 @@ class JavadocPlugin extends AbstractKordampPlugin {
                     t.description = 'An archive of the Javadoc API docs'
                     t.archiveClassifier.set('javadoc')
                     t.dependsOn javadoc
+                    t.dependsOn copyDocFiles
                     t.from javadoc.get().destinationDir
                     t.onlyIf { javadoc.get().enabled }
                 }
             })
     }
 
-    private void createCopyDocFilesTask(Project project,
+    private TaskProvider<Copy> createCopyDocFilesTask(Project project,
                                         TaskProvider<Javadoc> javadoc,
                                         String taskName,
                                         Object sourceDirs) {
@@ -288,6 +289,8 @@ class JavadocPlugin extends AbstractKordampPlugin {
             })
 
         javadoc.get().finalizedBy(copyDocFiles)
+
+        return copyDocFiles
     }
 
     private void updatePublications(Project project) {

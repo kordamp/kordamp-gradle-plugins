@@ -81,7 +81,7 @@ final class SimpleMapState implements MapState {
     static SimpleMapState of(Project project, Object owner, String key) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        MapProperty<String, String> property = project.objects.mapProperty(String, String).convention(Providers.notDefined())
+        MapProperty<String, String> property = project.objects.mapProperty(String, String).convention(Providers.<Map<String, String>>notDefined())
 
         Provider<Map<String, String>> provider = mapProvider(
             key,
@@ -95,7 +95,7 @@ final class SimpleMapState implements MapState {
     static SimpleMapState of(Project project, Object owner, String key, Map<String, String> defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        MapProperty<String, String> property = project.objects.mapProperty(String, String).convention(Providers.notDefined())
+        MapProperty<String, String> property = project.objects.mapProperty(String, String).convention(Providers.<Map<String, String>>notDefined())
 
         Provider<Map<String, String>> provider = mapProvider(
             key,
@@ -110,7 +110,7 @@ final class SimpleMapState implements MapState {
     static SimpleMapState of(Project project, Object owner, String key, Order order) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        MapProperty<String, String> property = project.objects.mapProperty(String, String).convention(Providers.notDefined())
+        MapProperty<String, String> property = project.objects.mapProperty(String, String).convention(Providers.<Map<String, String>>notDefined())
 
         Provider<Map<String, String>> provider = mapProvider(
             key,
@@ -125,7 +125,7 @@ final class SimpleMapState implements MapState {
     static SimpleMapState of(Project project, Object owner, String key, Order order, Path path, Map<String, String> defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        MapProperty<String, String> property = project.objects.mapProperty(String, String).convention(Providers.notDefined())
+        MapProperty<String, String> property = project.objects.mapProperty(String, String).convention(Providers.<Map<String, String>>notDefined())
 
         Provider<Map<String, String>> provider = mapProvider(
             key,
@@ -142,7 +142,7 @@ final class SimpleMapState implements MapState {
     static SimpleMapState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, Map<String, String> defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        MapProperty<String, String> property = project.objects.mapProperty(String, String).convention(Providers.notDefined())
+        MapProperty<String, String> property = project.objects.mapProperty(String, String).convention(Providers.<Map<String, String>>notDefined())
 
         Provider<Map<String, String>> provider = mapProvider(
             envKey,

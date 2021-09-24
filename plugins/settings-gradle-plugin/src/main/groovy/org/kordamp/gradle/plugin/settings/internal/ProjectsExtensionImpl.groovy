@@ -77,9 +77,9 @@ class ProjectsExtensionImpl implements ProjectsExtension {
         directories = objects.listProperty(String).convention([])
         directoriesWithPrefixSuffix = objects.mapProperty(String, String).convention([:])
         excludes = objects.setProperty(String).convention(new LinkedHashSet<String>())
-        prefix = objects.property(String).convention(Providers.notDefined())
-        suffix = objects.property(String).convention(Providers.notDefined())
-        fileNameTransformation = objects.property(FileNameTransformation).convention(Providers.notDefined())
+        prefix = objects.property(String).convention(Providers.<String>notDefined())
+        suffix = objects.property(String).convention(Providers.<String>notDefined())
+        fileNameTransformation = objects.property(FileNameTransformation).convention(Providers.<FileNameTransformation>notDefined())
 
         settings.gradle.addBuildListener(new BuildAdapter() {
             @Override

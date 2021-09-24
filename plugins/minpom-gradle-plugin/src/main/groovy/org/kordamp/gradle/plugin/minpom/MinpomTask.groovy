@@ -142,16 +142,16 @@ class MinpomTask extends DefaultTask {
         // }
 
         compileDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
-            processDependency(dep, config, versionExpressions, platforms, processedDependencies, 'compile')
+            MinpomTask.processDependency(dep, config, versionExpressions, platforms, processedDependencies, 'compile')
         }
         runtimeDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
-            processDependency(dep, config, versionExpressions, platforms, processedDependencies, 'runtime')
+            MinpomTask.processDependency(dep, config, versionExpressions, platforms, processedDependencies, 'runtime')
         }
         providedDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
-            processDependency(dep, config, versionExpressions, platforms, processedDependencies, 'provided')
+            MinpomTask.processDependency(dep, config, versionExpressions, platforms, processedDependencies, 'provided')
         }
         testDependencies.values().each { org.gradle.api.artifacts.Dependency dep ->
-            processDependency(dep, config, versionExpressions, platforms, processedDependencies, 'test')
+            MinpomTask.processDependency(dep, config, versionExpressions, platforms, processedDependencies, 'test')
         }
 
         boolean hasParent = isNotBlank(config.publishing.pom.parent)

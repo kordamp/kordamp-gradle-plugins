@@ -37,7 +37,7 @@ class RepositorySetImpl extends AbstractDomainSet<Repository> implements Reposit
     final ListProperty<Repository> repositories
 
     RepositorySetImpl(ObjectFactory objects) {
-        repositories = objects.listProperty(Repository).convention(Providers.notDefined())
+        repositories = objects.listProperty(Repository).convention(Providers.<List<Repository>>notDefined())
     }
 
     @Override
@@ -63,6 +63,7 @@ class RepositorySetImpl extends AbstractDomainSet<Repository> implements Reposit
     }
 
     @Override
+    @CompileDynamic
     void repository(Action<? super Repository> action) {
         Repository repository = new Repository()
         action.execute(repository)
@@ -70,6 +71,7 @@ class RepositorySetImpl extends AbstractDomainSet<Repository> implements Reposit
     }
 
     @Override
+    @CompileDynamic
     void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Repository) Closure<Void> action) {
         Repository repository = new Repository()
         ConfigureUtil.configure(action, repository)
@@ -81,6 +83,7 @@ class RepositorySetImpl extends AbstractDomainSet<Repository> implements Reposit
         getRepositories().find { it.name == name }
     }
 
+    @CompileDynamic
     static void merge(RepositorySetImpl o1, RepositorySetImpl o2) {
         o1.mergeStrategy = (o1.mergeStrategy ?: o2.mergeStrategy) ?: MergeStrategy.UNIQUE
 

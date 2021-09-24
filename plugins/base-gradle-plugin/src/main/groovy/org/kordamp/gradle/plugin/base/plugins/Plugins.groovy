@@ -21,9 +21,9 @@ import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.Plugin
+import org.kordamp.gradle.util.ConfigureUtil
 
 /**
  * @author Andres Almiray

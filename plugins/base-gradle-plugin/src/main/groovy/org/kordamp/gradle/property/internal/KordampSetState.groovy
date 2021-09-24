@@ -48,7 +48,7 @@ final class KordampSetState implements SetState {
     KordampSetState(Project project, String key, Provider<Set> parent, Set<String> defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.setProperty(String).convention(Providers.notDefined())
+        property = project.objects.setProperty(String).convention(Providers.<Set<String>>notDefined())
 
         provider = setProvider(
             key,
@@ -64,7 +64,7 @@ final class KordampSetState implements SetState {
     KordampSetState(Project project, String key, Provider<Set> parent, Provider<Set<String>> defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.setProperty(String).convention(Providers.notDefined())
+        property = project.objects.setProperty(String).convention(Providers.<Set<String>>notDefined())
 
         provider = setProvider(
             key,

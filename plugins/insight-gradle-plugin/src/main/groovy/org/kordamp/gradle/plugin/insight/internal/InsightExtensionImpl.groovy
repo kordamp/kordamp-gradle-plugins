@@ -55,7 +55,7 @@ class InsightExtensionImpl implements InsightExtension {
         this.settings = settings
         this.objects = objects
 
-        this.enabled = objects.property(Boolean).convention(Providers.notDefined())
+        this.enabled = objects.property(Boolean).convention(Providers.<Boolean>notDefined())
         this.resolvedEnabled = booleanProvider(providers, 'INSIGHT_ENABLED', 'insight.enabled', enabled, true)
         this.colors = objects.newInstance(ColorsImpl, objects, settings.gradle)
     }
@@ -138,8 +138,8 @@ class InsightExtensionImpl implements InsightExtension {
         }
 
         @CompileDynamic
-        String ignored(CharSequence s) {
-            console."${ignored.get()}"(s)
+        String skipped(CharSequence s) {
+            console."${skipped.get()}"(s)
         }
 
         @CompileDynamic

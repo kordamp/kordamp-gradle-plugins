@@ -61,7 +61,7 @@ allprojects {
     }
 }
 
-projects.subprojects {
+gradleProjects.subprojects {
     dir('plugins') {
         config {
             info {
@@ -77,6 +77,7 @@ projects.subprojects {
             }
 
             test {
+                useJUnitPlatform()
                 testLogging {
                     events 'failed'
                     exceptionFormat 'full'
@@ -88,14 +89,13 @@ projects.subprojects {
             compileOnly gradleApi()
 
             testImplementation gradleApi()
-            testImplementation("org.spockframework:spock-core:$spockVersion") {
-                exclude group: 'org.codehaus.groovy'
+            testImplementation platform("org.spockframework:spock-bom:$spockVersion")
+            testImplementation("org.spockframework:spock-core") {
+                exclude group: 'org.hamcrest', module: 'hamcrest-core'
             }
-        }
-
-        tasks.withType(ValidateTaskProperties) { validateTaskProperties ->
-            validateTaskProperties.failOnWarning = true
-            validateTaskProperties.enableStricterValidation = true
+            testImplementation("org.spockframework:spock-junit4") {
+                exclude group: 'org.hamcrest', module: 'hamcrest-core'
+            }
         }
     }
 }

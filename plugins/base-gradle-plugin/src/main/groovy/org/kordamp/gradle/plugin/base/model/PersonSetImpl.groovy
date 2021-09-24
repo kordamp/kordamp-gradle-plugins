@@ -37,7 +37,7 @@ class PersonSetImpl extends AbstractDomainSet<Person> implements PersonSet {
     final ListProperty<Person> people
 
     PersonSetImpl(ObjectFactory objects) {
-        people = objects.listProperty(Person).convention(Providers.notDefined())
+        people = objects.listProperty(Person).convention(Providers.<List<Person>>notDefined())
     }
 
     @Override
@@ -63,6 +63,7 @@ class PersonSetImpl extends AbstractDomainSet<Person> implements PersonSet {
     }
 
     @Override
+    @CompileDynamic
     void person(Action<? super Person> action) {
         Person person = new Person()
         action.execute(person)
@@ -70,12 +71,14 @@ class PersonSetImpl extends AbstractDomainSet<Person> implements PersonSet {
     }
 
     @Override
+    @CompileDynamic
     void person(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Person) Closure<Void> action) {
         Person person = new Person()
         ConfigureUtil.configure(action, person)
         people.add(person)
     }
 
+    @CompileDynamic
     static void merge(PersonSetImpl o1, PersonSetImpl o2) {
         o1.mergeStrategy = (o1.mergeStrategy ?: o2?.mergeStrategy) ?: MergeStrategy.UNIQUE
 

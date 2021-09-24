@@ -97,7 +97,7 @@ final class SimpleDirectoryState implements DirectoryState {
     static SimpleDirectoryState of(Project project, Object owner, String key) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.notDefined())
+        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.<Directory>notDefined())
 
         Provider<Directory> provider = directoryProvider(
             key,
@@ -111,7 +111,7 @@ final class SimpleDirectoryState implements DirectoryState {
     static SimpleDirectoryState of(Project project, Object owner, String key, Directory defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.notDefined())
+        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.<Directory>notDefined())
 
         Provider<Directory> provider = directoryProvider(
             key,
@@ -126,7 +126,7 @@ final class SimpleDirectoryState implements DirectoryState {
     static SimpleDirectoryState of(Project project, Object owner, String key, Provider<Directory> defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.notDefined())
+        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.<Directory>notDefined())
 
         Provider<Directory> provider = directoryProvider(
             key,
@@ -141,7 +141,7 @@ final class SimpleDirectoryState implements DirectoryState {
     static SimpleDirectoryState of(Project project, Object owner, String key, Order order) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.notDefined())
+        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.<Directory>notDefined())
 
         Provider<Directory> provider = directoryProvider(
             key,
@@ -156,7 +156,7 @@ final class SimpleDirectoryState implements DirectoryState {
     static SimpleDirectoryState of(Project project, Object owner, String key, Order order, Path path, Directory defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.notDefined())
+        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.<Directory>notDefined())
 
         Provider<Directory> provider = directoryProvider(
             key,
@@ -173,7 +173,7 @@ final class SimpleDirectoryState implements DirectoryState {
     static SimpleDirectoryState of(Project project, Object owner, String key, Order order, Path path, Provider<Directory> defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.notDefined())
+        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.<Directory>notDefined())
 
         Provider<Directory> provider = directoryProvider(
             key,
@@ -190,7 +190,7 @@ final class SimpleDirectoryState implements DirectoryState {
     static SimpleDirectoryState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, Directory defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.notDefined())
+        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.<Directory>notDefined())
 
         Provider<Directory> provider = directoryProvider(
             envKey,
@@ -208,7 +208,7 @@ final class SimpleDirectoryState implements DirectoryState {
     static SimpleDirectoryState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, Provider<Directory> defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.notDefined())
+        DirectoryProperty property = project.objects.directoryProperty().convention(Providers.<Directory>notDefined())
 
         Provider<Directory> provider = directoryProvider(
             envKey,

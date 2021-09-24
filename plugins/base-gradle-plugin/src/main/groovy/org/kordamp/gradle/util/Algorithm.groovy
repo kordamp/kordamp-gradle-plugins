@@ -15,7 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':base-gradle-plugin')
-    api 'gradle.plugin.com.hierynomus.gradle.plugins:license-gradle-plugin:0.16.1'
+package org.kordamp.gradle.util
+
+import static org.kordamp.gradle.util.StringUtils.isBlank
+
+/**
+ * @author Andres Almiray
+ * @since 0.47.0
+ */
+enum Algorithm {
+    MD2,
+    MD5,
+    SHA_1,
+    SHA_256,
+    SHA_384,
+    SHA_512,
+    SHA3_224,
+    SHA3_256,
+    SHA3_384,
+    SHA3_512
+
+    String formatted() {
+        if (name().startsWith('SHA3')) {
+            return name().toLowerCase().replace('_', '-')
+        }
+        return name().toLowerCase().replace('_', '')
+    }
+
+    static Algorithm of(String str) {
+        if (isBlank(str)) return null
+        return Algorithm.valueOf(str.toUpperCase().trim())
+    }
 }

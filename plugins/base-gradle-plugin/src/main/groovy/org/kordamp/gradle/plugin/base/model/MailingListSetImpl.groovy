@@ -37,7 +37,7 @@ class MailingListSetImpl extends AbstractDomainSet<MailingList> implements Maili
     final ListProperty<MailingList> mailingLists
 
     MailingListSetImpl(ObjectFactory objects) {
-        mailingLists = objects.listProperty(MailingList).convention(Providers.notDefined())
+        mailingLists = objects.listProperty(MailingList).convention(Providers.<List<MailingList>>notDefined())
     }
 
     @Override
@@ -63,6 +63,7 @@ class MailingListSetImpl extends AbstractDomainSet<MailingList> implements Maili
     }
 
     @Override
+    @CompileDynamic
     void mailingList(Action<? super MailingList> action) {
         MailingList mailingList = new MailingList()
         action.execute(mailingList)
@@ -70,12 +71,14 @@ class MailingListSetImpl extends AbstractDomainSet<MailingList> implements Maili
     }
 
     @Override
+    @CompileDynamic
     void mailingList(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MailingList) Closure<Void> action) {
         MailingList mailingList = new MailingList()
         ConfigureUtil.configure(action, mailingList)
         mailingLists.add(mailingList)
     }
 
+    @CompileDynamic
     static void merge(MailingListSetImpl o1, MailingListSetImpl o2) {
         o1.mergeStrategy = (o1.mergeStrategy ?: o2?.mergeStrategy) ?: MergeStrategy.UNIQUE
 

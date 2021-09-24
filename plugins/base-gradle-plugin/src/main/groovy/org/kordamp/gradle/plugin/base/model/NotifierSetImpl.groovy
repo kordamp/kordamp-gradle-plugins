@@ -37,7 +37,7 @@ class NotifierSetImpl extends AbstractDomainSet<Notifier> implements NotifierSet
     final ListProperty<Notifier> notifiers
 
     NotifierSetImpl(ObjectFactory objects) {
-        notifiers = objects.listProperty(Notifier).convention(Providers.notDefined())
+        notifiers = objects.listProperty(Notifier).convention(Providers.<List<Notifier>>notDefined())
     }
 
     @Override
@@ -63,6 +63,7 @@ class NotifierSetImpl extends AbstractDomainSet<Notifier> implements NotifierSet
     }
 
     @Override
+    @CompileDynamic
     void notifier(Action<? super Notifier> action) {
         Notifier notifier = new Notifier()
         action.execute(notifier)
@@ -70,12 +71,14 @@ class NotifierSetImpl extends AbstractDomainSet<Notifier> implements NotifierSet
     }
 
     @Override
+    @CompileDynamic
     void notifier(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Notifier) Closure<Void> action) {
         Notifier notifier = new Notifier()
         ConfigureUtil.configure(action, notifier)
         notifiers.add(notifier)
     }
 
+    @CompileDynamic
     static void merge(NotifierSetImpl o1, NotifierSetImpl o2) {
         o1.mergeStrategy = (o1.mergeStrategy ?: o2?.mergeStrategy) ?: MergeStrategy.UNIQUE
 

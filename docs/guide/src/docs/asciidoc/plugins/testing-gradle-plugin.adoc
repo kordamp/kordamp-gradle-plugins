@@ -53,7 +53,7 @@ config {
         colors {
             success
             failure
-            ignored
+            skipped
         }
     }
 }
@@ -100,7 +100,7 @@ config {
 | Name    | Type    | Required | Default Value | Description
 | success | String  | no       | green         |
 | failure | String  | no       | red           |
-| ignored | String  | no       | yellow        |
+| skipped | String  | no       | yellow        |
 |===
 
 Valid values are [`black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`].

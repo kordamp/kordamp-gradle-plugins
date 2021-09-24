@@ -48,7 +48,7 @@ final class KordampLongState implements LongState {
     KordampLongState(Project project, String key, Provider<Long> parent, long defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.property(Long).convention(Providers.notDefined())
+        property = project.objects.property(Long).convention(Providers.<Long>notDefined())
 
         provider = longProvider(
             key,
@@ -64,7 +64,7 @@ final class KordampLongState implements LongState {
     KordampLongState(Project project, String key, Provider<Long> parent, Provider<Long> defaultValue) {
         this.project = requireNonNull(project, "Argument 'project' must not be null.")
 
-        property = project.objects.property(Long).convention(Providers.notDefined())
+        property = project.objects.property(Long).convention(Providers.<Long>notDefined())
 
         provider = longProvider(
             key,

@@ -20,7 +20,6 @@ package org.kordamp.gradle.util
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.invocation.Gradle
-import org.gradle.internal.hash.HashUtil
 
 import java.util.function.Consumer
 
@@ -39,7 +38,7 @@ final class Cache {
         final String value
 
         private Key(Object input) {
-            this.value = HashUtil.sha256(String.valueOf(input).bytes).asHexString()
+            this.value = ChecksumUtils.checksum(Algorithm.SHA_256, String.valueOf(input).bytes)
         }
 
         String getAbsolutePath(Gradle gradle) {

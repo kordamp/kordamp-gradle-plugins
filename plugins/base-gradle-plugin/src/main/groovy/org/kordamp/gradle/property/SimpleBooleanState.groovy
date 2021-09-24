@@ -81,7 +81,7 @@ final class SimpleBooleanState implements BooleanState {
     static SimpleBooleanState of(Project project, Object owner, String key) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Boolean> property = project.objects.property(Boolean).convention(Providers.notDefined())
+        Property<Boolean> property = project.objects.property(Boolean).convention(Providers.<Boolean>notDefined())
 
         Provider<Boolean> provider = booleanProvider(
             key,
@@ -95,7 +95,7 @@ final class SimpleBooleanState implements BooleanState {
     static SimpleBooleanState of(Project project, Object owner, String key, boolean defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Boolean> property = project.objects.property(Boolean).convention(Providers.notDefined())
+        Property<Boolean> property = project.objects.property(Boolean).convention(Providers.<Boolean>notDefined())
 
         Provider<Boolean> provider = booleanProvider(
             key,
@@ -110,7 +110,7 @@ final class SimpleBooleanState implements BooleanState {
     static SimpleBooleanState of(Project project, Object owner, String key, Order order) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Boolean> property = project.objects.property(Boolean).convention(Providers.notDefined())
+        Property<Boolean> property = project.objects.property(Boolean).convention(Providers.<Boolean>notDefined())
 
         Provider<Boolean> provider = booleanProvider(
             key,
@@ -125,7 +125,7 @@ final class SimpleBooleanState implements BooleanState {
     static SimpleBooleanState of(Project project, Object owner, String key, Order order, Path path, boolean defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Boolean> property = project.objects.property(Boolean).convention(Providers.notDefined())
+        Property<Boolean> property = project.objects.property(Boolean).convention(Providers.<Boolean>notDefined())
 
         Provider<Boolean> provider = booleanProvider(
             key,
@@ -142,7 +142,7 @@ final class SimpleBooleanState implements BooleanState {
     static SimpleBooleanState of(Project project, Object owner, String envKey, String propertyKey, Order order, Path path, boolean defaultValue) {
         requireNonNull(project, ERROR_PROJECT_NULL)
 
-        Property<Boolean> property = project.objects.property(Boolean).convention(Providers.notDefined())
+        Property<Boolean> property = project.objects.property(Boolean).convention(Providers.<Boolean>notDefined())
 
         Provider<Boolean> provider = booleanProvider(
             envKey,
