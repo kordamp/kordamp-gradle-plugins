@@ -19,7 +19,7 @@ release:
     changelog:
       sort: DESC
       formatted: ALWAYS
-      change: '- {{commitShortHash}} {{commitTitle}}'
+      format: '- {{commitShortHash}} {{commitTitle}}'
       labelers:
         - label: 'feature'
           title: 'Resolves #'
