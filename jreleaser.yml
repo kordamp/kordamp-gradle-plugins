@@ -66,6 +66,7 @@ release:
         - search: '\[chore\] '
         - search: '\[deps\] '
         - search: '\[docs\] '
+        - search: '\[build\] '
 
 announce:
   twitter:
