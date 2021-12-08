@@ -251,7 +251,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
         Task jacocoReportTask = project.tasks.findByName(taskName)
 
         if (!jacocoReportTask) {
-            jacocoReportTask = project.tasks.create(taskName, JacocoReport) { t ->
+            jacocoReportTask = project.tasks.register(taskName, JacocoReport) { t ->
                 t.dependsOn testTask
                 t.group = 'Reporting'
                 t.description = "Generates code coverage report for the ${testTask.name} task."
