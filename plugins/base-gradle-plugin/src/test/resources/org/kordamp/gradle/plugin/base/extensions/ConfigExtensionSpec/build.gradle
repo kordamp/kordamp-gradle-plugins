@@ -60,8 +60,8 @@ kordamp {
                 url = 'http://vladimir.orany.cz'
                 timezone = 'Europe/Prague'
                 organization {
-                    name = 'Agorapulse'
-                    url = 'https://agorapulse.com'
+                    name = 'Other Org'
+                    url = 'https://example.com/otherorg'
                 }
             }
         }
@@ -153,6 +153,9 @@ tasks.register('extensionTest') {
         assert musketyr.email.get() == 'vlad@agorapulse.com'
         assert musketyr.url.get() == 'http://vladimir.orany.cz'
         assert musketyr.timezone.get() == 'Europe/Prague'
+        assert musketyr.organization.get().name.get() == 'Other Org'
+        assert musketyr.organization.get().url.get() == 'https://example.com/otherorg'
+
 
         def testList = kordamp.info.mailingLists.named('testList').get()
         assert testList.subscribe.get() == 'https://example.com/ml/subscribe'
