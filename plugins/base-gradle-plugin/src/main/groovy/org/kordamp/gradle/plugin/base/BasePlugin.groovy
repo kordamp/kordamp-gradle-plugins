@@ -28,6 +28,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.listener.ProjectEvaluationListenerManager
 import org.kordamp.gradle.listener.TaskGraphReadyListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
+import org.kordamp.gradle.plugin.base.extensions.ConfigExtension
 import org.kordamp.gradle.plugin.base.tasks.ArchivesTask
 import org.kordamp.gradle.plugin.base.tasks.ClearKordampFileCacheTask
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask
@@ -92,6 +93,8 @@ class BasePlugin extends AbstractKordampPlugin {
         if (!project.extensions.findByType(ProjectConfigurationExtension)) {
             project.extensions.create(ProjectConfigurationExtension.CONFIG_NAME, ProjectConfigurationExtension, project)
         }
+
+        ConfigExtension.createIfMissing(project)
 
         project.tasks.register('verify', DefaultTask,
             new Action<DefaultTask>() {
