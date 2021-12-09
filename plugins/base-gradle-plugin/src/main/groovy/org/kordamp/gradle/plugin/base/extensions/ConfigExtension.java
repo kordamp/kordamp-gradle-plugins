@@ -37,6 +37,9 @@ public interface ConfigExtension extends ExtensionAware {
         });
 
         InfoExtension.createIfMissing(project);
+        BomExtension.createIfMissing(project);
+        BuildInfoExtension.createIfMissing(project);
+        ClirrExtension.createIfMissing(project);
 
         return config;
     }
