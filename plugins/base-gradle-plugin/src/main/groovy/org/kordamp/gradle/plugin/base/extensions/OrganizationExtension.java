@@ -29,8 +29,8 @@ public interface OrganizationExtension extends ExtensionAware, Organization {
 
     // TODO: isEmpty()
 
-    static OrganizationExtension createIfMissing(Project project) {
-        return ExtensionUtil.createIfMissing(project, PATH, (ext, root) -> {
+    static OrganizationExtension create(Project project) {
+        return ExtensionUtil.create(project, PATH, (ext, root) -> {
             ext.getName().convention(root.getName());
             ext.getUrl().convention(root.getUrl());
         });

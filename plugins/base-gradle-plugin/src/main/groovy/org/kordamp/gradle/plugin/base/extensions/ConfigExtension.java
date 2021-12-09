@@ -31,15 +31,15 @@ public interface ConfigExtension extends ExtensionAware {
 
     Property<Boolean> getRelease();
 
-    static ConfigExtension createIfMissing(Project project) {
-        ConfigExtension config = ExtensionUtil.createIfMissing(project, project.getRootProject(), PATH, (ext, root) -> {
+    static ConfigExtension create(Project project) {
+        ConfigExtension config = ExtensionUtil.create(project, project.getRootProject(), PATH, (ext, root) -> {
             ext.getRelease().convention(root.getRelease());
         });
 
-        InfoExtension.createIfMissing(project);
-        BomExtension.createIfMissing(project);
-        BuildInfoExtension.createIfMissing(project);
-        ClirrExtension.createIfMissing(project);
+        InfoExtension.create(project);
+        BomExtension.create(project);
+        BuildInfoExtension.create(project);
+        ClirrExtension.create(project);
 
         return config;
     }

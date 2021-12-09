@@ -37,4 +37,8 @@ public class ExtensionTypeAndName<E extends ExtensionAware> {
         return extensionType;
     }
 
+    @Override
+    public String toString() {
+        return name + "(" + extensionType.getName() + ")";
+    }
 }

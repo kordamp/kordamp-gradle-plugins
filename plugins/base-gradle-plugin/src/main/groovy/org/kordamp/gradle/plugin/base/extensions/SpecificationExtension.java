@@ -35,8 +35,8 @@ public interface SpecificationExtension extends ExtensionAware {
 
     // TODO: merge
 
-    static SpecificationExtension createIfMissing(Project project) {
-        return ExtensionUtil.createIfMissing(project, PATH, (ext, root) -> {
+    static SpecificationExtension create(Project project) {
+        return ExtensionUtil.create(project, PATH, (ext, root) -> {
             ext.getEnabled().convention(root.getEnabled().convention(true));
             ext.getTitle().convention(root.getTitle());
             ext.getVersion().convention(root.getVersion());

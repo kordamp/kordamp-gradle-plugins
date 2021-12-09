@@ -35,8 +35,8 @@ public interface LinksExtension extends ExtensionAware {
 
     // TODO: validate
 
-    static LinksExtension createIfMissing(Project project) {
-        return ExtensionUtil.createIfMissing(project, PATH, (ext, root) -> {
+    static LinksExtension create(Project project) {
+        return ExtensionUtil.create(project, PATH, (ext, root) -> {
             ext.getEnabled().convention(root.getEnabled().convention(true));
             ext.getWebsite().convention(root.getWebsite());
             ext.getIssueTracker().convention(root.getIssueTracker());

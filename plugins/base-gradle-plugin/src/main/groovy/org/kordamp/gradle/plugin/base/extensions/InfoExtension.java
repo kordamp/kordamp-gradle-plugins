@@ -44,8 +44,8 @@ public interface InfoExtension extends ExtensionAware {
 
     // TODO: merge containers
 
-    static InfoExtension createIfMissing(Project project) {
-        InfoExtension config = ExtensionUtil.createIfMissing(project, PATH, (ext, root) -> {
+    static InfoExtension create(Project project) {
+        InfoExtension config = ExtensionUtil.create(project, PATH, (ext, root) -> {
             ext.getName().convention(root.getName());
             ext.getDescription().convention(root.getDescription());
             ext.getInceptionYear().convention(root.getInceptionYear());
@@ -53,13 +53,13 @@ public interface InfoExtension extends ExtensionAware {
             ext.getTags().convention(root.getTags());
         });
 
-        OrganizationExtension.createIfMissing(project);
-        LinksExtension.createIfMissing(project);
-        ScmExtension.createIfMissing(project);
-        IssueManagementExtension.createIfMissing(project);
-        CiManagementExtension.createIfMissing(project);
-        SpecificationExtension.createIfMissing(project);
-        ImplementationExtension.createIfMissing(project);
+        OrganizationExtension.create(project);
+        LinksExtension.create(project);
+        ScmExtension.create(project);
+        IssueManagementExtension.create(project);
+        CiManagementExtension.create(project);
+        SpecificationExtension.create(project);
+        ImplementationExtension.create(project);
 
         return config;
     }

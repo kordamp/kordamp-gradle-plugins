@@ -33,8 +33,8 @@ public interface IssueManagementExtension extends ExtensionAware {
 
     // TODO: isEmpty
 
-    static IssueManagementExtension createIfMissing(Project project) {
-        return ExtensionUtil.createIfMissing(project, PATH, (ext, root) -> {
+    static IssueManagementExtension create(Project project) {
+        return ExtensionUtil.create(project, PATH, (ext, root) -> {
             ext.getSystem().convention(root.getSystem());
             ext.getUrl().convention(root.getUrl());
         });

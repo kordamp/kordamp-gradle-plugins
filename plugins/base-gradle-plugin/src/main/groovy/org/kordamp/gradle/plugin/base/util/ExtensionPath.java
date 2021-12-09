@@ -58,4 +58,11 @@ public class ExtensionPath<P extends ExtensionAware, E extends ExtensionAware> {
         return current.getExtensionType().cast(parent.get(container).getExtensions().getByName(current.getName()));
     }
 
+    @Override
+    public String toString() {
+        if (parent == null) {
+            return "/" + current;
+        }
+        return getParent().toString() + "/" + current;
+    }
 }

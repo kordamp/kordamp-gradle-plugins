@@ -26,23 +26,23 @@ import java.util.function.BiConsumer;
 
 public class ExtensionUtil {
 
-    public static <E extends ExtensionAware, P extends ExtensionAware> E createIfMissing(Project project, ExtensionPath<P, E> path) {
-        return createIfMissing(project, path, null);
+    public static <E extends ExtensionAware, P extends ExtensionAware> E create(Project project, ExtensionPath<P, E> path) {
+        return create(project, path, null);
     }
 
-    public static <E extends ExtensionAware, P extends ExtensionAware> E createIfMissing(Project project, ExtensionPath<P, E> path, BiConsumer<E, E> conventionSetter) {
-        return createIfMissing(project, project.getRootProject(), path, conventionSetter);
+    public static <E extends ExtensionAware, P extends ExtensionAware> E create(Project project, ExtensionPath<P, E> path, BiConsumer<E, E> conventionSetter) {
+        return create(project, project.getRootProject(), path, conventionSetter);
     }
 
-    public static <E extends ExtensionAware, P extends ExtensionAware> E createIfMissing(ExtensionAware parent, ExtensionAware root, ExtensionPath<P, E> path) {
-        return createIfMissing(parent, root, path, null);
+    public static <E extends ExtensionAware, P extends ExtensionAware> E create(ExtensionAware parent, ExtensionAware root, ExtensionPath<P, E> path) {
+        return create(parent, root, path, null);
     }
 
-    public static <E extends ExtensionAware, P extends ExtensionAware> E createIfMissing(ExtensionAware parent, ExtensionAware root, ExtensionPath<P, E> path, BiConsumer<E, E> conventionSetter) {
-        E extension = findOrCreateExtension(parent, path);
+    public static <E extends ExtensionAware, P extends ExtensionAware> E create(ExtensionAware parent, ExtensionAware root, ExtensionPath<P, E> path, BiConsumer<E, E> conventionSetter) {
+        E extension = createExtension(parent, path);
 
         if (root != null && !Objects.equals(parent, root)) {
-            E rootExtension = findOrCreateExtension(root, path);
+            E rootExtension = path.get(root);
             if (conventionSetter != null) {
                 conventionSetter.accept(extension, rootExtension);
             }
@@ -51,19 +51,15 @@ public class ExtensionUtil {
         return extension;
     }
 
-    private static <E extends ExtensionAware, P extends ExtensionAware> E findOrCreateExtension(ExtensionAware parent, ExtensionPath<P, E> path) {
+    private static <E extends ExtensionAware, P extends ExtensionAware> E createExtension(ExtensionAware parent, ExtensionPath<P, E> path) {
         Optional<ExtensionPath<?, P>> maybeParentPath = path.getParent();
         ExtensionTypeAndName<E> current = path.getCurrent();
-        if (!maybeParentPath.isPresent()) {
-            E extension = parent.getExtensions().findByType(current.getExtensionType());
-            if (extension != null) {
-                return extension;
-            }
-            return parent.getExtensions().create(current.getName(), current.getExtensionType());
+
+        if (maybeParentPath.isPresent()) {
+            return maybeParentPath.get().get(parent).getExtensions().create(current.getName(), current.getExtensionType());
         }
 
-        ExtensionPath<?, P> parentPath = maybeParentPath.get();
-        return findOrCreateExtension(findOrCreateExtension(parent, parentPath), path.asOrphan());
+        return parent.getExtensions().create(current.getName(), current.getExtensionType());
     }
 
 

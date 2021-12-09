@@ -36,8 +36,8 @@ public interface CiManagementExtension extends ExtensionAware {
     // TODO: isEmpty
     // TODO: mergeNotifiersOnDemand
 
-    static CiManagementExtension createIfMissing(Project project) {
-        return ExtensionUtil.createIfMissing(project, PATH, (ext, root) -> {
+    static CiManagementExtension create(Project project) {
+        return ExtensionUtil.create(project, PATH, (ext, root) -> {
             ext.getSystem().convention(root.getSystem());
             ext.getUrl().convention(root.getUrl());
         });

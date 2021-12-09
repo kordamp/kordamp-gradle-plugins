@@ -37,8 +37,8 @@ public interface ScmExtension extends ExtensionAware {
     // TODO: isEmpty
     // TODO: validate
 
-    static ScmExtension createIfMissing(Project project) {
-        return ExtensionUtil.createIfMissing(project, PATH, (ext, root) -> {
+    static ScmExtension create(Project project) {
+        return ExtensionUtil.create(project, PATH, (ext, root) -> {
             ext.getEnabled().convention(root.getEnabled().convention(true));
             ext.getUrl().convention(root.getUrl());
             ext.getTag().convention(root.getTag());

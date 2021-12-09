@@ -37,8 +37,8 @@ public interface ImplementationExtension extends ExtensionAware {
 
     // TODO: merge
 
-    static ImplementationExtension createIfMissing(Project project) {
-        return ExtensionUtil.createIfMissing(project, PATH, (ext, root) -> {
+    static ImplementationExtension create(Project project) {
+        return ExtensionUtil.create(project, PATH, (ext, root) -> {
             ext.getEnabled().convention(root.getEnabled().convention(true));
             ext.getTitle().convention(root.getTitle());
             ext.getVersion().convention(root.getVersion());

@@ -71,8 +71,9 @@ class BasePlugin extends AbstractKordampPlugin {
     }
 
     void apply(Project project) {
-        project.allprojects { Project p ->
-            ConfigExtension.createIfMissing(p)
+        ConfigExtension.create(project)
+        project.subprojects { Project p ->
+            ConfigExtension.create(p)
         }
 
         if (true) {
