@@ -18,6 +18,7 @@
 package org.kordamp.gradle.plugin.base.util;
 
 import org.gradle.api.Project;
+import org.gradle.api.UnknownDomainObjectException;
 import org.gradle.api.plugins.ExtensionAware;
 
 import java.util.Objects;
@@ -42,9 +43,13 @@ public class ExtensionUtil {
         E extension = createExtension(parent, path);
 
         if (root != null && !Objects.equals(parent, root)) {
-            E rootExtension = path.get(root);
-            if (conventionSetter != null) {
-                conventionSetter.accept(extension, rootExtension);
+            try {
+                E rootExtension = path.get(root);
+                if (conventionSetter != null) {
+                    conventionSetter.accept(extension, rootExtension);
+                }
+            } catch (UnknownDomainObjectException e) {
+                throw new IllegalStateException("The path " + path + " is missing in root " + root + "! Please, create the extension first in the root!", e);
             }
         }
 
@@ -56,7 +61,12 @@ public class ExtensionUtil {
         ExtensionTypeAndName<E> current = path.getCurrent();
 
         if (maybeParentPath.isPresent()) {
-            return maybeParentPath.get().get(parent).getExtensions().create(current.getName(), current.getExtensionType());
+            try {
+                P grandParent = maybeParentPath.get().get(parent);
+                return grandParent.getExtensions().create(current.getName(), current.getExtensionType());
+            } catch (UnknownDomainObjectException e) {
+                throw new IllegalStateException("The path " + path + " is missing in parent " + parent + "! Please, create the extension first in the parent!", e);
+            }
         }
 
         return parent.getExtensions().create(current.getName(), current.getExtensionType());
