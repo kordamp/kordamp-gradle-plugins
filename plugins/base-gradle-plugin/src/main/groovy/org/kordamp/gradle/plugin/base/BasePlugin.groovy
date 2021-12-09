@@ -71,6 +71,15 @@ class BasePlugin extends AbstractKordampPlugin {
     }
 
     void apply(Project project) {
+        project.allprojects { Project p ->
+            ConfigExtension.createIfMissing(p)
+        }
+
+        if (true) {
+            // TODO: remove after testing
+            return
+        }
+
         Banner.display(project)
         this.project = project
         ProjectEvaluationListenerManager.register(project.gradle)
@@ -93,8 +102,6 @@ class BasePlugin extends AbstractKordampPlugin {
         if (!project.extensions.findByType(ProjectConfigurationExtension)) {
             project.extensions.create(ProjectConfigurationExtension.CONFIG_NAME, ProjectConfigurationExtension, project)
         }
-
-        ConfigExtension.createIfMissing(project)
 
         project.tasks.register('verify', DefaultTask,
             new Action<DefaultTask>() {

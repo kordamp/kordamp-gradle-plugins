@@ -98,7 +98,7 @@ gradleProjects.subprojects {
             }
 
             testImplementation gradleTestKit()
-            testImplementation 'com.agorapulse.testing:fixt:0.2.2'
+            testImplementation 'com.agorapulse.testing:fixt:0.2.3'
         }
     }
 }
