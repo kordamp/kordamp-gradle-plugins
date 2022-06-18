@@ -1,0 +1,196 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2018-2021 Andres Almiray.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+plugins {
+    id 'org.kordamp.gradle.base'
+}
+
+kordamp {
+    release = true
+    info {
+        name = 'Hello'
+        description = 'Description'
+        inceptionYear = '2021'
+        tags = ['foo', 'bar']
+        organization {
+            name = 'Agorapulse'
+            url = 'https://agorapulse.com'
+        }
+        links {
+            enabled = true
+            website ='https://example.com/web'
+            issueTracker ='https://example.com/issues'
+            scm ='https://example.com/scm'
+        }
+        scm {
+            enabled = true
+            url = 'https://example.com/scm'
+            tag = 'release-1.2.3'
+            connection = 'https://example.com/connection'
+            developerConnection = 'https://example.com/developerConnection'
+        }
+        issueManagement {
+            system = 'Example Issues'
+            url = 'https://example.com/issues'
+        }
+        ciManagement {
+            system = 'Example CI'
+            url = 'https://example.com/ci'
+            notifiers {
+                testNotifier {
+                    type = 'test'
+                    sendOnError = true
+                    sendOnFailure = true
+                    sendOnSuccess = true
+                    sendOnWarning = true
+                    configuration =[foo: 'bar']
+                }
+            }
+        }
+        repositories {
+            releaseRepository {
+                url = 'https://repo.com'
+//                credentials {
+//                    username = 'vlad'
+//                    password = 'strong'
+//                }
+            }
+        }
+        people {
+            musketyr {
+                fullName = 'Vladimir Orany'
+                email = 'vlad@agorapulse.com'
+                url = 'http://vladimir.orany.cz'
+                timezone = 'Europe/Prague'
+//                organization {
+//                    name = 'Other Org'
+//                    url = 'https://example.com/otherorg'
+//                }
+            }
+        }
+        mailingLists {
+            testList {
+                subscribe = 'https://example.com/ml/subscribe'
+                unsubscribe = 'https://example.com/ml/unsubscribe'
+                post = 'https://example.com/ml/post'
+                archive = 'https://example.com/ml/archive'
+                otherArchives = ['https://example.com/ml/other-archive']
+            }
+        }
+        externalCredentials {
+            github {
+                username = 'musketyr'
+                password = 'password'
+            }
+        }
+        specification {
+            enabled = true
+            title = 'The Title'
+            version = 'v1.2.3'
+            vendor = 'Kordamp'
+        }
+        implementation {
+            enabled = true
+            title = 'The Implementation Tile'
+            version = 'v1.2.3.4'
+            vendor = 'Kordamp'
+            vendorId = 'kordamp'
+            url = 'https://kordamp.org'
+        }
+    }
+}
+
+tasks.register('extensionTest') {
+    doFirst {
+        assert kordamp.release.get()
+        assert kordamp.info.name.get() == 'Hello'
+        assert kordamp.info.description.get() == 'Description'
+        assert kordamp.info.inceptionYear.get() == '2021'
+        assert kordamp.info.tags.get() == ['foo', 'bar']
+
+        assert kordamp.info.organization.name.get() == 'Agorapulse'
+        assert kordamp.info.organization.url.get() == 'https://agorapulse.com'
+
+        assert kordamp.info.links.enabled.get() == true
+        assert kordamp.info.links.website.get() == 'https://example.com/web'
+        assert kordamp.info.links.issueTracker.get() == 'https://example.com/issues'
+        assert kordamp.info.links.scm.get() == 'https://example.com/scm'
+
+        assert kordamp.info.scm.enabled.get() == true
+        assert kordamp.info.scm.url.get() == 'https://example.com/scm'
+        assert kordamp.info.scm.tag.get() == 'release-1.2.3'
+        assert kordamp.info.scm.connection.get() == 'https://example.com/connection'
+        assert kordamp.info.scm.developerConnection.get() == 'https://example.com/developerConnection'
+
+        assert kordamp.info.issueManagement.system.get() == 'Example Issues'
+        assert kordamp.info.issueManagement.url.get() == 'https://example.com/issues'
+
+        assert kordamp.info.ciManagement.system.get() == 'Example CI'
+        assert kordamp.info.ciManagement.url.get() == 'https://example.com/ci'
+
+        assert kordamp.info.specification.enabled.get() == true
+        assert kordamp.info.specification.title.get() == 'The Title'
+        assert kordamp.info.specification.version.get() == 'v1.2.3'
+        assert kordamp.info.specification.vendor.get() == 'Kordamp'
+
+        assert kordamp.info.implementation.enabled.get() == true
+        assert kordamp.info.implementation.title.get() == 'The Implementation Tile'
+        assert kordamp.info.implementation.version.get() == 'v1.2.3.4'
+        assert kordamp.info.implementation.vendor.get() == 'Kordamp'
+        assert kordamp.info.implementation.vendorId.get() == 'kordamp'
+        assert kordamp.info.implementation.url.get() == 'https://kordamp.org'
+
+        def releaseRepository = kordamp.info.repositories.named('releaseRepository').get()
+
+        assert releaseRepository
+        assert releaseRepository.name == 'releaseRepository'
+        assert releaseRepository.url.get() == 'https://repo.com'
+//        assert releaseRepository.credentials.get().username == 'vlad'
+//        assert releaseRepository.credentials.get().password == 'strong'
+
+        def musketyr = kordamp.info.people.named('musketyr').get()
+
+        assert musketyr.name == 'musketyr'
+        assert musketyr.id == 'musketyr'
+        assert musketyr.fullName.get() == 'Vladimir Orany'
+        assert musketyr.email.get() == 'vlad@agorapulse.com'
+        assert musketyr.url.get() == 'http://vladimir.orany.cz'
+        assert musketyr.timezone.get() == 'Europe/Prague'
+        // assert musketyr.organization.get().name.get() == 'Other Org'
+        // assert musketyr.organization.get().url.get() == 'https://example.com/otherorg'
+
+
+        def testList = kordamp.info.mailingLists.named('testList').get()
+        assert testList.subscribe.get() == 'https://example.com/ml/subscribe'
+        assert testList.unsubscribe.get() == 'https://example.com/ml/unsubscribe'
+        assert testList.post.get() == 'https://example.com/ml/post'
+        assert testList.archive.get() == 'https://example.com/ml/archive'
+        assert testList.otherArchives.get() == ['https://example.com/ml/other-archive']
+
+        def github = kordamp.info.externalCredentials.named('github').get()
+        assert github.username.get() == 'musketyr'
+        assert github.password.get() == 'password'
+
+        def testNotifier = kordamp.info.ciManagement.notifiers.named('testNotifier').get()
+        assert testNotifier.type.get() == 'test'
+        assert testNotifier.sendOnError.get() == true
+        assert testNotifier.sendOnFailure.get() == true
+        assert testNotifier.sendOnSuccess.get() == true
+        assert testNotifier.sendOnWarning.get() == true
+        assert testNotifier.configuration.get() == [foo: 'bar']
+    }
+}

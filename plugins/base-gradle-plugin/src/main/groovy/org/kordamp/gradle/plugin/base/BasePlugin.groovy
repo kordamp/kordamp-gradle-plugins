@@ -28,6 +28,7 @@ import org.kordamp.gradle.listener.ProjectEvaluatedListener
 import org.kordamp.gradle.listener.ProjectEvaluationListenerManager
 import org.kordamp.gradle.listener.TaskGraphReadyListener
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
+import org.kordamp.gradle.plugin.base.extensions.ConfigExtension
 import org.kordamp.gradle.plugin.base.tasks.ArchivesTask
 import org.kordamp.gradle.plugin.base.tasks.ClearKordampFileCacheTask
 import org.kordamp.gradle.plugin.base.tasks.ConfigurationSettingsTask
@@ -70,6 +71,16 @@ class BasePlugin extends AbstractKordampPlugin {
     }
 
     void apply(Project project) {
+        ConfigExtension.create(project)
+        project.subprojects { Project p ->
+            ConfigExtension.create(p)
+        }
+
+        if (true) {
+            // TODO: remove after testing
+            return
+        }
+
         Banner.display(project)
         this.project = project
         ProjectEvaluationListenerManager.register(project.gradle)
