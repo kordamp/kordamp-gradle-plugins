@@ -32,7 +32,6 @@ asciidoctor {
     attributes = [
         'gradle-version': project.gradle.gradleVersion,
         'source-highlighter': 'prettify',
-        detektVersion: detektVersion,
         errorproneVersion: errorproneVersion,
         checkstyleVersion: checkstyleVersion,
         codenarcVersion: codenarcVersion,

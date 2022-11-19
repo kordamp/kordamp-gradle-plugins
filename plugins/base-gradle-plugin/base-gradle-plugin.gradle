@@ -34,7 +34,6 @@ processResources {
             version: project.version,
             id: 'base',
             name: 'Kordamp Gradle plugins',
-            detektVersion: detektVersion,
             errorproneVersion: errorproneVersion,
             checkstyleVersion: checkstyleVersion,
             codenarcVersion: codenarcVersion,

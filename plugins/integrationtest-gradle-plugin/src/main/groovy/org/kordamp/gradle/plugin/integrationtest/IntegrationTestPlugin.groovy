@@ -73,18 +73,6 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
             createTasksIfNeeded(project)
         }
 
-        project.pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
-            createSourceSetsIfNeeded(project)
-            createConfigurationsIfNeeded(project)
-            createTasksIfNeeded(project)
-        }
-
-        project.pluginManager.withPlugin('scala-base') {
-            createSourceSetsIfNeeded(project)
-            createConfigurationsIfNeeded(project)
-            createTasksIfNeeded(project)
-        }
-
         addProjectEvaluatedListener(project, new IntegrationProjectEvaluatedListener())
     }
 
@@ -108,14 +96,6 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
 
         project.pluginManager.withPlugin('groovy-base') {
             adjustSourceSet(project, sourceSetDir, 'groovy')
-        }
-
-        project.pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
-            adjustSourceSet(project, sourceSetDir, 'kotlin')
-        }
-
-        project.pluginManager.withPlugin('scala-base') {
-            adjustSourceSet(project, sourceSetDir, 'scala')
         }
 
         SourceSet sourceSet = resolveSourceSets(project).integrationTest

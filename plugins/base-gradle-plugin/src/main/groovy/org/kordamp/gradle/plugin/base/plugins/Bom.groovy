@@ -91,8 +91,6 @@ class Bom extends AbstractFeature implements PomOptions, DependencyManagement {
                 ProjectConfigurationExtension config = project.extensions.getByType(ProjectConfigurationExtension)
                 config.docs.javadoc.enabled = false
                 config.docs.groovydoc.enabled = false
-                config.docs.kotlindoc.enabled = false
-                config.docs.scaladoc.enabled = false
                 config.docs.sourceHtml.enabled = false
                 config.docs.sourceXref.enabled = false
                 config.artifacts.source.enabled = false

@@ -9,9 +9,7 @@ class:: `org.kordamp.gradle.plugin.javadoc.JavadocPlugin`
      link:api-html/org/kordamp/gradle/plugin/javadoc/JavadocPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`
 applied by:: `<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>` +
-`<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>` +
-`<<_org_kordamp_gradle_kotlindoc,org.kordamp.gradle.kotlindoc>>` +
-`<<_org_kordamp_gradle_scaladoc,org.kordamp.gradle.scaladoc>>`
+`<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>`
 
 Generates and packages Javadoc documentation.
 

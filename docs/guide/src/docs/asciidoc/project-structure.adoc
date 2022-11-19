@@ -332,7 +332,5 @@ There are 4 language specific project aggregators and 1 generic project aggregat
 | Generic | `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
 | Java    | `<<_org_kordamp_gradle_java_project,org.kordamp.gradle.java-project>>`
 | Groovy  | `<<_org_kordamp_gradle_groovy_project,org.kordamp.gradle.groovy-project>>`
-| Kotlin  | `<<_org_kordamp_gradle_kotlin_project,org.kordamp.gradle.kotlin-project>>`
-| Scala   | `<<_org_kordamp_gradle_scala_project,org.kordamp.gradle.scala-project>>`
 |===
 

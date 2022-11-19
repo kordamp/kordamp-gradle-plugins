@@ -8,9 +8,7 @@ class:: `org.kordamp.gradle.plugin.project.java.JavaProjectPlugin`
     (link:api/org/kordamp/gradle/plugin/project/java/JavaProjectPlugin.html[groovydoc],
      link:api-html/org/kordamp/gradle/plugin/project/java/JavaProjectPlugin.html[source])
 applies:: `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`
-applied by:: `<<_org_kordamp_gradle_groovy_project,org.kordamp.gradle.groovy-project>>` +
-`<<_org_kordamp_gradle_kotlin_project,org.kordamp.gradle.kotlin-project>>` +
-`<<_org_kordamp_gradle_scala_project,org.kordamp.gradle.scala-project>>`
+applied by:: `<<_org_kordamp_gradle_groovy_project,org.kordamp.gradle.groovy-project>>`
 
 Configures a project with Java conventions.
 

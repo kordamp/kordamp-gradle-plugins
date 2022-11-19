@@ -18,5 +18,5 @@
 dependencies {
     api project(':base-gradle-plugin')
     api "org.yaml:snakeyaml:$snakeYamlVersion"
-    api 'com.github.jezza:toml:1.2-java-8'
+    api 'com.github.jezza:toml:1.2'
 }

@@ -20,7 +20,9 @@ package org.kordamp.gradle.plugin.sourcexref
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.apache.maven.jxr.JXR
-import org.apache.maven.jxr.log.Log
+import org.apache.maven.jxr.JavaCodeTransform
+import org.apache.maven.jxr.pacman.FileManager
+import org.apache.maven.jxr.pacman.PackageManager
 import org.gradle.api.DefaultTask
 import org.gradle.api.JavaVersion
 import org.gradle.api.file.FileCollection
@@ -73,7 +75,11 @@ class JxrTask extends DefaultTask {
 
     @TaskAction
     void xref() {
-        JXR jxr = new JXR()
+        FileManager fileManager = new FileManager()
+        PackageManager packageManager = new PackageManager(fileManager)
+        JavaCodeTransform codeTransform = new JavaCodeTransform(packageManager, fileManager)
+
+        JXR jxr = new JXR(packageManager, codeTransform)
         jxr.setDest(Paths.get(outputDirectory.absolutePath))
 
         if (isBlank(inputEncoding)) {
@@ -87,7 +93,6 @@ class JxrTask extends DefaultTask {
 
         jxr.outputEncoding = getOutputEncoding()
         jxr.locale = Locale.default
-        jxr.log = new LogWrapper()
         jxr.revision = 'HEAD' // TODO
 
         if (excludes) {
@@ -190,28 +195,6 @@ class JxrTask extends DefaultTask {
         }
         catch (IOException e) {
             logger.warn('An error occured while copying the resource to the target directory', e)
-        }
-    }
-
-    private class LogWrapper implements Log {
-        @Override
-        void info(String message) {
-            logger.info(message)
-        }
-
-        @Override
-        void debug(String message) {
-            logger.debug(message)
-        }
-
-        @Override
-        void warn(String message) {
-            logger.warn(message)
-        }
-
-        @Override
-        void error(String message) {
-            logger.error(message)
         }
     }
 }

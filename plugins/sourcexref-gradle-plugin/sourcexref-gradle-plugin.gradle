@@ -17,5 +17,5 @@
  */
 dependencies {
     api project(':base-gradle-plugin')
-    api 'org.apache.maven:maven-jxr:3.0.0'
+    api "org.apache.maven:maven-jxr:$jxrVersion"
 }

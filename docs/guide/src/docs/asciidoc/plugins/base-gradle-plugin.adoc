@@ -14,7 +14,6 @@ applied by:: `<<_org_kordamp_gradle_bom,org.kordamp.gradle.bom>>`, +
 `<<_org_kordamp_gradle_codenarc,org.kordamp.gradle.codenarc>>`, +
 `<<_org_kordamp_gradle_coveralls,org.kordamp.gradle.coveralls>>`, +
 `<<_org_kordamp_gradle_cpd,org.kordamp.gradle.cpd>>`, +
-`<<_org_kordamp_gradle_detekt,org.kordamp.gradle.detekt>>`, +
 `<<_org_kordamp_gradle_errorprone,org.kordamp.gradle.errorprone>>`, +
 `<<_org_kordamp_gradle_functionaltest,org.kordamp.gradle.functional-test>>`, +
 `<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>`, +
@@ -23,14 +22,12 @@ applied by:: `<<_org_kordamp_gradle_bom,org.kordamp.gradle.bom>>`, +
 `<<_org_kordamp_gradle_jacoco,org.kordamp.gradle.jacoco>>`, +
 `<<_org_kordamp_gradle_jar,org.kordamp.gradle.jar>>`, +
 `<<_org_kordamp_gradle_javadoc,org.kordamp.gradle.javadoc>>`, +
-`<<_org_kordamp_gradle_kotlindoc,org.kordamp.gradle.kotlindoc>>`, +
 `<<_org_kordamp_gradle_licensing,org.kordamp.gradle.licensing>>`, +
 `<<_org_kordamp_gradle_minpom,org.kordamp.gradle.minpom>>`, +
 `<<_org_kordamp_gradle_plugins,org.kordamp.gradle.plugin>>`, +
 `<<_org_kordamp_gradle_pmd,org.kordamp.gradle.pmd>>`, +
 `<<_org_kordamp_gradle_project,org.kordamp.gradle.project>>`, +
 `<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>`, +
-`<<_org_kordamp_gradle_scaladoc,org.kordamp.gradle.scaladoc>>`, +
 `<<_org_kordamp_gradle_sonar,org.kordamp.gradle.sonar>>`, +
 `<<_org_kordamp_gradle_source,org.kordamp.gradle.source-jar>>`, +
 `<<_org_kordamp_gradle_sourcehtml,org.kordamp.gradle.source-html>>`, +

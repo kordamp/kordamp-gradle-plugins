@@ -32,7 +32,6 @@ final class DefaultVersions {
 
     final String checkstyleVersion = bundle.getString('checkstyle.version')
     final String codenarcVersion = bundle.getString('codenarc.version')
-    final String detektVersion = bundle.getString('detekt.version')
     final String errorproneVersion = bundle.getString('errorprone.version')
     final String jacocoVersion = bundle.getString('jacoco.version')
     final String pmdVersion = bundle.getString('pmd.version')

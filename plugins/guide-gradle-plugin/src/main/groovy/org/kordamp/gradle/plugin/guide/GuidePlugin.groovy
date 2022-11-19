@@ -103,7 +103,7 @@ class GuidePlugin extends AbstractKordampPlugin {
     }
 
     @Named('guide')
-    @DependsOn(['base', 'javadoc', 'groovydoc', 'kotlindoc', 'sourceHtml', 'sourceXref'])
+    @DependsOn(['base', 'javadoc', 'groovydoc', 'sourceHtml', 'sourceXref'])
     private class GuideAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
         @Override
         void allProjectsEvaluated(Project rootProject) {
@@ -127,12 +127,6 @@ class GuidePlugin extends AbstractKordampPlugin {
                     if (task?.enabled) {
                         t.dependsOn task
                         t.from(task.destinationDir) { into extension.groovydocApiDir }
-                    }
-
-                    task = rootProject.tasks.findByName('dokkaHtmlCollector')
-                    if (task?.enabled) {
-                        t.dependsOn task
-                        t.from(task.outputDirectory) { into extension.kotlindocApiDir }
                     }
 
                     task = rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)

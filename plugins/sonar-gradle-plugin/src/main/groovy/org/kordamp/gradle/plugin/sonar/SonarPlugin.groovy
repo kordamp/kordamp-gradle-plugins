@@ -28,10 +28,10 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.Sonar
-import org.sonarqube.gradle.SonarQubeExtension
+import org.sonarqube.gradle.SonarExtension
 import org.sonarqube.gradle.SonarQubePlugin
-import org.sonarqube.gradle.SonarQubeProperties
-import org.sonarqube.gradle.SonarQubeTask
+import org.sonarqube.gradle.SonarProperties
+import org.sonarqube.gradle.SonarTask
 
 import javax.inject.Named
 
@@ -102,13 +102,13 @@ class SonarPlugin extends AbstractKordampPlugin {
             setEnabled(config.quality.sonar.enabled)
             ProjectConfigurationExtension rootConfig = resolveConfig(project.rootProject)
 
-            SonarQubeExtension sonarExt = project.extensions.findByType(SonarQubeExtension)
+            SonarExtension sonarExt = project.extensions.findByType(SonarExtension)
             sonarExt.skipProject = rootConfig.quality.sonar.excludedProjects.contains(project.name)
         }
     }
 
     @Named('sonar')
-    @DependsOn(['jacoco', 'detekt', 'codenarc', 'checkstyle'])
+    @DependsOn(['jacoco', 'codenarc', 'checkstyle'])
     private class SonarAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
         @Override
         void allProjectsEvaluated(Project rootProject) {
@@ -118,10 +118,10 @@ class SonarPlugin extends AbstractKordampPlugin {
 
     private static void applySonarToRoot(Project project) {
         ProjectConfigurationExtension config = resolveConfig(project)
-        SonarQubeExtension sonarExt = project.extensions.findByType(SonarQubeExtension)
-        sonarExt.properties(new Action<SonarQubeProperties>() {
+        SonarExtension sonarExt = project.extensions.findByType(SonarExtension)
+        sonarExt.properties(new Action<SonarProperties>() {
             @Override
-            void execute(SonarQubeProperties p) {
+            void execute(SonarProperties p) {
                 config.quality.sonar.getConfigProperties().each { property, value ->
                     p.property(property, value)
                 }
@@ -133,9 +133,6 @@ class SonarPlugin extends AbstractKordampPlugin {
                 }
                 if (config.quality.codenarc.enabled) {
                     p.property('sonar.groovy.codenarc.reportPaths', resolveBuiltFile(project, 'reports/codenarc/aggregate.xml'))
-                }
-                if (config.quality.detekt.enabled) {
-                    p.property('sonar.kotlin.detekt.reportPaths', resolveBuiltFile(project, 'reports/detekt/aggregate.xml'))
                 }
                 addIfUndefined('sonar.projectName', config.info.name, p)
                 addIfUndefined('sonar.projectDescription', config.info.description, p)
@@ -152,7 +149,7 @@ class SonarPlugin extends AbstractKordampPlugin {
                 p.layout.buildDirectory.file(path).get().asFile.absolutePath
             }
 
-            private void addIfUndefined(String sonarProperty, String value, SonarQubeProperties p) {
+            private void addIfUndefined(String sonarProperty, String value, SonarProperties p) {
                 Map<String, Object> properties = p.getProperties()
                 if (!properties.containsKey(sonarProperty) || isBlank(properties.get(sonarProperty) as String) && isNotBlank(value)) {
                     p.property(sonarProperty, value)
@@ -160,15 +157,12 @@ class SonarPlugin extends AbstractKordampPlugin {
             }
         })
 
-        project.tasks.withType(SonarQubeTask, new Action<SonarQubeTask>() {
+        project.tasks.withType(SonarTask, new Action<SonarTask>() {
             @Override
-            void execute(SonarQubeTask t) {
+            void execute(SonarTask t) {
                 t.setGroup('Quality')
                 if (config.coverage.jacoco.enabled) {
                     t.dependsOn(project.tasks.named('aggregateJacocoReport'))
-                }
-                if (config.quality.detekt.enabled) {
-                    t.dependsOn(project.tasks.named('aggregateDetekt'))
                 }
                 if (config.quality.codenarc.enabled) {
                     t.dependsOn(project.tasks.named('aggregateCodenarc'))

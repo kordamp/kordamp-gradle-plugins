@@ -55,6 +55,7 @@ config {
 allprojects {
     repositories {
         mavenLocal()
+        mavenCentral()
         gradlePluginPortal()
         flatDir { dir rootProject.file('libraries') }
     }

@@ -19,7 +19,7 @@ Defines a set of build related properties. These properties are
 |===
 | Name             | Type             | Description
 | buildDate        | String           | The value of current timestamp formatted with "yyyy-MM-dd"
-| buildTime        | String           | The value of current timestamp formatted with "HH:mm:ssXXX"
+| buildTime        | String           | The value of current timestamp formatted with "HH:mm:ss.nZ"
 | buildBy          | String           | The value of the `user.name` System property
 | buildRevision    | String           | The value of the latest commit hash
 | buildJdk         | String           | Concatenation of the following System properties [`java.version`, `java.vendor`, `java.vm.version`]
@@ -39,7 +39,7 @@ These properties are consumed by the `<<_org_kordamp_gradle_jar,org.kordamp.grad
 config {
     buildInfo {
         enabled
-        clearTime
+        useCommitTimestamp
         skipBuildBy
         skipBuildDate
         skipBuildTime
@@ -55,7 +55,7 @@ config {
 |===
 | Name               | Type    | Required | Default Value | Description
 | enabled            | boolean | no       | true          | Disables `org.kordamp.gradle.build-info` plugin if `false`
-| clearTime          | boolean | no       | false         | Sets the value of `buildTime` to zero.
+| useCommitTimestamp | boolean | no       | true          | Uses the latest commit time instead of the current time
 | skipBuildBy        | boolean | no       | false         | Skips calculating this value
 | skipBuildDate      | boolean | no       | false         | Skips calculating this value
 | skipBuildTime      | boolean | no       | false         | Skips calculating this value

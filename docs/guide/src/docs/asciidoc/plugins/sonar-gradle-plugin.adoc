@@ -12,9 +12,7 @@ applies:: `<<_org_kordamp_gradle_base,org.kordamp.gradle.base>>`, +
 
 Configures the SonarQube gradle plugin to analyze your project with link:https://www.sonarqube.org/[SonarQube]. +
 If <<_org_kordamp_gradle_jacoco,org.kordamp.gradle.jacoco>> is enabled, the output of the
-<<_task_aggregate_jacoco_report,aggregateJacocoReport>> task is used as input for the sonarqube task. +
-For kotlin projects, if <<_org_kordamp_gradle_detekt,org.kordamp.gradle.detekt>> is enabled, the output of the
-<<_task_aggregate_detekt,aggregateDetekt>> task is also used as input for the sonarqube task.
+<<_task_aggregate_jacoco_report,aggregateJacocoReport>> task is used as input for the sonarqube task
 
 Data defined in the DSL’s `config.info` block will be used to provide additional information to SonarQube.
 
@@ -65,7 +63,6 @@ This block should be configured on the root project.
 | `config.quality.sonar.projectKey`               | `sonar.projectKey`                     |
 | `config.quality.sonar.excludes`                 | `sonar.exclusions`                     |
 | `config.coverage.jacoco.aggregateReportXmlFile` | `sonar.coverage.jacoco.xmlReportPaths` | if jacoco is enabled
-| 'build/reports/detekt/aggregate.xml'            | `sonar.kotlin.detekt.reportPaths`      | if detekt is enabled
 | `config.info.description`                       | `sonar.projectDescription`             |
 | `config.info.links.website`                     | `sonar.links.homepage`                 |
 | `config.info.ciManagement.url`                  | `sonar.links.ci`                       |
