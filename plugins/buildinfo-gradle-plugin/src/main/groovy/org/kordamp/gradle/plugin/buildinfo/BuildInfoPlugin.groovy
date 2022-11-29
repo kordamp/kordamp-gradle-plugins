@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2021 Andres Almiray.
+ * Copyright 2018-2022 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,14 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.BuildInfo
+import org.kordamp.gradle.plugin.buildinfo.internal.ExtGitInfoService
 
 import javax.inject.Named
-import java.text.SimpleDateFormat
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatterBuilder
 
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_TIME
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
@@ -89,16 +93,12 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
                 return
             }
 
-            Date date = new Date()
-            if (config.buildInfo.clearTime) {
-                Calendar calendar = Calendar.instance
-                calendar.time = date
-                calendar.clear(Calendar.HOUR)
-                calendar.clear(Calendar.MINUTE)
-                calendar.clear(Calendar.SECOND)
-                calendar.clear(Calendar.MILLISECOND)
-                calendar.clear(Calendar.ZONE_OFFSET)
-                date = calendar.time
+            ZonedDateTime timestamp = ZonedDateTime.now()
+            if (config.buildInfo.useCommitTimestamp || !config.buildInfo.skipBuildRevision) {
+                project.pluginManager.apply(VersioningPlugin)
+                VersioningExtension versioning = project.extensions.findByType(VersioningExtension)
+                config.buildInfo.buildRevision = versioning.info.commit
+                timestamp = ExtGitInfoService.getCommitTimestamp(project, versioning)
             }
 
             if (!config.buildInfo.skipBuildBy) {
@@ -106,17 +106,18 @@ class BuildInfoPlugin extends AbstractKordampPlugin {
             }
 
             if (!config.buildInfo.skipBuildDate) {
-                config.buildInfo.buildDate = new SimpleDateFormat('yyyy-MM-dd').format(date)
+                config.buildInfo.buildDate = timestamp.format(new DateTimeFormatterBuilder()
+                    .append(ISO_LOCAL_DATE)
+                    .toFormatter())
             }
 
             if (!config.buildInfo.skipBuildTime) {
-                config.buildInfo.buildTime = new SimpleDateFormat('HH:mm:ssXXX').format(date)
-            }
-
-            if (!config.buildInfo.skipBuildRevision) {
-                project.pluginManager.apply(VersioningPlugin)
-                VersioningExtension versioning = project.extensions.findByType(VersioningExtension)
-                config.buildInfo.buildRevision = versioning.info.commit
+                config.buildInfo.buildTime = timestamp.format(new DateTimeFormatterBuilder()
+                    .append(ISO_LOCAL_TIME)
+                    .optionalStart()
+                    .appendOffset('+HH:MM', 'Z')
+                    .optionalEnd()
+                    .toFormatter())
             }
 
             if (!config.buildInfo.skipBuildJdk) {

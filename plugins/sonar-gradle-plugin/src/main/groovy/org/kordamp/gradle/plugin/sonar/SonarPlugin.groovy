@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2021 Andres Almiray.
+ * Copyright 2018-2022 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ class SonarPlugin extends AbstractKordampPlugin {
     }
 
     @Named('sonar')
-    @DependsOn(['jacoco', 'detekt', 'codenarc', 'checkstyle'])
+    @DependsOn(['jacoco', 'codenarc', 'checkstyle'])
     private class SonarAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
         @Override
         void allProjectsEvaluated(Project rootProject) {
@@ -133,9 +133,6 @@ class SonarPlugin extends AbstractKordampPlugin {
                 }
                 if (config.quality.codenarc.enabled) {
                     p.property('sonar.groovy.codenarc.reportPaths', resolveBuiltFile(project, 'reports/codenarc/aggregate.xml'))
-                }
-                if (config.quality.detekt.enabled) {
-                    p.property('sonar.kotlin.detekt.reportPaths', resolveBuiltFile(project, 'reports/detekt/aggregate.xml'))
                 }
                 addIfUndefined('sonar.projectName', config.info.name, p)
                 addIfUndefined('sonar.projectDescription', config.info.description, p)
@@ -166,9 +163,6 @@ class SonarPlugin extends AbstractKordampPlugin {
                 t.setGroup('Quality')
                 if (config.coverage.jacoco.enabled) {
                     t.dependsOn(project.tasks.named('aggregateJacocoReport'))
-                }
-                if (config.quality.detekt.enabled) {
-                    t.dependsOn(project.tasks.named('aggregateDetekt'))
                 }
                 if (config.quality.codenarc.enabled) {
                     t.dependsOn(project.tasks.named('aggregateCodenarc'))

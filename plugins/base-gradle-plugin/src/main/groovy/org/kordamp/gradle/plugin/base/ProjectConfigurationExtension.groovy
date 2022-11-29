@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2021 Andres Almiray.
+ * Copyright 2018-2022 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.model.Information
 import org.kordamp.gradle.plugin.base.model.artifact.DependencyManagement
-import org.kordamp.gradle.plugin.base.plugins.Bintray
 import org.kordamp.gradle.plugin.base.plugins.Bom
 import org.kordamp.gradle.plugin.base.plugins.BuildInfo
 import org.kordamp.gradle.plugin.base.plugins.Checkstyle
@@ -32,21 +31,18 @@ import org.kordamp.gradle.plugin.base.plugins.Coveralls
 import org.kordamp.gradle.plugin.base.plugins.Cpd
 import org.kordamp.gradle.plugin.base.plugins.Dependencies
 
-import org.kordamp.gradle.plugin.base.plugins.Detekt
 import org.kordamp.gradle.plugin.base.plugins.ErrorProne
 import org.kordamp.gradle.plugin.base.plugins.Groovydoc
 import org.kordamp.gradle.plugin.base.plugins.Guide
 import org.kordamp.gradle.plugin.base.plugins.Jacoco
 import org.kordamp.gradle.plugin.base.plugins.Jar
 import org.kordamp.gradle.plugin.base.plugins.Javadoc
-import org.kordamp.gradle.plugin.base.plugins.Kotlindoc
 import org.kordamp.gradle.plugin.base.plugins.Licensing
 import org.kordamp.gradle.plugin.base.plugins.Minpom
 import org.kordamp.gradle.plugin.base.plugins.Plugins
 import org.kordamp.gradle.plugin.base.plugins.Pmd
 import org.kordamp.gradle.plugin.base.plugins.Publishing
 import org.kordamp.gradle.plugin.base.plugins.Reproducible
-import org.kordamp.gradle.plugin.base.plugins.Scaladoc
 import org.kordamp.gradle.plugin.base.plugins.Sonar
 import org.kordamp.gradle.plugin.base.plugins.Source
 import org.kordamp.gradle.plugin.base.plugins.SourceHtml
@@ -70,7 +66,6 @@ class ProjectConfigurationExtension {
     final Information info
     final Dependencies dependencyManagement
     final Bom bom
-    final Bintray bintray
     final BuildInfo buildInfo
     final Clirr clirr
     final Licensing licensing
@@ -91,7 +86,6 @@ class ProjectConfigurationExtension {
         info = new Information(this, project)
         dependencyManagement = new Dependencies(this, project)
         bom = new Bom(this, project)
-        bintray = new Bintray(this, project)
         buildInfo = new BuildInfo(this, project)
         clirr = new Clirr(this, project)
         licensing = new Licensing(this, project)
@@ -174,18 +168,6 @@ class ProjectConfigurationExtension {
 
     void bom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Bom) Closure<Void> action) {
         ConfigureUtil.configure(action, bom)
-    }
-
-    @Deprecated
-    void bintray(Action<? super Bintray> action) {
-        println("The method config.bintray is deprecated and will be removed in the future.")
-        action.execute(bintray)
-    }
-
-    @Deprecated
-    void bintray(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Bintray) Closure<Void> action) {
-        println("The method config.bintray is deprecated and will be removed in the future.")
-        ConfigureUtil.configure(action, bintray)
     }
 
     void buildInfo(Action<? super BuildInfo> action) {
@@ -298,7 +280,6 @@ class ProjectConfigurationExtension {
         Information.merge(this.@info, other.@info)
         Dependencies.merge(this.@dependencyManagement, other.@dependencyManagement)
         Bom.merge(this.@bom, other.@bom)
-        Bintray.merge(this.@bintray, other.@bintray)
         BuildInfo.merge(this.@buildInfo, other.@buildInfo)
         Clirr.merge(this.@clirr, other.@clirr)
         Licensing.merge(this.@licensing, other.@licensing)
@@ -320,7 +301,6 @@ class ProjectConfigurationExtension {
 
         errors.addAll(this.@info.validate(this))
         errors.addAll(this.@bom.validate(this))
-        errors.addAll(this.@bintray.validate(this))
         errors.addAll(this.@licensing.validate(this))
         errors.addAll(this.@reproducible.validate(this))
         errors.addAll(this.@plugins.validate(this))
@@ -333,7 +313,6 @@ class ProjectConfigurationExtension {
         info.normalize()
         buildInfo.normalize()
         artifacts.normalize()
-        bintray.normalize()
         publishing.normalize()
         bom.normalize()
         licensing.normalize()
@@ -351,7 +330,6 @@ class ProjectConfigurationExtension {
     ProjectConfigurationExtension postMerge() {
         buildInfo.postMerge()
         artifacts.postMerge()
-        bintray.postMerge()
         publishing.postMerge()
         bom.postMerge()
         licensing.postMerge()
@@ -370,7 +348,6 @@ class ProjectConfigurationExtension {
     static class Quality {
         final Checkstyle checkstyle
         final Codenarc codenarc
-        final Detekt detekt
         final ErrorProne errorprone
         final Pmd pmd
         final Cpd cpd
@@ -385,7 +362,6 @@ class ProjectConfigurationExtension {
             this.project = project
             checkstyle = new Checkstyle(config, project)
             codenarc = new Codenarc(config, project)
-            detekt = new Detekt(config, project)
             errorprone = new ErrorProne(config, project)
             pmd = new Pmd(config, project)
             cpd = new Cpd(config, project)
@@ -398,7 +374,6 @@ class ProjectConfigurationExtension {
 
             if (checkstyle.visible) map.putAll(checkstyle.toMap())
             if (codenarc.visible) map.putAll(codenarc.toMap())
-            if (detekt.visible) map.putAll(detekt.toMap())
             if (errorprone.visible) map.putAll(errorprone.toMap())
             if (pmd.visible) map.putAll(pmd.toMap())
             if (cpd.visible) map.putAll(cpd.toMap())
@@ -422,14 +397,6 @@ class ProjectConfigurationExtension {
 
         void codenarc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Codenarc) Closure<Void> action) {
             ConfigureUtil.configure(action, codenarc)
-        }
-
-        void detekt(Action<? super Detekt> action) {
-            action.execute(detekt)
-        }
-
-        void detekt(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Detekt) Closure<Void> action) {
-            ConfigureUtil.configure(action, detekt)
         }
 
         void errorprone(Action<? super ErrorProne> action) {
@@ -475,7 +442,6 @@ class ProjectConfigurationExtension {
         static Quality merge(Quality o1, Quality o2) {
             Checkstyle.merge(o1.@checkstyle, o2.@checkstyle)
             Codenarc.merge(o1.@codenarc, o2.@codenarc)
-            Detekt.merge(o1.@detekt, o2.@detekt)
             ErrorProne.merge(o1.@errorprone, o2.@errorprone)
             Pmd.merge(o1.@pmd, o2.@pmd)
             Cpd.merge(o1.@cpd, o2.@cpd)
@@ -495,7 +461,6 @@ class ProjectConfigurationExtension {
         Quality normalize() {
             checkstyle.normalize()
             codenarc.normalize()
-            detekt.normalize()
             errorprone.normalize()
             pmd.normalize()
             cpd.normalize()
@@ -507,7 +472,6 @@ class ProjectConfigurationExtension {
         Quality postMerge() {
             checkstyle.postMerge()
             codenarc.postMerge()
-            detekt.postMerge()
             errorprone.postMerge()
             pmd.postMerge()
             cpd.postMerge()
@@ -580,9 +544,7 @@ class ProjectConfigurationExtension {
     static class Docs {
         final Guide guide
         final Groovydoc groovydoc
-        final Kotlindoc kotlindoc
         final Javadoc javadoc
-        final Scaladoc scaladoc
         final SourceHtml sourceHtml
         final SourceXref sourceXref
 
@@ -594,9 +556,7 @@ class ProjectConfigurationExtension {
             this.project = project
             guide = new Guide(config, project)
             groovydoc = new Groovydoc(config, project)
-            kotlindoc = new Kotlindoc(config, project)
             javadoc = new Javadoc(config, project)
-            scaladoc = new Scaladoc(config, project)
             sourceHtml = new SourceHtml(config, project)
             sourceXref = new SourceXref(config, project)
         }
@@ -606,8 +566,6 @@ class ProjectConfigurationExtension {
 
             if (javadoc.visible) map.putAll(javadoc.toMap())
             if (groovydoc.visible) map.putAll(groovydoc.toMap())
-            if (kotlindoc.visible) map.putAll(kotlindoc.toMap())
-            if (scaladoc.visible) map.putAll(scaladoc.toMap())
             if (sourceHtml.visible) map.putAll(sourceHtml.toMap())
             if (sourceXref.visible) map.putAll(sourceXref.toMap())
             if (guide.visible) map.putAll(guide.toMap())
@@ -631,28 +589,12 @@ class ProjectConfigurationExtension {
             ConfigureUtil.configure(action, groovydoc)
         }
 
-        void kotlindoc(Action<? super Kotlindoc> action) {
-            action.execute(kotlindoc)
-        }
-
-        void kotlindoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Kotlindoc) Closure<Void> action) {
-            ConfigureUtil.configure(action, kotlindoc)
-        }
-
         void javadoc(Action<? super Javadoc> action) {
             action.execute(javadoc)
         }
 
         void javadoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Javadoc) Closure<Void> action) {
             ConfigureUtil.configure(action, javadoc)
-        }
-
-        void scaladoc(Action<? super Scaladoc> action) {
-            action.execute(scaladoc)
-        }
-
-        void scaladoc(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scaladoc) Closure<Void> action) {
-            ConfigureUtil.configure(action, scaladoc)
         }
 
         void sourceHtml(Action<? super SourceHtml> action) {
@@ -674,9 +616,7 @@ class ProjectConfigurationExtension {
         static Docs merge(Docs o1, Docs o2) {
             Guide.merge(o1.@guide, o2.@guide)
             Groovydoc.merge(o1.@groovydoc, o2.@groovydoc)
-            Kotlindoc.merge(o1.@kotlindoc, o2.@kotlindoc)
             Javadoc.merge(o1.@javadoc, o2.@javadoc)
-            Scaladoc.merge(o1.@scaladoc, o2.@scaladoc)
             SourceHtml.merge(o1.@sourceHtml, o2.@sourceHtml)
             SourceXref.merge(o1.@sourceXref, o2.@sourceXref)
             o1
@@ -685,9 +625,7 @@ class ProjectConfigurationExtension {
         Docs normalize() {
             guide.normalize()
             groovydoc.normalize()
-            kotlindoc.normalize()
             javadoc.normalize()
-            scaladoc.normalize()
             sourceHtml.normalize()
             sourceXref.normalize()
             this
@@ -696,9 +634,7 @@ class ProjectConfigurationExtension {
         Docs postMerge() {
             guide.postMerge()
             groovydoc.postMerge()
-            kotlindoc.postMerge()
             javadoc.postMerge()
-            scaladoc.postMerge()
             sourceHtml.postMerge()
             sourceXref.postMerge()
             this

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2021 Andres Almiray.
+ * Copyright 2018-2022 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,8 +91,6 @@ class Bom extends AbstractFeature implements PomOptions, DependencyManagement {
                 ProjectConfigurationExtension config = project.extensions.getByType(ProjectConfigurationExtension)
                 config.docs.javadoc.enabled = false
                 config.docs.groovydoc.enabled = false
-                config.docs.kotlindoc.enabled = false
-                config.docs.scaladoc.enabled = false
                 config.docs.sourceHtml.enabled = false
                 config.docs.sourceXref.enabled = false
                 config.artifacts.source.enabled = false

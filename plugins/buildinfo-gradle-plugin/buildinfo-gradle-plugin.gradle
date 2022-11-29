@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2021 Andres Almiray.
+ * Copyright 2018-2022 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,5 @@ dependencies {
     api project(':base-gradle-plugin')
 
     api 'gradle.plugin.net.nemerosa:versioning:2.14.0'
-    // api 'org.ajoberstar.grgit:grgit-core:4.0.1'
-    // api "org.eclipse.jgit:org.eclipse.jgit.ui:$jgitVersion"
-    // api "org.eclipse.jgit:org.eclipse.jgit:$jgitVersion"
-    // api 'org.tmatesoft.svnkit:svnkit:1.10.3'
+    api "org.ajoberstar.grgit:grgit-core:$grgitVersion"
 }

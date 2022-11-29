@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2021 Andres Almiray.
+ * Copyright 2018-2022 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ processResources {
             version: project.version,
             id: 'base',
             name: 'Kordamp Gradle plugins',
-            detektVersion: detektVersion,
             errorproneVersion: errorproneVersion,
             checkstyleVersion: checkstyleVersion,
             codenarcVersion: codenarcVersion,

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2021 Andres Almiray.
+ * Copyright 2018-2022 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ import static org.kordamp.gradle.util.StringUtils.isNotBlank
 class EffectiveSettingsTask extends AbstractReportingTask {
     private final List<String> COVERAGE = ['coveralls', 'jacoco'].asImmutable()
     private final List<String> ARTIFACTS = ['jar', 'source', 'minpom'].asImmutable()
-    private final List<String> DOCS = ['guide', 'groovydoc', 'javadoc', 'kotlindoc', 'scaladoc', 'sourceHtml', 'sourceXref'].asImmutable()
-    private final List<String> QUALITY = ['checkstyle', 'codenarc', 'detekt', 'errorprone', 'pmd', 'cpd', 'sonar', 'spotbugs'].asImmutable()
+    private final List<String> DOCS = ['guide', 'groovydoc', 'javadoc', 'sourceHtml', 'sourceXref'].asImmutable()
+    private final List<String> QUALITY = ['checkstyle', 'codenarc', 'errorprone', 'pmd', 'cpd', 'sonar', 'spotbugs'].asImmutable()
     private final List<String> SECTIONS = [
         'info',
         'buildInfo',

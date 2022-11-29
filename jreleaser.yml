@@ -4,49 +4,46 @@ project:
   longDescription: |
     This project provides a set of Gradle plugins that follow an opinionated way to build Java, Groovy, Scala or Kotlin projects.
     The conventions defined by these plugins closely follow common practices observed in many Open Source projects.
-  website: https://kordamp.org/kordamp-gradle-plugins/
+  links:
+    homepage: https://kordamp.org/kordamp-gradle-plugins
   authors:
     - Andres Almiray
   license: Apache-2.0
+  inceptionYear: 2018
 
 release:
   github:
     branch: master
-    username: aalmiray
     overwrite: true
-    milestone:
-      name: '{{projectVersion}}'
     changelog:
-      sort: DESC
       formatted: ALWAYS
-      change: '- {{commitShortHash}} {{commitTitle}}'
+      preset: conventional-commits
+      format: '- {{commitShortHash}} {{commitTitle}}'
+      contributors:
+        format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
       labelers:
-        - label: 'feature'
-          title: 'Resolves #'
-          body: 'Resolves #'
-        - label: 'issue'
-          title: 'Fixes #'
-          body: 'Fixes #'
-        - label: 'issue'
-          title: 'Relates to #'
-          body: 'Relates to #'
-        - label: 'task'
-          title: '[chore]'
+        - label: 'dependencies'
+          title: 'regex:^(?:deps(?:\(.*\))?!?):\s.*'
+          order: 120
       categories:
-        - title: '🚀 Features'
+        - title: '⚙️  Dependencies'
+          key: 'dependencies'
+          order: 80
           labels:
-            - 'feature'
-        - title: '✅ Issues'
-          labels:
-            - 'issue'
-        - title: '🧰 Tasks'
-          labels:
-            - 'task'
+            - 'dependencies'
+      hide:
+        categories:
+          - 'merge'
+        contributors:
+          - 'GitHub'
       replacers:
-        - search: '\[chore\] '
-          replace: ''
+        - search: 'deps: '
 
 announce:
   twitter:
-    active: release
+    active: RELEASE
+    status: 🚀 {{projectName}} {{projectVersion}} has been released! {{releaseNotesUrl}}
+  mastodon:
+    active: RELEASE
+    host: https://mastodon.social
     status: 🚀 {{projectName}} {{projectVersion}} has been released! {{releaseNotesUrl}}

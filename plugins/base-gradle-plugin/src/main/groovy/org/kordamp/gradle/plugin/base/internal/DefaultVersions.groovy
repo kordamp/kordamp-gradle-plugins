@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2021 Andres Almiray.
+ * Copyright 2018-2022 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ final class DefaultVersions {
 
     final String checkstyleVersion = bundle.getString('checkstyle.version')
     final String codenarcVersion = bundle.getString('codenarc.version')
-    final String detektVersion = bundle.getString('detekt.version')
     final String errorproneVersion = bundle.getString('errorprone.version')
     final String jacocoVersion = bundle.getString('jacoco.version')
     final String pmdVersion = bundle.getString('pmd.version')

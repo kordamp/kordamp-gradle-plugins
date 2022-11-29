@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2021 Andres Almiray.
+ * Copyright 2018-2022 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@
  */
 buildscript {
     repositories {
-        gradlePluginPortal()
-        mavenCentral()
         mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
         classpath "com.github.jengelman.gradle.plugins:shadow:$shadowPluginVersion"
-        classpath "org.ajoberstar:gradle-git-publish:$gitPluginVersion"
         classpath "org.kordamp.gradle:groovy-project-gradle-plugin:$kordampPluginVersion"
-        classpath "org.kordamp.gradle:bintray-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:plugin-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:guide-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:kordamp-parentbuild:$kordampBuildVersion"
+        classpath "org.ajoberstar.grgit:grgit-core:$grgitVersion"
+        classpath "org.ajoberstar.git-publish:gradle-git-publish:$gitPluginVersion"
     }
 }
 apply plugin: 'org.kordamp.gradle.kordamp-parentbuild'
@@ -129,6 +129,7 @@ enforce {
             'com.google.code.findbugs:jsr305:3.0.2',
             'org.bouncycastle:bcprov-jdk15on:1.64',
             'org.bouncycastle:bcpkix-jdk15on:1.64',
-            "com.google.errorprone:error_prone_annotations:$errorproneVersion"
+            "com.google.errorprone:error_prone_annotations:$errorproneVersion",
+            "org.ajoberstar.grgit:grgit-core:$grgitVersion"
     }
 }

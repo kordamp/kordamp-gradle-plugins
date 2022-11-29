@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2021 Andres Almiray.
+ * Copyright 2018-2022 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,18 +72,6 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
             createTasksIfNeeded(project)
         }
 
-        project.pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
-            createSourceSetsIfNeeded(project)
-            createConfigurationsIfNeeded(project)
-            createTasksIfNeeded(project)
-        }
-
-        project.pluginManager.withPlugin('scala-base') {
-            createSourceSetsIfNeeded(project)
-            createConfigurationsIfNeeded(project)
-            createTasksIfNeeded(project)
-        }
-
         addProjectEvaluatedListener(project, new FunctionalProjectEvaluatedListener())
     }
 
@@ -107,14 +95,6 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
 
         project.pluginManager.withPlugin('groovy-base') {
             adjustSourceSet(project, sourceSetDir, 'groovy')
-        }
-
-        project.pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
-            adjustSourceSet(project, sourceSetDir, 'kotlin')
-        }
-
-        project.pluginManager.withPlugin('scala-base') {
-            adjustSourceSet(project, sourceSetDir, 'scala')
         }
 
         SourceSet sourceSet = resolveSourceSets(project).functionalTest

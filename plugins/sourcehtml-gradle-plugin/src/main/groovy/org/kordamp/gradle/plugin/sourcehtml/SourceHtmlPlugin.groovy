@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2021 Andres Almiray.
+ * Copyright 2018-2022 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -340,14 +340,6 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
         project.pluginManager.hasPlugin('groovy-base')
     }
 
-    private boolean hasKotlinPlugin(Project project) {
-        project.pluginManager.hasPlugin('org.jetbrains.kotlin.jvm')
-    }
-
-    private boolean hasScalaPlugin(Project project) {
-        project.pluginManager.hasPlugin('scala-base')
-    }
-
     @CompileDynamic
     private FileCollection resolveSrcDirs(Project project, FileCollection files) {
         try {
@@ -355,18 +347,6 @@ class SourceHtmlPlugin extends AbstractKordampPlugin {
                 if (hasGroovyPlugin(project)) {
                     return project.files(project.files(files,
                         project.sourceSets.main.groovy.srcDirs,
-                        project.sourceSets.main.java.srcDirs).files.findAll { file ->
-                        file.exists()
-                    })
-                } else if (hasScalaPlugin(project)) {
-                    return project.files(project.files(files,
-                        project.sourceSets.main.scala.srcDirs,
-                        project.sourceSets.main.java.srcDirs).files.findAll { file ->
-                        file.exists()
-                    })
-                } else if (hasKotlinPlugin(project)) {
-                    return project.files(project.files(files,
-                        project.sourceSets.main.kotlin.srcDirs,
                         project.sourceSets.main.java.srcDirs).files.findAll { file ->
                         file.exists()
                     })

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2021 Andres Almiray.
+ * Copyright 2018-2022 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 class BuildInfo extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.build-info'
 
-    boolean clearTime
+    boolean useCommitTimestamp
     boolean skipBuildBy
     boolean skipBuildDate
     boolean skipBuildTime
@@ -46,7 +46,7 @@ class BuildInfo extends AbstractFeature {
     String buildOs
     String buildCreatedBy
 
-    private boolean clearTimeSet
+    private boolean useCommitTimestampSet
     private boolean skipBuildBySet
     private boolean skipBuildDateSet
     private boolean skipBuildTimeSet
@@ -85,7 +85,7 @@ class BuildInfo extends AbstractFeature {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         if (isVisible()) {
-            map.clearTime = clearTime
+            map.useCommitTimestamp = useCommitTimestamp
             if (!skipBuildBy) map.buildBy = buildBy
             if (!skipBuildDate) map.buildDate = buildDate
             if (!skipBuildTime) map.buildTime = buildTime
@@ -98,13 +98,13 @@ class BuildInfo extends AbstractFeature {
         new LinkedHashMap<>('buildInfo': map)
     }
 
-    void setClearTime(boolean clearTime) {
-        this.clearTime = clearTime
-        this.clearTimeSet = true
+    void setUseCommitTimestamp(boolean useCommitTimestamp) {
+        this.useCommitTimestamp = useCommitTimestamp
+        this.useCommitTimestampSet = true
     }
 
-    boolean isClearTimeSet() {
-        this.clearTimeSet
+    boolean isUseCommitTimestampSet() {
+        this.useCommitTimestampSet
     }
 
     void setSkipBuildBy(boolean skipBuildBy) {
@@ -172,7 +172,7 @@ class BuildInfo extends AbstractFeature {
 
     static void merge(BuildInfo o1, BuildInfo o2) {
         AbstractFeature.merge(o1, o2)
-        o1.setClearTime((boolean) (o1.clearTimeSet ? o1.clearTime : o2.clearTime))
+        o1.setUseCommitTimestamp((boolean) (o1.useCommitTimestampSet ? o1.useCommitTimestamp : o2.useCommitTimestamp))
         o1.setSkipBuildBy((boolean) (o1.skipBuildBySet ? o1.skipBuildBy : o2.skipBuildBy))
         o1.setSkipBuildDate((boolean) (o1.skipBuildDateSet ? o1.skipBuildDate : o2.skipBuildDate))
         o1.setSkipBuildTime((boolean) (o1.skipBuildTimeSet ? o1.skipBuildTime : o2.skipBuildTime))

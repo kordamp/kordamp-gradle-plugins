@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2021 Andres Almiray.
+ * Copyright 2018-2022 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+buildscript {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "org.ajoberstar.grgit:grgit-core:$grgitVersion"
+    }
+}
 
 project.rootProject.ext.theVersion = file('VERSION').text.trim()
 
@@ -61,9 +70,9 @@ config {
 
 allprojects {
     repositories {
+        mavenLocal()
         gradlePluginPortal()
         flatDir { dir rootProject.file('libraries') }
-        mavenLocal()
     }
 }
 
@@ -97,6 +106,18 @@ projects.subprojects {
             testImplementation("org.spockframework:spock-core:$spockVersion") {
                 exclude group: 'org.codehaus.groovy'
             }
+        }
+
+        def scompat = project.findProperty('sourceCompatibility')
+        def tcompat = project.findProperty('targetCompatibility')
+
+        tasks.withType(JavaCompile) { JavaCompile c ->
+            if (scompat) c.sourceCompatibility = scompat
+            if (tcompat) c.targetCompatibility = tcompat
+        }
+        tasks.withType(GroovyCompile) { GroovyCompile c ->
+            if (scompat) c.sourceCompatibility = scompat
+            if (tcompat) c.targetCompatibility = tcompat
         }
 
         tasks.withType(ValidateTaskProperties) { validateTaskProperties ->
