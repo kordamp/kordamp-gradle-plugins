@@ -344,7 +344,8 @@ class LicensingPlugin extends AbstractKordampPlugin {
     private void preConfigureDownloadLicensesExtension(Project project) {
         DownloadLicensesExtension extension = project.extensions.findByType(DownloadLicensesExtension)
         extension.dependencyConfiguration = 'runtimeClasspath'
-        extension.aliases = new LinkedHashMap<>(DEFAULT_ALIASES)
+        extension.aliases.clear()
+        extension.aliases.putAll(DEFAULT_ALIASES)
     }
 
     @CompileDynamic
