@@ -55,7 +55,6 @@ config {
 allprojects {
     repositories {
         mavenLocal()
-        mavenCentral()
         gradlePluginPortal()
         flatDir { dir rootProject.file('libraries') }
     }
@@ -96,6 +95,18 @@ gradleProjects.subprojects {
             testImplementation("org.spockframework:spock-junit4") {
                 exclude group: 'org.hamcrest', module: 'hamcrest-core'
             }
+        }
+
+        def scompat = project.findProperty('sourceCompatibility')
+        def tcompat = project.findProperty('targetCompatibility')
+
+        tasks.withType(JavaCompile) { JavaCompile c ->
+            if (scompat) c.sourceCompatibility = scompat
+            if (tcompat) c.targetCompatibility = tcompat
+        }
+        tasks.withType(GroovyCompile) { GroovyCompile c ->
+            if (scompat) c.sourceCompatibility = scompat
+            if (tcompat) c.targetCompatibility = tcompat
         }
     }
 }

@@ -17,13 +17,17 @@
  */
 package org.kordamp.gradle.plugin.buildinfo.internal
 
-
 import net.nemerosa.versioning.VersioningExtension
-import org.ajoberstar.grgit.Commit
-import org.ajoberstar.grgit.Grgit
-import org.gradle.api.GradleException
+import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.lib.Constants
+import org.eclipse.jgit.lib.ObjectId
+import org.eclipse.jgit.lib.PersonIdent
+import org.eclipse.jgit.revwalk.RevCommit
+import org.eclipse.jgit.revwalk.RevWalk
 import org.gradle.api.Project
 
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
 
 /**
@@ -42,16 +46,26 @@ class ExtGitInfoService {
             // Git directory
             File gitDir = getGitDirectory(extension, project)
             // Open the Git repo
-            Grgit grgit = Grgit.open(currentDir: gitDir)
+            Git git = Git.open(gitDir)
 
             // Gets the commit info
-            List<Commit> commits = grgit.log(maxCommits: 1)
-            if (commits.empty) {
-                throw new GradleException("No commit available in the repository - cannot compute version")
+            RevWalk walk = new RevWalk(git.getRepository())
+            ObjectId head = git.getRepository().resolve(Constants.HEAD)
+            RevCommit commit = null
+
+            try {
+                commit = walk.parseCommit(head)
+            } catch (NullPointerException e) {
+                throw new IllegalStateException('HEAD commit not found')
             }
 
-            Commit lastCommit = commits[0]
-            return lastCommit.dateTime
+            PersonIdent authorIdent = commit.getAuthorIdent()
+            Date authorDate = authorIdent.getWhen()
+            TimeZone authorTimeZone = authorIdent.getTimeZone()
+
+            ZoneId zoneId = ZoneId.of(authorTimeZone.getID())
+            LocalDateTime local = LocalDateTime.ofInstant(authorDate.toInstant(), zoneId)
+            return ZonedDateTime.of(local, zoneId)
         }
 
         ZonedDateTime.now()
