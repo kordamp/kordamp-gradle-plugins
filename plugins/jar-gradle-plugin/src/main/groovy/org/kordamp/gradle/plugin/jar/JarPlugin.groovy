@@ -172,6 +172,7 @@ class JarPlugin extends AbstractKordampPlugin {
     @CompileDynamic
     private static void configureJarManifest(Project project, Jar jarTask) {
         ProjectConfigurationExtension config = resolveConfig(project.rootProject)
+        ProjectConfigurationExtension myconfig = resolveConfig(project)
 
         if (config.release) {
             Map<String, String> attributesMap = [:]
@@ -186,6 +187,9 @@ class JarPlugin extends AbstractKordampPlugin {
                 checkBuildInfoAttribute(config.buildInfo, 'buildRevision', attributesMap, 'Build-Revision')
             }
             attributesMap.'Build-Jdk-Spec' = System.getProperty('java.specification.version')
+            if (myconfig.info.bytecodeVersion) {
+                attributesMap.'Bytecode-Version' = myconfig.info.bytecodeVersion.join(',')
+            }
 
             if (config.info.specification.enabled) {
                 attributesMap.'Specification-Title' = config.info.specification.title
