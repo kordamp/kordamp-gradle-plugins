@@ -27,7 +27,7 @@ import org.gradle.api.logging.configuration.ConsoleOutput
  * @since 0.16.0
  */
 @CompileStatic
-class AnsiConsole {
+class AnsiConsole implements Serializable {
     private boolean plain
 
     AnsiConsole(Project project) {

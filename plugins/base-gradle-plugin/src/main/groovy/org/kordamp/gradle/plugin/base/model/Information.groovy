@@ -46,6 +46,7 @@ class Information {
     final Scm scm = new Scm()
     final IssueManagement issueManagement = new IssueManagement()
     final CiManagement ciManagement
+    final Set<Integer> bytecodeVersion = new TreeSet<>()
 
     private final RepositorySetImpl repositories
     private final PersonSetImpl people
@@ -69,6 +70,26 @@ class Information {
         people = new PersonSetImpl(project.objects)
         mailingLists = new MailingListSetImpl(project.objects)
         credentials = new CredentialsSetImpl(project.objects)
+    }
+
+    void setBytecodeVersion(Integer v) {
+        if (null != v) bytecodeVersion.add(v)
+    }
+
+    void setBytecodeVersion(Set<Integer> v) {
+        if (v) bytecodeVersion.addAll(v)
+    }
+
+    void setBytecodeVersion(String v) {
+        if (isNotBlank(v)) {
+            v.split(',').each { s ->
+                try {
+                    setBytecodeVersion(Integer.parseInt(s))
+                } catch (NumberFormatException ignored) {
+                    // noop
+                }
+            }
+        }
     }
 
     PersonSet getPeople() {
@@ -106,7 +127,8 @@ class Information {
             mailingLists   : mailingLists.toMap(),
             specification  : specification.toMap(),
             implementation : implementation.toMap(),
-            credentials    : credentials.toMap()
+            credentials    : credentials.toMap(),
+            bytecodeVersion: bytecodeVersion
         ])])
     }
 
@@ -265,6 +287,15 @@ class Information {
         implementation.title = impl.title ?: project.name
         implementation.version = impl.version ?: project.version
         implementation.vendor = impl.vendor ?: getVendor()
+
+        Set<Integer> bv = new TreeSet<>(bytecodeVersion)
+        bytecodeVersion.clear()
+        bv.each { b ->
+            if (b < 49) {
+                b = 44 + b
+            }
+            bytecodeVersion.add(b)
+        }
 
         this
     }
