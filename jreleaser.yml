@@ -13,7 +13,7 @@ project:
 
 release:
   github:
-    branch: master
+    branch: gradle6
     overwrite: true
     changelog:
       formatted: ALWAYS
