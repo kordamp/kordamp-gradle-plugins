@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.internal.DefaultVersions
+import org.kordamp.gradle.util.CollectionUtils
 
 /**
  * @author Andres Almiray
@@ -30,6 +31,7 @@ import org.kordamp.gradle.plugin.base.internal.DefaultVersions
 class ErrorProne extends AbstractFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.errorprone'
 
+    List<String> args = []
     Boolean disableAllChecks
     Boolean allErrorsAsWarnings
     Boolean allDisabledChecksAsWarnings
@@ -68,7 +70,8 @@ class ErrorProne extends AbstractFeature {
             compilingTestOnlyCode: compilingTestOnlyCode,
             excludedPaths: excludedPaths,
             erroProneVersion: errorProneVersion,
-            erroProneJavacVersion: errorProneJavacVersion
+            erroProneJavacVersion: errorProneJavacVersion,
+            args: args
         ))
     }
 
@@ -112,5 +115,6 @@ class ErrorProne extends AbstractFeature {
         o1.excludedPaths = o1.excludedPaths ?: o2.excludedPaths
         o1.errorProneVersion = o1.errorProneVersion ?: o2.errorProneVersion
         o1.errorProneJavacVersion = o1.errorProneJavacVersion ?: o2.errorProneJavacVersion
+        o1.args = CollectionUtils.merge(o1.args, o2?.args, false)
     }
 }

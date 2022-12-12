@@ -104,6 +104,7 @@ class ErrorPronePlugin extends AbstractKordampPlugin {
                 t.options.errorprone.ignoreUnknownCheckNames = config.quality.errorprone.ignoreUnknownCheckNames
                 t.options.errorprone.ignoreSuppressionAnnotations = config.quality.errorprone.ignoreSuppressionAnnotations
                 t.options.errorprone.compilingTestOnlyCode = config.quality.errorprone.compilingTestOnlyCode
+                t.options.errorprone.errorproneArgs.addAll(config.quality.errorprone.args)
                 if (isNotBlank(config.quality.errorprone.excludedPaths)) {
                     t.options.errorprone.excludedPaths = config.quality.errorprone.excludedPaths
                 }
