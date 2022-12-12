@@ -17,9 +17,9 @@
  */
 package org.kordamp.gradle.plugin.spotbugs
 
-import com.github.spotbugs.SpotBugsExtension
-import com.github.spotbugs.SpotBugsPlugin
-import com.github.spotbugs.SpotBugsTask
+import com.github.spotbugs.snom.SpotBugsExtension
+import com.github.spotbugs.snom.SpotBugsPlugin
+import com.github.spotbugs.snom.SpotBugsTask
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
@@ -147,7 +147,7 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
             setEnabled(config.quality.spotbugs.enabled)
 
             SpotBugsExtension spotbugsExt = project.extensions.findByType(SpotBugsExtension)
-            spotbugsExt.toolVersion = config.quality.spotbugs.toolVersion
+            spotbugsExt.toolVersion.set(config.quality.spotbugs.toolVersion)
 
             project.tasks.withType(SpotBugsTask) { SpotBugsTask task ->
                 task.enabled = config.quality.spotbugs.enabled
@@ -171,11 +171,9 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
                     void execute(SpotBugsTask t) {
                         applyTo(config, t)
                         t.enabled &= tt.size() > 0
-                        t.source(*((tt*.source).unique()))
-                        t.classes = project.files(*((tt*.classes).flatten()))
-                        t.classpath = project.files(*((tt*.classpath).unique()))
-                        t.spotbugsClasspath = project.files(*((tt*.spotbugsClasspath).unique()))
-                        t.pluginClasspath = project.files(*((tt*.pluginClasspath).unique()))
+                        t.sourceDirs = project.files(*((tt*.sourceDirs).unique()))
+                        t.classDirs = project.files(*((tt*.classDirs).flatten()))
+                        t.auxClassPaths = project.files(*((tt*.auxClassPaths).unique()))
                     }
                 })
             }
@@ -195,7 +193,7 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension config = resolveConfig(project)
 
         SpotBugsExtension spotbugsExt = project.extensions.findByType(SpotBugsExtension)
-        spotbugsExt.toolVersion = config.quality.spotbugs.toolVersion
+        spotbugsExt.toolVersion.set(config.quality.spotbugs.toolVersion)
 
         Set<SpotBugsTask> tt = new LinkedHashSet<>()
         project.tasks.withType(SpotBugsTask) { SpotBugsTask task ->
@@ -220,11 +218,9 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
                 applyTo(config, t)
                 t.enabled = config.quality.spotbugs.aggregate.enabled && tt.size() > 0
                 t.ignoreFailures = false
-                t.source(*((tt*.source).unique()))
-                t.classes = project.files(*((tt*.classes).flatten()))
-                t.classpath = project.files(*((tt*.classpath).unique()))
-                t.spotbugsClasspath = project.files(*((tt*.spotbugsClasspath).unique()))
-                t.pluginClasspath = project.files(*((tt*.pluginClasspath).unique()))
+                t.sourceDirs = project.files(*((tt*.sourceDirs).unique()))
+                t.classDirs = project.files(*((tt*.classDirs).flatten()))
+                t.auxClassPaths = project.files(*((tt*.auxClassPaths).unique()))
             }
         })
     }
@@ -240,26 +236,26 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
         if (config.quality.spotbugs.excludeBugsFilterFile.exists()) t.excludeBugsFilterConfig.setFrom(config.quality.spotbugs.excludeBugsFilterFile)
         if (config.quality.spotbugs.includes) t.includes.addAll(config.quality.spotbugs.includes)
         if (config.quality.spotbugs.excludes) t.excludes.addAll(config.quality.spotbugs.excludes)
-        if (config.quality.spotbugs.visitors) t.visitors = config.quality.spotbugs.visitors
-        if (config.quality.spotbugs.omitVisitors) t.omitVisitors = config.quality.spotbugs.omitVisitors
-        t.showProgress = config.quality.spotbugs.showProgress
+        if (config.quality.spotbugs.visitors) t.visitors.addAll(config.quality.spotbugs.visitors)
+        if (config.quality.spotbugs.omitVisitors) t.omitVisitors.addAll(config.quality.spotbugs.omitVisitors)
+        t.showProgress.set(config.quality.spotbugs.showProgress)
         t.ignoreFailures = config.quality.spotbugs.getIgnoreFailures()
         t.effort = config.quality.spotbugs.effort
         t.reportLevel = config.quality.spotbugs.reportLevel
-        if (config.quality.spotbugs.extraArgs) t.extraArgs = config.quality.spotbugs.extraArgs
-        if (config.quality.spotbugs.jvmArgs) t.jvmArgs = config.quality.spotbugs.jvmArgs
+        if (config.quality.spotbugs.extraArgs) t.extraArgs.addAll(config.quality.spotbugs.extraArgs)
+        if (config.quality.spotbugs.jvmArgs) t.jvmArgs.addAll(config.quality.spotbugs.jvmArgs)
         switch (config.quality.spotbugs.report?.toLowerCase()) {
             case 'xml':
-                t.reports.xml.enabled = true
-                t.reports.html.enabled = false
+                t.reports.maybeCreate('xml').enabled = true
+                t.reports.maybeCreate('htm').enabled = false
                 break
             case 'html':
             default:
-                t.reports.xml.enabled = false
-                t.reports.html.enabled = true
+                t.reports.maybeCreate('xml').enabled = false
+                t.reports.maybeCreate('html').enabled = true
                 break
         }
-        t.reports.html.destination = config.project.layout.buildDirectory.file("reports/spotbugs/${sourceSetName}.html").get().asFile
-        t.reports.xml.destination = config.project.layout.buildDirectory.file("reports/spotbugs/${sourceSetName}.xml").get().asFile
+        t.reports.maybeCreate('html').destination = config.project.layout.buildDirectory.file("reports/spotbugs/${sourceSetName}.html").get().asFile
+        t.reports.maybeCreate('xml').destination = config.project.layout.buildDirectory.file("reports/spotbugs/${sourceSetName}.xml").get().asFile
     }
 }
