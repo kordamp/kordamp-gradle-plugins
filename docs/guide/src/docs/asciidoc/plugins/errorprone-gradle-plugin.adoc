@@ -22,6 +22,7 @@ config {
     quality {
         errorprone {
             enabled
+            args
             disableAllChecks
             allErrorsAsWarnings
             allDisabledChecksAsWarnings
@@ -41,6 +42,7 @@ config {
 |===
 | Name                           | Type         | Required | Default Value       | Description
 | enabled                        | boolean      | no       | true                | Disables `org.kordamp.gradle.errorprone` plugin if `false`
+| args                           | List<String> | no       | []                  | Additional arguments to be passed to the ErrorProne javac plugin
 | disableAllChecks               | boolean      | no       | false               |
 | allErrorsAsWarnings            | boolean      | no       | false               |
 | allDisabledChecksAsWarnings    | boolean      | no       | false               |
