@@ -29,6 +29,10 @@ import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 class Coveralls extends AbstractTestingFeature {
     static final String PLUGIN_ID = 'org.kordamp.gradle.coveralls'
 
+    boolean standalone = true
+
+    private boolean standaloneSet
+
     Coveralls(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID)
     }
@@ -42,9 +46,19 @@ class Coveralls extends AbstractTestingFeature {
     Map<String, Map<String, Object>> toMap() {
         if (!isRoot()) return [:]
 
-        new LinkedHashMap<>('coveralls': new LinkedHashMap<>(
-            enabled: enabled
-        ))
+        new LinkedHashMap<>('coveralls': [
+            enabled: this.enabled,
+            standalone: this.standalone
+        ])
+    }
+
+    void setStandalone(boolean standalone) {
+        this.@standalone = standalone
+        this.standaloneSet = true
+    }
+
+    boolean isStandaloneSet() {
+        this.standaloneSet
     }
 
     @Override
@@ -68,5 +82,6 @@ class Coveralls extends AbstractTestingFeature {
 
     static void merge(Coveralls o1, Coveralls o2) {
         AbstractFeature.merge(o1, o2)
+        o1.@standalone = (boolean) (o1.standaloneSet ? o1.standalone : o2.standalone)
     }
 }
