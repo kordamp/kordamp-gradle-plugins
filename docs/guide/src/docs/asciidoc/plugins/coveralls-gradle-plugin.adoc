@@ -34,6 +34,7 @@ config {
 
 [options="header", cols="5*"]
 |===
-| Name    | Type     | Required | Default Value | Description
-| enabled | boolean  | no       | true          | Disables `org.kordamp.gradle.coveralls` plugin if `false`
+| Name       | Type     | Required | Default Value | Description
+| enabled    | boolean  | no       | true          | Disables `org.kordamp.gradle.coveralls` plugin if `false`
+| standalone | boolean  | no       | false         | Disables dependency on `:aggregateJacocoReport` if `true`
 |===

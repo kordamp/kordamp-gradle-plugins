@@ -95,7 +95,9 @@ class CoverallsPlugin extends AbstractKordampPlugin {
                     t.group = 'Coverage'
                     t.description = 'Uploads the aggregated coverage report to Coveralls'
                     t.enabled = config.coverage.coveralls.enabled
-                    t.dependsOn(rootProject.tasks.named('aggregateJacocoReport'))
+                    if (!config.coverage.coveralls.standalone) {
+                        t.dependsOn(rootProject.tasks.named('aggregateJacocoReport'))
+                    }
                     t.onlyIf { System.getenv().CI || System.getenv().GITHUB_ACTIONS }
                 }
             })
