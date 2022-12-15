@@ -7,7 +7,7 @@
 :project-version: 0.48.0
 :plugin-id:       {project-group}.base
 
-image:https://github.com/{project-owner}/{project-name}/workflows/Build/badge.svg["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
+image:http://img.shields.io/github/actions/workflow/status/{project-owner}/{project-name}/early-access.yml?branch=master&logo=github&label=Build["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
 image:https://img.shields.io/maven-metadata/v?label=Plugin%20Portal&metadataUrl=https://plugins.gradle.org/m2/org/kordamp/gradle/base/{plugin-id}.gradle.plugin/maven-metadata.xml["Gradle Plugin Portal, link="https://plugins.gradle.org/plugin/{plugin-id}"]
 
 ---
