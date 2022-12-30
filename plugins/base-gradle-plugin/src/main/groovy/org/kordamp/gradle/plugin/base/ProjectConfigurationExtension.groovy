@@ -434,7 +434,9 @@ class ProjectConfigurationExtension {
         List<String> validate(ProjectConfigurationExtension extension) {
             List<String> errors = []
 
-            errors.addAll(sonar.validate(extension))
+            if (project.rootProject == project) {
+                errors.addAll(sonar.validate(extension))
+            }
 
             errors
         }
