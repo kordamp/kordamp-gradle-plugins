@@ -247,7 +247,7 @@ class SpotbugsPlugin extends AbstractKordampPlugin {
         switch (config.quality.spotbugs.report?.toLowerCase()) {
             case 'xml':
                 t.reports.maybeCreate('xml').enabled = true
-                t.reports.maybeCreate('htm').enabled = false
+                t.reports.maybeCreate('html').enabled = false
                 break
             case 'html':
             default:

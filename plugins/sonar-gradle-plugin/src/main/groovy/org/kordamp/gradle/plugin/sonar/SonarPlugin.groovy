@@ -128,6 +128,12 @@ class SonarPlugin extends AbstractKordampPlugin {
                 addIfUndefined('sonar.host.url', config.quality.sonar.hostUrl, p)
                 addIfUndefined('sonar.projectKey', config.quality.sonar.projectKey, p)
                 addIfUndefined('sonar.exclusions', config.quality.sonar.excludes.join(','), p)
+                if (config.coverage.jacoco.enabled) {
+                    p.property('sonar.coverage.jacoco.xmlReportPaths', config.coverage.jacoco.aggregateReportXmlFile.absolutePath)
+                }
+                if (config.quality.spotbugs.enabled) {
+                    p.property('sonar.java.spotbugs.reportPaths', resolveBuiltFile(project, 'reports/spotbugs/aggregateSpotbugs.xml'))
+                }
                 if (config.quality.checkstyle.enabled) {
                     p.property('sonar.java.checkstyle.reportPaths', resolveBuiltFile(project, 'reports/checkstyle/aggregate.xml'))
                 }
@@ -161,14 +167,19 @@ class SonarPlugin extends AbstractKordampPlugin {
             @Override
             void execute(SonarQubeTask t) {
                 t.setGroup('Quality')
-                if (config.coverage.jacoco.enabled) {
-                    t.dependsOn(project.tasks.named('aggregateJacocoReport'))
-                }
-                if (config.quality.codenarc.enabled) {
-                    t.dependsOn(project.tasks.named('aggregateCodenarc'))
-                }
-                if (config.quality.checkstyle.enabled) {
-                    t.dependsOn(project.tasks.named('aggregateCheckstyle'))
+                if (!config.coverage.coveralls.standalone) {
+                    if (config.coverage.jacoco.enabled) {
+                        t.dependsOn(project.tasks.named('aggregateJacocoReport'))
+                    }
+                    if (config.quality.codenarc.enabled) {
+                        t.dependsOn(project.tasks.named('aggregateCodenarc'))
+                    }
+                    if (config.quality.checkstyle.enabled) {
+                        t.dependsOn(project.tasks.named('aggregateCheckstyle'))
+                    }
+                    if (config.quality.spotbugs.enabled) {
+                        t.dependsOn(project.tasks.named('aggregateSpotbugs'))
+                    }
                 }
             }
         })

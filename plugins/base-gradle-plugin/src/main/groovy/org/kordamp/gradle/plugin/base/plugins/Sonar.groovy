@@ -41,6 +41,9 @@ class Sonar extends AbstractFeature {
     Map<String, Object> configProperties = [:]
     Set<String> excludes = new LinkedHashSet<>()
     final Set<Project> excludedProjects = new LinkedHashSet<>()
+    boolean standalone = true
+
+    private boolean standaloneSet
 
     Sonar(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID)
@@ -65,6 +68,7 @@ class Sonar extends AbstractFeature {
         )
 
         if (isRoot()) {
+            map.standalone = this.standalone
             map.hostUrl = this.hostUrl
             map.projectKey = this.projectKey
             map.organization = this.organization
@@ -85,6 +89,15 @@ class Sonar extends AbstractFeature {
 
     protected boolean isIgnoreFailuresSet() {
         this.ignoreFailures != null
+    }
+
+    void setStandalone(boolean standalone) {
+        this.@standalone = standalone
+        this.standaloneSet = true
+    }
+
+    boolean isStandaloneSet() {
+        this.standaloneSet
     }
 
     void normalize() {
@@ -136,6 +149,7 @@ class Sonar extends AbstractFeature {
 
     static void merge(Sonar o1, Sonar o2) {
         AbstractQualityFeature.merge(o1, o2)
+        o1.@standalone = (boolean) (o1.standaloneSet ? o1.standalone : o2.standalone)
         o1.hostUrl = o1.hostUrl ?: o2.hostUrl
         o1.projectKey = o1.projectKey ?: o2.projectKey
         o1.organization = o1.organization ?: o2.organization
