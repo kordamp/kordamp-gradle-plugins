@@ -54,7 +54,7 @@ config {
 | licenses           | LicenseSet          | yes      |               | This block maps to the `<licenses>` block in POM. +
                                                                         At least one nested `license` block must be defined.
 | inherits           | boolean             | no       | true          | Whether to inherit values from a parent `POM`.
-| mergeStrategy      | MergeStrategy       | no       | UNIQUE        | One of `PREPEND`, `APPEND`, `UNIQUE`, `OVERWRITE`.
+| mergeStrategy      | MergeStrategy       | no       | UNIQUE        | One of `PREPEND`, `APPEND`, `UNIQUE`, `OVERRIDE`.
 |===
 
 The value of `inherits` cannot be changed once it has been set.
