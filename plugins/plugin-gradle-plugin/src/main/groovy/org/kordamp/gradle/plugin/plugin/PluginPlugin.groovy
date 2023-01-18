@@ -72,20 +72,18 @@ class PluginPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
+        project.pluginManager.apply(JavaGradlePluginPlugin)
+        project.pluginManager.apply(PublishPlugin)
 
         project.tasks.register('listPluginDescriptors', ListPluginDescriptorsTask.class,
             new Action<ListPluginDescriptorsTask>() {
                 void execute(ListPluginDescriptorsTask t) {
                     t.group = 'Plugin development'
                     t.description = 'Lists plugin descriptors from plugin declarations.'
-                    t.declarations.set(project.extensions.findByType(GradlePluginDevelopmentExtension).plugins)
                 }
             })
 
         addProjectEvaluatedListener(project, new PublishingProjectEvaluatedListener())
-
-        project.pluginManager.apply(JavaGradlePluginPlugin)
-        project.pluginManager.apply(PublishPlugin)
 
         // Must execute after JavaGradlePluginPlugin|PublishPlugin
         // because ${plugin.name}PluginMarkerMaven is created explicitly and not with `maybeCreate`.
@@ -108,6 +106,13 @@ class PluginPlugin extends AbstractKordampPlugin {
 
             GradlePluginDevelopmentExtension gpdExt = project.extensions.findByType(GradlePluginDevelopmentExtension)
             PluginBundleExtension pbExt = project.extensions.findByType(PluginBundleExtension)
+
+            project.tasks.named('listPluginDescriptors', ListPluginDescriptorsTask.class,
+                new Action<ListPluginDescriptorsTask>() {
+                    void execute(ListPluginDescriptorsTask t) {
+                        t.declarations.set(gpdExt.plugins)
+                    }
+                })
 
             if (isBlank(pbExt.website) && isNotBlank(config.info.url)) {
                 pbExt.website = config.info.url
