@@ -4,7 +4,7 @@
 :project-repo:    maven
 :project-name:    kordamp-gradle-plugins
 :project-group:   org.kordamp.gradle
-:project-version: 0.46.6
+:project-version: 0.46.7
 :plugin-id:       {project-group}.base
 
 image:http://img.shields.io/github/actions/workflow/status/{project-owner}/{project-name}/early-access.yml?branch=master&logo=github&label=Build["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
