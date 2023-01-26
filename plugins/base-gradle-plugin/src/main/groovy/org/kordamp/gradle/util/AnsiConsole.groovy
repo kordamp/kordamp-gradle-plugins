@@ -28,15 +28,26 @@ import org.gradle.api.logging.configuration.ConsoleOutput
  */
 @CompileStatic
 class AnsiConsole implements Serializable {
-    private boolean plain
+    final boolean plain
 
     AnsiConsole(Project project) {
-        this(project.gradle)
+        this(project.gradle, '')
     }
 
     AnsiConsole(Gradle gradle) {
+        this(gradle, '')
+    }
+
+    AnsiConsole(Project project, String appName) {
+        this(project.gradle, appName)
+    }
+
+    AnsiConsole(Gradle gradle, String appName) {
         plain = gradle.startParameter.consoleOutput == ConsoleOutput.Plain ||
-            'plain'.equalsIgnoreCase(System.getProperty('org.gradle.console'))
+            'plain'.equalsIgnoreCase(System.getProperty('org.gradle.console')) ||
+            System.getenv().containsKey('NO_COLOR') ||
+            (appName && System.getenv().containsKey(appName.toUpperCase(Locale.ENGLISH) + '_NO_COLOR')) ||
+            System.getenv().get('TERM') == 'dumb'
     }
 
     String black(CharSequence s) {
