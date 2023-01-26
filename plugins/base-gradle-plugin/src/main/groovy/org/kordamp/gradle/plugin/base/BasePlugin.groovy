@@ -70,7 +70,10 @@ class BasePlugin extends AbstractKordampPlugin {
     }
 
     void apply(Project project) {
-        Banner.display(project)
+        project.gradle.sharedServices
+            .registerIfAbsent('kordamp-banner', Banner, { spec -> })
+            .get().display(project)
+
         this.project = project
         ProjectEvaluationListenerManager.register(project.gradle)
 
