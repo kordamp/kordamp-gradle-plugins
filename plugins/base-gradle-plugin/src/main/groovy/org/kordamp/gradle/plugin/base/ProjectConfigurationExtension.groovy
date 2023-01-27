@@ -25,7 +25,6 @@ import org.kordamp.gradle.plugin.base.model.artifact.DependencyManagement
 import org.kordamp.gradle.plugin.base.plugins.Bom
 import org.kordamp.gradle.plugin.base.plugins.BuildInfo
 import org.kordamp.gradle.plugin.base.plugins.Checkstyle
-import org.kordamp.gradle.plugin.base.plugins.Clirr
 import org.kordamp.gradle.plugin.base.plugins.Codenarc
 import org.kordamp.gradle.plugin.base.plugins.Coveralls
 import org.kordamp.gradle.plugin.base.plugins.Cpd
@@ -67,7 +66,6 @@ class ProjectConfigurationExtension {
     final Dependencies dependencyManagement
     final Bom bom
     final BuildInfo buildInfo
-    final Clirr clirr
     final Licensing licensing
     final Reproducible reproducible
     final Plugins plugins
@@ -87,7 +85,6 @@ class ProjectConfigurationExtension {
         dependencyManagement = new Dependencies(this, project)
         bom = new Bom(this, project)
         buildInfo = new BuildInfo(this, project)
-        clirr = new Clirr(this, project)
         licensing = new Licensing(this, project)
         reproducible = new Reproducible(this, project)
         plugins = new Plugins(this, project)
@@ -116,7 +113,6 @@ class ProjectConfigurationExtension {
         map.putAll(coverage.toMap())
         map.putAll(quality.toMap())
         if (testing.visible) map.putAll(testing.toMap())
-        if (clirr.visible) map.putAll(clirr.toMap())
         if (plugins.visible) map.putAll(plugins.toMap())
         if (plugins.visible) map.putAll(plugins.toMap())
         if (stats.visible) map.putAll(stats.toMap())
@@ -176,14 +172,6 @@ class ProjectConfigurationExtension {
 
     void buildInfo(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = BuildInfo) Closure<Void> action) {
         ConfigureUtil.configure(action, buildInfo)
-    }
-
-    void clirr(Action<? super Clirr> action) {
-        action.execute(clirr)
-    }
-
-    void clirr(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Clirr) Closure<Void> action) {
-        ConfigureUtil.configure(action, clirr)
     }
 
     void licensing(Action<? super Licensing> action) {
@@ -281,7 +269,6 @@ class ProjectConfigurationExtension {
         Dependencies.merge(this.@dependencyManagement, other.@dependencyManagement)
         Bom.merge(this.@bom, other.@bom)
         BuildInfo.merge(this.@buildInfo, other.@buildInfo)
-        Clirr.merge(this.@clirr, other.@clirr)
         Licensing.merge(this.@licensing, other.@licensing)
         Reproducible.merge(this.@reproducible, other.@reproducible)
         Plugins.merge(this.@plugins, other.@plugins)
@@ -318,7 +305,6 @@ class ProjectConfigurationExtension {
         licensing.normalize()
         reproducible.normalize()
         testing.normalize()
-        clirr.normalize()
         plugins.normalize()
         stats.normalize()
         docs.normalize()
@@ -335,7 +321,6 @@ class ProjectConfigurationExtension {
         licensing.postMerge()
         reproducible.postMerge()
         testing.postMerge()
-        clirr.postMerge()
         plugins.postMerge()
         stats.postMerge()
         docs.postMerge()

@@ -15,7 +15,6 @@ config {
     <<_base_dependencyManagement,dependencyManagement>> { ... }
     <<_org_kordamp_gradle_bom,bom>> { ... }
     <<_org_kordamp_gradle_buildinfo,buildInfo>> { ... }
-    <<_org_kordamp_gradle_clirr,clirr>> { ... }
     <<_org_kordamp_gradle_licensing,licensing>> { ... }
     <<_org_kordamp_gradle_plugins,plugins>> { ... }
     <<_org_kordamp_gradle_publishing,publishing>> { ... }

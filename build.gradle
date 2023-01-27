@@ -72,7 +72,6 @@ allprojects {
     repositories {
         mavenLocal()
         gradlePluginPortal()
-        flatDir { dir rootProject.file('libraries') }
     }
 }
 
