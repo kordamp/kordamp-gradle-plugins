@@ -10,7 +10,6 @@ class:: `org.kordamp.gradle.plugin.base.BasePlugin`
 applied by:: `<<_org_kordamp_gradle_bom,org.kordamp.gradle.bom>>`, +
 `<<_org_kordamp_gradle_buildinfo,org.kordamp.gradle.build-info>>`, +
 `<<_org_kordamp_gradle_checkstyle,org.kordamp.gradle.chekcstyle>>`, +
-`<<_org_kordamp_gradle_clirr,org.kordamp.gradle.clirr>>`, +
 `<<_org_kordamp_gradle_codenarc,org.kordamp.gradle.codenarc>>`, +
 `<<_org_kordamp_gradle_coveralls,org.kordamp.gradle.coveralls>>`, +
 `<<_org_kordamp_gradle_cpd,org.kordamp.gradle.cpd>>`, +

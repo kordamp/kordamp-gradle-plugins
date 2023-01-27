@@ -21,7 +21,6 @@ dependencies {
     api project(':profiles-gradle-plugin')
     api project(':bom-gradle-plugin')
     api project(':buildinfo-gradle-plugin')
-    api project(':clirr-gradle-plugin')
     api project(':coveralls-gradle-plugin')
     api project(':jacoco-gradle-plugin')
     api project(':jar-gradle-plugin')

@@ -42,7 +42,6 @@ class EffectiveSettingsTask extends AbstractReportingTask {
         'licensing',
         'reproducible',
         'testing',
-        'clirr',
         'plugins',
         'stats',
         'coverage',
