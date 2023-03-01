@@ -17,9 +17,11 @@
  */
 package org.kordamp.gradle.plugin.base.model.impl
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.javadoc.Groovydoc
+import org.gradle.util.GradleVersion
 import org.kordamp.gradle.util.CollectionUtils
 
 /**
@@ -38,11 +40,17 @@ class GroovydocOptions {
     boolean noTimestamp
     boolean noVersionStamp
     boolean includePrivate
+    boolean includeAuthor
+    boolean includeMainForScripts
+    boolean processScripts
     boolean use
 
     private boolean noTimestampSet
     private boolean noVersionStampSet
     private boolean includePrivateSet
+    private boolean includeAuthorSet
+    private boolean includeMainForScriptsSet
+    private boolean processScriptsSet
     private boolean useSet
 
     boolean isNoTimestampSet() {
@@ -59,6 +67,18 @@ class GroovydocOptions {
 
     boolean isUseSet() {
         return useSet
+    }
+
+    boolean isIncludeAuthorSet() {
+        return includeAuthorSet
+    }
+
+    boolean isIncludeMainForScriptsSet() {
+        return includeMainForScriptsSet
+    }
+
+    boolean isProcessScriptsSet() {
+        return processScriptsSet
     }
 
     void setUse(boolean use) {
@@ -79,6 +99,21 @@ class GroovydocOptions {
     void setIncludePrivate(boolean includePrivate) {
         this.includePrivate = includePrivate
         includePrivateSet = true
+    }
+
+    void setIncludeAuthor(boolean includeAuthor) {
+        this.includeAuthor = includeAuthor
+        includeAuthorSet = true
+    }
+
+    void setIncludeMainForScripts(boolean includeMainForScripts) {
+        this.includeMainForScripts = includeMainForScripts
+        includeMainForScriptsSet = true
+    }
+
+    void setProcessScripts(boolean processScripts) {
+        this.processScripts = processScripts
+        processScriptsSet = true
     }
 
     void link(String url, String... packages) {
@@ -108,6 +143,9 @@ class GroovydocOptions {
         o1.setNoTimestamp((boolean) (o1.noTimestampSet ? o1.noTimestamp : o2.noTimestamp))
         o1.setNoVersionStamp((boolean) (o1.noVersionStampSet ? o1.noVersionStamp : o2.noVersionStamp))
         o1.setIncludePrivate((boolean) (o1.includePrivateSet ? o1.includePrivate : o2.includePrivate))
+        o1.setIncludeAuthor((boolean) (o1.includeAuthorSet ? o1.includeAuthor : o2.includeAuthor))
+        o1.setIncludeMainForScripts((boolean) (o1.includeMainForScriptsSet ? o1.includeMainForScripts : o2.includeMainForScripts))
+        o1.setProcessScripts((boolean) (o1.processScriptsSet ? o1.processScripts : o2.processScripts))
         o1.setUse((boolean) (o1.useSet ? o1.use : o2.use))
         o1.setWindowTitle(o1.windowTitle ?: o2.windowTitle)
         o1.setDocTitle(o1.docTitle ?: o2.docTitle)
@@ -117,10 +155,10 @@ class GroovydocOptions {
         o1.links = CollectionUtils.merge(o1.links, o2?.links, false)
     }
 
+    @CompileDynamic
     void applyTo(Groovydoc groovydoc) {
         groovydoc.setNoTimestamp(noTimestamp)
         groovydoc.setNoVersionStamp(noVersionStamp)
-        groovydoc.setIncludePrivate(includePrivate)
         groovydoc.setUse(use)
         groovydoc.setWindowTitle(windowTitle)
         groovydoc.setDocTitle(docTitle)
@@ -128,5 +166,12 @@ class GroovydocOptions {
         groovydoc.setFooter(footer)
         groovydoc.setOverviewText(overviewText)
         groovydoc.setLinks(links)
+
+        if (GradleVersion.current() >= GradleVersion.version('7.5')) {
+            groovydoc.getIncludeAuthor().set(includeAuthor)
+            groovydoc.getIncludeMainForScripts().set(includeMainForScripts)
+            groovydoc.getProcessScripts().set(processScripts)
+        }
+        groovydoc.setIncludePrivate(includePrivate)
     }
 }
