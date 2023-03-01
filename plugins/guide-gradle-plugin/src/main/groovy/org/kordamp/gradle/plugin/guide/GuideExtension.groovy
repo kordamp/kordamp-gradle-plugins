@@ -28,8 +28,6 @@ import org.gradle.api.Project
 class GuideExtension {
     String javadocApiDir = 'api'
     String groovydocApiDir = 'gapi'
-    String sourceHtmlDir = 'api-html'
-    String sourceXrefDir = 'api-xref'
 
     GuideExtension(Project project) {
     }

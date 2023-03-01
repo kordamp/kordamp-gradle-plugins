@@ -27,7 +27,6 @@ import org.kordamp.gradle.plugin.base.plugins.BuildInfo
 import org.kordamp.gradle.plugin.base.plugins.Checkstyle
 import org.kordamp.gradle.plugin.base.plugins.Codenarc
 import org.kordamp.gradle.plugin.base.plugins.Coveralls
-import org.kordamp.gradle.plugin.base.plugins.Cpd
 import org.kordamp.gradle.plugin.base.plugins.Dependencies
 
 import org.kordamp.gradle.plugin.base.plugins.ErrorProne
@@ -44,8 +43,6 @@ import org.kordamp.gradle.plugin.base.plugins.Publishing
 import org.kordamp.gradle.plugin.base.plugins.Reproducible
 import org.kordamp.gradle.plugin.base.plugins.Sonar
 import org.kordamp.gradle.plugin.base.plugins.Source
-import org.kordamp.gradle.plugin.base.plugins.SourceHtml
-import org.kordamp.gradle.plugin.base.plugins.SourceXref
 import org.kordamp.gradle.plugin.base.plugins.Spotbugs
 import org.kordamp.gradle.plugin.base.plugins.Stats
 import org.kordamp.gradle.plugin.base.plugins.Testing
@@ -335,7 +332,6 @@ class ProjectConfigurationExtension {
         final Codenarc codenarc
         final ErrorProne errorprone
         final Pmd pmd
-        final Cpd cpd
         final Spotbugs spotbugs
         final Sonar sonar
 
@@ -349,7 +345,6 @@ class ProjectConfigurationExtension {
             codenarc = new Codenarc(config, project)
             errorprone = new ErrorProne(config, project)
             pmd = new Pmd(config, project)
-            cpd = new Cpd(config, project)
             sonar = new Sonar(config, project)
             spotbugs = new Spotbugs(config, project)
         }
@@ -361,7 +356,6 @@ class ProjectConfigurationExtension {
             if (codenarc.visible) map.putAll(codenarc.toMap())
             if (errorprone.visible) map.putAll(errorprone.toMap())
             if (pmd.visible) map.putAll(pmd.toMap())
-            if (cpd.visible) map.putAll(cpd.toMap())
             if (sonar.visible) map.putAll(sonar.toMap())
             if (spotbugs.visible) map.putAll(spotbugs.toMap())
 
@@ -400,14 +394,6 @@ class ProjectConfigurationExtension {
             ConfigureUtil.configure(action, pmd)
         }
 
-        void cpd(Action<? super Cpd> action) {
-            action.execute(cpd)
-        }
-
-        void cpd(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Cpd) Closure<Void> action) {
-            ConfigureUtil.configure(action, cpd)
-        }
-
         void sonar(Action<? super Sonar> action) {
             action.execute(sonar)
         }
@@ -429,7 +415,6 @@ class ProjectConfigurationExtension {
             Codenarc.merge(o1.@codenarc, o2.@codenarc)
             ErrorProne.merge(o1.@errorprone, o2.@errorprone)
             Pmd.merge(o1.@pmd, o2.@pmd)
-            Cpd.merge(o1.@cpd, o2.@cpd)
             Sonar.merge(o1.@sonar, o2.@sonar)
             Spotbugs.merge(o1.@spotbugs, o2.@spotbugs)
             o1
@@ -450,7 +435,6 @@ class ProjectConfigurationExtension {
             codenarc.normalize()
             errorprone.normalize()
             pmd.normalize()
-            cpd.normalize()
             sonar.normalize()
             spotbugs.normalize()
             this
@@ -461,7 +445,6 @@ class ProjectConfigurationExtension {
             codenarc.postMerge()
             errorprone.postMerge()
             pmd.postMerge()
-            cpd.postMerge()
             sonar.postMerge()
             spotbugs.postMerge()
             this
@@ -532,8 +515,6 @@ class ProjectConfigurationExtension {
         final Guide guide
         final Groovydoc groovydoc
         final Javadoc javadoc
-        final SourceHtml sourceHtml
-        final SourceXref sourceXref
 
         private final ProjectConfigurationExtension config
         private final Project project
@@ -544,8 +525,6 @@ class ProjectConfigurationExtension {
             guide = new Guide(config, project)
             groovydoc = new Groovydoc(config, project)
             javadoc = new Javadoc(config, project)
-            sourceHtml = new SourceHtml(config, project)
-            sourceXref = new SourceXref(config, project)
         }
 
         Map<String, Object> toMap() {
@@ -553,8 +532,6 @@ class ProjectConfigurationExtension {
 
             if (javadoc.visible) map.putAll(javadoc.toMap())
             if (groovydoc.visible) map.putAll(groovydoc.toMap())
-            if (sourceHtml.visible) map.putAll(sourceHtml.toMap())
-            if (sourceXref.visible) map.putAll(sourceXref.toMap())
             if (guide.visible) map.putAll(guide.toMap())
 
             map ? new LinkedHashMap<>('docs': map) : [:]
@@ -584,28 +561,10 @@ class ProjectConfigurationExtension {
             ConfigureUtil.configure(action, javadoc)
         }
 
-        void sourceHtml(Action<? super SourceHtml> action) {
-            action.execute(sourceHtml)
-        }
-
-        void sourceHtml(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SourceHtml) Closure<Void> action) {
-            ConfigureUtil.configure(action, sourceHtml)
-        }
-
-        void sourceXref(Action<? super SourceXref> action) {
-            action.execute(sourceXref)
-        }
-
-        void sourceXref(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SourceXref) Closure<Void> action) {
-            ConfigureUtil.configure(action, sourceXref)
-        }
-
         static Docs merge(Docs o1, Docs o2) {
             Guide.merge(o1.@guide, o2.@guide)
             Groovydoc.merge(o1.@groovydoc, o2.@groovydoc)
             Javadoc.merge(o1.@javadoc, o2.@javadoc)
-            SourceHtml.merge(o1.@sourceHtml, o2.@sourceHtml)
-            SourceXref.merge(o1.@sourceXref, o2.@sourceXref)
             o1
         }
 
@@ -613,8 +572,6 @@ class ProjectConfigurationExtension {
             guide.normalize()
             groovydoc.normalize()
             javadoc.normalize()
-            sourceHtml.normalize()
-            sourceXref.normalize()
             this
         }
 
@@ -622,8 +579,6 @@ class ProjectConfigurationExtension {
             guide.postMerge()
             groovydoc.postMerge()
             javadoc.postMerge()
-            sourceHtml.postMerge()
-            sourceXref.postMerge()
             this
         }
     }
