@@ -94,7 +94,10 @@ class PluginUtils {
         if (isAndroidProject(project)) {
             return project.android.sourceSets.main.javaDirectories.flatten()
         }
-        project.sourceSets.main.allSource.srcDirs.flatten()
+        if (hasSourceSets(project)) {
+            return project.sourceSets.main.allSource.srcDirs.flatten()
+        }
+        [] // empty
     }
 
     @CompileDynamic
@@ -102,7 +105,10 @@ class PluginUtils {
         if (isAndroidProject(project)) {
             return project.android.sourceSets.javaDirectories.flatten()
         }
-        project.sourceSets.collect { it.allSource.srcDirs }.flatten()
+        if (hasSourceSets(project)) {
+            return project.sourceSets.collect { it.allSource.srcDirs }.flatten()
+        }
+        [] //empty
     }
 
     static resolveMainSourceDirs(Collection<Project> projects) {
