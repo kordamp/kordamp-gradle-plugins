@@ -18,7 +18,7 @@ jobs:
     with:
       branch: ${{ github.event.inputs.branch }}
       version: ${{ github.event.inputs.version }}
-      java-version: 11
+      java-version: ${{ vars.JAVA_VERSION }}
     secrets:
       github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
       gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
