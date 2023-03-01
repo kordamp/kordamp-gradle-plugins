@@ -44,8 +44,6 @@ import org.kordamp.gradle.plugin.project.tasks.reports.GenerateSummaryReportTask
 import org.kordamp.gradle.plugin.project.tasks.reports.GenerateTeamReportTask
 import org.kordamp.gradle.plugin.publishing.PublishingPlugin
 import org.kordamp.gradle.plugin.source.SourceJarPlugin
-import org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
-import org.kordamp.gradle.plugin.sourcexref.SourceXrefPlugin
 import org.kordamp.gradle.plugin.stats.SourceStatsPlugin
 import org.kordamp.gradle.plugin.testing.TestingPlugin
 
@@ -99,8 +97,6 @@ class ProjectPlugin extends AbstractKordampPlugin {
         JarPlugin.applyIfMissing(project)
         SourceJarPlugin.applyIfMissing(project)
         SourceStatsPlugin.applyIfMissing(project)
-        SourceHtmlPlugin.applyIfMissing(project)
-        SourceXrefPlugin.applyIfMissing(project)
         TestingPlugin.applyIfMissing(project)
 
         project.pluginManager.apply(VersionsPlugin)

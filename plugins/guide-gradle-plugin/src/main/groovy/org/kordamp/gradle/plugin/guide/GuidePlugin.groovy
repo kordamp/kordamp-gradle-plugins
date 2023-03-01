@@ -35,7 +35,6 @@ import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.base.BasePlugin
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.plugins.Guide
-import org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
 
 import javax.inject.Named
 
@@ -71,7 +70,6 @@ class GuidePlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         BasePlugin.applyIfMissing(project)
-        SourceHtmlPlugin.applyIfMissing(project.rootProject)
         project.pluginManager.apply(AsciidoctorJPlugin)
 
         project.extensions.create('guide', GuideExtension, project)
@@ -103,7 +101,7 @@ class GuidePlugin extends AbstractKordampPlugin {
     }
 
     @Named('guide')
-    @DependsOn(['base', 'javadoc', 'groovydoc', 'sourceHtml', 'sourceXref'])
+    @DependsOn(['base', 'javadoc', 'groovydoc'])
     private class GuideAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
         @Override
         void allProjectsEvaluated(Project rootProject) {
@@ -127,18 +125,6 @@ class GuidePlugin extends AbstractKordampPlugin {
                     if (task?.enabled) {
                         t.dependsOn task
                         t.from(task.destinationDir) { into extension.groovydocApiDir }
-                    }
-
-                    task = rootProject.tasks.findByName(SourceHtmlPlugin.AGGREGATE_SOURCE_HTML_TASK_NAME)
-                    if (task?.enabled) {
-                        t.dependsOn task
-                        t.from(task.destinationDir) { into extension.sourceHtmlDir }
-                    }
-
-                    task = rootProject.tasks.findByName('aggregateSourceXref')
-                    if (task?.enabled) {
-                        t.dependsOn task
-                        t.from(task.outputDirectory) { into extension.sourceXrefDir }
                     }
                 }
             })
@@ -302,9 +288,7 @@ class GuidePlugin extends AbstractKordampPlugin {
                             |
                             |= Links
                             |
-                            |link:${extension.javadocApiDir}/index.html[Javadoc, window="_blank"]
-                            |
-                            |link:${extension.sourceHtmlDir}/index.html[Source, window="_blank"]""".stripMargin('|')
+                            |link:${extension.javadocApiDir}/index.html[Javadoc, window="_blank"]""".stripMargin('|')
         }
 
         File introduction = touchFile(project.file("${asciidocDir}/introduction.adoc"))
