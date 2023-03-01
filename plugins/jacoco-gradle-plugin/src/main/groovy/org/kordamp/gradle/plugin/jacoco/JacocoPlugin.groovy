@@ -59,7 +59,6 @@ import static org.kordamp.gradle.util.PluginUtils.resolveConfig
  */
 @CompileStatic
 class JacocoPlugin extends AbstractKordampPlugin {
-    static final String AGGREGATE_JACOCO_MERGE_TASK_NAME = 'aggregateJacocoMerge'
     static final String AGGREGATE_JACOCO_REPORT_TASK_NAME = 'aggregateJacocoReport'
 
     Project project
@@ -116,22 +115,11 @@ class JacocoPlugin extends AbstractKordampPlugin {
     }
 
     private void configureRootProject(Project project) {
-        TaskProvider<JacocoMerge> aggregateJacocoMerge = project.tasks.register(AGGREGATE_JACOCO_MERGE_TASK_NAME, JacocoMerge,
-            new Action<JacocoMerge>() {
-                @Override
-                void execute(JacocoMerge t) {
-                    t.enabled = false
-                    t.group = 'Reporting'
-                    t.description = 'Aggregate Jacoco coverage reports.'
-                }
-            })
-
         project.tasks.register(AGGREGATE_JACOCO_REPORT_TASK_NAME, JacocoReport,
             new Action<JacocoReport>() {
                 @Override
                 void execute(JacocoReport t) {
                     t.enabled = false
-                    t.dependsOn aggregateJacocoMerge
                     t.group = 'Reporting'
                     t.description = 'Generate aggregate Jacoco coverage report.'
 
@@ -201,7 +189,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
     private class JacocoAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
         @Override
         void allProjectsEvaluated(Project rootProject) {
-            applyJacocoMerge(rootProject)
+            configureJacocoReports(rootProject)
         }
     }
 
@@ -235,7 +223,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
             }
         }
 
-        if (graph.hasTask(':' + AGGREGATE_JACOCO_MERGE_TASK_NAME)) {
+        if (graph.hasTask(':' + AGGREGATE_JACOCO_REPORT_TASK_NAME)) {
             tt*.ignoreFailures = true
             itt*.ignoreFailures = true
             ftt*.ignoreFailures = true
@@ -302,8 +290,12 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
     @CompileDynamic
     private static FileCollection resolveClassDirs(ProjectConfigurationExtension config, Project project) {
-        project.files(PluginUtils.resolveSourceSets(project).main.output.classesDirs*.path.flatten().unique())
-            .from(config.coverage.jacoco.additionalClassDirs.files.flatten().unique())
+        def sourceSets = PluginUtils.resolveSourceSets(project)
+        if (sourceSets) {
+            return project.files(sourceSets.main.output.classesDirs*.path.flatten().unique())
+                .from(config.coverage.jacoco.additionalClassDirs.files.flatten().unique())
+        }
+        project.files() // empty
     }
 
     private static FileCollection resolveSourceDirs(ProjectConfigurationExtension config, Collection<Project> projects) {
@@ -314,7 +306,7 @@ class JacocoPlugin extends AbstractKordampPlugin {
         config.project.files(projects.collect { resolveClassDirs(config, it) }.flatten().unique())
     }
 
-    private void applyJacocoMerge(Project project) {
+    private void configureJacocoReports(Project project) {
         ProjectConfigurationExtension config = resolveConfig(project)
         if (!config.coverage.jacoco.enabled) {
             return
@@ -338,27 +330,20 @@ class JacocoPlugin extends AbstractKordampPlugin {
             }
         }
 
-        TaskProvider<JacocoMerge> aggregateJacocoMerge = project.tasks.named(AGGREGATE_JACOCO_MERGE_TASK_NAME, JacocoMerge, new Action<JacocoMerge>() {
-            @Override
-            @CompileDynamic
-            void execute(JacocoMerge t) {
-                t.dependsOn testTasks + reportTasks
-                t.enabled = config.coverage.jacoco.enabled
-                t.executionData = project.files(reportTasks.executionData.files.flatten())
-                t.destinationFile = config.coverage.jacoco.aggregateExecFile
-            }
-        })
-
         project.tasks.named(AGGREGATE_JACOCO_REPORT_TASK_NAME, JacocoReport, new Action<JacocoReport>() {
             @Override
+            @CompileDynamic
             void execute(JacocoReport t) {
                 t.enabled = config.coverage.jacoco.enabled
+
+                t.dependsOn testTasks + reportTasks
+                t.enabled = config.coverage.jacoco.enabled
+                t.executionData(project.files(reportTasks.executionData.files.flatten()))
 
                 t.sourceDirectories.from project.files(resolveSourceDirs(config, projects))
                 t.classDirectories.from project.files(resolveClassDirs(config, projects))
                 t.additionalSourceDirs.from project.files(resolveSourceDirs(config, projects))
                 t.additionalClassDirs.from project.files(resolveClassDirs(config, projects))
-                t.executionData project.files(aggregateJacocoMerge.get().destinationFile)
 
                 t.reports(new Action<JacocoReportsContainer>() {
                     @Override
