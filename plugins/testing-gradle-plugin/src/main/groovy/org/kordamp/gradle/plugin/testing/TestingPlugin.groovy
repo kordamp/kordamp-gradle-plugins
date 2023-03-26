@@ -350,7 +350,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             @Override
             void execute(TestReport t) {
                 t.enabled = tt.size() > 0
-                t.reportOn(tt)
+                t.testResults.from(tt.binaryResultsDirectory)
                 configureAggregateTestReportTask(t, 'Unit', tt)
             }
         })
@@ -359,7 +359,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             @Override
             void execute(TestReport t) {
                 t.enabled = itt.size() > 0
-                t.reportOn(itt)
+                t.testResults.from(itt.binaryResultsDirectory)
                 configureAggregateTestReportTask(t, 'Integration', itt)
             }
         })
@@ -368,7 +368,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             @Override
             void execute(TestReport t) {
                 t.enabled = ftt.size() > 0
-                t.reportOn(ftt)
+                t.testResults.from(ftt.binaryResultsDirectory)
                 configureAggregateTestReportTask(t, 'Functional', ftt)
             }
         })
@@ -378,7 +378,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             @CompileDynamic
             void execute(TestReport t) {
                 t.enabled = tt.size() > 0 || itt.size() > 0 || ftt.size() > 0
-                t.reportOn(tt + itt + ftt)
+                t.testResults.from(tt.binaryResultsDirectory + itt.binaryResultsDirectory + ftt.binaryResultsDirectory)
                 configureAggregateTestReportTask(t, 'All', tt + itt + ftt)
             }
         })

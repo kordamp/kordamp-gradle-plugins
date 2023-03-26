@@ -133,7 +133,7 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
         functionalTest.dependsOn project.tasks.findByName('jar')
         functionalTest.mustRunAfter project.tasks.findByName('test')
         functionalTest.finalizedBy functionalTestReport
-        functionalTestReport.reportOn functionalTest.binaryResultsDirectory
+        functionalTestReport.testResults.from(functionalTest.binaryResultsDirectory)
         project.tasks.findByName('check').dependsOn functionalTest
         project.tasks.findByName('check').dependsOn functionalTestReport
     }

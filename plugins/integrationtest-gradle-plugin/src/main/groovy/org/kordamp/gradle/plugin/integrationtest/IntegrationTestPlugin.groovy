@@ -139,7 +139,7 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
         integrationTest.dependsOn project.tasks.findByName('jar')
         integrationTest.mustRunAfter project.tasks.findByName('test')
         integrationTest.finalizedBy integrationTestReport
-        integrationTestReport.reportOn integrationTest.binaryResultsDirectory
+        integrationTestReport.testResults.from(integrationTest.binaryResultsDirectory)
         project.tasks.findByName('check').dependsOn integrationTest
         project.tasks.findByName('check').dependsOn integrationTestReport
     }
