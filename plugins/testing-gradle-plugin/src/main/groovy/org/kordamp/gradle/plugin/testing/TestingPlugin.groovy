@@ -134,7 +134,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                     t.enabled = false
                     t.group = 'Reporting'
                     t.description = 'Aggregate test reports.'
-                    t.destinationDir = project.file("${project.buildDir}/reports/aggregate-tests")
+                    t.destinationDirectory.set(project.file("${project.buildDir}/reports/aggregate-tests"))
                 }
             })
 
@@ -145,7 +145,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                     t.enabled = false
                     t.group = 'Reporting'
                     t.description = 'Aggregate integration test reports.'
-                    t.destinationDir = project.file("${project.buildDir}/reports/aggregate-integration-tests")
+                    t.destinationDirectory.set(project.file("${project.buildDir}/reports/aggregate-integration-tests"))
                 }
             })
 
@@ -156,7 +156,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                     t.enabled = false
                     t.group = 'Reporting'
                     t.description = 'Aggregate functional test reports.'
-                    t.destinationDir = project.file("${project.buildDir}/reports/aggregate-functional-tests")
+                    t.destinationDirectory.set(project.file("${project.buildDir}/reports/aggregate-functional-tests"))
                 }
             })
 
@@ -167,7 +167,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                     t.enabled = false
                     t.group = 'Reporting'
                     t.description = 'Aggregate all test reports.'
-                    t.destinationDir = project.file("${project.buildDir}/reports/aggregate-all-tests")
+                    t.destinationDirectory.set(project.file("${project.buildDir}/reports/aggregate-all-tests"))
                 }
             })
 
@@ -406,7 +406,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                 t.project.logger.lifecycle(str.toString())
 
                 if (results.failure > 0) {
-                    println("There were failing tests. See the report at: ${t.destinationDir}/index.html")
+                    println("There were failing tests. See the report at: ${t.destinationDirectory.get().asFile}/index.html")
                     throw new IllegalMonitorStateException('There were failing tests')
                 }
             }

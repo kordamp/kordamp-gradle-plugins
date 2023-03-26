@@ -198,7 +198,7 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
                     void execute(TestReport t) {
                         t.group = 'Reporting'
                         t.description = 'Generates a report on integration tests.'
-                        t.destinationDir = project.file("${project.reporting.baseDir.path}/integration-tests")
+                        t.destinationDirectory.set(project.file("${project.reporting.baseDir.path}/integration-tests"))
                     }
                 })
         }

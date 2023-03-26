@@ -192,7 +192,7 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
                     void execute(TestReport t) {
                         t.group = 'Reporting'
                         t.description = 'Generates a report on functional tests.'
-                        t.destinationDir = project.file("${project.reporting.baseDir.path}/functional-tests")
+                        t.destinationDirectory.set(project.file("${project.reporting.baseDir.path}/functional-tests"))
                     }
                 })
         }
