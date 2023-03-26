@@ -110,8 +110,8 @@ class Pmd extends AbstractQualityFeature {
         pmdTask.ignoreFailures = getIgnoreFailures()
         pmdTask.getIncrementalAnalysis().set(incrementalAnalysisSet)
         pmdTask.rulePriority = rulePriority
-        pmdTask.reports.html.enabled = true
-        pmdTask.reports.xml.enabled = true
+        pmdTask.reports.html.required.set(true)
+        pmdTask.reports.xml.required.set(true)
         pmdTask.reports.html.destination = project.layout.buildDirectory.file("reports/pmd/${sourceSetName}.html").get().asFile
         pmdTask.reports.xml.destination = project.layout.buildDirectory.file("reports/pmd/${sourceSetName}.xml").get().asFile
     }

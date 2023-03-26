@@ -175,7 +175,7 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
                         t.description = 'Runs the functional tests.'
                         t.testClassesDirs = resolveSourceSets(project).functionalTest.output.classesDirs
                         t.classpath = resolveSourceSets(project).functionalTest.runtimeClasspath
-                        t.reports.html.enabled = false
+                        t.reports.html.required.set(true)
                         t.forkEvery = Runtime.runtime.availableProcessors()
 
                         t.testLogging {

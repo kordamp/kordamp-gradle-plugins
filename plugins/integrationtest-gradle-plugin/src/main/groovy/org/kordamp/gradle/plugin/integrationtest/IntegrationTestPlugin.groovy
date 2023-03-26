@@ -181,7 +181,7 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
                         t.description = 'Runs the integration tests.'
                         t.testClassesDirs = resolveSourceSets(project).integrationTest.output.classesDirs
                         t.classpath = resolveSourceSets(project).integrationTest.runtimeClasspath
-                        t.reports.html.enabled = false
+                        t.reports.html.required.set(true)
                         t.forkEvery = Runtime.runtime.availableProcessors()
 
                         t.testLogging {

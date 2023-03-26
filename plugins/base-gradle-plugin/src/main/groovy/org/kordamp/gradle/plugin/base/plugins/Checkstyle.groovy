@@ -131,8 +131,8 @@ class Checkstyle extends AbstractQualityFeature {
         checkstyleTask.maxWarnings = maxWarnings
         checkstyleTask.showViolations = showViolations
         checkstyleTask.ignoreFailures = getIgnoreFailures()
-        checkstyleTask.reports.html.enabled = true
-        checkstyleTask.reports.xml.enabled = true
+        checkstyleTask.reports.html.required.set(true)
+        checkstyleTask.reports.xml.required.set(true)
         checkstyleTask.reports.html.destination = project.layout.buildDirectory.file("reports/checkstyle/${sourceSetName}.html").get().asFile
         checkstyleTask.reports.xml.destination = project.layout.buildDirectory.file("reports/checkstyle/${sourceSetName}.xml").get().asFile
     }

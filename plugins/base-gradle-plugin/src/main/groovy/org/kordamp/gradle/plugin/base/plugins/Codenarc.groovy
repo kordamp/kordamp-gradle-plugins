@@ -114,8 +114,8 @@ class Codenarc extends AbstractQualityFeature {
         codenarcTask.maxPriority2Violations = maxPriority2Violations
         codenarcTask.maxPriority3Violations = maxPriority3Violations
         codenarcTask.ignoreFailures = getIgnoreFailures()
-        codenarcTask.reports.html.enabled = true
-        codenarcTask.reports.xml.enabled = true
+        codenarcTask.reports.html.required.set(true)
+        codenarcTask.reports.xml.required.set(true)
         codenarcTask.reports.html.destination = project.layout.buildDirectory.file("reports/codenarc/${sourceSetName}.html").get().asFile
         codenarcTask.reports.xml.destination = project.layout.buildDirectory.file("reports/codenarc/${sourceSetName}.xml").get().asFile
     }

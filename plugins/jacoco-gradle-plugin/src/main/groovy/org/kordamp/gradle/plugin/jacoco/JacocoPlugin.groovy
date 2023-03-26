@@ -126,8 +126,8 @@ class JacocoPlugin extends AbstractKordampPlugin {
                     t.reports(new Action<JacocoReportsContainer>() {
                         @Override
                         void execute(JacocoReportsContainer reports) {
-                            reports.html.enabled = true
-                            reports.xml.enabled = true
+                            reports.html.required.set(true)
+                            reports.xml.required.set(true)
                         }
                     })
                 }
@@ -274,9 +274,9 @@ class JacocoPlugin extends AbstractKordampPlugin {
 
             t.enabled = config.coverage.jacoco.enabled
             t.reports {
-                xml.enabled = true
-                csv.enabled = false
-                html.enabled = true
+                xml.required.set(true)
+                csv.required.set(false)
+                html.required.set(true)
             }
         }
 
@@ -337,7 +337,6 @@ class JacocoPlugin extends AbstractKordampPlugin {
                 t.enabled = config.coverage.jacoco.enabled
 
                 t.dependsOn testTasks + reportTasks
-                t.enabled = config.coverage.jacoco.enabled
                 t.executionData(project.files(reportTasks.executionData.files.flatten()))
 
                 t.sourceDirectories.from project.files(resolveSourceDirs(config, projects))
