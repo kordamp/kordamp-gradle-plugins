@@ -94,6 +94,13 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                 addProjectEvaluatedListener(project, new SourceProjectEvaluatedListener())
             }
         })
+
+        project.pluginManager.withPlugin('java-platform', new Action<AppliedPlugin>() {
+            @Override
+            void execute(AppliedPlugin appliedPlugin) {
+                addProjectEvaluatedListener(project, new DisableSourceProjectEvaluatedListener())
+            }
+        })
     }
 
     private void configureRootProject(Project project) {
@@ -109,6 +116,17 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                     t.enabled = false
                 }
             })
+    }
+
+    @Named('source')
+    @DependsOn(['base'])
+    private class DisableSourceProjectEvaluatedListener implements ProjectEvaluatedListener {
+        @Override
+        void projectEvaluated(Project project) {
+            ProjectConfigurationExtension config = resolveConfig(project)
+            config.artifacts.source.enabled = false
+            setEnabled(false)
+        }
     }
 
     @Named('source')
