@@ -21,6 +21,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.javadoc.Groovydoc
+import org.gradle.api.tasks.javadoc.GroovydocAccess
 import org.gradle.util.GradleVersion
 import org.kordamp.gradle.util.CollectionUtils
 
@@ -171,7 +172,7 @@ class GroovydocOptions {
             groovydoc.getIncludeAuthor().set(includeAuthor)
             groovydoc.getIncludeMainForScripts().set(includeMainForScripts)
             groovydoc.getProcessScripts().set(processScripts)
+            groovydoc.getAccess().set(includePrivate ? GroovydocAccess.PRIVATE : GroovydocAccess.PUBLIC)
         }
-        groovydoc.setIncludePrivate(includePrivate)
     }
 }
