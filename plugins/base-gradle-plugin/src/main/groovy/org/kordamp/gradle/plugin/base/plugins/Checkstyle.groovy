@@ -133,8 +133,8 @@ class Checkstyle extends AbstractQualityFeature {
         checkstyleTask.ignoreFailures = getIgnoreFailures()
         checkstyleTask.reports.html.required.set(true)
         checkstyleTask.reports.xml.required.set(true)
-        checkstyleTask.reports.html.destination = project.layout.buildDirectory.file("reports/checkstyle/${sourceSetName}.html").get().asFile
-        checkstyleTask.reports.xml.destination = project.layout.buildDirectory.file("reports/checkstyle/${sourceSetName}.xml").get().asFile
+        checkstyleTask.reports.html.outputLocation.set(project.layout.buildDirectory.file("reports/checkstyle/${sourceSetName}.html").get().asFile)
+        checkstyleTask.reports.xml.outputLocation.set(project.layout.buildDirectory.file("reports/checkstyle/${sourceSetName}.xml").get().asFile)
     }
 
     private File resolveConfigFile(File baseFile, boolean fileSet, String sourceSetName) {

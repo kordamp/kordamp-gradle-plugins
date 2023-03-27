@@ -116,8 +116,8 @@ class Codenarc extends AbstractQualityFeature {
         codenarcTask.ignoreFailures = getIgnoreFailures()
         codenarcTask.reports.html.required.set(true)
         codenarcTask.reports.xml.required.set(true)
-        codenarcTask.reports.html.destination = project.layout.buildDirectory.file("reports/codenarc/${sourceSetName}.html").get().asFile
-        codenarcTask.reports.xml.destination = project.layout.buildDirectory.file("reports/codenarc/${sourceSetName}.xml").get().asFile
+        codenarcTask.reports.html.outputLocation.set(project.layout.buildDirectory.file("reports/codenarc/${sourceSetName}.html").get().asFile)
+        codenarcTask.reports.xml.outputLocation.set(project.layout.buildDirectory.file("reports/codenarc/${sourceSetName}.xml").get().asFile)
     }
 
     private File resolveConfigFile(File baseFile, boolean fileSet, String sourceSetName) {

@@ -248,8 +248,8 @@ class JacocoPlugin extends AbstractKordampPlugin {
                 t.executionData testTask
 
                 t.reports {
-                    html.destination = project.file("${project.reporting.baseDir.path}/jacoco/${testTask.name}/html")
-                    xml.destination = project.file("${project.reporting.baseDir.path}/jacoco/${testTask.name}/jacocoTestReport.xml")
+                    html.outputLocation.set(project.file("${project.reporting.baseDir.path}/jacoco/${testTask.name}/html"))
+                    xml.outputLocation.set(project.file("${project.reporting.baseDir.path}/jacoco/${testTask.name}/jacocoTestReport.xml"))
                 }
             }
         }

@@ -112,8 +112,8 @@ class Pmd extends AbstractQualityFeature {
         pmdTask.rulePriority = rulePriority
         pmdTask.reports.html.required.set(true)
         pmdTask.reports.xml.required.set(true)
-        pmdTask.reports.html.destination = project.layout.buildDirectory.file("reports/pmd/${sourceSetName}.html").get().asFile
-        pmdTask.reports.xml.destination = project.layout.buildDirectory.file("reports/pmd/${sourceSetName}.xml").get().asFile
+        pmdTask.reports.html.outputLocation.set(project.layout.buildDirectory.file("reports/pmd/${sourceSetName}.html").get().asFile)
+        pmdTask.reports.xml.outputLocation.set(project.layout.buildDirectory.file("reports/pmd/${sourceSetName}.xml").get().asFile)
     }
 
     private FileCollection resolveRuleSetFiles(FileCollection baseFiles, boolean fileSet, String sourceSetName) {
