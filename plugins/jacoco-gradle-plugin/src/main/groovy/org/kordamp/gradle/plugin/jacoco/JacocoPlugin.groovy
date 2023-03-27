@@ -258,10 +258,10 @@ class JacocoPlugin extends AbstractKordampPlugin {
             Set<Project> projects = [project] as Set
 
             if (config.coverage.jacoco.includeProjectDependencies) {
-                project.configurations.findByName(testTask.name + 'Implementation').allDependencies.each { d ->
+                project.configurations.findByName(testTask.name + 'Implementation')?.allDependencies?.each { d ->
                     if (d instanceof ProjectDependency) projects << d.dependencyProject
                 }
-                project.configurations.findByName(testTask.name + 'RuntimeOnly').allDependencies.each { d ->
+                project.configurations.findByName(testTask.name + 'RuntimeOnly')?.allDependencies?.each { d ->
                     if (d instanceof ProjectDependency) projects << d.dependencyProject
                 }
             }
