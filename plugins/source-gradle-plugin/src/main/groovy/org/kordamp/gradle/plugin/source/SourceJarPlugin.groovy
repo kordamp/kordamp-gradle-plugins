@@ -215,7 +215,7 @@ class SourceJarPlugin extends AbstractKordampPlugin {
                             hasSourceSets(p)) projects << p
                     }
 
-                    t.from projects.collect { resolveAllSource(it) }.flatten()
+                    t.from projects.collect {p ->  resolveAllSource(p) }.flatten()
                 }
             }
         })

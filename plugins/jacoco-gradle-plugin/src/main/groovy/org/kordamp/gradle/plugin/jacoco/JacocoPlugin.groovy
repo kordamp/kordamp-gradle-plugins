@@ -347,8 +347,8 @@ class JacocoPlugin extends AbstractKordampPlugin {
                 t.reports(new Action<JacocoReportsContainer>() {
                     @Override
                     void execute(JacocoReportsContainer reports) {
-                        reports.html.setDestination(config.coverage.jacoco.aggregateReportHtmlFile)
-                        reports.xml.setDestination(config.coverage.jacoco.aggregateReportXmlFile)
+                        reports.html.outputLocation.set(config.coverage.jacoco.aggregateReportHtmlFile)
+                        reports.xml.outputLocation.set(config.coverage.jacoco.aggregateReportXmlFile)
                     }
                 })
 

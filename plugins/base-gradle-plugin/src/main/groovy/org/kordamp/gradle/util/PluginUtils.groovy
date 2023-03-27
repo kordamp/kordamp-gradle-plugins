@@ -63,7 +63,12 @@ class PluginUtils {
         if (isAndroidProject(project)) {
             return project.android.sourceSets.main.java.sourceFiles
         }
-        project.sourceSets.main.allSource
+
+        try {
+            return project.sourceSets.main.allSource
+        } catch (MissingPropertyException e) {
+            return project.fileTree([])
+        }
     }
 
     static boolean hasSourceSets(Project project) {
