@@ -21,7 +21,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaApplication
 import org.kordamp.gradle.plugin.inline.PropertyAdapter
-import org.kordamp.gradle.util.PluginUtils
 import org.kordamp.jipsy.annotations.ServiceProviderFor
 
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
@@ -51,27 +50,20 @@ class ApplicationPluginPropertyAdapter extends AbstractPropertyAdapter {
 
         String mainClass = resolveProperty(project, 'application.mainClass') ?: resolveProperty(project, 'exec.mainClass')
         if (isNotBlank(mainClass)) {
-            if (PluginUtils.isGradle6Compatible()) {
-                project.logger.debug("Setting application.mainClass to '{}'", mainClass)
-                application.mainClass.set(mainClass)
-            } else {
-                project.logger.warn("Setting application.mainClassName to '{}'", mainClass)
-                application.mainClassName = mainClass
-            }
+            project.logger.debug("Setting application.mainClass to '{}'", mainClass)
+            application.mainClass.set(mainClass)
         }
 
         String mainClassName = resolveProperty(project, 'application.mainClassName')
         if (isNotBlank(mainClassName)) {
-            project.logger.warn("Setting application.mainClassName to '{}'", mainClassName)
-            application.mainClassName = mainClassName
+            project.logger.warn("Setting application.mainClass to '{}'", mainClassName)
+            application.mainClass.set(mainClassName)
         }
 
         String mainModule = resolveProperty(project, 'application.mainModule')
         if (isNotBlank(mainModule)) {
-            if (PluginUtils.isGradle6Compatible()) {
-                project.logger.debug("Setting application.mainModule to '{}'", mainClass)
-                application.mainModule.set(mainModule)
-            }
+            project.logger.debug("Setting application.mainModule to '{}'", mainClass)
+            application.mainModule.set(mainModule)
         }
 
         String applicationDefaultJvmArgs = resolveProperty(project, 'application.applicationDefaultJvmArgs') ?: resolveProperty(project, 'exec.args')

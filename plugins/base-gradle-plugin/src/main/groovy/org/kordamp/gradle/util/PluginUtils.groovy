@@ -158,10 +158,6 @@ class PluginUtils {
         null
     }
 
-    static boolean isGradle6Compatible() {
-        GradleVersion.current() >= GradleVersion.version('6.0')
-    }
-
     static boolean isGradle7Compatible() {
         GradleVersion.current() >= GradleVersion.version('7.0')
     }
@@ -172,28 +168,24 @@ class PluginUtils {
                                             Project project,
                                             boolean addAttributes = true,
                                             String scope = 'runtime') {
-        if (isGradle6Compatible()) {
-            Configuration variant = project.configurations.maybeCreate(feature.uncapitalize() + 'Elements')
-            variant.visible = false
-            variant.description = feature + ' elements.'
-            variant.canBeResolved = false
-            variant.canBeConsumed = true
-            if (addAttributes) {
-                variant.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, Usage.JAVA_RUNTIME))
-                variant.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category, Category.DOCUMENTATION))
-                variant.attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.objects.named(Bundling, Bundling.EXTERNAL))
-                variant.attributes.attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType, classifier))
-            }
-
-            variant.outgoing.artifact(new LazyPublishArtifact(jarProvider))
-            AdhocComponentWithVariants component = findJavaComponent(project.components)
-            if (component != null) {
-                component.addVariantsFromConfiguration(variant, new JavaConfigurationVariantMapping(scope, true))
-            }
-
-            return variant
+        Configuration variant = project.configurations.maybeCreate(feature.uncapitalize() + 'Elements')
+        variant.visible = false
+        variant.description = feature + ' elements.'
+        variant.canBeResolved = false
+        variant.canBeConsumed = true
+        if (addAttributes) {
+            variant.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, Usage.JAVA_RUNTIME))
+            variant.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category, Category.DOCUMENTATION))
+            variant.attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.objects.named(Bundling, Bundling.EXTERNAL))
+            variant.attributes.attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType, classifier))
         }
 
-        return null
+        variant.outgoing.artifact(new LazyPublishArtifact(jarProvider))
+        AdhocComponentWithVariants component = findJavaComponent(project.components)
+        if (component != null) {
+            component.addVariantsFromConfiguration(variant, new JavaConfigurationVariantMapping(scope, true))
+        }
+
+        return variant
     }
 }
