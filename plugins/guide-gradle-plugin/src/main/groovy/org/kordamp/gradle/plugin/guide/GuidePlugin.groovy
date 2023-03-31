@@ -24,6 +24,7 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
@@ -201,6 +202,7 @@ class GuidePlugin extends AbstractKordampPlugin {
                     t.dependsOn project.tasks.named(ASCIIDOCTOR)
                     t.setDestinationDir(project.file("${project.buildDir}/guide"))
                     t.from(project.tasks.asciidoctor.outputDir)
+                    t.duplicatesStrategy = DuplicatesStrategy.INCLUDE
                 }
             })
 
