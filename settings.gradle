@@ -139,6 +139,7 @@ enforce {
             "org.ow2.asm:asm-util:$asmVersion",
             "org.ow2.asm:asm:$asmVersion",
             "org.slf4j:slf4j-api:$slf4jVersion",
+            "org.sonarsource.scanner.api:sonar-scanner-api:$sonarApiVersion",
             "org.yaml:snakeyaml:$snakeYamlVersion",
             "com.google.errorprone:error_prone_annotations:$errorproneVersion"
     }
