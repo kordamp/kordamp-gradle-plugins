@@ -158,8 +158,8 @@ class PluginUtils {
         null
     }
 
-    static boolean isGradle7Compatible() {
-        GradleVersion.current() >= GradleVersion.version('7.0')
+    static boolean isGradle8Compatible() {
+        GradleVersion.current() >= GradleVersion.version('8.0')
     }
 
     static Configuration registerJarVariant(String feature,

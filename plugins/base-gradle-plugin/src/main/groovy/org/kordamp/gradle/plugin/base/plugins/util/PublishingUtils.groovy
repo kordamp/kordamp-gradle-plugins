@@ -53,7 +53,6 @@ import org.kordamp.gradle.plugin.base.model.artifact.Platform
 import org.kordamp.gradle.plugin.base.model.artifact.internal.DependencyUtils
 import org.kordamp.gradle.plugin.base.plugins.Publishing
 
-import static org.kordamp.gradle.util.PluginUtils.isGradle7Compatible
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.StringUtils.isBlank
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
@@ -197,20 +196,6 @@ class PublishingUtils {
             return null
         }
 
-        if (!isGradle7Compatible()) {
-            if (project.configurations.findByName('compile')) {
-                project.configurations.findByName('compile')
-                    .allDependencies.findAll(filter)
-                    .each(processDependency.curry(compileDependencies))
-            }
-
-            if (project.configurations.findByName('runtime')) {
-                project.configurations.findByName('runtime')
-                    .allDependencies.findAll(filter)
-                    .each(processDependency.curry(runtimeDependencies))
-            }
-        }
-
         if (project.configurations.findByName('testRuntime')) {
             project.configurations.findByName('testRuntime')
                 .allDependencies.findAll(filter)
@@ -268,7 +253,7 @@ class PublishingUtils {
 
     private static Platform asPlatform(org.gradle.api.artifacts.Dependency dependency) {
         return DependencyUtils.platform(
-            dependency.name.replace('-','.').replace('_','.'),
+            dependency.name.replace('-', '.').replace('_', '.'),
             dependency.group,
             dependency.name,
             dependency.version

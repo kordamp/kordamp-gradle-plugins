@@ -50,7 +50,6 @@ import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAl
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addTaskGraphReadyListener
 import static org.kordamp.gradle.util.PluginUtils.checkFlag
-import static org.kordamp.gradle.util.PluginUtils.isGradle7Compatible
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 
 /**
@@ -326,11 +325,7 @@ class BasePlugin extends AbstractKordampPlugin {
         })
 
         if (isRootProject(project)) {
-            if (!isGradle7Compatible()) {
-                project.extensions.create('projects', ProjectsExtension, project)
-            } else {
-                project.extensions.create('gradleProjects', ProjectsExtension, project)
-            }
+            project.extensions.create('gradleProjects', ProjectsExtension, project)
 
             project.tasks.register('listProjects', ListProjectsTask,
                 new Action<ListProjectsTask>() {
