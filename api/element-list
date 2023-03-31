@@ -1,4 +1,2 @@
-org.kordamp.gradle.plugin.clirr.reporters
-org.kordamp.gradle.plugin.clirr.tasks
 org.kordamp.gradle.plugin.test.tasks
 org.kordamp.gradle.util
