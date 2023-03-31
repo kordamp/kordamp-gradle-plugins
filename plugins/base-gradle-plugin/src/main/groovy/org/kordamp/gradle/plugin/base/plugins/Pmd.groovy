@@ -108,8 +108,8 @@ class Pmd extends AbstractQualityFeature {
         pmdTask.targetJdk = TargetJdk.VERSION_1_7
         pmdTask.ruleSetFiles = specificRuleSetFiles
         pmdTask.ignoreFailures = getIgnoreFailures()
-        pmdTask.getIncrementalAnalysis().set(incrementalAnalysisSet)
-        pmdTask.rulePriority = rulePriority
+        pmdTask.incrementalAnalysis.set(incrementalAnalysis)
+        pmdTask.rulesMinimumPriority.set(rulePriority)
         pmdTask.reports.html.required.set(true)
         pmdTask.reports.xml.required.set(true)
         pmdTask.reports.html.outputLocation.set(project.layout.buildDirectory.file("reports/pmd/${sourceSetName}.html").get().asFile)
