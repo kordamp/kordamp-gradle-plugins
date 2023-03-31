@@ -12,7 +12,6 @@ applied by:: `<<_org_kordamp_gradle_bom,org.kordamp.gradle.bom>>`, +
 `<<_org_kordamp_gradle_checkstyle,org.kordamp.gradle.chekcstyle>>`, +
 `<<_org_kordamp_gradle_codenarc,org.kordamp.gradle.codenarc>>`, +
 `<<_org_kordamp_gradle_coveralls,org.kordamp.gradle.coveralls>>`, +
-`<<_org_kordamp_gradle_cpd,org.kordamp.gradle.cpd>>`, +
 `<<_org_kordamp_gradle_errorprone,org.kordamp.gradle.errorprone>>`, +
 `<<_org_kordamp_gradle_functionaltest,org.kordamp.gradle.functional-test>>`, +
 `<<_org_kordamp_gradle_groovydoc,org.kordamp.gradle.groovydoc>>`, +
@@ -29,8 +28,6 @@ applied by:: `<<_org_kordamp_gradle_bom,org.kordamp.gradle.bom>>`, +
 `<<_org_kordamp_gradle_publishing,org.kordamp.gradle.publishing>>`, +
 `<<_org_kordamp_gradle_sonar,org.kordamp.gradle.sonar>>`, +
 `<<_org_kordamp_gradle_source,org.kordamp.gradle.source-jar>>`, +
-`<<_org_kordamp_gradle_sourcehtml,org.kordamp.gradle.source-html>>`, +
-`<<_org_kordamp_gradle_sourcexref,org.kordamp.gradle.source-xref>>`, +
 `<<_org_kordamp_gradle_sourcestats,org.kordamp.gradle.source-stats>>`, +
 `<<_org_kordamp_gradle_spotbugs,org.kordamp.gradle.spotbugs>>`, +
 `<<_org_kordamp_gradle_testing,org.kordamp.gradle.testing>>`
@@ -1404,35 +1401,23 @@ plugin 22:
     enabled: true
 
 plugin 23:
-    id: org.kordamp.gradle.source-html
-    version: {project-version}
-    implementationClass: org.kordamp.gradle.plugin.sourcehtml.SourceHtmlPlugin
-    enabled: true
-
-plugin 24:
-    id: org.kordamp.gradle.source-xref
-    version: {project-version}
-    implementationClass: org.kordamp.gradle.plugin.sourcexref.SourceXrefPlugin
-    enabled: true
-
-plugin 25:
     id: org.kordamp.gradle.testing
     version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.testing.TestingPlugin
     enabled: true
 
-plugin 26:
+plugin 24:
     id: com.github.ben-manes.versions
     version: 0.38.0
     implementationClass: com.github.benmanes.gradle.versions.VersionsPlugin
 
-plugin 27:
+plugin 25:
     id: org.kordamp.gradle.project
     version: {project-version}
     implementationClass: org.kordamp.gradle.plugin.project.ProjectPlugin
     enabled: true
 
-plugin 28:
+plugin 26:
     id: net.nemerosa.versioning
     version: 2.14.0
     implementationClass: net.nemerosa.versioning.VersioningPlugin

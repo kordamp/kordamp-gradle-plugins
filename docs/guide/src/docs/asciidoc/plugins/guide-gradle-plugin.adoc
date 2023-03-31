@@ -94,8 +94,6 @@ config {
 guide {
     javadocApiDir
     groovydocApiDir
-    sourceHtmlDir
-    sourceXrefDir
 }
 ----
 
@@ -104,8 +102,6 @@ guide {
 | Name            | Type   | Required | Default Value | Description
 | javadocApiDir   | String | no       | 'api'         | Director where javadoc will be copied
 | groovydocApiDir | String | no       | 'gapi'        | Director where groovydoc will be copied
-| sourceHtmlDir   | String | no       | 'api-html'    | Director where source-html will be copied
-| sourceXrefDir   | String | no       | 'api-xref'    | Director where source-xref will be copied
 |===
 
 [[_org_kordamp_gradle_guide_tasks]]
@@ -132,8 +128,6 @@ Creates an Asciidoctor based guide. Depends on the output of the following tasks
  * `asciidoctor`
  * `aggregateJavadoc` (if enabled)
  * `aggregateGroovydoc` (if enabled)
- * `aggregateSourceHtml` (if enabled)
- * `aggregateSourceXref` (if enabled)
 
 [horizontal]
 Name:: createGuide
