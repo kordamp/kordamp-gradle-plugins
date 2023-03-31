@@ -17,5 +17,5 @@
  */
 dependencies {
     api project(':base-gradle-plugin')
-    api 'com.github.spotbugs.snom:spotbugs-gradle-plugin:5.0.13'
+    api 'com.github.spotbugs.snom:spotbugs-gradle-plugin:5.0.14'
 }
