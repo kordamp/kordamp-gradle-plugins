@@ -61,4 +61,4 @@ the `org.kordamp.gradle.project` at the root. All plugins may be applied indepen
 
 == Requirements
 
-Java 8 and Gradle 5 are the minimum requirements to use any of these plugins.
+Java 11 and Gradle 7 are the minimum requirements to use any of these plugins.

@@ -49,5 +49,5 @@ and usage.
 
 == Requirements
 
- * Java 8
- * Gradle 6+
+ * Java 11
+ * Gradle 7+
