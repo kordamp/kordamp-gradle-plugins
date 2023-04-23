@@ -22,12 +22,11 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.internal.metaobject.ConfigureDelegate
-import org.kordamp.gradle.plugin.base.model.Information
 
 import javax.annotation.Nullable
 
 /**
- * Wraps {@code org.gradle.util.ConfigureUtil} to immediately bubble up any {@code MissingMethodException}s.
+ * Wraps {@code org.gradle.util.internal.ConfigureUtil} to immediately bubble up any {@code MissingMethodException}s.
  *
  * @author Andres Almiray
  * @since 0.37.0
@@ -36,7 +35,7 @@ import javax.annotation.Nullable
 class ConfigureUtil {
     static <T> T configureByMap(Map<?, ?> properties, T delegate) {
         try {
-            org.gradle.util.ConfigureUtil.configureByMap(properties, delegate)
+            org.gradle.util.internal.ConfigureUtil.configureByMap(properties, delegate)
         } catch (MissingMethodException mme) {
             throw new GradleException(mme.message, mme)
         }
@@ -44,7 +43,7 @@ class ConfigureUtil {
 
     static <T> T configureByMap(Map<?, ?> properties, T delegate, Collection<?> mandatoryKeys) {
         try {
-            org.gradle.util.ConfigureUtil.configureByMap(properties, delegate, mandatoryKeys)
+            org.gradle.util.internal.ConfigureUtil.configureByMap(properties, delegate, mandatoryKeys)
         } catch (MissingMethodException mme) {
             throw new GradleException(mme.message, mme)
         }
@@ -53,7 +52,7 @@ class ConfigureUtil {
     @CompileDynamic
     static <T> T configure(@Nullable @DelegatesTo(strategy = Closure.DELEGATE_FIRST) Closure configureClosure, T target) {
         try {
-            org.gradle.util.ConfigureUtil.configure(configureClosure, target)
+            org.gradle.util.internal.ConfigureUtil.configure(configureClosure, target)
         } catch (MissingMethodException mme) {
             throw new GradleException(mme.message, mme)
         }
@@ -61,7 +60,7 @@ class ConfigureUtil {
 
     static <T> Action<T> configureUsing(@Nullable Closure configureClosure) {
         try {
-            org.gradle.util.ConfigureUtil.configureUsing(configureClosure)
+            org.gradle.util.internal.ConfigureUtil.configureUsing(configureClosure)
         } catch (MissingMethodException mme) {
             throw new GradleException(mme.message, mme)
         }
@@ -69,7 +68,7 @@ class ConfigureUtil {
 
     static <T> T configureSelf(@Nullable Closure configureClosure, T target) {
         try {
-            org.gradle.util.ConfigureUtil.configureSelf(configureClosure, target)
+            org.gradle.util.internal.ConfigureUtil.configureSelf(configureClosure, target)
         } catch (MissingMethodException mme) {
             throw new GradleException(mme.message, mme)
         }
@@ -77,7 +76,7 @@ class ConfigureUtil {
 
     static <T> T configureSelf(@Nullable Closure configureClosure, T target, ConfigureDelegate closureDelegate) {
         try {
-            org.gradle.util.ConfigureUtil.configureSelf(configureClosure, target, closureDelegate)
+            org.gradle.util.internal.ConfigureUtil.configureSelf(configureClosure, target, closureDelegate)
         } catch (MissingMethodException mme) {
             throw new GradleException(mme.message, mme)
         }

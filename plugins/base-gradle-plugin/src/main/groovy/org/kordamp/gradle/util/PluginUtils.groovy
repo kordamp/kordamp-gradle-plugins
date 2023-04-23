@@ -31,6 +31,7 @@ import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.component.SoftwareComponentContainer
 import org.gradle.api.file.FileTree
 import org.gradle.api.internal.artifacts.dsl.LazyPublishArtifact
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.internal.JavaConfigurationVariantMapping
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskProvider
@@ -180,12 +181,21 @@ class PluginUtils {
             variant.attributes.attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType, classifier))
         }
 
-        variant.outgoing.artifact(new LazyPublishArtifact(jarProvider))
+        variant.outgoing.artifact(lazyPublishArtifact(jarProvider, (ProjectInternal) project))
         AdhocComponentWithVariants component = findJavaComponent(project.components)
         if (component != null) {
             component.addVariantsFromConfiguration(variant, new JavaConfigurationVariantMapping(scope, true))
         }
 
         return variant
+    }
+
+    @CompileDynamic
+    private static LazyPublishArtifact lazyPublishArtifact(TaskProvider<Jar> jarProvider, ProjectInternal project) {
+        if (!isGradle8Compatible()) {
+            return new LazyPublishArtifact(jarProvider, project.fileResolver)
+        } else {
+            return new LazyPublishArtifact(jarProvider, project.fileResolver, project.taskDependencyFactory)
+        }
     }
 }
