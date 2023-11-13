@@ -180,5 +180,9 @@ class PluginPlugin extends AbstractKordampPlugin {
         def publishPluginJar = project.tasks.findByName('publishPluginJar')
         def generateMetadataFileForPluginMavenPublication = project.tasks.findByName('generateMetadataFileForPluginMavenPublication')
         if (generateMetadataFileForPluginMavenPublication && publishPluginJar) generateMetadataFileForPluginMavenPublication.dependsOn(publishPluginJar)
+        def publishMainPublicationToMavenLocal = project.tasks.findByName('publishMainPublicationToMavenLocal')
+        if (publishMainPublicationToMavenLocal && publishPluginJar) publishMainPublicationToMavenLocal.dependsOn(publishPluginJar)
+        if (publishMainPublicationToMavenLocal && publishPluginJavaDocsJar) publishMainPublicationToMavenLocal.dependsOn(publishPluginJavaDocsJar)
+
     }
 }
