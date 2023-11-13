@@ -22,7 +22,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath "gradle.plugin.com.github.johnrengelman:shadow:$shadowPluginVersion"
+        classpath "com.github.johnrengelman:shadow:$shadowPluginVersion"
         classpath "org.ajoberstar:gradle-git-publish:$gitPluginVersion"
         classpath "org.kordamp.gradle:groovy-project-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:plugin-gradle-plugin:$kordampPluginVersion"
@@ -64,6 +64,7 @@ enforce {
         r.ignore('com.sun.jna.*')
         r.ignore('com.mycila.*')
         r.ignore('org.xmlpull.*')
+        r.ignore('org.apache.commons.logging.*')
         //r.ignore('org.cyberneko.*')
         //r.ignore('org.apache.xerces.*')
         //r.ignore('org.apache.maven.*')
@@ -81,7 +82,7 @@ enforce {
 
     rule(enforcer.rules.ForceDependencies) { r ->
         r.dependencies.addAll "com.google.code.findbugs:jsr305:3.0.2",
-            "com.google.code.gson:gson:2.8.5",
+            "com.google.code.gson:gson:2.8.9",
             "com.google.guava:guava:$guavaVersion",
             "com.mycila:license-maven-plugin:$mycilaMavenPlugin",
             "com.squareup.okio:okio:2.10.0",
@@ -96,6 +97,7 @@ enforce {
             "net.sf.saxon:Saxon-HE:9.9.1-7",
             "org.ajoberstar.grgit:grgit-core:$grgitVersion",
             "org.apache.commons:commons-lang3:3.10",
+            "org.apache.commons:commons-text:$commonsTextVersion",
             "org.apache.httpcomponents:httpclient:$httpclientVersion",
             "org.apache.httpcomponents:httpclient:$httpclientVersion",
             "org.apache.httpcomponents:httpcore:$httpcoreVersion",
@@ -117,9 +119,10 @@ enforce {
             "org.apache.maven:maven-resolver-provider:$mavenVersion",
             "org.apache.maven:maven-settings-builder:$mavenVersion",
             "org.apache.maven:maven-settings:$mavenVersion",
-            "org.assertj:assertj-core:3.19.0",
-            "org.bouncycastle:bcpkix-jdk15on:1.64",
-            "org.bouncycastle:bcprov-jdk15on:1.64",
+            "org.assertj:assertj-core:3.24.2",
+            "org.bouncycastle:bcpkix-jdk15on:1.70",
+            "org.bouncycastle:bcprov-jdk15on:1.70",
+            "org.checkerframework:checker-qual:$checkerQualVersion",
             "org.codehaus.groovy.modules.http-builder:http-builder:0.7.2",
             "org.codehaus.groovy:groovy:$groovyVersion",
             "org.codehaus.plexus:plexus-classworlds:$plexusCVersion",
@@ -131,6 +134,7 @@ enforce {
             "org.eclipse.sisu:org.eclipse.sisu.plexus:$sisuVersion",
             "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
             "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion",
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion",
             "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
             "org.junit.platform:junit-platform-launcher:1.7.2",
             "org.ow2.asm:asm-analysis:$asmVersion",

@@ -93,7 +93,8 @@ class JavaExecSettingsTask extends AbstractReportingTask {
 
     private void printTask(JavaExec task) {
         print(task.name + ':', 0)
-        doPrintMapEntry('main', task.main, 1)
+        doPrintMapEntry('mainClass', task.mainClass, 1)
+        doPrintMapEntry('mainModule', task.mainModule, 1)
         doPrintMapEntry('executable', task.executable, 1)
         doPrintMapEntry('minHeapSize', task.minHeapSize, 1)
         doPrintMapEntry('maxHeapSize', task.maxHeapSize, 1)

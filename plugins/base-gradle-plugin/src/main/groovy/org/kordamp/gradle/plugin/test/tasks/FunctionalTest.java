@@ -27,5 +27,6 @@ import org.gradle.api.tasks.testing.Test;
  */
 @NonNullApi
 @CacheableTask
-public class FunctionalTest extends Test {
+public abstract class FunctionalTest extends Test {
+
 }

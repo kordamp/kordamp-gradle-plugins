@@ -154,6 +154,7 @@ class PluginPlugin extends AbstractKordampPlugin {
                 pc.tags = plugin.resolveTags(config)
                 pc.version = project.version
             }
+
         }
     }
 
@@ -173,5 +174,11 @@ class PluginPlugin extends AbstractKordampPlugin {
         }
 
         PublishingUtils.configureSigning(config, project, 'pluginMaven')
+        def copyDocFiles = project.tasks.findByName('copyDocFiles')
+        def publishPluginJavaDocsJar = project.tasks.findByName('publishPluginJavaDocsJar')
+        if (publishPluginJavaDocsJar && copyDocFiles) publishPluginJavaDocsJar.dependsOn(copyDocFiles)
+        def publishPluginJar = project.tasks.findByName('publishPluginJar')
+        def generateMetadataFileForPluginMavenPublication = project.tasks.findByName('generateMetadataFileForPluginMavenPublication')
+        if (generateMetadataFileForPluginMavenPublication && publishPluginJar) generateMetadataFileForPluginMavenPublication.dependsOn(publishPluginJar)
     }
 }

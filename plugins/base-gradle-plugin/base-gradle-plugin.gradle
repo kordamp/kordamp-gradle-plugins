@@ -20,11 +20,11 @@ dependencies {
     implementation "commons-codec:commons-codec:$commonsCodecVersion"
 
     // added here so that dependencyUpdates can tell if there are newer versions
-    compileOnly "net.sourceforge.pmd:pmd:$pmdVersion"
-    compileOnly "com.github.spotbugs:spotbugs:$spotbugsVersion"
-    compileOnly "org.jacoco:org.jacoco.core:$jacocoVersion"
-    compileOnly "org.codenarc:CodeNarc:$codenarcVersion"
-    compileOnly "com.puppycrawl.tools:checkstyle:$checkstyleVersion"
+    compileOnly("net.sourceforge.pmd:pmd:$pmdVersion") { transitive = false }
+    compileOnly("com.github.spotbugs:spotbugs:$spotbugsVersion") { transitive = false }
+    compileOnly("org.jacoco:org.jacoco.core:$jacocoVersion") { transitive = false }
+    compileOnly("org.codenarc:CodeNarc:$codenarcVersion") { transitive = false }
+    compileOnly("com.puppycrawl.tools:checkstyle:$checkstyleVersion") { transitive = false }
 }
 
 processResources {
