@@ -205,12 +205,12 @@ class PublishingPlugin extends AbstractKordampPlugin {
                                 pom.properties.putAll(expressions)
 
                                 Node propertiesNode = asNode().children().find {
-                                    (it.name() instanceof QName ? it.name().localPart : it.name()) == 'properties'
+                                    it.name().toString().contains('properties')
                                 }
                                 if (!propertiesNode) {
                                     propertiesNode = new Node(null, 'properties')
                                     List nodes = asNode().children()
-                                        .find { (it.name() instanceof QName ? it.name().localPart : it.name()) == 'dependencyManagement' }
+                                        .find { it.name().toString().contains('dependencyManagement') }
                                         .parent().children()
                                     nodes.add(nodes.size() - 1, propertiesNode)
                                 }
