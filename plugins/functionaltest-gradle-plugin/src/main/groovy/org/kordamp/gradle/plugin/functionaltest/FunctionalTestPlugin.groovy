@@ -110,12 +110,8 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
 
     @CompileStatic
     private void adjustConfigurations(Project project) {
-        String compileSuffix = 'Compile'
-        String runtimeSuffix = 'Runtime'
-        if (supportsApiConfiguration(project)) {
-            compileSuffix = 'Implementation'
-            runtimeSuffix = 'RuntimeOnly'
-        }
+        String compileSuffix = 'Implementation'
+        String runtimeSuffix = 'RuntimeOnly'
 
         project.configurations.findByName('functionalTest' + compileSuffix)
             .extendsFrom project.configurations.findByName(compileSuffix.uncapitalize())
@@ -138,15 +134,8 @@ class FunctionalTestPlugin extends AbstractKordampPlugin {
     }
 
     private void createConfigurationsIfNeeded(Project project) {
-        String compileSuffix = 'Compile'
-        String runtimeSuffix = 'Runtime'
-        if (supportsApiConfiguration(project)) {
-            compileSuffix = 'Implementation'
-            runtimeSuffix = 'RuntimeOnly'
-        }
-
-        project.configurations.maybeCreate('functionalTest' + compileSuffix)
-        project.configurations.maybeCreate('functionalTest' + runtimeSuffix)
+        project.configurations.maybeCreate('functionalTestImplementation')
+        project.configurations.maybeCreate('functionalTestRuntimeOnly')
     }
 
     private void createSourceSetsIfNeeded(Project project) {

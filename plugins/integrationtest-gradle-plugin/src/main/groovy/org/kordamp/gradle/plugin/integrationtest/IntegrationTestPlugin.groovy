@@ -36,7 +36,6 @@ import javax.inject.Named
 import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
 import static org.kordamp.gradle.util.PluginUtils.resolveConfig
 import static org.kordamp.gradle.util.PluginUtils.resolveSourceSets
-import static org.kordamp.gradle.util.PluginUtils.supportsApiConfiguration
 
 /**
  * @author Andres Almiray
@@ -115,12 +114,8 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
 
     @CompileStatic
     private void adjustConfigurations(Project project) {
-        String compileSuffix = 'Compile'
-        String runtimeSuffix = 'Runtime'
-        if (supportsApiConfiguration(project)) {
-            compileSuffix = 'Implementation'
-            runtimeSuffix = 'RuntimeOnly'
-        }
+        String compileSuffix = 'Implementation'
+        String runtimeSuffix = 'RuntimeOnly'
 
         project.configurations.findByName('integrationTest' + compileSuffix)
             .extendsFrom(project.configurations.findByName('test' + compileSuffix))
@@ -144,15 +139,8 @@ class IntegrationTestPlugin extends AbstractKordampPlugin {
     }
 
     private void createConfigurationsIfNeeded(Project project) {
-        String compileSuffix = 'Compile'
-        String runtimeSuffix = 'Runtime'
-        if (supportsApiConfiguration(project)) {
-            compileSuffix = 'Implementation'
-            runtimeSuffix = 'RuntimeOnly'
-        }
-
-        project.configurations.maybeCreate('integrationTest' + compileSuffix)
-        project.configurations.maybeCreate('integrationTest' + runtimeSuffix)
+        project.configurations.maybeCreate('integrationTestImplementation')
+        project.configurations.maybeCreate('integrationTestRuntimeOnly')
     }
 
     private void createSourceSetsIfNeeded(Project project) {
