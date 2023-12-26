@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"org.kordamp.gradle.plugin.test.tasks"},{"l":"org.kordamp.gradle.util"}]
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"org.kordamp.gradle.plugin.test.tasks"},{"l":"org.kordamp.gradle.util"}];updateSearchResults();
