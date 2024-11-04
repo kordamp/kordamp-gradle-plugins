@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2023 Andres Almiray.
+ * Copyright 2018-2024 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -538,7 +538,7 @@ class PublishingUtils {
                                     if (person.email) developer.email.set(person.email)
                                     if (person.organization?.name) developer.organization.set(person.organization.name)
                                     if (person.organization?.url) developer.organizationUrl.set(person.organization.url)
-                                    if (person.roles) developer.roles.set(person.roles as Set)
+                                    if (person.roles) developer.roles.set(person.roles as Set<String>)
                                     if (person.properties) developer.properties.set(person.properties)
                                 }
                             })
@@ -562,7 +562,7 @@ class PublishingUtils {
                                     if (person.email) contributor.email.set(person.email)
                                     if (person.organization?.name) contributor.organization.set(person.organization.name)
                                     if (person.organization?.url) contributor.organizationUrl.set(person.organization.url)
-                                    if (person.roles) contributor.roles.set(person.roles as Set)
+                                    if (person.roles) contributor.roles.set(person.roles as Set<String>)
                                     if (person.properties) contributor.properties.set(person.properties)
                                 }
                             })
@@ -605,7 +605,7 @@ class PublishingUtils {
                                 if (isNotBlank(ml.unsubscribe)) mailingList.unsubscribe.set(ml.unsubscribe)
                                 if (isNotBlank(ml.post)) mailingList.post.set(ml.post)
                                 if (isNotBlank(ml.archive)) mailingList.archive.set(ml.archive)
-                                if (ml.otherArchives) mailingList.otherArchives.set(ml.otherArchives as Set)
+                                if (ml.otherArchives) mailingList.otherArchives.set(ml.otherArchives as Set<String>)
                             }
                         })
                     }

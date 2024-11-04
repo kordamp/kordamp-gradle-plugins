@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2018-2023 Andres Almiray.
+ * Copyright 2018-2024 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,11 +119,11 @@ enforce {
             "org.apache.maven:maven-resolver-provider:$mavenVersion",
             "org.apache.maven:maven-settings-builder:$mavenVersion",
             "org.apache.maven:maven-settings:$mavenVersion",
-            "org.assertj:assertj-core:3.24.2",
+            "org.assertj:assertj-core:3.26.3",
             "org.bouncycastle:bcpkix-jdk15on:1.70",
             "org.bouncycastle:bcprov-jdk15on:1.70",
             "org.checkerframework:checker-qual:$checkerQualVersion",
-            "org.codehaus.groovy.modules.http-builder:http-builder:0.7.2",
+            "org.codehaus.groovy.modules.http-builder:http-builder:0.7.1",
             "org.codehaus.groovy:groovy:$groovyVersion",
             "org.codehaus.plexus:plexus-classworlds:$plexusCVersion",
             "org.codehaus.plexus:plexus-component-annotations:$plexusAVersion",
