@@ -44,6 +44,13 @@ config {
             secretKey
             password
         }
+        <<_publishing_maven_central,mavenCentral>> {
+            enabled
+            username
+            password
+            publishingType
+            timeoutSeconds
+        }
         <<_publishing_pom,pom>>  {
             properties
             parent
@@ -94,6 +101,39 @@ link:https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory
 If `keyId`, `secretKey`, and `password` are set then the signatory will use an
 link:https://docs.gradle.org/current/userguide/signing_plugin.html#using_in_memory_ascii_armored_openpgp_subkeys[in-memory ascii-armored OpenPGP subkey].
 
+[[_publishing_maven_central]]
+*mavenCentral*
+
+[options="header", cols="5*"]
+|===
+| Name           | Type    | Required | Default Value | Description
+| enabled        | boolean | no       | false         | Enables Maven Central publishing using the new REST API
+| username       | String  | no       |               | Maven Central username (user token)
+| password       | String  | no       |               | Maven Central password (user token)
+| publishingType | String  | no       | USER_MANAGED  | Publishing type: `AUTOMATIC` or `USER_MANAGED`
+| timeoutSeconds | int     | no       | 300           | HTTP timeout in seconds for API calls
+|===
+
+Maven Central publishing uses the new link:https://central.sonatype.org/publish/publish-portal-api/[Central Publisher Portal API] introduced in 2024.
+This replaces the legacy OSSRH workflow with a modern REST API approach.
+
+When `mavenCentral.enabled` is set to `true`, the plugin will:
+
+1. Create ZIP bundles containing all required artifacts (JAR, sources, javadoc, POM, signatures)
+2. Upload bundles to Maven Central using the REST API
+3. Handle validation and publishing workflow
+4. Support both automatic and user-managed publishing modes
+
+*Publishing Types:*
+
+- `AUTOMATIC`: Deployments are automatically published after successful validation
+- `USER_MANAGED`: Deployments require manual approval via the Central Portal UI or API
+
+*Authentication:*
+
+The `username` and `password` should be your Maven Central user token credentials, not your Sonatype account credentials.
+These can be obtained from your link:https://central.sonatype.com/[Central Portal] account settings.
+
 [[_publishing_pom]]
 *pom*
 
@@ -121,9 +161,11 @@ The format for `parent` may be any of the following ones:
 This block is optional.
 
 [[_org_kordamp_gradle_publishing_example]]
-== Example
+== Examples
 
-Publishing signed artifacts to Maven Central.
+=== Legacy OSSRH Publishing
+
+Publishing signed artifacts to Maven Central using the legacy OSSRH workflow.
 
 [source,groovy]
 .build.gradle
@@ -160,6 +202,58 @@ config {
 }
 ----
 
+=== Maven Central REST API Publishing
+
+Publishing signed artifacts to Maven Central using the new REST API (recommended).
+
+[source,groovy]
+.build.gradle
+----
+config {
+    publishing {
+        signing {
+            enabled = true
+            keyId = System.getenv('SIGNING_KEY_ID')
+            secretKey = System.getenv('SIGNING_SECRET_KEY')
+            password = System.getenv('SIGNING_PASSWORD')
+        }
+        
+        mavenCentral {
+            enabled = true
+            username = System.getenv('MAVEN_CENTRAL_USERNAME')
+            password = System.getenv('MAVEN_CENTRAL_PASSWORD')
+            publishingType = 'AUTOMATIC'
+            timeoutSeconds = 600
+        }
+    }
+}
+----
+
+*Environment Variables:*
+
+[source,bash]
+----
+export SIGNING_KEY_ID="12345678"
+export SIGNING_SECRET_KEY="-----BEGIN PGP PRIVATE KEY BLOCK-----..."
+export SIGNING_PASSWORD="your-key-password"
+export MAVEN_CENTRAL_USERNAME="your-user-token"
+export MAVEN_CENTRAL_PASSWORD="your-user-token-password"
+----
+
+*Publishing Commands:*
+
+[source,bash]
+----
+# Publish to Maven Central
+./gradlew publishToMavenCentral
+
+# Drop a failed deployment
+./gradlew dropMavenCentralDeployment --deployment-id=abc123
+
+# Enable automatic publishing for a deployment
+./gradlew enableAutomaticMavenCentralPublishing --deployment-id=abc123
+----
+
 [[_org_kordamp_gradle_publishing_tasks]]
 == Tasks
 
@@ -180,6 +274,52 @@ publications:: The publications to generate the report for.
 
 You may specify either of the two, be advised that `publications` has precedence over `publication`. All publications will be displayed
 if neither of these options is specified.
+
+[[_task_prepare_maven_central_publishing]]
+=== PrepareMavenCentralPublishing
+
+Prepares Maven Central publishing by registering the project with the Maven Central build service.
+
+[horizontal]
+Name:: prepareMavenCentralPublishing
+Type:: `org.kordamp.gradle.plugin.publishing.central.PrepareMavenCentralPublishingTask`
+
+[[_task_publish_to_maven_central]]
+=== PublishToMavenCentral
+
+Publishes artifacts to Maven Central using the new REST API.
+
+[horizontal]
+Name:: publishToMavenCentral
+Type:: `org.kordamp.gradle.plugin.publishing.central.PublishToMavenCentralTask`
+
+This task depends on `prepareMavenCentralPublishing` and all Maven publication tasks.
+
+[[_task_drop_maven_central_deployment]]
+=== DropMavenCentralDeployment
+
+Drops a Maven Central deployment.
+
+[horizontal]
+Name:: dropMavenCentralDeployment
+Type:: `org.kordamp.gradle.plugin.publishing.central.DropMavenCentralDeploymentTask`
+
+.Options
+[horizontal]
+deployment-id:: The deployment ID to drop (REQUIRED).
+
+[[_task_enable_automatic_maven_central_publishing]]
+=== EnableAutomaticMavenCentralPublishing
+
+Enables automatic publishing for a Maven Central deployment.
+
+[horizontal]
+Name:: enableAutomaticMavenCentralPublishing
+Type:: `org.kordamp.gradle.plugin.publishing.central.EnableAutomaticMavenCentralPublishingTask`
+
+.Options
+[horizontal]
+deployment-id:: The deployment ID to enable automatic publishing for (REQUIRED).
 
 [[_org_kordamp_gradle_publishing_rules]]
 == Rules

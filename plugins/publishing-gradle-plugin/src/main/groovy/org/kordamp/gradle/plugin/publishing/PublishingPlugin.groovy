@@ -40,6 +40,11 @@ import org.kordamp.gradle.plugin.base.plugins.util.PublishingUtils
 import org.kordamp.gradle.plugin.buildinfo.BuildInfoPlugin
 import org.kordamp.gradle.plugin.jar.JarPlugin
 import org.kordamp.gradle.plugin.source.SourceJarPlugin
+import org.kordamp.gradle.plugin.publishing.central.DropMavenCentralDeploymentTask
+import org.kordamp.gradle.plugin.publishing.central.EnableAutomaticMavenCentralPublishingTask
+import org.kordamp.gradle.plugin.publishing.central.MavenCentralBuildService
+import org.kordamp.gradle.plugin.publishing.central.PrepareMavenCentralPublishingTask
+import org.kordamp.gradle.plugin.publishing.central.PublishToMavenCentralTask
 
 import javax.inject.Named
 
@@ -138,6 +143,43 @@ class PublishingPlugin extends AbstractKordampPlugin {
                 }
             }
         })
+
+        // Register Maven Central tasks
+        project.tasks.register('prepareMavenCentralPublishing', PrepareMavenCentralPublishingTask,
+            new Action<PrepareMavenCentralPublishingTask>() {
+                @Override
+                void execute(PrepareMavenCentralPublishingTask t) {
+                    t.group = 'Publishing'
+                    t.description = 'Prepare Maven Central publishing.'
+                }
+            })
+
+        project.tasks.register('publishToMavenCentral', PublishToMavenCentralTask,
+            new Action<PublishToMavenCentralTask>() {
+                @Override
+                void execute(PublishToMavenCentralTask t) {
+                    t.group = 'Publishing'
+                    t.description = 'Publish to Maven Central.'
+                }
+            })
+
+        project.tasks.register('dropMavenCentralDeployment', DropMavenCentralDeploymentTask,
+            new Action<DropMavenCentralDeploymentTask>() {
+                @Override
+                void execute(DropMavenCentralDeploymentTask t) {
+                    t.group = 'Publishing'
+                    t.description = 'Drop Maven Central deployment.'
+                }
+            })
+
+        project.tasks.register('enableAutomaticMavenCentralPublishing', EnableAutomaticMavenCentralPublishingTask,
+            new Action<EnableAutomaticMavenCentralPublishingTask>() {
+                @Override
+                void execute(EnableAutomaticMavenCentralPublishingTask t) {
+                    t.group = 'Publishing'
+                    t.description = 'Enable automatic Maven Central publishing.'
+                }
+            })
     }
 
     @Named('publishing')
@@ -271,5 +313,59 @@ class PublishingPlugin extends AbstractKordampPlugin {
         List<String> publications = new ArrayList<>(config.publishing.publications)
         if (!publications) publications << 'main'
         PublishingUtils.configureSigning(config, project, *publications)
+
+        // Configure Maven Central publishing
+        configureMavenCentral(project, config, publications)
+    }
+
+    @CompileDynamic
+    private void configureMavenCentral(Project project, ProjectConfigurationExtension config, List<String> publications) {
+        if (!config.publishing.mavenCentral.enabled) {
+            return
+        }
+
+        // Register Maven Central build service
+        def buildService = project.gradle.sharedServices.registerIfAbsent('mavenCentralBuildService', MavenCentralBuildService) {
+            parameters {
+                username = config.publishing.mavenCentral.username
+                password = config.publishing.mavenCentral.password
+                timeoutSeconds = config.publishing.mavenCentral.timeoutSeconds
+                buildDirectory = new File(project.rootProject.buildDir, 'maven-central')
+            }
+        }
+
+        // Configure Maven Central tasks
+        project.tasks.named('prepareMavenCentralPublishing', PrepareMavenCentralPublishingTask) {
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
+            buildService = buildService
+            config = config.publishing.mavenCentral
+
+            // Configure publication (use first available publication)
+            project.publishing.publications.withType(MavenPublication).configureEach { pub ->
+                if (publications.contains(pub.name)) {
+                    publication = pub
+                }
+            }
+        }
+
+        project.tasks.named('publishToMavenCentral', PublishToMavenCentralTask) {
+            buildService = buildService
+            dependsOn('prepareMavenCentralPublishing')
+            
+            // Depend on all publish tasks to ensure artifacts are ready
+            project.tasks.withType(org.gradle.api.publish.PublishToMavenRepository).each { task ->
+                dependsOn(task)
+            }
+        }
+
+        project.tasks.named('dropMavenCentralDeployment', DropMavenCentralDeploymentTask) {
+            buildService = buildService
+        }
+
+        project.tasks.named('enableAutomaticMavenCentralPublishing', EnableAutomaticMavenCentralPublishingTask) {
+            buildService = buildService
+        }
     }
 }
