@@ -43,7 +43,7 @@ release:
         - search: 'deps: '
 
 announce:
-  twitter:
+  bluesky:
     active: RELEASE
     status: 🚀 {{projectName}} {{projectVersion}} has been released! {{releaseNotesUrl}}
   mastodon:
