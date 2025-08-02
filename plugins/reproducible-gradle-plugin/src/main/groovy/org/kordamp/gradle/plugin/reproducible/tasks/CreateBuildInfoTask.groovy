@@ -175,7 +175,6 @@ class CreateBuildInfoTask extends DefaultTask {
             }
             writer.println()
         }
-        project.gradle.startParameter
     }
 
     private void printToolInformation(Writer writer) {

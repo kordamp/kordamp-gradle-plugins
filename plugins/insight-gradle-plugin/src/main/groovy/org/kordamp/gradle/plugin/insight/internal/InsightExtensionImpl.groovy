@@ -22,7 +22,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.initialization.Settings
 import org.gradle.api.internal.provider.Providers
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -55,7 +54,7 @@ class InsightExtensionImpl implements InsightExtension {
         this.settings = settings
         this.objects = objects
 
-        this.enabled = objects.property(Boolean).convention(Providers.<Boolean>notDefined())
+        this.enabled = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         this.resolvedEnabled = booleanProvider(providers, 'INSIGHT_ENABLED', 'insight.enabled', enabled, true)
         this.colors = objects.newInstance(ColorsImpl, objects, settings.gradle)
     }
@@ -94,12 +93,12 @@ class InsightExtensionImpl implements InsightExtension {
         private final AnsiConsole console
 
         static final List<String> VALID_COLORS = [
-            'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'
+                'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'
         ]
 
         @Inject
-        ColorsImpl(ObjectFactory objects, Gradle gradle) {
-            this.console = new AnsiConsole(gradle)
+        ColorsImpl(ObjectFactory objects) {
+            this.console = new AnsiConsole()
             this.success = objects.property(String).convention('green')
             this.failure = objects.property(String).convention('red')
             this.skipped = objects.property(String).convention('yellow')

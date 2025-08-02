@@ -49,13 +49,9 @@ import org.kordamp.gradle.util.TimeUtils
 
 import javax.inject.Named
 
-import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addAllProjectsEvaluatedListener
-import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addProjectEvaluatedListener
-import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.addTaskGraphReadyListener
+import static org.kordamp.gradle.listener.ProjectEvaluationListenerManager.*
 import static org.kordamp.gradle.plugin.base.BasePlugin.isRootProject
-import static org.kordamp.gradle.util.PluginUtils.registerJarVariant
-import static org.kordamp.gradle.util.PluginUtils.resolveConfig
-import static org.kordamp.gradle.util.PluginUtils.resolveSourceSets
+import static org.kordamp.gradle.util.PluginUtils.*
 
 /**
  *
@@ -111,14 +107,14 @@ class TestingPlugin extends AbstractKordampPlugin {
                 TaskProvider<DefaultTask> allTestsTask = null
                 if (project.childProjects.isEmpty()) {
                     allTestsTask = project.tasks.register(ALL_TESTS_TASK_NAME, DefaultTask,
-                        new Action<DefaultTask>() {
-                            @Override
-                            void execute(DefaultTask t) {
-                                t.enabled = false
-                                t.group = 'Verification'
-                                t.description = 'Executes all tests.'
-                            }
-                        })
+                            new Action<DefaultTask>() {
+                                @Override
+                                void execute(DefaultTask t) {
+                                    t.enabled = false
+                                    t.group = 'Verification'
+                                    t.description = 'Executes all tests.'
+                                }
+                            })
                 }
 
                 addProjectEvaluatedListener(project, new TestingProjectEvaluatedListener(allTestsTask))
@@ -128,48 +124,48 @@ class TestingPlugin extends AbstractKordampPlugin {
 
     private void configureRootProject(Project project) {
         project.tasks.register(AGGREGATE_TEST_REPORTS_TASK_NAME, TestReport,
-            new Action<TestReport>() {
-                @Override
-                void execute(TestReport t) {
-                    t.enabled = false
-                    t.group = 'Reporting'
-                    t.description = 'Aggregate test reports.'
-                    t.destinationDirectory.set(project.file("${project.buildDir}/reports/aggregate-tests"))
-                }
-            })
+                new Action<TestReport>() {
+                    @Override
+                    void execute(TestReport t) {
+                        t.enabled = false
+                        t.group = 'Reporting'
+                        t.description = 'Aggregate test reports.'
+                        t.destinationDirectory.set(project.file("${project.buildDir}/reports/aggregate-tests"))
+                    }
+                })
 
         project.tasks.register(AGGREGATE_INTEGRATION_TEST_REPORTS_TASK_NAME, TestReport,
-            new Action<TestReport>() {
-                @Override
-                void execute(TestReport t) {
-                    t.enabled = false
-                    t.group = 'Reporting'
-                    t.description = 'Aggregate integration test reports.'
-                    t.destinationDirectory.set(project.file("${project.buildDir}/reports/aggregate-integration-tests"))
-                }
-            })
+                new Action<TestReport>() {
+                    @Override
+                    void execute(TestReport t) {
+                        t.enabled = false
+                        t.group = 'Reporting'
+                        t.description = 'Aggregate integration test reports.'
+                        t.destinationDirectory.set(project.file("${project.buildDir}/reports/aggregate-integration-tests"))
+                    }
+                })
 
         project.tasks.register(AGGREGATE_FUNCTIONAL_TEST_REPORTS_TASK_NAME, TestReport,
-            new Action<TestReport>() {
-                @Override
-                void execute(TestReport t) {
-                    t.enabled = false
-                    t.group = 'Reporting'
-                    t.description = 'Aggregate functional test reports.'
-                    t.destinationDirectory.set(project.file("${project.buildDir}/reports/aggregate-functional-tests"))
-                }
-            })
+                new Action<TestReport>() {
+                    @Override
+                    void execute(TestReport t) {
+                        t.enabled = false
+                        t.group = 'Reporting'
+                        t.description = 'Aggregate functional test reports.'
+                        t.destinationDirectory.set(project.file("${project.buildDir}/reports/aggregate-functional-tests"))
+                    }
+                })
 
         project.tasks.register(AGGREGATE_ALL_TEST_REPORTS_TASK_NAME, TestReport,
-            new Action<TestReport>() {
-                @Override
-                void execute(TestReport t) {
-                    t.enabled = false
-                    t.group = 'Reporting'
-                    t.description = 'Aggregate all test reports.'
-                    t.destinationDirectory.set(project.file("${project.buildDir}/reports/aggregate-all-tests"))
-                }
-            })
+                new Action<TestReport>() {
+                    @Override
+                    void execute(TestReport t) {
+                        t.enabled = false
+                        t.group = 'Reporting'
+                        t.description = 'Aggregate all test reports.'
+                        t.destinationDirectory.set(project.file("${project.buildDir}/reports/aggregate-all-tests"))
+                    }
+                })
 
         addAllProjectsEvaluatedListener(project, new TestingAllProjectsEvaluatedListener())
         addTaskGraphReadyListener(project, new TestingTaskGraphReadyListener())
@@ -204,7 +200,7 @@ class TestingPlugin extends AbstractKordampPlugin {
                     configureLogging(testTask, config.testing.logging)
                     if (config.testing.jar) {
                         project.tasks.findByName(org.gradle.api.plugins.BasePlugin.ASSEMBLE_TASK_NAME)
-                            .dependsOn(createTestJar(project, testTask))
+                                .dependsOn(createTestJar(project, testTask))
                     }
                     config.testing.testTasks() << testTask
                 }
@@ -228,6 +224,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             }
         }
     }
+
     @Named('testing')
     @DependsOn(['base'])
     private class TestingTaskGraphReadyListener implements TaskGraphReadyListener {
@@ -287,7 +284,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             if (descriptor.name.contains('Gradle Test Executor')) return
 
             ProjectConfigurationExtension config = resolveConfig(testTask.project)
-            AnsiConsole console = new AnsiConsole(testTask.project)
+            AnsiConsole console = new AnsiConsole()
             String indicator = config.testing.colors.success(console, WINDOWS ? '√' : '✔')
             if (result.failedTestCount > 0) {
                 indicator = config.testing.colors.failure(console, WINDOWS ? 'X' : '✘')
@@ -312,18 +309,18 @@ class TestingPlugin extends AbstractKordampPlugin {
         ProjectConfigurationExtension config = resolveConfig(project)
 
         project.tasks.register(TEST_JAR_TASK_NAME, Jar,
-            new Action<Jar>() {
-                @Override
-                @CompileDynamic
-                void execute(Jar t) {
-                    t.enabled = config.testing.enabled
-                    t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
-                    t.description = 'An archive of the unit tests'
-                    t.archiveClassifier.set('tests')
-                    t.dependsOn testTask
-                    t.from resolveSourceSets(project).test.output
-                }
-            })
+                new Action<Jar>() {
+                    @Override
+                    @CompileDynamic
+                    void execute(Jar t) {
+                        t.enabled = config.testing.enabled
+                        t.group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
+                        t.description = 'An archive of the unit tests'
+                        t.archiveClassifier.set('tests')
+                        t.dependsOn testTask
+                        t.from resolveSourceSets(project).test.output
+                    }
+                })
     }
 
     @CompileDynamic
@@ -391,7 +388,7 @@ class TestingPlugin extends AbstractKordampPlugin {
             @Override
             void execute(Task task) {
                 ProjectConfigurationExtension config = resolveConfig(project)
-                AnsiConsole console = new AnsiConsole(project)
+                AnsiConsole console = new AnsiConsole()
                 String indicator = config.testing.colors.success(console, WINDOWS ? '√' : '✔')
                 if (results.failure > 0) {
                     indicator = config.testing.colors.failure(console, WINDOWS ? 'X' : '✘')
@@ -418,7 +415,7 @@ class TestingPlugin extends AbstractKordampPlugin {
 
         Closure configurer = { TestDescriptor descriptor, TestResult result ->
             if (descriptor.name.contains('Gradle Test Executor') ||
-                descriptor.name.contains('Gradle Test Run')) return
+                    descriptor.name.contains('Gradle Test Run')) return
 
             results.put('total', results.get('total') + result.testCount)
             results.put('time', results.get('time') + (result.endTime - result.startTime))

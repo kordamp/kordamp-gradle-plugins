@@ -131,7 +131,6 @@ class ProjectsExtensionImpl implements ProjectsExtension {
 
     private File findSettingsFile() {
         [
-            settings.gradle.startParameter.settingsFile,
             new File(settings.settingsDir, 'settings.gradle'),
             new File(settings.settingsDir, 'settings.gradle.kts')
         ].find { it?.exists() } ?: null

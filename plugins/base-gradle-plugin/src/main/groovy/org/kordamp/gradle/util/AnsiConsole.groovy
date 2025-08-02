@@ -18,9 +18,6 @@
 package org.kordamp.gradle.util
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
-import org.gradle.api.logging.configuration.ConsoleOutput
 
 /**
  * @author Andres Almiray
@@ -30,24 +27,15 @@ import org.gradle.api.logging.configuration.ConsoleOutput
 class AnsiConsole implements Serializable {
     final boolean plain
 
-    AnsiConsole(Project project) {
-        this(project.gradle, '')
+    AnsiConsole() {
+        this('')
     }
 
-    AnsiConsole(Gradle gradle) {
-        this(gradle, '')
-    }
-
-    AnsiConsole(Project project, String appName) {
-        this(project.gradle, appName)
-    }
-
-    AnsiConsole(Gradle gradle, String appName) {
-        plain = gradle.startParameter.consoleOutput == ConsoleOutput.Plain ||
-            'plain'.equalsIgnoreCase(System.getProperty('org.gradle.console')) ||
-            System.getenv().containsKey('NO_COLOR') ||
-            (appName && System.getenv().containsKey(appName.toUpperCase(Locale.ENGLISH) + '_NO_COLOR')) ||
-            System.getenv().get('TERM') == 'dumb'
+    AnsiConsole(String appName) {
+        plain = 'plain'.equalsIgnoreCase(System.getProperty('org.gradle.console')) ||
+                System.getenv().containsKey('NO_COLOR') ||
+                (appName && System.getenv().containsKey(appName.toUpperCase(Locale.ENGLISH) + '_NO_COLOR')) ||
+                System.getenv().get('TERM') == 'dumb'
     }
 
     String black(CharSequence s) {

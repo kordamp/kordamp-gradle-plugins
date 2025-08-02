@@ -45,7 +45,7 @@ abstract class AbstractReportingTask extends DefaultTask {
         this.showSecrets = showSecrets
     }
 
-    protected final AnsiConsole console = new AnsiConsole(project)
+    protected final AnsiConsole console = new AnsiConsole()
 
     protected void print(String value, int offset) {
         doPrintElement(value, offset)

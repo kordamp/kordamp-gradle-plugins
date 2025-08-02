@@ -51,7 +51,7 @@ class CheckAutoLinksTask extends AbstractReportingTask {
         counts.put(REDIRECT, 0)
         counts.put(ERROR, 0)
 
-        AnsiConsole console = new AnsiConsole(project)
+        AnsiConsole console = new AnsiConsole()
         for (String link : links) {
             try {
                 URL url = new URL(link + 'package-list')
