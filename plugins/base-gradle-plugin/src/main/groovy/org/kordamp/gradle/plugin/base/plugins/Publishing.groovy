@@ -44,6 +44,7 @@ class Publishing extends AbstractFeature {
     boolean useVersionExpressions = true
     boolean flattenPlatforms = false
     final Signing signing
+    final MavenCentral mavenCentral
 
     private boolean useVersionExpressionsSet
     private boolean flattenPlatformsSet
@@ -51,6 +52,7 @@ class Publishing extends AbstractFeature {
     Publishing(ProjectConfigurationExtension config, Project project) {
         super(config, project, PLUGIN_ID)
         signing = new Signing(config, project)
+        mavenCentral = new MavenCentral(config, project)
     }
 
     @Override
@@ -63,6 +65,7 @@ class Publishing extends AbstractFeature {
         Map<String, Object> map = new LinkedHashMap<String, Object>(enabled: enabled)
 
         map.putAll(signing.toMap())
+        map.putAll(mavenCentral.toMap())
         map.releasesRepository = releasesRepository
         map.snapshotsRepository = snapshotsRepository
         map.publications = publications
@@ -101,6 +104,14 @@ class Publishing extends AbstractFeature {
         ConfigureUtil.configure(action, signing)
     }
 
+    void mavenCentral(Action<? super MavenCentral> action) {
+        action.execute(mavenCentral)
+    }
+
+    void mavenCentral(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MavenCentral) Closure<Void> action) {
+        ConfigureUtil.configure(action, mavenCentral)
+    }
+
     void setUseVersionExpressions(boolean value) {
         this.useVersionExpressions = value
         this.useVersionExpressionsSet = true
@@ -124,6 +135,7 @@ class Publishing extends AbstractFeature {
         o1.releasesRepository = o1.@releasesRepository ?: o2.@releasesRepository
         o1.snapshotsRepository = o1.@snapshotsRepository ?: o2.@snapshotsRepository
         Signing.merge(o1.signing, o2.signing)
+        MavenCentral.merge(o1.mavenCentral, o2.mavenCentral)
         o1.@useVersionExpressions = o1.useVersionExpressionsSet ? o1.useVersionExpressions : o2.useVersionExpressions
         o1.@useVersionExpressionsSet = o1.useVersionExpressionsSet ?: o2.useVersionExpressionsSet
         o1.@flattenPlatforms = o1.flattenPlatformsSet ? o1.flattenPlatforms : o2.flattenPlatforms
@@ -281,6 +293,51 @@ class Publishing extends AbstractFeature {
             o1.keyId = o1.@keyId != null ? o1.keyId : o2.keyId
             o1.secretKey = o1.@secretKey != null ? o1.secretKey : o2.secretKey
             o1.password = o1.@password != null ? o1.password : o2.password
+        }
+    }
+
+    @CompileStatic
+    static class MavenCentral {
+        Boolean enabled
+        String username
+        String password
+        String publishingType = 'USER_MANAGED'
+        int timeoutSeconds = 300
+
+        private final ProjectConfigurationExtension config
+        private final Project project
+
+        MavenCentral(ProjectConfigurationExtension config, Project project) {
+            this.config = config
+            this.project = project
+        }
+
+        Map<String, Object> toMap() {
+            Map<String, Object> map = new LinkedHashMap<String, Object>()
+
+            map.enabled = getEnabled()
+            map.username = this.username ? '************' : '**unset**'
+            map.password = this.password ? '************' : '**unset**'
+            map.publishingType = this.publishingType
+            map.timeoutSeconds = this.timeoutSeconds
+
+            new LinkedHashMap<>('mavenCentral': map)
+        }
+
+        boolean getEnabled() {
+            this.@enabled != null && this.@enabled
+        }
+
+        boolean isEnabledSet() {
+            this.@enabled != null
+        }
+
+        static void merge(MavenCentral o1, MavenCentral o2) {
+            o1.enabled = o1.isEnabledSet() ? o1.getEnabled() : o2.getEnabled()
+            o1.username = o1.@username != null ? o1.username : o2.username
+            o1.password = o1.@password != null ? o1.password : o2.password
+            o1.publishingType = o1.@publishingType != null ? o1.publishingType : o2.publishingType
+            o1.timeoutSeconds = o1.@timeoutSeconds != null ? o1.timeoutSeconds : o2.timeoutSeconds
         }
     }
 }
